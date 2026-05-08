@@ -1,0 +1,328 @@
+---
+---
+
+<html lang="en">
+  <head>
+    <title>Should I Spend $30,000 on a Wedding?</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <style>
+      :root {
+        --bg: #eef2f7;
+        --card: #ffffff;
+        --navy: #0f172a;
+        --text: #111827;
+        --muted: #475569;
+        --teal: #0f766e;
+        --green: #15803d;
+        --amber: #b45309;
+        --red: #b91c1c;
+        --border: #d7dee8;
+      }
+
+      body {
+        font-family: Arial, sans-serif;
+        background: var(--bg);
+        margin: 0;
+        padding: 40px 20px;
+        color: var(--text);
+      }
+
+      .container {
+        max-width: 920px;
+        margin: auto;
+      }
+
+      .eyebrow {
+        text-align: center;
+        color: var(--teal);
+        font-weight: 800;
+        letter-spacing: .08em;
+        text-transform: uppercase;
+        margin-bottom: 14px;
+      }
+
+      h1 {
+        font-size: 56px;
+        text-align: center;
+        margin: 0 0 16px;
+        color: var(--navy);
+        line-height: 1.05;
+      }
+
+      .subtitle {
+        text-align: center;
+        font-size: 22px;
+        color: var(--muted);
+        margin: 0 auto 42px;
+        line-height: 1.5;
+        max-width: 760px;
+      }
+
+      .calculator {
+        background: var(--card);
+        border-radius: 24px;
+        padding: 38px;
+        box-shadow: 0 18px 50px rgba(15, 23, 42, 0.08);
+        border: 1px solid rgba(15, 23, 42, 0.05);
+      }
+
+      .calculator h2 {
+        margin-top: 0;
+        color: var(--navy);
+      }
+
+      .grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 20px;
+      }
+
+      label {
+        display: block;
+        font-weight: 800;
+        margin-bottom: 9px;
+        color: var(--navy);
+      }
+
+      input {
+        width: 100%;
+        padding: 16px;
+        border-radius: 12px;
+        border: 1px solid var(--border);
+        font-size: 18px;
+        box-sizing: border-box;
+      }
+
+      input:focus {
+        outline: 3px solid rgba(15, 118, 110, 0.18);
+        border-color: var(--teal);
+      }
+
+      button {
+        margin-top: 28px;
+        background: var(--navy);
+        color: white;
+        border: none;
+        padding: 18px 28px;
+        border-radius: 14px;
+        font-size: 19px;
+        font-weight: 900;
+        cursor: pointer;
+      }
+
+      button:hover {
+        background: var(--teal);
+      }
+
+      .result {
+        margin-top: 34px;
+        background: #f8fafc;
+        border: 1px solid var(--border);
+        border-radius: 20px;
+        padding: 30px;
+        display: none;
+      }
+
+      .score {
+        font-size: 36px;
+        font-weight: 900;
+        margin-bottom: 18px;
+        color: var(--navy);
+      }
+
+      .bar {
+        height: 16px;
+        background: #e2e8f0;
+        border-radius: 999px;
+        overflow: hidden;
+        margin-bottom: 24px;
+      }
+
+      .bar-fill {
+        height: 100%;
+        background: var(--teal);
+        width: 0%;
+      }
+
+      .line {
+        margin-bottom: 12px;
+        font-size: 18px;
+        color: var(--text);
+      }
+
+      .guidance {
+        margin-top: 26px;
+        font-size: 20px;
+        line-height: 1.6;
+        color: var(--navy);
+      }
+
+      .disclaimer {
+        margin-top: 22px;
+        font-size: 13px;
+        color: #64748b;
+      }
+
+      @media (max-width: 700px) {
+        body {
+          padding: 28px 14px;
+        }
+
+        h1 {
+          font-size: 38px;
+        }
+
+        .subtitle {
+          font-size: 18px;
+        }
+
+        .calculator {
+          padding: 24px;
+        }
+
+        .grid {
+          grid-template-columns: 1fr;
+        }
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="container">
+      <div class="eyebrow">Wedding Spending Calculator</div>
+
+      <h1>Should I Spend $30,000 on a Wedding?</h1>
+
+      <p class="subtitle">
+        Get a practical verdict based on income, savings, debt, stress level,
+        and how much of your financial cushion the wedding would consume.
+      </p>
+
+      <div class="calculator">
+        <h2>Wedding Affordability Verdict</h2>
+
+        <div class="grid">
+          <div>
+            <label>Combined Annual Income</label>
+            <input id="income" type="number" placeholder="Example: 140000" />
+          </div>
+
+          <div>
+            <label>Total Savings</label>
+            <input id="savings" type="number" placeholder="Example: 50000" />
+          </div>
+
+          <div>
+            <label>Wedding Cost</label>
+            <input id="cost" type="number" placeholder="30000" />
+          </div>
+
+          <div>
+            <label>Current Debt</label>
+            <input id="debt" type="number" placeholder="Example: 12000" />
+          </div>
+        </div>
+
+        <button id="weddingButton">Get Wedding Verdict</button>
+
+        <div class="result" id="result">
+          <div class="score" id="scoreText"></div>
+
+          <div class="bar">
+            <div class="bar-fill" id="barFill"></div>
+          </div>
+
+          <div class="line" id="stress"></div>
+          <div class="line" id="savingsImpact"></div>
+          <div class="line" id="incomeImpact"></div>
+          <div class="line" id="debtRatio"></div>
+
+          <div class="guidance" id="guidance"></div>
+
+          <div class="disclaimer">
+            This is a general educational estimate, not financial advice.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script is:inline>
+      function calculateWedding() {
+        const income = Number(document.getElementById("income").value);
+        const savings = Number(document.getElementById("savings").value);
+        const cost = Number(document.getElementById("cost").value);
+        const debt = Number(document.getElementById("debt").value || 0);
+
+        if (!income || !savings || !cost) {
+          alert("Please enter income, savings, and wedding cost.");
+          return;
+        }
+
+        const savingsImpact = (cost / savings) * 100;
+        const incomeImpact = (cost / income) * 100;
+        const debtRatio = (debt / income) * 100;
+
+        let score = 100;
+
+        if (savingsImpact > 10) score -= 12;
+        if (savingsImpact > 25) score -= 18;
+        if (savingsImpact > 50) score -= 25;
+        if (incomeImpact > 15) score -= 10;
+        if (incomeImpact > 25) score -= 15;
+        if (debtRatio > 10) score -= 8;
+        if (debtRatio > 25) score -= 12;
+
+        score = Math.max(0, Math.min(100, score));
+
+        let verdict = "";
+        let guidance = "";
+        let stress = "";
+        let barColor = "";
+
+        if (score >= 85) {
+          verdict = "Financially Comfortable";
+          stress = "Low stress";
+          barColor = "var(--green)";
+          guidance = "This wedding appears financially manageable. It still deserves a budget, but the cost does not seriously threaten your cushion.";
+        } else if (score >= 70) {
+          verdict = "Reasonable, with Guardrails";
+          stress = "Manageable stress";
+          barColor = "var(--teal)";
+          guidance = "This can work if you avoid financing it, keep extra costs under control, and preserve enough savings after the wedding.";
+        } else if (score >= 50) {
+          verdict = "Proceed Carefully";
+          stress = "Noticeable stress";
+          barColor = "var(--amber)";
+          guidance = "This wedding would take a meaningful bite out of your financial cushion. Consider trimming the guest list, venue cost, or extras.";
+        } else {
+          verdict = "High Financial Risk";
+          stress = "High stress";
+          barColor = "var(--red)";
+          guidance = "This wedding cost looks too aggressive for the current financial picture. A smaller budget would likely protect your future flexibility.";
+        }
+
+        document.getElementById("result").style.display = "block";
+        document.getElementById("scoreText").textContent = `${verdict} - ${score}/100`;
+        document.getElementById("barFill").style.width = `${score}%`;
+        document.getElementById("barFill").style.background = barColor;
+
+        document.getElementById("stress").innerHTML =
+          `<strong>Stress level:</strong> ${stress}`;
+
+        document.getElementById("savingsImpact").innerHTML =
+          `<strong>Savings impact:</strong> ${savingsImpact.toFixed(1)}% of savings`;
+
+        document.getElementById("incomeImpact").innerHTML =
+          `<strong>Income impact:</strong> ${incomeImpact.toFixed(1)}% of annual income`;
+
+        document.getElementById("debtRatio").innerHTML =
+          `<strong>Debt ratio:</strong> ${debtRatio.toFixed(1)}% of annual income`;
+
+        document.getElementById("guidance").textContent = guidance;
+      }
+
+      document.getElementById("weddingButton").addEventListener("click", calculateWedding);
+    </script>
+  </body>
+</html>
