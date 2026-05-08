@@ -1,0 +1,330 @@
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Should I Spend $700 on a Car Payment?</title>
+
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #eef2f7;
+      color: #0f172a;
+      margin: 0;
+      padding: 40px 20px;
+    }
+
+    .container {
+      max-width: 900px;
+      margin: auto;
+    }
+
+    .eyebrow {
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      color: #0f766e;
+      font-weight: bold;
+      text-align: center;
+      margin-bottom: 10px;
+    }
+
+    h1 {
+      font-size: 4rem;
+      line-height: 1;
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    .subtext {
+      text-align: center;
+      font-size: 1.4rem;
+      line-height: 1.7;
+      max-width: 850px;
+      margin: 0 auto 50px auto;
+      color: #334155;
+    }
+
+    .calculator {
+      background: white;
+      padding: 40px;
+      border-radius: 24px;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.06);
+    }
+
+    .calculator h2 {
+      margin-top: 0;
+      font-size: 2rem;
+      margin-bottom: 30px;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+    }
+
+    .field label {
+      display: block;
+      font-weight: bold;
+      margin-bottom: 10px;
+    }
+
+    .field input {
+      width: 100%;
+      padding: 16px;
+      border-radius: 12px;
+      border: 1px solid #cbd5e1;
+      font-size: 1rem;
+      box-sizing: border-box;
+    }
+
+    button {
+      margin-top: 30px;
+      background: #0f172a;
+      color: white;
+      border: none;
+      padding: 18px 32px;
+      border-radius: 14px;
+      font-size: 1.1rem;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    .results {
+      margin-top: 40px;
+      background: #f8fafc;
+      padding: 30px;
+      border-radius: 20px;
+      border: 1px solid #dbe4ee;
+    }
+
+    .results h3 {
+      font-size: 3rem;
+      margin-top: 0;
+      margin-bottom: 20px;
+    }
+
+    .bar {
+      width: 100%;
+      height: 16px;
+      background: #dbe4ee;
+      border-radius: 999px;
+      overflow: hidden;
+      margin-bottom: 30px;
+    }
+
+    .fill {
+      height: 100%;
+      width: 0%;
+      background: #16a34a;
+      transition: width 0.4s ease;
+    }
+
+    .results p {
+      font-size: 1.2rem;
+      line-height: 1.8;
+      margin: 10px 0;
+    }
+
+    .guidance {
+      margin-top: 30px;
+      font-size: 1.35rem;
+      line-height: 1.8;
+      color: #1e293b;
+    }
+
+    .disclaimer {
+      margin-top: 30px;
+      font-size: 0.9rem;
+      color: #64748b;
+    }
+
+    @media (max-width: 768px) {
+      h1 {
+        font-size: 2.7rem;
+      }
+
+      .grid {
+        grid-template-columns: 1fr;
+      }
+
+      .calculator {
+        padding: 24px;
+      }
+
+      .results h3 {
+        font-size: 2.2rem;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container">
+
+    <div class="eyebrow">
+      Car Payment Calculator
+    </div>
+
+    <h1>
+      Should I Spend $700 on a Car Payment?
+    </h1>
+
+    <div class="subtext">
+      Evaluate whether your monthly car payment is financially manageable based on income, savings, debt load, and overall comfort level.
+    </div>
+
+    <div class="calculator">
+
+      <h2>Car Payment Affordability Verdict</h2>
+
+      <div class="grid">
+
+        <div class="field">
+          <label>Monthly Take-Home Income</label>
+          <input id="income" type="number" placeholder="Example: 6000" />
+        </div>
+
+        <div class="field">
+          <label>Current Savings</label>
+          <input id="savings" type="number" placeholder="Example: 15000" />
+        </div>
+
+        <div class="field">
+          <label>Monthly Car Payment</label>
+          <input id="payment" type="number" placeholder="Example: 700" />
+        </div>
+
+        <div class="field">
+          <label>Current Monthly Debt Payments</label>
+          <input id="debt" type="number" placeholder="Example: 900" />
+        </div>
+
+      </div>
+
+      <button id="carButton">
+        Get Car Payment Verdict
+      </button>
+
+      <div class="results">
+
+        <h3 id="verdict">
+          Waiting For Inputs
+        </h3>
+
+        <div class="bar">
+          <div class="fill" id="fillBar"></div>
+        </div>
+
+        <p id="stress"></p>
+        <p id="paymentImpact"></p>
+        <p id="savingsImpact"></p>
+        <p id="debtRatio"></p>
+
+        <div class="guidance" id="guidance"></div>
+
+        <div class="disclaimer">
+          This is a general educational estimate, not financial advice.
+        </div>
+
+      </div>
+
+    </div>
+
+  </div>
+
+  <script is:inline>
+
+    function calculateCarPayment() {
+
+      const income =
+        Number(document.getElementById("income").value);
+
+      const savings =
+        Number(document.getElementById("savings").value);
+
+      const payment =
+        Number(document.getElementById("payment").value);
+
+      const debt =
+        Number(document.getElementById("debt").value);
+
+      const paymentImpact =
+        (payment / income) * 100;
+
+      const savingsImpact =
+        (payment * 6 / savings) * 100;
+
+      const debtRatio =
+        ((payment + debt) / income) * 100;
+
+      let score = 100;
+
+      score -= paymentImpact * 1.8;
+      score -= savingsImpact * 0.25;
+      score -= debtRatio * 1.3;
+
+      if (score < 0) score = 0;
+      if (score > 100) score = 100;
+
+      let verdict = "";
+      let stress = "";
+      let guidance = "";
+      let barColor = "";
+
+      if (score >= 80) {
+        verdict = "Comfortable Payment";
+        stress = "Low stress";
+        guidance =
+          "This car payment appears manageable relative to your income and financial cushion.";
+        barColor = "#16a34a";
+      }
+
+      else if (score >= 60) {
+        verdict = "Manageable but Heavy";
+        stress = "Moderate stress";
+        guidance =
+          "This payment may work, but it could limit flexibility for savings, investing, or emergencies.";
+        barColor = "#eab308";
+      }
+
+      else {
+        verdict = "Financial Pressure Risk";
+        stress = "High stress";
+        guidance =
+          "This payment may be too aggressive for your current financial picture. A cheaper vehicle could reduce financial strain.";
+        barColor = "#dc2626";
+      }
+
+      document.getElementById("verdict").textContent =
+        `${verdict} - ${Math.round(score)}/100`;
+
+      document.getElementById("fillBar").style.width =
+        `${score}%`;
+
+      document.getElementById("fillBar").style.background =
+        barColor;
+
+      document.getElementById("stress").innerHTML =
+        `<strong>Stress level:</strong> ${stress}`;
+
+      document.getElementById("paymentImpact").innerHTML =
+        `<strong>Payment impact:</strong> ${paymentImpact.toFixed(1)}% of monthly income`;
+
+      document.getElementById("savingsImpact").innerHTML =
+        `<strong>6-month payment impact:</strong> ${savingsImpact.toFixed(1)}% of savings`;
+
+      document.getElementById("debtRatio").innerHTML =
+        `<strong>Total debt ratio:</strong> ${debtRatio.toFixed(1)}% of monthly income`;
+
+      document.getElementById("guidance").textContent =
+        guidance;
+    }
+
+    document
+      .getElementById("carButton")
+      .addEventListener("click", calculateCarPayment);
+
+  </script>
+
+</body>
+</html>
