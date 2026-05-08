@@ -165,51 +165,85 @@
     </main>
 
     <script is:inline>
-      function calculateVerdict() {
-        const income = Number(document.getElementById("income").value);
-        const savings = Number(document.getElementById("savings").value);
-        const cost = Number(document.getElementById("cost").value);
-        const uses = Number(document.getElementById("uses").value);
+  function calculateVerdict() {
+    const income = Number(document.getElementById("income").value);
+    const savings = Number(document.getElementById("savings").value);
+    const cost = Number(document.getElementById("cost").value);
+    const uses = Number(document.getElementById("uses").value);
 
-        const result = document.getElementById("result");
-        const verdictBox = document.getElementById("verdict");
-        const detailsBox = document.getElementById("details");
+    const result = document.getElementById("result");
+    const verdictBox = document.getElementById("verdict");
+    const detailsBox = document.getElementById("details");
 
-        if (!income || !savings || !cost || !uses) {
-          result.style.display = "block";
-          verdictBox.textContent = "Add the missing numbers.";
-          detailsBox.textContent = "Fill out all four fields to get a useful spending verdict.";
-          return;
-        }
+    if (!income || !savings || !cost || !uses) {
+      result.style.display = "block";
+      verdictBox.textContent = "Add the missing numbers.";
+      detailsBox.textContent = "Fill out all four fields to get a useful spending verdict.";
+      return;
+    }
 
-        const savingsImpact = (cost / savings) * 100;
-        const incomeImpact = (cost / income) * 100;
-        const costPerUse = cost / uses;
+    const savingsImpact = (cost / savings) * 100;
+    const incomeImpact = (cost / income) * 100;
+    const costPerUse = cost / uses;
 
-        let verdict = "";
-        let guidance = "";
+    let score = 100;
 
-        if (savingsImpact <= 10 && incomeImpact <= 25) {
-          verdict = "Reasonable Spend";
-          guidance = "This purchase looks financially comfortable based on your income and savings.";
-        } else if (savingsImpact <= 25 && incomeImpact <= 50) {
-          verdict = "Proceed Carefully";
-          guidance = "This may be worth it, but it uses a noticeable chunk of your financial cushion.";
-        } else if (savingsImpact <= 50 || incomeImpact <= 100) {
-          verdict = "Risky Spend";
-          guidance = "This purchase could create pressure. Consider reducing the cost, delaying it, or saving more first.";
-        } else {
-          verdict = "Bad Idea for Now";
-          guidance = "This looks too expensive relative to your current savings and income.";
-        }
+    if (savingsImpact > 10) score -= 15;
+    if (savingsImpact > 25) score -= 20;
+    if (savingsImpact > 50) score -= 25;
 
-        result.style.display = "block";
-        verdictBox.textContent = verdict;
-        detailsBox.innerHTML = `
-          <strong>Cost per use:</strong> $${costPerUse.toFixed(2)}<br>
-          <strong>Savings impact:</strong> ${savingsImpact.toFixed(1)}% of your savings<br>
-          <strong>Income impact:</strong> ${incomeImpact.toFixed(1)}% of one month’s take-home income<br><br>
-          ${guidance}
-        `;
-      }
-    document.getElementById("calculateButton").addEventListener("click", calculateVerdict);
+    if (incomeImpact > 25) score -= 10;
+    if (incomeImpact > 50) score -= 15;
+    if (incomeImpact > 100) score -= 25;
+
+    if (costPerUse > 100) score -= 10;
+    if (costPerUse > 250) score -= 15;
+
+    score = Math.max(0, Math.min(100, score));
+
+    let verdict = "";
+    let guidance = "";
+    let stress = "";
+
+    if (score >= 85) {
+      verdict = "Smart Purchase";
+      stress = "Low stress";
+      guidance = "This looks financially comfortable. The purchase does not meaningfully threaten your savings or monthly income.";
+    } else if (score >= 70) {
+      verdict = "Reasonable Spend";
+      stress = "Manageable stress";
+      guidance = "This purchase appears reasonable, especially if it brings real value, convenience, memories, or repeated use.";
+    } else if (score >= 50) {
+      verdict = "Proceed Carefully";
+      stress = "Noticeable stress";
+      guidance = "This may still be worth it, but it takes enough from your cushion that you should pause before buying.";
+    } else if (score >= 30) {
+      verdict = "Financial Stretch";
+      stress = "High stress";
+      guidance = "This purchase could create pressure. Consider reducing the cost, delaying it, or saving more first.";
+    } else {
+      verdict = "Probably Not Worth It";
+      stress = "Very high stress";
+      guidance = "This looks too expensive relative to your current income and savings. Waiting is probably the better move.";
+    }
+
+    result.style.display = "block";
+    verdictBox.textContent = `${verdict} — ${score}/100`;
+
+    detailsBox.innerHTML = `
+      <div style="background:#e5e7eb; border-radius:999px; height:14px; overflow:hidden; margin:14px 0 20px;">
+        <div style="width:${score}%; background:#111827; height:14px;"></div>
+      </div>
+
+      <strong>Comfort score:</strong> ${score}/100<br>
+      <strong>Stress level:</strong> ${stress}<br>
+      <strong>Cost per use:</strong> $${costPerUse.toFixed(2)}<br>
+      <strong>Savings impact:</strong> ${savingsImpact.toFixed(1)}% of your savings<br>
+      <strong>Income impact:</strong> ${incomeImpact.toFixed(1)}% of one month’s take-home income<br><br>
+
+      ${guidance}
+    `;
+  }
+
+  document.getElementById("calculateButton").addEventListener("click", calculateVerdict);
+</script>
