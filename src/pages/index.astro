@@ -1,249 +1,251 @@
----
----
-
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>ShouldISpend.com</title>
+
+    <title>Should I Spend This Much?</title>
 
     <style>
-      body {
-        margin: 0;
-        font-family: Arial, sans-serif;
-        background: #f5f7fb;
-        color: #111827;
+      :root {
+        --bg: #f4f7fb;
+        --card: #ffffff;
+        --text: #0f172a;
+        --muted: #475569;
+        --border: #dbe3ee;
+        --primary: #0f172a;
+        --accent: #0f766e;
       }
 
-      .page {
-        max-width: 980px;
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        font-family: Arial, Helvetica, sans-serif;
+        background: var(--bg);
+        color: var(--text);
+      }
+
+      .container {
+        width: 92%;
+        max-width: 1200px;
         margin: 0 auto;
-        padding: 60px 24px;
       }
 
       .hero {
+        padding: 80px 0 50px;
         text-align: center;
-        margin-bottom: 42px;
+      }
+
+      .eyebrow {
+        color: var(--accent);
+        font-size: 0.85rem;
+        font-weight: 700;
+        letter-spacing: 2px;
+        text-transform: uppercase;
+        margin-bottom: 12px;
       }
 
       h1 {
-        font-size: 56px;
-        line-height: 1.05;
-        margin-bottom: 18px;
+        font-size: clamp(2.8rem, 7vw, 5rem);
+        line-height: 1;
+        margin: 0 0 24px;
+        color: var(--primary);
       }
 
       .hero p {
-        font-size: 21px;
-        line-height: 1.6;
-        color: #4b5563;
-        max-width: 720px;
+        max-width: 760px;
         margin: 0 auto;
+        font-size: 1.2rem;
+        line-height: 1.7;
+        color: var(--muted);
       }
 
-      .calculator {
-        background: white;
-        border-radius: 24px;
-        padding: 32px;
-        box-shadow: 0 16px 40px rgba(0,0,0,0.07);
+      .section {
+        margin-top: 70px;
+      }
+
+      .section-title {
+        font-size: 2rem;
+        margin-bottom: 24px;
       }
 
       .grid {
         display: grid;
-        grid-template-columns: repeat(2, 1fr);
-        gap: 20px;
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        gap: 24px;
       }
 
-      label {
+      .card {
+        background: var(--card);
+        border: 1px solid var(--border);
+        border-radius: 22px;
+        padding: 28px;
+        transition: 0.2s ease;
+      }
+
+      .card:hover {
+        transform: translateY(-3px);
+      }
+
+      .card-category {
+        color: var(--accent);
+        font-size: 0.8rem;
         font-weight: 700;
-        display: block;
-        margin-bottom: 8px;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        margin-bottom: 10px;
       }
 
-      input {
-        width: 100%;
-        padding: 14px;
-        font-size: 18px;
-        border: 1px solid #d1d5db;
-        border-radius: 12px;
+      .card h3 {
+        margin: 0 0 14px;
+        font-size: 1.6rem;
+        line-height: 1.2;
       }
 
-      button {
-        margin-top: 24px;
-        background: #111827;
-        color: white;
-        border: 0;
-        padding: 16px 26px;
-        border-radius: 12px;
-        font-weight: 800;
-        font-size: 18px;
-        cursor: pointer;
-      }
-
-      .result {
-        margin-top: 28px;
-        padding: 24px;
-        border-radius: 18px;
-        background: #f9fafb;
-        border: 1px solid #e5e7eb;
-      }
-
-      .verdict {
-        font-size: 32px;
-        font-weight: 900;
-        margin-bottom: 12px;
-      }
-
-      .details {
-        font-size: 18px;
+      .card p {
+        color: var(--muted);
         line-height: 1.6;
-        color: #374151;
+        margin-bottom: 24px;
       }
 
-      .small {
-        margin-top: 18px;
-        font-size: 14px;
-        color: #6b7280;
+      .button {
+        display: inline-block;
+        background: var(--primary);
+        color: white;
+        padding: 14px 22px;
+        border-radius: 12px;
+        text-decoration: none;
+        font-weight: 700;
+      }
+
+      .coming-soon {
+        opacity: 0.7;
+      }
+
+      footer {
+        text-align: center;
+        padding: 80px 0 40px;
+        color: var(--muted);
+        font-size: 0.95rem;
       }
 
       @media (max-width: 700px) {
-        h1 {
-          font-size: 42px;
+        .hero {
+          padding-top: 60px;
         }
 
-        .grid {
-          grid-template-columns: 1fr;
+        .hero p {
+          font-size: 1rem;
+        }
+
+        .card h3 {
+          font-size: 1.35rem;
         }
       }
     </style>
   </head>
 
   <body>
-    <main class="page">
+    <div class="container">
       <section class="hero">
+        <div class="eyebrow">Financial Decision Engine</div>
+
         <h1>Should I Spend This Much?</h1>
+
         <p>
-          Get a quick verdict on whether a purchase, trip, wedding,
-          subscription, or lifestyle expense is financially worth it.
+          Get a fast, practical verdict on whether a purchase, subscription,
+          wedding, trip, lifestyle expense, or major payment is financially
+          worth it.
         </p>
       </section>
 
-      <section class="calculator">
-        <h2>Quick Spending Verdict Calculator</h2>
+      <section class="section">
+        <h2 class="section-title">Start With a Calculator</h2>
 
         <div class="grid">
-          <div>
-            <label for="income">Monthly Take-Home Income</label>
-            <input id="income" type="number" placeholder="Example: 6000" />
+          <div class="card">
+            <div class="card-category">Weddings</div>
+
+            <h3>Should I Spend $30,000 on a Wedding?</h3>
+
+            <p>
+              Analyze wedding affordability based on income, savings, debt,
+              financial stress, and long-term flexibility.
+            </p>
+
+            <a
+              class="button"
+              href="/should-i-spend-30000-on-a-wedding"
+            >
+              Open Calculator
+            </a>
           </div>
 
-          <div>
-            <label for="savings">Current Savings</label>
-            <input id="savings" type="number" placeholder="Example: 15000" />
-          </div>
+          <div class="card">
+            <div class="card-category">Cars</div>
 
-          <div>
-            <label for="cost">Purchase Cost</label>
-            <input id="cost" type="number" placeholder="Example: 2500" />
-          </div>
+            <h3>Should I Spend $700 on a Car Payment?</h3>
 
-          <div>
-            <label for="uses">Expected Uses</label>
-            <input id="uses" type="number" placeholder="Example: 20" />
-          </div>
-        </div>
+            <p>
+              Evaluate whether your monthly vehicle payment is realistic for
+              your income, debt load, and savings cushion.
+            </p>
 
-        <button id="calculateButton">Get My Verdict</button>
-
-        <div id="result" class="result" style="display: none;">
-          <div id="verdict" class="verdict"></div>
-          <div id="details" class="details"></div>
-          <div class="small">
-            This is a general educational estimate, not financial advice.
+            <a
+              class="button"
+              href="/should-i-spend-700-on-a-car-payment"
+            >
+              Open Calculator
+            </a>
           </div>
         </div>
       </section>
-    </main>
 
-    <script is:inline>
-  function calculateVerdict() {
-    const income = Number(document.getElementById("income").value);
-    const savings = Number(document.getElementById("savings").value);
-    const cost = Number(document.getElementById("cost").value);
-    const uses = Number(document.getElementById("uses").value);
+      <section class="section">
+        <h2 class="section-title">Upcoming Categories</h2>
 
-    const result = document.getElementById("result");
-    const verdictBox = document.getElementById("verdict");
-    const detailsBox = document.getElementById("details");
+        <div class="grid">
+          <div class="card coming-soon">
+            <div class="card-category">Housing</div>
 
-    if (!income || !savings || !cost || !uses) {
-      result.style.display = "block";
-      verdictBox.textContent = "Add the missing numbers.";
-      detailsBox.textContent = "Fill out all four fields to get a useful spending verdict.";
-      return;
-    }
+            <h3>Mortgage & Rent Calculators</h3>
 
-    const savingsImpact = (cost / savings) * 100;
-    const incomeImpact = (cost / income) * 100;
-    const costPerUse = cost / uses;
+            <p>
+              Tools for rent affordability, mortgage sizing, home upgrades, and
+              real estate decisions.
+            </p>
+          </div>
 
-    let score = 100;
+          <div class="card coming-soon">
+            <div class="card-category">Travel</div>
 
-    if (savingsImpact > 10) score -= 15;
-    if (savingsImpact > 25) score -= 20;
-    if (savingsImpact > 50) score -= 25;
+            <h3>Vacation & Flight Spending</h3>
 
-    if (incomeImpact > 25) score -= 10;
-    if (incomeImpact > 50) score -= 15;
-    if (incomeImpact > 100) score -= 25;
+            <p>
+              Decide whether luxury trips, flights, resorts, and travel budgets
+              make financial sense.
+            </p>
+          </div>
 
-    if (costPerUse > 100) score -= 10;
-    if (costPerUse > 250) score -= 15;
+          <div class="card coming-soon">
+            <div class="card-category">Lifestyle</div>
 
-    score = Math.max(0, Math.min(100, score));
+            <h3>Subscriptions & Daily Spending</h3>
 
-    let verdict = "";
-    let guidance = "";
-    let stress = "";
+            <p>
+              Analyze recurring costs, gym memberships, hobbies, entertainment,
+              and lifestyle creep.
+            </p>
+          </div>
+        </div>
+      </section>
 
-    if (score >= 85) {
-      verdict = "Smart Purchase";
-      stress = "Low stress";
-      guidance = "This looks financially comfortable. The purchase does not meaningfully threaten your savings or monthly income.";
-    } else if (score >= 70) {
-      verdict = "Reasonable Spend";
-      stress = "Manageable stress";
-      guidance = "This purchase appears reasonable, especially if it brings real value, convenience, memories, or repeated use.";
-    } else if (score >= 50) {
-      verdict = "Proceed Carefully";
-      stress = "Noticeable stress";
-      guidance = "This may still be worth it, but it takes enough from your cushion that you should pause before buying.";
-    } else if (score >= 30) {
-      verdict = "Financial Stretch";
-      stress = "High stress";
-      guidance = "This purchase could create pressure. Consider reducing the cost, delaying it, or saving more first.";
-    } else {
-      verdict = "Probably Not Worth It";
-      stress = "Very high stress";
-      guidance = "This looks too expensive relative to your current income and savings. Waiting is probably the better move.";
-    }
-
-    result.style.display = "block";
-    verdictBox.textContent = `${verdict} - ${score}/100`;
-
-    detailsBox.innerHTML = `
-      <div style="background:#e5e7eb; border-radius:999px; height:14px; overflow:hidden; margin:14px 0 20px;">
-        <div style="width:${score}%; background:#111827; height:14px;"></div>
-      </div>
-
-      <strong>Comfort score:</strong> ${score}/100<br>
-      <strong>Stress level:</strong> ${stress}<br>
-      <strong>Cost per use:</strong> $${costPerUse.toFixed(2)}<br>
-      <strong>Savings impact:</strong> ${savingsImpact.toFixed(1)}% of your savings<br>
-      <strong>Income impact:</strong> ${incomeImpact.toFixed(1)}% of one month’s take-home income<br><br>
-
-      ${guidance}
-    `;
-  }
-
-  document.getElementById("calculateButton").addEventListener("click", calculateVerdict);
-</script>
+      <footer>
+        ShouldISpend.com — practical financial comfort calculators for real
+        life decisions.
+      </footer>
+    </div>
+  </body>
+</html>
