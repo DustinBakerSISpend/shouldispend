@@ -178,6 +178,22 @@
         color: var(--navy);
       }
 
+      .verdict-breakdown {
+  margin-top: 18px;
+  padding: 18px;
+  background: #f8fafc;
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  font-size: 0.98rem;
+  line-height: 1.65;
+  color: var(--muted);
+  display: none;
+}
+
+.verdict-breakdown strong {
+  color: var(--text);
+}
+
       .disclaimer {
         margin-top: 22px;
         font-size: 13px;
@@ -311,6 +327,8 @@
 
           <div class="guidance" id="guidance"></div>
 
+          <div class="verdict-breakdown" id="verdictBreakdown"></div>
+
           <div class="disclaimer">
             This is a general educational estimate, not financial advice.
           </div>
@@ -426,6 +444,7 @@
         const savingsImpact = (cost / savings) * 100;
         const incomeImpact = (cost / income) * 100;
         const debtRatio = (debt / income) * 100;
+        const breakdown = document.getElementById("verdictBreakdown");
 
         let score = 100;
 
@@ -484,6 +503,17 @@
           `<strong>Debt ratio:</strong> ${debtRatio.toFixed(1)}% of annual income`;
 
         document.getElementById("guidance").textContent = guidance;
+        breakdown.innerHTML = `
+  <strong>Financial Breakdown:</strong><br><br>
+
+  - Wedding cost equals <strong>${incomeImpact.toFixed(1)}%</strong> of annual household income.<br>
+
+  - Wedding cost consumes <strong>${savingsImpact.toFixed(1)}%</strong> of total savings.<br>
+
+  - Existing debt load equals <strong>${debtRatio.toFixed(1)}%</strong> of annual income.<br><br>
+
+  Higher savings impact and debt pressure usually increase long-term financial stress after large purchases.
+`;
       }
 
       document.getElementById("weddingButton").addEventListener("click", calculateWedding);
