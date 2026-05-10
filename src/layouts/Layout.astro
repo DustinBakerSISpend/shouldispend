@@ -1,3 +1,7 @@
+---
+const { title = "ShouldISpend" } = Astro.props;
+---
+
 <!doctype html>
 <html lang="en">
 	<head>
@@ -6,18 +10,139 @@
 		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
 		<link rel="icon" href="/favicon.ico" />
 		<meta name="generator" content={Astro.generator} />
-		<title>Astro Basics</title>
+		<title>{title}</title>
 	</head>
+
 	<body>
-		<slot />
+		<header class="site-header">
+			<div class="container nav">
+				<a href="/" class="logo">
+					Should<span>I</span>Spend
+				</a>
+
+				<nav>
+					<a href="/calculators">Calculators</a>
+					<a href="/about">About</a>
+				</nav>
+			</div>
+		</header>
+
+		<main>
+			<slot />
+		</main>
+
+		<footer class="site-footer">
+			<div class="container footer-content">
+				<div>
+					<h3>ShouldISpend</h3>
+					<p>
+						Verdict-driven financial decision tools built to help you
+						spend smarter.
+					</p>
+				</div>
+
+				<div class="footer-links">
+					<a href="/calculators">Calculators</a>
+					<a href="/about">About</a>
+					<a href="/privacy-policy">Privacy Policy</a>
+					<a href="/disclaimer">Disclaimer</a>
+				</div>
+			</div>
+		</footer>
 	</body>
 </html>
 
 <style>
-	html,
+	:root {
+		--bg: #f4f7f8;
+		--card: #ffffff;
+		--text: #102a43;
+		--muted: #486581;
+		--primary: #0f766e;
+		--border: #d9e2ec;
+	}
+
+	* {
+		box-sizing: border-box;
+	}
+
 	body {
 		margin: 0;
-		width: 100%;
-		height: 100%;
+		font-family: Arial, sans-serif;
+		background: var(--bg);
+		color: var(--text);
+		line-height: 1.6;
+	}
+
+	a {
+		text-decoration: none;
+		color: inherit;
+	}
+
+	.container {
+		max-width: 1100px;
+		margin: 0 auto;
+		padding: 0 1.5rem;
+	}
+
+	.site-header {
+		background: white;
+		border-bottom: 1px solid var(--border);
+		position: sticky;
+		top: 0;
+		z-index: 10;
+	}
+
+	.nav {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		padding: 1rem 0;
+	}
+
+	.logo {
+		font-size: 1.4rem;
+		font-weight: 700;
+		color: var(--text);
+	}
+
+	.logo span {
+		color: var(--primary);
+	}
+
+	nav {
+		display: flex;
+		gap: 1.5rem;
+		font-weight: 600;
+		color: var(--muted);
+	}
+
+	main {
+		min-height: 70vh;
+	}
+
+	.site-footer {
+		background: white;
+		border-top: 1px solid var(--border);
+		margin-top: 4rem;
+		padding: 3rem 0;
+	}
+
+	.footer-content {
+		display: flex;
+		justify-content: space-between;
+		gap: 2rem;
+		flex-wrap: wrap;
+	}
+
+	.footer-links {
+		display: flex;
+		flex-direction: column;
+		gap: 0.75rem;
+		color: var(--muted);
+	}
+
+	h3 {
+		margin-top: 0;
 	}
 </style>
