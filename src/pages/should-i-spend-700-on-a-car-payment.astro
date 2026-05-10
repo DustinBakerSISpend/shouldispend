@@ -1,6 +1,7 @@
 ---
 import Layout from "../layouts/Layout.astro";
 import CalculatorPageShell from "../components/CalculatorPageShell.astro";
+import VerdictBadge from "../components/VerdictBadge.astro";
 ---
 <Layout title="Should I Spend $700 on a Car Payment?">
 
@@ -191,9 +192,12 @@ import CalculatorPageShell from "../components/CalculatorPageShell.astro";
 
       <div class="results">
 
-        <h3 id="verdict">
-          Waiting For Inputs
-        </h3>
+        <div id="verdictBadge">
+  <VerdictBadge
+    label="Waiting For Inputs"
+    tone="neutral"
+  />
+</div>
 
         <div class="bar">
           <div class="fill" id="fillBar"></div>
@@ -279,8 +283,22 @@ import CalculatorPageShell from "../components/CalculatorPageShell.astro";
         barColor = "#dc2626";
       }
 
-      document.getElementById("verdict").textContent =
-        `${verdict} - ${Math.round(score)}/100`;
+      let tone = "neutral";
+
+if (score >= 75) {
+  tone = "good";
+} else if (score >= 55) {
+  tone = "warning";
+} else {
+  tone = "danger";
+}
+
+document.getElementById("verdictBadge").innerHTML = `
+  <div class="verdict-badge ${tone}">
+    <p>${verdict}</p>
+    <strong>${Math.round(score)}/100</strong>
+  </div>
+`;
 
       document.getElementById("fillBar").style.width =
         `${score}%`;

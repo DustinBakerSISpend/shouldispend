@@ -1,0 +1,58 @@
+---
+const {
+  label = "Waiting For Inputs",
+  score = null,
+  tone = "neutral",
+} = Astro.props;
+---
+
+<div class={`verdict-badge ${tone}`}>
+  <p>{label}</p>
+  {score !== null && <strong>{score}/100</strong>}
+</div>
+
+<style>
+  .verdict-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    border-radius: 999px;
+    padding: 10px 16px;
+    font-weight: 800;
+    background: #eef2f7;
+    color: #0f172a;
+    border: 1px solid #dbe3ee;
+  }
+
+  .verdict-badge p {
+    margin: 0;
+  }
+
+  .verdict-badge strong {
+    font-weight: 900;
+  }
+
+  .verdict-badge.good {
+    background: #ecfdf5;
+    color: #166534;
+    border-color: #bbf7d0;
+  }
+
+  .verdict-badge.warning {
+    background: #fffbeb;
+    color: #92400e;
+    border-color: #fde68a;
+  }
+
+  .verdict-badge.danger {
+    background: #fef2f2;
+    color: #991b1b;
+    border-color: #fecaca;
+  }
+
+  .verdict-badge.neutral {
+    background: #eef2f7;
+    color: #0f172a;
+    border-color: #dbe3ee;
+  }
+</style>
