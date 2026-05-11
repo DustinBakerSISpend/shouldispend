@@ -1,0 +1,99 @@
+---
+import Layout from "../layouts/Layout.astro";
+import CalculatorCard from "../components/CalculatorCard.astro";
+import { calculators } from "../data/calculators.js";
+
+const weddingCalculators = calculators.filter(
+  (calculator) => calculator.category === "Weddings"
+);
+---
+
+<Layout title="Wedding Budget Calculators | ShouldISpend">
+  <style>
+    .container {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 80px 24px;
+    }
+
+    .eyebrow {
+      color: var(--accent);
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      font-size: 0.8rem;
+      font-weight: 700;
+      margin-bottom: 16px;
+    }
+
+    h1 {
+      font-size: 4rem;
+      line-height: 1;
+      margin-bottom: 24px;
+      max-width: 850px;
+    }
+
+    .intro {
+      max-width: 760px;
+      color: var(--muted);
+      font-size: 1.1rem;
+      line-height: 1.8;
+      margin-bottom: 56px;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      gap: 24px;
+      margin-top: 32px;
+    }
+
+    .content-section {
+      max-width: 760px;
+      margin-top: 80px;
+    }
+
+    .content-section h2 {
+      font-size: 2rem;
+      margin-bottom: 20px;
+    }
+
+    .content-section p {
+      color: var(--muted);
+      line-height: 1.8;
+      margin-bottom: 18px;
+    }
+  </style>
+
+  <main class="container">
+    <div class="eyebrow">Wedding Calculators</div>
+
+    <h1>Wedding Budget Calculators and Financial Planning Tools</h1>
+
+    <p class="intro">
+      Wedding costs can escalate quickly once venues, catering, travel, photography, and guest counts start stacking together. These calculators are designed to help you evaluate affordability, financial stress, savings impact, and long-term flexibility before committing to major wedding expenses.
+    </p>
+
+    <div class="grid">
+      {weddingCalculators.map((calculator) => (
+    <CalculatorCard
+  category={calculator.category}
+  title={calculator.title}
+  description={calculator.description}
+  href={calculator.href}
+/>
+      ))}
+    </div>
+
+    <section class="content-section">
+      <h2>How Much Should You Spend on a Wedding?</h2>
+
+      <p>
+        There is no universal “correct” wedding budget. The right number depends on your income, savings, debt load, emergency fund, financial goals, and comfort level with short-term financial pressure.
+      </p>
+
+      <p>
+        A wedding that feels manageable for one household may create years of stress for another. The goal is not maximizing the wedding budget. The goal is balancing celebration, memories, and long-term financial stability.
+      </p>
+    </section>
+  </main>
+</Layout>

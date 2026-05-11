@@ -7,6 +7,22 @@ export const calculators = [
       "Analyze wedding affordability based on income, savings, debt, financial stress, and long-term flexibility.",
     href: "/should-i-spend-30000-on-a-wedding",
   },
+    {
+    id: "wedding-15000",
+    category: "Weddings",
+    title: "Should I Spend $15,000 on a Wedding?",
+    description:
+      "Evaluate whether a smaller wedding budget fits your income, savings, debt, and overall financial comfort.",
+    href: "/should-i-spend-15000-on-a-wedding",
+  },
+  {
+    id: "wedding-50000",
+    category: "Weddings",
+    title: "Should I Spend $50,000 on a Wedding?",
+    description:
+      "Analyze whether a high-end wedding budget creates financial pressure based on savings, income, debt, and tradeoffs.",
+    href: "/should-i-spend-50000-on-a-wedding",
+  },
   {
     id: "car-payment-700",
     category: "Cars",
