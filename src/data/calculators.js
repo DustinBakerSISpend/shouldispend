@@ -63,4 +63,29 @@ export const calculators = [
     "Analyze whether a large family vacation budget creates financial pressure or fits comfortably within your finances.",
   href: "/should-i-spend-8000-on-a-disney-vacation",
 },
+{
+  id: "rent-2000",
+  category: "Rent",
+  title: "Should I Spend $2,000 on Rent?",
+  description:
+    "Evaluate whether a $2,000 monthly rent payment fits your income, savings, debt load, and financial flexibility.",
+  href: "/should-i-spend-2000-on-rent",
+},
+{
+  id: "rent-3000",
+  category: "Rent",
+  title: "Should I Spend $3,000 on Rent?",
+  description:
+    "Evaluate whether a $3,000 monthly rent payment fits your income, savings, debt load, and financial flexibility.",
+  href: "/should-i-spend-3000-on-rent",
+},
+
+{
+  id: "rent-50-percent",
+  category: "Rent",
+  title: "Should I Spend 50% of My Income on Rent?",
+  description:
+    "Analyze whether spending half your income on housing creates financial pressure or long-term budget risk.",
+  href: "/should-i-spend-50-percent-of-income-on-rent",
+},
 ];

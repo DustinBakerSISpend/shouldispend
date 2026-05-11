@@ -1,0 +1,115 @@
+---
+import Layout from "../layouts/Layout.astro";
+import CalculatorCard from "../components/CalculatorCard.astro";
+import { calculators } from "../data/calculators";
+
+const rentCalculators = calculators.filter(
+  (calculator) => calculator.category === "Rent"
+);
+---
+
+<Layout title="Rent Affordability Calculators | ShouldISpend">
+  <style>
+    .container {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 72px 24px;
+    }
+
+    .eyebrow {
+      color: #0f766e;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      font-size: 0.75rem;
+      font-weight: 800;
+      margin-bottom: 20px;
+    }
+
+    h1 {
+      font-size: clamp(3rem, 7vw, 5rem);
+      line-height: 0.95;
+      margin-bottom: 28px;
+      max-width: 760px;
+      color: #0f172a;
+    }
+
+    .intro {
+      font-size: 1.1rem;
+      line-height: 1.9;
+      color: #334155;
+      max-width: 760px;
+      margin-bottom: 56px;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 24px;
+      margin-bottom: 72px;
+    }
+
+    .content-section {
+      max-width: 760px;
+    }
+
+    .content-section h2 {
+      font-size: 2rem;
+      margin-bottom: 24px;
+      line-height: 1.2;
+      color: #0f172a;
+    }
+
+    .content-section p {
+      font-size: 1.08rem;
+      line-height: 1.9;
+      color: #334155;
+      margin-bottom: 24px;
+    }
+  </style>
+
+  <main class="container">
+    <div class="eyebrow">Rent Calculators</div>
+
+    <h1>
+      Rent Affordability Calculators and Housing Budget Tools
+    </h1>
+
+    <p class="intro">
+      Rent affects nearly every part of your financial life. These calculators
+      help evaluate whether your monthly housing costs fit comfortably within
+      your income, savings, debt load, and long-term financial flexibility.
+    </p>
+
+    <div class="grid">
+      {rentCalculators.map((calculator) => (
+        <CalculatorCard
+  category={calculator.category}
+  title={calculator.title}
+  description={calculator.description}
+  href={calculator.href}
+/>
+      ))}
+    </div>
+
+    <section class="content-section">
+      <h2>How Much Should You Spend on Rent?</h2>
+
+      <p>
+        Rent should support your lifestyle without overwhelming the rest of
+        your financial picture. Housing costs affect savings rates, emergency
+        funds, retirement contributions, debt payoff speed, and overall stress.
+      </p>
+
+      <p>
+        A rent payment that technically fits your income can still create
+        financial pressure if it leaves little room for flexibility, repairs,
+        travel, investing, or unexpected expenses.
+      </p>
+
+      <p>
+        The healthiest housing budgets usually leave enough breathing room for
+        both current stability and future goals.
+      </p>
+    </section>
+  </main>
+</Layout>

@@ -1,0 +1,291 @@
+---
+import Layout from "../layouts/Layout.astro";
+---
+
+<Layout title="Should I Spend $2,000 on Rent?">
+  <style>
+    .container {
+      max-width: 920px;
+      margin: 0 auto;
+      padding: 72px 24px;
+    }
+
+    .eyebrow {
+      color: #0f766e;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      font-size: 0.75rem;
+      font-weight: 800;
+      margin-bottom: 18px;
+      text-align: center;
+    }
+
+    h1 {
+      font-size: clamp(3rem, 7vw, 5rem);
+      line-height: 0.95;
+      margin-bottom: 24px;
+      text-align: center;
+      color: #0f172a;
+    }
+
+    .subtitle {
+      text-align: center;
+      font-size: 1.08rem;
+      line-height: 1.8;
+      color: #334155;
+      max-width: 720px;
+      margin: 0 auto 60px auto;
+    }
+
+    .content-section {
+      max-width: 760px;
+      margin: 0 auto 56px auto;
+    }
+
+    .content-section h2 {
+      font-size: 2rem;
+      line-height: 1.2;
+      margin-bottom: 24px;
+      color: #0f172a;
+    }
+
+    .content-section p {
+      font-size: 1.08rem;
+      line-height: 1.9;
+      color: #334155;
+      margin-bottom: 24px;
+    }
+
+    .calculator {
+      background: white;
+      border: 1px solid #dbe4ee;
+      border-radius: 24px;
+      padding: 36px;
+      margin: 56px auto;
+      box-shadow: 0 10px 30px rgba(15, 23, 42, 0.05);
+    }
+
+    .calculator h3 {
+      margin-bottom: 28px;
+      font-size: 1.7rem;
+      color: #0f172a;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 22px;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 10px;
+      font-weight: 700;
+      color: #0f172a;
+      font-size: 0.95rem;
+    }
+
+    input {
+      width: 100%;
+      padding: 16px;
+      border-radius: 14px;
+      border: 1px solid #cbd5e1;
+      font-size: 1rem;
+    }
+
+    button {
+      margin-top: 28px;
+      background: #020617;
+      color: white;
+      border: none;
+      padding: 18px 28px;
+      border-radius: 14px;
+      font-size: 19px;
+      font-weight: 900;
+      cursor: pointer;
+      display: inline-block;
+    }
+
+    .result {
+      margin-top: 28px;
+      background: #f8fafc;
+      border: 1px solid #cbd5e1;
+      border-radius: 18px;
+      padding: 28px;
+    }
+
+    .score {
+      font-size: 2.5rem;
+      font-weight: 900;
+      color: #0f172a;
+      margin-bottom: 18px;
+    }
+
+    .bar {
+      height: 14px;
+      background: #dbe4ee;
+      border-radius: 999px;
+      overflow: hidden;
+      margin-bottom: 18px;
+    }
+
+    .fill {
+      height: 100%;
+      width: 0%;
+      background: #0f766e;
+      transition: width 0.4s ease;
+    }
+
+    .fine-print {
+      font-size: 0.9rem;
+      color: #64748b;
+    }
+
+    .faq-section h2 {
+      margin-bottom: 32px;
+    }
+
+    .faq {
+      background: white;
+      border: 1px solid #dbe4ee;
+      border-radius: 18px;
+      padding: 28px;
+      margin-bottom: 22px;
+    }
+
+    .faq h3 {
+      margin-bottom: 16px;
+      color: #0f172a;
+    }
+
+    .faq p {
+      margin: 0;
+    }
+
+    @media (max-width: 720px) {
+      .grid {
+        grid-template-columns: 1fr;
+      }
+
+      .calculator {
+        padding: 24px;
+      }
+    }
+  </style>
+
+  <main class="container">
+    <div class="eyebrow">Rent Affordability Calculator</div>
+
+    <h1>Should I Spend $2,000 on Rent?</h1>
+
+    <p class="subtitle">
+      Evaluate whether a $2,000 monthly rent payment fits comfortably within
+      your income, debt load, savings, and overall financial flexibility.
+    </p>
+
+    <section class="content-section">
+      <h2>How Much Rent Can You Actually Afford?</h2>
+
+      <p>
+        Rent is often the largest recurring expense in a monthly budget.
+        Affordability depends on more than income alone — savings, debt,
+        emergency flexibility, and long-term goals all matter.
+      </p>
+
+      <p>
+        A rent payment that stretches your budget too aggressively can reduce
+        savings growth, increase stress, and make financial setbacks harder to
+        absorb.
+      </p>
+    </section>
+
+    <div class="calculator">
+      <h3>Rent Affordability Verdict</h3>
+
+      <div class="grid">
+        <div>
+          <label>Monthly Take-Home Income</label>
+          <input id="income" type="number" placeholder="Example: 6500" />
+        </div>
+
+        <div>
+          <label>Total Savings</label>
+          <input id="savings" type="number" placeholder="Example: 25000" />
+        </div>
+
+        <div>
+          <label>Monthly Rent</label>
+          <input id="rent" type="number" placeholder="2000" />
+        </div>
+
+        <div>
+          <label>Monthly Debt Payments</label>
+          <input id="debt" type="number" placeholder="Example: 800" />
+        </div>
+      </div>
+
+      <button id="rentButton">Get Rent Verdict</button>
+
+      <div class="result" id="result">
+        <div class="score" id="scoreText">Waiting For Inputs</div>
+
+        <div class="bar">
+          <div class="fill" id="scoreFill"></div>
+        </div>
+
+        <div class="fine-print">
+          This is a general educational estimate, not financial advice.
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <script is:inline>
+    function calculateRent() {
+      const income = Number(document.getElementById("income").value);
+      const savings = Number(document.getElementById("savings").value);
+      const rent = Number(document.getElementById("rent").value);
+      const debt = Number(document.getElementById("debt").value);
+
+      if (!income || !rent) {
+        alert("Please enter income and rent.");
+        return;
+      }
+
+      let score = 100;
+
+      const rentRatio = rent / income;
+      const debtRatio = debt / income;
+
+      score -= rentRatio * 120;
+      score -= debtRatio * 45;
+
+      if (savings < rent * 3) score -= 18;
+      if (savings < rent * 6) score -= 10;
+
+      score = Math.max(5, Math.min(100, Math.round(score)));
+
+      let verdict = "";
+
+      if (score >= 80) {
+        verdict = "Comfortable Rent";
+      } else if (score >= 60) {
+        verdict = "Manageable With Guardrails";
+      } else if (score >= 40) {
+        verdict = "Financial Stretch";
+      } else {
+        verdict = "High Risk Housing Cost";
+      }
+
+      document.getElementById(
+        "scoreText"
+      ).innerText = `${verdict} - ${score}/100`;
+
+      document.getElementById("scoreFill").style.width = `${score}%`;
+    }
+
+    document
+      .getElementById("rentButton")
+      .addEventListener("click", calculateRent);
+  </script>
+</Layout>
