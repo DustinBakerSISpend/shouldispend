@@ -1,0 +1,112 @@
+---
+import Layout from "../layouts/Layout.astro";
+import CalculatorCard from "../components/CalculatorCard.astro";
+import { calculators } from "../data/calculators";
+
+const ruleCalculators = calculators.filter(
+  (calculator) =>
+    calculator.title.includes("%") ||
+    calculator.title.includes("Income")
+);
+---
+
+<Layout title="Budget Rule Calculators | ShouldISpend">
+  <style>
+    .container {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 72px 24px;
+    }
+
+    .eyebrow {
+      color: #0f766e;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      font-size: 0.75rem;
+      font-weight: 800;
+      margin-bottom: 20px;
+    }
+
+    h1 {
+      font-size: clamp(3rem, 7vw, 5rem);
+      line-height: 0.95;
+      margin-bottom: 28px;
+      max-width: 760px;
+      color: #0f172a;
+    }
+
+    .intro {
+      font-size: 1.1rem;
+      line-height: 1.9;
+      color: #334155;
+      max-width: 760px;
+      margin-bottom: 56px;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 24px;
+      margin-bottom: 72px;
+    }
+
+    .content-section {
+      max-width: 760px;
+    }
+
+    .content-section h2 {
+      font-size: 2rem;
+      margin-bottom: 24px;
+      line-height: 1.2;
+      color: #0f172a;
+    }
+
+    .content-section p {
+      font-size: 1.08rem;
+      line-height: 1.9;
+      color: #334155;
+      margin-bottom: 24px;
+    }
+  </style>
+
+  <main class="container">
+    <div class="eyebrow">Budget Rule Calculators</div>
+
+    <h1>
+      Percentage-Based Budget and Spending Calculators
+    </h1>
+
+    <p class="intro">
+      These calculators evaluate spending decisions using percentage-of-income
+      rules commonly used in budgeting, housing, transportation, and lifestyle
+      planning.
+    </p>
+
+    <div class="grid">
+      {ruleCalculators.map((calculator) => (
+        <CalculatorCard
+          category={calculator.category}
+          title={calculator.title}
+          description={calculator.description}
+          href={calculator.href}
+        />
+      ))}
+    </div>
+
+    <section class="content-section">
+      <h2>Why Percentage-Based Budget Rules Matter</h2>
+
+      <p>
+        Many financial decisions are evaluated relative to income rather than
+        raw dollar amounts alone. A payment that feels manageable at one income
+        level may create major stress at another.
+      </p>
+
+      <p>
+        Percentage-based budgeting helps compare housing, transportation,
+        vacations, and debt within the broader context of financial flexibility,
+        savings potential, and long-term stability.
+      </p>
+    </section>
+  </main>
+</Layout>
