@@ -2,6 +2,31 @@
 import Layout from "../layouts/Layout.astro";
 import CalculatorPageShell from "../components/CalculatorPageShell.astro";
 import VerdictBadge from "../components/VerdictBadge.astro";
+import FAQSection from "../components/FAQSection.astro";
+import RelatedCalculators from "../components/RelatedCalculators.astro";
+import { calculators } from "../data/calculators.js";
+
+const carFaqs = [
+  {
+    question: "Is a $700 car payment too much?",
+    answer:
+      "A $700 car payment can be manageable for some households, but it becomes risky when it crowds out emergency savings, retirement contributions, insurance, fuel, repairs, or other debt payments.",
+  },
+  {
+    question: "How much of my income should go toward a car payment?",
+    answer:
+      "A common guideline is to keep the car payment comfortably below 10% to 15% of monthly take-home pay, especially when insurance, gas, maintenance, and registration are added on top.",
+  },
+  {
+    question: "What should I consider besides the monthly payment?",
+    answer:
+      "The payment is only one part of the decision. You should also consider loan length, interest rate, down payment, insurance cost, maintenance, depreciation, and whether the payment still leaves room for savings.",
+  },
+];
+
+const relatedCalculators = calculators.filter(
+  (calculator) => calculator.href !== "/should-i-spend-700-on-a-car-payment"
+);
 ---
 <Layout title="Should I Spend $700 on a Car Payment?">
 
@@ -217,6 +242,24 @@ import VerdictBadge from "../components/VerdictBadge.astro";
       </div>
 
     </div>
+  <section class="content-section">
+    <h2>What Your Car Payment Verdict Actually Means</h2>
+    <p>
+      A car payment verdict is not just about whether the monthly bill technically fits. It is about whether the payment leaves enough room for insurance, repairs, savings, emergencies, and normal life.
+    </p>
+    <p>
+      A stronger verdict means the payment is less likely to create monthly pressure. A weaker verdict means the car may still be possible, but the financial tradeoff could be larger than it looks.
+    </p>
+  </section>
+
+  <div class="content-section">
+    <FAQSection faqs={carFaqs} />
+  </div>
+
+  <div class="content-section">
+    <RelatedCalculators calculators={relatedCalculators} />
+  </div>
+
 </CalculatorPageShell>
   </div>
 
