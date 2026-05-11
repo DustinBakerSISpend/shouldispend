@@ -1,7 +1,15 @@
 ---
 import Layout from "../layouts/Layout.astro";
----
+import CalculatorCard from "../components/CalculatorCard.astro";
+import { calculators } from "../data/calculators.js";
 
+const relatedCalculators = calculators
+  .filter(
+    (calculator) =>
+      calculator.category === "Weddings" &&
+      calculator.href !== "/should-i-spend-30000-on-a-wedding"
+  )
+  .slice(0, 4);
 ---
 
 <Layout title="Should I Spend $30,000 on a Wedding?">
@@ -96,16 +104,17 @@ import Layout from "../layouts/Layout.astro";
       }
 
       button {
-        margin-top: 28px;
-        background: var(--navy);
-        color: white;
-        border: none;
-        padding: 18px 28px;
-        border-radius: 14px;
-        font-size: 19px;
-        font-weight: 900;
-        cursor: pointer;
-      }
+  margin-top: 28px;
+  background: #020617;
+  color: white;
+  border: none;
+  padding: 18px 28px;
+  border-radius: 14px;
+  font-size: 19px;
+  font-weight: 900;
+  cursor: pointer;
+  display: inline-block;
+}
 
       button:hover {
         background: var(--teal);
@@ -373,31 +382,14 @@ import Layout from "../layouts/Layout.astro";
   <h2>Related Financial Calculators</h2>
 
   <div class="grid">
-    <div class="card">
-      <div class="card-category">Travel</div>
-      <h3>Should I Spend $5,000 on a Vacation?</h3>
-      <p>
-        Evaluate whether a large vacation expense fits your income, savings,
-        debt load, and long-term flexibility.
-      </p>
-
-      <a class="button" href="/should-i-spend-5000-on-a-vacation">
-        Open Calculator
-      </a>
-    </div>
-
-    <div class="card">
-      <div class="card-category">Cars</div>
-      <h3>Should I Spend $700 on a Car Payment?</h3>
-      <p>
-        Analyze whether your monthly vehicle payment is realistic based on
-        income, debt, and financial cushion.
-      </p>
-
-      <a class="button" href="/should-i-spend-700-on-a-car-payment">
-        Open Calculator
-      </a>
-    </div>
+    {relatedCalculators.map((calculator) => (
+  <CalculatorCard
+  category={calculator.category}
+  title={calculator.title}
+  description={calculator.description}
+  href={calculator.href}
+/>
+    ))}
   </div>
 </section>
     </div>
