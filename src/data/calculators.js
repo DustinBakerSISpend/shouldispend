@@ -32,6 +32,14 @@ export const calculators = [
     href: "/should-i-spend-700-on-a-car-payment",
   },
   {
+    id: "car-payment-1000",
+    category: "Cars",
+    title: "Should I Spend $1,000 on a Car Payment?",
+    description:
+      "Analyze whether a luxury-level car payment creates financial strain based on income, savings, debt, and flexibility.",
+    href: "/should-i-spend-1000-on-a-car-payment",
+  },
+  {
     id: "vacation-5000",
     category: "Travel",
     title: "Should I Spend $5,000 on a Vacation?",
@@ -39,4 +47,20 @@ export const calculators = [
       "Evaluate whether a large vacation expense fits your income, savings, debt load, and long-term flexibility.",
     href: "/should-i-spend-5000-on-a-vacation",
   },
+  {
+  id: "europe-trip-10000",
+  category: "Travel",
+  title: "Should I Spend $10,000 on a Europe Trip?",
+  description:
+    "Evaluate whether a major international vacation fits your savings, debt load, income, and long-term goals.",
+  href: "/should-i-spend-10000-on-a-europe-trip",
+},
+{
+  id: "disney-vacation-8000",
+  category: "Travel",
+  title: "Should I Spend $8,000 on a Disney Vacation?",
+  description:
+    "Analyze whether a large family vacation budget creates financial pressure or fits comfortably within your finances.",
+  href: "/should-i-spend-8000-on-a-disney-vacation",
+},
 ];

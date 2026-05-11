@@ -1,0 +1,355 @@
+---
+import Layout from "../layouts/Layout.astro";
+import CalculatorPageShell from "../components/CalculatorPageShell.astro";
+import FAQSection from "../components/FAQSection.astro";
+import RelatedCalculators from "../components/RelatedCalculators.astro";
+---
+<Layout title="Should I Spend $8,000 on a Vacation?">
+
+  <style>
+  
+    .container {
+      max-width: 950px;
+      margin: 0 auto;
+      padding: 60px 20px;
+    }
+.content-section {
+  max-width: 760px;
+  margin: 72px auto 0;
+}
+    .eyebrow {
+      text-transform: uppercase;
+      letter-spacing: 3px;
+      font-size: 0.8rem;
+      color: var(--accent);
+      font-weight: 700;
+      margin-bottom: 18px;
+      text-align: center;
+    }
+
+    h1 {
+      font-size: clamp(2.5rem, 7vw, 4.5rem);
+      line-height: 1;
+      margin: 0 0 24px;
+      text-align: center;
+    }
+
+    .subtitle {
+      max-width: 760px;
+      margin: 0 auto 60px;
+      text-align: center;
+      font-size: 1.2rem;
+      line-height: 1.7;
+      color: var(--muted);
+    }
+
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 28px;
+      padding: 34px;
+    }
+
+    h2 {
+      margin-top: 0;
+      font-size: 2rem;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 22px;
+      margin-bottom: 28px;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 10px;
+      font-weight: 700;
+    }
+
+    input {
+      width: 100%;
+      padding: 18px;
+      border-radius: 14px;
+      border: 1px solid var(--border);
+      font-size: 1.1rem;
+    }
+
+    button {
+      background: var(--button);
+      color: white;
+      border: none;
+      padding: 16px 28px;
+      border-radius: 14px;
+      font-size: 1rem;
+      font-weight: 700;
+      cursor: pointer;
+      margin-top: 10px;
+    }
+
+    .result {
+      margin-top: 40px;
+      border: 1px solid var(--border);
+      border-radius: 24px;
+      padding: 28px;
+    }
+
+    .score {
+      font-size: 3rem;
+      font-weight: 800;
+      margin-bottom: 16px;
+    }
+
+    .bar {
+      width: 100%;
+      height: 16px;
+      background: #dbe3ee;
+      border-radius: 999px;
+      overflow: hidden;
+      margin-bottom: 24px;
+    }
+
+    .fill {
+      height: 100%;
+      width: 0%;
+      background: #16a34a;
+      border-radius: 999px;
+      transition: width 0.4s ease;
+    }
+
+    .metric {
+      margin-bottom: 14px;
+      font-size: 1.05rem;
+    }
+
+    .guidance {
+      margin-top: 26px;
+      font-size: 1.15rem;
+      line-height: 1.7;
+    }
+
+    .disclaimer {
+      margin-top: 30px;
+      font-size: 0.9rem;
+      color: var(--muted);
+    }
+  </style>
+
+<div class="container">
+<CalculatorPageShell
+  eyebrow="Vacation Spending Calculator"
+  title="Should I Spend $8,000 on a Vacation?"
+  description="Evaluate whether a large vacation expense is financially manageable based on income, savings, debt, and financial flexibility."
+>
+ 
+
+ 
+
+  
+
+  <div class="card">
+
+    <h2>Vacation Affordability Verdict</h2>
+
+    <div class="grid">
+
+      <div>
+        <label>Annual Household Income</label>
+        <input id="income" type="number" placeholder="150000" />
+      </div>
+
+      <div>
+        <label>Total Savings</label>
+        <input id="savings" type="number" placeholder="12000" />
+      </div>
+
+      <div>
+        <label>Vacation Cost</label>
+        <input id="vacation" type="number" placeholder="5000" />
+      </div>
+
+      <div>
+        <label>Total Debt</label>
+        <input id="debt" type="number" placeholder="20000" />
+      </div>
+
+    </div>
+
+    <button id="vacationButton">
+      Get Vacation Verdict
+    </button>
+
+    <div class="result">
+
+      <div class="score" id="score">
+        Comfortable Vacation - 82/100
+      </div>
+
+      <div class="bar">
+        <div class="fill" id="barFill"></div>
+      </div>
+
+      <div class="metric" id="stress"></div>
+
+      <div class="metric" id="savingsImpact"></div>
+
+      <div class="metric" id="incomeImpact"></div>
+
+      <div class="metric" id="debtRatio"></div>
+
+      <div class="guidance" id="guidance"></div>
+
+      <div class="disclaimer">
+        This is a general educational estimate, not financial advice.
+      </div>
+
+    </div>
+
+  </div>
+
+<div class="content-section">
+  <div class="content-section">
+      <section class="content-section">
+    <h2>What Your Vacation Verdict Actually Means</h2>
+    <p>
+      A vacation verdict is not just about whether you can pay for the trip today. It is about whether the trip still leaves enough room for emergency savings, upcoming bills, debt payments, and normal spending after you get home.
+    </p>
+    <p>
+      A stronger verdict means the trip is less likely to create financial stress later. A weaker verdict means the vacation may still be possible, but the timing, total cost, or payment method may need to change.
+    </p>
+  </section>
+  <FAQSection
+    title="Vacation Spending FAQ"
+    faqs={[
+      {
+        question: "Is a $8,000 vacation too expensive?",
+        answer:
+          "That depends on your income, savings, debt load, and overall financial flexibility. A $8,000 vacation may feel comfortable for one household and financially stressful for another.",
+      },
+      {
+        question: "How much should I spend on a vacation?",
+        answer:
+          "Vacation spending should fit comfortably within your broader financial picture without damaging emergency savings, increasing high-interest debt, or delaying major long-term goals.",
+      },
+      {
+        question: "Should I finance a vacation?",
+        answer:
+          "Financing a vacation with high-interest debt can create long-term financial pressure if the trip cost exceeds what your income and savings can comfortably support.",
+      },
+    ]}
+    />
+    <RelatedCalculators
+  calculators={[
+    {
+      category: "Transportation",
+      title: "Should I Spend $700 on a Car Payment?",
+      href: "/should-i-spend-700-on-a-car-payment",
+    },
+    {
+      category: "Events",
+      title: "Should I Spend $30,000 on a Wedding?",
+      href: "/should-i-spend-30000-on-a-wedding",
+    },
+  ]}
+/>
+    </CalculatorPageShell>
+</div>
+ 
+</div>
+
+
+
+<script is:inline>
+  
+
+function calculateVacation() {
+
+  const income = Number(document.getElementById("income").value);
+  const savings = Number(document.getElementById("savings").value);
+  const vacation = Number(document.getElementById("vacation").value);
+  const debt = Number(document.getElementById("debt").value);
+
+  let score = 100;
+
+  const savingsImpact = (vacation / savings) * 100;
+  const incomeImpact = (vacation / income) * 100;
+  const debtRatio = (debt / income) * 100;
+
+  score -= savingsImpact * 0.22;
+  score -= incomeImpact * 0.9;
+  score -= debtRatio * 0.18;
+
+  if (savings < vacation) score -= 12;
+  if (debt > income * 0.5) score -= 10;
+
+  score = Math.max(0, Math.min(100, Math.round(score)));
+
+  let verdict = "";
+  let stress = "";
+  let guidance = "";
+  let barColor = "";
+
+  if (score >= 80) {
+    verdict = "Comfortable Vacation";
+    stress = "Low stress";
+    guidance =
+      "This vacation appears financially manageable based on your income, savings, and debt situation.";
+    barColor = "#16a34a";
+  }
+
+  else if (score >= 60) {
+    verdict = "Manageable With Caution";
+    stress = "Moderate stress";
+    guidance =
+      "This trip is probably affordable, though it may reduce financial flexibility in the short term.";
+    barColor = "#ca8a04";
+  }
+
+  else if (score >= 40) {
+    verdict = "Financial Stretch";
+    stress = "High stress";
+    guidance =
+      "This vacation could create financial pressure. A lower budget or delayed trip may be safer.";
+    barColor = "#ea580c";
+  }
+
+  else {
+    verdict = "High Financial Risk";
+    stress = "Very high stress";
+    guidance =
+      "This vacation cost looks too aggressive for the current financial picture.";
+    barColor = "#b91c1c";
+  }
+
+  document.getElementById("score").textContent =
+    `${verdict} - ${score}/100`;
+
+  document.getElementById("barFill").style.width =
+    `${score}%`;
+
+  document.getElementById("barFill").style.background =
+    barColor;
+
+  document.getElementById("stress").innerHTML =
+    `<strong>Stress level:</strong> ${stress}`;
+
+  document.getElementById("savingsImpact").innerHTML =
+    `<strong>Savings impact:</strong> ${savingsImpact.toFixed(1)}% of savings`;
+
+  document.getElementById("incomeImpact").innerHTML =
+    `<strong>Income impact:</strong> ${incomeImpact.toFixed(1)}% of annual income`;
+
+  document.getElementById("debtRatio").innerHTML =
+    `<strong>Debt ratio:</strong> ${debtRatio.toFixed(1)}% of annual income`;
+
+  document.getElementById("guidance").textContent =
+    guidance;
+}
+
+document.getElementById("vacationButton")
+  .addEventListener("click", calculateVacation);
+
+</script>
+
+</Layout>

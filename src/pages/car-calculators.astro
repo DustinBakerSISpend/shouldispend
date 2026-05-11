@@ -1,0 +1,99 @@
+---
+import Layout from "../layouts/Layout.astro";
+import CalculatorCard from "../components/CalculatorCard.astro";
+import { calculators } from "../data/calculators.js";
+
+const carCalculators = calculators.filter(
+  (calculator) => calculator.category === "Cars"
+);
+---
+
+<Layout title="Car Payment Calculators | ShouldISpend">
+  <style>
+    .container {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 80px 24px;
+    }
+
+    .eyebrow {
+      color: var(--accent);
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      font-size: 0.8rem;
+      font-weight: 700;
+      margin-bottom: 16px;
+    }
+
+    h1 {
+      font-size: 4rem;
+      line-height: 1;
+      margin-bottom: 24px;
+      max-width: 850px;
+    }
+
+    .intro {
+      max-width: 760px;
+      color: var(--muted);
+      font-size: 1.1rem;
+      line-height: 1.8;
+      margin-bottom: 56px;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      gap: 24px;
+      margin-top: 32px;
+    }
+
+    .content-section {
+      max-width: 760px;
+      margin-top: 80px;
+    }
+
+    .content-section h2 {
+      font-size: 2rem;
+      margin-bottom: 20px;
+    }
+
+    .content-section p {
+      color: var(--muted);
+      line-height: 1.8;
+      margin-bottom: 18px;
+    }
+  </style>
+
+  <main class="container">
+    <div class="eyebrow">Car Calculators</div>
+
+    <h1>Car Payment Calculators and Auto Affordability Tools</h1>
+
+    <p class="intro">
+      Car payments can look manageable in isolation, but the real cost includes insurance, fuel, repairs, debt load, savings pressure, and long-term flexibility. These calculators help you evaluate whether a vehicle expense actually fits your financial life.
+    </p>
+
+    <div class="grid">
+      {carCalculators.map((calculator) => (
+        <CalculatorCard
+          category={calculator.category}
+          title={calculator.title}
+          description={calculator.description}
+          href={calculator.href}
+        />
+      ))}
+    </div>
+
+    <section class="content-section">
+      <h2>How Much Should You Spend on a Car Payment?</h2>
+
+      <p>
+        A car payment should be judged against your full monthly picture, not just whether the lender approves the loan. Income, existing debt, savings, insurance, repairs, and emergency flexibility all matter.
+      </p>
+
+      <p>
+        A lower car payment can create more room for savings and reduce stress. A higher payment may still work, but only when the rest of the budget stays stable after the vehicle expense is included.
+      </p>
+    </section>
+  </main>
+</Layout>

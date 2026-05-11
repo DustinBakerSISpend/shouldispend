@@ -1,0 +1,99 @@
+---
+import Layout from "../layouts/Layout.astro";
+import CalculatorCard from "../components/CalculatorCard.astro";
+import { calculators } from "../data/calculators.js";
+
+const travelCalculators = calculators.filter(
+  (calculator) => calculator.category === "Travel"
+);
+---
+
+<Layout title="Travel Budget Calculators | ShouldISpend">
+  <style>
+    .container {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 80px 24px;
+    }
+
+    .eyebrow {
+      color: var(--accent);
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      font-size: 0.8rem;
+      font-weight: 700;
+      margin-bottom: 16px;
+    }
+
+    h1 {
+      font-size: 4rem;
+      line-height: 1;
+      margin-bottom: 24px;
+      max-width: 850px;
+    }
+
+    .intro {
+      max-width: 760px;
+      color: var(--muted);
+      font-size: 1.1rem;
+      line-height: 1.8;
+      margin-bottom: 56px;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      gap: 24px;
+      margin-top: 32px;
+    }
+
+    .content-section {
+      max-width: 760px;
+      margin-top: 80px;
+    }
+
+    .content-section h2 {
+      font-size: 2rem;
+      margin-bottom: 20px;
+    }
+
+    .content-section p {
+      color: var(--muted);
+      line-height: 1.8;
+      margin-bottom: 18px;
+    }
+  </style>
+
+  <main class="container">
+    <div class="eyebrow">Travel Calculators</div>
+
+    <h1>Travel Budget Calculators and Vacation Affordability Tools</h1>
+
+    <p class="intro">
+      Travel spending can feel worth it emotionally while still creating financial pressure afterward. These calculators help you evaluate whether vacations, trips, flights, hotels, and family travel plans fit your savings, debt load, income, and long-term flexibility.
+    </p>
+
+    <div class="grid">
+      {travelCalculators.map((calculator) => (
+        <CalculatorCard
+          category={calculator.category}
+          title={calculator.title}
+          description={calculator.description}
+          href={calculator.href}
+        />
+      ))}
+    </div>
+
+    <section class="content-section">
+      <h2>How Much Should You Spend on Travel?</h2>
+
+      <p>
+        A vacation budget should be judged by more than the trip price. Savings cushion, debt, emergency needs, upcoming bills, and how quickly you can recover after the trip all matter.
+      </p>
+
+      <p>
+        A trip that fits comfortably should create memories without creating months of financial stress afterward. The best travel budget leaves room for the experience and the return home.
+      </p>
+    </section>
+  </main>
+</Layout>

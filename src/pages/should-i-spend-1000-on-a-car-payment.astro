@@ -1,0 +1,374 @@
+---
+import Layout from "../layouts/Layout.astro";
+import CalculatorPageShell from "../components/CalculatorPageShell.astro";
+import VerdictBadge from "../components/VerdictBadge.astro";
+import FAQSection from "../components/FAQSection.astro";
+import RelatedCalculators from "../components/RelatedCalculators.astro";
+import { calculators } from "../data/calculators.js";
+
+const carFaqs = [
+  {
+    question: "Is a $1,000 car payment too much?",
+    answer:
+      "A $1,000 car payment can be manageable for some households, but it becomes risky when it crowds out emergency savings, retirement contributions, insurance, fuel, repairs, or other debt payments.",
+  },
+  {
+    question: "How much of my income should go toward a car payment?",
+    answer:
+      "A common guideline is to keep the car payment comfortably below 10% to 15% of monthly take-home pay, especially when insurance, gas, maintenance, and registration are added on top.",
+  },
+  {
+    question: "What should I consider besides the monthly payment?",
+    answer:
+      "The payment is only one part of the decision. You should also consider loan length, interest rate, down payment, insurance cost, maintenance, depreciation, and whether the payment still leaves room for savings.",
+  },
+];
+
+const relatedCalculators = calculators.filter(
+  (calculator) => calculator.href !== "/should-i-spend-1000-on-a-car-payment"
+);
+---
+<Layout title="Should I Spend $1,000 on a Car Payment?">
+
+  <style>
+    
+    .container {
+      max-width: 900px;
+      margin: auto;
+    }
+
+    .eyebrow {
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      color: #0f766e;
+      font-weight: bold;
+      text-align: center;
+      margin-bottom: 10px;
+    }
+
+    h1 {
+      font-size: 4rem;
+      line-height: 1;
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    .subtext {
+      text-align: center;
+      font-size: 1.4rem;
+      line-height: 1.7;
+      max-width: 850px;
+      margin: 0 auto 50px auto;
+      color: #334155;
+    }
+
+    .calculator {
+      background: white;
+      padding: 40px;
+      border-radius: 24px;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.06);
+    }
+
+    .calculator h2 {
+      margin-top: 0;
+      font-size: 2rem;
+      margin-bottom: 30px;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+    }
+
+    .field label {
+      display: block;
+      font-weight: bold;
+      margin-bottom: 10px;
+    }
+
+    .field input {
+      width: 100%;
+      padding: 16px;
+      border-radius: 12px;
+      border: 1px solid #cbd5e1;
+      font-size: 1rem;
+      box-sizing: border-box;
+    }
+
+    button {
+      margin-top: 30px;
+      background: #0f172a;
+      color: white;
+      border: none;
+      padding: 18px 32px;
+      border-radius: 14px;
+      font-size: 1.1rem;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    .results {
+      margin-top: 40px;
+      background: #f8fafc;
+      padding: 30px;
+      border-radius: 20px;
+      border: 1px solid #dbe4ee;
+    }
+
+    .results h3 {
+      font-size: 3rem;
+      margin-top: 0;
+      margin-bottom: 20px;
+    }
+
+    .bar {
+      width: 100%;
+      height: 16px;
+      background: #dbe4ee;
+      border-radius: 999px;
+      overflow: hidden;
+      margin-bottom: 30px;
+    }
+
+    .fill {
+      height: 100%;
+      width: 0%;
+      background: #16a34a;
+      transition: width 0.4s ease;
+    }
+
+    .results p {
+      font-size: 1.2rem;
+      line-height: 1.8;
+      margin: 10px 0;
+    }
+
+    .guidance {
+      margin-top: 30px;
+      font-size: 1.35rem;
+      line-height: 1.8;
+      color: #1e293b;
+    }
+
+    .disclaimer {
+      margin-top: 30px;
+      font-size: 0.9rem;
+      color: #64748b;
+    }
+
+    @media (max-width: 768px) {
+      h1 {
+        font-size: 2.7rem;
+      }
+
+      .grid {
+        grid-template-columns: 1fr;
+      }
+
+      .calculator {
+        padding: 24px;
+      }
+
+      .results h3 {
+        font-size: 2.2rem;
+      }
+    }
+  </style>
+
+  <div class="container">
+    <CalculatorPageShell
+  eyebrow="Car Payment Calculator"
+  title="Should I Spend $1,000 on a Car Payment?"
+  description="Evaluate whether your monthly car payment is financially manageable based on income, savings, debt load, and overall comfort level."
+>
+
+    <div class="calculator">
+
+      <h2>Car Payment Affordability Verdict</h2>
+
+      <div class="grid">
+
+        <div class="field">
+          <label>Monthly Take-Home Income</label>
+          <input id="income" type="number" placeholder="Example: 6000" />
+        </div>
+
+        <div class="field">
+          <label>Current Savings</label>
+          <input id="savings" type="number" placeholder="Example: 15000" />
+        </div>
+
+        <div class="field">
+          <label>Monthly Car Payment</label>
+          <input id="payment" type="number" placeholder="Example: 1000" />
+        </div>
+
+        <div class="field">
+          <label>Current Monthly Debt Payments</label>
+          <input id="debt" type="number" placeholder="Example: 900" />
+        </div>
+
+      </div>
+
+      <button id="carButton">
+        Get Car Payment Verdict
+      </button>
+
+      <div class="results">
+
+        <div id="verdictBadge">
+  <VerdictBadge
+    label="Waiting For Inputs"
+    tone="neutral"
+  />
+</div>
+
+        <div class="bar">
+          <div class="fill" id="fillBar"></div>
+        </div>
+
+        <p id="stress"></p>
+        <p id="paymentImpact"></p>
+        <p id="savingsImpact"></p>
+        <p id="debtRatio"></p>
+
+        <div class="guidance" id="guidance"></div>
+
+        <div class="disclaimer">
+          This is a general educational estimate, not financial advice.
+        </div>
+
+      </div>
+
+    </div>
+  <section class="content-section">
+    <h2>What Your Car Payment Verdict Actually Means</h2>
+    <p>
+      A car payment verdict is not just about whether the monthly bill technically fits. It is about whether the payment leaves enough room for insurance, repairs, savings, emergencies, and normal life.
+    </p>
+    <p>
+      A stronger verdict means the payment is less likely to create monthly pressure. A weaker verdict means the car may still be possible, but the financial tradeoff could be larger than it looks.
+    </p>
+  </section>
+
+  <div class="content-section">
+    <FAQSection faqs={carFaqs} />
+  </div>
+
+  <div class="content-section">
+    <RelatedCalculators calculators={relatedCalculators} />
+  </div>
+
+</CalculatorPageShell>
+  </div>
+
+  <script is:inline>
+
+    function calculateCarPayment() {
+
+      const income =
+        Number(document.getElementById("income").value);
+
+      const savings =
+        Number(document.getElementById("savings").value);
+
+      const payment =
+        Number(document.getElementById("payment").value);
+
+      const debt =
+        Number(document.getElementById("debt").value);
+
+      const paymentImpact =
+        (payment / income) * 100;
+
+      const savingsImpact =
+        (payment * 6 / savings) * 100;
+
+      const debtRatio =
+        ((payment + debt) / income) * 100;
+
+      let score = 100;
+
+      score -= paymentImpact * 1.8;
+      score -= savingsImpact * 0.25;
+      score -= debtRatio * 1.3;
+
+      if (score < 0) score = 0;
+      if (score > 100) score = 100;
+
+      let verdict = "";
+      let stress = "";
+      let guidance = "";
+      let barColor = "";
+
+      if (score >= 80) {
+        verdict = "Comfortable Payment";
+        stress = "Low stress";
+        guidance =
+          "This car payment appears manageable relative to your income and financial cushion.";
+        barColor = "#16a34a";
+      }
+
+      else if (score >= 60) {
+        verdict = "Manageable but Heavy";
+        stress = "Moderate stress";
+        guidance =
+          "This payment may work, but it could limit flexibility for savings, investing, or emergencies.";
+        barColor = "#eab308";
+      }
+
+      else {
+        verdict = "Financial Pressure Risk";
+        stress = "High stress";
+        guidance =
+          "This payment may be too aggressive for your current financial picture. A cheaper vehicle could reduce financial strain.";
+        barColor = "#dc2626";
+      }
+
+      let tone = "neutral";
+
+if (score >= 75) {
+  tone = "good";
+} else if (score >= 55) {
+  tone = "warning";
+} else {
+  tone = "danger";
+}
+
+document.getElementById("verdictBadge").innerHTML = `
+  <div class="verdict-badge ${tone}">
+    <p>${verdict}</p>
+    <strong>${Math.round(score)}/100</strong>
+  </div>
+`;
+
+      document.getElementById("fillBar").style.width =
+        `${score}%`;
+
+      document.getElementById("fillBar").style.background =
+        barColor;
+
+      document.getElementById("stress").innerHTML =
+        `<strong>Stress level:</strong> ${stress}`;
+
+      document.getElementById("paymentImpact").innerHTML =
+        `<strong>Payment impact:</strong> ${paymentImpact.toFixed(1)}% of monthly income`;
+
+      document.getElementById("savingsImpact").innerHTML =
+        `<strong>6-month payment impact:</strong> ${savingsImpact.toFixed(1)}% of savings`;
+
+      document.getElementById("debtRatio").innerHTML =
+        `<strong>Total debt ratio:</strong> ${debtRatio.toFixed(1)}% of monthly income`;
+
+      document.getElementById("guidance").textContent =
+        guidance;
+    }
+
+    document
+      .getElementById("carButton")
+      .addEventListener("click", calculateCarPayment);
+
+  </script>
+
+</Layout>
