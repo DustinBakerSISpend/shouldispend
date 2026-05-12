@@ -40,14 +40,24 @@ export const calculators = [
     href: "/should-i-spend-1000-on-a-car-payment",
   },
   {
-    id: "vacation-5000",
-    category: "Travel",
-    title: "Should I Spend $5,000 on a Vacation?",
-    description:
-      "Evaluate whether a large vacation expense fits your income, savings, debt load, and long-term flexibility.",
-    href: "/should-i-spend-5000-on-a-vacation",
-  },
-  {
+  id: "vacation-5000",
+  category: "Travel",
+  title: "Should I Spend $5,000 on a Vacation?",
+  description:
+    "Evaluate whether a moderate vacation expense fits your income, savings, debt load, and long-term flexibility.",
+  href: "/should-i-spend-5000-on-a-vacation",
+},
+
+{
+  id: "disney-vacation-8000",
+  category: "Travel",
+  title: "Should I Spend $8,000 on a Disney Vacation?",
+  description:
+    "Analyze whether a large Disney vacation budget creates financial pressure or fits comfortably within your finances.",
+  href: "/should-i-spend-8000-on-a-disney-vacation",
+},
+
+{
   id: "europe-trip-10000",
   category: "Travel",
   title: "Should I Spend $10,000 on a Europe Trip?",
@@ -55,13 +65,32 @@ export const calculators = [
     "Evaluate whether a major international vacation fits your savings, debt load, income, and long-term goals.",
   href: "/should-i-spend-10000-on-a-europe-trip",
 },
+
 {
-  id: "disney-vacation-8000",
+  id: "cruise-12000",
   category: "Travel",
-  title: "Should I Spend $8,000 on a Disney Vacation?",
+  title: "Should I Spend $12,000 on a Cruise?",
   description:
-    "Analyze whether a large family vacation budget creates financial pressure or fits comfortably within your finances.",
-  href: "/should-i-spend-8000-on-a-disney-vacation",
+    "Evaluate whether a major cruise vacation fits your income, savings, debt load, and long-term flexibility.",
+  href: "/should-i-spend-12000-on-a-cruise",
+},
+
+{
+  id: "honeymoon-15000",
+  category: "Travel",
+  title: "Should I Spend $15,000 on a Honeymoon?",
+  description:
+    "Evaluate whether a major honeymoon expense fits your income, savings, debt load, and long-term financial flexibility.",
+  href: "/should-i-spend-15000-on-a-honeymoon",
+},
+
+{
+  id: "family-vacation-20000",
+  category: "Travel",
+  title: "Should I Spend $20,000 on a Family Vacation?",
+  description:
+    "Evaluate whether a major family vacation expense fits your income, savings, debt load, and long-term flexibility.",
+  href: "/should-i-spend-20000-on-a-family-vacation",
 },
 {
   id: "rent-2000",
