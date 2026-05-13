@@ -6,7 +6,7 @@ const { title = "ShouldISpend" } = Astro.props;
 <html lang="en">
 	<head>
 		<meta charset="UTF-8" />
-		<meta name="viewport" content="width=device-width" />
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
 		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
 		<meta name="generator" content={Astro.generator} />
 		<title>{title}</title>
@@ -15,19 +15,25 @@ const { title = "ShouldISpend" } = Astro.props;
 	<body>
 		<header class="site-header">
 			<div class="container nav">
-				<a href="/" class="logo">
-					Should<span>I</span>Spend
-				</a>
+				<a href="/" class="logo">Should<span>I</span>Spend</a>
 
-				<nav>
-<a href="/calculators">Calculators</a>
-<a href="/wedding-calculators">Weddings</a>
-<a href="/car-calculators">Cars</a>
-<a href="/travel-calculators">Travel</a>
-<a href="/rent-calculators">Rent</a>
-<a href="/budget-rule-calculators">Budget Rules</a>
-<a href="/what-counts-as-debt">Debt Guide</a>
-<a href="/about">About</a>
+				<input type="checkbox" id="nav-toggle" class="nav-toggle" aria-label="Toggle navigation" />
+
+				<label for="nav-toggle" class="hamburger">
+					<span></span>
+					<span></span>
+					<span></span>
+				</label>
+
+				<nav class="site-nav">
+					<a href="/calculators">Calculators</a>
+					<a href="/wedding-calculators">Weddings</a>
+					<a href="/car-calculators">Cars</a>
+					<a href="/travel-calculators">Travel</a>
+					<a href="/rent-calculators">Rent</a>
+					<a href="/budget-rule-calculators">Budget Rules</a>
+					<a href="/what-counts-as-debt">Debt Guide</a>
+					<a href="/about">About</a>
 				</nav>
 			</div>
 		</header>
@@ -86,10 +92,10 @@ const { title = "ShouldISpend" } = Astro.props;
 	}
 
 	.container {
-	max-width: 1180px;
-	margin: 0 auto;
-	padding: 0 1.5rem;
-}
+		max-width: 1180px;
+		margin: 0 auto;
+		padding: 0 1.5rem;
+	}
 
 	.site-header {
 		background: white;
@@ -99,59 +105,60 @@ const { title = "ShouldISpend" } = Astro.props;
 		z-index: 10;
 	}
 
-	nav {
-	display: flex;
-	justify-content: flex-end;
-	gap: 1rem;
-	font-weight: 600;
-	color: var(--muted);
-	font-size: 0.9rem;
-	white-space: nowrap;
-	flex-wrap: nowrap;
-}
-
-@media (max-width: 760px) {
 	.nav {
-	display: flex;
-	align-items: center;
-	justify-content: space-between;
-	gap: 2rem;
-	padding: 0.75rem 0;
-}
-
-	.logo {
-		font-size: 1.25rem;
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		gap: 2rem;
+		padding: 0.85rem 1.5rem;
 	}
-
-	nav {
-		width: 100%;
-		overflow-x: auto;
-		gap: 1rem;
-		padding-bottom: 0.25rem;
-		font-size: 0.85rem;
-		-webkit-overflow-scrolling: touch;
-	}
-
-	nav a {
-		flex: 0 0 auto;
-	}
-}
 
 	.logo {
 		font-size: 1.4rem;
 		font-weight: 700;
 		color: var(--text);
+		white-space: nowrap;
 	}
 
 	.logo span {
 		color: var(--primary);
 	}
 
-	nav {
+	.site-nav {
 		display: flex;
-		gap: 1.5rem;
+		align-items: center;
+		justify-content: flex-end;
+		gap: 1.25rem;
 		font-weight: 600;
 		color: var(--muted);
+		font-size: 0.9rem;
+		white-space: nowrap;
+	}
+
+	.site-nav a:hover,
+	.footer-links a:hover {
+		color: var(--primary);
+	}
+
+	.nav-toggle {
+		display: none;
+	}
+
+	.hamburger {
+		display: none;
+		width: 2rem;
+		height: 1.5rem;
+		cursor: pointer;
+		flex-direction: column;
+		justify-content: space-between;
+	}
+
+	.hamburger span {
+		display: block;
+		height: 3px;
+		width: 100%;
+		background: var(--text);
+		border-radius: 999px;
 	}
 
 	main {
@@ -181,5 +188,44 @@ const { title = "ShouldISpend" } = Astro.props;
 
 	h3 {
 		margin-top: 0;
+	}
+
+	@media (max-width: 900px) {
+		.nav {
+			position: relative;
+			padding: 0.75rem 1.25rem;
+		}
+
+		.logo {
+			font-size: 1.25rem;
+		}
+
+		.hamburger {
+			display: flex;
+		}
+
+		.site-nav {
+			display: none;
+			position: absolute;
+			top: 100%;
+			left: 0;
+			right: 0;
+			background: white;
+			border-bottom: 1px solid var(--border);
+			padding: 0.75rem 1.25rem 1rem;
+			flex-direction: column;
+			align-items: flex-start;
+			gap: 0.75rem;
+			box-shadow: 0 12px 20px rgba(16, 42, 67, 0.08);
+		}
+
+		.nav-toggle:checked ~ .site-nav {
+			display: flex;
+		}
+
+		.site-nav a {
+			width: 100%;
+			padding: 0.35rem 0;
+		}
 	}
 </style>
