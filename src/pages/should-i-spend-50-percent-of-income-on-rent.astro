@@ -176,10 +176,10 @@ import Layout from "../layouts/Layout.astro";
   <main class="container">
     <div class="eyebrow">Rent Affordability Calculator</div>
 
-    <h1>Should I Spend $2,000 on Rent?</h1>
+    <h1>Should I Spend 50% of My Income on Rent?</h1>
 
     <p class="subtitle">
-      Evaluate whether a $2,000 monthly rent payment fits comfortably within
+      Evaluate whether 50% of your income on rent fits comfortably within
       your income, debt load, savings, and overall financial flexibility.
     </p>
 
@@ -260,8 +260,13 @@ import Layout from "../layouts/Layout.astro";
       score -= rentRatio * 120;
       score -= debtRatio * 45;
 
-      if (savings < rent * 3) score -= 18;
-      if (savings < rent * 6) score -= 10;
+      if (rentRatio > 0.35 && savings < rent * 3) {
+  score -= 18;
+}
+
+else if (rentRatio > 0.25 && savings < rent * 6) {
+  score -= 10;
+}
 
       score = Math.max(5, Math.min(100, Math.round(score)));
 

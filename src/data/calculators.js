@@ -117,4 +117,28 @@ export const calculators = [
     "Analyze whether spending half your income on housing creates financial pressure or long-term budget risk.",
   href: "/should-i-spend-50-percent-of-income-on-rent",
 },
+{
+  id: "rent-2500",
+  category: "Rent",
+  title: "Should I Spend $2,500 on Rent?",
+  description:
+    "Evaluate whether a $2,500 monthly rent payment fits your income, savings, debt load, and financial flexibility.",
+  href: "/should-i-spend-2500-on-rent",
+},
+{
+  id: "rent-3000",
+  category: "Rent",
+  title: "Should I Spend $3,000 on Rent?",
+  description:
+    "Evaluate whether a $3,000 monthly rent payment fits your income, savings, debt load, and financial flexibility.",
+  href: "/should-i-spend-3000-on-rent",
+},
+{
+  id: "rent-40-percent",
+  category: "Rent",
+  title: "Should I Spend 40% of My Income on Rent?",
+  description:
+    "See whether a 40% rent ratio leaves enough room for savings, debt payments, and normal expenses.",
+  href: "/should-i-spend-40-percent-income-on-rent",
+},
 ];
