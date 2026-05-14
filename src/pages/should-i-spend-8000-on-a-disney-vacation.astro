@@ -4,43 +4,20 @@ import CalculatorPageShell from "../components/CalculatorPageShell.astro";
 import FAQSection from "../components/FAQSection.astro";
 import RelatedCalculators from "../components/RelatedCalculators.astro";
 ---
+
 <Layout title="Should I Spend $8,000 on a Disney Vacation?">
 
   <style>
-  
+
     .container {
       max-width: 950px;
       margin: 0 auto;
       padding: 60px 20px;
     }
-.content-section {
-  max-width: 760px;
-  margin: 72px auto 0;
-}
-    .eyebrow {
-      text-transform: uppercase;
-      letter-spacing: 3px;
-      font-size: 0.8rem;
-      color: var(--accent);
-      font-weight: 700;
-      margin-bottom: 18px;
-      text-align: center;
-    }
 
-    h1 {
-      font-size: clamp(2.5rem, 7vw, 4.5rem);
-      line-height: 1;
-      margin: 0 0 24px;
-      text-align: center;
-    }
-
-    .subtitle {
+    .content-section {
       max-width: 760px;
-      margin: 0 auto 60px;
-      text-align: center;
-      font-size: 1.2rem;
-      line-height: 1.7;
-      color: var(--muted);
+      margin: 72px auto 0;
     }
 
     .card {
@@ -86,6 +63,7 @@ import RelatedCalculators from "../components/RelatedCalculators.astro";
       font-weight: 700;
       cursor: pointer;
       margin-top: 10px;
+      display: inline-block;
     }
 
     .result {
@@ -134,23 +112,30 @@ import RelatedCalculators from "../components/RelatedCalculators.astro";
       font-size: 0.9rem;
       color: var(--muted);
     }
+
+    .helper-link {
+      margin-top: 10px;
+      font-size: 0.9rem;
+    }
+
+    .helper-link a {
+      color: var(--primary);
+      font-weight: 600;
+    }
+
   </style>
 
 <div class="container">
+
 <CalculatorPageShell
-  eyebrow="Vacation Spending Calculator"
-  title="Should I Spend $8,000 on a Vacation?"
-  description="Evaluate whether a large vacation expense is financially manageable based on income, savings, debt, and financial flexibility."
+  eyebrow="Disney Vacation Calculator"
+  title="Should I Spend $8,000 on a Disney Vacation?"
+  description="Estimate whether an $8,000 Disney vacation fits your income, savings, debt, emergency cushion, family size, and overall financial flexibility."
 >
- 
-
- 
-
-  
 
   <div class="card">
 
-    <h2>Vacation Affordability Verdict</h2>
+    <h2>Disney Vacation Affordability Verdict</h2>
 
     <div class="grid">
 
@@ -161,29 +146,35 @@ import RelatedCalculators from "../components/RelatedCalculators.astro";
 
       <div>
         <label>Total Savings</label>
-        <input id="savings" type="number" placeholder="12000" />
+        <input id="savings" type="number" placeholder="25000" />
       </div>
 
       <div>
-        <label>Vacation Cost</label>
-        <input id="vacation" type="number" placeholder="5000" />
+        <label>Disney Vacation Cost</label>
+        <input id="vacation" type="number" placeholder="8000" />
       </div>
 
       <div>
         <label>Total Debt</label>
         <input id="debt" type="number" placeholder="20000" />
+
+        <div class="helper-link">
+          <a href="/what-counts-as-debt">
+            Not sure what counts as debt? Read the debt guide
+          </a>
+        </div>
       </div>
 
     </div>
 
-    <button id="vacationButton">
-      Get Vacation Verdict
+    <button id="vacationButton" type="button">
+      Get Disney Vacation Verdict
     </button>
 
     <div class="result">
 
       <div class="score" id="score">
-        Comfortable Vacation - 82/100
+        Comfortable Disney Vacation - 82/100
       </div>
 
       <div class="bar">
@@ -191,11 +182,8 @@ import RelatedCalculators from "../components/RelatedCalculators.astro";
       </div>
 
       <div class="metric" id="stress"></div>
-
       <div class="metric" id="savingsImpact"></div>
-
       <div class="metric" id="incomeImpact"></div>
-
       <div class="metric" id="debtRatio"></div>
 
       <div class="guidance" id="guidance"></div>
@@ -209,59 +197,128 @@ import RelatedCalculators from "../components/RelatedCalculators.astro";
   </div>
 
 <div class="content-section">
-  <div class="content-section">
-      <section class="content-section">
-    <h2>What Your Vacation Verdict Actually Means</h2>
-    <p>
-      A vacation verdict is not just about whether you can pay for the trip today. It is about whether the trip still leaves enough room for emergency savings, upcoming bills, debt payments, and normal spending after you get home.
-    </p>
-    <p>
-      A stronger verdict means the trip is less likely to create financial stress later. A weaker verdict means the vacation may still be possible, but the timing, total cost, or payment method may need to change.
-    </p>
-  </section>
-  <FAQSection
-    title="Vacation Spending FAQ"
-    faqs={[
-      {
-        question: "Is a $8,000 vacation too expensive?",
-        answer:
-          "That depends on your income, savings, debt load, and overall financial flexibility. A $8,000 vacation may feel comfortable for one household and financially stressful for another.",
-      },
-      {
-        question: "How much should I spend on a vacation?",
-        answer:
-          "Vacation spending should fit comfortably within your broader financial picture without damaging emergency savings, increasing high-interest debt, or delaying major long-term goals.",
-      },
-      {
-        question: "Should I finance a vacation?",
-        answer:
-          "Financing a vacation with high-interest debt can create long-term financial pressure if the trip cost exceeds what your income and savings can comfortably support.",
-      },
-    ]}
-    />
-    <RelatedCalculators
-  calculators={[
+
+<section>
+  <h2>What an $8,000 Disney Vacation Really Costs</h2>
+
+  <p>
+    A Disney vacation budget can rise quickly because the headline price rarely includes
+    everything families actually spend. Park tickets, hotel nights, airfare, rental cars,
+    airport transfers, food, snacks, souvenirs, Lightning Lane-style upgrades, stroller rentals,
+    character meals, and rest-day activities can all push the final cost higher.
+  </p>
+
+  <p>
+    An $8,000 Disney trip may be reasonable for a family if it includes several park days,
+    moderate hotel choices, flights, meals, and a cushion for extras. It becomes more risky
+    when the number only covers the basics and leaves souvenirs, transportation, upgraded
+    experiences, and emergency costs to be figured out later.
+  </p>
+
+  <p>
+    Disney is also different from many vacations because the emotional pressure is real.
+    Parents often want the trip to feel special, which can make it easy to approve another
+    meal, another souvenir, another park upgrade, or another convenience cost in the moment.
+  </p>
+</section>
+
+<section>
+  <h2>When an $8,000 Disney Vacation Makes Sense</h2>
+
+  <p>
+    A Disney trip at this price point makes more sense when the vacation is mostly paid from
+    savings, the household still has an emergency cushion afterward, and the trip does not
+    create high-interest credit card debt.
+  </p>
+
+  <p>
+    The budget should include the full Disney reality: tickets, lodging, food, transportation,
+    parking, airport costs, souvenirs, and paid line-skipping or premium experiences if your
+    family expects to use them.
+  </p>
+
+  <p>
+    The trip can be worth it when the cost fits the family budget and the memories do not come
+    with months of stress after returning home.
+  </p>
+</section>
+
+<section>
+  <h2>When You Should Wait</h2>
+
+  <p>
+    Waiting may be smarter if the trip would drain savings, depend on credit cards, delay debt
+    payoff, or make normal household bills feel tight afterward.
+  </p>
+
+  <p>
+    You may not need to cancel the idea completely. A shorter trip, fewer park days, off-site
+    hotel, cheaper flights, fewer table-service meals, or a stricter souvenir budget can lower
+    the total cost without giving up the Disney experience entirely.
+  </p>
+</section>
+
+<FAQSection
+  title="Disney Vacation FAQ"
+  faqs={[
     {
-      category: "Transportation",
-      title: "Should I Spend $700 on a Car Payment?",
-      href: "/should-i-spend-700-on-a-car-payment",
+      question: "Is $8,000 enough for a Disney vacation?",
+      answer:
+        "Yes, $8,000 can be enough for many Disney trips, especially for families that plan carefully. The final cost depends on airfare, hotel tier, park days, tickets, meals, souvenirs, and paid upgrades.",
     },
     {
-      category: "Events",
-      title: "Should I Spend $30,000 on a Wedding?",
-      href: "/should-i-spend-30000-on-a-wedding",
+      question: "Is an $8,000 Disney vacation too expensive?",
+      answer:
+        "It depends on income, savings, debt, and the emergency cushion left after the trip. It becomes too expensive if it creates credit card debt or makes normal bills harder to manage.",
+    },
+    {
+      question: "Should I use savings or finance a Disney vacation?",
+      answer:
+        "Savings are usually safer than financing. A Disney trip can feel less magical afterward if the cost turns into months of high-interest credit card payments.",
+    },
+    {
+      question: "What should be included in a Disney vacation budget?",
+      answer:
+        "A Disney budget should include park tickets, hotel, airfare or gas, rental car or transfers, meals, snacks, souvenirs, stroller rentals, parking, Lightning Lane-style costs, and an emergency cushion.",
+    },
+    {
+      question: "How can I make a Disney vacation cheaper?",
+      answer:
+        "Consider fewer park days, off-site hotels, cheaper travel dates, packed snacks, fewer table-service meals, limited souvenirs, and avoiding premium upgrades that are not essential to the trip.",
     },
   ]}
 />
-    </CalculatorPageShell>
-</div>
- 
-</div>
 
+<RelatedCalculators
+  calculators={[
+    {
+      category: "Travel",
+      title: "Should I Spend $5,000 on a Vacation?",
+      href: "/should-i-spend-5000-on-a-vacation",
+    },
+    {
+      category: "Travel",
+      title: "Should I Spend $10,000 on a Europe Trip?",
+      href: "/should-i-spend-10000-on-a-europe-trip",
+    },
+    {
+      category: "Travel",
+      title: "Should I Spend $12,000 on a Cruise?",
+      href: "/should-i-spend-12000-on-a-cruise",
+    },
+    {
+      category: "Travel",
+      title: "Browse Travel Calculators",
+      href: "/travel-calculators",
+    },
+  ]}
+/>
 
+</div>
+</CalculatorPageShell>
+</div>
 
 <script is:inline>
-  
 
 function calculateVacation() {
 
@@ -291,18 +348,18 @@ function calculateVacation() {
   let barColor = "";
 
   if (score >= 80) {
-    verdict = "Comfortable Vacation";
+    verdict = "Comfortable Disney Vacation";
     stress = "Low stress";
     guidance =
-      "This vacation appears financially manageable based on your income, savings, and debt situation.";
+      "This Disney vacation appears financially manageable based on your income, savings, debt, and remaining emergency cushion.";
     barColor = "#16a34a";
   }
 
   else if (score >= 60) {
-    verdict = "Manageable With Caution";
+    verdict = "Manageable With Guardrails";
     stress = "Moderate stress";
     guidance =
-      "This trip is probably affordable, though it may reduce financial flexibility in the short term.";
+      "This Disney trip may work, but keep firm limits on tickets, hotel costs, food, souvenirs, and paid park upgrades.";
     barColor = "#ca8a04";
   }
 
@@ -310,7 +367,7 @@ function calculateVacation() {
     verdict = "Financial Stretch";
     stress = "High stress";
     guidance =
-      "This vacation could create financial pressure. A lower budget or delayed trip may be safer.";
+      "This Disney vacation could create financial pressure. Consider fewer park days, a cheaper hotel, or delaying until more cash is saved.";
     barColor = "#ea580c";
   }
 
@@ -318,7 +375,7 @@ function calculateVacation() {
     verdict = "High Financial Risk";
     stress = "Very high stress";
     guidance =
-      "This vacation cost looks too aggressive for the current financial picture.";
+      "This Disney vacation cost appears too aggressive for the current financial picture, especially if any part would be financed with high-interest debt.";
     barColor = "#b91c1c";
   }
 
