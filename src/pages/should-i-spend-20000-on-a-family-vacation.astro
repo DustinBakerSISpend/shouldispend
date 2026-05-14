@@ -4,43 +4,19 @@ import CalculatorPageShell from "../components/CalculatorPageShell.astro";
 import FAQSection from "../components/FAQSection.astro";
 import RelatedCalculators from "../components/RelatedCalculators.astro";
 ---
-<Layout title="Should I Spend $20,000 on a Vacation?">
+
+<Layout title="Should I Spend $20,000 on a Family Vacation?">
 
   <style>
-  
     .container {
       max-width: 950px;
       margin: 0 auto;
       padding: 60px 20px;
     }
-.content-section {
-  max-width: 760px;
-  margin: 72px auto 0;
-}
-    .eyebrow {
-      text-transform: uppercase;
-      letter-spacing: 3px;
-      font-size: 0.8rem;
-      color: var(--accent);
-      font-weight: 700;
-      margin-bottom: 18px;
-      text-align: center;
-    }
 
-    h1 {
-      font-size: clamp(2.5rem, 7vw, 4.5rem);
-      line-height: 1;
-      margin: 0 0 24px;
-      text-align: center;
-    }
-
-    .subtitle {
+    .content-section {
       max-width: 760px;
-      margin: 0 auto 60px;
-      text-align: center;
-      font-size: 1.2rem;
-      line-height: 1.7;
-      color: var(--muted);
+      margin: 72px auto 0;
     }
 
     .card {
@@ -86,6 +62,7 @@ import RelatedCalculators from "../components/RelatedCalculators.astro";
       font-weight: 700;
       cursor: pointer;
       margin-top: 10px;
+      display: inline-block;
     }
 
     .result {
@@ -134,56 +111,68 @@ import RelatedCalculators from "../components/RelatedCalculators.astro";
       font-size: 0.9rem;
       color: var(--muted);
     }
+
+    .helper-link {
+      margin-top: 10px;
+      font-size: 0.9rem;
+    }
+
+    .helper-link a {
+      color: var(--primary);
+      font-weight: 600;
+    }
   </style>
 
 <div class="container">
+
 <CalculatorPageShell
-  eyebrow="Vacation Spending Calculator"
-  title="Should I Spend $20,000 on a Vacation?"
-  description="Evaluate whether a major family vacation expense fits your income, savings, debt load, and long-term financial flexibility."
+  eyebrow="Family Vacation Calculator"
+  title="Should I Spend $20,000 on a Family Vacation?"
+  description="Estimate whether a $20,000 family vacation fits your income, savings, debt, emergency cushion, kids' costs, airfare, hotels, food, and activities."
 >
- 
-
- 
-
-  
 
   <div class="card">
 
-    <h2>Vacation Affordability Verdict</h2>
+    <h2>Family Vacation Affordability Verdict</h2>
 
     <div class="grid">
 
       <div>
         <label>Annual Household Income</label>
-        <input id="income" type="number" placeholder="150000" />
+        <input id="income" type="number" placeholder="175000" />
       </div>
 
       <div>
         <label>Total Savings</label>
-        <input id="savings" type="number" placeholder="12000" />
+        <input id="savings" type="number" placeholder="40000" />
       </div>
 
       <div>
-        <label>Vacation Cost</label>
-        <input id="vacation" type="number" placeholder="5000" />
+        <label>Family Vacation Cost</label>
+        <input id="vacation" type="number" placeholder="20000" />
       </div>
 
       <div>
         <label>Total Debt</label>
-        <input id="debt" type="number" placeholder="20000" />
+        <input id="debt" type="number" placeholder="25000" />
+
+        <div class="helper-link">
+          <a href="/what-counts-as-debt">
+            Not sure what counts as debt? Read the debt guide
+          </a>
+        </div>
       </div>
 
     </div>
 
-    <button id="vacationButton">
-      Get Vacation Verdict
+    <button id="vacationButton" type="button">
+      Get Family Vacation Verdict
     </button>
 
     <div class="result">
 
       <div class="score" id="score">
-        Comfortable Vacation - 82/100
+        Comfortable Family Vacation - 82/100
       </div>
 
       <div class="bar">
@@ -191,11 +180,8 @@ import RelatedCalculators from "../components/RelatedCalculators.astro";
       </div>
 
       <div class="metric" id="stress"></div>
-
       <div class="metric" id="savingsImpact"></div>
-
       <div class="metric" id="incomeImpact"></div>
-
       <div class="metric" id="debtRatio"></div>
 
       <div class="guidance" id="guidance"></div>
@@ -209,59 +195,129 @@ import RelatedCalculators from "../components/RelatedCalculators.astro";
   </div>
 
 <div class="content-section">
-  <div class="content-section">
-      <section class="content-section">
-    <h2>What Your Vacation Verdict Actually Means</h2>
-    <p>
-      A vacation verdict is not just about whether you can pay for the trip today. It is about whether the trip still leaves enough room for emergency savings, upcoming bills, debt payments, and normal spending after you get home.
-    </p>
-    <p>
-      A stronger verdict means the trip is less likely to create financial stress later. A weaker verdict means the vacation may still be possible, but the timing, total cost, or payment method may need to change.
-    </p>
-  </section>
-  <FAQSection
-    title="Vacation Spending FAQ"
-    faqs={[
-      {
-        question: "Is a $20,000 vacation too expensive?",
-        answer:
-          "That depends on your income, savings, debt load, and overall financial flexibility. A $5,000 vacation may feel comfortable for one household and financially stressful for another.",
-      },
-      {
-        question: "How much should I spend on a vacation?",
-        answer:
-          "Family vacation spending should fit comfortably within your broader financial picture without damaging emergency savings, increasing high-interest debt, or delaying major long-term goals.",
-      },
-      {
-        question: "Should I finance a vacation?",
-        answer:
-          "Financing a vacation with high-interest debt can create long-term financial pressure if the trip cost exceeds what your income and savings can comfortably support.",
-      },
-    ]}
-    />
-    <RelatedCalculators
-  calculators={[
+
+<section>
+  <h2>What a $20,000 Family Vacation Really Costs</h2>
+
+  <p>
+    A family vacation budget grows quickly because every major category multiplies. Airfare,
+    meals, tickets, hotel rooms, rental cars, checked bags, snacks, activities, souvenirs,
+    and emergency costs all become larger when several people are traveling together.
+  </p>
+
+  <p>
+    A $20,000 family vacation may be reasonable for a larger household, international trip,
+    theme park vacation, resort stay, cruise, or multi-city itinerary. It becomes riskier when
+    the number only covers flights and lodging while food, activities, transportation, and
+    kid-specific costs are added later.
+  </p>
+
+  <p>
+    Families also face timing pressure. School breaks, holidays, and summer travel can make
+    flights and hotels more expensive, which means the same trip may cost far less during a
+    different season.
+  </p>
+</section>
+
+<section>
+  <h2>When a $20,000 Family Vacation Makes Sense</h2>
+
+  <p>
+    A family vacation at this price point makes more sense when it is paid mostly from savings,
+    the emergency fund remains intact, and the trip does not create credit card debt after
+    everyone gets home.
+  </p>
+
+  <p>
+    The budget should include the full family reality: flights, lodging, rental car or transfers,
+    meals, snacks, checked bags, activities, tickets, childcare-related needs, souvenirs, and
+    a cushion for illness, delays, or last-minute changes.
+  </p>
+
+  <p>
+    The trip can be worth it when the memories fit inside a financial plan that still works
+    after the vacation ends.
+  </p>
+</section>
+
+<section>
+  <h2>When You Should Wait</h2>
+
+  <p>
+    Waiting may be smarter if the trip would drain savings, require high-interest debt, or
+    make normal expenses feel tight after returning home.
+  </p>
+
+  <p>
+    A cheaper version may still work. Consider driving instead of flying, shortening the trip,
+    booking fewer hotel nights, choosing a kitchen-equipped rental, traveling outside peak
+    school-break windows, or limiting paid activities.
+  </p>
+</section>
+
+<FAQSection
+  title="Family Vacation FAQ"
+  faqs={[
     {
-      category: "Transportation",
-      title: "Should I Spend $700 on a Car Payment?",
-      href: "/should-i-spend-700-on-a-car-payment",
+      question: "Is $20,000 too much for a family vacation?",
+      answer:
+        "It depends on income, savings, debt, family size, destination, and trip length. A $20,000 family vacation can be reasonable if it is planned honestly and does not create debt pressure.",
     },
     {
-      category: "Events",
-      title: "Should I Spend $30,000 on a Wedding?",
-      href: "/should-i-spend-30000-on-a-wedding",
+      question: "What should be included in a family vacation budget?",
+      answer:
+        "Include airfare or gas, hotels, rental car or transfers, meals, snacks, activities, tickets, checked bags, souvenirs, travel insurance, and an emergency cushion.",
+    },
+    {
+      question: "Should I finance a family vacation?",
+      answer:
+        "Financing a family vacation can create long-term stress, especially with credit card interest. Paying from savings while keeping an emergency fund intact is usually safer.",
+    },
+    {
+      question: "Why are family vacations so expensive?",
+      answer:
+        "Family vacations cost more because transportation, meals, tickets, luggage, activities, and lodging needs often multiply with each traveler.",
+    },
+    {
+      question: "How can I lower the cost of a family vacation?",
+      answer:
+        "Travel outside peak dates, drive when possible, use fewer hotel nights, book lodging with a kitchen, limit paid activities, set a souvenir budget, and build the trip around free or low-cost experiences.",
     },
   ]}
 />
-    </CalculatorPageShell>
-</div>
- 
+
+<RelatedCalculators
+  calculators={[
+    {
+      category: "Travel",
+      title: "Should I Spend $5,000 on a Vacation?",
+      href: "/should-i-spend-5000-on-a-vacation",
+    },
+    {
+      category: "Travel",
+      title: "Should I Spend $8,000 on a Disney Vacation?",
+      href: "/should-i-spend-8000-on-a-disney-vacation",
+    },
+    {
+      category: "Travel",
+      title: "Should I Spend $10,000 on a Europe Trip?",
+      href: "/should-i-spend-10000-on-a-europe-trip",
+    },
+    {
+      category: "Travel",
+      title: "Browse Travel Calculators",
+      href: "/travel-calculators",
+    },
+  ]}
+/>
+
 </div>
 
+</CalculatorPageShell>
 
+</div>
 
 <script is:inline>
-  
 
 function calculateVacation() {
 
@@ -291,18 +347,18 @@ function calculateVacation() {
   let barColor = "";
 
   if (score >= 80) {
-    verdict = "Comfortable Vacation";
+    verdict = "Comfortable Family Vacation";
     stress = "Low stress";
     guidance =
-      "This vacation appears financially manageable based on your income, savings, and debt situation.";
+      "This family vacation appears financially manageable based on your income, savings, debt, and remaining emergency cushion.";
     barColor = "#16a34a";
   }
 
   else if (score >= 60) {
-    verdict = "Manageable With Caution";
+    verdict = "Manageable With Guardrails";
     stress = "Moderate stress";
     guidance =
-      "This trip is probably affordable, though it may reduce financial flexibility in the short term.";
+      "This family vacation may work, but keep firm limits on flights, hotels, food, activities, souvenirs, and emergency spending.";
     barColor = "#ca8a04";
   }
 
@@ -310,7 +366,7 @@ function calculateVacation() {
     verdict = "Financial Stretch";
     stress = "High stress";
     guidance =
-      "This vacation could create financial pressure. A lower budget or delayed trip may be safer.";
+      "This family vacation could create financial pressure. Consider fewer travel days, cheaper lodging, driving instead of flying, or more time to save.";
     barColor = "#ea580c";
   }
 
@@ -318,7 +374,7 @@ function calculateVacation() {
     verdict = "High Financial Risk";
     stress = "Very high stress";
     guidance =
-      "This vacation cost looks too aggressive for the current financial picture.";
+      "This family vacation cost appears too aggressive for the current financial picture, especially if the trip would be financed with high-interest debt.";
     barColor = "#b91c1c";
   }
 
