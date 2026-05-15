@@ -125,14 +125,7 @@ export const calculators = [
     "Evaluate whether a $2,500 monthly rent payment fits your income, savings, debt load, and financial flexibility.",
   href: "/should-i-spend-2500-on-rent",
 },
-{
-  id: "rent-3000",
-  category: "Rent",
-  title: "Should I Spend $3,000 on Rent?",
-  description:
-    "Evaluate whether a $3,000 monthly rent payment fits your income, savings, debt load, and financial flexibility.",
-  href: "/should-i-spend-3000-on-rent",
-},
+
 {
   id: "rent-40-percent",
   category: "Rent",
