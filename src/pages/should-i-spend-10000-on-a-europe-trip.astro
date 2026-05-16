@@ -117,9 +117,37 @@ import RelatedCalculators from "../components/RelatedCalculators.astro";
       <button id="calculateBtn">Calculate Verdict</button>
 
       <div id="result" class="result">
-        <h2 id="verdict"></h2>
-        <p id="resultText"></p>
-      </div>
+  <h2 id="verdict"></h2>
+
+  <div
+    style="
+      width: 100%;
+      height: 14px;
+      background: #dbe4ee;
+      border-radius: 999px;
+      overflow: hidden;
+      margin: 1rem 0;
+    "
+  >
+    <div
+      class="fill"
+      id="barFill"
+      style="
+        height: 100%;
+        width: 0%;
+        border-radius: 999px;
+        transition: width 0.35s ease;
+      "
+    ></div>
+  </div>
+
+  <p><strong>Stress Level:</strong> <span id="stress"></span></p>
+  <p><strong>Savings Impact:</strong> <span id="savingsImpact"></span></p>
+  <p><strong>Income Impact:</strong> <span id="incomeImpact"></span></p>
+  <p><strong>Debt Ratio:</strong> <span id="debtRatio"></span></p>
+
+  <p id="resultText"></p>
+</div>
     </div>
 
     <div class="content-section">
@@ -185,14 +213,6 @@ import RelatedCalculators from "../components/RelatedCalculators.astro";
           answer:
             "A Europe trip budget should include flights, hotels, trains, local transportation, meals, museums, tours, travel insurance, luggage fees, exchange-rate buffer, phone data, souvenirs, and emergency money.",
         },
-        <p>
-  A Europe trip also creates different financial pressures than a
-  <a href="/should-i-spend-8000-on-a-disney-vacation">Disney vacation</a>
-  or a
-  <a href="/should-i-spend-12000-on-a-cruise">cruise</a>.
-  Flights, trains, hotels, exchange-rate swings, and multi-city transportation
-  can make international travel harder to predict financially.
-</p>
       ]}
     />
 <MethodologySection
@@ -246,6 +266,11 @@ import RelatedCalculators from "../components/RelatedCalculators.astro";
       const verdict = document.getElementById("verdict");
       const resultText = document.getElementById("resultText");
       const result = document.getElementById("result");
+      const stress = document.getElementById("stress");
+const savingsImpactEl = document.getElementById("savingsImpact");
+const incomeImpactEl = document.getElementById("incomeImpact");
+const debtRatioEl = document.getElementById("debtRatio");
+const barFill = document.getElementById("barFill");
 
       result.style.display = "block";
 
@@ -255,17 +280,37 @@ import RelatedCalculators from "../components/RelatedCalculators.astro";
           "Enter your income, savings, estimated Europe trip cost, and debt so the calculator can give a useful verdict.";
         return;
       }
+score = Math.max(0, Math.min(100, Math.round(score)));
+
+let barColor = "#dc2626";
+let stressLabel = "High";
+
+if (score >= 75) {
+  barColor = "#0f766e";
+  stressLabel = "Low";
+} else if (score >= 50) {
+  barColor = "#d97706";
+  stressLabel = "Moderate";
+}
+
+barFill.style.width = `${score}%`;
+barFill.style.background = barColor;
+
+stress.textContent = stressLabel;
+savingsImpactEl.textContent = `${Math.round(savingsImpact)}% of savings`;
+incomeImpactEl.textContent = `${Math.round(incomeImpact)}% of annual income`;
+debtRatioEl.textContent = `${Math.round(debtRatio)}%`;
 
       if (score >= 75) {
-        verdict.textContent = "This Europe trip looks financially reasonable";
-        resultText.textContent =
+        
+        verdict.textContent = `Financially Comfortable Trip - ${score}/100`;
           "A $10,000 Europe trip appears manageable based on your income, savings, and debt. Make sure your budget includes flights, hotels, trains, meals, tours, exchange-rate movement, and an emergency cushion.";
       } else if (score >= 50) {
-        verdict.textContent = "This Europe trip is possible, but plan carefully";
+        verdict.textContent = `Manageable but Expensive - ${score}/100`;
         resultText.textContent =
           "The trip may be doable, but the budget deserves caution. Look for ways to reduce airfare, shorten the trip, choose fewer cities, use trains strategically, or build more savings before booking.";
       } else {
-        verdict.textContent = "You may want to wait before spending $10,000";
+        verdict.textContent = `High Financial Pressure - ${score}/100`;
         resultText.textContent =
           "This trip could put too much pressure on your savings, debt load, or monthly flexibility. Consider delaying the trip, lowering the budget, or saving more before committing.";
       }

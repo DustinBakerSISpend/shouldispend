@@ -115,7 +115,7 @@ export const calculators = [
   title: "Should I Spend 50% of My Income on Rent?",
   description:
     "Analyze whether spending half your income on housing creates financial pressure or long-term budget risk.",
-  href: "/should-i-spend-50-percent-of-income-on-rent",
+  href: "/should-i-spend-50-percent-income-on-rent",
 },
 {
   id: "rent-2500",
