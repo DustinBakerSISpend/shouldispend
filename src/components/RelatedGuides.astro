@@ -1,0 +1,58 @@
+---
+const {
+  title = "Related Guides",
+  guides = [],
+} = Astro.props;
+---
+
+<section class="related-guides">
+  <h2>{title}</h2>
+
+  <div class="guide-grid">
+    {guides.map((guide) => (
+      <a class="guide-card" href={guide.href}>
+        <h3>{guide.title}</h3>
+        <p>{guide.description}</p>
+      </a>
+    ))}
+  </div>
+</section>
+
+<style>
+  .related-guides {
+    margin: 2.5rem 0;
+  }
+
+  .guide-grid {
+    display: grid;
+    gap: 1rem;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  }
+
+  .guide-card {
+    display: block;
+    padding: 1.25rem;
+    border-radius: 16px;
+    border: 1px solid #d8e0ea;
+    background: white;
+    text-decoration: none;
+    transition: transform 0.2s ease, border-color 0.2s ease;
+  }
+
+  .guide-card:hover {
+    transform: translateY(-2px);
+    border-color: #0f766e;
+  }
+
+  .guide-card h3 {
+    margin-top: 0;
+    margin-bottom: 0.5rem;
+    color: #061126;
+  }
+
+  .guide-card p {
+    margin: 0;
+    color: #475569;
+    line-height: 1.6;
+  }
+</style>

@@ -1,0 +1,56 @@
+---
+const {
+  title = "Key Costs to Consider",
+  items = [],
+} = Astro.props;
+---
+
+<section class="key-costs">
+  <h2>{title}</h2>
+
+  <div class="cost-grid">
+    {items.map((item) => (
+  <div class="cost-card">
+    <h3>{item.title}</h3>
+    <p>{item.description}</p>
+  </div>
+))}
+  </div>
+</section>
+
+<style>
+  .key-costs {
+    margin: 2.5rem 0;
+  }
+
+  .cost-grid {
+    display: grid;
+    gap: 1rem;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .cost-card {
+    background: white;
+    border: 1px solid #d8e0ea;
+    border-radius: 16px;
+    padding: 1.25rem;
+  }
+
+  .cost-card h3 {
+    margin-top: 0;
+    margin-bottom: 0.5rem;
+    color: #061126;
+  }
+
+  .cost-card p {
+    margin: 0;
+    color: #475569;
+    line-height: 1.6;
+  }
+
+  @media (max-width: 700px) {
+    .cost-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>
