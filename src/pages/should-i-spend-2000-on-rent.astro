@@ -1,8 +1,20 @@
 ---
 import Layout from "../layouts/Layout.astro";
+import FAQSection from "../components/FAQSection.astro";
+import RelatedCalculators from "../components/RelatedCalculators.astro";
+import RelatedGuides from "../components/RelatedGuides.astro";
+import MethodologySection from "../components/MethodologySection.astro";
+import FinancialRedFlags from "../components/FinancialRedFlags.astro";
+import CalculatorAssumptions from "../components/CalculatorAssumptions.astro";
+import KeyCostCategories from "../components/KeyCostCategories.astro";
+import ReduceCostTips from "../components/ReduceCostTips.astro";
+import WhenSpendingMakesSense from "../components/WhenSpendingMakesSense.astro";
 ---
 
-<Layout title="Should I Spend $2,000 on Rent?">
+<Layout
+  title="Should I Spend $2,000 on Rent?"
+  description="Use this rent calculator to decide whether a $2,000 monthly rent payment fits your income, savings, debt, and monthly flexibility."
+>
   <style>
     .container {
       max-width: 920px;
@@ -39,7 +51,7 @@ import Layout from "../layouts/Layout.astro";
 
     .content-section {
       max-width: 760px;
-      margin: 0 auto 56px auto;
+      margin: 72px auto 0;
     }
 
     .content-section h2 {
@@ -49,7 +61,8 @@ import Layout from "../layouts/Layout.astro";
       color: #0f172a;
     }
 
-    .content-section p {
+    .content-section p,
+    .content-section li {
       font-size: 1.08rem;
       line-height: 1.9;
       color: #334155;
@@ -65,7 +78,7 @@ import Layout from "../layouts/Layout.astro";
       box-shadow: 0 10px 30px rgba(15, 23, 42, 0.05);
     }
 
-    .calculator h3 {
+    .calculator h2 {
       margin-bottom: 28px;
       font-size: 1.7rem;
       color: #0f172a;
@@ -91,6 +104,20 @@ import Layout from "../layouts/Layout.astro";
       border-radius: 14px;
       border: 1px solid #cbd5e1;
       font-size: 1rem;
+      box-sizing: border-box;
+    }
+
+    .helper-link {
+      margin-top: 10px;
+      font-size: 0.92rem;
+      line-height: 1.5;
+      color: #475569;
+    }
+
+    .helper-link a {
+      color: #0f766e;
+      font-weight: 700;
+      text-decoration: none;
     }
 
     button {
@@ -106,12 +133,17 @@ import Layout from "../layouts/Layout.astro";
       display: inline-block;
     }
 
+    button:hover {
+      opacity: 0.92;
+    }
+
     .result {
       margin-top: 28px;
       background: #f8fafc;
       border: 1px solid #cbd5e1;
       border-radius: 18px;
       padding: 28px;
+      display: none;
     }
 
     .score {
@@ -136,39 +168,36 @@ import Layout from "../layouts/Layout.astro";
       transition: width 0.4s ease;
     }
 
+    .result-details {
+      color: #334155;
+      line-height: 1.8;
+      margin-bottom: 18px;
+    }
+
     .fine-print {
       font-size: 0.9rem;
       color: #64748b;
     }
 
-    .faq-section h2 {
-      margin-bottom: 32px;
-    }
-
-    .faq {
-      background: white;
-      border: 1px solid #dbe4ee;
-      border-radius: 18px;
-      padding: 28px;
-      margin-bottom: 22px;
-    }
-
-    .faq h3 {
-      margin-bottom: 16px;
-      color: #0f172a;
-    }
-
-    .faq p {
-      margin: 0;
-    }
-
     @media (max-width: 720px) {
+      .container {
+        padding: 54px 20px;
+      }
+
+      h1 {
+        font-size: 2.8rem;
+      }
+
       .grid {
         grid-template-columns: 1fr;
       }
 
       .calculator {
         padding: 24px;
+      }
+
+      .score {
+        font-size: 2rem;
       }
     }
   </style>
@@ -180,75 +209,267 @@ import Layout from "../layouts/Layout.astro";
 
     <p class="subtitle">
       Evaluate whether a $2,000 monthly rent payment fits comfortably within
-      your income, debt load, savings, and overall financial flexibility.
+      your take-home income, debt load, savings, utilities, and overall
+      financial flexibility.
     </p>
 
     <section class="content-section">
-      <h2>How Much Rent Can You Actually Afford?</h2>
+      <h2>Is $2,000 Rent Affordable?</h2>
 
       <p>
-        Rent is often the largest recurring expense in a monthly budget.
-        Affordability depends on more than income alone — savings, debt,
-        emergency flexibility, and long-term goals all matter.
+        A $2,000 monthly rent payment can be manageable for some households and
+        stressful for others. The difference usually comes down to take-home
+        income, debt payments, savings, utilities, transportation costs, and how
+        much flexibility remains after rent is paid.
       </p>
 
       <p>
-        A rent payment that stretches your budget too aggressively can reduce
-        savings growth, increase stress, and make financial setbacks harder to
-        absorb.
+        Rent affordability is not just about qualifying for the apartment. It is
+        about whether the payment still leaves enough room for normal life,
+        emergencies, savings, and other goals.
       </p>
     </section>
 
     <div class="calculator">
-      <h3>Rent Affordability Verdict</h3>
+      <h2>Rent Affordability Verdict</h2>
 
       <div class="grid">
         <div>
-          <label>Monthly Take-Home Income</label>
+          <label for="income">Monthly Take-Home Income</label>
           <input id="income" type="number" placeholder="Example: 6500" />
         </div>
 
         <div>
-          <label>Total Savings</label>
+          <label for="savings">Total Savings</label>
           <input id="savings" type="number" placeholder="Example: 25000" />
         </div>
 
         <div>
-          <label>Monthly Rent</label>
-          <input id="rent" type="number" placeholder="2000" />
+          <label for="rent">Monthly Rent</label>
+          <input id="rent" type="number" value="2000" />
         </div>
 
         <div>
-          <label>Monthly Debt Payments</label>
+          <label for="debt">Monthly Debt Payments</label>
           <input id="debt" type="number" placeholder="Example: 800" />
+
+          <div class="helper-link">
+            Not sure what counts as debt?
+            <a href="/what-counts-as-debt">Read the debt guide</a>
+          </div>
         </div>
       </div>
 
-      <button id="rentButton">Get Rent Verdict</button>
+      <button id="rentButton" type="button">Get Rent Verdict</button>
 
       <div class="result" id="result">
-        <div class="score" id="scoreText">Waiting For Inputs</div>
+        <div class="score" id="scoreText"></div>
 
         <div class="bar">
           <div class="fill" id="scoreFill"></div>
         </div>
+
+        <div class="result-details" id="resultDetails"></div>
 
         <div class="fine-print">
           This is a general educational estimate, not financial advice.
         </div>
       </div>
     </div>
+
+    <section class="content-section">
+      <h2>What $2,000 Rent Really Means</h2>
+
+      <p>
+        A $2,000 rent payment is a fixed monthly commitment. That means it should
+        be judged differently from a one-time purchase. Once the lease begins,
+        the payment affects your budget every month.
+      </p>
+
+      <p>
+        The same $2,000 rent can feel very different at $4,500 of take-home pay
+        versus $8,000 of take-home pay. Debt payments, savings, and utility costs
+        can make the gap even wider.
+      </p>
+    </section>
+
+    <WhenSpendingMakesSense
+      title="When $2,000 Rent Can Make Sense"
+      items={[
+        "The payment leaves room for monthly savings after bills.",
+        "Your emergency fund remains intact after move-in costs.",
+        "Debt payments are low enough that rent does not crowd out other obligations.",
+        "The location reduces commute costs, improves safety, or supports work stability.",
+        "Utilities, parking, pet fees, and renter’s insurance have been included in the budget.",
+      ]}
+    />
+
+    <section class="content-section">
+      <h2>When You Should Look for Cheaper Rent</h2>
+
+      <p>
+        A cheaper apartment may be smarter if $2,000 rent would prevent monthly
+        saving, slow debt payoff, force credit card use, or leave little room for
+        groceries, transportation, utilities, and emergencies.
+      </p>
+
+      <p>
+        Moving costs also matter. Deposits, application fees, furniture, moving
+        trucks, parking, and utility setup can make an otherwise manageable rent
+        decision more stressful upfront.
+      </p>
+    </section>
+
+    <KeyCostCategories
+      items={[
+        {
+          title: "Utilities and recurring fees",
+          description:
+            "Electric, gas, water, trash, internet, parking, pet rent, laundry, and renter’s insurance can push the true housing cost above $2,000.",
+        },
+        {
+          title: "Debt payments",
+          description:
+            "Credit cards, student loans, car payments, and personal loans reduce how much room is left after rent.",
+        },
+        {
+          title: "Move-in costs",
+          description:
+            "Security deposits, first month’s rent, application fees, movers, furniture, and utility setup can create a large upfront cash need.",
+        },
+        {
+          title: "Transportation tradeoffs",
+          description:
+            "A $2,000 apartment may be easier to justify if it lowers commuting costs, parking costs, or the need for another vehicle.",
+        },
+      ]}
+    />
+
+    <ReduceCostTips
+      items={[
+        "Compare total housing cost, not just the advertised rent.",
+        "Ask about average utilities before applying.",
+        "Avoid draining emergency savings on move-in costs.",
+        "Look for free parking, included utilities, or lower transportation costs.",
+        "Consider a slightly smaller unit if it protects monthly savings.",
+      ]}
+    />
+
+    <FinancialRedFlags
+      items={[
+        "Rent would leave little or no room for monthly savings.",
+        "You would need credit cards for normal expenses after rent.",
+        "Move-in costs would wipe out most of your emergency fund.",
+        "Debt payments already make your monthly budget tight.",
+        "You are ignoring utilities, parking, insurance, pet fees, or commuting costs.",
+      ]}
+    />
+
+    <CalculatorAssumptions
+      items={[
+        "The calculator uses monthly take-home income rather than gross income.",
+        "The estimate assumes rent is the base monthly payment and does not include every utility or fee.",
+        "Debt payments should include recurring monthly obligations such as credit cards, student loans, car payments, and personal loans.",
+        "Savings are used as a cushion signal, especially when move-in costs or high rent reduce flexibility.",
+        "Local housing costs, job stability, family obligations, and transportation needs can change the final decision.",
+      ]}
+    />
+
+    <FAQSection
+      title="$2,000 Rent FAQ"
+      faqs={[
+        {
+          question: "Is $2,000 a month too much for rent?",
+          answer:
+            "$2,000 rent may be manageable or risky depending on take-home income, debt payments, savings, utilities, transportation costs, and other monthly obligations.",
+        },
+        {
+          question: "How much income do I need for $2,000 rent?",
+          answer:
+            "Many renters use 30% of income as a starting point, but take-home pay matters more. The payment is safer when it leaves room for savings, bills, debt payoff, and emergencies.",
+        },
+        {
+          question: "Should utilities count when judging $2,000 rent?",
+          answer:
+            "Yes. Utilities, internet, parking, renter’s insurance, pet fees, and transportation costs all affect whether the apartment is truly affordable.",
+        },
+        {
+          question: "Is $2,000 rent better than a cheaper apartment with a longer commute?",
+          answer:
+            "Sometimes. Higher rent can make sense if it meaningfully reduces commuting costs, improves safety, or supports work stability without damaging savings.",
+        },
+        {
+          question: "What if $2,000 rent leaves no room for savings?",
+          answer:
+            "That is a warning sign. Rent that prevents saving money can make emergencies harder to absorb and may create financial stress throughout the lease.",
+        },
+      ]}
+    />
+
+    <MethodologySection category="rent affordability" updated="May 2026" />
+
+    <RelatedGuides
+      guides={[
+        {
+          title: "How Much Rent Can I Afford?",
+          href: "/how-much-rent-can-i-afford",
+          description:
+            "Learn how rent-to-income rules, take-home pay, debt, utilities, and savings affect affordability.",
+        },
+        {
+          title: "What Counts as Debt?",
+          href: "/what-counts-as-debt",
+          description:
+            "See which monthly obligations should be included when evaluating rent affordability.",
+        },
+      ]}
+    />
+
+    <RelatedCalculators
+      calculators={[
+        {
+          category: "Rent",
+          title: "Should I Spend $2,500 on Rent?",
+          href: "/should-i-spend-2500-on-rent",
+        },
+        {
+          category: "Rent",
+          title: "Should I Spend $3,000 on Rent?",
+          href: "/should-i-spend-3000-on-rent",
+        },
+        {
+          category: "Rent",
+          title: "Should I Spend 40% of My Income on Rent?",
+          href: "/should-i-spend-40-percent-income-on-rent",
+        },
+        {
+          category: "Rent",
+          title: "Should I Spend 50% of My Income on Rent?",
+          href: "/should-i-spend-50-percent-income-on-rent",
+        },
+      ]}
+    />
   </main>
 
   <script is:inline>
     function calculateRent() {
       const income = Number(document.getElementById("income").value);
-      const savings = Number(document.getElementById("savings").value);
+      const savings = Number(document.getElementById("savings").value || 0);
       const rent = Number(document.getElementById("rent").value);
-      const debt = Number(document.getElementById("debt").value);
+      const debt = Number(document.getElementById("debt").value || 0);
+
+      const result = document.getElementById("result");
+      const scoreText = document.getElementById("scoreText");
+      const scoreFill = document.getElementById("scoreFill");
+      const resultDetails = document.getElementById("resultDetails");
+
+      result.style.display = "block";
 
       if (!income || !rent) {
-        alert("Please enter income and rent.");
+        scoreText.textContent = "Add your numbers first";
+        scoreFill.style.width = "0%";
+        resultDetails.innerHTML =
+          "<p>Enter your take-home income and monthly rent so the calculator can give a useful verdict.</p>";
         return;
       }
 
@@ -256,37 +477,48 @@ import Layout from "../layouts/Layout.astro";
 
       const rentRatio = rent / income;
       const debtRatio = debt / income;
+      const savingsMonths = savings > 0 ? savings / rent : 0;
 
       score -= rentRatio * 120;
       score -= debtRatio * 45;
 
       if (rentRatio > 0.35 && savings < rent * 3) {
-  score -= 18;
-}
-
-else if (rentRatio > 0.25 && savings < rent * 6) {
-  score -= 10;
-}
+        score -= 18;
+      } else if (rentRatio > 0.25 && savings < rent * 6) {
+        score -= 10;
+      }
 
       score = Math.max(5, Math.min(100, Math.round(score)));
 
       let verdict = "";
+      let color = "";
 
       if (score >= 80) {
         verdict = "Comfortable Rent";
+        color = "#16a34a";
       } else if (score >= 60) {
         verdict = "Manageable With Guardrails";
+        color = "#eab308";
       } else if (score >= 40) {
         verdict = "Financial Stretch";
+        color = "#f97316";
       } else {
         verdict = "High Risk Housing Cost";
+        color = "#dc2626";
       }
 
-      document.getElementById(
-        "scoreText"
-      ).innerText = `${verdict} - ${score}/100`;
+      const rentPercent = rentRatio * 100;
+      const debtPercent = debtRatio * 100;
 
-      document.getElementById("scoreFill").style.width = `${score}%`;
+      scoreText.textContent = `${verdict} - ${score}/100`;
+      scoreFill.style.width = `${score}%`;
+      scoreFill.style.background = color;
+
+      resultDetails.innerHTML = `
+        <p><strong>Rent impact:</strong> ${rentPercent.toFixed(1)}% of monthly take-home income.</p>
+        <p><strong>Debt impact:</strong> ${debtPercent.toFixed(1)}% of monthly take-home income.</p>
+        <p><strong>Savings cushion:</strong> ${savingsMonths.toFixed(1)} months of rent covered.</p>
+      `;
     }
 
     document
