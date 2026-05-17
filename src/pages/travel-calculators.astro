@@ -1,16 +1,45 @@
 ---
 import Layout from "../layouts/Layout.astro";
 import CalculatorCard from "../components/CalculatorCard.astro";
+import FAQSection from "../components/FAQSection.astro";
 import { calculators } from "../data/calculators.js";
 
 const travelCalculators = calculators.filter(
   (calculator) => calculator.category === "Travel"
 );
+
+const travelFaqs = [
+  {
+    question: "How much should I spend on a vacation?",
+    answer:
+      "The right amount depends on income, savings, debt, emergency funds, family size, and upcoming obligations. A vacation should not damage your ability to pay normal bills or recover financially after the trip.",
+  },
+  {
+    question: "Should I use savings or finance a vacation?",
+    answer:
+      "Savings are usually safer than financing. High-interest travel debt can turn a good trip into months of financial stress after you return home.",
+  },
+  {
+    question: "What travel costs do people forget?",
+    answer:
+      "Commonly forgotten costs include checked bags, tips, rideshares, parking, resort fees, excursions, museum tickets, snacks, phone plans, travel insurance, passports, and emergency expenses.",
+  },
+  {
+    question: "Is an expensive vacation ever worth it?",
+    answer:
+      "Yes, an expensive vacation can be worth it if the trip is a real priority, the full cost is planned honestly, and the expense does not create debt pressure or drain your emergency fund.",
+  },
+  {
+    question: "How do I make a trip cheaper without ruining it?",
+    answer:
+      "Reduce the number of travel days, choose fewer paid activities, use cheaper dates, book lodging with a kitchen, limit souvenirs, avoid unnecessary upgrades, and build more free time into the itinerary.",
+  },
+];
 ---
 
 <Layout
   title="Travel Budget Calculators"
-  description="Browse travel budget calculators for vacations, Europe trips, Disney vacations, cruises, and other major travel spending decisions."
+  description="Browse travel budget calculators for vacations, Europe trips, Disney vacations, cruises, honeymoons, family trips, and major travel spending decisions."
 >
   <style>
     .container {
@@ -29,14 +58,14 @@ const travelCalculators = calculators.filter(
     }
 
     h1 {
-      font-size: 4rem;
+      font-size: clamp(2.8rem, 7vw, 4.8rem);
       line-height: 1;
       margin-bottom: 24px;
-      max-width: 850px;
+      max-width: 900px;
     }
 
     .intro {
-      max-width: 760px;
+      max-width: 780px;
       color: var(--muted);
       font-size: 1.1rem;
       line-height: 1.8;
@@ -51,13 +80,14 @@ const travelCalculators = calculators.filter(
     }
 
     .content-section {
-      max-width: 780px;
+      max-width: 800px;
       margin-top: 80px;
     }
 
     .content-section h2 {
       font-size: 2rem;
       margin-bottom: 20px;
+      line-height: 1.2;
     }
 
     .content-section h3 {
@@ -88,6 +118,11 @@ const travelCalculators = calculators.filter(
       background: var(--card);
       text-decoration: none;
       color: inherit;
+      transition: transform 0.15s ease;
+    }
+
+    .link-card:hover {
+      transform: translateY(-2px);
     }
 
     .link-card strong {
@@ -102,8 +137,16 @@ const travelCalculators = calculators.filter(
       font-size: 0.95rem;
     }
 
-    .faq-item {
-      margin-top: 26px;
+    .callout {
+      border: 1px solid var(--border);
+      background: var(--card);
+      border-radius: 22px;
+      padding: 24px;
+      margin-top: 30px;
+    }
+
+    .callout p {
+      margin: 0;
     }
   </style>
 
@@ -113,10 +156,10 @@ const travelCalculators = calculators.filter(
     <h1>Travel Budget Calculators and Vacation Affordability Tools</h1>
 
     <p class="intro">
-      Travel can be one of the most worthwhile uses of money, but the final cost often
-      reaches beyond flights and hotels. These calculators help you decide whether a
-      vacation fits your income, savings, debt, emergency cushion, and long-term financial
-      flexibility before you book.
+      Travel can be one of the most worthwhile uses of money, but the final cost
+      often reaches beyond flights and hotels. These calculators help you decide
+      whether a vacation fits your income, savings, debt, emergency cushion, and
+      long-term financial flexibility before you book.
     </p>
 
     <div class="grid">
@@ -134,186 +177,175 @@ const travelCalculators = calculators.filter(
       <h2>Popular Travel Affordability Calculators</h2>
 
       <p>
-        Different trips create different kinds of financial pressure. A Disney vacation may
-        be driven by tickets, park days, food, and souvenirs. A cruise may look bundled until
-        gratuities, excursions, drink packages, and flights are included. A Europe trip may
-        require trains, hotels, museums, meals, and an exchange-rate cushion.
+        Different trips create different kinds of financial pressure. A Disney
+        vacation may be driven by tickets, park days, food, and souvenirs. A
+        cruise may look bundled until gratuities, excursions, drink packages, and
+        flights are included. A Europe trip may require trains, hotels, museums,
+        meals, and an exchange-rate cushion.
       </p>
 
       <div class="link-grid">
         <a class="link-card" href="/should-i-spend-5000-on-a-vacation">
           <strong>$5,000 Vacation Calculator</strong>
-          <span>Estimate whether a standard vacation fits your current budget.</span>
+          <span>
+            Estimate whether a standard vacation fits your current budget.
+          </span>
         </a>
 
         <a class="link-card" href="/should-i-spend-8000-on-a-disney-vacation">
           <strong>$8,000 Disney Vacation Calculator</strong>
-          <span>Check tickets, hotels, food, souvenirs, and park-day pressure.</span>
+          <span>
+            Check tickets, hotels, food, souvenirs, and park-day pressure.
+          </span>
         </a>
 
         <a class="link-card" href="/should-i-spend-10000-on-a-europe-trip">
           <strong>$10,000 Europe Trip Calculator</strong>
-          <span>Evaluate flights, hotels, trains, museums, meals, and currency buffers.</span>
+          <span>
+            Evaluate flights, hotels, trains, museums, meals, and currency
+            buffers.
+          </span>
         </a>
 
         <a class="link-card" href="/should-i-spend-12000-on-a-cruise">
           <strong>$12,000 Cruise Calculator</strong>
-          <span>Account for gratuities, excursions, drink packages, flights, and port costs.</span>
+          <span>
+            Account for gratuities, excursions, drink packages, flights, and
+            port costs.
+          </span>
         </a>
 
         <a class="link-card" href="/should-i-spend-15000-on-a-honeymoon">
           <strong>$15,000 Honeymoon Calculator</strong>
-          <span>Balance milestone memories with wedding debt and post-wedding cash flow.</span>
+          <span>
+            Balance milestone memories with wedding debt and post-wedding cash
+            flow.
+          </span>
         </a>
-
-        <a class="link-card" href="/how-to-budget-for-a-disney-vacation">
-  <strong>How to Budget for a Disney Vacation</strong>
-  <span>Plan Disney hotels, park tickets, food, souvenirs, upgrades, and financial guardrails.</span>
-</a>
 
         <a class="link-card" href="/should-i-spend-20000-on-a-family-vacation">
           <strong>$20,000 Family Vacation Calculator</strong>
-          <span>Measure airfare multipliers, larger rooms, meals, activities, and kid costs.</span>
+          <span>
+            Measure airfare multipliers, larger rooms, meals, activities, and
+            kid costs.
+          </span>
         </a>
       </div>
     </section>
-    
 
     <section class="content-section">
       <h2>How Much Should You Spend on Travel?</h2>
 
       <p>
-        A travel budget should be judged by more than the trip price. The better question is
-        whether the trip still works after your <a href="/how-much-emergency-savings-should-i-have">emergency fund</a>, debt payments, upcoming bills,
-        housing costs, childcare costs, and normal monthly spending are considered.
+        A travel budget should be judged by more than the trip price. The better
+        question is whether the trip still works after your
+        <a href="/how-much-emergency-savings-should-i-have">
+          emergency fund
+        </a>, debt payments, upcoming bills, housing costs, childcare costs, and
+        normal monthly spending are considered.
       </p>
 
       <p>
-        A trip that fits comfortably should create memories without creating months of stress
-        afterward. The safest travel budget leaves room for the experience, the return home,
-        and the next financial priority.
+        A trip that fits comfortably should create memories without creating
+        months of stress afterward. The safest travel budget leaves room for the
+        experience, the return home, and the next financial priority.
       </p>
+
+      <div class="callout">
+        <p>
+          A better question than “Can I afford this trip?” is often: “Can I
+          comfortably afford this trip without damaging my long-term financial
+          flexibility?”
+        </p>
+      </div>
 
       <h3>A Simple Travel Budget Rule</h3>
 
       <p>
-        A vacation is usually safer when it is paid mostly from savings, does not wipe out your
-        emergency cushion, and does not require high-interest credit card debt. The larger the
-        trip, the more important the recovery period becomes.
+        A vacation is usually safer when it is paid mostly from savings, does not
+        wipe out your emergency cushion, and does not require high-interest
+        credit card debt. The larger the trip, the more important the recovery
+        period becomes.
       </p>
 
       <h3>Hidden Travel Costs to Include</h3>
 
       <p>
-        Many trips cost more than the first quote. Include luggage, transportation, resort fees,
-        tips, meals, snacks, tours, excursions, tickets, travel insurance, passports, parking,
-        exchange-rate swings, and emergency spending.
+        Many trips cost more than the first quote. Include luggage,
+        transportation, resort fees, tips, meals, snacks, tours, excursions,
+        tickets, travel insurance, passports, parking, exchange-rate swings, and
+        emergency spending.
       </p>
 
       <h3>When Waiting Is the Better Move</h3>
 
       <p>
-        Waiting may be smarter if the trip would drain savings, require credit card debt, delay
-        debt payoff, or make normal bills feel tight after you return home. A cheaper version,
-        shorter trip, off-season booking, or delayed vacation can protect the same goal with
-        less pressure.
+        Waiting may be smarter if the trip would drain savings, require credit
+        card debt, delay debt payoff, or make normal bills feel tight after you
+        return home. A cheaper version, shorter trip, off-season booking, or
+        delayed vacation can protect the same goal with less pressure.
       </p>
     </section>
-    
 
     <section class="content-section">
-  <h2>Travel Planning Guides</h2>
+      <h2>Travel Planning Guides</h2>
 
-  <p>
-    These guides go deeper than the calculators alone, helping you understand hidden travel
-    costs, budget pressure points, and ways to avoid vacation debt.
-  </p>
+      <p>
+        These guides go deeper than the calculators alone, helping you understand
+        hidden travel costs, budget pressure points, and ways to avoid vacation
+        debt.
+      </p>
 
-  <div class="link-grid">
+      <div class="link-grid">
+        <a class="link-card" href="/how-to-budget-for-a-disney-vacation">
+          <strong>How to Budget for a Disney Vacation</strong>
+          <span>
+            Learn how to plan Disney tickets, hotels, food, upgrades, souvenirs,
+            and realistic family costs.
+          </span>
+        </a>
 
-    <a class="link-card" href="/how-to-budget-for-a-disney-vacation">
-      <strong>How to Budget for a Disney Vacation</strong>
-      <span>
-        Learn how to plan Disney tickets, hotels, food, Lightning Lane-style upgrades,
-        souvenirs, and realistic family costs.
-      </span>
-    </a>
-<a class="link-card" href="/how-to-avoid-vacation-debt">
-  <strong>How to Avoid Vacation Debt</strong>
-  <span>
-    Learn how to budget trips realistically, avoid credit card pressure,
-    and keep vacations from creating long-term financial stress.
-  </span>
-</a>
-  </div>
-</section>
+        <a class="link-card" href="/how-to-avoid-vacation-debt">
+          <strong>How to Avoid Vacation Debt</strong>
+          <span>
+            Learn how to budget trips realistically, avoid credit card pressure,
+            and keep vacations from creating long-term financial stress.
+          </span>
+        </a>
 
-<section class="content-section">
-  <h2>Travel Budget Rules That Matter</h2>
-
-  <p>
-    The total vacation price is only part of the equation. A trip becomes risky when it drains your emergency savings,
-    forces credit card debt, or creates stress after returning home.
-  </p>
-
-  <p>
-    Good travel budgets usually include an emergency cushion, realistic food costs, transportation between destinations,
-    baggage fees, travel insurance, and room for unexpected expenses. Many travelers underestimate how quickly costs rise
-    once flights and hotels are booked.
-  </p>
-
-  <p>
-    A better question than “Can I afford this trip?” is often: “Can I comfortably afford this trip without damaging my
-    long-term financial flexibility?”
-  </p>
-</section>
-
-    <section class="content-section">
-      <h2>Travel Budget FAQ</h2>
-
-      <div class="faq-item">
-        <h3>How much should I spend on a vacation?</h3>
-        <p>
-          The right amount depends on income, savings, debt, emergency funds, family size, and
-          upcoming obligations. A vacation should not damage your ability to pay normal bills
-          or recover financially after the trip.
-        </p>
-      </div>
-
-      <div class="faq-item">
-        <h3>Should I use savings or finance a vacation?</h3>
-        <p>
-          Savings are usually safer than financing. High-interest travel debt can turn a good
-          trip into months of financial stress after you return home.
-        </p>
-      </div>
-
-      <div class="faq-item">
-        <h3>What travel costs do people forget?</h3>
-        <p>
-          Commonly forgotten costs include checked bags, tips, rideshares, parking, resort fees,
-          excursions, museum tickets, snacks, phone plans, travel insurance, passports, and
-          emergency expenses.
-        </p>
-      </div>
-
-      <div class="faq-item">
-        <h3>Is an expensive vacation ever worth it?</h3>
-        <p>
-          Yes, an expensive vacation can be worth it if the trip is a real priority, the full
-          cost is planned honestly, and the expense does not create debt pressure or drain your
-          emergency fund.
-        </p>
-      </div>
-
-      <div class="faq-item">
-        <h3>How do I make a trip cheaper without ruining it?</h3>
-        <p>
-          Reduce the number of travel days, choose fewer paid activities, use cheaper dates,
-          book lodging with a kitchen, limit souvenirs, avoid unnecessary upgrades, and build
-          more free time into the itinerary.
-        </p>
+        <a class="link-card" href="/how-much-emergency-savings-should-i-have">
+          <strong>Emergency Savings Guide</strong>
+          <span>
+            See how much cushion to keep before booking a major trip or
+            committing to a large expense.
+          </span>
+        </a>
       </div>
     </section>
+
+    <section class="content-section">
+      <h2>Travel Budget Rules That Matter</h2>
+
+      <p>
+        The total vacation price is only part of the equation. A trip becomes
+        risky when it drains emergency savings, forces credit card debt, or
+        creates stress after returning home.
+      </p>
+
+      <p>
+        Good travel budgets usually include an emergency cushion, realistic food
+        costs, transportation between destinations, baggage fees, travel
+        insurance, and room for unexpected expenses. Many travelers underestimate
+        how quickly costs rise once flights and hotels are booked.
+      </p>
+
+      <p>
+        The strongest travel budgets account for the whole experience: the trip
+        itself, the return home, and the financial goals that still need to be
+        protected afterward.
+      </p>
+    </section>
+
+    <FAQSection title="Travel Budget FAQ" faqs={travelFaqs} />
   </main>
 </Layout>
