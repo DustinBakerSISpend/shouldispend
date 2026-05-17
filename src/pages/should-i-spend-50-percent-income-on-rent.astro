@@ -1,9 +1,20 @@
 ---
 import Layout from "../layouts/Layout.astro";
+import FAQSection from "../components/FAQSection.astro";
 import RelatedCalculators from "../components/RelatedCalculators.astro";
+import RelatedGuides from "../components/RelatedGuides.astro";
+import MethodologySection from "../components/MethodologySection.astro";
+import FinancialRedFlags from "../components/FinancialRedFlags.astro";
+import CalculatorAssumptions from "../components/CalculatorAssumptions.astro";
+import KeyCostCategories from "../components/KeyCostCategories.astro";
+import ReduceCostTips from "../components/ReduceCostTips.astro";
+import WhenSpendingMakesSense from "../components/WhenSpendingMakesSense.astro";
 ---
 
-<Layout title="Should I Spend $2,000 on Rent?">
+<Layout
+  title="Should I Spend 50% of My Income on Rent?"
+  description="Use this rent calculator to evaluate whether spending 50% of your income on rent creates too much financial pressure."
+>
   <style>
     .container {
       max-width: 920px;
@@ -40,7 +51,7 @@ import RelatedCalculators from "../components/RelatedCalculators.astro";
 
     .content-section {
       max-width: 760px;
-      margin: 0 auto 56px auto;
+      margin: 72px auto 0;
     }
 
     .content-section h2 {
@@ -50,7 +61,8 @@ import RelatedCalculators from "../components/RelatedCalculators.astro";
       color: #0f172a;
     }
 
-    .content-section p {
+    .content-section p,
+    .content-section li {
       font-size: 1.08rem;
       line-height: 1.9;
       color: #334155;
@@ -66,7 +78,7 @@ import RelatedCalculators from "../components/RelatedCalculators.astro";
       box-shadow: 0 10px 30px rgba(15, 23, 42, 0.05);
     }
 
-    .calculator h3 {
+    .calculator h2 {
       margin-bottom: 28px;
       font-size: 1.7rem;
       color: #0f172a;
@@ -92,6 +104,20 @@ import RelatedCalculators from "../components/RelatedCalculators.astro";
       border-radius: 14px;
       border: 1px solid #cbd5e1;
       font-size: 1rem;
+      box-sizing: border-box;
+    }
+
+    .helper-link {
+      margin-top: 10px;
+      font-size: 0.92rem;
+      line-height: 1.5;
+      color: #475569;
+    }
+
+    .helper-link a {
+      color: #0f766e;
+      font-weight: 700;
+      text-decoration: none;
     }
 
     button {
@@ -107,12 +133,17 @@ import RelatedCalculators from "../components/RelatedCalculators.astro";
       display: inline-block;
     }
 
+    button:hover {
+      opacity: 0.92;
+    }
+
     .result {
       margin-top: 28px;
       background: #f8fafc;
       border: 1px solid #cbd5e1;
       border-radius: 18px;
       padding: 28px;
+      display: none;
     }
 
     .score {
@@ -137,39 +168,36 @@ import RelatedCalculators from "../components/RelatedCalculators.astro";
       transition: width 0.4s ease;
     }
 
+    .result-details {
+      color: #334155;
+      line-height: 1.8;
+      margin-bottom: 18px;
+    }
+
     .fine-print {
       font-size: 0.9rem;
       color: #64748b;
     }
 
-    .faq-section h2 {
-      margin-bottom: 32px;
-    }
-
-    .faq {
-      background: white;
-      border: 1px solid #dbe4ee;
-      border-radius: 18px;
-      padding: 28px;
-      margin-bottom: 22px;
-    }
-
-    .faq h3 {
-      margin-bottom: 16px;
-      color: #0f172a;
-    }
-
-    .faq p {
-      margin: 0;
-    }
-
     @media (max-width: 720px) {
+      .container {
+        padding: 54px 20px;
+      }
+
+      h1 {
+        font-size: 2.8rem;
+      }
+
       .grid {
         grid-template-columns: 1fr;
       }
 
       .calculator {
         padding: 24px;
+      }
+
+      .score {
+        font-size: 2rem;
       }
     }
   </style>
@@ -180,76 +208,267 @@ import RelatedCalculators from "../components/RelatedCalculators.astro";
     <h1>Should I Spend 50% of My Income on Rent?</h1>
 
     <p class="subtitle">
-      Evaluate whether 50% of your income on rent fits comfortably within
-      your income, debt load, savings, and overall financial flexibility.
+      Evaluate whether spending half of your take-home income on rent leaves
+      enough room for debt payments, utilities, savings, emergencies, and normal
+      life.
     </p>
 
     <section class="content-section">
-      <h2>How Much Rent Can You Actually Afford?</h2>
+      <h2>Is 50% of Income on Rent Too Much?</h2>
 
       <p>
-        Rent is often the largest recurring expense in a monthly budget.
-        Affordability depends on more than income alone — savings, debt,
-        emergency flexibility, and long-term goals all matter.
+        Spending 50% of take-home income on rent is usually a high-risk housing
+        decision. It may be unavoidable in some expensive markets, but it leaves
+        far less room for savings, debt payoff, transportation, food, insurance,
+        and unexpected expenses.
       </p>
 
       <p>
-        A rent payment that stretches your budget too aggressively can reduce
-        savings growth, increase stress, and make financial setbacks harder to
-        absorb.
+        The danger is not just the rent payment itself. The danger is losing
+        flexibility every month for the entire lease.
       </p>
     </section>
 
     <div class="calculator">
-      <h3>Rent Affordability Verdict</h3>
+      <h2>Rent Affordability Verdict</h2>
 
       <div class="grid">
         <div>
-          <label>Monthly Take-Home Income</label>
+          <label for="income">Monthly Take-Home Income</label>
           <input id="income" type="number" placeholder="Example: 6500" />
         </div>
 
         <div>
-          <label>Total Savings</label>
+          <label for="savings">Total Savings</label>
           <input id="savings" type="number" placeholder="Example: 25000" />
         </div>
 
         <div>
-          <label>Monthly Rent</label>
-          <input id="rent" type="number" placeholder="2000" />
+          <label for="rent">Monthly Rent</label>
+          <input id="rent" type="number" value="3250" />
         </div>
 
         <div>
-          <label>Monthly Debt Payments</label>
+          <label for="debt">Monthly Debt Payments</label>
           <input id="debt" type="number" placeholder="Example: 800" />
+
+          <div class="helper-link">
+            Not sure what counts as debt?
+            <a href="/what-counts-as-debt">Read the debt guide</a>
+          </div>
         </div>
       </div>
 
-      <button id="rentButton">Get Rent Verdict</button>
+      <button id="rentButton" type="button">Get Rent Verdict</button>
 
       <div class="result" id="result">
-        <div class="score" id="scoreText">Waiting For Inputs</div>
+        <div class="score" id="scoreText"></div>
 
         <div class="bar">
           <div class="fill" id="scoreFill"></div>
         </div>
+
+        <div class="result-details" id="resultDetails"></div>
 
         <div class="fine-print">
           This is a general educational estimate, not financial advice.
         </div>
       </div>
     </div>
+
+    <section class="content-section">
+      <h2>What a 50% Rent Ratio Really Means</h2>
+
+      <p>
+        A 50% rent ratio means half of monthly take-home pay is gone before
+        utilities, groceries, transportation, insurance, debt, savings, and
+        everyday spending are handled.
+      </p>
+
+      <p>
+        This can create a fragile budget. Even if rent is technically payable,
+        there may be very little margin left for car repairs, medical bills, job
+        disruption, moving costs, or family emergencies.
+      </p>
+    </section>
+
+    <WhenSpendingMakesSense
+      title="When 50% Rent Might Be Temporarily Acceptable"
+      items={[
+        "The lease is short-term and solves an immediate housing need.",
+        "You have unusually strong savings after move-in costs.",
+        "You have little or no debt and very low transportation costs.",
+        "The location directly supports income, safety, school, or family stability.",
+        "You have a clear plan to reduce housing costs or increase income soon.",
+      ]}
+    />
+
+    <section class="content-section">
+      <h2>When 50% Rent Becomes Dangerous</h2>
+
+      <p>
+        A 50% rent payment becomes dangerous when it forces credit card reliance,
+        prevents savings, delays debt payoff, or leaves no buffer for emergencies.
+      </p>
+
+      <p>
+        It is especially risky if the rent only looks affordable because of
+        overtime, bonuses, side income, temporary help, or optimistic assumptions
+        about future raises.
+      </p>
+    </section>
+
+    <KeyCostCategories
+      items={[
+        {
+          title: "Utilities and fees",
+          description:
+            "Electric, gas, water, trash, internet, parking, pet fees, laundry, and renter’s insurance can push the true housing cost above the rent payment.",
+        },
+        {
+          title: "Debt payments",
+          description:
+            "Credit cards, student loans, auto loans, and personal loans make a 50% rent ratio much harder to sustain.",
+        },
+        {
+          title: "Emergency savings",
+          description:
+            "High rent is much riskier when savings cannot cover repairs, medical bills, job loss, moving costs, or other surprises.",
+        },
+        {
+          title: "Income stability",
+          description:
+            "Spending half of income on rent is more dangerous when income depends on overtime, commissions, contract work, or unstable hours.",
+        },
+      ]}
+    />
+
+    <ReduceCostTips
+      items={[
+        "Look for a cheaper unit before signing a long lease.",
+        "Consider a roommate, smaller apartment, or different neighborhood.",
+        "Negotiate move-in costs, parking, or lease terms if possible.",
+        "Avoid draining savings for deposits, furniture, or moving costs.",
+        "Compare total housing cost, not just rent.",
+        "Set a specific plan to lower rent burden or increase income.",
+      ]}
+    />
+
+    <FinancialRedFlags
+      items={[
+        "Rent would leave little or no money for savings each month.",
+        "You would need credit cards for groceries, gas, utilities, or normal expenses.",
+        "Move-in costs would wipe out most of your emergency fund.",
+        "Debt payments already consume a large share of take-home pay.",
+        "You are relying on overtime, bonuses, family help, or side income to make rent work.",
+      ]}
+    />
+
+    <CalculatorAssumptions
+      items={[
+        "The calculator uses monthly take-home income rather than gross income.",
+        "The estimate assumes rent is the base monthly payment and does not include every possible utility or fee.",
+        "Debt payments should include recurring monthly obligations such as credit cards, student loans, car payments, and personal loans.",
+        "Savings are used as a cushion signal because high rent creates less margin for emergencies.",
+        "Local housing costs, job stability, family obligations, and transportation needs can change the final decision.",
+      ]}
+    />
+
+    <FAQSection
+      title="50% Rent FAQ"
+      faqs={[
+        {
+          question: "Is spending 50% of income on rent bad?",
+          answer:
+            "It is usually risky. Spending half of take-home income on rent can leave very little room for savings, debt payoff, emergencies, transportation, groceries, and normal life.",
+        },
+        {
+          question: "Can spending 50% of income on rent ever make sense?",
+          answer:
+            "Sometimes, but usually only temporarily. It is more realistic with strong savings, very low debt, stable income, and a clear reason the location is worth the tradeoff.",
+        },
+        {
+          question: "Should utilities count toward the 50% number?",
+          answer:
+            "Utilities should be considered separately because they make the true housing cost higher. Rent may be 50% of income before utilities, but the total housing burden can be even higher.",
+        },
+        {
+          question: "What is a safer rent percentage?",
+          answer:
+            "Many renters aim for 25% to 30% of take-home income. In expensive markets, 35% to 40% may be more realistic, but 50% usually creates much less flexibility.",
+        },
+        {
+          question: "What should I do if rent is half my income?",
+          answer:
+            "Build a detailed monthly budget, avoid new debt, protect emergency savings, compare cheaper options, and create a plan to lower housing costs or increase income.",
+        },
+      ]}
+    />
+
+    <MethodologySection category="rent affordability" updated="May 2026" />
+
+    <RelatedGuides
+      guides={[
+        {
+          title: "How Much Rent Can I Afford?",
+          href: "/how-much-rent-can-i-afford",
+          description:
+            "Learn how rent-to-income rules, take-home pay, debt, utilities, and savings affect affordability.",
+        },
+        {
+          title: "What Counts as Debt?",
+          href: "/what-counts-as-debt",
+          description:
+            "See which monthly obligations should be included when evaluating rent affordability.",
+        },
+      ]}
+    />
+
+    <RelatedCalculators
+      calculators={[
+        {
+          category: "Rent",
+          title: "Should I Spend $2,000 on Rent?",
+          href: "/should-i-spend-2000-on-rent",
+        },
+        {
+          category: "Rent",
+          title: "Should I Spend $2,500 on Rent?",
+          href: "/should-i-spend-2500-on-rent",
+        },
+        {
+          category: "Rent",
+          title: "Should I Spend $3,000 on Rent?",
+          href: "/should-i-spend-3000-on-rent",
+        },
+        {
+          category: "Rent",
+          title: "Should I Spend 40% of My Income on Rent?",
+          href: "/should-i-spend-40-percent-income-on-rent",
+        },
+      ]}
+    />
   </main>
 
   <script is:inline>
     function calculateRent() {
       const income = Number(document.getElementById("income").value);
-      const savings = Number(document.getElementById("savings").value);
+      const savings = Number(document.getElementById("savings").value || 0);
       const rent = Number(document.getElementById("rent").value);
-      const debt = Number(document.getElementById("debt").value);
+      const debt = Number(document.getElementById("debt").value || 0);
+
+      const result = document.getElementById("result");
+      const scoreText = document.getElementById("scoreText");
+      const scoreFill = document.getElementById("scoreFill");
+      const resultDetails = document.getElementById("resultDetails");
+
+      result.style.display = "block";
 
       if (!income || !rent) {
-        alert("Please enter income and rent.");
+        scoreText.textContent = "Add your numbers first";
+        scoreFill.style.width = "0%";
+        resultDetails.innerHTML =
+          "<p>Enter your take-home income and monthly rent so the calculator can give a useful verdict.</p>";
         return;
       }
 
@@ -257,65 +476,56 @@ import RelatedCalculators from "../components/RelatedCalculators.astro";
 
       const rentRatio = rent / income;
       const debtRatio = debt / income;
+      const savingsMonths = savings > 0 ? savings / rent : 0;
 
       score -= rentRatio * 120;
       score -= debtRatio * 45;
 
-      if (rentRatio > 0.35 && savings < rent * 3) {
-  score -= 18;
-}
+      if (rentRatio > 0.45) {
+        score -= 14;
+      }
 
-else if (rentRatio > 0.25 && savings < rent * 6) {
-  score -= 10;
-}
+      if (rentRatio > 0.35 && savings < rent * 3) {
+        score -= 18;
+      } else if (rentRatio > 0.25 && savings < rent * 6) {
+        score -= 10;
+      }
 
       score = Math.max(5, Math.min(100, Math.round(score)));
 
       let verdict = "";
+      let color = "";
 
       if (score >= 80) {
         verdict = "Comfortable Rent";
+        color = "#16a34a";
       } else if (score >= 60) {
         verdict = "Manageable With Guardrails";
+        color = "#eab308";
       } else if (score >= 40) {
         verdict = "Financial Stretch";
+        color = "#f97316";
       } else {
         verdict = "High Risk Housing Cost";
+        color = "#dc2626";
       }
 
-      document.getElementById(
-        "scoreText"
-      ).innerText = `${verdict} - ${score}/100`;
+      const rentPercent = rentRatio * 100;
+      const debtPercent = debtRatio * 100;
 
-      document.getElementById("scoreFill").style.width = `${score}%`;
+      scoreText.textContent = `${verdict} - ${score}/100`;
+      scoreFill.style.width = `${score}%`;
+      scoreFill.style.background = color;
+
+      resultDetails.innerHTML = `
+        <p><strong>Rent impact:</strong> ${rentPercent.toFixed(1)}% of monthly take-home income.</p>
+        <p><strong>Debt impact:</strong> ${debtPercent.toFixed(1)}% of monthly take-home income.</p>
+        <p><strong>Savings cushion:</strong> ${savingsMonths.toFixed(1)} months of rent covered.</p>
+      `;
     }
 
     document
       .getElementById("rentButton")
       .addEventListener("click", calculateRent);
   </script>
-  <RelatedCalculators
-  calculators={[
-    {
-      category: "Rent",
-      title: "Should I Spend $3,000 on Rent?",
-      href: "/should-i-spend-3000-on-rent",
-    },
-    {
-      category: "Rent",
-      title: "Should I Spend $2,500 on Rent?",
-      href: "/should-i-spend-2500-on-rent",
-    },
-    {
-      category: "Housing",
-      title: "How Much Rent Can I Afford?",
-      href: "/how-much-rent-can-i-afford",
-    },
-    {
-      category: "Debt",
-      title: "What Counts as Debt?",
-      href: "/what-counts-as-debt",
-    },
-  ]}
-/>
 </Layout>
