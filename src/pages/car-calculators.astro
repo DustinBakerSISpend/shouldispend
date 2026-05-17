@@ -1,14 +1,46 @@
 ---
 import Layout from "../layouts/Layout.astro";
 import CalculatorCard from "../components/CalculatorCard.astro";
+import FAQSection from "../components/FAQSection.astro";
 import { calculators } from "../data/calculators.js";
 
 const carCalculators = calculators.filter(
   (calculator) => calculator.category === "Cars"
 );
+
+const carFaqs = [
+  {
+    question: "How much should I spend on a car payment?",
+    answer:
+      "A car payment is safer when it fits comfortably within take-home income after insurance, fuel, maintenance, savings, debt payments, and emergency costs are included.",
+  },
+  {
+    question: "Is a $700 car payment too much?",
+    answer:
+      "A $700 car payment can be manageable for some households, but it becomes risky when it crowds out savings, debt payoff, insurance, fuel, repairs, or other monthly obligations.",
+  },
+  {
+    question: "Is a $1,000 car payment too much?",
+    answer:
+      "A $1,000 car payment is usually a high-cost vehicle decision. It may work for high-income households with strong savings and low debt, but it deserves careful review.",
+  },
+  {
+    question: "What costs should I include besides the payment?",
+    answer:
+      "Include insurance, fuel, maintenance, tires, registration, repairs, interest, depreciation, parking, and any other recurring ownership costs.",
+  },
+  {
+    question: "Does loan length matter?",
+    answer:
+      "Yes. A longer loan can lower the monthly payment, but it may increase total interest and keep you owing more than the vehicle is worth for longer.",
+  },
+];
 ---
 
-<Layout title="Car Payment Calculators | ShouldISpend">
+<Layout
+  title="Car Payment Calculators | ShouldISpend"
+  description="Browse car payment calculators for $700 and $1,000 monthly payments, plus guidance on insurance, loan length, interest, depreciation, and total ownership cost."
+>
   <style>
     .container {
       max-width: 1100px;
@@ -26,41 +58,95 @@ const carCalculators = calculators.filter(
     }
 
     h1 {
-      font-size: 4rem;
+      font-size: clamp(2.8rem, 7vw, 4.8rem);
       line-height: 1;
       margin-bottom: 24px;
-      max-width: 850px;
+      max-width: 900px;
     }
 
     .intro {
-      max-width: 760px;
+      max-width: 800px;
       color: var(--muted);
       font-size: 1.1rem;
       line-height: 1.8;
       margin-bottom: 56px;
     }
 
-    .grid {
+    .grid,
+    .link-grid,
+    .info-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
       gap: 24px;
+    }
+
+    .grid {
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
       margin-top: 32px;
     }
 
+    .link-grid,
+    .info-grid {
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      margin-top: 28px;
+    }
+
     .content-section {
-      max-width: 760px;
+      max-width: 820px;
       margin-top: 80px;
     }
 
     .content-section h2 {
       font-size: 2rem;
       margin-bottom: 20px;
+      line-height: 1.2;
     }
 
-    .content-section p {
+    .content-section h3 {
+      font-size: 1.25rem;
+      margin-top: 28px;
+      margin-bottom: 10px;
+      color: var(--text);
+    }
+
+    .content-section p,
+    .content-section li {
       color: var(--muted);
       line-height: 1.8;
       margin-bottom: 18px;
+    }
+
+    .link-card,
+    .info-card {
+      display: block;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      padding: 22px;
+      text-decoration: none;
+      color: inherit;
+    }
+
+    .link-card {
+      transition: transform 0.15s ease;
+    }
+
+    .link-card:hover {
+      transform: translateY(-2px);
+    }
+
+    .link-card strong,
+    .info-card h3 {
+      display: block;
+      color: var(--text);
+      margin-bottom: 10px;
+    }
+
+    .link-card span,
+    .info-card p {
+      color: var(--muted);
+      line-height: 1.7;
+      font-size: 0.96rem;
+      margin: 0;
     }
   </style>
 
@@ -70,7 +156,10 @@ const carCalculators = calculators.filter(
     <h1>Car Payment Calculators and Auto Affordability Tools</h1>
 
     <p class="intro">
-      Car payments can look manageable in isolation, but the real cost includes insurance, fuel, repairs, debt load, savings pressure, and long-term flexibility. These calculators help you evaluate whether a vehicle expense actually fits your financial life.
+      Car payments can look manageable in isolation, but the real cost includes
+      insurance, fuel, repairs, maintenance, interest, depreciation, debt load,
+      savings pressure, and long-term flexibility. These calculators help you
+      evaluate whether a vehicle expense actually fits your financial life.
     </p>
 
     <div class="grid">
@@ -85,15 +174,127 @@ const carCalculators = calculators.filter(
     </div>
 
     <section class="content-section">
+      <h2>Popular Car Payment Tools</h2>
+
+      <p>
+        A $700 payment and a $1,000 payment can both create pressure depending
+        on income, debt, savings, insurance, and loan length. Use these
+        calculators to compare the monthly payment against the full ownership
+        cost.
+      </p>
+
+      <div class="link-grid">
+        <a class="link-card" href="/should-i-spend-700-on-a-car-payment">
+          <strong>$700 Car Payment Calculator</strong>
+          <span>
+            Evaluate whether a $700 monthly vehicle payment fits your income,
+            savings, debt, and monthly flexibility.
+          </span>
+        </a>
+
+        <a class="link-card" href="/should-i-spend-1000-on-a-car-payment">
+          <strong>$1,000 Car Payment Calculator</strong>
+          <span>
+            Test whether a high-end monthly vehicle payment creates too much
+            pressure on your budget.
+          </span>
+        </a>
+
+        <a class="link-card" href="/what-counts-as-debt">
+          <strong>What Counts as Debt?</strong>
+          <span>
+            See which debt obligations should be included when evaluating car
+            payment affordability.
+          </span>
+        </a>
+
+        <a class="link-card" href="/how-much-emergency-savings-should-i-have">
+          <strong>Emergency Savings Guide</strong>
+          <span>
+            Learn how much cushion to keep before taking on a large monthly
+            vehicle payment.
+          </span>
+        </a>
+      </div>
+    </section>
+
+    <section class="content-section">
       <h2>How Much Should You Spend on a Car Payment?</h2>
 
       <p>
-        A car payment should be judged against your full monthly picture, not just whether the lender approves the loan. Income, existing debt, savings, insurance, repairs, and emergency flexibility all matter.
+        A car payment should be judged against your full monthly picture, not
+        just whether the lender approves the loan. Income, existing debt,
+        savings, insurance, fuel, repairs, loan length, and emergency
+        flexibility all matter.
       </p>
 
       <p>
-        A lower car payment can create more room for savings and reduce stress. A higher payment may still work, but only when the rest of the budget stays stable after the vehicle expense is included.
+        A lower car payment can create more room for savings and reduce stress.
+        A higher payment may still work, but only when the rest of the budget
+        stays stable after the vehicle expense is included.
+      </p>
+
+      <p>
+        The strongest car budgets include the payment plus the true ownership
+        costs: insurance, maintenance, tires, registration, fuel, depreciation,
+        and surprise repairs.
       </p>
     </section>
+
+    <section class="content-section">
+      <h2>Car Costs That Often Get Missed</h2>
+
+      <div class="info-grid">
+        <div class="info-card">
+          <h3>Insurance</h3>
+          <p>
+            Newer, larger, luxury, or financed vehicles can carry higher
+            insurance premiums than expected.
+          </p>
+        </div>
+
+        <div class="info-card">
+          <h3>Loan Length</h3>
+          <p>
+            A longer loan can make the payment look better while increasing
+            total interest and negative-equity risk.
+          </p>
+        </div>
+
+        <div class="info-card">
+          <h3>Maintenance and Tires</h3>
+          <p>
+            Trucks, SUVs, luxury models, and performance vehicles often cost
+            more to maintain and repair.
+          </p>
+        </div>
+
+        <div class="info-card">
+          <h3>Depreciation</h3>
+          <p>
+            A high monthly payment can become more stressful if the vehicle
+            loses value faster than the loan balance falls.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <section class="content-section">
+      <h2>When a Higher Car Payment Can Make Sense</h2>
+
+      <p>
+        A higher payment can make sense when the vehicle supports work, safety,
+        family logistics, reliability, or a real transportation need — and the
+        household still has strong savings after the purchase.
+      </p>
+
+      <p>
+        It becomes riskier when the payment depends on a long loan, uncertain
+        income, ignored insurance costs, or a belief that future raises will make
+        the payment easier later.
+      </p>
+    </section>
+
+    <FAQSection title="Car Payment FAQ" faqs={carFaqs} />
   </main>
 </Layout>
