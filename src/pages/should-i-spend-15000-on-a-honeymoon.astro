@@ -3,10 +3,19 @@ import Layout from "../layouts/Layout.astro";
 import CalculatorPageShell from "../components/CalculatorPageShell.astro";
 import FAQSection from "../components/FAQSection.astro";
 import RelatedCalculators from "../components/RelatedCalculators.astro";
+import RelatedGuides from "../components/RelatedGuides.astro";
+import MethodologySection from "../components/MethodologySection.astro";
+import FinancialRedFlags from "../components/FinancialRedFlags.astro";
+import CalculatorAssumptions from "../components/CalculatorAssumptions.astro";
+import KeyCostCategories from "../components/KeyCostCategories.astro";
+import ReduceCostTips from "../components/ReduceCostTips.astro";
+import WhenSpendingMakesSense from "../components/WhenSpendingMakesSense.astro";
 ---
 
-<Layout title="Should I Spend $15,000 on a Honeymoon?">
-
+<Layout
+  title="Should I Spend $15,000 on a Honeymoon?"
+  description="Use this honeymoon calculator to decide whether a $15,000 trip fits your income, post-wedding savings, debt, and first-year marriage cash flow."
+>
   <style>
     .container {
       max-width: 950px;
@@ -50,10 +59,11 @@ import RelatedCalculators from "../components/RelatedCalculators.astro";
       border-radius: 14px;
       border: 1px solid var(--border);
       font-size: 1.1rem;
+      box-sizing: border-box;
     }
 
     button {
-      background: var(--button);
+      background: #0f766e;
       color: white;
       border: none;
       padding: 16px 28px;
@@ -65,11 +75,17 @@ import RelatedCalculators from "../components/RelatedCalculators.astro";
       display: inline-block;
     }
 
+    button:hover {
+      opacity: 0.92;
+    }
+
     .result {
       margin-top: 40px;
       border: 1px solid var(--border);
       border-radius: 24px;
       padding: 28px;
+      display: none;
+      background: #f8fafc;
     }
 
     .score {
@@ -121,288 +137,366 @@ import RelatedCalculators from "../components/RelatedCalculators.astro";
       color: var(--primary);
       font-weight: 600;
     }
+
+    .content-section p,
+    .content-section li {
+      line-height: 1.8;
+    }
   </style>
 
-<div class="container">
+  <div class="container">
+    <CalculatorPageShell
+      eyebrow="Honeymoon Calculator"
+      title="Should I Spend $15,000 on a Honeymoon?"
+      description="Estimate whether a $15,000 honeymoon fits your income, savings after the wedding, debt, emergency cushion, and post-wedding cash flow."
+    >
+      <div class="card">
+        <h2>Honeymoon Affordability Verdict</h2>
 
-<CalculatorPageShell
-  eyebrow="Honeymoon Calculator"
-  title="Should I Spend $15,000 on a Honeymoon?"
-  description="Estimate whether a $15,000 honeymoon fits your income, savings, debt, wedding costs, emergency cushion, and post-wedding cash flow."
->
+        <div class="grid">
+          <div>
+            <label for="income">Annual Household Income</label>
+            <input id="income" type="number" placeholder="150000" />
+          </div>
 
-  <div class="card">
+          <div>
+            <label for="savings">Total Savings After Wedding</label>
+            <input id="savings" type="number" placeholder="30000" />
+          </div>
 
-    <h2>Honeymoon Affordability Verdict</h2>
+          <div>
+            <label for="vacation">Honeymoon Cost</label>
+            <input id="vacation" type="number" value="15000" />
+          </div>
 
-    <div class="grid">
+          <div>
+            <label for="debt">Total Debt</label>
+            <input id="debt" type="number" placeholder="20000" />
 
-      <div>
-        <label>Annual Household Income</label>
-        <input id="income" type="number" placeholder="150000" />
-      </div>
+            <div class="helper-link">
+              <a href="/what-counts-as-debt">
+                Not sure what counts as debt? Read the debt guide
+              </a>
+            </div>
+          </div>
+        </div>
 
-      <div>
-        <label>Total Savings After Wedding</label>
-        <input id="savings" type="number" placeholder="30000" />
-      </div>
+        <button id="vacationButton" type="button">
+          Get Honeymoon Verdict
+        </button>
 
-      <div>
-        <label>Honeymoon Cost</label>
-        <input id="vacation" type="number" placeholder="15000" />
-      </div>
+        <div class="result" id="result">
+          <div class="score" id="score"></div>
 
-      <div>
-        <label>Total Debt</label>
-        <input id="debt" type="number" placeholder="20000" />
+          <div class="bar">
+            <div class="fill" id="barFill"></div>
+          </div>
 
-        <div class="helper-link">
-          <a href="/what-counts-as-debt">
-            Not sure what counts as debt? Read the debt guide
-          </a>
+          <div class="metric" id="stress"></div>
+          <div class="metric" id="savingsImpact"></div>
+          <div class="metric" id="incomeImpact"></div>
+          <div class="metric" id="debtRatio"></div>
+
+          <div class="guidance" id="guidance"></div>
+
+          <div class="disclaimer">
+            This is a general educational estimate, not financial advice.
+          </div>
         </div>
       </div>
 
-    </div>
+      <div class="content-section">
+        <h2>What a $15,000 Honeymoon Really Costs</h2>
 
-    <button id="vacationButton" type="button">
-      Get Honeymoon Verdict
-    </button>
+        <p>
+          A honeymoon budget can feel different from a normal vacation because
+          it is tied to a major life milestone. Flights, resort nights, upgrades,
+          excursions, meals, spa appointments, travel insurance, photos, airport
+          transfers, and once-in-a-lifetime experiences can quickly push the
+          total above the original estimate.
+        </p>
 
-    <div class="result">
+        <p>
+          A $15,000 honeymoon may be reasonable for a luxury resort,
+          international trip, longer stay, or premium experience. It becomes
+          more risky when the wedding already created debt, savings are low
+          after the wedding, or the honeymoon depends on credit cards to feel
+          special.
+        </p>
 
-      <div class="score" id="score">
-        Comfortable Honeymoon - 82/100
+        <p>
+          The best honeymoon budget protects both goals: making the trip
+          memorable and starting married life without immediate financial strain.
+        </p>
       </div>
 
-      <div class="bar">
-        <div class="fill" id="barFill"></div>
+      <div class="content-section">
+        <h2>Why Honeymoon Spending Hits Differently</h2>
+
+        <p>
+          Honeymoon spending often happens right after one of the most expensive
+          seasons of a couple’s life. Wedding deposits, final vendor payments,
+          attire, rings, travel, gifts, and moving or housing costs may all land
+          close together.
+        </p>
+
+        <p>
+          That timing matters. A trip that would be affordable in isolation may
+          become stressful if it comes immediately after a wedding that drained
+          cash reserves or added new debt.
+        </p>
       </div>
 
-      <div class="metric" id="stress"></div>
-      <div class="metric" id="savingsImpact"></div>
-      <div class="metric" id="incomeImpact"></div>
-      <div class="metric" id="debtRatio"></div>
+      <WhenSpendingMakesSense
+        title="When a $15,000 Honeymoon Makes Sense"
+        items={[
+          "The wedding is already paid for without lingering high-interest debt.",
+          "You still have meaningful emergency savings after the honeymoon.",
+          "The trip is a true shared priority, not just pressure to match expectations.",
+          "The budget includes flights, lodging, meals, excursions, upgrades, insurance, and tips.",
+          "The honeymoon will not make the first year of marriage financially tighter than necessary.",
+        ]}
+      />
 
-      <div class="guidance" id="guidance"></div>
+      <div class="content-section">
+        <h2>When You Should Wait</h2>
 
-      <div class="disclaimer">
-        This is a general educational estimate, not financial advice.
+        <p>
+          Waiting may be smarter if wedding bills are still unpaid, credit cards
+          are carrying balances, or the honeymoon would drain most of your
+          remaining savings.
+        </p>
+
+        <p>
+          You can still preserve the milestone with a lower-cost version.
+          Consider a shorter trip, delayed honeymoon, cheaper resort, fewer
+          upgrades, domestic destination, or a smaller trip now with a larger
+          anniversary trip later.
+        </p>
       </div>
 
-    </div>
+      <KeyCostCategories
+        items={[
+          {
+            title: "Flights and premium lodging",
+            description:
+              "International flights, upgraded rooms, villas, overwater bungalows, suites, or resort packages can drive the core honeymoon cost.",
+          },
+          {
+            title: "Resort fees, meals, and drinks",
+            description:
+              "All-inclusive packages may reduce surprises, but resort fees, tips, premium restaurants, drinks, and room service still matter.",
+          },
+          {
+            title: "Excursions and once-in-a-lifetime upgrades",
+            description:
+              "Private tours, boat days, spa appointments, photos, adventure excursions, and special experiences can turn the trip into a much larger purchase.",
+          },
+          {
+            title: "Wedding cash flow overlap",
+            description:
+              "Final wedding payments, gift timing, credit card balances, and post-wedding savings should be considered before booking the honeymoon.",
+          },
+        ]}
+      />
 
+      <ReduceCostTips
+        items={[
+          "Delay the honeymoon by a few months to rebuild cash after the wedding.",
+          "Use cash gifts or a honeymoon fund only after protecting emergency savings.",
+          "Shorten the trip instead of cutting every meaningful experience.",
+          "Choose one premium splurge and keep the rest of the trip simpler.",
+          "Travel during shoulder season instead of peak honeymoon dates.",
+          "Compare luxury domestic options against expensive international itineraries.",
+        ]}
+      />
+
+      <FinancialRedFlags
+        items={[
+          "Wedding bills are still unpaid or sitting on credit cards.",
+          "The honeymoon would drain most of your post-wedding savings.",
+          "You are counting on uncertain cash gifts to make the trip affordable.",
+          "The trip requires high-interest debt to feel special.",
+          "The honeymoon would create money stress during the first year of marriage.",
+        ]}
+      />
+
+      <CalculatorAssumptions
+        items={[
+          "The calculator assumes savings are measured after major wedding costs are paid.",
+          "The estimate assumes the honeymoon is primarily paid with cash rather than high-interest debt.",
+          "The budget should include flights, lodging, meals, excursions, upgrades, tips, insurance, and transportation.",
+          "The calculator assumes your income and debt obligations are relatively stable.",
+          "Cash gifts, registry contributions, and travel disruptions can change the final affordability picture.",
+        ]}
+      />
+
+      <FAQSection
+        title="Honeymoon Spending FAQ"
+        faqs={[
+          {
+            question: "Is $15,000 too much for a honeymoon?",
+            answer:
+              "It depends on income, savings after the wedding, debt, destination, trip length, and whether the cost creates financial pressure. A $15,000 honeymoon can be reasonable if it is paid from savings and does not damage your emergency cushion.",
+          },
+          {
+            question: "Should we spend more on the wedding or the honeymoon?",
+            answer:
+              "That depends on which experience matters more to you. The safest approach is to set one combined wedding and honeymoon budget so the honeymoon does not become an afterthought funded with debt.",
+          },
+          {
+            question: "Should I finance a honeymoon?",
+            answer:
+              "Financing a honeymoon can create stress early in marriage, especially with high-interest credit card debt. Using savings while keeping an emergency cushion is usually safer.",
+          },
+          {
+            question: "What should be included in a honeymoon budget?",
+            answer:
+              "Include flights, hotels or resort stays, meals, excursions, upgrades, travel insurance, transportation, tips, photos, spa costs, passports, and an emergency cushion.",
+          },
+          {
+            question: "Is a delayed honeymoon a good idea?",
+            answer:
+              "A delayed honeymoon can be a smart move if it gives you time to recover from wedding costs, rebuild savings, avoid debt, or book the trip you actually want without pressure.",
+          },
+        ]}
+      />
+
+      <MethodologySection category="honeymoon spending" updated="May 2026" />
+
+      <RelatedGuides
+        guides={[
+          {
+            title: "How to Budget for a Wedding Without Going Into Debt",
+            href: "/how-to-budget-for-a-wedding-without-going-into-debt",
+            description:
+              "Plan wedding spending without letting the celebration create long-term financial pressure.",
+          },
+          {
+            title: "How to Avoid Vacation Debt",
+            href: "/how-to-avoid-vacation-debt",
+            description:
+              "Learn how to plan major travel without relying on high-interest debt.",
+          },
+        ]}
+      />
+
+      <RelatedCalculators
+        calculators={[
+          {
+            category: "Wedding",
+            title: "Should I Spend $30,000 on a Wedding?",
+            href: "/should-i-spend-30000-on-a-wedding",
+          },
+          {
+            category: "Travel",
+            title: "Should I Spend $10,000 on a Europe Trip?",
+            href: "/should-i-spend-10000-on-a-europe-trip",
+          },
+          {
+            category: "Travel",
+            title: "Should I Spend $12,000 on a Cruise?",
+            href: "/should-i-spend-12000-on-a-cruise",
+          },
+          {
+            category: "Travel",
+            title: "Browse Travel Calculators",
+            href: "/travel-calculators",
+          },
+        ]}
+      />
+    </CalculatorPageShell>
   </div>
 
-<div class="content-section">
+  <script is:inline>
+    function calculateVacation() {
+      const income = Number(document.getElementById("income").value);
+      const savings = Number(document.getElementById("savings").value);
+      const vacation = Number(document.getElementById("vacation").value);
+      const debt = Number(document.getElementById("debt").value || 0);
 
-<section>
-  <h2>What a $15,000 Honeymoon Really Costs</h2>
+      const result = document.getElementById("result");
+      const scoreEl = document.getElementById("score");
+      const barFill = document.getElementById("barFill");
+      const stressEl = document.getElementById("stress");
+      const savingsImpactEl = document.getElementById("savingsImpact");
+      const incomeImpactEl = document.getElementById("incomeImpact");
+      const debtRatioEl = document.getElementById("debtRatio");
+      const guidanceEl = document.getElementById("guidance");
 
-  <p>
-    A honeymoon budget can feel different from a normal vacation because it is tied to a major
-    life milestone. Flights, resort nights, upgrades, excursions, meals, spa appointments,
-    travel insurance, photos, airport transfers, and once-in-a-lifetime experiences can quickly
-    push the total above the original estimate.
-  </p>
+      result.style.display = "block";
 
-  <p>
-    A $15,000 honeymoon may be reasonable for a luxury resort, international trip, longer stay,
-    or premium experience. It becomes more risky when the wedding already created debt, savings
-    are low after the wedding, or the honeymoon depends on credit cards to feel special.
-  </p>
+      if (!income || !savings || !vacation) {
+        scoreEl.textContent = "Add your numbers first";
+        barFill.style.width = "0%";
+        stressEl.innerHTML = "";
+        savingsImpactEl.innerHTML = "";
+        incomeImpactEl.innerHTML = "";
+        debtRatioEl.innerHTML = "";
+        guidanceEl.textContent =
+          "Enter your income, post-wedding savings, honeymoon cost, and debt so the calculator can give a useful verdict.";
+        return;
+      }
 
-  <p>
-    The best honeymoon budget protects both goals: making the trip memorable and starting
-    married life without immediate financial strain.
-  </p>
-</section>
+      const savingsImpact = (vacation / savings) * 100;
+      const incomeImpact = (vacation / income) * 100;
+      const debtRatio = (debt / income) * 100;
 
-<section>
-  <h2>When a $15,000 Honeymoon Makes Sense</h2>
+      let score = 100;
 
-  <p>
-    A honeymoon at this price point makes more sense when the wedding is already paid for,
-    emergency savings remain intact, and the trip does not create high-interest debt.
-  </p>
+      score -= savingsImpact * 0.22;
+      score -= incomeImpact * 0.9;
+      score -= debtRatio * 0.18;
 
-  <p>
-    The budget should include the full experience: flights, lodging, resort fees, meals,
-    excursions, upgrades, transportation, travel insurance, and a cushion for extra spending.
-  </p>
+      if (savings < vacation) score -= 12;
+      if (debt > income * 0.5) score -= 10;
 
-  <p>
-    It can be worth spending more when the trip is a true priority and the cost does not make
-    the first year of marriage financially tighter than necessary.
-  </p>
-</section>
+      score = Math.max(0, Math.min(100, Math.round(score)));
 
-<section>
-  <h2>When You Should Wait</h2>
+      let verdict = "";
+      let stress = "";
+      let guidance = "";
+      let barColor = "";
 
-  <p>
-    Waiting may be smarter if wedding bills are still unpaid, credit cards are carrying balances,
-    or the honeymoon would drain most of your remaining savings.
-  </p>
+      if (score >= 80) {
+        verdict = "Comfortable Honeymoon";
+        stress = "Low stress";
+        guidance =
+          "This honeymoon appears financially manageable based on your income, post-wedding savings, debt, and remaining emergency cushion.";
+        barColor = "#16a34a";
+      } else if (score >= 60) {
+        verdict = "Manageable With Guardrails";
+        stress = "Moderate stress";
+        guidance =
+          "This honeymoon may work, but keep firm limits on upgrades, excursions, resort costs, and post-wedding spending.";
+        barColor = "#ca8a04";
+      } else if (score >= 40) {
+        verdict = "Financial Stretch";
+        stress = "High stress";
+        guidance =
+          "This honeymoon could create financial pressure. Consider a delayed honeymoon, shorter trip, cheaper destination, or more time to save.";
+        barColor = "#ea580c";
+      } else {
+        verdict = "High Financial Risk";
+        stress = "Very high stress";
+        guidance =
+          "This honeymoon cost appears too aggressive for the current financial picture, especially if wedding costs or high-interest debt are already present.";
+        barColor = "#b91c1c";
+      }
 
-  <p>
-    You can still preserve the milestone with a lower-cost version. Consider a shorter trip,
-    delayed honeymoon, cheaper resort, fewer upgrades, domestic destination, or a smaller trip
-    now with a larger anniversary trip later.
-  </p>
-</section>
+      scoreEl.textContent = `${verdict} - ${score}/100`;
+      barFill.style.width = `${score}%`;
+      barFill.style.background = barColor;
 
-<FAQSection
-  title="Honeymoon Spending FAQ"
-  faqs={[
-    {
-      question: "Is $15,000 too much for a honeymoon?",
-      answer:
-        "It depends on income, savings after the wedding, debt, destination, trip length, and whether the cost creates financial pressure. A $15,000 honeymoon can be reasonable if it is paid from savings and does not damage your emergency cushion.",
-    },
-    {
-      question: "Should we spend more on the wedding or the honeymoon?",
-      answer:
-        "That depends on which experience matters more to you. The safest approach is to set one combined wedding and honeymoon budget so the honeymoon does not become an afterthought funded with debt.",
-    },
-    {
-      question: "Should I finance a honeymoon?",
-      answer:
-        "Financing a honeymoon can create stress early in marriage, especially with high-interest credit card debt. Using savings while keeping an emergency cushion is usually safer.",
-    },
-    {
-      question: "What should be included in a honeymoon budget?",
-      answer:
-        "Include flights, hotels or resort stays, meals, excursions, upgrades, travel insurance, transportation, tips, photos, spa costs, passports, and an emergency cushion.",
-    },
-    {
-      question: "Is a delayed honeymoon a good idea?",
-      answer:
-        "A delayed honeymoon can be a smart move if it gives you time to recover from wedding costs, rebuild savings, avoid debt, or book the trip you actually want without pressure.",
-    },
-  ]}
-/>
+      stressEl.innerHTML = `<strong>Stress level:</strong> ${stress}`;
+      savingsImpactEl.innerHTML = `<strong>Savings impact:</strong> ${savingsImpact.toFixed(1)}% of post-wedding savings`;
+      incomeImpactEl.innerHTML = `<strong>Income impact:</strong> ${incomeImpact.toFixed(1)}% of annual income`;
+      debtRatioEl.innerHTML = `<strong>Debt ratio:</strong> ${debtRatio.toFixed(1)}% of annual income`;
+      guidanceEl.textContent = guidance;
+    }
 
-<RelatedCalculators
-  calculators={[
-    {
-      category: "Wedding",
-      title: "Should I Spend $30,000 on a Wedding?",
-      href: "/should-i-spend-30000-on-a-wedding",
-    },
-    {
-      category: "Travel",
-      title: "Should I Spend $10,000 on a Europe Trip?",
-      href: "/should-i-spend-10000-on-a-europe-trip",
-    },
-    {
-      category: "Travel",
-      title: "Should I Spend $12,000 on a Cruise?",
-      href: "/should-i-spend-12000-on-a-cruise",
-    },
-    {
-      category: "Travel",
-      title: "Browse Travel Calculators",
-      href: "/travel-calculators",
-    },
-  ]}
-/>
-
-</div>
-
-</CalculatorPageShell>
-
-</div>
-
-<script is:inline>
-
-function calculateVacation() {
-
-  const income = Number(document.getElementById("income").value);
-  const savings = Number(document.getElementById("savings").value);
-  const vacation = Number(document.getElementById("vacation").value);
-  const debt = Number(document.getElementById("debt").value);
-
-  let score = 100;
-
-  const savingsImpact = (vacation / savings) * 100;
-  const incomeImpact = (vacation / income) * 100;
-  const debtRatio = (debt / income) * 100;
-
-  score -= savingsImpact * 0.22;
-  score -= incomeImpact * 0.9;
-  score -= debtRatio * 0.18;
-
-  if (savings < vacation) score -= 12;
-  if (debt > income * 0.5) score -= 10;
-
-  score = Math.max(0, Math.min(100, Math.round(score)));
-
-  let verdict = "";
-  let stress = "";
-  let guidance = "";
-  let barColor = "";
-
-  if (score >= 80) {
-    verdict = "Comfortable Honeymoon";
-    stress = "Low stress";
-    guidance =
-      "This honeymoon appears financially manageable based on your income, post-wedding savings, debt, and remaining emergency cushion.";
-    barColor = "#16a34a";
-  }
-
-  else if (score >= 60) {
-    verdict = "Manageable With Guardrails";
-    stress = "Moderate stress";
-    guidance =
-      "This honeymoon may work, but keep firm limits on upgrades, excursions, resort costs, and post-wedding spending.";
-    barColor = "#ca8a04";
-  }
-
-  else if (score >= 40) {
-    verdict = "Financial Stretch";
-    stress = "High stress";
-    guidance =
-      "This honeymoon could create financial pressure. Consider a delayed honeymoon, shorter trip, cheaper destination, or more time to save.";
-    barColor = "#ea580c";
-  }
-
-  else {
-    verdict = "High Financial Risk";
-    stress = "Very high stress";
-    guidance =
-      "This honeymoon cost appears too aggressive for the current financial picture, especially if wedding costs or high-interest debt are already present.";
-    barColor = "#b91c1c";
-  }
-
-  document.getElementById("score").textContent =
-    `${verdict} - ${score}/100`;
-
-  document.getElementById("barFill").style.width =
-    `${score}%`;
-
-  document.getElementById("barFill").style.background =
-    barColor;
-
-  document.getElementById("stress").innerHTML =
-    `<strong>Stress level:</strong> ${stress}`;
-
-  document.getElementById("savingsImpact").innerHTML =
-    `<strong>Savings impact:</strong> ${savingsImpact.toFixed(1)}% of post-wedding savings`;
-
-  document.getElementById("incomeImpact").innerHTML =
-    `<strong>Income impact:</strong> ${incomeImpact.toFixed(1)}% of annual income`;
-
-  document.getElementById("debtRatio").innerHTML =
-    `<strong>Debt ratio:</strong> ${debtRatio.toFixed(1)}% of annual income`;
-
-  document.getElementById("guidance").textContent =
-    guidance;
-}
-
-document.getElementById("vacationButton")
-  .addEventListener("click", calculateVacation);
-
-</script>
-
+    document
+      .getElementById("vacationButton")
+      .addEventListener("click", calculateVacation);
+  </script>
 </Layout>
