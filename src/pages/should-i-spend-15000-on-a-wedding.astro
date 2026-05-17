@@ -1,497 +1,580 @@
 ---
 import Layout from "../layouts/Layout.astro";
+import FAQSection from "../components/FAQSection.astro";
+import RelatedCalculators from "../components/RelatedCalculators.astro";
+import RelatedGuides from "../components/RelatedGuides.astro";
+import MethodologySection from "../components/MethodologySection.astro";
+import FinancialRedFlags from "../components/FinancialRedFlags.astro";
+import CalculatorAssumptions from "../components/CalculatorAssumptions.astro";
+import KeyCostCategories from "../components/KeyCostCategories.astro";
+import ReduceCostTips from "../components/ReduceCostTips.astro";
+import WhenSpendingMakesSense from "../components/WhenSpendingMakesSense.astro";
 ---
 
----
+<Layout
+  title="Should I Spend $15,000 on a Wedding?"
+  description="Use this wedding calculator to decide whether a $15,000 wedding fits your income, savings, debt, emergency cushion, and financial goals."
+>
+  <style>
+    .container {
+      max-width: 920px;
+      margin: 0 auto;
+      padding: 72px 24px;
+    }
 
-<Layout title="Should I Spend $15,000 on a Wedding?">
- 
-    <style>
-  
+    .eyebrow {
+      text-align: center;
+      color: var(--teal);
+      font-weight: 800;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      margin-bottom: 14px;
+    }
+
+    h1 {
+      font-size: clamp(3rem, 7vw, 5rem);
+      text-align: center;
+      margin: 0 0 16px;
+      color: var(--navy);
+      line-height: 1.05;
+    }
+
+    .subtitle {
+      text-align: center;
+      font-size: 22px;
+      color: var(--muted);
+      margin: 0 auto 56px;
+      line-height: 1.5;
+      max-width: 760px;
+    }
+
+    .content-section {
+      max-width: 760px;
+      margin: 72px auto 0;
+    }
+
+    .content-section h2 {
+      font-size: 2rem;
+      margin-bottom: 24px;
+      line-height: 1.2;
+    }
+
+    .content-section p,
+    .content-section li {
+      font-size: 1.08rem;
+      line-height: 1.9;
+      color: #334155;
+      margin-bottom: 24px;
+    }
+
+    .calculator {
+      background: var(--card);
+      border-radius: 24px;
+      padding: 38px;
+      box-shadow: 0 18px 50px rgba(15, 23, 42, 0.08);
+      border: 1px solid rgba(15, 23, 42, 0.05);
+      margin-top: 56px;
+    }
+
+    .calculator h2 {
+      margin-top: 0;
+      color: var(--navy);
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+    }
+
+    label {
+      display: block;
+      font-weight: 800;
+      margin-bottom: 9px;
+      color: var(--navy);
+    }
+
+    input {
+      width: 100%;
+      padding: 16px;
+      border-radius: 12px;
+      border: 1px solid var(--border);
+      font-size: 18px;
+      box-sizing: border-box;
+    }
+
+    input:focus {
+      outline: 3px solid rgba(15, 118, 110, 0.18);
+      border-color: var(--teal);
+    }
+
+    button {
+      margin-top: 28px;
+      background: #0f766e;
+      color: white;
+      border: none;
+      padding: 18px 28px;
+      border-radius: 14px;
+      font-size: 19px;
+      font-weight: 900;
+      cursor: pointer;
+    }
+
+    button:hover {
+      opacity: 0.92;
+    }
+
+    .result {
+      margin-top: 34px;
+      background: #f8fafc;
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 30px;
+      display: none;
+    }
+
+    .score {
+      font-size: 36px;
+      font-weight: 900;
+      margin-bottom: 18px;
+      color: var(--navy);
+    }
+
+    .bar {
+      height: 16px;
+      background: #e2e8f0;
+      border-radius: 999px;
+      overflow: hidden;
+      margin-bottom: 24px;
+    }
+
+    .bar-fill {
+      height: 100%;
+      background: var(--teal);
+      width: 0%;
+      transition: width 0.4s ease;
+    }
+
+    .line {
+      margin-bottom: 12px;
+      font-size: 18px;
+      color: var(--text);
+    }
+
+    .guidance {
+      margin-top: 26px;
+      font-size: 20px;
+      line-height: 1.6;
+      color: var(--navy);
+    }
+
+    .verdict-breakdown {
+      margin-top: 18px;
+      padding: 18px;
+      background: #f8fafc;
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      font-size: 0.98rem;
+      line-height: 1.65;
+      color: var(--muted);
+      display: none;
+    }
+
+    .verdict-breakdown strong {
+      color: var(--text);
+    }
+
+    .disclaimer {
+      margin-top: 22px;
+      font-size: 13px;
+      color: #64748b;
+    }
+
+    .helper-link {
+      margin-top: 10px;
+      font-size: 0.9rem;
+    }
+
+    .helper-link a {
+      color: #0f766e;
+      font-weight: 700;
+    }
+
+    @media (max-width: 700px) {
       .container {
-        max-width: 920px;
-        margin: auto;
-      }
-.content-section {
-  max-width: 760px;
-  margin: 0 auto 48px auto;
-}
-
-.content-section h2 {
-  font-size: 2rem;
-  margin-bottom: 24px;
-  line-height: 1.2;
-}
-
-.content-section p {
-  font-size: 1.08rem;
-  line-height: 1.9;
-  color: #334155;
-  margin-bottom: 24px;
-}
-      .eyebrow {
-        text-align: center;
-        color: var(--teal);
-        font-weight: 800;
-        letter-spacing: .08em;
-        text-transform: uppercase;
-        margin-bottom: 14px;
+        padding: 54px 20px;
       }
 
       h1 {
-        font-size: 56px;
-        text-align: center;
-        margin: 0 0 16px;
-        color: var(--navy);
-        line-height: 1.05;
+        font-size: 38px;
       }
 
       .subtitle {
-        text-align: center;
-        font-size: 22px;
-        color: var(--muted);
-        margin: 0 auto 42px;
-        line-height: 1.5;
-        max-width: 760px;
+        font-size: 18px;
       }
 
       .calculator {
-        background: var(--card);
-        border-radius: 24px;
-        padding: 38px;
-        box-shadow: 0 18px 50px rgba(15, 23, 42, 0.08);
-        border: 1px solid rgba(15, 23, 42, 0.05);
-      }
-
-      .calculator h2 {
-        margin-top: 0;
-        color: var(--navy);
+        padding: 24px;
       }
 
       .grid {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 20px;
+        grid-template-columns: 1fr;
       }
+    }
+  </style>
 
-      label {
-        display: block;
-        font-weight: 800;
-        margin-bottom: 9px;
-        color: var(--navy);
-      }
+  <main class="container">
+    <div class="eyebrow">Wedding Spending Calculator</div>
 
-      input {
-        width: 100%;
-        padding: 16px;
-        border-radius: 12px;
-        border: 1px solid var(--border);
-        font-size: 18px;
-        box-sizing: border-box;
-      }
+    <h1>Should I Spend $15,000 on a Wedding?</h1>
 
-      input:focus {
-        outline: 3px solid rgba(15, 118, 110, 0.18);
-        border-color: var(--teal);
-      }
+    <p class="subtitle">
+      Get a practical verdict based on income, savings, debt, stress level, and
+      how much of your financial cushion the wedding would consume.
+    </p>
 
-      button {
-        margin-top: 28px;
-        background: #0f766e;
-        color: white;
-        border: none;
-        padding: 18px 28px;
-        border-radius: 14px;
-        font-size: 19px;
-        font-weight: 900;
-        cursor: pointer;
-      }
+    <div class="calculator">
+      <h2>Wedding Affordability Verdict</h2>
 
-      button:hover {
-        background: var(--teal);
-      }
-
-      .result {
-        margin-top: 34px;
-        background: #f8fafc;
-        border: 1px solid var(--border);
-        border-radius: 20px;
-        padding: 30px;
-        display: none;
-      }
-
-      .score {
-        font-size: 36px;
-        font-weight: 900;
-        margin-bottom: 18px;
-        color: var(--navy);
-      }
-
-      .bar {
-        height: 16px;
-        background: #e2e8f0;
-        border-radius: 999px;
-        overflow: hidden;
-        margin-bottom: 24px;
-      }
-
-      .bar-fill {
-        height: 100%;
-        background: var(--teal);
-        width: 0%;
-      }
-
-      .line {
-        margin-bottom: 12px;
-        font-size: 18px;
-        color: var(--text);
-      }
-
-      .guidance {
-        margin-top: 26px;
-        font-size: 20px;
-        line-height: 1.6;
-        color: var(--navy);
-      }
-
-      .verdict-breakdown {
-  margin-top: 18px;
-  padding: 18px;
-  background: #f8fafc;
-  border: 1px solid var(--border);
-  border-radius: 14px;
-  font-size: 0.98rem;
-  line-height: 1.65;
-  color: var(--muted);
-  display: none;
-}
-
-.verdict-breakdown strong {
-  color: var(--text);
-}
-
-      .disclaimer {
-        margin-top: 22px;
-        font-size: 13px;
-        color: #64748b;
-      }
-
-      @media (max-width: 700px) {
-        body {
-          padding: 28px 14px;
-        }
-
-        h1 {
-          font-size: 38px;
-        }
-
-        .subtitle {
-          font-size: 18px;
-        }
-
-        .calculator {
-          padding: 24px;
-        }
-
-        .grid {
-          grid-template-columns: 1fr;
-        }
-      }
-      .card {
-  background: white;
-  border: 1px solid var(--border);
-  border-radius: 20px;
-  padding: 24px;
-}
-
-.card h3 {
-  font-size: 1.35rem;
-  margin-bottom: 12px;
-  line-height: 1.3;
-}
-
-.card p {
-  color: #475569;
-  line-height: 1.7;
-  margin-bottom: 20px;
-}
-
-.card-category {
-  color: var(--teal);
-  font-size: 0.75rem;
-  font-weight: 800;
-  letter-spacing: .08em;
-  text-transform: uppercase;
-  margin-bottom: 12px;
-}
-    </style>
-  
-    <div class="container">
-      <div class="eyebrow">Wedding Spending Calculator</div>
-
-      <h1>Should I Spend $15,000 on a Wedding?</h1>
-
-      <p class="subtitle">
-        Get a practical verdict based on income, savings, debt, stress level,
-        and how much of your financial cushion the wedding would consume.
-      </p>
-<section class="content-section">
-  <h2>How Much Wedding Can You Actually Afford?</h2>
-
-  <p>
-    Weddings are one of the largest discretionary expenses most people will
-    ever make. While the average American wedding now costs tens of thousands
-    of dollars, affordability depends far more on income, savings, debt load,
-    and long-term financial flexibility than on social expectations.
-  </p>
-
-  <p>
-    A $15,000 wedding may feel manageable for one household and financially
-    dangerous for another. The real question is not whether the wedding is
-    "worth it," but whether the expense damages emergency savings, increases
-    debt stress, or delays larger financial goals like homeownership,
-    retirement investing, or starting a family.
-  </p>
-
-  <p>
-    This calculator helps estimate whether a wedding budget fits comfortably
-    within your broader financial picture by analyzing savings impact, debt
-    ratio, and income flexibility.
-  </p>
-</section>
-      <div class="calculator">
-        <h2>Wedding Affordability Verdict</h2>
-
-        <div class="grid">
-          <div>
-            <label>Combined Annual Income</label>
-            <input id="income" type="number" placeholder="Example: 140000" />
-          </div>
-
-          <div>
-            <label>Total Savings</label>
-            <input id="savings" type="number" placeholder="Example: 50000" />
-          </div>
-
-          <div>
-            <label>Wedding Cost</label>
-            <input id="cost" type="number" placeholder="15000" />
-          </div>
-
-          <div>
-            <label>Current Debt</label>
-            <input id="debt" type="number" placeholder="Example: 12000" />
-          </div>
+      <div class="grid">
+        <div>
+          <label for="income">Combined Annual Income</label>
+          <input id="income" type="number" placeholder="Example: 140000" />
         </div>
 
-        <button id="weddingButton">Get Wedding Verdict</button>
+        <div>
+          <label for="savings">Total Savings</label>
+          <input id="savings" type="number" placeholder="Example: 50000" />
+        </div>
 
-        <div class="result" id="result">
-          <div class="score" id="scoreText"></div>
+        <div>
+          <label for="cost">Wedding Cost</label>
+          <input id="cost" type="number" value="15000" />
+        </div>
 
-          <div class="bar">
-            <div class="bar-fill" id="barFill"></div>
-          </div>
+        <div>
+          <label for="debt">Current Debt</label>
+          <input id="debt" type="number" placeholder="Example: 12000" />
 
-          <div class="line" id="stress"></div>
-          <div class="line" id="savingsImpact"></div>
-          <div class="line" id="incomeImpact"></div>
-          <div class="line" id="debtRatio"></div>
-
-          <div class="guidance" id="guidance"></div>
-
-          <div class="verdict-breakdown" id="verdictBreakdown"></div>
-
-          <div class="disclaimer">
-            This is a general educational estimate, not financial advice.
+          <div class="helper-link">
+            <a href="/what-counts-as-debt">
+              Not sure what counts as debt? Read the debt guide
+            </a>
           </div>
         </div>
       </div>
-      <section class="content-section">
-  <h2>What Your Wedding Verdict Actually Means</h2>
 
-  <p>
-    A wedding affordability score is not a judgment about whether a celebration
-    is emotionally meaningful or personally worthwhile. The purpose of the
-    verdict is to estimate how much financial pressure the expense may create
-    relative to your current income, savings cushion, and debt load.
-  </p>
+      <button id="weddingButton" type="button">Get Wedding Verdict</button>
 
-  <p>
-    Higher savings impact percentages usually indicate that the wedding budget
-    may consume too much of an emergency fund or reduce future financial
-    flexibility. Large wedding expenses become more financially dangerous when
-    they rely heavily on financing, credit cards, personal loans, or depleted
-    savings accounts.
-  </p>
+      <div class="result" id="result">
+        <div class="score" id="scoreText"></div>
 
-  <p>
-    Debt ratios also matter. Even higher-income households can create long-term
-    financial stress if wedding spending significantly increases existing debt
-    obligations or delays major goals like buying a home, investing for
-    retirement, or building long-term savings stability.
-  </p>
+        <div class="bar">
+          <div class="bar-fill" id="barFill"></div>
+        </div>
 
-  <p>
-    In general, the healthiest wedding budgets are the ones that allow couples
-    to celebrate meaningfully without creating years of financial recovery
-    afterward.
-  </p>
-</section>
-<section class="content-section faq-section">
-  <h2>Wedding Spending FAQ</h2>
+        <div class="line" id="stress"></div>
+        <div class="line" id="savingsImpact"></div>
+        <div class="line" id="incomeImpact"></div>
+        <div class="line" id="debtRatio"></div>
 
-  <h3>Is $15,000 too much to spend on a wedding?</h3>
-  <p>
-    It depends on income, savings, debt, and whether the wedding creates
-    financial stress afterward. A $15,000 wedding may be manageable for one
-    household and risky for another.
-  </p>
+        <div class="guidance" id="guidance"></div>
 
-  <h3>Should you finance a wedding?</h3>
-  <p>
-    Financing a wedding can create long-term pressure after the celebration is
-    over. If the cost requires credit cards, personal loans, or depleted
-    emergency savings, the budget may be too aggressive.
-  </p>
+        <div class="verdict-breakdown" id="verdictBreakdown"></div>
 
-  <h3>How much of your savings should a wedding use?</h3>
-  <p>
-    There is no perfect number, but using a large share of available savings can
-    reduce financial flexibility. Emergency savings, housing goals, debt, and
-    future plans should come before a larger wedding budget.
-  </p>
+        <div class="disclaimer">
+          This is a general educational estimate, not financial advice.
+        </div>
+      </div>
+    </div>
 
-  <h3>What percentage of income should a wedding cost?</h3>
-  <p>
-    A lower percentage of annual income is usually safer. The higher the wedding
-    cost rises relative to income, the more important it becomes to avoid debt
-    and preserve savings.
-  </p>
-</section>
-<section class="content-section">
-  <h2>Related Financial Calculators</h2>
+    <section class="content-section">
+      <h2>What a $15,000 Wedding Really Costs</h2>
 
-  <div class="grid">
-    <div class="card">
-      <div class="card-category">Travel</div>
-      <h3>Should I Spend $5,000 on a Vacation?</h3>
       <p>
-        Evaluate whether a large vacation expense fits your income, savings,
-        debt load, and long-term flexibility.
+        A $15,000 wedding can be a disciplined, realistic celebration, but it
+        still needs a full budget. Venue fees, catering, attire, photography,
+        flowers, music, decorations, invitations, gratuities, rentals, and
+        last-minute upgrades can push the total higher than expected.
       </p>
 
-      <a class="button" href="/should-i-spend-5000-on-a-vacation">
-        Open Calculator
-      </a>
-    </div>
-
-    <div class="card">
-      <div class="card-category">Cars</div>
-      <h3>Should I Spend $700 on a Car Payment?</h3>
       <p>
-        Analyze whether your monthly vehicle payment is realistic based on
-        income, debt, and financial cushion.
+        The main question is whether the wedding fits your broader financial
+        life. A $15,000 wedding may be manageable if it is planned in advance and
+        paid mostly in cash. It becomes riskier if it drains emergency savings,
+        adds debt, or delays larger goals.
+      </p>
+    </section>
+
+    <WhenSpendingMakesSense
+      title="When a $15,000 Wedding Can Make Sense"
+      items={[
+        "You can pay for the wedding without high-interest debt.",
+        "Emergency savings remain intact after the celebration.",
+        "The guest list, venue, food, and extras fit one clear budget.",
+        "The wedding does not delay housing, debt payoff, or savings goals.",
+        "Both partners are comfortable with the tradeoffs.",
+      ]}
+    />
+
+    <section class="content-section">
+      <h2>When You Should Scale Back</h2>
+
+      <p>
+        Scaling back may be smarter if the wedding would require credit cards,
+        personal loans, depleted savings, or financial help that creates stress
+        afterward.
       </p>
 
-      <a class="button" href="/should-i-spend-700-on-a-car-payment">
-        Open Calculator
-      </a>
-    </div>
-  </div>
-</section>
-    </div>
+      <p>
+        A lower-cost wedding can still feel personal and meaningful. A smaller
+        guest list, simpler venue, shorter reception, limited bar, or fewer
+        vendor upgrades can protect the parts of the day that matter most.
+      </p>
+    </section>
 
-    <script is:inline>
-      function calculateWedding() {
-        const income = Number(document.getElementById("income").value);
-        const savings = Number(document.getElementById("savings").value);
-        const cost = Number(document.getElementById("cost").value);
-        const debt = Number(document.getElementById("debt").value || 0);
+    <KeyCostCategories
+      items={[
+        {
+          title: "Venue and food",
+          description:
+            "Venue rental, catering, cake, bar service, service fees, and gratuities usually drive the largest share of the budget.",
+        },
+        {
+          title: "Photography and entertainment",
+          description:
+            "Photo, video, DJ, live music, ceremony sound, and reception entertainment can quickly change the final total.",
+        },
+        {
+          title: "Attire and beauty",
+          description:
+            "Dress, suit, alterations, shoes, accessories, hair, makeup, and wedding-party expectations should be included upfront.",
+        },
+        {
+          title: "Decor and last-minute extras",
+          description:
+            "Flowers, signage, rentals, transportation, favors, postage, and day-of upgrades can quietly push the budget higher.",
+        },
+      ]}
+    />
 
-        if (!income || !savings || !cost) {
-          alert("Please enter income, savings, and wedding cost.");
-          return;
-        }
+    <ReduceCostTips
+      items={[
+        "Limit the guest list before cutting meaningful details.",
+        "Choose a venue with tables, chairs, linens, and basic decor included.",
+        "Use a simpler bar package or shorter reception window.",
+        "Pick one or two splurges instead of upgrading every category.",
+        "Keep a separate buffer for taxes, tips, and final-week expenses.",
+      ]}
+    />
 
-        const savingsImpact = (cost / savings) * 100;
-        const incomeImpact = (cost / income) * 100;
-        const debtRatio = (debt / income) * 100;
-        const breakdown = document.getElementById("verdictBreakdown");
+    <FinancialRedFlags
+      items={[
+        "The wedding requires credit cards or personal loans.",
+        "The budget would drain most emergency savings.",
+        "The final cost depends on uncertain gifts or family contributions.",
+        "The wedding would delay debt payoff or housing stability.",
+        "The couple disagrees about the tradeoffs or feels pressured to overspend.",
+      ]}
+    />
 
-        let score = 100;
+    <CalculatorAssumptions
+      items={[
+        "The calculator assumes the wedding cost includes the major event expenses, not only the venue deposit.",
+        "The estimate uses annual household income, total savings, current debt, and the planned wedding budget.",
+        "The calculator treats high savings impact and high debt pressure as larger risk factors.",
+        "The tool is educational and does not replace personalized financial advice.",
+        "Actual wedding affordability can change based on local prices, family contributions, timing, and payment method.",
+      ]}
+    />
 
-        if (savingsImpact > 10) score -= 12;
-        if (savingsImpact > 25) score -= 18;
-        if (savingsImpact > 50) score -= 25;
-        if (incomeImpact > 15) score -= 10;
-        if (incomeImpact > 25) score -= 15;
-        if (debtRatio > 10) score -= 8;
-        if (debtRatio > 25) score -= 12;
+    <section class="content-section">
+      <h2>What Your Wedding Verdict Actually Means</h2>
 
-        score = Math.max(0, Math.min(100, score));
+      <p>
+        A wedding affordability score is not a judgment about whether the
+        celebration is emotionally meaningful. The verdict estimates how much
+        financial pressure the expense may create relative to your current
+        income, savings cushion, and debt load.
+      </p>
 
-        let verdict = "";
-        let guidance = "";
-        let stress = "";
-        let barColor = "";
+      <p>
+        A stronger score means the wedding is easier to absorb. A weaker score
+        means the budget may still be possible, but the tradeoffs deserve more
+        caution.
+      </p>
+    </section>
 
-        if (score >= 85) {
-          verdict = "Smart Wedding Budget";
-          stress = "Low stress";
-          barColor = "var(--green)";
-          guidance = "This wedding appears financially manageable. It still deserves a budget, but the cost does not seriously threaten your cushion.";
-        } else if (score >= 70) {
-          verdict = "Manageable with Guardrails";
-          stress = "Manageable stress";
-          barColor = "var(--teal)";
-          guidance = "This can work if you avoid financing it, keep extra costs under control, and preserve enough savings after the wedding.";
-        } else if (score >= 50) {
-          verdict = "Proceed Carefully";
-          stress = "Noticeable stress";
-          barColor = "var(--amber)";
-          guidance = "This wedding would take a meaningful bite out of your financial cushion. Consider trimming the guest list, venue cost, or extras.";
-        } else {
-          verdict = "High Financial Risk";
-          stress = "High stress";
-          barColor = "var(--red)";
-          guidance = "This wedding cost looks too aggressive for the current financial picture. A smaller budget would likely protect your future flexibility.";
-        }
+    <FAQSection
+      title="$15,000 Wedding FAQ"
+      faqs={[
+        {
+          question: "Is $15,000 too much to spend on a wedding?",
+          answer:
+            "It depends on income, savings, debt, and whether the wedding creates financial stress afterward. A $15,000 wedding may be manageable for one household and risky for another.",
+        },
+        {
+          question: "Can you have a good wedding for $15,000?",
+          answer:
+            "Yes. A $15,000 wedding can work well with a focused guest list, careful venue choice, realistic food costs, and clear priorities.",
+        },
+        {
+          question: "Should you finance a $15,000 wedding?",
+          answer:
+            "Financing a wedding can create long-term pressure after the celebration is over. If the cost requires high-interest debt or depleted emergency savings, the budget may be too aggressive.",
+        },
+        {
+          question: "What should be included in a $15,000 wedding budget?",
+          answer:
+            "Include venue, food, drinks, attire, photography, music, decorations, flowers, invitations, transportation, taxes, tips, and a buffer for last-minute costs.",
+        },
+        {
+          question: "How can I reduce a $15,000 wedding budget?",
+          answer:
+            "Start with the guest list, venue, food, bar package, photography package, and decor. Those categories usually create the biggest savings opportunities.",
+        },
+      ]}
+    />
 
-        document.getElementById("result").style.display = "block";
-        document.getElementById("scoreText").textContent = `${verdict} - ${score}/100`;
-        document.getElementById("barFill").style.width = `${score}%`;
-        document.getElementById("barFill").style.background = barColor;
+    <MethodologySection category="wedding spending" updated="May 2026" />
 
-        document.getElementById("stress").innerHTML =
-          `<strong>Stress level:</strong> ${stress}`;
+    <RelatedGuides
+      guides={[
+        {
+          title: "How to Budget for a Wedding Without Going Into Debt",
+          href: "/how-to-budget-for-a-wedding-without-going-into-debt",
+          description:
+            "Plan wedding spending without letting the celebration create long-term financial pressure.",
+        },
+        {
+          title: "What Counts as Debt?",
+          href: "/what-counts-as-debt",
+          description:
+            "See which debt obligations matter when evaluating a major wedding budget.",
+        },
+      ]}
+    />
 
-        document.getElementById("savingsImpact").innerHTML =
-          `<strong>Savings impact:</strong> ${savingsImpact.toFixed(1)}% of savings`;
+    <RelatedCalculators
+      calculators={[
+        {
+          category: "Weddings",
+          title: "Should I Spend $30,000 on a Wedding?",
+          href: "/should-i-spend-30000-on-a-wedding",
+        },
+        {
+          category: "Weddings",
+          title: "Should I Spend $50,000 on a Wedding?",
+          href: "/should-i-spend-50000-on-a-wedding",
+        },
+        {
+          category: "Travel",
+          title: "Should I Spend $15,000 on a Honeymoon?",
+          href: "/should-i-spend-15000-on-a-honeymoon",
+        },
+        {
+          category: "Cars",
+          title: "Should I Spend $700 on a Car Payment?",
+          href: "/should-i-spend-700-on-a-car-payment",
+        },
+      ]}
+    />
+  </main>
 
-        document.getElementById("incomeImpact").innerHTML =
-          `<strong>Income impact:</strong> ${incomeImpact.toFixed(1)}% of annual income`;
+  <script is:inline>
+    function calculateWedding() {
+      const income = Number(document.getElementById("income").value);
+      const savings = Number(document.getElementById("savings").value);
+      const cost = Number(document.getElementById("cost").value);
+      const debt = Number(document.getElementById("debt").value || 0);
 
-        document.getElementById("debtRatio").innerHTML =
-          `<strong>Debt ratio:</strong> ${debtRatio.toFixed(1)}% of annual income`;
-
-        document.getElementById("guidance").textContent = guidance;
-
-breakdown.style.display = "block";
-
-breakdown.innerHTML = `
-  <strong>Financial Breakdown:</strong><br><br>
-
-  - Wedding cost equals <strong>${incomeImpact.toFixed(1)}%</strong> of annual household income.<br>
-
-  - Wedding cost consumes <strong>${savingsImpact.toFixed(1)}%</strong> of total savings.<br>
-
-  - Existing debt load equals <strong>${debtRatio.toFixed(1)}%</strong> of annual income.<br><br>
-
-  Higher savings impact and debt pressure usually increase long-term financial stress after large purchases.
-`;
+      if (!income || !savings || !cost) {
+        alert("Please enter income, savings, and wedding cost.");
+        return;
       }
 
-      document.getElementById("weddingButton").addEventListener("click", calculateWedding);
-    </script>
-  </Layout>
+      const savingsImpact = (cost / savings) * 100;
+      const incomeImpact = (cost / income) * 100;
+      const debtRatio = (debt / income) * 100;
+      const breakdown = document.getElementById("verdictBreakdown");
+
+      let score = 100;
+
+      if (savingsImpact > 10) score -= 12;
+      if (savingsImpact > 25) score -= 18;
+      if (savingsImpact > 50) score -= 25;
+      if (incomeImpact > 15) score -= 10;
+      if (incomeImpact > 25) score -= 15;
+      if (debtRatio > 10) score -= 8;
+      if (debtRatio > 25) score -= 12;
+
+      score = Math.max(0, Math.min(100, score));
+
+      let verdict = "";
+      let guidance = "";
+      let stress = "";
+      let barColor = "";
+
+      if (score >= 85) {
+        verdict = "Smart Wedding Budget";
+        stress = "Low stress";
+        barColor = "var(--green)";
+        guidance =
+          "This wedding appears financially manageable. It still deserves a budget, but the cost does not seriously threaten your cushion.";
+      } else if (score >= 70) {
+        verdict = "Manageable with Guardrails";
+        stress = "Manageable stress";
+        barColor = "var(--teal)";
+        guidance =
+          "This can work if you avoid financing it, keep extra costs under control, and preserve enough savings after the wedding.";
+      } else if (score >= 50) {
+        verdict = "Proceed Carefully";
+        stress = "Noticeable stress";
+        barColor = "var(--amber)";
+        guidance =
+          "This wedding would take a meaningful bite out of your financial cushion. Consider trimming the guest list, venue cost, or extras.";
+      } else {
+        verdict = "High Financial Risk";
+        stress = "High stress";
+        barColor = "var(--red)";
+        guidance =
+          "This wedding cost looks too aggressive for the current financial picture. A smaller budget would likely protect your future flexibility.";
+      }
+
+      document.getElementById("result").style.display = "block";
+      document.getElementById("scoreText").textContent =
+        `${verdict} - ${score}/100`;
+
+      document.getElementById("barFill").style.width = `${score}%`;
+      document.getElementById("barFill").style.background = barColor;
+
+      document.getElementById("stress").innerHTML =
+        `<strong>Stress level:</strong> ${stress}`;
+
+      document.getElementById("savingsImpact").innerHTML =
+        `<strong>Savings impact:</strong> ${savingsImpact.toFixed(1)}% of savings`;
+
+      document.getElementById("incomeImpact").innerHTML =
+        `<strong>Income impact:</strong> ${incomeImpact.toFixed(1)}% of annual income`;
+
+      document.getElementById("debtRatio").innerHTML =
+        `<strong>Debt ratio:</strong> ${debtRatio.toFixed(1)}% of annual income`;
+
+      document.getElementById("guidance").textContent = guidance;
+
+      breakdown.style.display = "block";
+
+      breakdown.innerHTML = `
+        <strong>Financial Breakdown:</strong><br><br>
+        - Wedding cost equals <strong>${incomeImpact.toFixed(1)}%</strong> of annual household income.<br>
+        - Wedding cost consumes <strong>${savingsImpact.toFixed(1)}%</strong> of total savings.<br>
+        - Existing debt load equals <strong>${debtRatio.toFixed(1)}%</strong> of annual income.<br><br>
+        Higher savings impact and debt pressure usually increase long-term financial stress after large purchases.
+      `;
+    }
+
+    document
+      .getElementById("weddingButton")
+      .addEventListener("click", calculateWedding);
+  </script>
+</Layout>
