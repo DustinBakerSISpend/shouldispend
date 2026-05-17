@@ -1,14 +1,46 @@
 ---
 import Layout from "../layouts/Layout.astro";
 import CalculatorCard from "../components/CalculatorCard.astro";
+import FAQSection from "../components/FAQSection.astro";
 import { calculators } from "../data/calculators.js";
 
 const weddingCalculators = calculators.filter(
   (calculator) => calculator.category === "Weddings"
 );
+
+const weddingFaqs = [
+  {
+    question: "How much should you spend on a wedding?",
+    answer:
+      "The right wedding budget depends on income, savings, debt, emergency funds, family help, guest count, and whether the cost creates financial pressure after the celebration.",
+  },
+  {
+    question: "Should you finance a wedding?",
+    answer:
+      "Financing a wedding can create long-term pressure, especially with high-interest credit card debt or personal loans. A wedding is usually safer when paid mostly from savings while keeping an emergency cushion intact.",
+  },
+  {
+    question: "What wedding costs do couples forget?",
+    answer:
+      "Commonly forgotten costs include taxes, gratuities, alterations, postage, transportation, vendor meals, overtime, rentals, hotel rooms, rehearsal events, and last-minute upgrades.",
+  },
+  {
+    question: "Is a smaller wedding financially smarter?",
+    answer:
+      "Often, yes. A smaller wedding can protect emergency savings, reduce debt pressure, and leave more room for housing, travel, family goals, or a honeymoon.",
+  },
+  {
+    question: "Should honeymoon costs be part of the wedding budget?",
+    answer:
+      "Yes. Wedding and honeymoon spending often happen close together, so couples should consider the combined cash flow impact before committing to either expense.",
+  },
+];
 ---
 
-<Layout title="Wedding Budget Calculators | ShouldISpend">
+<Layout
+  title="Wedding Budget Calculators | ShouldISpend"
+  description="Browse wedding budget calculators for $15,000, $30,000, and $50,000 weddings, plus wedding debt and honeymoon affordability guidance."
+>
   <style>
     .container {
       max-width: 1100px;
@@ -26,41 +58,95 @@ const weddingCalculators = calculators.filter(
     }
 
     h1 {
-      font-size: 4rem;
+      font-size: clamp(2.8rem, 7vw, 4.8rem);
       line-height: 1;
       margin-bottom: 24px;
-      max-width: 850px;
+      max-width: 900px;
     }
 
     .intro {
-      max-width: 760px;
+      max-width: 800px;
       color: var(--muted);
       font-size: 1.1rem;
       line-height: 1.8;
       margin-bottom: 56px;
     }
 
-    .grid {
+    .grid,
+    .link-grid,
+    .info-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
       gap: 24px;
+    }
+
+    .grid {
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
       margin-top: 32px;
     }
 
+    .link-grid,
+    .info-grid {
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      margin-top: 28px;
+    }
+
     .content-section {
-      max-width: 760px;
+      max-width: 820px;
       margin-top: 80px;
     }
 
     .content-section h2 {
       font-size: 2rem;
       margin-bottom: 20px;
+      line-height: 1.2;
     }
 
-    .content-section p {
+    .content-section h3 {
+      font-size: 1.25rem;
+      margin-top: 28px;
+      margin-bottom: 10px;
+      color: var(--text);
+    }
+
+    .content-section p,
+    .content-section li {
       color: var(--muted);
       line-height: 1.8;
       margin-bottom: 18px;
+    }
+
+    .link-card,
+    .info-card {
+      display: block;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      padding: 22px;
+      text-decoration: none;
+      color: inherit;
+    }
+
+    .link-card {
+      transition: transform 0.15s ease;
+    }
+
+    .link-card:hover {
+      transform: translateY(-2px);
+    }
+
+    .link-card strong,
+    .info-card h3 {
+      display: block;
+      color: var(--text);
+      margin-bottom: 10px;
+    }
+
+    .link-card span,
+    .info-card p {
+      color: var(--muted);
+      line-height: 1.7;
+      font-size: 0.96rem;
+      margin: 0;
     }
   </style>
 
@@ -70,41 +156,164 @@ const weddingCalculators = calculators.filter(
     <h1>Wedding Budget Calculators and Financial Planning Tools</h1>
 
     <p class="intro">
-      Wedding costs can escalate quickly once venues, catering, travel, photography, and guest counts start stacking together. These calculators are designed to help you evaluate affordability, financial stress, savings impact, and long-term flexibility before committing to major wedding expenses.
+      Wedding costs can escalate quickly once venues, catering, photography,
+      attire, flowers, rentals, travel, and guest counts start stacking
+      together. These calculators help you evaluate affordability, savings
+      impact, debt pressure, and long-term flexibility before committing to a
+      major wedding budget.
     </p>
 
     <div class="grid">
       {weddingCalculators.map((calculator) => (
-    <CalculatorCard
-  category={calculator.category}
-  title={calculator.title}
-  description={calculator.description}
-  href={calculator.href}
-/>
+        <CalculatorCard
+          category={calculator.category}
+          title={calculator.title}
+          description={calculator.description}
+          href={calculator.href}
+        />
       ))}
     </div>
+
+    <section class="content-section">
+      <h2>Popular Wedding Budget Tools</h2>
+
+      <p>
+        Different wedding budgets create different tradeoffs. A $15,000 wedding
+        may require tight priorities and a focused guest list. A $30,000 wedding
+        may be realistic for some couples but stressful if it drains savings. A
+        $50,000 wedding should be treated as a major financial event.
+      </p>
+
+      <div class="link-grid">
+        <a class="link-card" href="/should-i-spend-15000-on-a-wedding">
+          <strong>$15,000 Wedding Calculator</strong>
+          <span>
+            Evaluate whether a more modest wedding budget fits your income,
+            savings, debt, and priorities.
+          </span>
+        </a>
+
+        <a class="link-card" href="/should-i-spend-30000-on-a-wedding">
+          <strong>$30,000 Wedding Calculator</strong>
+          <span>
+            Analyze a larger wedding budget against savings impact, debt
+            pressure, and long-term flexibility.
+          </span>
+        </a>
+
+        <a class="link-card" href="/should-i-spend-50000-on-a-wedding">
+          <strong>$50,000 Wedding Calculator</strong>
+          <span>
+            Test whether a high-end wedding budget creates too much financial
+            pressure.
+          </span>
+        </a>
+
+        <a class="link-card" href="/should-i-spend-15000-on-a-honeymoon">
+          <strong>$15,000 Honeymoon Calculator</strong>
+          <span>
+            Balance post-wedding cash flow, travel splurges, and first-year
+            marriage finances.
+          </span>
+        </a>
+      </div>
+    </section>
 
     <section class="content-section">
       <h2>How Much Should You Spend on a Wedding?</h2>
 
       <p>
-        There is no universal “correct” wedding budget. The right number depends on your income, savings, debt load, emergency fund, financial goals, and comfort level with short-term financial pressure.
+        There is no universal correct wedding budget. The right number depends
+        on income, savings, debt load, emergency fund, family help, guest count,
+        local prices, and comfort with short-term financial pressure.
       </p>
 
       <p>
-        A wedding that feels manageable for one household may create years of stress for another. The goal is not maximizing the wedding budget. The goal is balancing celebration, memories, and long-term financial stability.
+        A wedding that feels manageable for one household may create years of
+        stress for another. The goal is not maximizing the wedding budget. The
+        goal is balancing celebration, memories, and long-term financial
+        stability.
       </p>
-      <div class="link-grid">
 
-  <a class="link-card" href="/how-to-budget-for-a-wedding-without-going-into-debt">
-    <strong>How to Budget for a Wedding Without Going Into Debt</strong>
-    <span>
-      Learn how to build a realistic wedding budget, avoid financial pressure,
-      and protect emergency savings after the celebration ends.
-    </span>
-  </a>
-
-</div>
+      <p>
+        A wedding budget is usually safer when it is paid mostly in cash, does
+        not wipe out emergency savings, and does not delay major goals like
+        housing, debt payoff, retirement savings, or family planning.
+      </p>
     </section>
+
+    <section class="content-section">
+      <h2>Wedding Costs That Often Get Missed</h2>
+
+      <div class="info-grid">
+        <div class="info-card">
+          <h3>Taxes, Tips, and Service Fees</h3>
+          <p>
+            Venue and catering quotes often grow once taxes, gratuities, service
+            charges, and overtime are included.
+          </p>
+        </div>
+
+        <div class="info-card">
+          <h3>Attire and Alterations</h3>
+          <p>
+            Dresses, suits, shoes, accessories, tailoring, hair, and makeup can
+            cost more than expected.
+          </p>
+        </div>
+
+        <div class="info-card">
+          <h3>Weekend Events</h3>
+          <p>
+            Rehearsal dinners, welcome parties, brunches, hotel rooms, and
+            transportation can turn one event into a full weekend budget.
+          </p>
+        </div>
+
+        <div class="info-card">
+          <h3>Last-Minute Upgrades</h3>
+          <p>
+            Flowers, signage, rentals, vendor meals, postage, favors, and
+            day-of convenience purchases can quietly raise the final cost.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <section class="content-section">
+      <h2>Wedding Planning Guides</h2>
+
+      <p>
+        These guides help explain the financial side of wedding planning,
+        including debt risk, emergency savings, honeymoon timing, and realistic
+        budget tradeoffs.
+      </p>
+
+      <div class="link-grid">
+        <a class="link-card" href="/how-to-budget-for-a-wedding-without-going-into-debt">
+          <strong>How to Budget for a Wedding Without Going Into Debt</strong>
+          <span>
+            Learn how to build a realistic wedding budget, avoid financial
+            pressure, and protect emergency savings.
+          </span>
+        </a>
+
+        <a class="link-card" href="/what-counts-as-debt">
+          <strong>What Counts as Debt?</strong>
+          <span>
+            See which obligations matter when evaluating wedding affordability.
+          </span>
+        </a>
+
+        <a class="link-card" href="/how-much-emergency-savings-should-i-have">
+          <strong>Emergency Savings Guide</strong>
+          <span>
+            Learn how much cushion to keep before committing to a large event.
+          </span>
+        </a>
+      </div>
+    </section>
+
+    <FAQSection title="Wedding Budget FAQ" faqs={weddingFaqs} />
   </main>
 </Layout>
