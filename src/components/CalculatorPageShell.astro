@@ -4,12 +4,38 @@ const {
   title,
   description,
 } = Astro.props;
+
+const siteUrl = "https://shouldispend.com";
+
+const calculatorSchema = {
+  "@context": "https://schema.org",
+  "@type": "WebApplication",
+  name: title,
+  description,
+  applicationCategory: "FinanceApplication",
+  operatingSystem: "All",
+  browserRequirements: "Requires JavaScript",
+  url: Astro.url.href,
+  isAccessibleForFree: true,
+  provider: {
+    "@type": "Organization",
+    name: "ShouldISpend",
+    url: siteUrl,
+  },
+};
 ---
+
+<script
+  type="application/ld+json"
+  set:html={JSON.stringify(calculatorSchema)}
+/>
 
 <section class="calculator-page">
   <div class="calculator-hero">
     <p class="eyebrow">{eyebrow}</p>
+
     <h1>{title}</h1>
+
     <p class="description">{description}</p>
   </div>
 
@@ -51,5 +77,19 @@ const {
     line-height: 1.7;
     max-width: 720px;
     margin: 0 auto;
+  }
+
+  @media (max-width: 640px) {
+    .calculator-page {
+      padding: 44px 20px;
+    }
+
+    .calculator-hero {
+      margin-bottom: 40px;
+    }
+
+    .description {
+      font-size: 1rem;
+    }
   }
 </style>
