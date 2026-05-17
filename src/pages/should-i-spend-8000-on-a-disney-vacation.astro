@@ -7,6 +7,9 @@ import FinancialRedFlags from "../components/FinancialRedFlags.astro";
 import CalculatorAssumptions from "../components/CalculatorAssumptions.astro";
 import RelatedCalculators from "../components/RelatedCalculators.astro";
 import RelatedGuides from "../components/RelatedGuides.astro";
+import KeyCostCategories from "../components/KeyCostCategories.astro";
+import ReduceCostTips from "../components/ReduceCostTips.astro";
+import WhenSpendingMakesSense from "../components/WhenSpendingMakesSense.astro";
 ---
 
 <Layout
@@ -56,10 +59,11 @@ import RelatedGuides from "../components/RelatedGuides.astro";
       border-radius: 14px;
       border: 1px solid var(--border);
       font-size: 1.1rem;
+      box-sizing: border-box;
     }
 
     button {
-      background: var(--button);
+      background: #0f766e;
       color: white;
       border: none;
       padding: 16px 28px;
@@ -71,11 +75,17 @@ import RelatedGuides from "../components/RelatedGuides.astro";
       display: inline-block;
     }
 
+    button:hover {
+      opacity: 0.92;
+    }
+
     .result {
       margin-top: 40px;
       border: 1px solid var(--border);
       border-radius: 24px;
       padding: 28px;
+      display: none;
+      background: #f8fafc;
     }
 
     .score {
@@ -127,6 +137,11 @@ import RelatedGuides from "../components/RelatedGuides.astro";
       color: var(--primary);
       font-weight: 600;
     }
+
+    .content-section p,
+    .content-section li {
+      line-height: 1.8;
+    }
   </style>
 
   <div class="container">
@@ -151,7 +166,7 @@ import RelatedGuides from "../components/RelatedGuides.astro";
 
           <div>
             <label for="vacation">Disney Vacation Cost</label>
-            <input id="vacation" type="number" placeholder="8000" />
+            <input id="vacation" type="number" value="8000" />
           </div>
 
           <div>
@@ -170,10 +185,8 @@ import RelatedGuides from "../components/RelatedGuides.astro";
           Get Disney Vacation Verdict
         </button>
 
-        <div class="result">
-          <div class="score" id="score">
-            Comfortable Disney Vacation - 82/100
-          </div>
+        <div class="result" id="result">
+          <div class="score" id="score"></div>
 
           <div class="bar">
             <div class="fill" id="barFill"></div>
@@ -193,212 +206,217 @@ import RelatedGuides from "../components/RelatedGuides.astro";
       </div>
 
       <div class="content-section">
-        <section>
-          <h2>What an $8,000 Disney Vacation Really Costs</h2>
+        <h2>What an $8,000 Disney Vacation Really Costs</h2>
 
-          <p>
-            An $8,000 Disney vacation can be realistic, but only if the number includes the full trip.
-            Families often budget for hotel and park tickets first, then underestimate airfare, airport
-            transfers, meals, snacks, souvenirs, stroller rentals, parking, character meals, rest-day
-            activities, and paid line-skipping options.
-          </p>
+        <p>
+          An $8,000 Disney vacation can be realistic, but only if the number
+          includes the full trip. Families often budget for hotel and park
+          tickets first, then underestimate airfare, airport transfers, meals,
+          snacks, souvenirs, stroller rentals, parking, character meals, rest-day
+          activities, and paid line-skipping options.
+        </p>
 
-          <p>
-            Disney trips also vary heavily by family size. An $8,000 budget for two adults is very different
-            from an $8,000 budget for a family of four, five, or six. Park days, hotel tier, travel dates,
-            airfare, and whether you stay on property can change the final price quickly.
-          </p>
+        <p>
+          Disney trips also vary heavily by family size. An $8,000 budget for two
+          adults is very different from an $8,000 budget for a family of four,
+          five, or six. Park days, hotel tier, travel dates, airfare, and whether
+          you stay on property can change the final price quickly.
+        </p>
 
-          <p>
-            The safest Disney budget includes tickets, lodging, transportation, food, souvenirs, premium
-            park upgrades, and a cushion for hot-weather convenience spending. In the parks, small decisions
-            can become expensive fast.
-          </p>
-        </section>
-
-        <section>
-          <h2>Why Disney Vacations Become So Expensive</h2>
-
-          <p>
-            Disney vacations are expensive because the trip is built from many separate costs. Park tickets,
-            park hopper options, hotel nights, flights, transportation, meals, snacks, souvenirs, and premium
-            experiences all stack together.
-          </p>
-
-          <p>
-            Families may also pay for Lightning Lane-style access, special dining, themed merchandise,
-            stroller rentals, photo packages, resort parking, or extra convenience when the weather is hot
-            and everyone is tired.
-          </p>
-
-          <p>
-            The emotional pressure is part of the cost. Parents often want the trip to feel memorable, which
-            can make it easier to approve another souvenir, another character meal, or another shortcut in
-            the moment.
-          </p>
-        </section>
-
-        <section>
-          <h2>Disney Costs People Forget</h2>
-
-          <p>
-            Common forgotten costs include airport food, checked bags, rideshares, sunscreen, rain gear,
-            refillable bottles, stroller rentals, resort fees, tips, snacks, phone chargers, souvenirs,
-            travel insurance, and meals on arrival and departure days.
-          </p>
-
-          <p>
-            Families should also budget for fatigue. A rest day, a closer hotel, or a paid convenience can
-            make the trip smoother, but those choices should be planned before booking instead of added
-            under pressure.
-          </p>
-        </section>
-
-        <section>
-          <h2>When an $8,000 Disney Trip Makes Sense</h2>
-
-          <p>
-            An $8,000 Disney trip makes sense when it is mostly paid from savings, leaves the emergency fund
-            intact, and does not create high-interest credit card debt after returning home.
-          </p>
-
-          <p>
-            It is easier to justify when the trip is tied to a major family milestone, the kids are at a good
-            age for the parks, and the budget already includes tickets, lodging, food, transportation,
-            souvenirs, and premium experiences your family expects to use.
-          </p>
-        </section>
-
-        <section>
-          <h2>When You Should Scale Back</h2>
-
-          <p>
-            Scaling back may be smarter if the trip would drain savings, depend on credit cards, delay debt
-            payoff, or make normal household bills feel tight afterward.
-          </p>
-
-          <p>
-            A lower-cost Disney plan can still work. Consider fewer park days, a value hotel, off-property
-            lodging, cheaper travel dates, packed snacks, limited souvenirs, fewer table-service meals, or
-            skipping park hopper tickets.
-          </p>
-        </section>
-
-        <FinancialRedFlags
-  items={[
-    "The trip would need to go on a credit card without a payoff plan.",
-    "You would drain savings that should cover emergencies or normal family expenses.",
-    "You are already behind on bills, debt payments, or savings goals.",
-    "The budget does not include park food, Genie-style add-ons, souvenirs, hotel fees, or transportation.",
-    "The trip would create stress before or after the vacation instead of feeling planned.",
-  ]}
-/><CalculatorAssumptions
-  items={[
-    "The calculator assumes the Disney trip is mostly funded with savings rather than revolving debt.",
-    "The estimate should include hotels, park tickets, food, transportation, souvenirs, and add-on services.",
-    "Travel costs can rise quickly during holidays and peak park seasons.",
-    "The calculator assumes your emergency savings remain available after the trip.",
-    "Unexpected family costs before or after the trip can affect overall affordability.",
-  ]}
-/>
-        <FAQSection
-          title="Disney Vacation FAQ"
-          faqs={[
-            {
-              question: "Is $8,000 enough for a Disney vacation?",
-              answer:
-                "Yes, $8,000 can be enough for many Disney vacations, especially with careful planning. The final answer depends on airfare, hotel tier, park days, ticket type, meals, souvenirs, family size, and paid upgrades.",
-            },
-            {
-              question: "Is an $8,000 Disney vacation too expensive?",
-              answer:
-                "An $8,000 Disney vacation is too expensive if it creates credit card debt, drains emergency savings, or makes normal bills harder to manage. It can be reasonable if it is saved for in advance and fits comfortably within the household budget.",
-            },
-            {
-              question: "Should I use savings or finance a Disney vacation?",
-              answer:
-                "Savings are usually safer than financing. A Disney trip can become much more expensive if the cost turns into months of high-interest credit card payments.",
-            },
-            {
-              question: "What should be included in a Disney vacation budget?",
-              answer:
-                "A Disney vacation budget should include park tickets, hotel, airfare or gas, airport transfers, rental car or rideshares, meals, snacks, souvenirs, stroller rentals, parking, travel insurance, Lightning Lane-style costs, and emergency money.",
-            },
-            {
-              question: "Are park hopper tickets worth it?",
-              answer:
-                "Park hopper tickets can be worth it for experienced Disney travelers who know how they want to move between parks. For families trying to control costs, single-park-per-day tickets may be the better financial choice.",
-            },
-            {
-              question: "How can I make a Disney vacation cheaper?",
-              answer:
-                "Consider fewer park days, value hotels, off-property lodging, cheaper travel dates, packed snacks, fewer table-service meals, limited souvenirs, and avoiding premium upgrades that are not essential to the trip.",
-            },
-          ]}
-        />
-
-        <MethodologySection
-          category="Disney vacation spending"
-          updated="May 2026"
-        />
-
-        <RelatedGuides
-  guides={[
-    {
-      title: "How to Avoid Vacation Debt",
-      href: "/how-to-avoid-vacation-debt",
-      description:
-        "Learn how to avoid financing vacations with high-interest debt or draining emergency savings.",
-    },
-    {
-      title: "Travel Budget Calculators",
-      href: "/travel-calculators",
-      description:
-        "Browse additional calculators for cruises, Europe trips, vacations, and major travel spending decisions.",
-    },
-  ]}
-/>
-        <RelatedCalculators
-          calculators={[
-            {
-              category: "Travel",
-              title: "Should I Spend $5,000 on a Vacation?",
-              href: "/should-i-spend-5000-on-a-vacation",
-            },
-            {
-              category: "Travel",
-              title: "Should I Spend $10,000 on a Europe Trip?",
-              href: "/should-i-spend-10000-on-a-europe-trip",
-            },
-            {
-              category: "Travel",
-              title: "Should I Spend $12,000 on a Cruise?",
-              href: "/should-i-spend-12000-on-a-cruise",
-            },
-            {
-              category: "Travel",
-              title: "Browse Travel Calculators",
-              href: "/travel-calculators",
-            },
-          ]}
-        />
-
-        <section>
-          <h2>Disney Vacation Planning Guide</h2>
-
-          <p>
-            Want a deeper breakdown of Disney hotel costs, park tickets, Lightning Lane-style upgrades,
-            food, souvenirs, and where families overspend?
-          </p>
-
-          <p>
-            Read the full guide:
-            <a href="/how-to-budget-for-a-disney-vacation">
-              How to Budget for a Disney Vacation
-            </a>
-          </p>
-        </section>
+        <p>
+          The safest Disney budget includes tickets, lodging, transportation,
+          food, souvenirs, premium park upgrades, and a cushion for hot-weather
+          convenience spending. In the parks, small decisions can become
+          expensive fast.
+        </p>
       </div>
+
+      <div class="content-section">
+        <h2>Why Disney Vacations Become So Expensive</h2>
+
+        <p>
+          Disney vacations are expensive because the trip is built from many
+          separate costs. Park tickets, park hopper options, hotel nights,
+          flights, transportation, meals, snacks, souvenirs, and premium
+          experiences all stack together.
+        </p>
+
+        <p>
+          Families may also pay for Lightning Lane-style access, special dining,
+          themed merchandise, stroller rentals, photo packages, resort parking,
+          or extra convenience when the weather is hot and everyone is tired.
+        </p>
+
+        <p>
+          The emotional pressure is part of the cost. Parents often want the trip
+          to feel memorable, which can make it easier to approve another
+          souvenir, another character meal, or another shortcut in the moment.
+        </p>
+      </div>
+
+      <WhenSpendingMakesSense
+        title="When an $8,000 Disney Trip Makes Sense"
+        items={[
+          "You can pay for the trip without carrying high-interest credit card debt.",
+          "Your emergency fund will still be intact after booking.",
+          "The trip fits a meaningful family milestone or rare travel window.",
+          "Your budget includes tickets, lodging, food, transportation, souvenirs, and add-ons.",
+          "The trip will not delay debt payoff, housing stability, or other major goals.",
+        ]}
+      />
+
+      <div class="content-section">
+        <h2>When You Should Scale Back</h2>
+
+        <p>
+          Scaling back may be smarter if the trip would drain savings, depend on
+          credit cards, delay debt payoff, or make normal household bills feel
+          tight afterward.
+        </p>
+
+        <p>
+          A lower-cost Disney plan can still work. Consider fewer park days, a
+          value hotel, off-property lodging, cheaper travel dates, packed snacks,
+          limited souvenirs, fewer table-service meals, or skipping park hopper
+          tickets.
+        </p>
+      </div>
+
+      <KeyCostCategories
+        items={[
+          {
+            title: "Park tickets and upgrades",
+            description:
+              "Tickets, park hopper options, Lightning Lane-style access, special events, and add-ons can become one of the largest parts of the trip.",
+          },
+          {
+            title: "Hotels and transportation",
+            description:
+              "On-property hotels, off-property lodging, airfare, driving costs, airport transfers, parking, and rideshares all change the real budget.",
+          },
+          {
+            title: "Meals and snacks",
+            description:
+              "Quick-service meals, character dining, snacks, drinks, groceries, and arrival-day food can add up quickly for families.",
+          },
+          {
+            title: "Souvenirs and convenience costs",
+            description:
+              "Merchandise, stroller rentals, rain gear, sunscreen, photo packages, chargers, and fatigue-driven purchases should be planned before the trip.",
+          },
+        ]}
+      />
+
+      <ReduceCostTips
+        items={[
+          "Choose fewer park days and build in a lower-cost rest day.",
+          "Compare value resorts, off-property hotels, and vacation rentals before booking.",
+          "Skip park hopper tickets if one park per day works for your family.",
+          "Set a souvenir budget before the trip starts.",
+          "Use grocery delivery, packed snacks, or simple breakfasts to control food costs.",
+          "Travel outside peak holiday and school-break windows when possible.",
+        ]}
+      />
+
+      <FinancialRedFlags
+        items={[
+          "The trip would need to go on a credit card without a payoff plan.",
+          "You would drain savings that should cover emergencies or normal family expenses.",
+          "You are already behind on bills, debt payments, or savings goals.",
+          "The budget does not include park food, paid add-ons, souvenirs, hotel fees, or transportation.",
+          "The trip would create stress before or after the vacation instead of feeling planned.",
+        ]}
+      />
+
+      <CalculatorAssumptions
+        items={[
+          "The calculator assumes the Disney trip is mostly funded with savings rather than revolving debt.",
+          "The estimate should include hotels, park tickets, food, transportation, souvenirs, and add-on services.",
+          "Travel costs can rise quickly during holidays and peak park seasons.",
+          "The calculator assumes your emergency savings remain available after the trip.",
+          "Unexpected family costs before or after the trip can affect overall affordability.",
+        ]}
+      />
+
+      <FAQSection
+        title="Disney Vacation FAQ"
+        faqs={[
+          {
+            question: "Is $8,000 enough for a Disney vacation?",
+            answer:
+              "Yes, $8,000 can be enough for many Disney vacations, especially with careful planning. The final answer depends on airfare, hotel tier, park days, ticket type, meals, souvenirs, family size, and paid upgrades.",
+          },
+          {
+            question: "Is an $8,000 Disney vacation too expensive?",
+            answer:
+              "An $8,000 Disney vacation is too expensive if it creates credit card debt, drains emergency savings, or makes normal bills harder to manage. It can be reasonable if it is saved for in advance and fits comfortably within the household budget.",
+          },
+          {
+            question: "Should I use savings or finance a Disney vacation?",
+            answer:
+              "Savings are usually safer than financing. A Disney trip can become much more expensive if the cost turns into months of high-interest credit card payments.",
+          },
+          {
+            question: "What should be included in a Disney vacation budget?",
+            answer:
+              "A Disney vacation budget should include park tickets, hotel, airfare or gas, airport transfers, rental car or rideshares, meals, snacks, souvenirs, stroller rentals, parking, travel insurance, Lightning Lane-style costs, and emergency money.",
+          },
+          {
+            question: "Are park hopper tickets worth it?",
+            answer:
+              "Park hopper tickets can be worth it for experienced Disney travelers who know how they want to move between parks. For families trying to control costs, single-park-per-day tickets may be the better financial choice.",
+          },
+          {
+            question: "How can I make a Disney vacation cheaper?",
+            answer:
+              "Consider fewer park days, value hotels, off-property lodging, cheaper travel dates, packed snacks, fewer table-service meals, limited souvenirs, and avoiding premium upgrades that are not essential to the trip.",
+          },
+        ]}
+      />
+
+      <MethodologySection category="Disney vacation spending" updated="May 2026" />
+
+      <RelatedGuides
+        guides={[
+          {
+            title: "How to Avoid Vacation Debt",
+            href: "/how-to-avoid-vacation-debt",
+            description:
+              "Learn how to avoid financing vacations with high-interest debt or draining emergency savings.",
+          },
+          {
+            title: "How to Budget for a Disney Vacation",
+            href: "/how-to-budget-for-a-disney-vacation",
+            description:
+              "Review Disney hotel costs, park tickets, food, souvenirs, and common places families overspend.",
+          },
+        ]}
+      />
+
+      <RelatedCalculators
+        calculators={[
+          {
+            category: "Travel",
+            title: "Should I Spend $5,000 on a Vacation?",
+            href: "/should-i-spend-5000-on-a-vacation",
+          },
+          {
+            category: "Travel",
+            title: "Should I Spend $10,000 on a Europe Trip?",
+            href: "/should-i-spend-10000-on-a-europe-trip",
+          },
+          {
+            category: "Travel",
+            title: "Should I Spend $12,000 on a Cruise?",
+            href: "/should-i-spend-12000-on-a-cruise",
+          },
+          {
+            category: "Travel",
+            title: "Browse Travel Calculators",
+            href: "/travel-calculators",
+          },
+        ]}
+      />
     </CalculatorPageShell>
   </div>
 
@@ -407,20 +425,43 @@ import RelatedGuides from "../components/RelatedGuides.astro";
       const income = Number(document.getElementById("income").value);
       const savings = Number(document.getElementById("savings").value);
       const vacation = Number(document.getElementById("vacation").value);
-      const debt = Number(document.getElementById("debt").value);
+      const debt = Number(document.getElementById("debt").value || 0);
+
+      const result = document.getElementById("result");
+      const scoreEl = document.getElementById("score");
+      const barFill = document.getElementById("barFill");
+      const stressEl = document.getElementById("stress");
+      const savingsImpactEl = document.getElementById("savingsImpact");
+      const incomeImpactEl = document.getElementById("incomeImpact");
+      const debtRatioEl = document.getElementById("debtRatio");
+      const guidanceEl = document.getElementById("guidance");
+
+      result.style.display = "block";
+
+      if (!income || !savings || !vacation) {
+        scoreEl.textContent = "Add your numbers first";
+        barFill.style.width = "0%";
+        stressEl.innerHTML = "";
+        savingsImpactEl.innerHTML = "";
+        incomeImpactEl.innerHTML = "";
+        debtRatioEl.innerHTML = "";
+        guidanceEl.textContent =
+          "Enter your income, savings, Disney trip cost, and debt so the calculator can give a useful verdict.";
+        return;
+      }
+
+      const savingsImpact = (vacation / savings) * 100;
+      const incomeImpact = (vacation / income) * 100;
+      const debtRatio = (debt / income) * 100;
 
       let score = 100;
-
-      const savingsImpact = savings > 0 ? (vacation / savings) * 100 : 100;
-      const incomeImpact = income > 0 ? (vacation / income) * 100 : 100;
-      const debtRatio = income > 0 ? (debt / income) * 100 : 50;
 
       score -= savingsImpact * 0.22;
       score -= incomeImpact * 0.9;
       score -= debtRatio * 0.18;
 
       if (savings < vacation) score -= 12;
-      if (income > 0 && debt > income * 0.5) score -= 10;
+      if (debt > income * 0.5) score -= 10;
 
       score = Math.max(0, Math.min(100, Math.round(score)));
 
@@ -455,25 +496,19 @@ import RelatedGuides from "../components/RelatedGuides.astro";
         barColor = "#b91c1c";
       }
 
-      document.getElementById("score").textContent = `${verdict} - ${score}/100`;
-      document.getElementById("barFill").style.width = `${score}%`;
-      document.getElementById("barFill").style.background = barColor;
+      scoreEl.textContent = `${verdict} - ${score}/100`;
+      barFill.style.width = `${score}%`;
+      barFill.style.background = barColor;
 
-      document.getElementById("stress").innerHTML =
-        `<strong>Stress level:</strong> ${stress}`;
-
-      document.getElementById("savingsImpact").innerHTML =
-        `<strong>Savings impact:</strong> ${savingsImpact.toFixed(1)}% of savings`;
-
-      document.getElementById("incomeImpact").innerHTML =
-        `<strong>Income impact:</strong> ${incomeImpact.toFixed(1)}% of annual income`;
-
-      document.getElementById("debtRatio").innerHTML =
-        `<strong>Debt ratio:</strong> ${debtRatio.toFixed(1)}% of annual income`;
-
-      document.getElementById("guidance").textContent = guidance;
+      stressEl.innerHTML = `<strong>Stress level:</strong> ${stress}`;
+      savingsImpactEl.innerHTML = `<strong>Savings impact:</strong> ${savingsImpact.toFixed(1)}% of savings`;
+      incomeImpactEl.innerHTML = `<strong>Income impact:</strong> ${incomeImpact.toFixed(1)}% of annual income`;
+      debtRatioEl.innerHTML = `<strong>Debt ratio:</strong> ${debtRatio.toFixed(1)}% of annual income`;
+      guidanceEl.textContent = guidance;
     }
 
-    document.getElementById("vacationButton").addEventListener("click", calculateVacation);
+    document
+      .getElementById("vacationButton")
+      .addEventListener("click", calculateVacation);
   </script>
 </Layout>
