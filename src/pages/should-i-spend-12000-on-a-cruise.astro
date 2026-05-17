@@ -7,6 +7,9 @@ import FinancialRedFlags from "../components/FinancialRedFlags.astro";
 import CalculatorAssumptions from "../components/CalculatorAssumptions.astro";
 import RelatedCalculators from "../components/RelatedCalculators.astro";
 import RelatedGuides from "../components/RelatedGuides.astro";
+import KeyCostCategories from "../components/KeyCostCategories.astro";
+import ReduceCostTips from "../components/ReduceCostTips.astro";
+import WhenSpendingMakesSense from "../components/WhenSpendingMakesSense.astro";
 ---
 
 <Layout
@@ -56,10 +59,11 @@ import RelatedGuides from "../components/RelatedGuides.astro";
       border-radius: 14px;
       border: 1px solid var(--border);
       font-size: 1.1rem;
+      box-sizing: border-box;
     }
 
     button {
-      background: var(--button);
+      background: #0f766e;
       color: white;
       border: none;
       padding: 16px 28px;
@@ -71,11 +75,17 @@ import RelatedGuides from "../components/RelatedGuides.astro";
       display: inline-block;
     }
 
+    button:hover {
+      opacity: 0.92;
+    }
+
     .result {
       margin-top: 40px;
       border: 1px solid var(--border);
       border-radius: 24px;
       padding: 28px;
+      display: none;
+      background: #f8fafc;
     }
 
     .score {
@@ -127,6 +137,11 @@ import RelatedGuides from "../components/RelatedGuides.astro";
       color: var(--primary);
       font-weight: 600;
     }
+
+    .content-section p,
+    .content-section li {
+      line-height: 1.8;
+    }
   </style>
 
   <div class="container">
@@ -151,7 +166,7 @@ import RelatedGuides from "../components/RelatedGuides.astro";
 
           <div>
             <label for="vacation">Total Cruise Cost</label>
-            <input id="vacation" type="number" placeholder="12000" />
+            <input id="vacation" type="number" value="12000" />
           </div>
 
           <div>
@@ -170,10 +185,8 @@ import RelatedGuides from "../components/RelatedGuides.astro";
           Get Cruise Verdict
         </button>
 
-        <div class="result">
-          <div class="score" id="score">
-            Comfortable Cruise - 82/100
-          </div>
+        <div class="result" id="result">
+          <div class="score" id="score"></div>
 
           <div class="bar">
             <div class="fill" id="barFill"></div>
@@ -193,202 +206,212 @@ import RelatedGuides from "../components/RelatedGuides.astro";
       </div>
 
       <div class="content-section">
-        <section>
-          <h2>What a $12,000 Cruise Really Costs</h2>
+        <h2>What a $12,000 Cruise Really Costs</h2>
 
-          <p>
-            A cruise can look cheaper than it really is because the base fare feels bundled.
-            The real total often includes gratuities, excursions, drink packages, specialty
-            dining, Wi-Fi, spa services, casino spending, port transportation, pre-cruise hotels,
-            flights, travel insurance, passports, luggage, and onboard purchases.
-          </p>
+        <p>
+          A cruise can look cheaper than it really is because the base fare feels
+          bundled. The real total often includes gratuities, excursions, drink
+          packages, specialty dining, Wi-Fi, spa services, casino spending, port
+          transportation, pre-cruise hotels, flights, travel insurance,
+          passports, luggage, and onboard purchases.
+        </p>
 
-          <p>
-            A $12,000 cruise may be reasonable for a family, longer itinerary, balcony cabin,
-            suite, Alaska sailing, European route, or premium cruise line. It becomes riskier
-            when the quoted fare only covers the cabin and leaves tips, shore excursions,
-            alcohol, flights, hotels, port transfers, and taxes outside the estimate.
-          </p>
+        <p>
+          A $12,000 cruise may be reasonable for a family, longer itinerary,
+          balcony cabin, suite, Alaska sailing, European route, or premium cruise
+          line. It becomes riskier when the quoted fare only covers the cabin and
+          leaves tips, shore excursions, alcohol, flights, hotels, port
+          transfers, and taxes outside the estimate.
+        </p>
 
-          <p>
-            Cruise spending can also climb during the trip. Once you are onboard, convenience
-            costs feel easier to approve because meals, entertainment, drinks, excursions, and
-            upgrades are all happening in one closed environment.
-          </p>
-        </section>
-
-        <section>
-          <h2>Why Cruises Cost More Than the Advertised Fare</h2>
-
-          <p>
-            The advertised cruise fare usually tells only part of the story. Port fees, taxes,
-            gratuities, drinks, specialty restaurants, shore excursions, Wi-Fi, photos, and
-            transportation can add thousands to the final bill.
-          </p>
-
-          <p>
-            Flights to the port city are another major swing factor. A family flying to Miami,
-            Orlando, Seattle, New York, Vancouver, Rome, or Barcelona may need airfare, checked
-            bags, hotel rooms before embarkation, meals, rideshares, and buffer time before
-            the ship leaves.
-          </p>
-        </section>
-
-        <section>
-          <h2>Cruise Costs People Forget</h2>
-
-          <p>
-            Common forgotten cruise costs include gratuities, drink packages, bottled water,
-            specialty coffee, Wi-Fi, photos, arcade spending, casino spending, spa services,
-            excursions, port taxis, travel insurance, seasickness medicine, formalwear, laundry,
-            passports, and pre- or post-cruise hotel nights.
-          </p>
-
-          <p>
-            Families should also consider cabin comfort. An interior cabin may save money, but
-            a balcony or larger room can matter more on longer sailings, rough seas, or trips
-            with children who need downtime.
-          </p>
-        </section>
-
-        <section>
-          <h2>When a $12,000 Cruise Makes Sense</h2>
-
-          <p>
-            A cruise at this price point makes more sense when it is mostly paid from savings,
-            your emergency fund remains intact, and the trip does not create high-interest
-            credit card debt.
-          </p>
-
-          <p>
-            The budget should include the full cruise experience: cabin fare, taxes, port fees,
-            gratuities, excursions, drink packages, specialty dining, flights, hotels before
-            sailing, ground transportation, travel insurance, and a cushion for onboard spending.
-          </p>
-
-          <p>
-            A cruise can be a strong value when the all-in cost is honest and the trip does not
-            create financial stress after you return home.
-          </p>
-        </section>
-
-        <section>
-          <h2>When You Should Scale Back</h2>
-
-          <p>
-            Scaling back may be smarter if the cruise requires financing, drains savings, or
-            leaves you without enough cash for bills, emergencies, debt payoff, or upcoming
-            household expenses.
-          </p>
-
-          <p>
-            A cheaper version may still work. Consider a shorter sailing, interior cabin, fewer
-            paid excursions, no drink package, a departure port within driving distance, or a
-            later date that gives you more time to save.
-          </p>
-        </section>
-
-        <FinancialRedFlags
-  items={[
-    "The cruise budget depends on financing the trip with debt.",
-    "You are not accounting for excursions, drink packages, gratuities, flights, or port costs.",
-    "The trip would significantly reduce your emergency savings.",
-    "Your monthly bills already feel difficult to manage.",
-    "You would return from the cruise financially stressed or unable to rebuild savings quickly.",
-  ]}
-
-  <CalculatorAssumptions
-  items={[
-    "The calculator assumes the cruise is primarily paid with savings instead of high-interest debt.",
-    "Cruise pricing should include gratuities, excursions, flights, transportation, and onboard purchases.",
-    "The estimate assumes your normal monthly bills remain manageable after the trip.",
-    "Unexpected medical, weather, or travel disruption costs can increase total spending.",
-    "The calculator assumes you still maintain an emergency cushion after booking the cruise.",
-  ]}
-/>
-/>
-        <FAQSection
-          title="Cruise Vacation FAQ"
-          faqs={[
-            {
-              question: "Is $12,000 too much for a cruise?",
-              answer:
-                "It depends on income, savings, debt, family size, cruise length, cabin type, destination, and what is included. A $12,000 cruise can be reasonable if it reflects the full trip cost and does not create debt pressure.",
-            },
-            {
-              question: "What costs should I include in a cruise budget?",
-              answer:
-                "Include the cruise fare, taxes, port fees, gratuities, excursions, drink packages, specialty dining, Wi-Fi, flights, hotels, transportation, travel insurance, passports, luggage, and onboard spending.",
-            },
-            {
-              question: "Should I finance a cruise?",
-              answer:
-                "Financing a cruise can be risky if it involves high-interest debt. A cruise is usually safer when paid from savings while keeping an emergency cushion intact.",
-            },
-            {
-              question: "Why do cruises cost more than the advertised fare?",
-              answer:
-                "The advertised fare often excludes gratuities, excursions, drinks, specialty dining, Wi-Fi, port transportation, flights, hotels, taxes, and extra onboard spending.",
-            },
-            {
-              question: "Are cruise drink packages worth it?",
-              answer:
-                "Drink packages can be worth it for travelers who will use them heavily, but they can also add major cost. Families or light drinkers should compare the package price against realistic daily use.",
-            },
-            {
-              question: "How can I make a cruise cheaper?",
-              answer:
-                "Choose an interior cabin, book a shorter sailing, limit excursions, skip drink packages, drive to the port if possible, avoid specialty dining, and set a firm onboard spending limit.",
-            },
-          ]}
-        />
-
-        <MethodologySection
-          category="cruise spending"
-          updated="May 2026"
-        />
-
-        <RelatedGuides
-  guides={[
-    {
-      title: "How to Avoid Vacation Debt",
-      href: "/how-to-avoid-vacation-debt",
-      description:
-        "Learn how to keep a cruise or major vacation from turning into long-term debt.",
-    },
-    {
-      title: "Travel Budget Calculators",
-      href: "/travel-calculators",
-      description:
-        "Compare cruise, Disney, Europe, and vacation calculators before committing to a major trip.",
-    },
-  ]}
-/>
-        <RelatedCalculators
-          calculators={[
-            {
-              category: "Travel",
-              title: "Should I Spend $5,000 on a Vacation?",
-              href: "/should-i-spend-5000-on-a-vacation",
-            },
-            {
-              category: "Travel",
-              title: "Should I Spend $8,000 on a Disney Vacation?",
-              href: "/should-i-spend-8000-on-a-disney-vacation",
-            },
-            {
-              category: "Travel",
-              title: "Should I Spend $10,000 on a Europe Trip?",
-              href: "/should-i-spend-10000-on-a-europe-trip",
-            },
-            {
-              category: "Travel",
-              title: "Browse Travel Calculators",
-              href: "/travel-calculators",
-            },
-          ]}
-        />
+        <p>
+          Cruise spending can also climb during the trip. Once you are onboard,
+          convenience costs feel easier to approve because meals, entertainment,
+          drinks, excursions, and upgrades are all happening in one closed
+          environment.
+        </p>
       </div>
+
+      <div class="content-section">
+        <h2>Why Cruises Cost More Than the Advertised Fare</h2>
+
+        <p>
+          The advertised cruise fare usually tells only part of the story. Port
+          fees, taxes, gratuities, drinks, specialty restaurants, shore
+          excursions, Wi-Fi, photos, and transportation can add thousands to the
+          final bill.
+        </p>
+
+        <p>
+          Flights to the port city are another major swing factor. A family
+          flying to Miami, Orlando, Seattle, New York, Vancouver, Rome, or
+          Barcelona may need airfare, checked bags, hotel rooms before
+          embarkation, meals, rideshares, and buffer time before the ship leaves.
+        </p>
+      </div>
+
+      <WhenSpendingMakesSense
+        title="When a $12,000 Cruise Makes Sense"
+        items={[
+          "You can pay for the trip without carrying high-interest credit card debt.",
+          "Your emergency fund remains intact after booking the cruise.",
+          "The budget includes the cruise fare, taxes, gratuities, excursions, flights, hotels, and onboard spending.",
+          "The trip fits a major family milestone, anniversary, retirement celebration, or rare travel opportunity.",
+          "You can return home without delaying debt payoff, housing stability, or normal savings goals.",
+        ]}
+      />
+
+      <div class="content-section">
+        <h2>When You Should Scale Back</h2>
+
+        <p>
+          Scaling back may be smarter if the cruise requires financing, drains
+          savings, or leaves you without enough cash for bills, emergencies,
+          debt payoff, or upcoming household expenses.
+        </p>
+
+        <p>
+          A cheaper version may still work. Consider a shorter sailing, interior
+          cabin, fewer paid excursions, no drink package, a departure port within
+          driving distance, or a later date that gives you more time to save.
+        </p>
+      </div>
+
+      <KeyCostCategories
+        items={[
+          {
+            title: "Cruise fare, taxes, and port fees",
+            description:
+              "The cabin price is only the starting point. Port fees, taxes, required charges, and cabin upgrades can change the real total.",
+          },
+          {
+            title: "Gratuities and onboard spending",
+            description:
+              "Daily gratuities, drinks, specialty dining, Wi-Fi, photos, spa services, casino spending, and shopping can add up during the trip.",
+          },
+          {
+            title: "Excursions and port days",
+            description:
+              "Shore excursions, taxis, beach clubs, tours, meals in port, and activity fees can become a major part of the cruise budget.",
+          },
+          {
+            title: "Flights, hotels, and transfers",
+            description:
+              "Airfare, checked bags, pre-cruise hotels, rideshares, airport transfers, parking, and buffer days should be planned before booking.",
+          },
+        ]}
+      />
+
+      <ReduceCostTips
+        items={[
+          "Choose a shorter sailing or less expensive cabin category.",
+          "Skip the drink package unless the math clearly works for your group.",
+          "Limit paid excursions and mix in cheaper self-guided port days.",
+          "Drive to the departure port if practical.",
+          "Set an onboard spending limit before the cruise begins.",
+          "Book with enough time to compare airfare, hotels, and transfer costs.",
+        ]}
+      />
+
+      <FinancialRedFlags
+        items={[
+          "The cruise budget depends on financing the trip with debt.",
+          "You are not accounting for excursions, drink packages, gratuities, flights, or port costs.",
+          "The trip would significantly reduce your emergency savings.",
+          "Your monthly bills already feel difficult to manage.",
+          "You would return from the cruise financially stressed or unable to rebuild savings quickly.",
+        ]}
+      />
+
+      <CalculatorAssumptions
+        items={[
+          "The calculator assumes the cruise is primarily paid with savings instead of high-interest debt.",
+          "Cruise pricing should include gratuities, excursions, flights, transportation, and onboard purchases.",
+          "The estimate assumes your normal monthly bills remain manageable after the trip.",
+          "Unexpected medical, weather, or travel disruption costs can increase total spending.",
+          "The calculator assumes you still maintain an emergency cushion after booking the cruise.",
+        ]}
+      />
+
+      <FAQSection
+        title="Cruise Vacation FAQ"
+        faqs={[
+          {
+            question: "Is $12,000 too much for a cruise?",
+            answer:
+              "It depends on income, savings, debt, family size, cruise length, cabin type, destination, and what is included. A $12,000 cruise can be reasonable if it reflects the full trip cost and does not create debt pressure.",
+          },
+          {
+            question: "What costs should I include in a cruise budget?",
+            answer:
+              "Include the cruise fare, taxes, port fees, gratuities, excursions, drink packages, specialty dining, Wi-Fi, flights, hotels, transportation, travel insurance, passports, luggage, and onboard spending.",
+          },
+          {
+            question: "Should I finance a cruise?",
+            answer:
+              "Financing a cruise can be risky if it involves high-interest debt. A cruise is usually safer when paid from savings while keeping an emergency cushion intact.",
+          },
+          {
+            question: "Why do cruises cost more than the advertised fare?",
+            answer:
+              "The advertised fare often excludes gratuities, excursions, drinks, specialty dining, Wi-Fi, port transportation, flights, hotels, taxes, and extra onboard spending.",
+          },
+          {
+            question: "Are cruise drink packages worth it?",
+            answer:
+              "Drink packages can be worth it for travelers who will use them heavily, but they can also add major cost. Families or light drinkers should compare the package price against realistic daily use.",
+          },
+          {
+            question: "How can I make a cruise cheaper?",
+            answer:
+              "Choose an interior cabin, book a shorter sailing, limit excursions, skip drink packages, drive to the port if possible, avoid specialty dining, and set a firm onboard spending limit.",
+          },
+        ]}
+      />
+
+      <MethodologySection category="cruise spending" updated="May 2026" />
+
+      <RelatedGuides
+        guides={[
+          {
+            title: "How to Avoid Vacation Debt",
+            href: "/how-to-avoid-vacation-debt",
+            description:
+              "Learn how to keep a cruise or major vacation from turning into long-term debt.",
+          },
+          {
+            title: "Travel Budget Calculators",
+            href: "/travel-calculators",
+            description:
+              "Compare cruise, Disney, Europe, and vacation calculators before committing to a major trip.",
+          },
+        ]}
+      />
+
+      <RelatedCalculators
+        calculators={[
+          {
+            category: "Travel",
+            title: "Should I Spend $5,000 on a Vacation?",
+            href: "/should-i-spend-5000-on-a-vacation",
+          },
+          {
+            category: "Travel",
+            title: "Should I Spend $8,000 on a Disney Vacation?",
+            href: "/should-i-spend-8000-on-a-disney-vacation",
+          },
+          {
+            category: "Travel",
+            title: "Should I Spend $10,000 on a Europe Trip?",
+            href: "/should-i-spend-10000-on-a-europe-trip",
+          },
+          {
+            category: "Travel",
+            title: "Browse Travel Calculators",
+            href: "/travel-calculators",
+          },
+        ]}
+      />
     </CalculatorPageShell>
   </div>
 
@@ -397,20 +420,43 @@ import RelatedGuides from "../components/RelatedGuides.astro";
       const income = Number(document.getElementById("income").value);
       const savings = Number(document.getElementById("savings").value);
       const vacation = Number(document.getElementById("vacation").value);
-      const debt = Number(document.getElementById("debt").value);
+      const debt = Number(document.getElementById("debt").value || 0);
+
+      const result = document.getElementById("result");
+      const scoreEl = document.getElementById("score");
+      const barFill = document.getElementById("barFill");
+      const stressEl = document.getElementById("stress");
+      const savingsImpactEl = document.getElementById("savingsImpact");
+      const incomeImpactEl = document.getElementById("incomeImpact");
+      const debtRatioEl = document.getElementById("debtRatio");
+      const guidanceEl = document.getElementById("guidance");
+
+      result.style.display = "block";
+
+      if (!income || !savings || !vacation) {
+        scoreEl.textContent = "Add your numbers first";
+        barFill.style.width = "0%";
+        stressEl.innerHTML = "";
+        savingsImpactEl.innerHTML = "";
+        incomeImpactEl.innerHTML = "";
+        debtRatioEl.innerHTML = "";
+        guidanceEl.textContent =
+          "Enter your income, savings, cruise cost, and debt so the calculator can give a useful verdict.";
+        return;
+      }
+
+      const savingsImpact = (vacation / savings) * 100;
+      const incomeImpact = (vacation / income) * 100;
+      const debtRatio = (debt / income) * 100;
 
       let score = 100;
-
-      const savingsImpact = savings > 0 ? (vacation / savings) * 100 : 100;
-      const incomeImpact = income > 0 ? (vacation / income) * 100 : 100;
-      const debtRatio = income > 0 ? (debt / income) * 100 : 50;
 
       score -= savingsImpact * 0.22;
       score -= incomeImpact * 0.9;
       score -= debtRatio * 0.18;
 
       if (savings < vacation) score -= 12;
-      if (income > 0 && debt > income * 0.5) score -= 10;
+      if (debt > income * 0.5) score -= 10;
 
       score = Math.max(0, Math.min(100, Math.round(score)));
 
@@ -445,25 +491,19 @@ import RelatedGuides from "../components/RelatedGuides.astro";
         barColor = "#b91c1c";
       }
 
-      document.getElementById("score").textContent = `${verdict} - ${score}/100`;
-      document.getElementById("barFill").style.width = `${score}%`;
-      document.getElementById("barFill").style.background = barColor;
+      scoreEl.textContent = `${verdict} - ${score}/100`;
+      barFill.style.width = `${score}%`;
+      barFill.style.background = barColor;
 
-      document.getElementById("stress").innerHTML =
-        `<strong>Stress level:</strong> ${stress}`;
-
-      document.getElementById("savingsImpact").innerHTML =
-        `<strong>Savings impact:</strong> ${savingsImpact.toFixed(1)}% of savings`;
-
-      document.getElementById("incomeImpact").innerHTML =
-        `<strong>Income impact:</strong> ${incomeImpact.toFixed(1)}% of annual income`;
-
-      document.getElementById("debtRatio").innerHTML =
-        `<strong>Debt ratio:</strong> ${debtRatio.toFixed(1)}% of annual income`;
-
-      document.getElementById("guidance").textContent = guidance;
+      stressEl.innerHTML = `<strong>Stress level:</strong> ${stress}`;
+      savingsImpactEl.innerHTML = `<strong>Savings impact:</strong> ${savingsImpact.toFixed(1)}% of savings`;
+      incomeImpactEl.innerHTML = `<strong>Income impact:</strong> ${incomeImpact.toFixed(1)}% of annual income`;
+      debtRatioEl.innerHTML = `<strong>Debt ratio:</strong> ${debtRatio.toFixed(1)}% of annual income`;
+      guidanceEl.textContent = guidance;
     }
 
-    document.getElementById("vacationButton").addEventListener("click", calculateVacation);
+    document
+      .getElementById("vacationButton")
+      .addEventListener("click", calculateVacation);
   </script>
 </Layout>
