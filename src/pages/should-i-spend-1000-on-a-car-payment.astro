@@ -4,70 +4,61 @@ import CalculatorPageShell from "../components/CalculatorPageShell.astro";
 import VerdictBadge from "../components/VerdictBadge.astro";
 import FAQSection from "../components/FAQSection.astro";
 import RelatedCalculators from "../components/RelatedCalculators.astro";
-import { calculators } from "../data/calculators.js";
 import MethodologySection from "../components/MethodologySection.astro";
+import FinancialRedFlags from "../components/FinancialRedFlags.astro";
+import CalculatorAssumptions from "../components/CalculatorAssumptions.astro";
+import KeyCostCategories from "../components/KeyCostCategories.astro";
+import ReduceCostTips from "../components/ReduceCostTips.astro";
+import WhenSpendingMakesSense from "../components/WhenSpendingMakesSense.astro";
+import { calculators } from "../data/calculators.js";
 
 const carFaqs = [
   {
     question: "Is a $1,000 car payment too much?",
     answer:
-      "A $1,000 car payment can be manageable for some households, but it becomes risky when it crowds out emergency savings, retirement contributions, insurance, fuel, repairs, or other debt payments.",
+      "A $1,000 car payment is usually a high-cost vehicle decision. It may be manageable for some households, but it becomes risky when insurance, fuel, maintenance, debt payments, and savings goals are included.",
   },
   {
-    question: "How much of my income should go toward a car payment?",
+    question: "How much income do I need for a $1,000 car payment?",
     answer:
-      "A common guideline is to keep the car payment comfortably below 10% to 15% of monthly take-home pay, especially when insurance, gas, maintenance, and registration are added on top.",
+      "There is no single perfect income number, but the payment is safer when it stays comfortably below 10% to 15% of monthly take-home pay after insurance, fuel, maintenance, and other debt payments are considered.",
   },
   {
     question: "What should I consider besides the monthly payment?",
     answer:
-      "The payment is only one part of the decision. You should also consider loan length, interest rate, down payment, insurance cost, maintenance, depreciation, and whether the payment still leaves room for savings.",
+      "You should consider loan length, interest rate, insurance, fuel, repairs, maintenance, depreciation, registration, tires, and whether the payment still leaves room for savings and emergencies.",
+  },
+  {
+    question: "Is a longer loan term worth it for a lower payment?",
+    answer:
+      "A longer loan term can lower the monthly payment, but it may increase total interest and keep you underwater on the vehicle longer. The lower payment should not hide the true total cost.",
   },
 ];
 
-const relatedCalculators = calculators.filter(
-  (calculator) => calculator.href !== "/should-i-spend-1000-on-a-car-payment"
-);
+const relatedCalculators = calculators
+  .filter(
+    (calculator) =>
+      calculator.category === "Cars" &&
+      calculator.href !== "/should-i-spend-1000-on-a-car-payment"
+  )
+  .slice(0, 4);
 ---
-<Layout title="Should I Spend $1,000 on a Car Payment?">
 
+<Layout
+  title="Should I Spend $1,000 on a Car Payment?"
+  description="Use this car payment calculator to decide whether a $1,000 monthly vehicle payment fits your income, savings, debt, insurance, and financial flexibility."
+>
   <style>
-    
     .container {
       max-width: 900px;
       margin: auto;
-    }
-
-    .eyebrow {
-      text-transform: uppercase;
-      letter-spacing: 2px;
-      color: #0f766e;
-      font-weight: bold;
-      text-align: center;
-      margin-bottom: 10px;
-    }
-
-    h1 {
-      font-size: 4rem;
-      line-height: 1;
-      text-align: center;
-      margin-bottom: 20px;
-    }
-
-    .subtext {
-      text-align: center;
-      font-size: 1.4rem;
-      line-height: 1.7;
-      max-width: 850px;
-      margin: 0 auto 50px auto;
-      color: #334155;
     }
 
     .calculator {
       background: white;
       padding: 40px;
       border-radius: 24px;
-      box-shadow: 0 10px 25px rgba(0,0,0,0.06);
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.06);
     }
 
     .calculator h2 {
@@ -97,9 +88,22 @@ const relatedCalculators = calculators.filter(
       box-sizing: border-box;
     }
 
+    .helper-link {
+      margin-top: 10px;
+      font-size: 0.92rem;
+      line-height: 1.5;
+      color: #475569;
+    }
+
+    .helper-link a {
+      color: #0f766e;
+      font-weight: 700;
+      text-decoration: none;
+    }
+
     button {
       margin-top: 30px;
-      background: #0f172a;
+      background: #0f766e;
       color: white;
       border: none;
       padding: 18px 32px;
@@ -107,6 +111,11 @@ const relatedCalculators = calculators.filter(
       font-size: 1.1rem;
       font-weight: bold;
       cursor: pointer;
+      transition: opacity 0.2s ease;
+    }
+
+    button:hover {
+      opacity: 0.92;
     }
 
     .results {
@@ -115,12 +124,6 @@ const relatedCalculators = calculators.filter(
       padding: 30px;
       border-radius: 20px;
       border: 1px solid #dbe4ee;
-    }
-
-    .results h3 {
-      font-size: 3rem;
-      margin-top: 0;
-      margin-bottom: 20px;
     }
 
     .bar {
@@ -140,14 +143,14 @@ const relatedCalculators = calculators.filter(
     }
 
     .results p {
-      font-size: 1.2rem;
+      font-size: 1.1rem;
       line-height: 1.8;
       margin: 10px 0;
     }
 
     .guidance {
       margin-top: 30px;
-      font-size: 1.35rem;
+      font-size: 1.25rem;
       line-height: 1.8;
       color: #1e293b;
     }
@@ -158,137 +161,258 @@ const relatedCalculators = calculators.filter(
       color: #64748b;
     }
 
+    .content-section {
+      margin-top: 60px;
+    }
+
+    .content-section h2 {
+      font-size: 2rem;
+      margin-bottom: 20px;
+    }
+
+    .content-section p,
+    .content-section li {
+      font-size: 1.1rem;
+      line-height: 1.9;
+      color: #334155;
+    }
+
     @media (max-width: 768px) {
-      h1 {
-        font-size: 2.7rem;
+      .calculator {
+        padding: 24px;
       }
 
       .grid {
         grid-template-columns: 1fr;
       }
 
-      .calculator {
+      .calculator h2 {
+        font-size: 1.7rem;
+      }
+
+      .results {
         padding: 24px;
       }
 
-      .results h3 {
-        font-size: 2.2rem;
+      .guidance {
+        font-size: 1.12rem;
+      }
+
+      .content-section h2 {
+        font-size: 1.7rem;
       }
     }
   </style>
 
   <div class="container">
     <CalculatorPageShell
-  eyebrow="Car Payment Calculator"
-  title="Should I Spend $1,000 on a Car Payment?"
-  description="Evaluate whether your monthly car payment is financially manageable based on income, savings, debt load, and overall comfort level."
->
+      eyebrow="Car Payment Calculator"
+      title="Should I Spend $1,000 on a Car Payment?"
+      description="Evaluate whether a $1,000 monthly vehicle payment is financially manageable based on income, savings, debt load, insurance pressure, and overall flexibility."
+    >
+      <div class="calculator">
+        <h2>Car Payment Affordability Verdict</h2>
 
-    <div class="calculator">
+        <div class="grid">
+          <div class="field">
+            <label for="income">Monthly Take-Home Income</label>
+            <input id="income" type="number" placeholder="Example: 8000" />
+          </div>
 
-      <h2>Car Payment Affordability Verdict</h2>
+          <div class="field">
+            <label for="savings">Current Savings</label>
+            <input id="savings" type="number" placeholder="Example: 25000" />
+          </div>
 
-      <div class="grid">
+          <div class="field">
+            <label for="payment">Monthly Car Payment</label>
+            <input id="payment" type="number" value="1000" />
+          </div>
 
-        <div class="field">
-          <label>Monthly Take-Home Income</label>
-          <input id="income" type="number" placeholder="Example: 6000" />
+          <div class="field">
+            <label for="debt">Current Monthly Debt Payments</label>
+            <input id="debt" type="number" placeholder="Example: 900" />
+
+            <div class="helper-link">
+              Not sure what counts as debt?
+              <a href="/what-counts-as-debt">Read the debt guide</a>
+            </div>
+          </div>
         </div>
 
-        <div class="field">
-          <label>Current Savings</label>
-          <input id="savings" type="number" placeholder="Example: 15000" />
-        </div>
+        <button id="carButton" type="button">
+          Get Car Payment Verdict
+        </button>
 
-        <div class="field">
-          <label>Monthly Car Payment</label>
-          <input id="payment" type="number" placeholder="Example: 1000" />
-        </div>
+        <div class="results">
+          <div id="verdictBadge">
+            <VerdictBadge label="Waiting For Inputs" tone="neutral" />
+          </div>
 
-        <div class="field">
-          <label>Current Monthly Debt Payments</label>
-          <input id="debt" type="number" placeholder="Example: 900" />
-        </div>
+          <div class="bar">
+            <div class="fill" id="fillBar"></div>
+          </div>
 
+          <p id="stress"></p>
+          <p id="paymentImpact"></p>
+          <p id="savingsImpact"></p>
+          <p id="debtRatio"></p>
+
+          <div class="guidance" id="guidance"></div>
+
+          <div class="disclaimer">
+            This is a general educational estimate, not financial advice.
+          </div>
+        </div>
       </div>
 
-      <button id="carButton">
-        Get Car Payment Verdict
-      </button>
+      <section class="content-section">
+        <h2>What a $1,000 Car Payment Really Costs</h2>
 
-      <div class="results">
+        <p>
+          A $1,000 car payment is rarely just a $1,000 transportation expense.
+          Insurance, fuel, maintenance, tires, registration, repairs, interest,
+          and depreciation can make the real monthly ownership cost much higher.
+        </p>
 
-        <div id="verdictBadge">
-  <VerdictBadge
-    label="Waiting For Inputs"
-    tone="neutral"
-  />
-</div>
+        <p>
+          In many households, a $1,000 payment can turn into a total vehicle cost
+          closer to $1,300–$1,700 per month once the full ownership picture is
+          included.
+        </p>
 
-        <div class="bar">
-          <div class="fill" id="fillBar"></div>
-        </div>
+        <p>
+          That does not automatically make the vehicle irresponsible. But it does
+          mean the decision should be evaluated as a major monthly commitment,
+          not just a car loan.
+        </p>
+      </section>
 
-        <p id="stress"></p>
-        <p id="paymentImpact"></p>
-        <p id="savingsImpact"></p>
-        <p id="debtRatio"></p>
+      <WhenSpendingMakesSense
+        title="When a $1,000 Car Payment Can Make Sense"
+        items={[
+          "Your take-home income is high enough that the payment does not crowd out savings.",
+          "You have strong emergency savings after the purchase.",
+          "Your total debt load remains manageable.",
+          "The vehicle supports work, safety, family logistics, or a real transportation need.",
+          "Insurance, fuel, maintenance, and depreciation have already been included in the budget.",
+        ]}
+      />
 
-        <div class="guidance" id="guidance"></div>
+      <section class="content-section">
+        <h2>When You Should Wait</h2>
 
-        <div class="disclaimer">
-          This is a general educational estimate, not financial advice.
-        </div>
+        <p>
+          A $1,000 car payment may be too aggressive if you are carrying
+          high-interest debt, rebuilding savings, relying on overtime income, or
+          using a long loan term just to make the payment look affordable.
+        </p>
 
+        <p>
+          It can also be risky if the vehicle would delay other priorities like
+          emergency savings, retirement contributions, debt payoff, housing
+          stability, or family expenses.
+        </p>
+      </section>
+
+      <KeyCostCategories
+        items={[
+          {
+            title: "Insurance and registration",
+            description:
+              "Higher-value vehicles often bring higher premiums, registration costs, taxes, and coverage requirements.",
+          },
+          {
+            title: "Interest and loan length",
+            description:
+              "A lower monthly payment can hide a longer loan, more interest, and a greater risk of owing more than the vehicle is worth.",
+          },
+          {
+            title: "Maintenance and tires",
+            description:
+              "Luxury vehicles, trucks, SUVs, and performance models can have higher repair, tire, and maintenance costs.",
+          },
+          {
+            title: "Depreciation and flexibility",
+            description:
+              "A high payment can reduce flexibility if the vehicle loses value quickly or your income changes.",
+          },
+        ]}
+      />
+
+      <ReduceCostTips
+        items={[
+          "Increase the down payment only if emergency savings remain intact.",
+          "Compare insurance quotes before agreeing to the vehicle.",
+          "Shorten the loan term if possible instead of only chasing a lower payment.",
+          "Consider a less expensive trim, used model, or lower-mileage alternative.",
+          "Wait longer if the purchase would slow debt payoff or savings goals.",
+        ]}
+      />
+
+      <FinancialRedFlags
+        items={[
+          "The payment would push total vehicle costs above a comfortable share of take-home pay.",
+          "You need a very long loan term to make the monthly number work.",
+          "Insurance costs have not been checked before purchase.",
+          "The payment would slow emergency savings or retirement contributions.",
+          "You are relying on overtime, bonuses, or future income to make the car affordable.",
+        ]}
+      />
+
+      <CalculatorAssumptions
+        items={[
+          "The calculator focuses on the monthly payment, savings, income, and debt load.",
+          "The estimate does not include every ownership cost, such as insurance, fuel, maintenance, repairs, taxes, or depreciation.",
+          "Savings are used as a cushion signal because high vehicle payments reduce monthly flexibility.",
+          "Debt payments should include recurring obligations such as credit cards, student loans, personal loans, and other vehicle loans.",
+          "Interest rates, loan length, trade-in value, and insurance costs can significantly change the final decision.",
+        ]}
+      />
+
+      <section class="content-section">
+        <h2>What Your Car Payment Verdict Actually Means</h2>
+
+        <p>
+          A car payment verdict is not just about whether the monthly bill
+          technically fits. It is about whether the payment leaves enough room
+          for insurance, repairs, savings, emergencies, and normal life.
+        </p>
+
+        <p>
+          A stronger verdict means the payment is less likely to create ongoing
+          financial pressure. A weaker verdict means the car may still be
+          possible, but the tradeoff could reduce flexibility in other areas of
+          your budget.
+        </p>
+      </section>
+
+      <div class="content-section">
+        <FAQSection title="$1,000 Car Payment FAQ" faqs={carFaqs} />
       </div>
 
-    </div>
-  <section class="content-section">
-    <h2>What Your Car Payment Verdict Actually Means</h2>
-    <p>
-      A car payment verdict is not just about whether the monthly bill technically fits. It is about whether the payment leaves enough room for insurance, repairs, savings, emergencies, and normal life.
-    </p>
-    <p>
-      A stronger verdict means the payment is less likely to create monthly pressure. A weaker verdict means the car may still be possible, but the financial tradeoff could be larger than it looks.
-    </p>
-  </section>
+      <div class="content-section">
+        <RelatedCalculators calculators={relatedCalculators} />
+      </div>
+    </CalculatorPageShell>
 
-  <div class="content-section">
-    <FAQSection faqs={carFaqs} />
-  </div>
-
-  <div class="content-section">
-    <RelatedCalculators calculators={relatedCalculators} />
-  </div>
-
-</CalculatorPageShell>
-<MethodologySection category="car payment budgeting" />
+    <MethodologySection category="car payment budgeting" updated="May 2026" />
   </div>
 
   <script is:inline>
-
     function calculateCarPayment() {
+      const income = Number(document.getElementById("income").value);
+      const savings = Number(document.getElementById("savings").value);
+      const payment = Number(document.getElementById("payment").value);
+      const debt = Number(document.getElementById("debt").value || 0);
 
-      const income =
-        Number(document.getElementById("income").value);
+      if (!income || !savings || !payment) {
+        return;
+      }
 
-      const savings =
-        Number(document.getElementById("savings").value);
-
-      const payment =
-        Number(document.getElementById("payment").value);
-
-      const debt =
-        Number(document.getElementById("debt").value);
-
-      const paymentImpact =
-        (payment / income) * 100;
-
-      const savingsImpact =
-        (payment * 6 / savings) * 100;
-
-      const debtRatio =
-        ((payment + debt) / income) * 100;
+      const paymentImpact = (payment / income) * 100;
+      const savingsImpact = ((payment * 6) / savings) * 100;
+      const debtRatio = ((payment + debt) / income) * 100;
 
       let score = 100;
 
@@ -310,17 +434,13 @@ const relatedCalculators = calculators.filter(
         guidance =
           "This car payment appears manageable relative to your income and financial cushion.";
         barColor = "#16a34a";
-      }
-
-      else if (score >= 60) {
+      } else if (score >= 60) {
         verdict = "Manageable but Heavy";
         stress = "Moderate stress";
         guidance =
           "This payment may work, but it could limit flexibility for savings, investing, or emergencies.";
         barColor = "#eab308";
-      }
-
-      else {
+      } else {
         verdict = "Financial Pressure Risk";
         stress = "High stress";
         guidance =
@@ -330,26 +450,23 @@ const relatedCalculators = calculators.filter(
 
       let tone = "neutral";
 
-if (score >= 75) {
-  tone = "good";
-} else if (score >= 55) {
-  tone = "warning";
-} else {
-  tone = "danger";
-}
+      if (score >= 75) {
+        tone = "good";
+      } else if (score >= 55) {
+        tone = "warning";
+      } else {
+        tone = "danger";
+      }
 
-document.getElementById("verdictBadge").innerHTML = `
-  <div class="verdict-badge ${tone}">
-    <p>${verdict}</p>
-    <strong>${Math.round(score)}/100</strong>
-  </div>
-`;
+      document.getElementById("verdictBadge").innerHTML = `
+        <div class="verdict-badge ${tone}">
+          <p>${verdict}</p>
+          <strong>${Math.round(score)}/100</strong>
+        </div>
+      `;
 
-      document.getElementById("fillBar").style.width =
-        `${score}%`;
-
-      document.getElementById("fillBar").style.background =
-        barColor;
+      document.getElementById("fillBar").style.width = `${score}%`;
+      document.getElementById("fillBar").style.background = barColor;
 
       document.getElementById("stress").innerHTML =
         `<strong>Stress level:</strong> ${stress}`;
@@ -363,14 +480,11 @@ document.getElementById("verdictBadge").innerHTML = `
       document.getElementById("debtRatio").innerHTML =
         `<strong>Total debt ratio:</strong> ${debtRatio.toFixed(1)}% of monthly income`;
 
-      document.getElementById("guidance").textContent =
-        guidance;
+      document.getElementById("guidance").textContent = guidance;
     }
 
     document
       .getElementById("carButton")
       .addEventListener("click", calculateCarPayment);
-
   </script>
-
 </Layout>
