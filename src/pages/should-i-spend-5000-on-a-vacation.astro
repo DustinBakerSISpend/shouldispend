@@ -4,11 +4,18 @@ import CalculatorPageShell from "../components/CalculatorPageShell.astro";
 import FAQSection from "../components/FAQSection.astro";
 import MethodologySection from "../components/MethodologySection.astro";
 import FinancialRedFlags from "../components/FinancialRedFlags.astro";
+import CalculatorAssumptions from "../components/CalculatorAssumptions.astro";
 import RelatedCalculators from "../components/RelatedCalculators.astro";
 import RelatedGuides from "../components/RelatedGuides.astro";
+import KeyCostCategories from "../components/KeyCostCategories.astro";
+import ReduceCostTips from "../components/ReduceCostTips.astro";
+import WhenSpendingMakesSense from "../components/WhenSpendingMakesSense.astro";
 ---
 
-<Layout title="Should I Spend $5,000 on a Vacation?">
+<Layout
+  title="Should I Spend $5,000 on a Vacation?"
+  description="Use this vacation calculator to decide whether a $5,000 trip fits your income, savings, debt, emergency cushion, and travel budget."
+>
   <style>
     .container {
       max-width: 950px;
@@ -52,10 +59,11 @@ import RelatedGuides from "../components/RelatedGuides.astro";
       border-radius: 14px;
       border: 1px solid var(--border);
       font-size: 1.1rem;
+      box-sizing: border-box;
     }
 
     button {
-      background: var(--button);
+      background: #0f766e;
       color: white;
       border: none;
       padding: 16px 28px;
@@ -66,11 +74,17 @@ import RelatedGuides from "../components/RelatedGuides.astro";
       margin-top: 10px;
     }
 
+    button:hover {
+      opacity: 0.92;
+    }
+
     .result {
       margin-top: 40px;
       border: 1px solid var(--border);
       border-radius: 24px;
       padding: 28px;
+      display: none;
+      background: #f8fafc;
     }
 
     .score {
@@ -122,6 +136,11 @@ import RelatedGuides from "../components/RelatedGuides.astro";
       color: var(--primary);
       font-weight: 600;
     }
+
+    .content-section p,
+    .content-section li {
+      line-height: 1.8;
+    }
   </style>
 
   <div class="container">
@@ -146,7 +165,7 @@ import RelatedGuides from "../components/RelatedGuides.astro";
 
           <div>
             <label for="vacation">Vacation Cost</label>
-            <input id="vacation" type="number" placeholder="5000" />
+            <input id="vacation" type="number" value="5000" />
           </div>
 
           <div>
@@ -161,14 +180,12 @@ import RelatedGuides from "../components/RelatedGuides.astro";
           </div>
         </div>
 
-        <button id="vacationButton">
+        <button id="vacationButton" type="button">
           Get Vacation Verdict
         </button>
 
-        <div class="result">
-          <div class="score" id="score">
-            Comfortable Vacation - 82/100
-          </div>
+        <div class="result" id="result">
+          <div class="score" id="score"></div>
 
           <div class="bar">
             <div class="fill" id="barFill"></div>
@@ -188,159 +205,204 @@ import RelatedGuides from "../components/RelatedGuides.astro";
       </div>
 
       <div class="content-section">
-        <section>
-          <h2>What Your Vacation Verdict Actually Means</h2>
+        <h2>What a $5,000 Vacation Really Includes</h2>
 
-          <p>
-            A vacation verdict is not just about whether you can technically pay for a trip today.
-            It is about whether the vacation still leaves enough room for emergency savings, normal
-            bills, debt payments, retirement goals, and financial flexibility after you return home.
-          </p>
+        <p>
+          A $5,000 vacation often sounds simple, but the real cost is usually
+          more than flights and hotels. Transportation, baggage fees, airport
+          meals, rideshares, rental cars, excursions, travel insurance, resort
+          fees, souvenirs, parking, tips, and unexpected costs can raise the
+          total quickly.
+        </p>
 
-          <p>
-            A stronger verdict means the trip is less likely to create stress later. A weaker verdict
-            means the vacation may still be possible, but the timing, payment method, trip length,
-            or overall budget may need to change.
-          </p>
-        </section>
+        <p>
+          For some households, $5,000 may cover a comfortable domestic trip,
+          road trip, beach rental, national park vacation, or modest
+          international getaway. For others, it may only cover airfare and
+          lodging, especially for a family or peak-season trip.
+        </p>
 
-        <section>
-          <h2>What a $5,000 Vacation Really Includes</h2>
-
-          <p>
-            A $5,000 vacation often includes more than flights and hotels. Transportation, baggage
-            fees, airport meals, rideshares, rental cars, excursions, travel insurance, resort fees,
-            souvenirs, parking, and unexpected costs can raise the total quickly.
-          </p>
-
-          <p>
-            For some households, $5,000 may cover a comfortable family trip. For others, it may only
-            cover airfare and lodging. The true affordability depends on income, savings, debt,
-            emergency reserves, family size, and how the trip will be paid for.
-          </p>
-        </section>
-
-        <section>
-          <h2>When a Vacation Makes Financial Sense</h2>
-
-          <p>
-            A vacation usually makes the most financial sense when it is mostly paid from savings,
-            does not drain the emergency fund, and does not create high-interest debt afterward.
-          </p>
-
-          <p>
-            The healthiest vacation budgets account for the full trip cost upfront instead of relying
-            on future paychecks or credit card balances after the trip is already over.
-          </p>
-
-          <p>
-            Vacations can absolutely be worthwhile. Rest, family memories, major milestones, and
-            meaningful experiences matter. The key is making sure the trip improves life instead of
-            creating financial pressure afterward.
-          </p>
-        </section>
-
-        <section>
-          <h2>When Waiting Might Be the Better Choice</h2>
-
-          <p>
-            Waiting may be smarter if the vacation would wipe out savings, delay debt payoff, depend
-            on credit cards, or make monthly bills harder to manage after returning home.
-          </p>
-
-          <p>
-            A cheaper version of the trip may still work. Fewer travel days, cheaper flights,
-            off-season travel, lower-cost lodging, or a closer destination can reduce financial
-            pressure without giving up the vacation entirely.
-          </p>
-        </section>
-
-        <FinancialRedFlags
-  items={[
-    "The vacation would require credit card debt or a buy-now-pay-later plan.",
-    "The trip would leave you without a real emergency cushion.",
-    "You have upcoming bills, repairs, medical costs, or family expenses that are not funded yet.",
-    "The budget does not include meals, transportation, tips, fees, or a surprise-cost buffer.",
-    "The trip would make normal life feel tighter after you return home.",
-  ]}
-/>
-        <FAQSection
-          title="Vacation Spending FAQ"
-          faqs={[
-            {
-              question: "Is a $5,000 vacation too expensive?",
-              answer:
-                "That depends on your income, savings, debt load, emergency fund, and overall financial flexibility. A $5,000 vacation may feel comfortable for one household and financially stressful for another.",
-            },
-            {
-              question: "How much should I spend on a vacation?",
-              answer:
-                "Vacation spending should fit comfortably within your broader financial picture without damaging emergency savings, increasing high-interest debt, or delaying major long-term goals.",
-            },
-            {
-              question: "Should I finance a vacation?",
-              answer:
-                "Financing a vacation with high-interest debt can create long-term financial pressure if the trip cost exceeds what your income and savings can comfortably support.",
-            },
-            {
-              question: "Should I use savings for a vacation?",
-              answer:
-                "Using savings is usually safer than using high-interest debt, but the vacation should still leave enough emergency cash afterward for normal life expenses and unexpected events.",
-            },
-            {
-              question: "What costs do people forget when budgeting for vacations?",
-              answer:
-                "Many travelers forget baggage fees, airport transportation, food, tips, resort fees, excursions, souvenirs, travel insurance, parking, and emergency spending.",
-            },
-          ]}
-        />
-
-        <MethodologySection
-          category="vacation spending"
-          updated="May 2026"
-        />
-
-        <RelatedGuides
-  guides={[
-    {
-      title: "How to Avoid Vacation Debt",
-      href: "/how-to-avoid-vacation-debt",
-      description:
-        "Learn how to plan a vacation without relying on credit card debt or draining your emergency fund.",
-    },
-    {
-      title: "Travel Budget Calculators",
-      href: "/travel-calculators",
-      description:
-        "Browse calculators for Disney trips, Europe vacations, cruises, and other major travel decisions.",
-    },
-  ]}
-/>
-        <RelatedCalculators
-          calculators={[
-            {
-              category: "Travel",
-              title: "Should I Spend $8,000 on a Disney Vacation?",
-              href: "/should-i-spend-8000-on-a-disney-vacation",
-            },
-            {
-              category: "Travel",
-              title: "Should I Spend $10,000 on a Europe Trip?",
-              href: "/should-i-spend-10000-on-a-europe-trip",
-            },
-            {
-              category: "Travel",
-              title: "Should I Spend $12,000 on a Cruise?",
-              href: "/should-i-spend-12000-on-a-cruise",
-            },
-            {
-              category: "Travel",
-              title: "Browse Travel Calculators",
-              href: "/travel-calculators",
-            },
-          ]}
-        />
+        <p>
+          The safest vacation budget includes the entire trip before booking, not
+          just the headline expenses that appear first.
+        </p>
       </div>
+
+      <div class="content-section">
+        <h2>Domestic vs. International Tradeoffs</h2>
+
+        <p>
+          A $5,000 budget can stretch much further when the destination, timing,
+          and transportation match the budget. A domestic road trip may leave
+          room for better lodging and activities, while an international trip may
+          use more of the budget on airfare before the vacation even begins.
+        </p>
+
+        <p>
+          Neither choice is automatically better. The key question is whether the
+          trip still leaves enough room for meals, transportation, experiences,
+          emergency costs, and normal life after you return home.
+        </p>
+      </div>
+
+      <WhenSpendingMakesSense
+        title="When a $5,000 Vacation Makes Sense"
+        items={[
+          "You can pay for the trip without carrying high-interest credit card debt.",
+          "Your emergency fund remains intact after booking.",
+          "The vacation fits a real need for rest, family time, or a meaningful milestone.",
+          "The budget includes transportation, lodging, food, activities, tips, fees, and surprise costs.",
+          "The trip will not delay debt payoff, housing stability, or other important goals.",
+        ]}
+      />
+
+      <div class="content-section">
+        <h2>When Waiting Might Be the Better Choice</h2>
+
+        <p>
+          Waiting may be smarter if the vacation would wipe out savings, delay
+          debt payoff, depend on credit cards, or make monthly bills harder to
+          manage after returning home.
+        </p>
+
+        <p>
+          A cheaper version of the trip may still work. Fewer travel days,
+          cheaper flights, off-season travel, lower-cost lodging, or a closer
+          destination can reduce financial pressure without giving up the
+          vacation entirely.
+        </p>
+      </div>
+
+      <KeyCostCategories
+        items={[
+          {
+            title: "Transportation",
+            description:
+              "Airfare, gas, rental cars, rideshares, checked bags, airport parking, and local transit can consume a large share of the budget.",
+          },
+          {
+            title: "Lodging",
+            description:
+              "Hotels, vacation rentals, resort fees, cleaning fees, taxes, parking, and location premiums should be included before booking.",
+          },
+          {
+            title: "Food and daily spending",
+            description:
+              "Restaurants, groceries, snacks, coffee, drinks, tips, and convenience purchases can become expensive over several days.",
+          },
+          {
+            title: "Activities and surprise costs",
+            description:
+              "Tours, tickets, excursions, souvenirs, travel insurance, weather backup plans, and emergency expenses should be part of the estimate.",
+          },
+        ]}
+      />
+
+      <ReduceCostTips
+        items={[
+          "Travel during shoulder season instead of peak dates.",
+          "Choose a closer destination if airfare would eat too much of the budget.",
+          "Book lodging with a kitchen or free breakfast to reduce meal costs.",
+          "Limit paid activities and mix in free or low-cost experiences.",
+          "Set a daily spending limit before the trip starts.",
+          "Build a small surprise-cost buffer into the budget.",
+        ]}
+      />
+
+      <FinancialRedFlags
+        items={[
+          "The vacation would require credit card debt or a buy-now-pay-later plan.",
+          "The trip would leave you without a real emergency cushion.",
+          "You have upcoming bills, repairs, medical costs, or family expenses that are not funded yet.",
+          "The budget does not include meals, transportation, tips, fees, or a surprise-cost buffer.",
+          "The trip would make normal life feel tighter after you return home.",
+        ]}
+      />
+
+      <CalculatorAssumptions
+        items={[
+          "The calculator assumes the vacation is primarily paid with savings instead of high-interest debt.",
+          "The estimate should include transportation, lodging, food, activities, tips, fees, and emergency costs.",
+          "The calculator assumes your income and debt obligations are relatively stable.",
+          "Trip length, destination, family size, and season can significantly change the real cost.",
+          "The calculator assumes you still maintain an emergency cushion after booking the trip.",
+        ]}
+      />
+
+      <FAQSection
+        title="Vacation Spending FAQ"
+        faqs={[
+          {
+            question: "Is a $5,000 vacation too expensive?",
+            answer:
+              "That depends on your income, savings, debt load, emergency fund, and overall financial flexibility. A $5,000 vacation may feel comfortable for one household and financially stressful for another.",
+          },
+          {
+            question: "How much should I spend on a vacation?",
+            answer:
+              "Vacation spending should fit comfortably within your broader financial picture without damaging emergency savings, increasing high-interest debt, or delaying major long-term goals.",
+          },
+          {
+            question: "Should I finance a vacation?",
+            answer:
+              "Financing a vacation with high-interest debt can create long-term financial pressure if the trip cost exceeds what your income and savings can comfortably support.",
+          },
+          {
+            question: "Should I use savings for a vacation?",
+            answer:
+              "Using savings is usually safer than using high-interest debt, but the vacation should still leave enough emergency cash afterward for normal life expenses and unexpected events.",
+          },
+          {
+            question: "What costs do people forget when budgeting for vacations?",
+            answer:
+              "Many travelers forget baggage fees, airport transportation, food, tips, resort fees, excursions, souvenirs, travel insurance, parking, and emergency spending.",
+          },
+        ]}
+      />
+
+      <MethodologySection category="vacation spending" updated="May 2026" />
+
+      <RelatedGuides
+        guides={[
+          {
+            title: "How to Avoid Vacation Debt",
+            href: "/how-to-avoid-vacation-debt",
+            description:
+              "Learn how to plan a vacation without relying on credit card debt or draining your emergency fund.",
+          },
+          {
+            title: "Travel Budget Calculators",
+            href: "/travel-calculators",
+            description:
+              "Browse calculators for Disney trips, Europe vacations, cruises, and other major travel decisions.",
+          },
+        ]}
+      />
+
+      <RelatedCalculators
+        calculators={[
+          {
+            category: "Travel",
+            title: "Should I Spend $8,000 on a Disney Vacation?",
+            href: "/should-i-spend-8000-on-a-disney-vacation",
+          },
+          {
+            category: "Travel",
+            title: "Should I Spend $10,000 on a Europe Trip?",
+            href: "/should-i-spend-10000-on-a-europe-trip",
+          },
+          {
+            category: "Travel",
+            title: "Should I Spend $12,000 on a Cruise?",
+            href: "/should-i-spend-12000-on-a-cruise",
+          },
+          {
+            category: "Travel",
+            title: "Browse Travel Calculators",
+            href: "/travel-calculators",
+          },
+        ]}
+      />
     </CalculatorPageShell>
   </div>
 
@@ -349,20 +411,43 @@ import RelatedGuides from "../components/RelatedGuides.astro";
       const income = Number(document.getElementById("income").value);
       const savings = Number(document.getElementById("savings").value);
       const vacation = Number(document.getElementById("vacation").value);
-      const debt = Number(document.getElementById("debt").value);
+      const debt = Number(document.getElementById("debt").value || 0);
+
+      const result = document.getElementById("result");
+      const scoreEl = document.getElementById("score");
+      const barFill = document.getElementById("barFill");
+      const stressEl = document.getElementById("stress");
+      const savingsImpactEl = document.getElementById("savingsImpact");
+      const incomeImpactEl = document.getElementById("incomeImpact");
+      const debtRatioEl = document.getElementById("debtRatio");
+      const guidanceEl = document.getElementById("guidance");
+
+      result.style.display = "block";
+
+      if (!income || !savings || !vacation) {
+        scoreEl.textContent = "Add your numbers first";
+        barFill.style.width = "0%";
+        stressEl.innerHTML = "";
+        savingsImpactEl.innerHTML = "";
+        incomeImpactEl.innerHTML = "";
+        debtRatioEl.innerHTML = "";
+        guidanceEl.textContent =
+          "Enter your income, savings, vacation cost, and debt so the calculator can give a useful verdict.";
+        return;
+      }
+
+      const savingsImpact = (vacation / savings) * 100;
+      const incomeImpact = (vacation / income) * 100;
+      const debtRatio = (debt / income) * 100;
 
       let score = 100;
-
-      const savingsImpact = savings > 0 ? (vacation / savings) * 100 : 100;
-      const incomeImpact = income > 0 ? (vacation / income) * 100 : 100;
-      const debtRatio = income > 0 ? (debt / income) * 100 : 50;
 
       score -= savingsImpact * 0.22;
       score -= incomeImpact * 0.9;
       score -= debtRatio * 0.18;
 
       if (savings < vacation) score -= 12;
-      if (income > 0 && debt > income * 0.5) score -= 10;
+      if (debt > income * 0.5) score -= 10;
 
       score = Math.max(0, Math.min(100, Math.round(score)));
 
@@ -381,48 +466,35 @@ import RelatedGuides from "../components/RelatedGuides.astro";
         verdict = "Manageable With Caution";
         stress = "Moderate stress";
         guidance =
-          "This trip is probably affordable, though it may reduce short-term financial flexibility.";
+          "This trip may work, but keep firm limits on transportation, lodging, food, activities, and surprise costs.";
         barColor = "#ca8a04";
       } else if (score >= 40) {
         verdict = "Financial Stretch";
         stress = "High stress";
         guidance =
-          "This vacation could create financial pressure. A lower budget or delayed trip may be safer.";
+          "This vacation could create financial pressure. A lower budget, closer destination, or delayed trip may be safer.";
         barColor = "#ea580c";
       } else {
         verdict = "High Financial Risk";
         stress = "Very high stress";
         guidance =
-          "This vacation cost appears too aggressive for the current financial picture.";
+          "This vacation cost appears too aggressive for the current financial picture, especially if the trip would be financed with high-interest debt.";
         barColor = "#b91c1c";
       }
 
-      document.getElementById("score").textContent =
-        `${verdict} - ${score}/100`;
+      scoreEl.textContent = `${verdict} - ${score}/100`;
+      barFill.style.width = `${score}%`;
+      barFill.style.background = barColor;
 
-      document.getElementById("barFill").style.width =
-        `${score}%`;
-
-      document.getElementById("barFill").style.background =
-        barColor;
-
-      document.getElementById("stress").innerHTML =
-        `<strong>Stress level:</strong> ${stress}`;
-
-      document.getElementById("savingsImpact").innerHTML =
-        `<strong>Savings impact:</strong> ${savingsImpact.toFixed(1)}% of savings`;
-
-      document.getElementById("incomeImpact").innerHTML =
-        `<strong>Income impact:</strong> ${incomeImpact.toFixed(1)}% of annual income`;
-
-      document.getElementById("debtRatio").innerHTML =
-        `<strong>Debt ratio:</strong> ${debtRatio.toFixed(1)}% of annual income`;
-
-      document.getElementById("guidance").textContent =
-        guidance;
+      stressEl.innerHTML = `<strong>Stress level:</strong> ${stress}`;
+      savingsImpactEl.innerHTML = `<strong>Savings impact:</strong> ${savingsImpact.toFixed(1)}% of savings`;
+      incomeImpactEl.innerHTML = `<strong>Income impact:</strong> ${incomeImpact.toFixed(1)}% of annual income`;
+      debtRatioEl.innerHTML = `<strong>Debt ratio:</strong> ${debtRatio.toFixed(1)}% of annual income`;
+      guidanceEl.textContent = guidance;
     }
 
-    document.getElementById("vacationButton")
+    document
+      .getElementById("vacationButton")
       .addEventListener("click", calculateVacation);
   </script>
 </Layout>
