@@ -1,151 +1,185 @@
 ---
 import Layout from "../layouts/Layout.astro";
 import { calculators } from "../data/calculators.js";
+
+const categories = ["Weddings", "Cars", "Travel", "Rent"];
 ---
 
-<Layout title="All Calculators | ShouldISpend">
-	<style>
-		.page-container {
-			max-width: 1200px;
-			margin: 0 auto;
-			padding: 60px 24px;
-		}
+<Layout
+  title="All Calculators | ShouldISpend"
+  description="Browse financial decision calculators for weddings, cars, travel, rent, debt, and major spending choices."
+>
+  <style>
+    .page-container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 60px 24px;
+    }
 
-		.eyebrow {
-			text-transform: uppercase;
-			letter-spacing: 3px;
-			font-size: 0.8rem;
-			color: var(--primary);
-			font-weight: 700;
-			margin-bottom: 18px;
-		}
+    .eyebrow {
+      text-transform: uppercase;
+      letter-spacing: 3px;
+      font-size: 0.8rem;
+      color: var(--primary);
+      font-weight: 700;
+      margin-bottom: 18px;
+    }
 
-		h1 {
-			font-size: clamp(2.5rem, 7vw, 4.8rem);
-			line-height: 1;
-			margin: 0 0 20px;
-		}
+    h1 {
+      font-size: clamp(2.5rem, 7vw, 4.8rem);
+      line-height: 1;
+      margin: 0 0 20px;
+    }
 
-		.subtitle {
-			max-width: 760px;
-			font-size: 1.2rem;
-			line-height: 1.7;
-			color: var(--muted);
-			margin-bottom: 60px;
-		}
+    .subtitle {
+      max-width: 780px;
+      font-size: 1.15rem;
+      line-height: 1.8;
+      color: var(--muted);
+      margin-bottom: 56px;
+    }
 
-		.section-title {
-			font-size: 2rem;
-			margin-bottom: 30px;
-		}
+    .section {
+      margin-top: 56px;
+    }
 
-		.grid {
-			display: grid;
-			grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-			gap: 28px;
-			margin-bottom: 60px;
-		}
+    .section-title {
+      font-size: 2rem;
+      margin-bottom: 16px;
+    }
 
-		.card {
-			background: var(--card);
-			border: 1px solid var(--border);
-			border-radius: 24px;
-			padding: 28px;
-		}
+    .section-description {
+      max-width: 760px;
+      color: var(--muted);
+      line-height: 1.75;
+      margin-bottom: 28px;
+    }
 
-		.card-category {
-			text-transform: uppercase;
-			letter-spacing: 2px;
-			font-size: 0.75rem;
-			color: var(--primary);
-			font-weight: 700;
-			margin-bottom: 14px;
-		}
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 24px;
+    }
 
-		.card h3 {
-			font-size: 1.8rem;
-			line-height: 1.1;
-			margin: 0 0 16px;
-		}
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 24px;
+      padding: 28px;
+    }
 
-		.card p {
-			color: var(--muted);
-			line-height: 1.7;
-			margin-bottom: 24px;
-		}
+    .card-category {
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      font-size: 0.75rem;
+      color: var(--primary);
+      font-weight: 700;
+      margin-bottom: 14px;
+    }
 
-		.button {
-			display: inline-block;
-			background: #0b132b;
-			color: white;
-			padding: 0.75rem 1rem;
-			border-radius: 10px;
-			text-decoration: none;
-			font-weight: 700;
-		}
+    .card h3 {
+      font-size: 1.55rem;
+      line-height: 1.15;
+      margin: 0 0 16px;
+    }
 
-		.button:hover {
-			opacity: 0.92;
-		}
+    .card p {
+      color: var(--muted);
+      line-height: 1.7;
+      margin-bottom: 24px;
+    }
 
-		@media (max-width: 768px) {
-			.page-container {
-				padding: 42px 18px;
-			}
+    .button {
+      display: inline-block;
+      background: #0f766e;
+      color: white;
+      padding: 0.75rem 1rem;
+      border-radius: 10px;
+      text-decoration: none;
+      font-weight: 700;
+    }
 
-			h1 {
-				font-size: 2.7rem;
-			}
+    .button:hover {
+      opacity: 0.92;
+    }
 
-			.subtitle {
-				font-size: 1.05rem;
-				margin-bottom: 42px;
-			}
+    @media (max-width: 768px) {
+      .page-container {
+        padding: 42px 18px;
+      }
 
-			.section-title {
-				font-size: 1.65rem;
-			}
+      h1 {
+        font-size: 2.7rem;
+      }
 
-			.grid {
-				grid-template-columns: 1fr;
-				gap: 18px;
-			}
+      .subtitle {
+        font-size: 1.05rem;
+        margin-bottom: 42px;
+      }
 
-			.card {
-				padding: 24px;
-				border-radius: 20px;
-			}
+      .section-title {
+        font-size: 1.65rem;
+      }
 
-			.card h3 {
-				font-size: 1.55rem;
-			}
-		}
-	</style>
+      .grid {
+        grid-template-columns: 1fr;
+        gap: 18px;
+      }
 
-	<div class="page-container">
-		<div class="eyebrow">Calculator Library</div>
+      .card {
+        padding: 24px;
+        border-radius: 20px;
+      }
 
-		<h1>All Financial Decision Calculators</h1>
+      .card h3 {
+        font-size: 1.45rem;
+      }
+    }
+  </style>
 
-		<p class="subtitle">
-			Explore verdict-driven calculators for weddings, cars, travel, subscriptions,
-			lifestyle spending, rent, debt, entertainment, and major purchases.
-		</p>
+  <main class="page-container">
+    <div class="eyebrow">Calculator Library</div>
 
-		<h2 class="section-title">Featured Calculators</h2>
+    <h1>All Financial Decision Calculators</h1>
 
-		<div class="grid">
-			{calculators.map((calculator) => (
-				<div class="card">
-					<div class="card-category">{calculator.category}</div>
+    <p class="subtitle">
+      Browse verdict-driven calculators for weddings, cars, travel, rent, and
+      major spending decisions. Each tool is designed to evaluate more than the
+      sticker price by considering income, savings, debt, emergency cushion, and
+      financial flexibility.
+    </p>
 
-					<h3>{calculator.title}</h3>
+    {categories.map((category) => {
+      const categoryCalculators = calculators.filter(
+        (calculator) => calculator.category === category
+      );
 
-					<p>{calculator.description}</p>
+      return (
+        <section class="section">
+          <h2 class="section-title">{category} Calculators</h2>
 
-					<a class="button" href={calculator.href}>Open Calculator</a>
-				</div>
-			))}
-		</div>
-	</div>
+          <p class="section-description">
+            Compare spending decisions in this category and understand whether
+            the cost fits your broader financial picture.
+          </p>
+
+          <div class="grid">
+            {categoryCalculators.map((calculator) => (
+              <div class="card">
+                <div class="card-category">{calculator.category}</div>
+
+                <h3>{calculator.title}</h3>
+
+                <p>{calculator.description}</p>
+
+                <a class="button" href={calculator.href}>
+                  Open Calculator
+                </a>
+              </div>
+            ))}
+          </div>
+        </section>
+      );
+    })}
+  </main>
 </Layout>
