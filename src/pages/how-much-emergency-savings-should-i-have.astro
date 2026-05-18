@@ -1,11 +1,43 @@
 ---
 import Layout from "../layouts/Layout.astro";
+import FAQSection from "../components/FAQSection.astro";
+
+const emergencySavingsFaqs = [
+  {
+    question: "How much emergency savings should I have?",
+    answer:
+      "A common target is three to six months of essential expenses, but the right amount depends on income stability, household size, job risk, health costs, housing costs, debt, and dependents.",
+  },
+  {
+    question: "Should I spend money if I do not have an emergency fund?",
+    answer:
+      "Necessary spending may still be unavoidable, but large optional purchases become much riskier without an emergency fund. Building at least a starter cushion first is usually safer.",
+  },
+  {
+    question: "Should I use emergency savings for a vacation?",
+    answer:
+      "A vacation should usually be paid from planned savings, not emergency savings. If the trip drains money meant for emergencies, waiting or reducing the trip cost may be safer.",
+  },
+  {
+    question: "Is it better to pay off debt or build emergency savings?",
+    answer:
+      "Many households need both. A small emergency cushion can prevent new debt, while paying down high-interest balances can reduce long-term pressure. The right balance depends on interest rates, cash flow, and risk level.",
+  },
+  {
+    question: "How much emergency savings should I keep after a big purchase?",
+    answer:
+      "The safer answer is enough to cover normal surprise expenses without using credit cards. For major optional purchases, many households should avoid dropping below a starter cushion or their core emergency fund.",
+  },
+];
 ---
 
-<Layout title="How Much Emergency Savings Should I Have? | ShouldISpend">
+<Layout
+  title="How Much Emergency Savings Should I Have? | ShouldISpend"
+  description="Learn how much emergency savings to keep before major spending decisions like travel, weddings, cars, rent, housing, and lifestyle purchases."
+>
   <style>
     .container {
-      max-width: 900px;
+      max-width: 920px;
       margin: 0 auto;
       padding: 80px 24px;
     }
@@ -27,7 +59,7 @@ import Layout from "../layouts/Layout.astro";
     }
 
     .intro {
-      max-width: 760px;
+      max-width: 800px;
       color: var(--muted);
       font-size: 1.15rem;
       line-height: 1.8;
@@ -35,12 +67,13 @@ import Layout from "../layouts/Layout.astro";
     }
 
     section {
-      margin-top: 56px;
+      margin-top: 64px;
     }
 
     h2 {
       font-size: 2rem;
       margin-bottom: 18px;
+      line-height: 1.2;
     }
 
     h3 {
@@ -68,6 +101,7 @@ import Layout from "../layouts/Layout.astro";
       color: var(--text);
     }
 
+    .info-grid,
     .link-grid {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
@@ -75,6 +109,7 @@ import Layout from "../layouts/Layout.astro";
       margin-top: 22px;
     }
 
+    .info-card,
     .link-card {
       display: block;
       border: 1px solid var(--border);
@@ -85,16 +120,28 @@ import Layout from "../layouts/Layout.astro";
       color: inherit;
     }
 
-    .link-card strong {
-      display: block;
-      margin-bottom: 8px;
-      color: var(--text);
+    .link-card {
+      transition: transform 0.15s ease;
     }
 
+    .link-card:hover {
+      transform: translateY(-2px);
+    }
+
+    .info-card h3,
+    .link-card strong {
+      display: block;
+      margin: 0 0 8px;
+      color: var(--text);
+      line-height: 1.3;
+    }
+
+    .info-card p,
     .link-card span {
       color: var(--muted);
       line-height: 1.6;
       font-size: 0.95rem;
+      margin: 0;
     }
   </style>
 
@@ -104,16 +151,17 @@ import Layout from "../layouts/Layout.astro";
     <h1>How Much Emergency Savings Should I Have Before Spending Big?</h1>
 
     <p class="intro">
-      Emergency savings are the financial cushion that makes big purchases safer. Before
-      spending thousands on travel, weddings, housing upgrades, cars, furniture, or lifestyle
-      purchases, it helps to know whether your cash cushion can survive both the expense and
-      normal life afterward.
+      Emergency savings are the financial cushion that makes big purchases safer.
+      Before spending thousands on travel, weddings, housing upgrades, cars,
+      furniture, or lifestyle purchases, it helps to know whether your cash
+      cushion can survive both the expense and normal life afterward.
     </p>
 
     <div class="callout">
       <p>
-        <strong>Quick rule:</strong> the bigger and less necessary the purchase, the more
-        important it is to keep emergency savings intact after you spend.
+        <strong>Quick rule:</strong> the bigger and less necessary the purchase,
+        the more important it is to keep emergency savings intact after you
+        spend.
       </p>
     </div>
 
@@ -121,72 +169,121 @@ import Layout from "../layouts/Layout.astro";
       <h2>The Simple Emergency Savings Rule</h2>
 
       <p>
-        Many households use three to six months of essential expenses as a general emergency
-        savings target. That does not mean every person needs the exact same number. A stable
-        two-income household may need less cushion than a single-income household, freelancer,
-        contractor, parent, homeowner, or person with irregular income.
+        Many households use three to six months of essential expenses as a
+        general emergency savings target. That does not mean every person needs
+        the exact same number. A stable two-income household may need less
+        cushion than a single-income household, freelancer, contractor, parent,
+        homeowner, or person with irregular income.
       </p>
 
       <p>
-        The real question is not only how much you have saved today. It is how much you will
-        still have saved after the purchase.
+        The real question is not only how much you have saved today. It is how
+        much you will still have saved after the purchase.
       </p>
 
       <p>
-        A big expense is safer when it leaves enough cash to handle job disruption, medical
-        bills, car repairs, home repairs, travel problems, childcare surprises, insurance
-        deductibles, and normal bills.
+        A big expense is safer when it leaves enough cash to handle job
+        disruption, medical bills, car repairs, home repairs, travel problems,
+        childcare surprises, insurance deductibles, and normal bills.
       </p>
+    </section>
+
+    <section>
+      <h2>Emergency Savings Tiers</h2>
+
+      <p>
+        A useful emergency fund is not just one number. It can be helpful to
+        think in layers, especially before a major spending decision.
+      </p>
+
+      <div class="info-grid">
+        <div class="info-card">
+          <h3>Starter Cushion</h3>
+          <p>
+            A small buffer that helps prevent minor surprises from becoming
+            credit card debt.
+          </p>
+        </div>
+
+        <div class="info-card">
+          <h3>Core Emergency Fund</h3>
+          <p>
+            Several months of essential expenses for rent or mortgage, food,
+            utilities, insurance, and minimum debt payments.
+          </p>
+        </div>
+
+        <div class="info-card">
+          <h3>Post-Purchase Cushion</h3>
+          <p>
+            The cash left after the purchase. This is the number that determines
+            whether spending still feels safe.
+          </p>
+        </div>
+
+        <div class="info-card">
+          <h3>High-Risk Cushion</h3>
+          <p>
+            Extra savings for households with unstable income, dependents, home
+            repairs, medical costs, or high monthly obligations.
+          </p>
+        </div>
+      </div>
     </section>
 
     <section>
       <h2>Why Emergency Savings Matter Before Big Purchases</h2>
 
       <p>
-        A purchase can be affordable on paper and still create pressure if it weakens your
-        safety net. Spending from savings feels clean because it avoids credit card debt, but
-        draining too much cash can leave you exposed if something goes wrong soon afterward.
+        A purchase can be affordable on paper and still create pressure if it
+        weakens your safety net. Spending from savings feels clean because it
+        avoids credit card debt, but draining too much cash can leave you exposed
+        if something goes wrong soon afterward.
       </p>
 
       <p>
-        This matters especially for discretionary spending. Vacations, weddings, luxury items,
-        furniture upgrades, electronics, and home projects can be worthwhile, but they should
-        not leave your household unable to absorb a normal emergency.
+        This matters especially for discretionary spending. Vacations, weddings,
+        luxury items, furniture upgrades, electronics, and home projects can be
+        worthwhile, but they should not leave your household unable to absorb a
+        normal emergency.
       </p>
 
       <p>
-        ShouldISpend calculators use emergency cushion as part of the broader verdict because
-        the cost of a purchase is only one part of the decision. The after-spending position
-        matters just as much.
+        ShouldISpend calculators use emergency cushion as part of the broader
+        verdict because the cost of a purchase is only one part of the decision.
+        The after-spending position matters just as much.
       </p>
     </section>
 
     <section>
       <h2>A Practical Emergency Savings Framework</h2>
 
-      <h3>Starter Cushion</h3>
+      <h3>1. Count Essential Monthly Expenses</h3>
       <p>
-        A starter cushion is the first layer of protection. It may not cover months of expenses,
-        but it can help prevent small surprises from turning into credit card debt.
+        Start with the expenses you would still need to pay during a financial
+        disruption: housing, groceries, utilities, insurance, transportation,
+        childcare, minimum debt payments, and basic medical needs.
       </p>
 
-      <h3>Core Emergency Fund</h3>
+      <h3>2. Separate Planned Savings from Emergency Savings</h3>
       <p>
-        A core emergency fund is meant to cover essential bills for several months. This is the
-        money that protects rent or mortgage payments, utilities, groceries, insurance, minimum
-        debt payments, transportation, and childcare.
+        Money saved for a vacation, wedding, car down payment, furniture, or home
+        project should ideally be separate from money meant for emergencies.
+        Mixing the two can make a purchase look safer than it really is.
       </p>
 
-      <h3>Post-Purchase Cushion</h3>
+      <h3>3. Look at the After-Spending Number</h3>
       <p>
-        This is the number many people forget. If you spend $8,000 on a trip, $15,000 on a
-        honeymoon, or $30,000 on a wedding, the key question is how much cash remains afterward.
+        This is the number many people forget. If you spend $8,000 on a trip,
+        $15,000 on a honeymoon, or $30,000 on a wedding, the key question is how
+        much cash remains afterward.
       </p>
 
       <div class="callout">
         <p>
-          <strong>Good test:</strong> if the purchase happens tomorrow, would your household
-          still feel safe handling an ordinary emergency next month?
+          <strong>Good test:</strong> if the purchase happens tomorrow, would
+          your household still feel safe handling an ordinary emergency next
+          month?
         </p>
       </div>
     </section>
@@ -195,15 +292,16 @@ import Layout from "../layouts/Layout.astro";
       <h2>When a Smaller Emergency Fund May Be Acceptable</h2>
 
       <p>
-        A smaller cushion may be less risky when income is stable, expenses are low, debt is
-        minimal, health insurance is strong, housing costs are manageable, and there are multiple
-        earners in the household.
+        A smaller cushion may be less risky when income is stable, expenses are
+        low, debt is minimal, health insurance is strong, housing costs are
+        manageable, and there are multiple earners in the household.
       </p>
 
       <p>
-        It may also be acceptable when the purchase is necessary rather than optional. For
-        example, replacing a broken appliance, handling a car repair, or paying a required
-        housing cost may justify using savings even if the emergency fund is not perfect.
+        It may also be acceptable when the purchase is necessary rather than
+        optional. Replacing a broken appliance, handling a car repair, or paying
+        a required housing cost may justify using savings even if the emergency
+        fund is not perfect.
       </p>
     </section>
 
@@ -211,63 +309,48 @@ import Layout from "../layouts/Layout.astro";
       <h2>When You Should Keep More Cash</h2>
 
       <p>
-        A larger cushion is smarter if your income is irregular, your job is uncertain, you own
-        a home, you have children, you support other people, you have medical costs, or your
-        monthly bills are high.
+        A larger cushion is smarter if your income is irregular, your job is
+        uncertain, you own a home, you have children, you support other people,
+        you have medical costs, or your monthly bills are high.
       </p>
 
       <p>
-        You should also be more cautious when the purchase is optional. A dream vacation,
-        luxury upgrade, expensive event, or major lifestyle purchase should usually wait if it
-        would leave your emergency savings too thin.
+        You should also be more cautious when the purchase is optional. A dream
+        vacation, luxury upgrade, expensive event, or major lifestyle purchase
+        should usually wait if it would leave your emergency savings too thin.
       </p>
+
+      <ul>
+        <li>Your income varies month to month</li>
+        <li>You have high rent, mortgage, or car payments</li>
+        <li>You have credit card balances or personal loans</li>
+        <li>You own a home with repair risk</li>
+        <li>You have children or dependents</li>
+        <li>You would need a credit card for the next emergency</li>
+      </ul>
     </section>
 
     <section>
       <h2>Emergency Savings and Debt Work Together</h2>
 
       <p>
-        Emergency savings should be viewed alongside debt. A household with high-interest debt
-        and a thin cash cushion is in a different position than a household with low debt and
-        strong savings.
+        Emergency savings should be viewed alongside debt. A household with
+        high-interest debt and a thin cash cushion is in a different position
+        than a household with low debt and strong savings.
       </p>
 
       <p>
         If you are unsure what debt to include when judging a purchase, read the
-        <a href="/what-counts-as-debt">debt guide</a>. Credit cards, personal loans, auto loans,
-        student loans, medical debt, and other balances can all affect how safe a big purchase
-        feels.
-      </p>
-    </section>
-
-    <section>
-      <h2>Emergency Savings FAQ</h2>
-
-      <h3>How much emergency savings should I have?</h3>
-      <p>
-        A common target is three to six months of essential expenses, but the right amount
-        depends on income stability, household size, job risk, health costs, housing costs,
-        debt, and dependents.
+        <a href="/what-counts-as-debt">debt guide</a>. Credit cards, personal
+        loans, auto loans, student loans, medical debt, and other balances can
+        all affect how safe a big purchase feels.
       </p>
 
-      <h3>Should I spend money if I do not have an emergency fund?</h3>
       <p>
-        Necessary spending may still be unavoidable, but large optional purchases become much
-        riskier without an emergency fund. Building at least a starter cushion first is usually
-        safer.
-      </p>
-
-      <h3>Should I use emergency savings for a vacation?</h3>
-      <p>
-        A vacation should usually be paid from planned savings, not emergency savings. If the
-        trip drains money meant for emergencies, waiting or reducing the trip cost may be safer.
-      </p>
-
-      <h3>Is it better to pay off debt or build emergency savings?</h3>
-      <p>
-        Many households need both. A small emergency cushion can prevent new debt, while paying
-        down high-interest balances can reduce long-term pressure. The right balance depends on
-        interest rates, cash flow, and risk level.
+        For a broader view of debt pressure, the
+        <a href="/how-much-debt-is-too-much">debt affordability guide</a>
+        explains how monthly obligations, debt-to-income ratio, and flexibility
+        can change a spending verdict.
       </p>
     </section>
 
@@ -275,26 +358,56 @@ import Layout from "../layouts/Layout.astro";
       <h2>Related ShouldISpend Tools</h2>
 
       <div class="link-grid">
+        <a class="link-card" href="/how-much-debt-is-too-much">
+          <strong>How Much Debt Is Too Much?</strong>
+          <span>
+            Understand how debt ratios and monthly obligations affect financial
+            flexibility.
+          </span>
+        </a>
+
         <a class="link-card" href="/what-counts-as-debt">
           <strong>What Counts as Debt?</strong>
-          <span>Understand which balances to include before running a spending calculator.</span>
+          <span>
+            Understand which balances to include before running a spending
+            calculator.
+          </span>
         </a>
 
-        <a class="link-card" href="/travel-calculators">
-          <strong>Travel Budget Calculators</strong>
-          <span>Compare vacations, Disney trips, cruises, Europe trips, and family travel.</span>
+        <a class="link-card" href="/how-much-car-can-i-afford">
+          <strong>How Much Car Can I Afford?</strong>
+          <span>
+            Learn how savings, debt, insurance, and monthly flexibility shape a
+            safe car budget.
+          </span>
         </a>
 
-        <a class="link-card" href="/should-i-spend-30000-on-a-wedding">
-          <strong>$30,000 Wedding Calculator</strong>
-          <span>Check whether a major wedding budget fits your financial cushion.</span>
+        <a class="link-card" href="/how-much-house-can-i-afford">
+          <strong>How Much House Can I Afford?</strong>
+          <span>
+            Evaluate home affordability using income, debt, taxes, insurance,
+            maintenance, and cash cushion.
+          </span>
         </a>
 
-        <a class="link-card" href="/should-i-spend-700-on-a-car-payment">
-          <strong>$700 Car Payment Calculator</strong>
-          <span>Estimate whether a large monthly car payment creates too much pressure.</span>
+        <a class="link-card" href="/how-much-vacation-can-i-afford">
+          <strong>How Much Vacation Can I Afford?</strong>
+          <span>
+            Compare travel spending against savings, debt, emergency cushion,
+            and post-trip flexibility.
+          </span>
+        </a>
+
+        <a class="link-card" href="/how-to-budget-for-a-wedding-without-going-into-debt">
+          <strong>Wedding Budget Without Debt</strong>
+          <span>
+            Plan wedding spending without weakening emergency savings or creating
+            repayment pressure.
+          </span>
         </a>
       </div>
     </section>
+
+    <FAQSection title="Emergency Savings FAQ" faqs={emergencySavingsFaqs} />
   </main>
 </Layout>

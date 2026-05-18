@@ -24,6 +24,14 @@ export const calculators = [
     href: "/should-i-spend-50000-on-a-wedding",
   },
   {
+    id: "car-affordability-guide",
+    category: "Cars",
+    title: "How Much Car Can I Afford?",
+    description:
+      "Learn how income, debt, insurance, savings, loan terms, and total ownership costs shape a realistic car budget.",
+    href: "/how-much-car-can-i-afford",
+  },
+  {
     id: "car-payment-700",
     category: "Cars",
     title: "Should I Spend $700 on a Car Payment?",
@@ -38,6 +46,14 @@ export const calculators = [
     description:
       "Analyze whether a luxury-level car payment creates financial strain based on income, savings, debt, and flexibility.",
     href: "/should-i-spend-1000-on-a-car-payment",
+  },
+  {
+    id: "vacation-affordability-guide",
+    category: "Travel",
+    title: "How Much Vacation Can I Afford?",
+    description:
+      "Learn how savings, debt, emergency funds, hidden travel costs, and post-trip flexibility affect vacation affordability.",
+    href: "/how-much-vacation-can-i-afford",
   },
   {
     id: "vacation-5000",
@@ -88,6 +104,14 @@ export const calculators = [
     href: "/should-i-spend-20000-on-a-family-vacation",
   },
   {
+    id: "rent-affordability-guide",
+    category: "Rent",
+    title: "How Much Rent Can I Afford?",
+    description:
+      "Learn how income, debt, utilities, transportation, emergency savings, and flexibility affect safe rent levels.",
+    href: "/how-much-rent-can-i-afford",
+  },
+  {
     id: "rent-2000",
     category: "Rent",
     title: "Should I Spend $2,000 on Rent?",
@@ -127,4 +151,36 @@ export const calculators = [
       "Analyze whether spending half your income on housing creates financial pressure, debt risk, or long-term budget strain.",
     href: "/should-i-spend-50-percent-income-on-rent",
   },
+  {
+    id: "house-affordability-guide",
+    category: "Budget Rules",
+    title: "How Much House Can I Afford?",
+    description:
+      "Learn how income, debt, taxes, insurance, maintenance, emergency savings, and monthly flexibility affect home affordability.",
+    href: "/how-much-house-can-i-afford",
+  },
+  {
+    id: "debt-too-much-guide",
+    category: "Budget Rules",
+    title: "How Much Debt Is Too Much?",
+    description:
+      "Understand how debt-to-income ratio, monthly obligations, emergency savings, and flexibility affect financial stability.",
+    href: "/how-much-debt-is-too-much",
+  },
+  {
+    id: "debt-definition-guide",
+    category: "Budget Rules",
+    title: "What Counts as Debt?",
+    description:
+      "Learn which monthly obligations usually count as debt when using affordability calculators and budget rules.",
+    href: "/what-counts-as-debt",
+  },
+  {
+  id: "groceries-monthly",
+  category: "Groceries",
+  title: "Should I Spend This Much on Groceries Per Month?",
+  description:
+    "Evaluate whether your monthly grocery budget fits your income, household size, debt, savings, and financial flexibility.",
+  href: "/should-i-spend-this-much-on-groceries-per-month",
+},
 ];
