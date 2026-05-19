@@ -1,13 +1,57 @@
 ---
 import Layout from "../layouts/Layout.astro";
+import CalculatorCard from "../components/CalculatorCard.astro";
 import { calculators } from "../data/calculators.js";
 
-const categories = ["Weddings", "Cars", "Travel", "Rent"];
+const categories = [
+  {
+    name: "Groceries",
+    title: "Grocery Budget Calculators",
+    description:
+      "Evaluate monthly grocery spending, household food costs, income pressure, savings cushion, and budget flexibility.",
+    hub: "/grocery-calculators",
+  },
+  {
+    name: "Weddings",
+    title: "Wedding Budget Calculators",
+    description:
+      "Analyze wedding affordability, guest costs, savings pressure, debt risk, and long-term financial flexibility.",
+    hub: "/wedding-calculators",
+  },
+  {
+    name: "Cars",
+    title: "Car Payment Calculators",
+    description:
+      "Evaluate vehicle affordability, monthly payment pressure, insurance costs, savings strain, and debt stress.",
+    hub: "/car-calculators",
+  },
+  {
+    name: "Travel",
+    title: "Vacation Spending Calculators",
+    description:
+      "Review Disney vacations, Europe trips, cruises, honeymoons, and family travel through income, savings, and debt pressure.",
+    hub: "/travel-calculators",
+  },
+  {
+    name: "Rent",
+    title: "Rent Affordability Calculators",
+    description:
+      "Understand whether rent fits your income, utilities, transportation costs, savings goals, and debt load.",
+    hub: "/rent-calculators",
+  },
+  {
+    name: "Budget Rules",
+    title: "Budget Rule Calculators and Guides",
+    description:
+      "Use debt, housing, emergency savings, and percentage-based budget rules to evaluate financial pressure.",
+    hub: "/budget-rule-calculators",
+  },
+];
 ---
 
 <Layout
   title="All Calculators | ShouldISpend"
-  description="Browse financial decision calculators for weddings, cars, travel, rent, debt, and major spending choices."
+  description="Browse financial decision calculators for groceries, weddings, cars, travel, rent, debt, housing, and major spending choices."
 >
   <style>
     .page-container {
@@ -21,7 +65,7 @@ const categories = ["Weddings", "Cars", "Travel", "Rent"];
       letter-spacing: 3px;
       font-size: 0.8rem;
       color: var(--primary);
-      font-weight: 700;
+      font-weight: 800;
       margin-bottom: 18px;
     }
 
@@ -29,78 +73,93 @@ const categories = ["Weddings", "Cars", "Travel", "Rent"];
       font-size: clamp(2.5rem, 7vw, 4.8rem);
       line-height: 1;
       margin: 0 0 20px;
+      color: var(--text);
     }
 
     .subtitle {
-      max-width: 780px;
+      max-width: 820px;
       font-size: 1.15rem;
-      line-height: 1.8;
+      line-height: 1.85;
       color: var(--muted);
       margin-bottom: 56px;
     }
 
+    .hub-row {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 18px;
+      margin-bottom: 64px;
+    }
+
+    .hub-card {
+      display: block;
+      background: white;
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      padding: 22px;
+      text-decoration: none;
+      color: inherit;
+      transition: transform 0.15s ease;
+    }
+
+    .hub-card:hover {
+      transform: translateY(-2px);
+    }
+
+    .hub-card strong {
+      display: block;
+      color: var(--text);
+      font-size: 1.08rem;
+      margin-bottom: 8px;
+    }
+
+    .hub-card span {
+      display: block;
+      color: var(--muted);
+      line-height: 1.65;
+      font-size: 0.94rem;
+    }
+
     .section {
-      margin-top: 56px;
+      margin-top: 64px;
+    }
+
+    .section-header {
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      gap: 24px;
+      margin-bottom: 24px;
     }
 
     .section-title {
       font-size: 2rem;
-      margin-bottom: 16px;
+      margin: 0 0 10px;
+      color: var(--text);
     }
 
     .section-description {
       max-width: 760px;
       color: var(--muted);
       line-height: 1.75;
-      margin-bottom: 28px;
+      margin: 0;
+    }
+
+    .hub-link {
+      white-space: nowrap;
+      font-weight: 800;
+      color: var(--primary);
+      text-decoration: none;
+    }
+
+    .hub-link:hover {
+      text-decoration: underline;
     }
 
     .grid {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
       gap: 24px;
-    }
-
-    .card {
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: 24px;
-      padding: 28px;
-    }
-
-    .card-category {
-      text-transform: uppercase;
-      letter-spacing: 2px;
-      font-size: 0.75rem;
-      color: var(--primary);
-      font-weight: 700;
-      margin-bottom: 14px;
-    }
-
-    .card h3 {
-      font-size: 1.55rem;
-      line-height: 1.15;
-      margin: 0 0 16px;
-    }
-
-    .card p {
-      color: var(--muted);
-      line-height: 1.7;
-      margin-bottom: 24px;
-    }
-
-    .button {
-      display: inline-block;
-      background: #0f766e;
-      color: white;
-      padding: 0.75rem 1rem;
-      border-radius: 10px;
-      text-decoration: none;
-      font-weight: 700;
-    }
-
-    .button:hover {
-      opacity: 0.92;
     }
 
     @media (max-width: 768px) {
@@ -117,22 +176,26 @@ const categories = ["Weddings", "Cars", "Travel", "Rent"];
         margin-bottom: 42px;
       }
 
+      .section {
+        margin-top: 52px;
+      }
+
+      .section-header {
+        display: block;
+      }
+
       .section-title {
         font-size: 1.65rem;
+      }
+
+      .hub-link {
+        display: inline-block;
+        margin-top: 16px;
       }
 
       .grid {
         grid-template-columns: 1fr;
         gap: 18px;
-      }
-
-      .card {
-        padding: 24px;
-        border-radius: 20px;
-      }
-
-      .card h3 {
-        font-size: 1.45rem;
       }
     }
   </style>
@@ -143,39 +206,52 @@ const categories = ["Weddings", "Cars", "Travel", "Rent"];
     <h1>All Financial Decision Calculators</h1>
 
     <p class="subtitle">
-      Browse verdict-driven calculators for weddings, cars, travel, rent, and
-      major spending decisions. Each tool is designed to evaluate more than the
-      sticker price by considering income, savings, debt, emergency cushion, and
-      financial flexibility.
+      Browse verdict-driven calculators and guides for groceries, weddings,
+      cars, travel, rent, debt, housing, and major spending decisions. Each tool
+      evaluates more than the sticker price by considering income, savings,
+      debt, emergency cushion, monthly pressure, and financial flexibility.
     </p>
+
+    <div class="hub-row">
+      {categories.map((category) => (
+        <a class="hub-card" href={category.hub}>
+          <strong>{category.title}</strong>
+          <span>{category.description}</span>
+        </a>
+      ))}
+    </div>
 
     {categories.map((category) => {
       const categoryCalculators = calculators.filter(
-        (calculator) => calculator.category === category
+        (calculator) => calculator.category === category.name
       );
+
+      if (categoryCalculators.length === 0) return null;
 
       return (
         <section class="section">
-          <h2 class="section-title">{category} Calculators</h2>
+          <div class="section-header">
+            <div>
+              <h2 class="section-title">{category.title}</h2>
 
-          <p class="section-description">
-            Compare spending decisions in this category and understand whether
-            the cost fits your broader financial picture.
-          </p>
+              <p class="section-description">
+                {category.description}
+              </p>
+            </div>
+
+            <a class="hub-link" href={category.hub}>
+              View Category →
+            </a>
+          </div>
 
           <div class="grid">
             {categoryCalculators.map((calculator) => (
-              <div class="card">
-                <div class="card-category">{calculator.category}</div>
-
-                <h3>{calculator.title}</h3>
-
-                <p>{calculator.description}</p>
-
-                <a class="button" href={calculator.href}>
-                  Open Calculator
-                </a>
-              </div>
+              <CalculatorCard
+                category={calculator.category}
+                title={calculator.title}
+                description={calculator.description}
+                href={calculator.href}
+              />
             ))}
           </div>
         </section>

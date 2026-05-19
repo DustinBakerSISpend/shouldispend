@@ -4,31 +4,31 @@ import FAQSection from "../components/FAQSection.astro";
 
 const groceryFaqs = [
   {
-    question: "How much should I spend on groceries per month?",
+    question: "Is $1,500 a month too much for groceries?",
     answer:
-      "A reasonable grocery budget depends on household size, income, location, dietary needs, debt, and savings goals. The safest number is one that still leaves room for bills, savings, and flexibility.",
+      "$1,500 per month can be reasonable for larger households, high-cost areas, special diets, or families replacing restaurant spending with home cooking. It becomes riskier when it crowds out savings, debt payoff, rent, utilities, or emergency flexibility.",
   },
   {
-    question: "Are groceries different from eating out?",
+    question: "What household size makes a $1,500 grocery budget more reasonable?",
     answer:
-      "Yes. Groceries usually cover food prepared at home. Restaurant meals, takeout, coffee runs, delivery fees, and convenience food should usually be tracked separately.",
+      "A $1,500 grocery budget looks very different for one person than it does for a family of four, five, or six. Per-person grocery spending is one of the most important context points.",
   },
   {
-    question: "Is a high grocery bill always bad?",
+    question: "Should restaurants and takeout count with groceries?",
     answer:
-      "No. A higher grocery bill may be reasonable for larger families, special diets, high-cost areas, or households replacing restaurant spending with home cooking.",
+      "Usually, no. Groceries and dining out should often be tracked separately. But total food spending matters because groceries plus restaurants can create real monthly pressure.",
   },
   {
-    question: "What if groceries are high because prices went up?",
+    question: "Can inflation make $1,500 groceries normal?",
     answer:
-      "Inflation and local food costs matter. The goal is not to shame necessary spending, but to see whether the grocery budget is crowding out savings, debt payoff, or other essentials.",
+      "Higher food prices can make larger grocery bills more common, but the important question is whether the spending still fits income, savings, debt, and monthly flexibility.",
   },
 ];
 ---
 
 <Layout
-  title="Should I Spend This Much on Groceries Per Month?"
-  description="Use this grocery spending calculator to evaluate whether your monthly grocery budget fits your income, household size, debt, savings, and financial flexibility."
+  title="Should I Spend $1,500 on Groceries Per Month?"
+  description="Use this grocery budget calculator to evaluate whether spending $1,500 per month on groceries fits your income, household size, debt, savings, and financial flexibility."
 >
   <style>
     .container {
@@ -38,7 +38,7 @@ const groceryFaqs = [
     }
 
     .eyebrow {
-      color: var(--accent);
+      color: var(--primary);
       text-transform: uppercase;
       letter-spacing: 2px;
       font-size: 0.8rem;
@@ -90,8 +90,7 @@ const groceryFaqs = [
       font-size: 0.95rem;
     }
 
-    input,
-    select {
+    input {
       width: 100%;
       border: 1px solid var(--border);
       border-radius: 12px;
@@ -122,58 +121,58 @@ const groceryFaqs = [
     }
 
     .result {
-  margin-top: 32px;
-  background: #f8fafc;
-  border: 1px solid var(--border);
-  border-radius: 24px;
-  padding: 32px;
-  display: none;
-  box-shadow: 0 10px 24px rgba(15, 23, 42, 0.04);
-}
+      margin-top: 32px;
+      background: #f8fafc;
+      border: 1px solid var(--border);
+      border-radius: 24px;
+      padding: 32px;
+      display: none;
+      box-shadow: 0 10px 24px rgba(15, 23, 42, 0.04);
+    }
 
     .result.visible {
       display: block;
     }
 
     .score {
-  font-size: clamp(2rem, 4vw, 2.7rem);
-  font-weight: 900;
-  color: #0f172a;
-  margin-bottom: 22px;
-  line-height: 1.15;
-}
+      font-size: clamp(2rem, 4vw, 2.7rem);
+      font-weight: 900;
+      color: #0f172a;
+      margin-bottom: 22px;
+      line-height: 1.15;
+    }
 
     .bar {
-  height: 16px;
-  background: #dbe4ee;
-  border-radius: 999px;
-  overflow: hidden;
-  margin-bottom: 24px;
-}
+      height: 16px;
+      background: #dbe4ee;
+      border-radius: 999px;
+      overflow: hidden;
+      margin-bottom: 24px;
+    }
 
     .fill {
-  height: 100%;
-  width: 0%;
-  transition: width 0.45s ease;
-}
+      height: 100%;
+      width: 0%;
+      transition: width 0.45s ease;
+    }
 
-.fill.safe {
-  background: linear-gradient(90deg, #0f766e 0%, #14b8a6 100%);
-}
+    .fill.safe {
+      background: linear-gradient(90deg, #0f766e 0%, #14b8a6 100%);
+    }
 
-.fill.caution {
-  background: linear-gradient(90deg, #ca8a04 0%, #facc15 100%);
-}
+    .fill.caution {
+      background: linear-gradient(90deg, #ca8a04 0%, #facc15 100%);
+    }
 
-.fill.danger {
-  background: linear-gradient(90deg, #dc2626 0%, #f97316 100%);
-}
+    .fill.danger {
+      background: linear-gradient(90deg, #dc2626 0%, #f97316 100%);
+    }
 
     .result-details {
-  color: var(--muted);
-  line-height: 1.9;
-  font-size: 1.02rem;
-}
+      color: var(--muted);
+      line-height: 1.9;
+      font-size: 1.02rem;
+    }
 
     .result-details p {
       margin-bottom: 12px;
@@ -253,33 +252,33 @@ const groceryFaqs = [
   <main class="container">
     <div class="eyebrow">Grocery Budget Calculator</div>
 
-    <h1>Should I Spend This Much on Groceries Per Month?</h1>
+    <h1>Should I Spend $1,500 on Groceries Per Month?</h1>
 
     <p class="intro">
-      Grocery spending is one of the easiest budget categories to underestimate.
-      This calculator helps you evaluate whether your monthly grocery budget
-      fits your household size, income, debt load, savings cushion, and overall
-      financial flexibility.
+      A $1,500 monthly grocery bill can be reasonable for some households and
+      financially stressful for others. This calculator evaluates whether that
+      grocery budget fits your income, household size, debt load, emergency
+      savings, dining out habits, and overall monthly flexibility.
     </p>
 
     <section class="calculator-box">
-      <h2>Monthly Grocery Spending Calculator</h2>
+      <h2>$1,500 Monthly Grocery Budget Calculator</h2>
 
       <p>
-        Enter your monthly grocery spending and basic financial details. This
-        tool estimates whether your grocery budget looks comfortable, elevated,
-        or financially tight.
+        This calculator starts with a $1,500 grocery budget. Enter your income,
+        household size, debt, savings, and dining out spending to see whether
+        that monthly food cost looks manageable, elevated, or financially tight.
       </p>
 
       <div class="form-grid">
         <div>
           <label for="groceries">Monthly grocery spending</label>
-          <input id="groceries" type="number" placeholder="Example: 900" />
+          <input id="groceries" type="number" value="1500" />
         </div>
 
         <div>
           <label for="income">Monthly take-home income</label>
-          <input id="income" type="number" placeholder="Example: 6500" />
+          <input id="income" type="number" placeholder="Example: 7500" />
         </div>
 
         <div>
@@ -289,7 +288,7 @@ const groceryFaqs = [
 
         <div>
           <label for="debt">Monthly debt payments</label>
-          <input id="debt" type="number" placeholder="Example: 800" />
+          <input id="debt" type="number" placeholder="Example: 900" />
         </div>
 
         <div>
@@ -303,7 +302,7 @@ const groceryFaqs = [
         </div>
       </div>
 
-      <button id="calculateButton" type="button">Review Grocery Budget</button>
+      <button id="calculateButton" type="button">Review $1,500 Grocery Budget</button>
 
       <p class="note">
         This calculator uses simplified educational estimates. It is not
@@ -326,75 +325,74 @@ const groceryFaqs = [
     </section>
 
     <section>
-      <h2>How to Think About Grocery Spending</h2>
+      <h2>When $1,500 on Groceries Can Make Sense</h2>
 
       <p>
-        Grocery spending is different from a vacation, wedding, or car payment
-        because food is necessary. The goal is not to treat groceries like a
-        luxury. The goal is to understand whether the monthly total is crowding
-        out savings, debt payoff, rent, transportation, or other essential
-        needs.
+        A $1,500 grocery budget may be reasonable for a larger household, a
+        high-cost area, a family with specific dietary needs, or a household
+        that cooks at home instead of spending heavily at restaurants.
       </p>
 
       <p>
-        A higher grocery bill may be reasonable for a larger household, a
-        high-cost area, specific dietary needs, or a family that cooks at home
-        instead of spending heavily at restaurants.
+        The number becomes more concerning when it combines with high dining
+        out spending, weak emergency savings, heavy debt payments, or a rent
+        and utility burden that already leaves little monthly room.
       </p>
     </section>
 
     <section>
-      <h2>Signs Your Grocery Budget May Be Too High</h2>
+      <h2>What Makes a $1,500 Grocery Budget Risky?</h2>
 
       <div class="info-grid">
         <div class="info-card">
-          <h3>It Crowds Out Savings</h3>
+          <h3>Small Household Size</h3>
           <p>
-            If groceries prevent you from building emergency savings, the budget
-            may need closer review.
+            $1,500 per month looks much heavier for one or two people than for a
+            larger family.
           </p>
         </div>
 
         <div class="info-card">
-          <h3>Dining Out Is Also High</h3>
+          <h3>High Dining Out Spending</h3>
           <p>
-            Groceries may be reasonable alone, but total food spending can rise
-            fast when takeout and restaurants are added.
+            Groceries may be only part of the issue if restaurants, takeout,
+            delivery, and coffee spending are also high.
           </p>
         </div>
 
         <div class="info-card">
-          <h3>Debt Is Already Tight</h3>
+          <h3>Thin Emergency Savings</h3>
           <p>
-            High monthly debt payments make every recurring category more
-            important to monitor.
+            A large grocery budget is riskier when the household has little
+            cushion for surprise expenses.
           </p>
         </div>
 
         <div class="info-card">
-          <h3>Food Waste Is Common</h3>
+          <h3>Heavy Debt Payments</h3>
           <p>
-            Throwing away groceries regularly can mean the issue is planning,
-            not just price.
+            Debt payments reduce the flexibility needed to absorb higher food
+            prices or irregular monthly expenses.
           </p>
         </div>
       </div>
     </section>
 
     <section>
-      <h2>Groceries vs. Restaurants</h2>
+      <h2>$1,500 Groceries vs. Total Food Spending</h2>
 
       <p>
-        For budgeting, it usually helps to separate groceries from restaurants,
-        takeout, coffee, delivery apps, and convenience food. A household may
-        have a high grocery bill but a low restaurant budget, which can still be
-        reasonable.
+        A $1,500 grocery bill does not tell the whole story. If restaurant
+        spending is low, the household may simply be buying most food at the
+        grocery store. If dining out is also high, total food spending may be
+        creating more pressure than the grocery number alone suggests.
       </p>
 
       <p>
-        Total food spending is the bigger picture. If groceries and dining out
-        are both high, the combined category may be creating more pressure than
-        it appears at first.
+        For most households, the better question is not whether $1,500 sounds
+        high in isolation. The better question is whether total food spending
+        still leaves room for savings, housing, transportation, debt payoff,
+        insurance, and normal life.
       </p>
     </section>
 
@@ -402,6 +400,21 @@ const groceryFaqs = [
       <h2>Related ShouldISpend Guides</h2>
 
       <div class="link-grid">
+        <a class="link-card" href="/grocery-calculators">
+          <strong>Grocery Budget Calculators</strong>
+          <span>
+            Browse grocery and food spending calculators for monthly budget
+            decisions.
+          </span>
+        </a>
+
+        <a class="link-card" href="/should-i-spend-this-much-on-groceries-per-month">
+          <strong>Monthly Grocery Spending Calculator</strong>
+          <span>
+            Use the broader grocery calculator for any monthly grocery budget.
+          </span>
+        </a>
+
         <a class="link-card" href="/how-much-emergency-savings-should-i-have">
           <strong>Emergency Savings Guide</strong>
           <span>
@@ -417,26 +430,10 @@ const groceryFaqs = [
             flexibility.
           </span>
         </a>
-
-        <a class="link-card" href="/budget-rule-calculators">
-          <strong>Budget Rule Calculators</strong>
-          <span>
-            Browse tools for income percentages, spending pressure, and budget
-            balance.
-          </span>
-        </a>
-
-        <a class="link-card" href="/what-counts-as-debt">
-          <strong>What Counts as Debt?</strong>
-          <span>
-            See which obligations should be included when evaluating monthly
-            financial pressure.
-          </span>
-        </a>
       </div>
     </section>
 
-    <FAQSection title="Grocery Budget FAQ" faqs={groceryFaqs} />
+    <FAQSection title="$1,500 Grocery Budget FAQ" faqs={groceryFaqs} />
   </main>
 
   <script>
@@ -450,15 +447,16 @@ const groceryFaqs = [
       const groceries = Number(document.getElementById("groceries").value);
       const income = Number(document.getElementById("income").value);
       const household = Number(document.getElementById("household").value);
-      const debt = Number(document.getElementById("debt").value);
-      const savings = Number(document.getElementById("savings").value);
-      const dining = Number(document.getElementById("dining").value);
+      const debt = Number(document.getElementById("debt").value || 0);
+      const savings = Number(document.getElementById("savings").value || 0);
+      const dining = Number(document.getElementById("dining").value || 0);
 
       result?.classList.add("visible");
 
       if (!groceries || !income || !household) {
         scoreText.textContent = "Add the Core Numbers First";
         scoreFill.style.width = "0%";
+        scoreFill.className = "fill";
         resultDetails.innerHTML = `
           <p>Enter monthly grocery spending, monthly take-home income, and household size to review the grocery budget.</p>
         `;
@@ -474,12 +472,14 @@ const groceryFaqs = [
       let riskScore = 100;
 
       if (groceryRatio > 0.18) riskScore -= 30;
-      else if (groceryRatio > 0.13) riskScore -= 20;
-      else if (groceryRatio > 0.1) riskScore -= 10;
+else if (groceryRatio > 0.13) riskScore -= 20;
+else if (groceryRatio > 0.1) riskScore -= 10;
+else if (groceryRatio > 0.08) riskScore -= 5;
 
       if (foodRatio > 0.24) riskScore -= 25;
-      else if (foodRatio > 0.18) riskScore -= 15;
-      else if (foodRatio > 0.14) riskScore -= 8;
+else if (foodRatio > 0.18) riskScore -= 15;
+else if (foodRatio > 0.14) riskScore -= 8;
+else if (foodRatio > 0.11) riskScore -= 4;
 
       if (groceriesPerPerson > 450) riskScore -= 15;
       else if (groceriesPerPerson > 350) riskScore -= 8;
@@ -494,35 +494,37 @@ const groceryFaqs = [
 
       let verdict = "Manageable";
       let explanation =
-        "Based on the numbers entered, this grocery budget appears to fit reasonably within your broader financial picture.";
+        "Based on the numbers entered, this $1,500 grocery budget appears to fit reasonably within your broader financial picture.";
 
       if (riskScore < 50) {
         verdict = "High Grocery Budget Pressure";
         explanation =
-          "This grocery budget looks tight relative to income, household size, total food spending, debt, or savings cushion. It may be reducing flexibility elsewhere in the budget.";
+          "This $1,500 grocery budget looks tight relative to income, household size, total food spending, debt, or savings cushion. It may be reducing flexibility elsewhere in the budget.";
       } else if (riskScore < 75) {
         verdict = "Manageable With Guardrails";
         explanation =
-          "This grocery budget may be reasonable, but there are signs of pressure. Review total food spending, dining out, debt payments, and savings room.";
+          "This $1,500 grocery budget may be reasonable, but there are signs of pressure. Review total food spending, dining out, debt payments, and savings room.";
       }
 
       scoreText.textContent = `${verdict} - ${riskScore}/100`;
-      scoreFill.style.width = `${riskScore}%`;
-scoreFill.classList.remove("safe", "caution", "danger");
 
-if (riskScore >= 75) {
-  scoreFill.classList.add("safe");
-} else if (riskScore >= 50) {
-  scoreFill.classList.add("caution");
-} else {
-  scoreFill.classList.add("danger");
-}
+scoreFill.style.width = `${Math.max(riskScore, 6)}%`;
+      scoreFill.className = "fill";
+
+      if (riskScore >= 75) {
+        scoreFill.classList.add("safe");
+      } else if (riskScore >= 50) {
+        scoreFill.classList.add("caution");
+      } else {
+        scoreFill.classList.add("danger");
+      }
 
       resultDetails.innerHTML = `
         <p><strong>Grocery impact:</strong> ${(groceryRatio * 100).toFixed(1)}% of monthly take-home income.</p>
         <p><strong>Total food impact:</strong> ${(foodRatio * 100).toFixed(1)}% of monthly take-home income, including dining out and takeout.</p>
         <p><strong>Groceries per person:</strong> $${groceriesPerPerson.toFixed(0)} per month.</p>
         <p><strong>Debt impact:</strong> ${(debtRatio * 100).toFixed(1)}% of monthly take-home income.</p>
+        <p><strong>Emergency savings cushion:</strong> About ${savingsMonths.toFixed(1)} months of estimated core expenses.</p>
         <p>${explanation}</p>
       `;
     });
