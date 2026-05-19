@@ -1,0 +1,533 @@
+---
+import Layout from "../layouts/Layout.astro";
+import FAQSection from "../components/FAQSection.astro";
+
+const diningFaqs = [
+  {
+    question: "How much is too much to spend eating out per month?",
+    answer:
+      "It depends on income, household size, debt, savings, and grocery spending. Eating out becomes more concerning when it crowds out emergency savings, debt payoff, rent, or normal monthly flexibility.",
+  },
+  {
+    question: "Should takeout and delivery count as eating out?",
+    answer:
+      "Yes. Restaurant meals, takeout, delivery apps, coffee runs, fast food, and convenience meals should usually be counted together when reviewing dining-out spending.",
+  },
+  {
+    question: "Is eating out always bad financially?",
+    answer:
+      "No. Dining out can be reasonable if it fits your income, savings goals, and total food budget. The issue is whether it quietly becomes a recurring pressure point.",
+  },
+  {
+    question: "Should groceries and restaurants be tracked separately?",
+    answer:
+      "Usually, yes. Separating groceries from dining out makes it easier to see whether the issue is food prices, convenience spending, restaurant habits, or total food spending.",
+  },
+];
+---
+
+<Layout
+  title="Should I Spend This Much Eating Out Per Month?"
+  description="Use this dining out calculator to evaluate whether your restaurant, takeout, coffee, and delivery spending fits your income, groceries, debt, savings, and financial flexibility."
+>
+  <style>
+    .container {
+      max-width: 980px;
+      margin: 0 auto;
+      padding: 80px 24px;
+    }
+
+    .eyebrow {
+      color: var(--primary);
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      font-size: 0.8rem;
+      font-weight: 800;
+      margin-bottom: 18px;
+    }
+
+    h1 {
+      font-size: clamp(2.6rem, 7vw, 4.7rem);
+      line-height: 0.95;
+      margin-bottom: 24px;
+      color: var(--text);
+      max-width: 900px;
+    }
+
+    .intro {
+      max-width: 820px;
+      color: var(--muted);
+      font-size: 1.12rem;
+      line-height: 1.85;
+      margin-bottom: 48px;
+    }
+
+    .calculator-box,
+    .info-card,
+    .link-card {
+      border: 1px solid var(--border);
+      background: var(--card);
+      border-radius: 22px;
+      padding: 24px;
+    }
+
+    .calculator-box {
+      margin-bottom: 40px;
+    }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 18px;
+      margin-top: 18px;
+    }
+
+    label {
+      display: block;
+      font-weight: 800;
+      color: var(--text);
+      margin-bottom: 8px;
+      font-size: 0.95rem;
+    }
+
+    input {
+      width: 100%;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 12px;
+      font-size: 1rem;
+      background: white;
+      color: var(--text);
+    }
+
+    button {
+      margin-top: 22px;
+      border: none;
+      border-radius: 999px;
+      padding: 14px 22px;
+      background: #0f766e;
+      color: white;
+      font-weight: 800;
+      font-size: 0.95rem;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      transition: opacity 0.15s ease;
+    }
+
+    button:hover {
+      opacity: 0.92;
+    }
+
+    .result {
+      margin-top: 32px;
+      background: #f8fafc;
+      border: 1px solid var(--border);
+      border-radius: 24px;
+      padding: 32px;
+      display: none;
+      box-shadow: 0 10px 24px rgba(15, 23, 42, 0.04);
+    }
+
+    .result.visible {
+      display: block;
+    }
+
+    .score {
+      font-size: clamp(2rem, 4vw, 2.7rem);
+      font-weight: 900;
+      color: #0f172a;
+      margin-bottom: 22px;
+      line-height: 1.15;
+    }
+
+    .bar {
+      height: 16px;
+      background: #dbe4ee;
+      border-radius: 999px;
+      overflow: hidden;
+      margin-bottom: 24px;
+    }
+
+    .fill {
+      height: 100%;
+      width: 0%;
+      transition: width 0.45s ease;
+    }
+
+    .fill.safe {
+      background: linear-gradient(90deg, #0f766e 0%, #14b8a6 100%);
+    }
+
+    .fill.caution {
+      background: linear-gradient(90deg, #ca8a04 0%, #facc15 100%);
+    }
+
+    .fill.danger {
+      background: linear-gradient(90deg, #dc2626 0%, #f97316 100%);
+    }
+
+    .result-details {
+      color: var(--muted);
+      line-height: 1.9;
+      font-size: 1.02rem;
+    }
+
+    .result-details p {
+      margin-bottom: 12px;
+    }
+
+    .fine-print {
+      color: var(--muted);
+      font-size: 0.9rem;
+      margin-top: 20px;
+    }
+
+    section {
+      margin-top: 64px;
+    }
+
+    h2 {
+      font-size: 2rem;
+      line-height: 1.2;
+      margin-bottom: 18px;
+      color: var(--text);
+    }
+
+    h3 {
+      font-size: 1.25rem;
+      color: var(--text);
+      margin: 0 0 10px;
+    }
+
+    p,
+    li {
+      color: var(--muted);
+      line-height: 1.85;
+      font-size: 1.05rem;
+    }
+
+    .info-grid,
+    .link-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 18px;
+      margin-top: 24px;
+    }
+
+    .info-card p,
+    .link-card span {
+      margin: 0;
+      color: var(--muted);
+      line-height: 1.65;
+      font-size: 0.95rem;
+    }
+
+    .link-card {
+      display: block;
+      text-decoration: none;
+      color: inherit;
+      transition: transform 0.15s ease;
+    }
+
+    .link-card:hover {
+      transform: translateY(-2px);
+    }
+
+    .link-card strong {
+      display: block;
+      color: var(--text);
+      margin-bottom: 8px;
+      line-height: 1.3;
+    }
+
+    .note {
+      font-size: 0.92rem;
+      color: var(--muted);
+      margin-top: 14px;
+    }
+  </style>
+
+  <main class="container">
+    <div class="eyebrow">Dining Out Calculator</div>
+
+    <h1>Should I Spend This Much Eating Out Per Month?</h1>
+
+    <p class="intro">
+      Eating out can quietly become one of the biggest flexible expenses in a
+      monthly budget. This calculator evaluates restaurant, takeout, coffee,
+      delivery, and convenience-food spending against your income, groceries,
+      debt, savings, and overall financial flexibility.
+    </p>
+
+    <section class="calculator-box">
+      <h2>Monthly Eating Out Calculator</h2>
+
+      <p>
+        Enter your dining-out spending and basic financial details. This tool
+        estimates whether your restaurant and takeout budget looks manageable,
+        elevated, or financially tight.
+      </p>
+
+      <div class="form-grid">
+        <div>
+          <label for="dining">Monthly eating out / takeout spending</label>
+          <input id="dining" type="number" placeholder="Example: 600" />
+        </div>
+
+        <div>
+          <label for="groceries">Monthly grocery spending</label>
+          <input id="groceries" type="number" placeholder="Example: 900" />
+        </div>
+
+        <div>
+          <label for="income">Monthly take-home income</label>
+          <input id="income" type="number" placeholder="Example: 6500" />
+        </div>
+
+        <div>
+          <label for="household">Household size</label>
+          <input id="household" type="number" placeholder="Example: 4" />
+        </div>
+
+        <div>
+          <label for="debt">Monthly debt payments</label>
+          <input id="debt" type="number" placeholder="Example: 800" />
+        </div>
+
+        <div>
+          <label for="savings">Emergency savings</label>
+          <input id="savings" type="number" placeholder="Example: 15000" />
+        </div>
+      </div>
+
+      <button id="calculateButton" type="button">Review Eating Out Budget</button>
+
+      <p class="note">
+        This calculator uses simplified educational estimates. It is not
+        financial advice.
+      </p>
+
+      <div class="result" id="result">
+        <div class="score" id="scoreText"></div>
+
+        <div class="bar">
+          <div class="fill" id="scoreFill"></div>
+        </div>
+
+        <div class="result-details" id="resultDetails"></div>
+
+        <div class="fine-print">
+          This is a general educational estimate, not financial advice.
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <h2>How to Think About Eating Out Spending</h2>
+
+      <p>
+        Restaurant spending is different from groceries because it is usually
+        more flexible. That does not make it bad. It just means the category
+        should be judged by whether it still leaves room for savings, debt
+        payoff, housing, groceries, transportation, and normal life.
+      </p>
+
+      <p>
+        Eating out may be reasonable when income is strong, groceries are under
+        control, savings are healthy, and the spending is intentional instead of
+        automatic.
+      </p>
+    </section>
+
+    <section>
+      <h2>Signs Your Dining Out Budget May Be Too High</h2>
+
+      <div class="info-grid">
+        <div class="info-card">
+          <h3>It Crowds Out Savings</h3>
+          <p>
+            If restaurant spending prevents you from building emergency savings,
+            the habit may need closer review.
+          </p>
+        </div>
+
+        <div class="info-card">
+          <h3>Groceries Are Also High</h3>
+          <p>
+            Dining out may be manageable alone, but total food spending can rise
+            quickly when groceries are also expensive.
+          </p>
+        </div>
+
+        <div class="info-card">
+          <h3>It Relies on Credit Cards</h3>
+          <p>
+            If eating out regularly rolls into credit card debt, the monthly
+            total is probably creating pressure.
+          </p>
+        </div>
+
+        <div class="info-card">
+          <h3>It Happens Automatically</h3>
+          <p>
+            Coffee, delivery fees, lunches, and takeout can add up before the
+            spending ever feels like a major purchase.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <h2>Eating Out vs. Groceries</h2>
+
+      <p>
+        Groceries and dining out should usually be tracked separately. A high
+        grocery bill may be reasonable for a larger household, while high dining
+        out spending often reflects convenience, time pressure, habits, or
+        lifestyle choices.
+      </p>
+
+      <p>
+        The bigger issue is total food spending. If groceries and restaurants
+        are both high, the combined category may be taking more monthly room
+        than it appears at first.
+      </p>
+    </section>
+
+    <section>
+      <h2>Related ShouldISpend Guides</h2>
+
+      <div class="link-grid">
+        <a class="link-card" href="/grocery-calculators">
+          <strong>Grocery Budget Calculators</strong>
+          <span>
+            Browse grocery and food spending calculators for monthly budget
+            decisions.
+          </span>
+        </a>
+
+        <a class="link-card" href="/should-i-spend-this-much-on-groceries-per-month">
+          <strong>Monthly Grocery Spending Calculator</strong>
+          <span>
+            Compare grocery spending against income, household size, debt, and
+            savings.
+          </span>
+        </a>
+
+        <a class="link-card" href="/should-i-spend-1500-on-groceries-per-month">
+          <strong>Should I Spend $1,500 on Groceries Per Month?</strong>
+          <span>
+            Review whether a higher grocery budget fits your broader financial
+            picture.
+          </span>
+        </a>
+
+        <a class="link-card" href="/how-much-debt-is-too-much">
+          <strong>How Much Debt Is Too Much?</strong>
+          <span>
+            Learn how monthly obligations and debt pressure affect financial
+            flexibility.
+          </span>
+        </a>
+      </div>
+    </section>
+
+    <FAQSection title="Eating Out Budget FAQ" faqs={diningFaqs} />
+  </main>
+
+  <script>
+    const button = document.getElementById("calculateButton");
+    const result = document.getElementById("result");
+    const scoreText = document.getElementById("scoreText");
+    const scoreFill = document.getElementById("scoreFill");
+    const resultDetails = document.getElementById("resultDetails");
+
+    button?.addEventListener("click", () => {
+      const dining = Number(document.getElementById("dining").value);
+      const groceries = Number(document.getElementById("groceries").value || 0);
+      const income = Number(document.getElementById("income").value);
+      const household = Number(document.getElementById("household").value || 1);
+      const debt = Number(document.getElementById("debt").value || 0);
+      const savings = Number(document.getElementById("savings").value || 0);
+
+      result?.classList.add("visible");
+
+      if (!dining || !income) {
+        scoreText.textContent = "Add the Core Numbers First";
+        scoreFill.style.width = "0%";
+        scoreFill.className = "fill";
+        resultDetails.innerHTML = `
+          <p>Enter monthly eating out spending and monthly take-home income to review the dining budget.</p>
+        `;
+        return;
+      }
+
+      const diningRatio = dining / income;
+      const foodRatio = (dining + groceries) / income;
+      const diningPerPerson = dining / household;
+      const debtRatio = debt / income;
+      const savingsMonths = savings / Math.max(income * 0.7, 1);
+
+      let riskScore = 100;
+
+      if (diningRatio > 0.14) riskScore -= 35;
+      else if (diningRatio > 0.1) riskScore -= 25;
+      else if (diningRatio > 0.07) riskScore -= 15;
+      else if (diningRatio > 0.05) riskScore -= 7;
+
+      if (foodRatio > 0.24) riskScore -= 25;
+      else if (foodRatio > 0.18) riskScore -= 15;
+      else if (foodRatio > 0.14) riskScore -= 8;
+      else if (foodRatio > 0.11) riskScore -= 4;
+
+      if (diningPerPerson > 350) riskScore -= 15;
+      else if (diningPerPerson > 250) riskScore -= 8;
+
+      if (debtRatio > 0.25) riskScore -= 15;
+      else if (debtRatio > 0.15) riskScore -= 8;
+
+      if (savingsMonths < 1) riskScore -= 15;
+      else if (savingsMonths < 3) riskScore -= 8;
+
+      riskScore = Math.max(0, Math.min(100, Math.round(riskScore)));
+
+      let verdict = "Manageable";
+      let explanation =
+        "Based on the numbers entered, this eating out budget appears to fit reasonably within your broader financial picture.";
+
+      if (riskScore < 50) {
+        verdict = "High Dining Out Pressure";
+        explanation =
+          "This eating out budget looks tight relative to income, total food spending, debt, or savings cushion. It may be reducing flexibility elsewhere in the budget.";
+      } else if (riskScore < 75) {
+        verdict = "Manageable With Guardrails";
+        explanation =
+          "This eating out budget may be reasonable, but there are signs of pressure. Review restaurant spending, grocery spending, debt payments, and savings room.";
+      }
+
+      scoreText.textContent = `${verdict} - ${riskScore}/100`;
+
+      scoreFill.style.width = `${Math.max(riskScore, 6)}%`;
+      scoreFill.className = "fill";
+
+      if (riskScore >= 75) {
+        scoreFill.classList.add("safe");
+      } else if (riskScore >= 50) {
+        scoreFill.classList.add("caution");
+      } else {
+        scoreFill.classList.add("danger");
+      }
+
+      resultDetails.innerHTML = `
+        <p><strong>Dining out impact:</strong> ${(diningRatio * 100).toFixed(1)}% of monthly take-home income.</p>
+        <p><strong>Total food impact:</strong> ${(foodRatio * 100).toFixed(1)}% of monthly take-home income, including groceries.</p>
+        <p><strong>Dining out per person:</strong> $${diningPerPerson.toFixed(0)} per month.</p>
+        <p><strong>Debt impact:</strong> ${(debtRatio * 100).toFixed(1)}% of monthly take-home income.</p>
+        <p><strong>Emergency savings cushion:</strong> About ${savingsMonths.toFixed(1)} months of estimated core expenses.</p>
+        <p>${explanation}</p>
+      `;
+    });
+  </script>
+</Layout>

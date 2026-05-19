@@ -183,4 +183,21 @@ export const calculators = [
     "Evaluate whether your monthly grocery budget fits your income, household size, debt, savings, and financial flexibility.",
   href: "/should-i-spend-this-much-on-groceries-per-month",
 },
+{
+  id: "groceries-1500",
+  category: "Groceries",
+  title: "Should I Spend $1,500 on Groceries Per Month?",
+  description:
+    "Evaluate whether spending $1,500 per month on groceries fits your income, household size, debt, savings, and overall financial flexibility.",
+  href: "/should-i-spend-1500-on-groceries-per-month",
+},
+{
+  id: "dining-out-monthly",
+  category: "Groceries",
+  title: "Should I Spend This Much Eating Out Per Month?",
+  description:
+    "Evaluate whether your monthly restaurant, takeout, coffee, and delivery spending fits your income, groceries, debt, savings, and flexibility.",
+  href: "/should-i-spend-this-much-eating-out-per-month",
+},
+
 ];
