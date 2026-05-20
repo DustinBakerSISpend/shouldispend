@@ -221,6 +221,42 @@ const categories = [
       ))}
     </div>
 
+    <section class="section">
+  <div class="section-header">
+    <div>
+      <h2 class="section-title">Most Important Financial Pressure Calculators</h2>
+
+      <p class="section-description">
+        These flagship tools evaluate recurring financial pressure from debt,
+        groceries, weddings, car payments, emergency savings, and monthly
+        affordability decisions.
+      </p>
+    </div>
+  </div>
+
+  <div class="grid">
+    {calculators
+      .filter((calculator) =>
+        [
+          "/how-much-debt-is-too-much",
+          "/should-i-spend-700-on-a-car-payment",
+          "/should-i-spend-30000-on-a-wedding",
+          "/should-i-spend-1500-on-groceries-per-month",
+          "/should-i-spend-this-much-eating-out-per-month",
+          "/should-i-spend-10000-on-a-funeral",
+        ].includes(calculator.href)
+      )
+      .map((calculator) => (
+        <CalculatorCard
+          category={calculator.category}
+          title={calculator.title}
+          description={calculator.description}
+          href={calculator.href}
+        />
+      ))}
+  </div>
+</section>
+
     {categories.map((category) => {
       const categoryCalculators = calculators.filter(
         (calculator) => calculator.category === category.name

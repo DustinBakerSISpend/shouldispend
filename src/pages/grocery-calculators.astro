@@ -1,6 +1,11 @@
 ---
 import Layout from "../layouts/Layout.astro";
 import CalculatorCard from "../components/CalculatorCard.astro";
+import { calculators } from "../data/calculators";
+
+const groceryCalculators = calculators.filter((calculator) =>
+  ["Groceries", "Food"].includes(calculator.category)
+);
 ---
 
 <Layout
@@ -139,15 +144,10 @@ import CalculatorCard from "../components/CalculatorCard.astro";
   </style>
 
   <div class="container">
-
     <section class="hero">
-      <div class="eyebrow">
-        Grocery Budget Calculators
-      </div>
+      <div class="eyebrow">Grocery Budget Calculators</div>
 
-      <h1>
-        Grocery Budget Calculators
-      </h1>
+      <h1>Grocery Budget Calculators</h1>
 
       <p>
         Grocery spending is one of the easiest monthly expenses to underestimate.
@@ -158,51 +158,43 @@ import CalculatorCard from "../components/CalculatorCard.astro";
     </section>
 
     <section class="section">
-      <h2 class="section-title">
-        Start with the Monthly Grocery Calculator
-      </h2>
+      <h2 class="section-title">Start with the Grocery and Food Calculators</h2>
 
       <p class="section-intro">
-        This calculator helps you decide whether your grocery spending is
-        reasonable for your household or whether it may be creating pressure
-        elsewhere in your budget.
+        These calculators help you decide whether your grocery spending, food
+        budget, or dining-out habits are reasonable for your household — or
+        whether they may be creating pressure elsewhere in your budget.
       </p>
 
       <div class="grid">
-        <CalculatorCard
-          category="Groceries"
-          title="Should I Spend This Much on Groceries Per Month?"
-          description="Evaluate whether your monthly grocery budget fits your income, household size, debt, savings, and financial flexibility."
-          href="/should-i-spend-this-much-on-groceries-per-month"
-        />
+        {groceryCalculators.map((calculator) => (
+          <CalculatorCard {...calculator} />
+        ))}
       </div>
     </section>
 
     <section class="section">
       <div class="verdict-bar">
-        <div class="verdict-label">
-          Grocery Spending Verdict
-        </div>
+        <div class="verdict-label">Grocery Spending Verdict</div>
 
         <h2>
-          A grocery budget is safe only if it leaves room for savings, bills, debt payments, and normal life.
+          A grocery budget is safe only if it leaves room for savings, bills,
+          debt payments, and normal life.
         </h2>
 
         <p>
           Food is essential, but grocery spending can still become a budget
           problem when it quietly crowds out emergency savings, debt payoff,
           rent, utilities, childcare, transportation, or other monthly needs.
-          The best grocery budget is not just “low.” It is sustainable,
-          realistic, repeatable, and flexible enough to survive an expensive
-          month without creating credit card pressure.
+          The best grocery budget is sustainable, realistic, repeatable, and
+          flexible enough to survive an expensive month without creating credit
+          card pressure.
         </p>
       </div>
     </section>
 
     <section class="section">
-      <h2 class="section-title">
-        What These Grocery Calculators Consider
-      </h2>
+      <h2 class="section-title">What These Grocery Calculators Consider</h2>
 
       <p class="section-intro">
         Grocery affordability depends on more than household size. A monthly
@@ -211,12 +203,8 @@ import CalculatorCard from "../components/CalculatorCard.astro";
       </p>
 
       <div class="info-grid">
-
         <div class="info-card">
-          <h3>
-            Household Size
-          </h3>
-
+          <h3>Household Size</h3>
           <p>
             A single adult, couple, family of four, and larger household all
             need different grocery expectations. The goal is not one universal
@@ -225,10 +213,7 @@ import CalculatorCard from "../components/CalculatorCard.astro";
         </div>
 
         <div class="info-card">
-          <h3>
-            Monthly Income
-          </h3>
-
+          <h3>Monthly Income</h3>
           <p>
             Grocery spending should be judged against take-home pay and the
             amount of breathing room left after required expenses.
@@ -236,10 +221,7 @@ import CalculatorCard from "../components/CalculatorCard.astro";
         </div>
 
         <div class="info-card">
-          <h3>
-            Debt Pressure
-          </h3>
-
+          <h3>Debt Pressure</h3>
           <p>
             Credit cards, loans, and other monthly obligations can make an
             otherwise normal grocery bill feel much heavier.
@@ -247,10 +229,7 @@ import CalculatorCard from "../components/CalculatorCard.astro";
         </div>
 
         <div class="info-card">
-          <h3>
-            Emergency Savings
-          </h3>
-
+          <h3>Emergency Savings</h3>
           <p>
             A household with a thin emergency fund may need a more cautious
             grocery target until savings become more stable.
@@ -258,10 +237,7 @@ import CalculatorCard from "../components/CalculatorCard.astro";
         </div>
 
         <div class="info-card">
-          <h3>
-            Flexibility
-          </h3>
-
+          <h3>Flexibility</h3>
           <p>
             A good grocery budget leaves room for normal life instead of
             forcing every unexpected expense onto a credit card.
@@ -269,30 +245,24 @@ import CalculatorCard from "../components/CalculatorCard.astro";
         </div>
 
         <div class="info-card">
-          <h3>
-            Repeatability
-          </h3>
-
+          <h3>Repeatability</h3>
           <p>
             The best food budget is one you can actually repeat month after
             month without unrealistic restriction or financial drift.
           </p>
         </div>
-
       </div>
     </section>
 
     <section class="section">
-      <h2 class="section-title">
-        Future Grocery and Food Spending Tools
-      </h2>
+      <h2 class="section-title">More Grocery and Food Spending Tools</h2>
 
       <p class="section-intro">
-        This category will eventually support a wider food-spending cluster,
-        including dining out, family grocery budgets, meal planning, warehouse
-        club spending, and other recurring food decisions.
+        This category now supports a growing food-spending cluster, including
+        monthly grocery budgets, high grocery bills, dining out, family food
+        costs, warehouse club spending, meal planning, and other recurring food
+        decisions.
       </p>
     </section>
-
   </div>
 </Layout>

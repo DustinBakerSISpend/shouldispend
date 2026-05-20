@@ -164,8 +164,7 @@ export const calculators = [
     category: "Budget Rules",
     title: "How Much Debt Is Too Much?",
     description:
-      "Understand how debt-to-income ratio, monthly obligations, emergency savings, and flexibility affect financial stability.",
-    href: "/how-much-debt-is-too-much",
+  "Calculate debt pressure using monthly payments, housing costs, emergency savings, credit card debt, and overall financial flexibility.",
   },
   {
     id: "debt-definition-guide",
@@ -175,6 +174,16 @@ export const calculators = [
       "Learn which monthly obligations usually count as debt when using affordability calculators and budget rules.",
     href: "/what-counts-as-debt",
   },
+  
+{
+  id: "funeral-10000",
+  category: "Budget Rules",
+  title: "Should I Spend $10,000 on a Funeral?",
+  description:
+    "Evaluate funeral affordability using savings, insurance help, debt pressure, income, and emergency flexibility.",
+  href: "/should-i-spend-10000-on-a-funeral",
+},
+
   {
   id: "groceries-monthly",
   category: "Groceries",

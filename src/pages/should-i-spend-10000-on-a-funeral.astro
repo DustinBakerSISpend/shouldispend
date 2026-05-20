@@ -1,0 +1,604 @@
+---
+import Layout from "../layouts/Layout.astro";
+import FAQSection from "../components/FAQSection.astro";
+
+const funeralFaqs = [
+  {
+    question: "Is $10,000 too much to spend on a funeral?",
+    answer:
+      "$10,000 can be manageable if the family has savings, insurance, or help from relatives. It becomes risky when the cost requires credit cards, personal loans, or drains emergency savings.",
+  },
+  {
+    question: "Should you go into debt for a funeral?",
+    answer:
+      "Funeral debt can create long-term pressure during an already difficult time. If possible, compare lower-cost options, ask for itemized pricing, and avoid high-interest financing.",
+  },
+  {
+    question: "What costs should I include in a funeral budget?",
+    answer:
+      "Include funeral home services, burial or cremation, casket or urn, cemetery costs, transportation, flowers, obituary notices, reception costs, clergy or celebrant fees, and travel.",
+  },
+  {
+    question: "Is cremation usually cheaper than burial?",
+    answer:
+      "Cremation is often less expensive than traditional burial, especially when it avoids cemetery plots, burial vaults, and higher casket costs.",
+  },
+];
+---
+
+<Layout
+  title="Should I Spend $10,000 on a Funeral?"
+  description="Use this funeral affordability calculator to evaluate whether a $10,000 funeral fits savings, income, insurance help, family contributions, debt, and emergency flexibility."
+>
+  <style>
+    .container {
+      max-width: 980px;
+      margin: 0 auto;
+      padding: 80px 24px;
+    }
+
+    .eyebrow {
+      color: #0f766e;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      font-size: 0.8rem;
+      font-weight: 800;
+      margin-bottom: 18px;
+    }
+
+    h1 {
+      font-size: clamp(2.7rem, 7vw, 4.8rem);
+      line-height: 0.95;
+      margin-bottom: 24px;
+      color: #0f172a;
+      max-width: 900px;
+    }
+
+    .intro {
+      max-width: 820px;
+      color: #334155;
+      font-size: 1.12rem;
+      line-height: 1.85;
+      margin-bottom: 48px;
+    }
+
+    .calculator-box,
+    .info-card,
+    .link-card,
+    .callout {
+      border: 1px solid #dbe4ee;
+      background: white;
+      border-radius: 22px;
+      padding: 26px;
+    }
+
+    .calculator-box {
+      margin-bottom: 56px;
+      box-shadow: 0 12px 28px rgba(15, 23, 42, 0.05);
+    }
+
+    .calculator-box h2,
+    .content-section h2 {
+      font-size: 2rem;
+      line-height: 1.2;
+      margin-bottom: 18px;
+      color: #0f172a;
+    }
+
+    .calculator-box p,
+    .content-section p,
+    .content-section li {
+      color: #334155;
+      line-height: 1.9;
+      font-size: 1.06rem;
+    }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 18px;
+      margin-top: 22px;
+    }
+
+    label {
+      display: block;
+      font-weight: 800;
+      color: #0f172a;
+      margin-bottom: 8px;
+      font-size: 0.95rem;
+    }
+
+    input {
+      width: 100%;
+      border: 1px solid #cbd5e1;
+      border-radius: 12px;
+      padding: 13px;
+      font-size: 1rem;
+      box-sizing: border-box;
+    }
+
+    button {
+      margin-top: 24px;
+      border: none;
+      border-radius: 999px;
+      padding: 15px 24px;
+      background: #0f766e;
+      color: white;
+      font-weight: 900;
+      font-size: 1rem;
+      cursor: pointer;
+    }
+
+    button:hover {
+      opacity: 0.92;
+    }
+
+    .result {
+      margin-top: 32px;
+      background: #f8fafc;
+      border: 1px solid #dbe4ee;
+      border-radius: 24px;
+      padding: 32px;
+      display: none;
+    }
+
+    .result.visible {
+      display: block;
+    }
+
+    .score {
+      font-size: clamp(2rem, 4vw, 2.7rem);
+      font-weight: 900;
+      color: #0f172a;
+      margin-bottom: 22px;
+      line-height: 1.15;
+    }
+
+    .bar {
+      height: 16px;
+      background: #dbe4ee;
+      border-radius: 999px;
+      overflow: hidden;
+      margin-bottom: 24px;
+    }
+
+    .fill {
+      height: 100%;
+      width: 0%;
+      border-radius: 999px;
+      transition: width 0.45s ease;
+    }
+
+    .fill.safe {
+      background: linear-gradient(90deg, #0f766e 0%, #14b8a6 100%);
+    }
+
+    .fill.caution {
+      background: linear-gradient(90deg, #ca8a04 0%, #facc15 100%);
+    }
+
+    .fill.danger {
+      background: linear-gradient(90deg, #dc2626 0%, #f97316 100%);
+    }
+
+    .result-details {
+      color: #334155;
+      line-height: 1.9;
+      font-size: 1.02rem;
+    }
+
+    .result-details p {
+      margin-bottom: 12px;
+    }
+
+    .guidance {
+      margin-top: 20px;
+      padding-top: 18px;
+      border-top: 1px solid #dbe4ee;
+      color: #0f172a;
+      font-size: 1.08rem;
+      line-height: 1.8;
+    }
+
+    .fine-print {
+      color: #64748b;
+      font-size: 0.9rem;
+      margin-top: 20px;
+    }
+
+    .content-section {
+      margin-top: 72px;
+    }
+
+    .content-section h3 {
+      font-size: 1.3rem;
+      color: #0f172a;
+      margin: 28px 0 12px;
+    }
+
+    .info-grid,
+    .link-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 20px;
+      margin-top: 28px;
+    }
+
+    .info-card h3 {
+      margin-top: 0;
+    }
+
+    .info-card p,
+    .link-card span {
+      margin: 0;
+      color: #334155;
+      line-height: 1.7;
+      font-size: 0.96rem;
+    }
+
+    .link-card {
+      display: block;
+      text-decoration: none;
+      color: inherit;
+      transition: transform 0.15s ease;
+    }
+
+    .link-card:hover {
+      transform: translateY(-2px);
+    }
+
+    .link-card strong {
+      display: block;
+      color: #0f172a;
+      margin-bottom: 8px;
+      line-height: 1.3;
+    }
+
+    .callout {
+      background: #f8fafc;
+      margin-top: 28px;
+    }
+  </style>
+
+  <main class="container">
+    <div class="eyebrow">Funeral Cost Calculator</div>
+
+    <h1>Should I Spend $10,000 on a Funeral?</h1>
+
+    <p class="intro">
+      Funeral costs can create sudden financial pressure at the worst possible
+      time. This calculator helps estimate whether a $10,000 funeral is
+      manageable based on savings, income, family help, insurance, debt, and
+      emergency flexibility.
+    </p>
+
+    <section class="calculator-box">
+      <h2>$10,000 Funeral Affordability Calculator</h2>
+
+      <p>
+        Enter the funeral cost, available savings, insurance or family
+        contributions, monthly income, and current debt payments. The calculator
+        estimates whether the expense looks manageable, stressful, or financially
+        dangerous.
+      </p>
+
+      <div class="form-grid">
+        <div>
+          <label for="cost">Estimated funeral cost</label>
+          <input id="cost" type="number" value="10000" />
+        </div>
+
+        <div>
+          <label for="savings">Current liquid savings</label>
+          <input id="savings" type="number" placeholder="Example: 15000" />
+        </div>
+
+        <div>
+          <label for="help">Insurance or family help</label>
+          <input id="help" type="number" placeholder="Example: 3000" />
+        </div>
+
+        <div>
+          <label for="income">Monthly take-home income</label>
+          <input id="income" type="number" placeholder="Example: 6500" />
+        </div>
+
+        <div>
+          <label for="debt">Monthly debt payments</label>
+          <input id="debt" type="number" placeholder="Example: 900" />
+        </div>
+
+        <div>
+          <label for="emergencyTarget">Minimum savings you want left afterward</label>
+          <input id="emergencyTarget" type="number" placeholder="Example: 15000" />
+        </div>
+      </div>
+
+      <button id="calculateButton" type="button">Check Funeral Affordability</button>
+
+      <div class="result" id="result">
+        <div class="score" id="scoreText"></div>
+
+        <div class="bar">
+          <div class="fill" id="scoreFill"></div>
+        </div>
+
+        <div class="result-details" id="resultDetails"></div>
+
+        <div class="guidance" id="guidance"></div>
+
+        <div class="fine-print">
+          This is a general educational estimate, not financial advice.
+        </div>
+      </div>
+    </section>
+
+    <section class="content-section">
+      <h2>When a $10,000 Funeral Can Make Sense</h2>
+
+      <p>
+        A $10,000 funeral can be manageable when there is enough savings,
+        insurance money, prepaid funeral planning, or shared family support to
+        cover most of the cost without high-interest debt.
+      </p>
+
+      <p>
+        The expense becomes more dangerous when the family has to rely on credit
+        cards, personal loans, or money that was needed for rent, groceries,
+        utilities, medical costs, or emergency savings.
+      </p>
+
+      <div class="callout">
+        <p>
+          A funeral budget should honor the person who died without creating
+          months or years of avoidable financial stress for the people left
+          behind.
+        </p>
+      </div>
+    </section>
+
+    <section class="content-section">
+      <h2>What This Funeral Calculator Considers</h2>
+
+      <div class="info-grid">
+        <div class="info-card">
+          <h3>Out-of-Pocket Cost</h3>
+          <p>
+            The most important number is what remains after insurance, prepaid
+            funds, and family contributions are applied.
+          </p>
+        </div>
+
+        <div class="info-card">
+          <h3>Emergency Savings</h3>
+          <p>
+            A funeral can be harder to absorb if it drains money needed for rent,
+            groceries, transportation, or medical needs.
+          </p>
+        </div>
+
+        <div class="info-card">
+          <h3>Debt Pressure</h3>
+          <p>
+            Existing debt payments make funeral financing riskier because less
+            monthly income is available for repayment.
+          </p>
+        </div>
+
+        <div class="info-card">
+          <h3>Income Flexibility</h3>
+          <p>
+            The same funeral cost creates different pressure depending on income,
+            savings, help available, and regular monthly obligations.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <section class="content-section">
+      <h2>Costs to Include in a Funeral Budget</h2>
+
+      <p>
+        Funeral quotes can vary because families choose different services,
+        products, locations, and burial or cremation options. Ask for an
+        itemized price list and separate required costs from optional upgrades.
+      </p>
+
+      <ul>
+        <li>Funeral home basic service fees</li>
+        <li>Viewing, ceremony, or memorial service costs</li>
+        <li>Casket, urn, burial vault, or cremation container</li>
+        <li>Burial plot, cemetery fees, and grave opening or closing</li>
+        <li>Transportation, flowers, obituary notices, and printed materials</li>
+        <li>Reception, travel, clergy, musician, or celebrant costs</li>
+      </ul>
+    </section>
+
+    <section class="content-section">
+      <h2>Lower-Cost Options to Consider</h2>
+
+      <p>
+        A lower funeral budget does not mean a less meaningful goodbye. Families
+        can often reduce pressure by choosing direct cremation, a smaller
+        memorial, a home or church gathering, fewer upgrades, or a simpler
+        service plan.
+      </p>
+
+      <p>
+        The goal is not to spend the least possible amount. The goal is to avoid
+        making a painful moment even harder with debt that lasts long after the
+        service is over.
+      </p>
+    </section>
+
+    <section class="content-section">
+      <h2>Related Financial Calculators</h2>
+
+      <div class="link-grid">
+        <a class="link-card" href="/how-much-debt-is-too-much">
+          <strong>Debt Pressure Calculator</strong>
+          <span>
+            See how existing debt payments affect funeral affordability and
+            other major spending decisions.
+          </span>
+        </a>
+
+        <a class="link-card" href="/how-much-emergency-savings-should-i-have">
+          <strong>Emergency Savings Guide</strong>
+          <span>
+            Understand how much cushion to keep before using savings for a major
+            unexpected expense.
+          </span>
+        </a>
+
+        <a class="link-card" href="/what-counts-as-debt">
+          <strong>What Counts as Debt?</strong>
+          <span>
+            Review which monthly obligations should be included when evaluating
+            affordability.
+          </span>
+        </a>
+
+        <a class="link-card" href="/calculators">
+          <strong>All Financial Calculators</strong>
+          <span>
+            Browse all ShouldISpend calculators for debt, groceries, weddings,
+            cars, travel, rent, and major expenses.
+          </span>
+        </a>
+      </div>
+    </section>
+
+    <FAQSection title="Funeral Cost FAQ" faqs={funeralFaqs} />
+  </main>
+
+  <script>
+    const button = document.getElementById("calculateButton");
+    const result = document.getElementById("result");
+    const scoreText = document.getElementById("scoreText");
+    const scoreFill = document.getElementById("scoreFill");
+    const resultDetails = document.getElementById("resultDetails");
+    const guidance = document.getElementById("guidance");
+
+    button?.addEventListener("click", () => {
+      const cost = Number(document.getElementById("cost").value);
+      const savings = Number(document.getElementById("savings").value || 0);
+      const help = Number(document.getElementById("help").value || 0);
+      const income = Number(document.getElementById("income").value);
+      const debt = Number(document.getElementById("debt").value || 0);
+      const emergencyTarget = Number(
+        document.getElementById("emergencyTarget").value || 0
+      );
+
+      result?.classList.add("visible");
+
+      if (!cost || !income) {
+        scoreText.textContent = "Add the Core Numbers First";
+        scoreFill.style.width = "0%";
+        scoreFill.className = "fill";
+        resultDetails.innerHTML =
+          "<p>Enter funeral cost and monthly take-home income to review affordability.</p>";
+        guidance.textContent = "";
+        return;
+      }
+
+      const outOfPocket = Math.max(cost - help, 0);
+      const savingsAfter = savings - outOfPocket;
+      const savingsImpact = savings > 0 ? outOfPocket / savings : 1.5;
+      const incomeImpact = outOfPocket / income;
+      const debtRatio = debt / income;
+      const emergencyGap =
+        emergencyTarget > 0 ? savingsAfter / emergencyTarget : null;
+
+      let score = 100;
+
+      if (outOfPocket <= 0) {
+        score = 100;
+      } else if (savingsAfter < 0 && outOfPocket > income * 2) {
+        score = 0;
+      } else {
+        if (savingsImpact > 1) score -= 40;
+        else if (savingsImpact > 0.75) score -= 32;
+        else if (savingsImpact > 0.5) score -= 24;
+        else if (savingsImpact > 0.25) score -= 14;
+        else if (savingsImpact < 0.15) score += 8;
+
+        if (incomeImpact > 3) score -= 34;
+        else if (incomeImpact > 2) score -= 26;
+        else if (incomeImpact > 1.25) score -= 18;
+        else if (incomeImpact > 0.75) score -= 10;
+        else if (incomeImpact < 0.3) score += 8;
+
+        if (debtRatio > 0.45) score -= 28;
+        else if (debtRatio > 0.3) score -= 20;
+        else if (debtRatio > 0.2) score -= 12;
+        else if (debtRatio < 0.05) score += 5;
+
+        if (emergencyGap !== null) {
+          if (emergencyGap < 0) score -= 30;
+          else if (emergencyGap < 0.25) score -= 20;
+          else if (emergencyGap < 0.5) score -= 12;
+          else if (emergencyGap > 1) score += 8;
+        } else if (savingsAfter < income) {
+          score -= 16;
+        }
+
+        score = Math.max(0, Math.min(100, Math.round(score)));
+      }
+
+      let verdict = "Funeral Cost Looks Manageable";
+      let explanation =
+        "Based on the numbers entered, this funeral cost appears manageable relative to savings, help available, income, debt, and emergency flexibility.";
+
+      if (score === 0) {
+        verdict = "Funeral Cost Looks Unworkable";
+        explanation =
+          "This funeral cost appears too large for the available savings, income, and help entered. Compare lower-cost options before using high-interest debt.";
+      } else if (score < 35) {
+        verdict = "Severe Funeral Cost Pressure";
+        explanation =
+          "This funeral budget would likely create serious financial pressure. Consider lower-cost arrangements, additional family help, insurance proceeds, or community assistance before borrowing.";
+      } else if (score < 50) {
+        verdict = "High Funeral Cost Pressure";
+        explanation =
+          "This funeral cost may significantly reduce savings or increase debt pressure. A simpler service plan may protect the household from long-term strain.";
+      } else if (score < 75) {
+        verdict = "Manageable With Guardrails";
+        explanation =
+          "This funeral cost may be workable, but it deserves caution. Protect emergency savings, avoid high-interest debt, and compare itemized options.";
+      } else if (score < 90) {
+        verdict = "Comfortable Funeral Budget";
+        explanation =
+          "This funeral budget appears reasonably comfortable, though itemized pricing and savings protection still matter.";
+      }
+
+      scoreText.textContent = `${verdict} - ${score}/100`;
+
+      scoreFill.style.width = `${Math.max(score, 6)}%`;
+      scoreFill.className = "fill";
+
+      if (score >= 75) {
+        scoreFill.classList.add("safe");
+      } else if (score >= 50) {
+        scoreFill.classList.add("caution");
+      } else {
+        scoreFill.classList.add("danger");
+      }
+
+      resultDetails.innerHTML = `
+        <p><strong>Estimated out-of-pocket cost:</strong> $${outOfPocket.toLocaleString()} after insurance or family help.</p>
+        <p><strong>Savings impact:</strong> ${savings > 0 ? `${(savingsImpact * 100).toFixed(1)}% of available savings.` : "No available savings entered."}</p>
+        <p><strong>Estimated savings after funeral:</strong> $${savingsAfter.toLocaleString()}.</p>
+        <p><strong>Income impact:</strong> ${(incomeImpact * 100).toFixed(1)}% of monthly take-home income.</p>
+        <p><strong>Debt payment pressure:</strong> ${(debtRatio * 100).toFixed(1)}% of monthly take-home income.</p>
+        ${
+          emergencyGap !== null
+            ? `<p><strong>Emergency target after funeral:</strong> ${(emergencyGap * 100).toFixed(1)}% of target remaining.</p>`
+            : ""
+        }
+      `;
+
+      guidance.textContent = explanation;
+    });
+  </script>
+</Layout>

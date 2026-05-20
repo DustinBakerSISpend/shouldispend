@@ -437,96 +437,121 @@ const groceryFaqs = [
   </main>
 
   <script>
-    const button = document.getElementById("calculateButton");
-    const result = document.getElementById("result");
-    const scoreText = document.getElementById("scoreText");
-    const scoreFill = document.getElementById("scoreFill");
-    const resultDetails = document.getElementById("resultDetails");
+  const button = document.getElementById("calculateButton");
+  const result = document.getElementById("result");
+  const scoreText = document.getElementById("scoreText");
+  const scoreFill = document.getElementById("scoreFill");
+  const resultDetails = document.getElementById("resultDetails");
 
-    button?.addEventListener("click", () => {
-      const groceries = Number(document.getElementById("groceries").value);
-      const income = Number(document.getElementById("income").value);
-      const household = Number(document.getElementById("household").value);
-      const debt = Number(document.getElementById("debt").value || 0);
-      const savings = Number(document.getElementById("savings").value || 0);
-      const dining = Number(document.getElementById("dining").value || 0);
+  button?.addEventListener("click", () => {
+    const groceries = Number(document.getElementById("groceries").value);
+    const income = Number(document.getElementById("income").value);
+    const household = Number(document.getElementById("household").value);
+    const debt = Number(document.getElementById("debt").value || 0);
+    const savings = Number(document.getElementById("savings").value || 0);
+    const dining = Number(document.getElementById("dining").value || 0);
 
-      result?.classList.add("visible");
+    result?.classList.add("visible");
 
-      if (!groceries || !income || !household) {
-        scoreText.textContent = "Add the Core Numbers First";
-        scoreFill.style.width = "0%";
-        scoreFill.className = "fill";
-        resultDetails.innerHTML = `
-          <p>Enter monthly grocery spending, monthly take-home income, and household size to review the grocery budget.</p>
-        `;
-        return;
-      }
+    if (!groceries || !income || !household) {
+      scoreText.textContent = "Add the Core Numbers First";
+      scoreFill.style.width = "0%";
+      scoreFill.className = "fill";
+      resultDetails.innerHTML = `
+        <p>Enter monthly grocery spending, monthly take-home income, and household size to review the grocery budget.</p>
+      `;
+      return;
+    }
 
-      const groceryRatio = groceries / income;
-      const foodRatio = (groceries + dining) / income;
-      const groceriesPerPerson = groceries / household;
-      const debtRatio = debt / income;
-      const savingsMonths = savings / Math.max(income * 0.7, 1);
+    const groceryRatio = groceries / income;
+    const foodRatio = (groceries + dining) / income;
+    const groceriesPerPerson = groceries / household;
+    const debtRatio = debt / income;
+    const savingsMonths = savings / Math.max(income * 0.7, 1);
 
-      let riskScore = 100;
+    let riskScore = 100;
 
-      if (groceryRatio > 0.18) riskScore -= 30;
-else if (groceryRatio > 0.13) riskScore -= 20;
-else if (groceryRatio > 0.1) riskScore -= 10;
-else if (groceryRatio > 0.08) riskScore -= 5;
+    if (groceryRatio >= 1 || foodRatio >= 1) {
+      riskScore = 0;
+    } else {
+      if (groceryRatio > 0.45) riskScore -= 55;
+      else if (groceryRatio > 0.3) riskScore -= 40;
+      else if (groceryRatio > 0.2) riskScore -= 28;
+      else if (groceryRatio > 0.15) riskScore -= 18;
+      else if (groceryRatio > 0.1) riskScore -= 10;
+      else if (groceryRatio < 0.04) riskScore += 10;
 
-      if (foodRatio > 0.24) riskScore -= 25;
-else if (foodRatio > 0.18) riskScore -= 15;
-else if (foodRatio > 0.14) riskScore -= 8;
-else if (foodRatio > 0.11) riskScore -= 4;
+      if (foodRatio > 0.5) riskScore -= 40;
+      else if (foodRatio > 0.35) riskScore -= 28;
+      else if (foodRatio > 0.25) riskScore -= 18;
+      else if (foodRatio > 0.18) riskScore -= 10;
+      else if (foodRatio < 0.08) riskScore += 8;
 
-      if (groceriesPerPerson > 450) riskScore -= 15;
+      if (household <= 2 && groceriesPerPerson > 500) riskScore -= 24;
+      else if (groceriesPerPerson > 450) riskScore -= 16;
       else if (groceriesPerPerson > 350) riskScore -= 8;
+      else if (groceriesPerPerson < 180) riskScore += 6;
 
-      if (debtRatio > 0.25) riskScore -= 15;
-      else if (debtRatio > 0.15) riskScore -= 8;
+      if (debtRatio > 0.45) riskScore -= 30;
+      else if (debtRatio > 0.3) riskScore -= 20;
+      else if (debtRatio > 0.2) riskScore -= 12;
+      else if (debtRatio < 0.05) riskScore += 5;
 
-      if (savingsMonths < 1) riskScore -= 15;
-      else if (savingsMonths < 3) riskScore -= 8;
+      if (savingsMonths < 1) riskScore -= 28;
+      else if (savingsMonths < 3) riskScore -= 18;
+      else if (savingsMonths < 6) riskScore -= 8;
+      else if (savingsMonths > 12) riskScore += 8;
 
       riskScore = Math.max(0, Math.min(100, Math.round(riskScore)));
+    }
 
-      let verdict = "Manageable";
-      let explanation =
-        "Based on the numbers entered, this $1,500 grocery budget appears to fit reasonably within your broader financial picture.";
+    let verdict = "Strong Grocery Budget";
+    let explanation =
+      "Based on the numbers entered, this grocery budget appears highly manageable relative to income, household size, debt, savings, and total food spending.";
 
-      if (riskScore < 50) {
-        verdict = "High Grocery Budget Pressure";
-        explanation =
-          "This $1,500 grocery budget looks tight relative to income, household size, total food spending, debt, or savings cushion. It may be reducing flexibility elsewhere in the budget.";
-      } else if (riskScore < 75) {
-        verdict = "Manageable With Guardrails";
-        explanation =
-          "This $1,500 grocery budget may be reasonable, but there are signs of pressure. Review total food spending, dining out, debt payments, and savings room.";
-      }
+    if (riskScore === 0) {
+      verdict = "Impossible Grocery Budget";
+      explanation =
+        "This grocery budget is equal to or greater than monthly take-home income. Recheck the number entered or reduce the budget dramatically.";
+    } else if (riskScore < 35) {
+      verdict = "Severe Grocery Budget Pressure";
+      explanation =
+        "This grocery budget looks financially unsustainable relative to income, household size, total food spending, debt, or savings cushion.";
+    } else if (riskScore < 50) {
+      verdict = "High Grocery Budget Pressure";
+      explanation =
+        "This grocery budget looks tight and may be reducing flexibility elsewhere in the budget.";
+    } else if (riskScore < 75) {
+      verdict = "Manageable With Guardrails";
+      explanation =
+        "This grocery budget may be reasonable, but there are signs of pressure. Review total food spending, dining out, debt payments, and savings room.";
+    } else if (riskScore < 90) {
+      verdict = "Comfortable Grocery Budget";
+      explanation =
+        "This grocery budget appears manageable, though it is still worth tracking total food spending and savings progress.";
+    }
 
-      scoreText.textContent = `${verdict} - ${riskScore}/100`;
+    scoreText.textContent = `${verdict} - ${riskScore}/100`;
 
-scoreFill.style.width = `${Math.max(riskScore, 6)}%`;
-      scoreFill.className = "fill";
+    scoreFill.style.width = `${Math.max(riskScore, 6)}%`;
+    scoreFill.className = "fill";
 
-      if (riskScore >= 75) {
-        scoreFill.classList.add("safe");
-      } else if (riskScore >= 50) {
-        scoreFill.classList.add("caution");
-      } else {
-        scoreFill.classList.add("danger");
-      }
+    if (riskScore >= 75) {
+      scoreFill.classList.add("safe");
+    } else if (riskScore >= 50) {
+      scoreFill.classList.add("caution");
+    } else {
+      scoreFill.classList.add("danger");
+    }
 
-      resultDetails.innerHTML = `
-        <p><strong>Grocery impact:</strong> ${(groceryRatio * 100).toFixed(1)}% of monthly take-home income.</p>
-        <p><strong>Total food impact:</strong> ${(foodRatio * 100).toFixed(1)}% of monthly take-home income, including dining out and takeout.</p>
-        <p><strong>Groceries per person:</strong> $${groceriesPerPerson.toFixed(0)} per month.</p>
-        <p><strong>Debt impact:</strong> ${(debtRatio * 100).toFixed(1)}% of monthly take-home income.</p>
-        <p><strong>Emergency savings cushion:</strong> About ${savingsMonths.toFixed(1)} months of estimated core expenses.</p>
-        <p>${explanation}</p>
-      `;
-    });
-  </script>
+    resultDetails.innerHTML = `
+      <p><strong>Grocery impact:</strong> ${(groceryRatio * 100).toFixed(1)}% of monthly take-home income.</p>
+      <p><strong>Total food impact:</strong> ${(foodRatio * 100).toFixed(1)}% of monthly take-home income, including dining out and takeout.</p>
+      <p><strong>Groceries per person:</strong> $${groceriesPerPerson.toFixed(0)} per month.</p>
+      <p><strong>Debt impact:</strong> ${(debtRatio * 100).toFixed(1)}% of monthly take-home income.</p>
+      <p><strong>Emergency savings cushion:</strong> About ${savingsMonths.toFixed(1)} months of estimated core expenses.</p>
+      <p>${explanation}</p>
+    `;
+  });
+</script>
 </Layout>
