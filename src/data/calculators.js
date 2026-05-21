@@ -165,7 +165,8 @@ export const calculators = [
     title: "How Much Debt Is Too Much?",
     description:
   "Calculate debt pressure using monthly payments, housing costs, emergency savings, credit card debt, and overall financial flexibility.",
-  },
+  href: "/how-much-debt-is-too-much",
+},
   {
     id: "debt-definition-guide",
     category: "Budget Rules",
