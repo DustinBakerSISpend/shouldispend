@@ -1,0 +1,471 @@
+---
+import Layout from "../layouts/Layout.astro";
+import FAQSection from "../components/FAQSection.astro";
+
+const medicalFaqs = [
+  {
+    question: "Should I use emergency savings for medical bills?",
+    answer:
+      "Emergency savings are often intended for unavoidable costs like healthcare, especially when delaying treatment creates greater risk later.",
+  },
+  {
+    question: "Should I go into debt for medical treatment?",
+    answer:
+      "Necessary medical care may still be worth pursuing even if payment plans or debt are required. The key question is whether the financial pressure remains survivable afterward.",
+  },
+  {
+    question: "Do payment plans make medical bills safer?",
+    answer:
+      "Payment plans can reduce short-term strain, but they still affect long-term flexibility, savings growth, and monthly cash flow.",
+  },
+  {
+    question: "Should I delay medical care because of cost?",
+    answer:
+      "That depends on medical urgency, risk, and available alternatives. Some care can safely wait while finances improve, while delaying other care may create larger health and financial problems later.",
+  },
+];
+---
+
+<Layout
+  title="Should I Spend This Much on Medical Bills? | Healthcare Cost Calculator"
+  description="Evaluate medical bill affordability using savings, debt pressure, insurance gaps, payment plans, income stability, and financial flexibility."
+>
+  <style>
+    .container {
+      width: 92%;
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 72px 0;
+    }
+
+    .hero {
+      max-width: 860px;
+      margin-bottom: 56px;
+    }
+
+    .eyebrow {
+      color: var(--primary);
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      font-size: 0.8rem;
+      font-weight: 800;
+      margin-bottom: 16px;
+    }
+
+    h1 {
+      font-size: clamp(2.8rem, 6vw, 5rem);
+      line-height: 1;
+      margin-bottom: 24px;
+      color: var(--primary);
+    }
+
+    .hero p {
+      font-size: 1.1rem;
+      line-height: 1.85;
+      color: var(--muted);
+      max-width: 820px;
+    }
+
+    .calculator {
+      border: 1px solid var(--border);
+      background: var(--card);
+      border-radius: 24px;
+      padding: 32px;
+      margin-bottom: 72px;
+    }
+
+    .calc-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 20px;
+    }
+
+    .calc-field {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .calc-field label {
+      font-weight: 700;
+      margin-bottom: 10px;
+      color: var(--text);
+    }
+
+    .calc-field input,
+    .calc-field select {
+      padding: 14px;
+      border-radius: 12px;
+      border: 1px solid var(--border);
+      font-size: 1rem;
+    }
+
+    .calc-button {
+      margin-top: 26px;
+      background: var(--primary);
+      color: white;
+      border: none;
+      border-radius: 14px;
+      padding: 15px 22px;
+      font-size: 1rem;
+      font-weight: 800;
+      cursor: pointer;
+    }
+
+    .calc-button:hover {
+      opacity: 0.92;
+    }
+
+    .calc-results {
+      margin-top: 30px;
+      border: 1px solid #dbe4ee;
+      background: #f8fafc;
+      border-radius: 20px;
+      padding: 26px;
+      display: none;
+    }
+
+    .calc-results.active {
+      display: block;
+    }
+
+    .calc-verdict {
+      font-size: 2rem;
+      font-weight: 800;
+      color: var(--primary);
+      margin-bottom: 16px;
+    }
+
+    .calc-stat {
+      font-size: 1.1rem;
+      margin-bottom: 12px;
+      color: var(--text);
+    }
+
+    .risk-bar {
+      width: 100%;
+      height: 16px;
+      background: #dbe4ee;
+      border-radius: 999px;
+      overflow: hidden;
+      margin: 24px 0;
+    }
+
+    .risk-fill {
+      height: 100%;
+      width: 0%;
+      border-radius: 999px;
+      transition: width 0.35s ease;
+      background: var(--primary);
+    }
+
+    .calc-analysis {
+      color: var(--muted);
+      line-height: 1.8;
+      margin-top: 18px;
+    }
+
+    .section {
+      max-width: 860px;
+      margin-top: 72px;
+    }
+
+    .section h2 {
+      font-size: 2rem;
+      margin-bottom: 22px;
+      line-height: 1.2;
+      color: var(--text);
+    }
+
+    .section p {
+      line-height: 1.9;
+      color: var(--muted);
+      margin-bottom: 24px;
+      font-size: 1.05rem;
+    }
+
+    .link-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 22px;
+      margin-top: 28px;
+    }
+
+    .link-card {
+      display: block;
+      border: 1px solid var(--border);
+      background: white;
+      border-radius: 18px;
+      padding: 22px;
+      text-decoration: none;
+      color: inherit;
+      transition: transform 0.15s ease;
+    }
+
+    .link-card:hover {
+      transform: translateY(-2px);
+    }
+
+    .link-card strong {
+      display: block;
+      margin-bottom: 10px;
+      color: var(--text);
+    }
+
+    .link-card span {
+      color: var(--muted);
+      line-height: 1.7;
+      font-size: 0.96rem;
+    }
+
+    @media (max-width: 720px) {
+      .container {
+        padding: 56px 0;
+      }
+
+      h1 {
+        font-size: 2.9rem;
+      }
+
+      .hero p {
+        font-size: 1rem;
+      }
+
+      .section h2 {
+        font-size: 1.7rem;
+      }
+    }
+  </style>
+
+  <main class="container">
+    <section class="hero">
+      <div class="eyebrow">Medical Bill Calculator</div>
+
+      <h1>Should I Spend This Much on Medical Bills?</h1>
+
+      <p>
+        Medical costs are different from luxury spending because healthcare is
+        often unavoidable. This calculator evaluates medical affordability using
+        emergency savings, debt pressure, insurance gaps, payment plans, and
+        long-term financial flexibility.
+      </p>
+    </section>
+
+    <section class="calculator">
+      <div class="calc-grid">
+        <div class="calc-field">
+          <label>Medical Bill Amount ($)</label>
+          <input type="number" id="billAmount" placeholder="5000" />
+        </div>
+
+        <div class="calc-field">
+          <label>Current Emergency Savings ($)</label>
+          <input type="number" id="savingsAmount" placeholder="12000" />
+        </div>
+
+        <div class="calc-field">
+          <label>Monthly Take-Home Income ($)</label>
+          <input type="number" id="incomeAmount" placeholder="6500" />
+        </div>
+
+        <div class="calc-field">
+          <label>Debt Pressure</label>
+
+          <select id="debtPressure">
+            <option value="low">Low</option>
+            <option value="moderate">Moderate</option>
+            <option value="high">High</option>
+          </select>
+        </div>
+
+        <div class="calc-field">
+          <label>Insurance Coverage</label>
+
+          <select id="insuranceLevel">
+            <option value="good">Strong Coverage</option>
+            <option value="average">Average Coverage</option>
+            <option value="weak">Weak Coverage</option>
+          </select>
+        </div>
+
+        <div class="calc-field">
+          <label>Can You Use a Payment Plan?</label>
+
+          <select id="paymentPlan">
+            <option value="yes">Yes</option>
+            <option value="no">No</option>
+          </select>
+        </div>
+      </div>
+
+      <button class="calc-button" id="calculateMedicalBills">
+        Evaluate Medical Cost Pressure
+      </button>
+
+      <div class="calc-results" id="calcResults">
+        <div class="calc-verdict" id="calcVerdict"></div>
+
+        <div class="calc-stat" id="calcStat"></div>
+
+        <div class="risk-bar">
+          <div class="risk-fill" id="riskFill"></div>
+        </div>
+
+        <div class="calc-analysis" id="calcAnalysis"></div>
+      </div>
+    </section>
+
+    <section class="section">
+      <h2>How Medical Bills Create Financial Pressure</h2>
+
+      <p>
+        Medical expenses can affect emergency savings, debt levels, monthly
+        flexibility, and long-term financial stability. Even necessary treatment
+        can create financial pressure if the bill leaves little room for rent,
+        groceries, transportation, childcare, or future emergencies afterward.
+      </p>
+
+      <p>
+        The safest healthcare decisions usually balance both medical necessity
+        and financial survivability. Payment plans, insurance support, emergency
+        savings, and debt load all affect how manageable a medical expense truly
+        becomes over time.
+      </p>
+
+      <p>
+        ShouldISpend calculators evaluate medical affordability differently than
+        luxury spending because avoiding important care can create larger health
+        and financial problems later.
+      </p>
+    </section>
+
+    <section class="section">
+      <h2>Related Financial Pressure Guides</h2>
+
+      <div class="link-grid">
+        <a class="link-card" href="/how-much-emergency-savings-should-i-have">
+          <strong>Emergency Savings Calculator</strong>
+
+          <span>
+            Evaluate how much emergency savings may be needed for unexpected
+            healthcare costs and financial disruptions.
+          </span>
+        </a>
+
+        <a class="link-card" href="/how-much-debt-is-too-much">
+          <strong>How Much Debt Is Too Much?</strong>
+
+          <span>
+            Learn how recurring debt obligations affect flexibility and
+            long-term affordability.
+          </span>
+        </a>
+
+        <a class="link-card" href="/budget-rule-calculators">
+          <strong>Budget Rule Calculators</strong>
+
+          <span>
+            Compare spending decisions against income, savings, debt pressure,
+            and financial flexibility.
+          </span>
+        </a>
+
+        <a class="link-card" href="/calculators">
+          <strong>All ShouldISpend Calculators</strong>
+
+          <span>
+            Browse calculators for healthcare, debt, groceries, weddings,
+            travel, housing, and major expenses.
+          </span>
+        </a>
+      </div>
+    </section>
+
+    <FAQSection title="Medical Bill FAQ" faqs={medicalFaqs} />
+  </main>
+
+  <script is:inline>
+    document.addEventListener("DOMContentLoaded", function () {
+      const button = document.getElementById("calculateMedicalBills");
+
+      if (!button) return;
+
+      button.addEventListener("click", function () {
+        const billAmount =
+          Number(document.getElementById("billAmount").value) || 0;
+
+        const savingsAmount =
+          Number(document.getElementById("savingsAmount").value) || 0;
+
+        const incomeAmount =
+          Number(document.getElementById("incomeAmount").value) || 0;
+
+        const debtPressure =
+          document.getElementById("debtPressure").value;
+
+        const insuranceLevel =
+          document.getElementById("insuranceLevel").value;
+
+        const paymentPlan =
+          document.getElementById("paymentPlan").value;
+
+        let riskScore = 0;
+
+        if (billAmount > savingsAmount) riskScore += 35;
+        else if (billAmount > savingsAmount * 0.5) riskScore += 20;
+
+        if (billAmount > incomeAmount) riskScore += 20;
+
+        if (debtPressure === "moderate") riskScore += 15;
+        if (debtPressure === "high") riskScore += 30;
+
+        if (insuranceLevel === "average") riskScore += 10;
+        if (insuranceLevel === "weak") riskScore += 20;
+
+        if (paymentPlan === "no") riskScore += 15;
+
+        if (riskScore > 100) riskScore = 100;
+
+        let verdict = "";
+        let analysis = "";
+
+        if (riskScore <= 30) {
+          verdict = "Manageable Medical Pressure";
+
+          analysis =
+            "This medical expense appears manageable relative to your savings, income stability, and overall financial flexibility.";
+        } else if (riskScore <= 60) {
+          verdict = "Moderate Financial Pressure";
+
+          analysis =
+            "This medical bill may create meaningful financial pressure and could reduce flexibility for savings, emergencies, or debt payoff.";
+        } else {
+          verdict = "High Medical Financial Pressure";
+
+          analysis =
+            "This expense may create serious financial strain relative to your current savings, debt pressure, and monthly flexibility.";
+        }
+
+        document.getElementById("calcResults").classList.add("active");
+
+        document.getElementById("calcVerdict").innerText = verdict;
+
+        document.getElementById("calcStat").innerText =
+          `Estimated Financial Pressure Score: ${riskScore}/100`;
+
+        document.getElementById("calcAnalysis").innerText = analysis;
+
+        const riskFill = document.getElementById("riskFill");
+
+riskFill.style.width = `${riskScore}%`;
+
+if (riskScore <= 30) {
+  riskFill.style.background = "#0f766e";
+} else if (riskScore <= 60) {
+  riskFill.style.background = "#ca8a04";
+} else {
+  riskFill.style.background = "#dc2626";
+}
+      });
+    });
+  </script>
+</Layout>

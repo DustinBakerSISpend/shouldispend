@@ -185,6 +185,15 @@ export const calculators = [
   href: "/should-i-spend-10000-on-a-funeral",
 },
 
+{
+  id: "emergency-savings-guide",
+  category: "Budget Rules",
+  title: "How Much Emergency Savings Should I Have?",
+  description:
+    "Calculate emergency savings targets using expenses, debt pressure, dependents, job stability, and financial flexibility.",
+  href: "/how-much-emergency-savings-should-i-have",
+},
+
   {
   id: "groceries-monthly",
   category: "Groceries",
@@ -208,6 +217,32 @@ export const calculators = [
   description:
     "Evaluate whether your monthly restaurant, takeout, coffee, and delivery spending fits your income, groceries, debt, savings, and flexibility.",
   href: "/should-i-spend-this-much-eating-out-per-month",
+},
+
+{
+  id: "medical-bills-monthly",
+  category: "Medical",
+  title: "Should I Spend This Much on Medical Bills?",
+  description:
+    "Evaluate medical costs using savings, insurance coverage, payment plans, debt pressure, and monthly flexibility.",
+  href: "/should-i-spend-this-much-on-medical-bills",
+},
+{
+  id: "use-emergency-savings-medical-bills",
+  category: "Medical",
+  title: "Should I Use Emergency Savings for Medical Bills?",
+  description:
+    "Evaluate whether using emergency savings for healthcare costs creates financial pressure or protects long-term stability.",
+  href: "/should-i-use-emergency-savings-for-medical-bills",
+},
+
+{
+  id: "home-repairs-cost",
+  category: "Home Improvement",
+  title: "Should I Spend This Much on Home Repairs?",
+  description:
+    "Evaluate home repair costs using emergency savings, urgency, debt pressure, income stability, and long-term flexibility.",
+  href: "/should-i-spend-this-much-on-home-repairs",
 },
 
 ];

@@ -1,0 +1,496 @@
+---
+import Layout from "../layouts/Layout.astro";
+import FAQSection from "../components/FAQSection.astro";
+
+const homeRepairFaqs = [
+  {
+    question: "Should I use emergency savings for home repairs?",
+    answer:
+      "Emergency savings may be appropriate for urgent repairs that protect safety, prevent property damage, or keep the home livable. Cosmetic upgrades should usually be planned separately.",
+  },
+  {
+    question: "Should I finance a home repair?",
+    answer:
+      "Financing may make sense for urgent repairs, but it becomes riskier when the monthly payment strains your budget, adds high-interest debt, or slows emergency savings recovery.",
+  },
+  {
+    question: "How do I know if a home repair is urgent?",
+    answer:
+      "Repairs involving water damage, heat, electrical systems, plumbing, roofing, safety, structural issues, or code problems are usually more urgent than cosmetic upgrades.",
+  },
+  {
+    question: "Should I delay a home repair because of cost?",
+    answer:
+      "Some projects can wait, but delaying urgent repairs can create larger costs later. The safer decision depends on urgency, savings, debt pressure, and whether the problem could worsen.",
+  },
+];
+---
+
+<Layout
+  title="Should I Spend This Much on Home Repairs? | Home Repair Calculator"
+  description="Evaluate home repair affordability using repair urgency, emergency savings, debt pressure, financing options, income stability, and financial flexibility."
+>
+  <style>
+    .container {
+      width: 92%;
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 72px 0;
+    }
+
+    .hero {
+      max-width: 880px;
+      margin-bottom: 56px;
+    }
+
+    .eyebrow {
+      color: var(--primary);
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      font-size: 0.8rem;
+      font-weight: 800;
+      margin-bottom: 16px;
+    }
+
+    h1 {
+      font-size: clamp(2.8rem, 6vw, 5rem);
+      line-height: 1;
+      margin-bottom: 24px;
+      color: var(--primary);
+    }
+
+    .hero p,
+    .section p {
+      font-size: 1.05rem;
+      line-height: 1.9;
+      color: var(--muted);
+    }
+
+    .calculator {
+      border: 1px solid var(--border);
+      background: var(--card);
+      border-radius: 24px;
+      padding: 32px;
+      margin-bottom: 72px;
+    }
+
+    .calc-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 20px;
+    }
+
+    .calc-field {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .calc-field label {
+      font-weight: 700;
+      margin-bottom: 10px;
+      color: var(--text);
+    }
+
+    .calc-field input,
+    .calc-field select {
+      padding: 14px;
+      border-radius: 12px;
+      border: 1px solid var(--border);
+      font-size: 1rem;
+    }
+
+    .calc-button {
+      margin-top: 26px;
+      background: var(--primary);
+      color: white;
+      border: none;
+      border-radius: 14px;
+      padding: 15px 22px;
+      font-size: 1rem;
+      font-weight: 800;
+      cursor: pointer;
+    }
+
+    .calc-button:hover {
+      opacity: 0.92;
+    }
+
+    .calc-results {
+      margin-top: 30px;
+      border: 1px solid #dbe4ee;
+      background: #f8fafc;
+      border-radius: 20px;
+      padding: 26px;
+      display: none;
+    }
+
+    .calc-results.active {
+      display: block;
+    }
+
+    .calc-verdict {
+      font-size: 2rem;
+      font-weight: 800;
+      color: var(--primary);
+      margin-bottom: 16px;
+    }
+
+    .calc-stat {
+      font-size: 1.1rem;
+      margin-bottom: 12px;
+      color: var(--text);
+    }
+
+    .risk-bar {
+      width: 100%;
+      height: 16px;
+      background: #dbe4ee;
+      border-radius: 999px;
+      overflow: hidden;
+      margin: 24px 0;
+    }
+
+    .risk-fill {
+      height: 100%;
+      width: 0%;
+      border-radius: 999px;
+      transition: width 0.35s ease;
+      background: #0f766e;
+    }
+
+    .calc-analysis {
+      color: var(--muted);
+      line-height: 1.8;
+      margin-top: 18px;
+    }
+
+    .section {
+      max-width: 880px;
+      margin-top: 72px;
+    }
+
+    .section h2 {
+      font-size: 2rem;
+      margin-bottom: 22px;
+      line-height: 1.2;
+      color: var(--text);
+    }
+
+    .link-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 22px;
+      margin-top: 28px;
+    }
+
+    .link-card {
+      display: block;
+      border: 1px solid var(--border);
+      background: white;
+      border-radius: 18px;
+      padding: 22px;
+      text-decoration: none;
+      color: inherit;
+      transition: transform 0.15s ease;
+    }
+
+    .link-card:hover {
+      transform: translateY(-2px);
+    }
+
+    .link-card strong {
+      display: block;
+      margin-bottom: 10px;
+      color: var(--text);
+    }
+
+    .link-card span {
+      color: var(--muted);
+      line-height: 1.7;
+      font-size: 0.96rem;
+    }
+
+    @media (max-width: 720px) {
+      .container {
+        padding: 56px 0;
+      }
+
+      h1 {
+        font-size: 2.9rem;
+      }
+
+      .hero p {
+        font-size: 1rem;
+      }
+
+      .section h2 {
+        font-size: 1.7rem;
+      }
+    }
+  </style>
+
+  <main class="container">
+    <section class="hero">
+      <div class="eyebrow">Home Repair Calculator</div>
+
+      <h1>Should I Spend This Much on Home Repairs?</h1>
+
+      <p>
+        Home repairs can be stressful because they often involve urgency,
+        safety, property damage, emergency savings, and debt tradeoffs. This
+        calculator evaluates whether a repair cost creates manageable pressure
+        or serious financial strain.
+      </p>
+    </section>
+
+    <section class="calculator">
+      <div class="calc-grid">
+        <div class="calc-field">
+          <label>Home Repair Cost ($)</label>
+          <input type="number" id="repairCost" placeholder="7500" />
+        </div>
+
+        <div class="calc-field">
+          <label>Current Emergency Savings ($)</label>
+          <input type="number" id="savingsAmount" placeholder="15000" />
+        </div>
+
+        <div class="calc-field">
+          <label>Monthly Take-Home Income ($)</label>
+          <input type="number" id="incomeAmount" placeholder="6500" />
+        </div>
+
+        <div class="calc-field">
+          <label>Repair Urgency</label>
+          <select id="repairUrgency">
+            <option value="cosmetic">Cosmetic / Optional</option>
+            <option value="important">Important but Can Wait Briefly</option>
+            <option value="urgent">Urgent / Prevents Damage</option>
+            <option value="critical">Critical / Safety or Livability</option>
+          </select>
+        </div>
+
+        <div class="calc-field">
+          <label>Debt Pressure</label>
+          <select id="debtPressure">
+            <option value="low">Low</option>
+            <option value="moderate">Moderate</option>
+            <option value="high">High</option>
+          </select>
+        </div>
+
+        <div class="calc-field">
+          <label>Income Stability</label>
+          <select id="incomeStability">
+            <option value="stable">Stable</option>
+            <option value="average">Average</option>
+            <option value="unstable">Unstable</option>
+          </select>
+        </div>
+
+        <div class="calc-field">
+          <label>Financing Available?</label>
+          <select id="financingAvailable">
+            <option value="yes">Yes</option>
+            <option value="no">No</option>
+          </select>
+        </div>
+
+        <div class="calc-field">
+          <label>Home Age / Condition</label>
+          <select id="homeCondition">
+            <option value="newer">Newer / Generally Stable</option>
+            <option value="average">Average Condition</option>
+            <option value="older">Older / More Repair Risk</option>
+          </select>
+        </div>
+      </div>
+
+      <button class="calc-button" id="calculateHomeRepair">
+        Evaluate Home Repair Pressure
+      </button>
+
+      <div class="calc-results" id="calcResults">
+        <div class="calc-verdict" id="calcVerdict"></div>
+
+        <div class="calc-stat" id="calcScore"></div>
+
+        <div class="calc-stat" id="savingsAfterRepair"></div>
+
+        <div class="risk-bar">
+          <div class="risk-fill" id="riskFill"></div>
+        </div>
+
+        <div class="calc-analysis" id="calcAnalysis"></div>
+      </div>
+    </section>
+
+    <section class="section">
+      <h2>How to Think About Home Repair Spending</h2>
+
+      <p>
+        A home repair is not always optional spending. Fixing a leak, replacing
+        a furnace, repairing electrical issues, or addressing structural damage
+        can protect both safety and long-term finances. In those cases, the
+        decision may be less about whether to spend and more about how to pay
+        while preserving stability.
+      </p>
+
+      <p>
+        Optional upgrades deserve a different test. Cosmetic projects, premium
+        finishes, and convenience improvements are easier to delay if they would
+        drain emergency savings or add debt pressure.
+      </p>
+    </section>
+
+    <section class="section">
+      <h2>Related Home and Financial Pressure Tools</h2>
+
+      <div class="link-grid">
+        <a class="link-card" href="/home-improvement-calculators">
+          <strong>Home Improvement Calculators</strong>
+
+          <span>
+            Browse home repair and renovation tools focused on savings, debt,
+            urgency, and financial flexibility.
+          </span>
+        </a>
+
+        <a class="link-card" href="/how-much-emergency-savings-should-i-have">
+          <strong>Emergency Savings Calculator</strong>
+
+          <span>
+            Estimate how much savings you may need before and after major home
+            expenses.
+          </span>
+        </a>
+
+        <a class="link-card" href="/how-much-house-can-i-afford">
+          <strong>How Much House Can I Afford?</strong>
+
+          <span>
+            Evaluate home affordability using income, debt, taxes, insurance,
+            maintenance, and cash cushion.
+          </span>
+        </a>
+
+        <a class="link-card" href="/how-much-debt-is-too-much">
+          <strong>How Much Debt Is Too Much?</strong>
+
+          <span>
+            Understand how monthly debt obligations affect major home repair
+            decisions.
+          </span>
+        </a>
+      </div>
+    </section>
+
+    <FAQSection title="Home Repair FAQ" faqs={homeRepairFaqs} />
+  </main>
+
+  <script is:inline>
+    document.addEventListener("DOMContentLoaded", function () {
+      const button = document.getElementById("calculateHomeRepair");
+
+      if (!button) return;
+
+      button.addEventListener("click", function () {
+        const repairCost =
+          Number(document.getElementById("repairCost").value) || 0;
+
+        const savingsAmount =
+          Number(document.getElementById("savingsAmount").value) || 0;
+
+        const incomeAmount =
+          Number(document.getElementById("incomeAmount").value) || 0;
+
+        const repairUrgency =
+          document.getElementById("repairUrgency").value;
+
+        const debtPressure =
+          document.getElementById("debtPressure").value;
+
+        const incomeStability =
+          document.getElementById("incomeStability").value;
+
+        const financingAvailable =
+          document.getElementById("financingAvailable").value;
+
+        const homeCondition =
+          document.getElementById("homeCondition").value;
+
+        const savingsLeft = savingsAmount - repairCost;
+
+        let riskScore = 0;
+
+        if (repairCost > savingsAmount) riskScore += 35;
+        else if (repairCost > savingsAmount * 0.75) riskScore += 28;
+        else if (repairCost > savingsAmount * 0.5) riskScore += 20;
+        else if (repairCost > savingsAmount * 0.25) riskScore += 10;
+
+        if (incomeAmount > 0 && repairCost > incomeAmount * 2) riskScore += 20;
+        else if (incomeAmount > 0 && repairCost > incomeAmount) riskScore += 12;
+
+        if (repairUrgency === "cosmetic") riskScore += 20;
+        if (repairUrgency === "important") riskScore += 10;
+        if (repairUrgency === "urgent") riskScore -= 5;
+        if (repairUrgency === "critical") riskScore -= 10;
+
+        if (debtPressure === "moderate") riskScore += 15;
+        if (debtPressure === "high") riskScore += 30;
+
+        if (incomeStability === "average") riskScore += 10;
+        if (incomeStability === "unstable") riskScore += 25;
+
+        if (financingAvailable === "no" && repairCost > savingsAmount) {
+          riskScore += 15;
+        }
+
+        if (homeCondition === "average") riskScore += 5;
+        if (homeCondition === "older") riskScore += 12;
+
+        if (riskScore < 0) riskScore = 0;
+        if (riskScore > 100) riskScore = 100;
+
+        let verdict = "";
+        let analysis = "";
+
+        if (riskScore <= 30) {
+          verdict = "Manageable Home Repair Pressure";
+          analysis =
+            "This repair appears manageable relative to your savings, income, urgency, and overall financial pressure.";
+        } else if (riskScore <= 60) {
+          verdict = "Moderate Home Repair Pressure";
+          analysis =
+            "This repair may be reasonable, but it could reduce financial flexibility. Consider whether the repair is urgent, whether a payment plan helps, and how quickly savings can be rebuilt.";
+        } else {
+          verdict = "High Home Repair Financial Pressure";
+          analysis =
+            "This repair may create serious financial strain. If the repair is urgent, compare financing options, ask about phased work, and avoid high-interest debt where possible.";
+        }
+
+        const riskFill = document.getElementById("riskFill");
+        riskFill.style.width = `${riskScore}%`;
+
+        if (riskScore <= 30) {
+          riskFill.style.background = "#0f766e";
+        } else if (riskScore <= 60) {
+          riskFill.style.background = "#ca8a04";
+        } else {
+          riskFill.style.background = "#dc2626";
+        }
+
+        document.getElementById("calcResults").classList.add("active");
+        document.getElementById("calcVerdict").innerText = verdict;
+
+        document.getElementById("calcScore").innerText =
+          `Estimated Home Repair Pressure Score: ${riskScore}/100`;
+
+        document.getElementById("savingsAfterRepair").innerText =
+          `Emergency Savings After Repair: $${savingsLeft.toLocaleString()}`;
+
+        document.getElementById("calcAnalysis").innerText = analysis;
+      });
+    });
+  </script>
+</Layout>
