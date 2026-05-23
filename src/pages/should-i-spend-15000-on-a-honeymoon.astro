@@ -151,7 +151,7 @@ import WhenSpendingMakesSense from "../components/WhenSpendingMakesSense.astro";
       description="Estimate whether a $15,000 honeymoon fits your income, savings after the wedding, debt, emergency cushion, and post-wedding cash flow."
     >
       <div class="card">
-        <h2>Honeymoon Affordability Verdict</h2>
+        <h2>Honeymoon Pressure Verdict</h2>
 
         <div class="grid">
           <div>
@@ -408,12 +408,47 @@ import WhenSpendingMakesSense from "../components/WhenSpendingMakesSense.astro";
     </CalculatorPageShell>
   </div>
 
-  <script is:inline>
+    <script is:inline>
+    const clamp = (value, min, max) => Math.min(Math.max(value, min), max);
+
+    const getNumber = (id) => {
+      const rawValue = document.getElementById(id)?.value;
+      const value = Number(rawValue);
+      return Number.isFinite(value) && value >= 0 ? value : 0;
+    };
+
+    function getPressureLevel(score) {
+      if (score <= 30) {
+        return {
+          label: "Low Pressure",
+          stress: "Low pressure",
+          color: "#16a34a",
+          action: "Proceed with a realistic honeymoon budget.",
+        };
+      }
+
+      if (score <= 60) {
+        return {
+          label: "Moderate Pressure",
+          stress: "Moderate pressure",
+          color: "#ca8a04",
+          action: "Reduce upgrades or rebuild savings before booking.",
+        };
+      }
+
+      return {
+        label: "High Pressure",
+        stress: "High pressure",
+        color: "#dc2626",
+        action: "Delay, reduce the honeymoon budget, or save more first.",
+      };
+    }
+
     function calculateVacation() {
-      const income = Number(document.getElementById("income").value);
-      const savings = Number(document.getElementById("savings").value);
-      const vacation = Number(document.getElementById("vacation").value);
-      const debt = Number(document.getElementById("debt").value || 0);
+      const income = getNumber("income");
+      const savings = getNumber("savings");
+      const vacation = getNumber("vacation");
+      const debt = getNumber("debt");
 
       const result = document.getElementById("result");
       const scoreEl = document.getElementById("score");
@@ -426,73 +461,88 @@ import WhenSpendingMakesSense from "../components/WhenSpendingMakesSense.astro";
 
       result.style.display = "block";
 
-      if (!income || !savings || !vacation) {
+      if (income <= 0 || savings <= 0 || vacation <= 0) {
         scoreEl.textContent = "Add your numbers first";
         barFill.style.width = "0%";
+        barFill.style.background = "#16a34a";
         stressEl.innerHTML = "";
         savingsImpactEl.innerHTML = "";
         incomeImpactEl.innerHTML = "";
         debtRatioEl.innerHTML = "";
         guidanceEl.textContent =
-          "Enter your income, post-wedding savings, honeymoon cost, and debt so the calculator can give a useful verdict.";
+          "Enter a positive income, post-wedding savings amount, honeymoon cost, and debt so the calculator can estimate financial pressure.";
         return;
       }
 
+      const monthlyIncome = income / 12;
       const savingsImpact = (vacation / savings) * 100;
-      const incomeImpact = (vacation / income) * 100;
-      const debtRatio = (debt / income) * 100;
+      const annualIncomeImpact = (vacation / income) * 100;
+      const monthlyIncomeImpact = (vacation / monthlyIncome) * 100;
+      const debtRatio = income > 0 ? (debt / income) * 100 : 0;
+      const remainingSavings = savings - vacation;
+      const remainingSavingsMonths = remainingSavings / monthlyIncome;
 
-      let score = 100;
+      let pressureScore = 0;
 
-      score -= savingsImpact * 0.22;
-      score -= incomeImpact * 0.9;
-      score -= debtRatio * 0.18;
+      if (remainingSavingsMonths < 1 && income < 100000) {
+  pressureScore += 18;
+} else if (remainingSavingsMonths < 3 && income < 150000) {
+  pressureScore += 10;
+} else if (remainingSavingsMonths >= 6) {
+  pressureScore -= 8;
+}
+      pressureScore += clamp(monthlyIncomeImpact * 0.24, 0, 25);
+      pressureScore += clamp(debtRatio * 0.2, 0, 15);
 
-      if (savings < vacation) score -= 12;
-      if (debt > income * 0.5) score -= 10;
+      if (vacation > savings) pressureScore += 28;
 
-      score = Math.max(0, Math.min(100, Math.round(score)));
+      if (remainingSavingsMonths < 1) pressureScore += 18;
+      else if (remainingSavingsMonths < 3) pressureScore += 10;
+      else if (remainingSavingsMonths >= 6) pressureScore -= 8;
 
-      let verdict = "";
-      let stress = "";
-      let guidance = "";
-      let barColor = "";
+      if (debtRatio >= 75) pressureScore += 10;
+      else if (debtRatio >= 40) pressureScore += 6;
 
-      if (score >= 80) {
-        verdict = "Comfortable Honeymoon";
-        stress = "Low stress";
-        guidance =
-          "This honeymoon appears financially manageable based on your income, post-wedding savings, debt, and remaining emergency cushion.";
-        barColor = "#16a34a";
-      } else if (score >= 60) {
-        verdict = "Manageable With Guardrails";
-        stress = "Moderate stress";
-        guidance =
-          "This honeymoon may work, but keep firm limits on upgrades, excursions, resort costs, and post-wedding spending.";
-        barColor = "#ca8a04";
-      } else if (score >= 40) {
-        verdict = "Financial Stretch";
-        stress = "High stress";
-        guidance =
-          "This honeymoon could create financial pressure. Consider a delayed honeymoon, shorter trip, cheaper destination, or more time to save.";
-        barColor = "#ea580c";
-      } else {
-        verdict = "High Financial Risk";
-        stress = "Very high stress";
-        guidance =
-          "This honeymoon cost appears too aggressive for the current financial picture, especially if wedding costs or high-interest debt are already present.";
-        barColor = "#b91c1c";
+      if (
+        annualIncomeImpact < 2 &&
+        savingsImpact < 10 &&
+        remainingSavingsMonths >= 6
+      ) {
+        pressureScore -= 12;
       }
 
-      scoreEl.textContent = `${verdict} - ${score}/100`;
-      barFill.style.width = `${score}%`;
-      barFill.style.background = barColor;
+      if (annualIncomeImpact < 0.25 && monthlyIncomeImpact < 5 && debtRatio < 10) {
+  pressureScore = Math.min(pressureScore, 20);
+}
 
-      stressEl.innerHTML = `<strong>Stress level:</strong> ${stress}`;
+if (annualIncomeImpact < 0.05 && monthlyIncomeImpact < 1 && debtRatio < 5) {
+  pressureScore = Math.min(pressureScore, 10);
+}
+
+      const level = getPressureLevel(pressureScore);
+
+      let guidance = "";
+
+      if (pressureScore <= 30) {
+        guidance =
+          `This honeymoon appears financially manageable based on the numbers provided. The cost equals about ${monthlyIncomeImpact.toFixed(1)}% of one month’s income and ${savingsImpact.toFixed(1)}% of post-wedding savings, so the priority is protecting emergency savings while enjoying the experience without relying on debt.`;
+      } else if (pressureScore <= 60) {
+        guidance =
+          `This honeymoon may work, but it deserves caution. The cost equals about ${monthlyIncomeImpact.toFixed(1)}% of one month’s income and ${savingsImpact.toFixed(1)}% of post-wedding savings, which means resort upgrades, excursions, flights, and luxury add-ons should stay inside a strict budget.`;
+      } else {
+        guidance =
+          `This honeymoon could create real financial strain. The cost equals about ${monthlyIncomeImpact.toFixed(1)}% of one month’s income and ${savingsImpact.toFixed(1)}% of post-wedding savings, so delaying the trip, shortening it, or choosing a less expensive destination would likely be safer.`;
+      }
+
+      scoreEl.textContent = `${level.label} — ${pressureScore}/100`;
+      barFill.style.width = `${pressureScore}%`;
+      barFill.style.background = level.color;
+
+      stressEl.innerHTML = `<strong>Pressure level:</strong> ${level.stress}`;
       savingsImpactEl.innerHTML = `<strong>Savings impact:</strong> ${savingsImpact.toFixed(1)}% of post-wedding savings`;
-      incomeImpactEl.innerHTML = `<strong>Income impact:</strong> ${incomeImpact.toFixed(1)}% of annual income`;
+      incomeImpactEl.innerHTML = `<strong>Annual income impact:</strong> ${annualIncomeImpact.toFixed(1)}% of annual income`;
       debtRatioEl.innerHTML = `<strong>Debt ratio:</strong> ${debtRatio.toFixed(1)}% of annual income`;
-      guidanceEl.textContent = guidance;
+      guidanceEl.textContent = `${guidance} Recommended next step: ${level.action}`;
     }
 
     document

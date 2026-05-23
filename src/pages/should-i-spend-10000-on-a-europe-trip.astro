@@ -17,391 +17,515 @@ import RelatedGuides from "../components/RelatedGuides.astro";
   description="Use this Europe trip calculator to evaluate whether a $10,000 vacation fits your income, savings, debt load, and long-term financial goals."
 >
   <style>
-    .calculator-box {
-      background: white;
-      border: 1px solid #d8e0ea;
-      border-radius: 18px;
-      padding: 1.5rem;
-      margin: 2rem 0;
+    .container {
+      max-width: 950px;
+      margin: 0 auto;
+      padding: 60px 20px;
     }
 
-:global(main) {
-  padding-top: 3rem;
-}
-    .form-grid {
+    .content-section {
+      max-width: 760px;
+      margin: 72px auto 0;
+    }
+
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 28px;
+      padding: 34px;
+    }
+
+    h2 {
+      margin-top: 0;
+      font-size: 2rem;
+    }
+
+    .grid {
       display: grid;
-      gap: 1rem;
-      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 22px;
+      margin-bottom: 28px;
     }
 
     label {
-      font-weight: 700;
       display: block;
-      margin-bottom: 0.35rem;
+      margin-bottom: 10px;
+      font-weight: 700;
     }
 
     input {
       width: 100%;
-      padding: 0.75rem;
-      border: 1px solid #cbd5e1;
-      border-radius: 10px;
+      padding: 18px;
+      border-radius: 14px;
+      border: 1px solid var(--border);
+      font-size: 1.1rem;
+      box-sizing: border-box;
+    }
+
+    button {
+      background: #0f766e;
+      color: white;
+      border: none;
+      padding: 16px 28px;
+      border-radius: 14px;
       font-size: 1rem;
+      font-weight: 700;
+      cursor: pointer;
+      margin-top: 10px;
+      display: inline-block;
+    }
+
+    button:hover {
+      opacity: 0.92;
+    }
+
+    .result {
+      margin-top: 40px;
+      border: 1px solid var(--border);
+      border-radius: 24px;
+      padding: 28px;
+      display: none;
+      background: #f8fafc;
+    }
+
+    .score {
+      font-size: 2.35rem;
+      font-weight: 800;
+      margin-bottom: 16px;
+      line-height: 1.15;
+    }
+
+    .bar {
+      width: 100%;
+      height: 16px;
+      background: #dbe3ee;
+      border-radius: 999px;
+      overflow: hidden;
+      margin-bottom: 24px;
+    }
+
+    .fill {
+      height: 100%;
+      width: 0%;
+      background: #16a34a;
+      border-radius: 999px;
+      transition: width 0.4s ease;
+    }
+
+    .metric {
+      margin-bottom: 14px;
+      font-size: 1.05rem;
+    }
+
+    .guidance {
+      margin-top: 26px;
+      font-size: 1.15rem;
+      line-height: 1.7;
+    }
+
+    .disclaimer {
+      margin-top: 30px;
+      font-size: 0.9rem;
+      color: var(--muted);
     }
 
     .helper-link {
-      margin-top: 0.35rem;
+      margin-top: 10px;
       font-size: 0.9rem;
     }
 
     .helper-link a {
-      color: #0f766e;
-      font-weight: 700;
-      text-decoration: none;
-    }
-
-    button {
-      margin-top: 1rem;
-      background: #0f766e;
-      color: white;
-      border: 0;
-      padding: 0.85rem 1.15rem;
-      border-radius: 10px;
-      font-weight: 800;
-      cursor: pointer;
-    }
-
-    .result {
-      margin-top: 1.25rem;
-      padding: 1rem;
-      border-radius: 14px;
-      background: #f1f5f9;
-      display: none;
-    }
-
-    .content-section {
-      margin: 2rem 0;
-    }
-
-    .content-section h2 {
-      margin-bottom: 0.75rem;
+      color: var(--primary);
+      font-weight: 600;
     }
 
     .content-section p,
     .content-section li {
-      line-height: 1.7;
+      line-height: 1.8;
     }
   </style>
 
-  <CalculatorPageShell
-    eyebrow="Travel Calculator"
-    title="Should I Spend $10,000 on a Europe Trip?"
-    description="Estimate whether a $10,000 Europe trip fits your income, savings, debt load, emergency cushion, and travel priorities."
-  >
-    <div class="calculator-box">
-      <div class="form-grid">
-        <div>
-          <label for="income">Annual Household Income</label>
-          <input id="income" type="number" placeholder="90000" />
+  <div class="container">
+    <CalculatorPageShell
+      eyebrow="Travel Calculator"
+      title="Should I Spend $10,000 on a Europe Trip?"
+      description="Estimate whether a $10,000 Europe trip fits your income, savings, debt load, emergency cushion, and travel priorities."
+    >
+      <div class="card">
+        <h2>Europe Trip Pressure Verdict</h2>
+
+        <div class="grid">
+          <div>
+            <label for="income">Annual Household Income</label>
+            <input id="income" type="number" min="0" inputmode="decimal" placeholder="90000" />
+          </div>
+
+          <div>
+            <label for="savings">Current Savings</label>
+            <input id="savings" type="number" min="0" inputmode="decimal" placeholder="25000" />
+          </div>
+
+          <div>
+            <label for="vacation">Europe Trip Cost</label>
+            <input id="vacation" type="number" min="0" inputmode="decimal" value="10000" />
+          </div>
+
+          <div>
+            <label for="debt">Total Debt</label>
+            <input id="debt" type="number" min="0" inputmode="decimal" placeholder="8000" />
+
+            <div class="helper-link">
+              <a href="/what-counts-as-debt">
+                Not sure what counts as debt? Read the debt guide
+              </a>
+            </div>
+          </div>
         </div>
 
-        <div>
-          <label for="savings">Current Savings</label>
-          <input id="savings" type="number" placeholder="25000" />
-        </div>
+        <button id="calculateBtn" type="button">
+          Get Europe Trip Verdict
+        </button>
 
-        <div>
-          <label for="vacation">Europe Trip Cost</label>
-          <input id="vacation" type="number" value="10000" />
-        </div>
+        <div class="result" id="result">
+          <div class="score" id="score"></div>
 
-        <div>
-          <label for="debt">Total Debt</label>
-          <input id="debt" type="number" placeholder="8000" />
-          <p class="helper-link">
-            <a href="/what-counts-as-debt">Not sure what counts as debt? Read the debt guide</a>
-          </p>
+          <div class="bar">
+            <div class="fill" id="barFill"></div>
+          </div>
+
+          <div class="metric" id="stress"></div>
+          <div class="metric" id="savingsImpact"></div>
+          <div class="metric" id="incomeImpact"></div>
+          <div class="metric" id="monthlyIncomeImpact"></div>
+          <div class="metric" id="debtRatio"></div>
+
+          <div class="guidance" id="guidance"></div>
+
+          <div class="disclaimer">
+            This is a general educational estimate, not financial advice.
+          </div>
         </div>
       </div>
 
-      <button id="calculateBtn">Calculate Verdict</button>
+      <div class="content-section">
+        <h2>What a $10,000 Europe Trip Really Costs</h2>
 
-      <div id="result" class="result">
-  <h2 id="verdict"></h2>
+        <p>
+          A $10,000 Europe trip can be reasonable, but only if the budget includes
+          the full trip — not just flights and hotels. For many travelers, the
+          real cost includes airfare, hotels or apartments, train tickets, local
+          transit, meals, museums, tours, luggage fees, exchange-rate movement,
+          credit card fees, and a small emergency buffer.
+        </p>
 
-  <div
-    style="
-      width: 100%;
-      height: 14px;
-      background: #dbe4ee;
-      border-radius: 999px;
-      overflow: hidden;
-      margin: 1rem 0;
-    "
-  >
-    <div
-      class="fill"
-      id="barFill"
-      style="
-        height: 100%;
-        width: 0%;
-        border-radius: 999px;
-        transition: width 0.35s ease;
-      "
-    ></div>
+        <p>
+          The number also changes depending on the group. A couple spending
+          $10,000 on a 10- to 14-day Europe trip is in a different position than a
+          family trying to cover four to six people across Rome, Florence, Paris,
+          London, Barcelona, Amsterdam, or the Amalfi Coast.
+        </p>
+
+        <p>
+          City count matters. A slower trip with two or three bases is usually
+          easier to control than an itinerary with constant hotel changes, train
+          tickets, taxis, baggage handling, and rushed sightseeing.
+        </p>
+      </div>
+
+      <div class="content-section">
+        <h2>When a $10,000 Europe Trip Makes Sense</h2>
+
+        <p>
+          A $10,000 Europe trip makes the most sense when it comes from planned
+          savings, does not drain your emergency fund, and does not force you to
+          carry high-interest credit card debt afterward.
+        </p>
+
+        <p>
+          It is also easier to justify if the trip covers a major anniversary,
+          honeymoon, graduation, milestone birthday, family reunion, or rare
+          travel opportunity that would be hard to recreate later.
+        </p>
+      </div>
+
+      <div class="content-section">
+        <h2>When You Should Wait</h2>
+
+        <p>
+          Waiting may be smarter if the trip would drain savings, require
+          <a href="/how-to-avoid-vacation-debt">vacation debt</a>, delay debt
+          payoff, or make normal bills feel tight after you return home.
+        </p>
+
+        <p>
+          Waiting can also improve the trip itself. More savings may let you book
+          better flight times, stay closer to city centers, avoid rushed train
+          connections, and build in experiences that make the trip feel complete
+          instead of financially cramped.
+        </p>
+      </div>
+
+      <WhenSpendingMakesSense
+        items={[
+          "You can pay for the trip without carrying high-interest credit card debt.",
+          "Your emergency fund will still cover several months of normal expenses after booking.",
+          "The trip fits a major life event, family milestone, or rare travel opportunity.",
+          "You have already included transportation, lodging, meals, tours, and surprise costs in the budget.",
+          "The trip will not delay debt payoff, housing stability, retirement savings, or other major goals.",
+        ]}
+      />
+
+      <KeyCostCategories
+        items={[
+          {
+            title: "Flights and baggage",
+            description:
+              "International airfare, seat selection, checked bags, carry-ons, airport transfers, and schedule changes can move the real trip cost quickly.",
+          },
+          {
+            title: "Hotels and city taxes",
+            description:
+              "European lodging costs can include city taxes, cleaning fees, higher rates near major attractions, and extra charges for larger groups.",
+          },
+          {
+            title: "Trains and local transit",
+            description:
+              "High-speed trains, metro passes, taxis, airport transfers, day trips, and luggage storage should be included before booking.",
+          },
+          {
+            title: "Meals, tours, and museums",
+            description:
+              "Food, guided tours, museum tickets, reservations, and spontaneous experiences can become a major part of the budget.",
+          },
+        ]}
+      />
+
+      <ReduceCostTips
+        items={[
+          "Travel during shoulder season instead of peak summer dates.",
+          "Limit the number of cities to reduce train, hotel, and transfer costs.",
+          "Use public transportation instead of taxis whenever possible.",
+          "Book flights and hotels earlier to avoid last-minute pricing spikes.",
+          "Prioritize a few meaningful experiences instead of overpacking the itinerary.",
+        ]}
+      />
+
+      <FinancialRedFlags
+        items={[
+          "You would need to finance the trip with high-interest credit card debt.",
+          "The trip would wipe out your emergency savings.",
+          "You are already struggling with monthly bills or debt payments.",
+          "You do not have enough buffer for airfare changes, emergencies, or unexpected costs.",
+          "You would return home without meaningful savings remaining.",
+        ]}
+      />
+
+      <CalculatorAssumptions
+        items={[
+          "The calculator assumes the trip is paid mostly in cash rather than financed with long-term debt.",
+          "The estimate assumes your emergency fund remains intact after booking the trip.",
+          "The budget should include airfare, lodging, transportation, meals, tours, and unexpected costs.",
+          "The calculator assumes your income and debt obligations are relatively stable.",
+          "Exchange-rate changes, emergencies, and travel disruptions can increase total trip costs.",
+        ]}
+      />
+
+      <FAQSection
+        faqs={[
+          {
+            question: "Is $10,000 enough for a Europe trip?",
+            answer:
+              "Yes, $10,000 can be enough for a Europe trip, especially for a couple or a carefully planned family trip. The answer depends on airfare, hotel quality, trip length, cities visited, train costs, meals, tours, and how much buffer you keep for surprises.",
+          },
+          {
+            question: "Is a $10,000 Europe trip too expensive?",
+            answer:
+              "A $10,000 Europe trip is too expensive if it creates credit card debt, drains your emergency fund, or makes normal bills stressful. It can be reasonable if it is saved for in advance and fits comfortably within your income and savings.",
+          },
+          {
+            question: "Should I use savings or finance a Europe trip?",
+            answer:
+              "Savings are usually the better choice for a Europe trip. Financing a vacation with high-interest debt can make the trip cost far more than the sticker price and create stress after you return.",
+          },
+          {
+            question: "What should be included in a Europe trip budget?",
+            answer:
+              "A Europe trip budget should include flights, hotels, trains, local transportation, meals, museums, tours, travel insurance, luggage fees, exchange-rate buffer, phone data, souvenirs, and emergency money.",
+          },
+        ]}
+      />
+
+      <MethodologySection category="Europe travel spending" updated="May 2026" />
+
+      <RelatedGuides
+        guides={[
+          {
+            title: "How to Avoid Vacation Debt",
+            href: "/how-to-avoid-vacation-debt",
+            description:
+              "Learn how to plan large trips without creating long-term financial stress or high-interest debt.",
+          },
+          {
+            title: "How to Budget for a Disney Vacation",
+            href: "/how-to-budget-for-a-disney-vacation",
+            description:
+              "See how major travel budgets can expand through lodging, transportation, food, and add-on costs.",
+          },
+        ]}
+      />
+
+      <RelatedCalculators
+        calculators={[
+          {
+            category: "Travel",
+            title: "Should I Spend $5,000 on a Vacation?",
+            href: "/should-i-spend-5000-on-a-vacation",
+          },
+          {
+            category: "Travel",
+            title: "Should I Spend $8,000 on a Disney Vacation?",
+            href: "/should-i-spend-8000-on-a-disney-vacation",
+          },
+          {
+            category: "Travel",
+            title: "Should I Spend $12,000 on a Cruise?",
+            href: "/should-i-spend-12000-on-a-cruise",
+          },
+          {
+            category: "Travel",
+            title: "Browse Travel Calculators",
+            href: "/travel-calculators",
+          },
+        ]}
+      />
+    </CalculatorPageShell>
   </div>
 
-  <p><strong>Stress Level:</strong> <span id="stress"></span></p>
-  <p><strong>Savings Impact:</strong> <span id="savingsImpact"></span></p>
-  <p><strong>Income Impact:</strong> <span id="incomeImpact"></span></p>
-  <p><strong>Debt Ratio:</strong> <span id="debtRatio"></span></p>
-
-  <p id="resultText"></p>
-</div>
-    </div>
-
-    <div class="content-section">
-      <h2>What a $10,000 Europe Trip Really Costs</h2>
-      <p>
-        A $10,000 Europe trip can be reasonable, but only if the budget includes the full trip — not just flights and hotels.
-        For many travelers, the real cost includes airfare, hotels or apartments, train tickets, local transit, meals,
-        museums, tours, luggage fees, exchange-rate movement, credit card fees, and a small emergency buffer.
-      </p>
-      <p>
-        The number also changes depending on the group. A couple spending $10,000 on a 10- to 14-day Europe trip is in a
-        different position than a family trying to cover four to six people across Rome, Florence, Paris, London, Barcelona,
-        Amsterdam, or the Amalfi Coast. Trip length matters just as much as destination.
-      </p>
-    </div>
-
-    <div class="content-section">
-      <h2>When a $10,000 Europe Trip Makes Sense</h2>
-      <p>
-        A $10,000 Europe trip makes the most sense when it comes from planned savings, does not drain your emergency fund,
-        and does not force you to carry high-interest credit card debt afterward. It is also easier to justify if the trip
-        covers a major anniversary, honeymoon, graduation, milestone birthday, or once-in-a-decade family experience.
-      </p>
-      <p>
-        The strongest green-light scenario is simple: you can pay for the trip in cash, keep several months of expenses
-        untouched, cover normal bills comfortably, and return home without financial stress.
-      </p>
-    </div>
-
-    <div class="content-section">
-      <h2>When You Should Wait</h2>
-      <p>
-  Waiting may be smarter if the trip would drain savings, require
-  <a href="/how-to-avoid-vacation-debt">vacation debt</a>,
-  delay debt payoff, or make normal bills feel tight after you return home.
-</p>
-      <p>
-        Waiting can also improve the trip itself. More savings may let you book better flight times, stay closer to city
-        centers, avoid rushed train connections, and build in experiences that make the trip feel complete instead of
-        financially cramped.
-      </p>
-    </div>
-
-    <WhenSpendingMakesSense
-  items={[
-    "You can pay for the trip without carrying high-interest credit card debt.",
-    "Your emergency fund will still cover several months of normal expenses after booking.",
-    "The trip fits a major life event, family milestone, or rare travel opportunity.",
-    "You have already included transportation, lodging, meals, tours, and surprise costs in the budget.",
-    "The trip will not delay debt payoff, housing stability, retirement savings, or other major goals.",
-  ]}
-/>
-    <KeyCostCategories
-  items={[
-    {
-      title: "Flights and baggage",
-      description:
-        "International airfare, seat selection, checked bags, carry-ons, and schedule changes can move the real trip cost quickly.",
-    },
-    {
-      title: "Hotels and city taxes",
-      description:
-        "European lodging costs can include city taxes, cleaning fees, resort-style fees, or higher rates near major attractions.",
-    },
-    {
-      title: "Trains and local transit",
-      description:
-        "High-speed trains, metro passes, taxis, airport transfers, and day trips should be included before booking.",
-    },
-    {
-      title: "Meals, tours, and museums",
-      description:
-        "Food, guided tours, museum tickets, reservations, and spontaneous experiences can become a major part of the budget.",
-    },
-  ]}
-/>
-  <ReduceCostTips
-  items={[
-    "Travel during shoulder season instead of peak summer dates.",
-    "Limit the number of cities to reduce train, hotel, and transfer costs.",
-    "Use public transportation instead of taxis whenever possible.",
-    "Book flights and hotels earlier to avoid last-minute pricing spikes.",
-    "Prioritize a few meaningful experiences instead of overpacking the itinerary.",
-  ]}
-/>
-<FinancialRedFlags
-  items={[
-    "You would need to finance the trip with high-interest credit card debt.",
-    "The trip would wipe out your emergency savings.",
-    "You are already struggling with monthly bills or debt payments.",
-    "You do not have enough buffer for airfare changes, emergencies, or unexpected costs.",
-    "You would return home without meaningful savings remaining.",
-  ]}
-/>
-<CalculatorAssumptions
-  items={[
-    "The calculator assumes the trip is paid mostly in cash rather than financed with long-term debt.",
-    "The estimate assumes your emergency fund remains intact after booking the trip.",
-    "The budget should include airfare, lodging, transportation, meals, and unexpected costs.",
-    "The calculator assumes your income and debt obligations are relatively stable.",
-    "Exchange-rate changes, emergencies, and travel disruptions can increase total trip costs.",
-  ]}
-/>
-    <FAQSection
-      faqs={[
-        {
-          question: "Is $10,000 enough for a Europe trip?",
-          answer:
-            "Yes, $10,000 can be enough for a Europe trip, especially for a couple or a carefully planned family trip. The answer depends on airfare, hotel quality, trip length, cities visited, train costs, meals, tours, and how much buffer you keep for surprises.",
-        },
-        {
-          question: "Is a $10,000 Europe trip too expensive?",
-          answer:
-            "A $10,000 Europe trip is too expensive if it creates credit card debt, drains your emergency fund, or makes normal bills stressful. It can be reasonable if it is saved for in advance and fits comfortably within your income and savings.",
-        },
-        {
-          question: "Should I use savings or finance a Europe trip?",
-          answer:
-            "Savings are usually the better choice for a Europe trip. Financing a vacation with high-interest debt can make the trip cost far more than the sticker price and create stress after you return.",
-        },
-        {
-          question: "What should be included in a Europe trip budget?",
-          answer:
-            "A Europe trip budget should include flights, hotels, trains, local transportation, meals, museums, tours, travel insurance, luggage fees, exchange-rate buffer, phone data, souvenirs, and emergency money.",
-        },
-      ]}
-    />
-<MethodologySection
-  category="Europe travel spending"
-  updated="May 2026"
-/>
-
-<RelatedGuides
-  guides={[
-    {
-      title: "How to Avoid Vacation Debt",
-      href: "/how-to-avoid-vacation-debt",
-      description:
-        "Learn how to plan large trips without creating long-term financial stress or high-interest debt.",
-    },
-    {
-      title: "How to Budget for a Disney Vacation",
-      href: "/how-to-budget-for-a-disney-vacation",
-      description:
-        "See how major travel budgets can expand through lodging, transportation, food, and add-on costs.",
-    },
-  ]}
-/>
-
-    <RelatedCalculators
-      calculators={[
-        {
-          category: "Travel",
-          title: "Should I Spend $5,000 on a Vacation?",
-          href: "/should-i-spend-5000-on-a-vacation",
-        },
-        {
-          category: "Travel",
-          title: "Should I Spend $8,000 on a Disney Vacation?",
-          href: "/should-i-spend-8000-on-a-disney-vacation",
-        },
-        {
-          category: "Travel",
-          title: "Should I Spend $12,000 on a Cruise?",
-          href: "/should-i-spend-12000-on-a-cruise",
-        },
-        {
-          category: "Travel",
-          title: "Browse Travel Calculators",
-          href: "/travel-calculators",
-        },
-      ]}
-    />
-  </CalculatorPageShell>
-
   <script is:inline>
+    const clamp = (value, min, max) => Math.min(Math.max(value, min), max);
+
+    const getNumber = (id) => {
+      const rawValue = document.getElementById(id)?.value;
+      const value = Number(rawValue);
+      return Number.isFinite(value) && value >= 0 ? value : 0;
+    };
+
+    function getPressureLevel(score) {
+      if (score <= 30) {
+        return {
+          label: "Low Pressure",
+          stress: "Low pressure",
+          color: "#16a34a",
+          action: "Proceed with a clear Europe trip budget.",
+        };
+      }
+
+      if (score <= 60) {
+        return {
+          label: "Moderate Pressure",
+          stress: "Moderate pressure",
+          color: "#ca8a04",
+          action: "Trim the itinerary or build more cushion before booking.",
+        };
+      }
+
+      return {
+        label: "High Pressure",
+        stress: "High pressure",
+        color: "#dc2626",
+        action: "Delay, lower the trip cost, or save more first.",
+      };
+    }
+
     function calculateVacation() {
-      const income = Number(document.getElementById("income").value);
-      const savings = Number(document.getElementById("savings").value);
-      const vacation = Number(document.getElementById("vacation").value);
-      const debt = Number(document.getElementById("debt").value);
+      const income = getNumber("income");
+      const savings = getNumber("savings");
+      const vacation = getNumber("vacation");
+      const debt = getNumber("debt");
 
-      let score = 100;
-
-      const savingsImpact = savings > 0 ? (vacation / savings) * 100 : 100;
-      const incomeImpact = income > 0 ? (vacation / income) * 100 : 100;
-      const debtRatio = income > 0 ? (debt / income) * 100 : 50;
-
-      score -= savingsImpact * 0.22;
-      score -= incomeImpact * 0.9;
-      score -= debtRatio * 0.18;
-
-      const verdict = document.getElementById("verdict");
-      const resultText = document.getElementById("resultText");
       const result = document.getElementById("result");
-      const stress = document.getElementById("stress");
-const savingsImpactEl = document.getElementById("savingsImpact");
-const incomeImpactEl = document.getElementById("incomeImpact");
-const debtRatioEl = document.getElementById("debtRatio");
-const barFill = document.getElementById("barFill");
+      const scoreEl = document.getElementById("score");
+      const barFill = document.getElementById("barFill");
+      const stressEl = document.getElementById("stress");
+      const savingsImpactEl = document.getElementById("savingsImpact");
+      const incomeImpactEl = document.getElementById("incomeImpact");
+      const monthlyIncomeImpactEl = document.getElementById("monthlyIncomeImpact");
+      const debtRatioEl = document.getElementById("debtRatio");
+      const guidanceEl = document.getElementById("guidance");
 
       result.style.display = "block";
 
-      if (!income || !savings || !vacation) {
-        verdict.textContent = "Add your numbers first";
-        resultText.textContent =
-          "Enter your income, savings, estimated Europe trip cost, and debt so the calculator can give a useful verdict.";
+      if (income <= 0 || savings <= 0 || vacation <= 0) {
+        scoreEl.textContent = "Add your numbers first";
+        barFill.style.width = "0%";
+        barFill.style.background = "#16a34a";
+        stressEl.innerHTML = "";
+        savingsImpactEl.innerHTML = "";
+        incomeImpactEl.innerHTML = "";
+        monthlyIncomeImpactEl.innerHTML = "";
+        debtRatioEl.innerHTML = "";
+        guidanceEl.textContent =
+          "Enter a positive income, savings amount, and Europe trip cost so the calculator can estimate financial pressure.";
         return;
       }
-score = Math.max(0, Math.min(100, Math.round(score)));
 
-let barColor = "#dc2626";
-let stressLabel = "High";
+      const monthlyIncome = income / 12;
+      const savingsImpact = (vacation / savings) * 100;
+      const annualIncomeImpact = (vacation / income) * 100;
+      const monthlyIncomeImpact = (vacation / monthlyIncome) * 100;
+      const debtRatio = (debt / income) * 100;
+      const remainingSavings = savings - vacation;
+      const remainingSavingsMonths = remainingSavings / monthlyIncome;
 
-if (score >= 75) {
-  barColor = "#0f766e";
-  stressLabel = "Low";
-} else if (score >= 50) {
-  barColor = "#d97706";
-  stressLabel = "Moderate";
-}
+      let pressureScore = 0;
 
-barFill.style.width = `${score}%`;
-barFill.style.background = barColor;
+      pressureScore += clamp(savingsImpact * 0.55, 0, 55);
+      pressureScore += clamp(monthlyIncomeImpact * 0.22, 0, 25);
+      pressureScore += clamp(debtRatio * 0.2, 0, 15);
 
-stress.textContent = stressLabel;
-savingsImpactEl.textContent = `${Math.round(savingsImpact)}% of savings`;
-incomeImpactEl.textContent = `${Math.round(incomeImpact)}% of annual income`;
-debtRatioEl.textContent = `${Math.round(debtRatio)}%`;
+      if (vacation > savings) pressureScore += 25;
+      if (remainingSavingsMonths < 1) pressureScore += 18;
+      else if (remainingSavingsMonths < 3) pressureScore += 10;
+      else if (remainingSavingsMonths >= 6) pressureScore -= 8;
 
-      if (score >= 75) {
-        
-        verdict.textContent = `Financially Comfortable Trip - ${score}/100`;
-          "A $10,000 Europe trip appears manageable based on your income, savings, and debt. Make sure your budget includes flights, hotels, trains, meals, tours, exchange-rate movement, and an emergency cushion.";
-      } else if (score >= 50) {
-        verdict.textContent = `Manageable but Expensive - ${score}/100`;
-        resultText.textContent =
-          "The trip may be doable, but the budget deserves caution. Look for ways to reduce airfare, shorten the trip, choose fewer cities, use trains strategically, or build more savings before booking.";
-      } else {
-        verdict.textContent = `High Financial Pressure - ${score}/100`;
-        resultText.textContent =
-          "This trip could put too much pressure on your savings, debt load, or monthly flexibility. Consider delaying the trip, lowering the budget, or saving more before committing.";
+      if (debtRatio >= 75) pressureScore += 10;
+      else if (debtRatio >= 40) pressureScore += 6;
+
+      if (annualIncomeImpact < 2 && savingsImpact < 10 && remainingSavingsMonths >= 6) {
+        pressureScore -= 12;
       }
+
+      pressureScore = clamp(Math.round(pressureScore), 0, 100);
+
+      const level = getPressureLevel(pressureScore);
+
+      let guidance = "";
+
+      if (pressureScore <= 30) {
+        guidance =
+          `This Europe trip appears manageable based on the numbers provided. The cost equals about ${monthlyIncomeImpact.toFixed(1)}% of one month’s income and ${savingsImpact.toFixed(1)}% of savings, so the main priority is keeping flights, hotels, trains, meals, tours, and surprise costs inside a clear budget.`;
+      } else if (pressureScore <= 60) {
+        guidance =
+          `This Europe trip may work, but it deserves caution. The cost equals about ${monthlyIncomeImpact.toFixed(1)}% of one month’s income and ${savingsImpact.toFixed(1)}% of savings, which means city count, hotel choices, train costs, meals, tours, and exchange-rate buffer should be planned before booking.`;
+      } else {
+        guidance =
+          `This Europe trip could create real financial strain. The cost equals about ${monthlyIncomeImpact.toFixed(1)}% of one month’s income and ${savingsImpact.toFixed(1)}% of savings, so delaying, shortening the trip, choosing fewer cities, or saving more would be safer.`;
+      }
+
+      scoreEl.textContent = `${level.label} — ${pressureScore}/100`;
+      barFill.style.width = `${pressureScore}%`;
+      barFill.style.background = level.color;
+
+      stressEl.innerHTML = `<strong>Pressure level:</strong> ${level.stress}`;
+      savingsImpactEl.innerHTML = `<strong>Savings impact:</strong> ${savingsImpact.toFixed(1)}% of savings`;
+      incomeImpactEl.innerHTML = `<strong>Annual income impact:</strong> ${annualIncomeImpact.toFixed(1)}% of annual income`;
+      monthlyIncomeImpactEl.innerHTML = `<strong>Monthly income impact:</strong> ${monthlyIncomeImpact.toFixed(1)}% of one month’s income`;
+      debtRatioEl.innerHTML = `<strong>Debt ratio:</strong> ${debtRatio.toFixed(1)}% of annual income`;
+      guidanceEl.textContent = `${guidance} Recommended next step: ${level.action}`;
     }
 
-    document.getElementById("calculateBtn").addEventListener("click", calculateVacation);
+    document
+      .getElementById("calculateBtn")
+      .addEventListener("click", calculateVacation);
   </script>
 </Layout>

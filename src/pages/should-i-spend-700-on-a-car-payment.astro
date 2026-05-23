@@ -269,7 +269,7 @@ const relatedCalculators = calculators
       description="Evaluate whether your monthly car payment is financially manageable based on income, savings, debt load, and overall comfort level."
     >
       <div class="calculator">
-        <h2>Car Payment Affordability Verdict</h2>
+        <h2>Car Payment Pressure Verdict</h2>
 
         <p class="calculator-intro">
           Enter your income, savings, car payment, and current debt payments.
@@ -486,100 +486,167 @@ const relatedCalculators = calculators
   </div>
 
   <script is:inline>
-    function calculateCarPayment() {
-      const income = Number(document.getElementById("income").value);
-      const savings = Number(document.getElementById("savings").value);
-      const payment = Number(document.getElementById("payment").value);
-      const debt = Number(document.getElementById("debt").value);
+  const clamp = (value, min, max) => Math.min(Math.max(value, min), max);
 
-      const results = document.getElementById("results");
-      const scoreText = document.getElementById("scoreText");
-      const fillBar = document.getElementById("fillBar");
-      const resultDetails = document.getElementById("resultDetails");
-      const guidance = document.getElementById("guidance");
+  const getNumber = (id) => {
+    const rawValue = document.getElementById(id)?.value;
+    const value = Number(rawValue);
+    return Number.isFinite(value) && value >= 0 ? value : 0;
+  };
 
-      results.classList.add("visible");
-
-      if (!income || !savings || !payment) {
-        scoreText.textContent = "Add the Core Numbers First";
-        fillBar.style.width = "0%";
-        fillBar.className = "fill";
-        resultDetails.innerHTML =
-          "<p>Enter monthly take-home income, current savings, and monthly car payment to review affordability.</p>";
-        guidance.textContent = "";
-        return;
-      }
-
-      const paymentImpact = payment / income;
-      const debtRatio = (payment + debt) / income;
-      const savingsMonths = savings / Math.max(income * 0.7, 1);
-      const sixMonthPaymentImpact = (payment * 6) / savings;
-
-      let score = 100;
-
-      if (paymentImpact > 0.18) score -= 35;
-      else if (paymentImpact > 0.15) score -= 25;
-      else if (paymentImpact > 0.12) score -= 15;
-      else if (paymentImpact > 0.1) score -= 8;
-
-      if (debtRatio > 0.45) score -= 30;
-      else if (debtRatio > 0.35) score -= 22;
-      else if (debtRatio > 0.25) score -= 14;
-      else if (debtRatio > 0.18) score -= 7;
-
-      if (savingsMonths < 1) score -= 20;
-      else if (savingsMonths < 3) score -= 12;
-      else if (savingsMonths < 6) score -= 5;
-
-      if (sixMonthPaymentImpact > 0.75) score -= 18;
-      else if (sixMonthPaymentImpact > 0.5) score -= 10;
-      else if (sixMonthPaymentImpact > 0.3) score -= 5;
-
-      score = Math.max(0, Math.min(100, Math.round(score)));
-
-      let verdict = "Comfortable Payment";
-      let stress = "Low pressure";
-      let explanation =
-        "This payment appears manageable relative to your income, savings, and current debt load.";
-
-      if (score < 50) {
-        verdict = "High Car Payment Pressure";
-        stress = "High pressure";
-        explanation =
-          "This car payment looks aggressive relative to your income, savings, and debt load. A lower payment could preserve more monthly flexibility.";
-      } else if (score < 75) {
-        verdict = "Manageable With Guardrails";
-        stress = "Moderate pressure";
-        explanation =
-          "This payment may be workable, but it deserves caution. Review insurance, fuel, repairs, savings goals, and other monthly obligations before committing.";
-      }
-
-      scoreText.textContent = `${verdict} - ${score}/100`;
-
-      fillBar.style.width = `${Math.max(score, 6)}%`;
-      fillBar.className = "fill";
-
-      if (score >= 75) {
-        fillBar.classList.add("safe");
-      } else if (score >= 50) {
-        fillBar.classList.add("caution");
-      } else {
-        fillBar.classList.add("danger");
-      }
-
-      resultDetails.innerHTML = `
-        <p><strong>Payment impact:</strong> ${(paymentImpact * 100).toFixed(1)}% of monthly take-home income.</p>
-        <p><strong>Total debt impact:</strong> ${(debtRatio * 100).toFixed(1)}% of monthly take-home income, including this car payment.</p>
-        <p><strong>Emergency savings cushion:</strong> About ${savingsMonths.toFixed(1)} months of estimated core expenses.</p>
-        <p><strong>Six-month payment impact:</strong> ${(sixMonthPaymentImpact * 100).toFixed(1)}% of current savings.</p>
-        <p><strong>Stress level:</strong> ${stress}.</p>
-      `;
-
-      guidance.textContent = explanation;
+  function getPressureLevel(score) {
+    if (score <= 30) {
+      return {
+        label: "Low Pressure",
+        stress: "Low pressure",
+        colorClass: "safe",
+        action: "Maintain the payment only if total vehicle costs stay reasonable.",
+      };
     }
 
-    document
-      .getElementById("carButton")
-      .addEventListener("click", calculateCarPayment);
-  </script>
+    if (score <= 60) {
+      return {
+        label: "Moderate Pressure",
+        stress: "Moderate pressure",
+        colorClass: "caution",
+        action: "Review insurance, fuel, and long-term debt exposure carefully.",
+      };
+    }
+
+    return {
+      label: "High Pressure",
+      stress: "High pressure",
+      colorClass: "danger",
+      action: "Reduce the vehicle budget or improve monthly flexibility first.",
+    };
+  }
+
+  function calculateCarPayment() {
+    const income = getNumber("income");
+    const savings = getNumber("savings");
+    const payment = getNumber("payment");
+    const debt = getNumber("debt");
+
+    const results = document.getElementById("results");
+    const scoreText = document.getElementById("scoreText");
+    const fillBar = document.getElementById("fillBar");
+    const resultDetails = document.getElementById("resultDetails");
+    const guidance = document.getElementById("guidance");
+
+    results.classList.add("visible");
+
+    if (income <= 0 || payment <= 0) {
+      scoreText.textContent = "Add your numbers first";
+
+      fillBar.style.width = "0%";
+      fillBar.className = "fill safe";
+
+      resultDetails.innerHTML =
+        "<p>Enter monthly take-home income, current savings, monthly car payment, and debt so the calculator can estimate financial pressure.</p>";
+
+      guidance.textContent = "";
+
+      return;
+    }
+
+    const paymentRatio = (payment / income) * 100;
+    const totalDebtRatio = ((payment + debt) / income) * 100;
+
+    const savingsMonths =
+      savings / Math.max(income * 0.7, 1);
+
+    const sixMonthPaymentImpact =
+      ((payment * 6) / Math.max(savings, 1)) * 100;
+
+    let pressureScore = 0;
+
+    pressureScore += clamp(paymentRatio * 2.2, 0, 42);
+
+    pressureScore += clamp(totalDebtRatio * 0.7, 0, 30);
+
+    if (paymentRatio >= 25) {
+      pressureScore += 24;
+    } else if (paymentRatio >= 18) {
+      pressureScore += 16;
+    } else if (paymentRatio >= 12) {
+      pressureScore += 8;
+    }
+
+    if (savingsMonths < 1) {
+      pressureScore += 18;
+    } else if (savingsMonths < 3) {
+      pressureScore += 10;
+    } else if (savingsMonths >= 6) {
+      pressureScore -= 8;
+    }
+
+    if (sixMonthPaymentImpact > 100) {
+      pressureScore += 18;
+    } else if (sixMonthPaymentImpact > 60) {
+      pressureScore += 10;
+    } else if (sixMonthPaymentImpact > 35) {
+      pressureScore += 5;
+    }
+
+    if (
+      paymentRatio < 8 &&
+      totalDebtRatio < 20 &&
+      savingsMonths >= 6
+    ) {
+      pressureScore = Math.min(pressureScore, 20);
+    }
+
+    if (
+      paymentRatio < 5 &&
+      totalDebtRatio < 10 &&
+      savingsMonths >= 12
+    ) {
+      pressureScore = Math.min(pressureScore, 10);
+    }
+
+    pressureScore = clamp(Math.round(pressureScore), 0, 100);
+
+    const level = getPressureLevel(pressureScore);
+
+    scoreText.textContent =
+      `${level.label} — ${pressureScore}/100`;
+
+    fillBar.style.width = `${pressureScore}%`;
+
+    fillBar.className = `fill ${level.colorClass}`;
+
+    let explanation = "";
+
+    if (pressureScore <= 30) {
+      explanation =
+        "This car payment appears manageable based on the numbers provided. The main priority is controlling total ownership costs like insurance, fuel, maintenance, and depreciation.";
+    } else if (pressureScore <= 60) {
+      explanation =
+        "This car payment may work, but it deserves caution. Insurance, fuel, repairs, loan length, and total debt load could reduce monthly flexibility faster than expected.";
+    } else {
+      explanation =
+        "This car payment could create ongoing financial pressure. A smaller payment, larger down payment, used vehicle, or stronger savings cushion would likely create more long-term flexibility.";
+    }
+
+    resultDetails.innerHTML = `
+      <p><strong>Payment impact:</strong> ${paymentRatio.toFixed(1)}% of monthly take-home income.</p>
+
+      <p><strong>Total debt impact:</strong> ${totalDebtRatio.toFixed(1)}% of monthly take-home income, including this car payment.</p>
+
+      <p><strong>Emergency savings cushion:</strong> About ${savingsMonths.toFixed(1)} months of estimated flexibility.</p>
+
+      <p><strong>Six-month payment impact:</strong> ${sixMonthPaymentImpact.toFixed(1)}% of current savings.</p>
+
+      <p><strong>Pressure level:</strong> ${level.stress}.</p>
+
+      <p>${explanation} Recommended next step: ${level.action}</p>
+    `;
+
+    guidance.textContent = "";
+  }
+
+  document
+    .getElementById("carButton")
+    .addEventListener("click", calculateCarPayment);
+</script>
 </Layout>

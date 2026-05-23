@@ -232,7 +232,7 @@ import WhenSpendingMakesSense from "../components/WhenSpendingMakesSense.astro";
     </section>
 
     <div class="calculator">
-      <h2>Rent Affordability Verdict</h2>
+      <h2>Rent Pressure Verdict</h2>
 
       <div class="grid">
         <div>
@@ -453,77 +453,127 @@ import WhenSpendingMakesSense from "../components/WhenSpendingMakesSense.astro";
   </main>
 
   <script is:inline>
-    function calculateRent() {
-      const income = Number(document.getElementById("income").value);
-      const savings = Number(document.getElementById("savings").value || 0);
-      const rent = Number(document.getElementById("rent").value);
-      const debt = Number(document.getElementById("debt").value || 0);
+  const clamp = (value, min, max) => Math.min(Math.max(value, min), max);
 
-      const result = document.getElementById("result");
-      const scoreText = document.getElementById("scoreText");
-      const scoreFill = document.getElementById("scoreFill");
-      const resultDetails = document.getElementById("resultDetails");
+  const getNumber = (id) => {
+    const rawValue = document.getElementById(id)?.value;
+    const value = Number(rawValue);
+    return Number.isFinite(value) && value >= 0 ? value : 0;
+  };
 
-      result.style.display = "block";
-
-      if (!income || !rent) {
-        scoreText.textContent = "Add your numbers first";
-        scoreFill.style.width = "0%";
-        resultDetails.innerHTML =
-          "<p>Enter your take-home income and monthly rent so the calculator can give a useful verdict.</p>";
-        return;
-      }
-
-      let score = 100;
-
-      const rentRatio = rent / income;
-      const debtRatio = debt / income;
-      const savingsMonths = savings > 0 ? savings / rent : 0;
-
-      score -= rentRatio * 120;
-      score -= debtRatio * 45;
-
-      if (rentRatio > 0.35 && savings < rent * 3) {
-        score -= 18;
-      } else if (rentRatio > 0.25 && savings < rent * 6) {
-        score -= 10;
-      }
-
-      score = Math.max(5, Math.min(100, Math.round(score)));
-
-      let verdict = "";
-      let color = "";
-
-      if (score >= 80) {
-        verdict = "Comfortable Rent";
-        color = "#16a34a";
-      } else if (score >= 60) {
-        verdict = "Manageable With Guardrails";
-        color = "#eab308";
-      } else if (score >= 40) {
-        verdict = "Financial Stretch";
-        color = "#f97316";
-      } else {
-        verdict = "High Risk Housing Cost";
-        color = "#dc2626";
-      }
-
-      const rentPercent = rentRatio * 100;
-      const debtPercent = debtRatio * 100;
-
-      scoreText.textContent = `${verdict} - ${score}/100`;
-      scoreFill.style.width = `${score}%`;
-      scoreFill.style.background = color;
-
-      resultDetails.innerHTML = `
-        <p><strong>Rent impact:</strong> ${rentPercent.toFixed(1)}% of monthly take-home income.</p>
-        <p><strong>Debt impact:</strong> ${debtPercent.toFixed(1)}% of monthly take-home income.</p>
-        <p><strong>Savings cushion:</strong> ${savingsMonths.toFixed(1)} months of rent covered.</p>
-      `;
+  function getPressureLevel(score) {
+    if (score <= 30) {
+      return { label: "Low Pressure", color: "#16a34a" };
     }
 
-    document
-      .getElementById("rentButton")
-      .addEventListener("click", calculateRent);
-  </script>
+    if (score <= 60) {
+      return { label: "Moderate Pressure", color: "#eab308" };
+    }
+
+    return { label: "High Pressure", color: "#dc2626" };
+  }
+
+  function calculateRent() {
+    const income = getNumber("income");
+    const savings = getNumber("savings");
+    const rent = getNumber("rent");
+    const debt = getNumber("debt");
+
+    const result = document.getElementById("result");
+    const scoreText = document.getElementById("scoreText");
+    const scoreFill = document.getElementById("scoreFill");
+    const resultDetails = document.getElementById("resultDetails");
+
+    result.style.display = "block";
+
+    if (income <= 0 || rent <= 0) {
+      scoreText.textContent = "Add your numbers first";
+      scoreFill.style.width = "0%";
+      scoreFill.style.background = "#16a34a";
+
+      resultDetails.innerHTML =
+        "<p>Enter your take-home income and monthly rent so the calculator can estimate housing pressure.</p>";
+
+      return;
+    }
+
+    const rentRatio = (rent / income) * 100;
+    const debtRatio = (debt / income) * 100;
+    const savingsMonths = savings > 0 ? savings / rent : 0;
+
+    let pressureScore = 0;
+
+    pressureScore += clamp(rentRatio * 1.35, 0, 55);
+    pressureScore += clamp(debtRatio * 0.55, 0, 25);
+
+    if (rentRatio >= 50) {
+      pressureScore += 18;
+    } else if (rentRatio >= 40) {
+      pressureScore += 12;
+    } else if (rentRatio >= 30) {
+      pressureScore += 6;
+    }
+
+    if (savingsMonths < 1) {
+      pressureScore += 14;
+    } else if (savingsMonths < 3) {
+      pressureScore += 8;
+    } else if (savingsMonths >= 6) {
+      pressureScore -= 8;
+    }
+
+    if (
+      rentRatio < 25 &&
+      debtRatio < 10 &&
+      savingsMonths >= 6
+    ) {
+      pressureScore = Math.min(pressureScore, 20);
+    }
+
+    if (
+      rentRatio < 15 &&
+      debtRatio < 5 &&
+      savingsMonths >= 12
+    ) {
+      pressureScore = Math.min(pressureScore, 10);
+    }
+
+    pressureScore = clamp(Math.round(pressureScore), 0, 100);
+
+    const level = getPressureLevel(pressureScore);
+
+    scoreText.textContent =
+      `${level.label} — ${pressureScore}/100`;
+
+    scoreFill.style.width = `${pressureScore}%`;
+    scoreFill.style.background = level.color;
+
+    let guidance = "";
+
+    if (pressureScore <= 30) {
+      guidance =
+        "This rent appears manageable based on the numbers provided. The main priority is keeping utilities, move-in costs, transportation, and savings goals inside the broader housing budget.";
+    } else if (pressureScore <= 60) {
+      guidance =
+        "This rent may work, but it deserves caution. The payment could reduce monthly flexibility if utilities, debt, transportation, parking, or move-in costs are higher than expected.";
+    } else {
+      guidance =
+        "This rent could create real monthly financial pressure. A cheaper apartment, lower debt load, stronger savings cushion, or higher income would likely make the lease safer.";
+    }
+
+    resultDetails.innerHTML = `
+      <p><strong>Rent impact:</strong> ${rentRatio.toFixed(1)}% of monthly take-home income.</p>
+
+      <p><strong>Debt impact:</strong> ${debtRatio.toFixed(1)}% of monthly take-home income.</p>
+
+      <p><strong>Savings cushion:</strong> ${savingsMonths.toFixed(1)} months of rent covered.</p>
+
+      <p>${guidance}</p>
+    `;
+  }
+
+  document
+    .getElementById("rentButton")
+    .addEventListener("click", calculateRent);
+</script>
 </Layout>

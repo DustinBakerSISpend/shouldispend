@@ -151,7 +151,7 @@ import WhenSpendingMakesSense from "../components/WhenSpendingMakesSense.astro";
       description="Estimate whether a $12,000 cruise fits your income, savings, debt, emergency cushion, flights, excursions, gratuities, and onboard spending."
     >
       <div class="card">
-        <h2>Cruise Affordability Verdict</h2>
+        <h2>Cruise Pressure Verdict</h2>
 
         <div class="grid">
           <div>
@@ -195,6 +195,7 @@ import WhenSpendingMakesSense from "../components/WhenSpendingMakesSense.astro";
           <div class="metric" id="stress"></div>
           <div class="metric" id="savingsImpact"></div>
           <div class="metric" id="incomeImpact"></div>
+          <div class="metric" id="monthlyIncomeImpact"></div>
           <div class="metric" id="debtRatio"></div>
 
           <div class="guidance" id="guidance"></div>
@@ -415,12 +416,47 @@ import WhenSpendingMakesSense from "../components/WhenSpendingMakesSense.astro";
     </CalculatorPageShell>
   </div>
 
-  <script is:inline>
+    <script is:inline>
+    const clamp = (value, min, max) => Math.min(Math.max(value, min), max);
+
+    const getNumber = (id) => {
+      const rawValue = document.getElementById(id)?.value;
+      const value = Number(rawValue);
+      return Number.isFinite(value) && value >= 0 ? value : 0;
+    };
+
+    function getPressureLevel(score) {
+      if (score <= 30) {
+        return {
+          label: "Low Pressure",
+          stress: "Low pressure",
+          color: "#16a34a",
+          action: "Proceed with a clear cruise budget.",
+        };
+      }
+
+      if (score <= 60) {
+        return {
+          label: "Moderate Pressure",
+          stress: "Moderate pressure",
+          color: "#ca8a04",
+          action: "Trim extras or build more cushion before booking.",
+        };
+      }
+
+      return {
+        label: "High Pressure",
+        stress: "High pressure",
+        color: "#dc2626",
+        action: "Delay, reduce the cruise cost, or save more first.",
+      };
+    }
+
     function calculateVacation() {
-      const income = Number(document.getElementById("income").value);
-      const savings = Number(document.getElementById("savings").value);
-      const vacation = Number(document.getElementById("vacation").value);
-      const debt = Number(document.getElementById("debt").value || 0);
+      const income = getNumber("income");
+      const savings = getNumber("savings");
+      const vacation = getNumber("vacation");
+      const debt = getNumber("debt");
 
       const result = document.getElementById("result");
       const scoreEl = document.getElementById("score");
@@ -428,78 +464,92 @@ import WhenSpendingMakesSense from "../components/WhenSpendingMakesSense.astro";
       const stressEl = document.getElementById("stress");
       const savingsImpactEl = document.getElementById("savingsImpact");
       const incomeImpactEl = document.getElementById("incomeImpact");
+      const monthlyIncomeImpactEl = document.getElementById("monthlyIncomeImpact");
       const debtRatioEl = document.getElementById("debtRatio");
       const guidanceEl = document.getElementById("guidance");
 
       result.style.display = "block";
 
-      if (!income || !savings || !vacation) {
+      if (income <= 0 || savings <= 0 || vacation <= 0) {
         scoreEl.textContent = "Add your numbers first";
         barFill.style.width = "0%";
+        barFill.style.background = "#16a34a";
         stressEl.innerHTML = "";
         savingsImpactEl.innerHTML = "";
         incomeImpactEl.innerHTML = "";
+        monthlyIncomeImpactEl.innerHTML = "";
         debtRatioEl.innerHTML = "";
         guidanceEl.textContent =
-          "Enter your income, savings, cruise cost, and debt so the calculator can give a useful verdict.";
+          "Enter a positive income, savings amount, cruise cost, and debt so the calculator can estimate financial pressure.";
         return;
       }
 
+      const monthlyIncome = income / 12;
       const savingsImpact = (vacation / savings) * 100;
-      const incomeImpact = (vacation / income) * 100;
+      const annualIncomeImpact = (vacation / income) * 100;
+      const monthlyIncomeImpact = (vacation / monthlyIncome) * 100;
       const debtRatio = (debt / income) * 100;
+      const remainingSavings = savings - vacation;
+      const remainingSavingsMonths = remainingSavings / monthlyIncome;
 
-      let score = 100;
+      let pressureScore = 0;
 
-      score -= savingsImpact * 0.22;
-      score -= incomeImpact * 0.9;
-      score -= debtRatio * 0.18;
+      pressureScore += clamp(savingsImpact * 0.38, 0, 38);
+      pressureScore += clamp(monthlyIncomeImpact * 0.24, 0, 25);
+      pressureScore += clamp(debtRatio * 0.2, 0, 15);
 
-      if (savings < vacation) score -= 12;
-      if (debt > income * 0.5) score -= 10;
+      if (vacation > savings) pressureScore += 25;
 
-      score = Math.max(0, Math.min(100, Math.round(score)));
-
-      let verdict = "";
-      let stress = "";
-      let guidance = "";
-      let barColor = "";
-
-      if (score >= 80) {
-        verdict = "Comfortable Cruise";
-        stress = "Low stress";
-        guidance =
-          "This cruise appears financially manageable based on your income, savings, debt, and remaining emergency cushion.";
-        barColor = "#16a34a";
-      } else if (score >= 60) {
-        verdict = "Manageable With Guardrails";
-        stress = "Moderate stress";
-        guidance =
-          "This cruise may work, but keep firm limits on excursions, drink packages, specialty dining, gratuities, and onboard spending.";
-        barColor = "#ca8a04";
-      } else if (score >= 40) {
-        verdict = "Financial Stretch";
-        stress = "High stress";
-        guidance =
-          "This cruise could create financial pressure. Consider a cheaper cabin, shorter sailing, fewer excursions, or more time to save.";
-        barColor = "#ea580c";
-      } else {
-        verdict = "High Financial Risk";
-        stress = "Very high stress";
-        guidance =
-          "This cruise cost appears too aggressive for the current financial picture, especially if the trip would be financed with high-interest debt.";
-        barColor = "#b91c1c";
+      if (remainingSavingsMonths < 1 && income < 100000) {
+        pressureScore += 18;
+      } else if (remainingSavingsMonths < 3 && income < 150000) {
+        pressureScore += 10;
+      } else if (remainingSavingsMonths >= 6) {
+        pressureScore -= 8;
       }
 
-      scoreEl.textContent = `${verdict} - ${score}/100`;
-      barFill.style.width = `${score}%`;
-      barFill.style.background = barColor;
+      if (debtRatio >= 75) pressureScore += 10;
+      else if (debtRatio >= 40) pressureScore += 6;
 
-      stressEl.innerHTML = `<strong>Stress level:</strong> ${stress}`;
+      if (annualIncomeImpact < 2 && savingsImpact < 10 && remainingSavingsMonths >= 6) {
+        pressureScore -= 12;
+      }
+
+      if (annualIncomeImpact < 0.25 && monthlyIncomeImpact < 5 && debtRatio < 10) {
+        pressureScore = Math.min(pressureScore, 20);
+      }
+
+      if (annualIncomeImpact < 0.05 && monthlyIncomeImpact < 1 && debtRatio < 5) {
+        pressureScore = Math.min(pressureScore, 10);
+      }
+
+      pressureScore = clamp(Math.round(pressureScore), 0, 100);
+
+      const level = getPressureLevel(pressureScore);
+
+      let guidance = "";
+
+      if (pressureScore <= 30) {
+        guidance =
+          `This cruise appears manageable based on the numbers provided. The cost equals about ${monthlyIncomeImpact.toFixed(1)}% of one month’s income and ${savingsImpact.toFixed(1)}% of savings, so the main priority is keeping excursions, gratuities, drinks, flights, hotels, and onboard spending inside the planned budget.`;
+      } else if (pressureScore <= 60) {
+        guidance =
+          `This cruise may work, but it deserves caution. The cost equals about ${monthlyIncomeImpact.toFixed(1)}% of one month’s income and ${savingsImpact.toFixed(1)}% of savings, which means cabin choice, excursions, drink packages, specialty dining, and port costs should be capped before booking.`;
+      } else {
+        guidance =
+          `This cruise could create real financial strain. The cost equals about ${monthlyIncomeImpact.toFixed(1)}% of one month’s income and ${savingsImpact.toFixed(1)}% of savings, so a shorter sailing, cheaper cabin, fewer excursions, or more time to save would likely be safer.`;
+      }
+
+      scoreEl.textContent = `${level.label} — ${pressureScore}/100`;
+      barFill.style.width = `${pressureScore}%`;
+      barFill.style.background = level.color;
+
+      stressEl.innerHTML = `<strong>Pressure level:</strong> ${level.stress}`;
       savingsImpactEl.innerHTML = `<strong>Savings impact:</strong> ${savingsImpact.toFixed(1)}% of savings`;
-      incomeImpactEl.innerHTML = `<strong>Income impact:</strong> ${incomeImpact.toFixed(1)}% of annual income`;
+      incomeImpactEl.innerHTML = `<strong>Annual income impact:</strong> ${annualIncomeImpact.toFixed(1)}% of annual income`;
+      monthlyIncomeImpactEl.innerHTML = `<strong>Monthly income impact:</strong> ${monthlyIncomeImpact.toFixed(1)}% of one month’s income`;
       debtRatioEl.innerHTML = `<strong>Debt ratio:</strong> ${debtRatio.toFixed(1)}% of annual income`;
-      guidanceEl.textContent = guidance;
+      guidanceEl.textContent = `${guidance} Recommended next step: ${level.action}`;
     }
 
     document
