@@ -375,29 +375,39 @@ import RelatedGuides from "../components/RelatedGuides.astro";
       />
 
       <RelatedCalculators
-        calculators={[
-          {
-            category: "Travel",
-            title: "Should I Spend $5,000 on a Vacation?",
-            href: "/should-i-spend-5000-on-a-vacation",
-          },
-          {
-            category: "Travel",
-            title: "Should I Spend $8,000 on a Disney Vacation?",
-            href: "/should-i-spend-8000-on-a-disney-vacation",
-          },
-          {
-            category: "Travel",
-            title: "Should I Spend $12,000 on a Cruise?",
-            href: "/should-i-spend-12000-on-a-cruise",
-          },
-          {
-            category: "Travel",
-            title: "Browse Travel Calculators",
-            href: "/travel-calculators",
-          },
-        ]}
-      />
+  calculators={[
+    {
+      category: "Travel",
+      title: "Should I Spend $5,000 on a Vacation?",
+      href: "/should-i-spend-5000-on-a-vacation",
+    },
+    {
+      category: "Travel",
+      title: "Should I Spend $8,000 on a Disney Vacation?",
+      href: "/should-i-spend-8000-on-a-disney-vacation",
+    },
+    {
+      category: "Travel",
+      title: "Should I Spend $12,000 on a Cruise?",
+      href: "/should-i-spend-12000-on-a-cruise",
+    },
+    {
+      category: "Travel",
+      title: "Should I Spend $15,000 on a Honeymoon?",
+      href: "/should-i-spend-15000-on-a-honeymoon",
+    },
+    {
+      category: "Travel",
+      title: "Should I Spend $20,000 on a Family Vacation?",
+      href: "/should-i-spend-20000-on-a-family-vacation",
+    },
+    {
+      category: "Travel",
+      title: "Browse Travel Calculators",
+      href: "/travel-calculators",
+    },
+  ]}
+/>
     </CalculatorPageShell>
   </div>
 
@@ -494,6 +504,22 @@ import RelatedGuides from "../components/RelatedGuides.astro";
       if (annualIncomeImpact < 2 && savingsImpact < 10 && remainingSavingsMonths >= 6) {
         pressureScore -= 12;
       }
+
+      if (
+  annualIncomeImpact < 0.25 &&
+  monthlyIncomeImpact < 5 &&
+  debtRatio < 10
+) {
+  pressureScore = Math.min(pressureScore, 20);
+}
+
+if (
+  annualIncomeImpact < 0.05 &&
+  monthlyIncomeImpact < 1 &&
+  debtRatio < 5
+) {
+  pressureScore = Math.min(pressureScore, 10);
+}
 
       pressureScore = clamp(Math.round(pressureScore), 0, 100);
 
