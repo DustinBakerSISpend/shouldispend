@@ -1,0 +1,541 @@
+---
+import Layout from "../layouts/Layout.astro";
+import CalculatorPageShell from "../components/CalculatorPageShell.astro";
+import FAQSection from "../components/FAQSection.astro";
+import RelatedCalculators from "../components/RelatedCalculators.astro";
+import RelatedGuides from "../components/RelatedGuides.astro";
+import MethodologySection from "../components/MethodologySection.astro";
+import FinancialRedFlags from "../components/FinancialRedFlags.astro";
+import CalculatorAssumptions from "../components/CalculatorAssumptions.astro";
+import KeyCostCategories from "../components/KeyCostCategories.astro";
+import ReduceCostTips from "../components/ReduceCostTips.astro";
+import WhenSpendingMakesSense from "../components/WhenSpendingMakesSense.astro";
+---
+
+<Layout
+  title="Should I Spend $2,500 on an ER Bill?"
+  description="Use this ER bill calculator to decide whether a $2,500 emergency room bill fits your income, savings, debt, payment plan, and monthly cash flow."
+>
+  <style>
+    .container {
+      max-width: 950px;
+      margin: 0 auto;
+      padding: 60px 20px;
+    }
+
+    .content-section {
+      max-width: 760px;
+      margin: 72px auto 0;
+    }
+
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 28px;
+      padding: 34px;
+    }
+
+    h2 {
+      margin-top: 0;
+      font-size: 2rem;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 22px;
+      margin-bottom: 28px;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 10px;
+      font-weight: 700;
+    }
+
+    input {
+      width: 100%;
+      padding: 18px;
+      border-radius: 14px;
+      border: 1px solid var(--border);
+      font-size: 1.1rem;
+      box-sizing: border-box;
+    }
+
+    button {
+      background: #0f172a;
+      color: white;
+      border: none;
+      padding: 16px 28px;
+      border-radius: 14px;
+      font-size: 1rem;
+      font-weight: 700;
+      cursor: pointer;
+      margin-top: 10px;
+      width: 100%;
+      display: block;
+    }
+
+    button:hover {
+      opacity: 0.92;
+    }
+
+    .result {
+      margin-top: 40px;
+      border: 1px solid var(--border);
+      border-radius: 24px;
+      padding: 28px;
+      display: none;
+      background: #f8fafc;
+    }
+
+    .score {
+      font-size: 3rem;
+      font-weight: 800;
+      margin-bottom: 16px;
+    }
+
+    .bar {
+      width: 100%;
+      height: 16px;
+      background: #dbe3ee;
+      border-radius: 999px;
+      overflow: hidden;
+      margin-bottom: 24px;
+    }
+
+    .fill {
+      height: 100%;
+      width: 0%;
+      background: #16a34a;
+      border-radius: 999px;
+      transition: width 0.4s ease;
+    }
+
+    .metric {
+      margin-bottom: 14px;
+      font-size: 1.05rem;
+    }
+
+    .guidance {
+      margin-top: 26px;
+      font-size: 1.15rem;
+      line-height: 1.7;
+    }
+
+    .disclaimer {
+      margin-top: 30px;
+      font-size: 0.9rem;
+      color: var(--muted);
+    }
+
+    .helper-link {
+      margin-top: 10px;
+      font-size: 0.9rem;
+    }
+
+    .helper-link a {
+      color: var(--primary);
+      font-weight: 600;
+    }
+
+    .content-section p,
+    .content-section li {
+      line-height: 1.8;
+    }
+  </style>
+
+  <div class="container">
+    <CalculatorPageShell
+      eyebrow="Medical Calculator"
+      title="Should I Spend $2,500 on an ER Bill?"
+      description="Estimate whether a $2,500 emergency room bill fits your income, emergency savings, debt load, monthly expenses, and payment plan options."
+    >
+      <div class="card">
+        <h2>ER Bill Pressure Verdict</h2>
+
+        <div class="grid">
+          <div>
+            <label for="cost">ER Bill Amount</label>
+            <input id="cost" type="number" placeholder="2500" min="0" inputmode="decimal" />
+          </div>
+
+          <div>
+            <label for="income">Monthly Take-Home Income</label>
+            <input id="income" type="number" placeholder="6000" min="0" inputmode="decimal" />
+          </div>
+
+          <div>
+            <label for="savings">Emergency Savings</label>
+            <input id="savings" type="number" placeholder="8000" min="0" inputmode="decimal" />
+          </div>
+
+          <div>
+            <label for="expenses">Monthly Expenses</label>
+            <input id="expenses" type="number" placeholder="3500" min="0" inputmode="decimal" />
+          </div>
+
+          <div>
+            <label for="debt">Monthly Debt Payments</label>
+            <input id="debt" type="number" placeholder="500" min="0" inputmode="decimal" />
+
+            <div class="helper-link">
+              <a href="/what-counts-as-debt">
+                Not sure what counts as debt? Read the debt guide
+              </a>
+            </div>
+          </div>
+
+          <div>
+            <label for="paymentPlan">Amount Put on Payment Plan</label>
+            <input id="paymentPlan" type="number" placeholder="0" min="0" inputmode="decimal" />
+          </div>
+        </div>
+
+        <button id="erButton" type="button">
+          Calculate Financial Pressure
+        </button>
+
+        <div class="result" id="result">
+          <div class="score" id="score"></div>
+
+          <div class="bar">
+            <div class="fill" id="barFill"></div>
+          </div>
+
+          <div class="metric" id="stress"></div>
+          <div class="metric" id="cashFlow"></div>
+          <div class="metric" id="savingsImpact"></div>
+          <div class="metric" id="paymentImpact"></div>
+
+          <div class="guidance" id="guidance"></div>
+
+          <div class="disclaimer">
+            This is a general educational estimate, not medical, insurance, legal, or financial advice.
+          </div>
+        </div>
+      </div>
+
+      <div class="content-section">
+        <h2>What a $2,500 ER Bill Really Costs</h2>
+
+        <p>
+          An emergency room bill can create financial pressure even when the medical event is over. The final cost may include facility fees, physician charges, imaging, lab work, medications, specialist review, ambulance charges, and insurance adjustments that arrive separately.
+        </p>
+
+        <p>
+          A $2,500 ER bill may be manageable if you have savings, stable income, and access to a reasonable payment plan. It becomes more stressful when the bill drains emergency savings, competes with rent or debt payments, or gets pushed onto a high-interest credit card.
+        </p>
+      </div>
+
+      <WhenSpendingMakesSense
+        title="When Paying a $2,500 ER Bill Makes Sense"
+        items={[
+          "You have confirmed the bill is accurate after insurance adjustments.",
+          "You can pay the balance without draining your emergency fund.",
+          "A no-interest or low-interest payment plan keeps monthly cash flow stable.",
+          "You have asked about financial assistance, discounts, or billing errors before paying.",
+          "The payment does not force you to miss rent, utilities, insurance, or debt obligations.",
+        ]}
+      />
+
+      <div class="content-section">
+        <h2>When You Should Slow Down Before Paying</h2>
+
+        <p>
+          You may want to pause before paying in full if the bill recently arrived, insurance has not finished processing, or the hospital has not reviewed financial assistance eligibility.
+        </p>
+
+        <p>
+          ER bills are often negotiable or adjustable. Before draining savings, ask for an itemized bill, confirm the insurance explanation of benefits, request a payment plan, and check whether the provider offers charity care or income-based assistance.
+        </p>
+      </div>
+
+      <KeyCostCategories
+        items={[
+          {
+            title: "Facility and physician charges",
+            description:
+              "Emergency departments may bill separately for the hospital facility, attending physician, specialists, imaging, labs, and other services.",
+          },
+          {
+            title: "Insurance adjustments",
+            description:
+              "Your final responsibility may change after deductibles, coinsurance, network status, denied claims, or corrected billing codes are reviewed.",
+          },
+          {
+            title: "Payment plan terms",
+            description:
+              "A hospital payment plan can reduce short-term pressure, but the monthly amount still matters alongside rent, debt, utilities, and normal expenses.",
+          },
+          {
+            title: "Emergency savings impact",
+            description:
+              "Using savings may be better than high-interest debt, but draining your cushion can leave you exposed to the next unexpected expense.",
+          },
+        ]}
+      />
+
+      <ReduceCostTips
+        items={[
+          "Ask for an itemized bill before paying the full balance.",
+          "Compare the bill against your insurance explanation of benefits.",
+          "Call the billing department and ask about financial assistance or charity care.",
+          "Request a no-interest payment plan before using a credit card.",
+          "Ask whether prompt-pay discounts are available.",
+          "Challenge duplicate charges, denied claims, or services you do not recognize.",
+        ]}
+      />
+
+      <FinancialRedFlags
+        items={[
+          "The bill has not finished processing through insurance.",
+          "You would need high-interest credit card debt to pay the balance.",
+          "Paying the bill would empty most of your emergency savings.",
+          "The hospital has not offered an itemized bill or payment plan options.",
+          "The payment would make rent, utilities, food, insurance, or debt payments difficult.",
+        ]}
+      />
+
+      <CalculatorAssumptions
+        items={[
+          "The calculator treats the ER bill as a necessary one-time medical expense.",
+          "Monthly income means take-home pay after taxes and payroll deductions.",
+          "Monthly debt payments include credit cards, car loans, student loans, personal loans, and other required debt payments.",
+          "The calculator assumes payment-plan balances still create financial pressure because they reduce future flexibility.",
+          "The estimate does not evaluate medical necessity, insurance accuracy, legal billing rights, or provider-specific assistance programs.",
+        ]}
+      />
+
+      <FAQSection
+        title="ER Bill Spending FAQ"
+        faqs={[
+          {
+            question: "Should I pay a $2,500 ER bill right away?",
+            answer:
+              "Not always. First confirm that insurance has processed the claim, review the explanation of benefits, ask for an itemized bill, and check whether financial assistance or a payment plan is available.",
+          },
+          {
+            question: "Can I negotiate an emergency room bill?",
+            answer:
+              "Often, yes. Hospitals may offer payment plans, financial assistance, charity care, prompt-pay discounts, or corrections for billing errors. The options depend on the provider, your income, insurance status, and bill details.",
+          },
+          {
+            question: "Is it better to use savings or a payment plan for an ER bill?",
+            answer:
+              "Using savings may be safer than high-interest debt, but a no-interest payment plan can protect your emergency cushion. The better choice depends on your savings level, monthly cash flow, and other obligations.",
+          },
+          {
+            question: "Should I put an ER bill on a credit card?",
+            answer:
+              "A credit card should usually be a last resort if it carries high interest. Ask the hospital about payment plans or assistance before turning a medical bill into revolving credit card debt.",
+          },
+          {
+            question: "What if I cannot afford the ER bill?",
+            answer:
+              "Contact the billing department quickly. Ask about financial assistance, income-based discounts, extended payment plans, and whether the bill can be reviewed for errors or insurance problems.",
+          },
+        ]}
+      />
+
+      <MethodologySection category="medical spending" updated="May 2026" />
+
+      <RelatedGuides
+        guides={[
+          {
+            title: "Medical Calculators",
+            href: "/medical-calculators",
+            description:
+              "Browse medical spending calculators for procedures, bills, dental costs, and out-of-pocket healthcare decisions.",
+          },
+          {
+            title: "What Counts as Debt?",
+            href: "/what-counts-as-debt",
+            description:
+              "Understand which monthly obligations should be included when estimating financial pressure.",
+          },
+        ]}
+      />
+
+      <RelatedCalculators
+        calculators={[
+          {
+            category: "Medical",
+            title: "Should I Spend $5,000 on LASIK?",
+            href: "/should-i-spend-5000-on-lasik",
+          },
+          {
+            category: "Medical",
+            title: "Should I Spend $4,000 on a Dental Implant?",
+            href: "/should-i-spend-4000-on-a-dental-implant",
+          },
+          {
+            category: "Medical",
+            title: "Should I Spend $3,000 on a Root Canal?",
+            href: "/should-i-spend-3000-on-a-root-canal",
+          },
+          {
+            category: "Medical",
+            title: "Browse Medical Calculators",
+            href: "/medical-calculators",
+          },
+        ]}
+      />
+    </CalculatorPageShell>
+  </div>
+
+  <script is:inline>
+    const clamp = (value, min, max) => Math.min(Math.max(value, min), max);
+
+    const getNumber = (id) => {
+      const rawValue = document.getElementById(id)?.value;
+      const value = Number(rawValue);
+      return Number.isFinite(value) && value >= 0 ? value : 0;
+    };
+
+    function getPressureLevel(score) {
+      if (score <= 30) {
+        return {
+          label: "Low Pressure",
+          stress: "Low pressure",
+          color: "#16a34a",
+          action: "Pay only after confirming insurance processing, itemized charges, and any available discounts.",
+        };
+      }
+
+      if (score <= 60) {
+        return {
+          label: "Moderate Pressure",
+          stress: "Moderate pressure",
+          color: "#ca8a04",
+          action: "Ask about assistance, negotiate the bill, and consider a payment plan before using savings heavily.",
+        };
+      }
+
+      return {
+        label: "High Pressure",
+        stress: "High pressure",
+        color: "#dc2626",
+        action: "Contact billing before paying, request assistance, avoid high-interest debt, and protect essential bills first.",
+      };
+    }
+
+    function calculateErBill() {
+      const cost = getNumber("cost");
+      const income = getNumber("income");
+      const savings = getNumber("savings");
+      const expenses = getNumber("expenses");
+      const debt = getNumber("debt");
+      const paymentPlan = getNumber("paymentPlan");
+
+      const result = document.getElementById("result");
+      const scoreEl = document.getElementById("score");
+      const barFill = document.getElementById("barFill");
+      const stressEl = document.getElementById("stress");
+      const cashFlowEl = document.getElementById("cashFlow");
+      const savingsImpactEl = document.getElementById("savingsImpact");
+      const paymentImpactEl = document.getElementById("paymentImpact");
+      const guidanceEl = document.getElementById("guidance");
+
+      result.style.display = "block";
+
+      if (cost <= 0 || income <= 0) {
+        scoreEl.textContent = "Add your numbers first";
+        barFill.style.width = "0%";
+        barFill.style.background = "#16a34a";
+        stressEl.innerHTML = "";
+        cashFlowEl.innerHTML = "";
+        savingsImpactEl.innerHTML = "";
+        paymentImpactEl.innerHTML = "";
+        guidanceEl.textContent =
+          "Enter a positive ER bill amount and monthly take-home income so the calculator can estimate financial pressure.";
+        return;
+      }
+
+      const outOfPocketNow = Math.max(cost - paymentPlan, 0);
+      const monthlyRemaining = income - expenses - debt;
+      const remainingSavings = savings - outOfPocketNow;
+      const savingsImpact = savings > 0 ? (outOfPocketNow / savings) * 100 : 100;
+      const incomeImpact = (cost / income) * 100;
+      const fixedObligationRatio = income > 0 ? ((expenses + debt) / income) * 100 : 100;
+      const emergencyMonths =
+        expenses > 0 ? remainingSavings / expenses : remainingSavings > 0 ? 12 : 0;
+      const paymentPlanShare = cost > 0 ? (paymentPlan / cost) * 100 : 0;
+
+      let pressureScore = 0;
+
+      pressureScore += clamp(incomeImpact * 0.3, 0, 26);
+      pressureScore += clamp(savingsImpact * 0.24, 0, 30);
+      pressureScore += clamp(fixedObligationRatio * 0.24, 0, 24);
+
+      if (remainingSavings < 0) pressureScore += 24;
+      else if (emergencyMonths < 1 && income < 12000) pressureScore += 18;
+      else if (emergencyMonths < 3 && income < 15000) pressureScore += 10;
+      else if (emergencyMonths >= 6) pressureScore -= 8;
+
+      if (paymentPlan > 0) pressureScore += clamp(paymentPlanShare * 0.1, 2, 10);
+
+      if (monthlyRemaining < 0) pressureScore += 18;
+      else if (monthlyRemaining < income * 0.1) pressureScore += 10;
+      else if (monthlyRemaining > income * 0.35) pressureScore -= 6;
+
+      if (income >= 12000 && remainingSavings > 0 && fixedObligationRatio < 65) {
+        pressureScore -= 10;
+      }
+
+      if (income >= 20000 && remainingSavings > 0 && fixedObligationRatio < 55) {
+        pressureScore -= 12;
+      }
+
+      if (
+        incomeImpact < 12 &&
+        savingsImpact < 15 &&
+        emergencyMonths >= 6 &&
+        fixedObligationRatio < 55
+      ) {
+        pressureScore = Math.min(pressureScore, 28);
+      }
+
+      if (
+        incomeImpact < 6 &&
+        savingsImpact < 8 &&
+        emergencyMonths >= 9 &&
+        fixedObligationRatio < 45
+      ) {
+        pressureScore = Math.min(pressureScore, 15);
+      }
+
+      pressureScore = Math.round(clamp(pressureScore, 0, 100));
+
+      const level = getPressureLevel(pressureScore);
+
+      let guidance = "";
+
+      if (pressureScore <= 30) {
+        guidance =
+          `This ER bill appears financially manageable based on the numbers provided. The bill equals about ${incomeImpact.toFixed(1)}% of one month’s take-home income, and your estimated emergency cushion remains around ${Math.max(emergencyMonths, 0).toFixed(1)} months after the amount paid now.`;
+      } else if (pressureScore <= 60) {
+        guidance =
+          `This ER bill may be manageable, but it creates real budget pressure. The bill equals about ${incomeImpact.toFixed(1)}% of one month’s take-home income, and the amount paid now uses about ${savingsImpact.toFixed(1)}% of available savings.`;
+      } else {
+        guidance =
+          `This ER bill could create serious financial strain. The bill equals about ${incomeImpact.toFixed(1)}% of one month’s take-home income, and the combination of savings impact, payment-plan pressure, debt, or monthly obligations suggests you should contact billing before paying aggressively.`;
+      }
+
+      scoreEl.textContent = `${level.label} — ${pressureScore}/100`;
+      scoreEl.style.color = level.color;
+      barFill.style.width = `${pressureScore}%`;
+      barFill.style.background = level.color;
+
+      stressEl.innerHTML = `<strong>Pressure level:</strong> ${level.stress}`;
+      cashFlowEl.innerHTML = `<strong>Monthly cash flow after bills and debt:</strong> $${monthlyRemaining.toLocaleString()}`;
+      savingsImpactEl.innerHTML = `<strong>Savings after amount paid now:</strong> $${remainingSavings.toLocaleString()}`;
+      paymentImpactEl.innerHTML = `<strong>Payment-plan portion:</strong> ${paymentPlanShare.toFixed(1)}% of ER bill`;
+      guidanceEl.textContent = `${guidance} Recommended next step: ${level.action}`;
+    }
+
+    document
+      .getElementById("erButton")
+      .addEventListener("click", calculateErBill);
+  </script>
+</Layout>

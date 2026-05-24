@@ -1,0 +1,541 @@
+---
+import Layout from "../layouts/Layout.astro";
+import CalculatorPageShell from "../components/CalculatorPageShell.astro";
+import FAQSection from "../components/FAQSection.astro";
+import RelatedCalculators from "../components/RelatedCalculators.astro";
+import RelatedGuides from "../components/RelatedGuides.astro";
+import MethodologySection from "../components/MethodologySection.astro";
+import FinancialRedFlags from "../components/FinancialRedFlags.astro";
+import CalculatorAssumptions from "../components/CalculatorAssumptions.astro";
+import KeyCostCategories from "../components/KeyCostCategories.astro";
+import ReduceCostTips from "../components/ReduceCostTips.astro";
+import WhenSpendingMakesSense from "../components/WhenSpendingMakesSense.astro";
+---
+
+<Layout
+  title="Should I Spend $4,000 on a Dental Implant?"
+  description="Use this dental implant calculator to decide whether a $4,000 implant fits your income, savings, debt, insurance coverage, and monthly cash flow."
+>
+  <style>
+    .container {
+      max-width: 950px;
+      margin: 0 auto;
+      padding: 60px 20px;
+    }
+
+    .content-section {
+      max-width: 760px;
+      margin: 72px auto 0;
+    }
+
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 28px;
+      padding: 34px;
+    }
+
+    h2 {
+      margin-top: 0;
+      font-size: 2rem;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 22px;
+      margin-bottom: 28px;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 10px;
+      font-weight: 700;
+    }
+
+    input {
+      width: 100%;
+      padding: 18px;
+      border-radius: 14px;
+      border: 1px solid var(--border);
+      font-size: 1.1rem;
+      box-sizing: border-box;
+    }
+
+    button {
+      background: #0f172a;
+      color: white;
+      border: none;
+      padding: 16px 28px;
+      border-radius: 14px;
+      font-size: 1rem;
+      font-weight: 700;
+      cursor: pointer;
+      margin-top: 10px;
+      width: 100%;
+      display: block;
+    }
+
+    button:hover {
+      opacity: 0.92;
+    }
+
+    .result {
+      margin-top: 40px;
+      border: 1px solid var(--border);
+      border-radius: 24px;
+      padding: 28px;
+      display: none;
+      background: #f8fafc;
+    }
+
+    .score {
+      font-size: 3rem;
+      font-weight: 800;
+      margin-bottom: 16px;
+    }
+
+    .bar {
+      width: 100%;
+      height: 16px;
+      background: #dbe3ee;
+      border-radius: 999px;
+      overflow: hidden;
+      margin-bottom: 24px;
+    }
+
+    .fill {
+      height: 100%;
+      width: 0%;
+      background: #16a34a;
+      border-radius: 999px;
+      transition: width 0.4s ease;
+    }
+
+    .metric {
+      margin-bottom: 14px;
+      font-size: 1.05rem;
+    }
+
+    .guidance {
+      margin-top: 26px;
+      font-size: 1.15rem;
+      line-height: 1.7;
+    }
+
+    .disclaimer {
+      margin-top: 30px;
+      font-size: 0.9rem;
+      color: var(--muted);
+    }
+
+    .helper-link {
+      margin-top: 10px;
+      font-size: 0.9rem;
+    }
+
+    .helper-link a {
+      color: var(--primary);
+      font-weight: 600;
+    }
+
+    .content-section p,
+    .content-section li {
+      line-height: 1.8;
+    }
+  </style>
+
+  <div class="container">
+    <CalculatorPageShell
+      eyebrow="Medical Calculator"
+      title="Should I Spend $4,000 on a Dental Implant?"
+      description="Estimate whether a $4,000 dental implant fits your income, emergency savings, debt load, monthly expenses, insurance coverage, and dental financing options."
+    >
+      <div class="card">
+        <h2>Dental Implant Pressure Verdict</h2>
+
+        <div class="grid">
+          <div>
+            <label for="cost">Dental Implant Cost</label>
+            <input id="cost" type="number" placeholder="4000" min="0" inputmode="decimal" />
+          </div>
+
+          <div>
+            <label for="income">Monthly Take-Home Income</label>
+            <input id="income" type="number" placeholder="6000" min="0" inputmode="decimal" />
+          </div>
+
+          <div>
+            <label for="savings">Emergency Savings</label>
+            <input id="savings" type="number" placeholder="12000" min="0" inputmode="decimal" />
+          </div>
+
+          <div>
+            <label for="expenses">Monthly Expenses</label>
+            <input id="expenses" type="number" placeholder="3500" min="0" inputmode="decimal" />
+          </div>
+
+          <div>
+            <label for="debt">Monthly Debt Payments</label>
+            <input id="debt" type="number" placeholder="500" min="0" inputmode="decimal" />
+
+            <div class="helper-link">
+              <a href="/what-counts-as-debt">
+                Not sure what counts as debt? Read the debt guide
+              </a>
+            </div>
+          </div>
+
+          <div>
+            <label for="financed">Amount Financed</label>
+            <input id="financed" type="number" placeholder="0" min="0" inputmode="decimal" />
+          </div>
+        </div>
+
+        <button id="implantButton" type="button">
+          Calculate Financial Pressure
+        </button>
+
+        <div class="result" id="result">
+          <div class="score" id="score"></div>
+
+          <div class="bar">
+            <div class="fill" id="barFill"></div>
+          </div>
+
+          <div class="metric" id="stress"></div>
+          <div class="metric" id="cashFlow"></div>
+          <div class="metric" id="savingsImpact"></div>
+          <div class="metric" id="financingImpact"></div>
+
+          <div class="guidance" id="guidance"></div>
+
+          <div class="disclaimer">
+            This is a general educational estimate, not dental, medical, insurance, or financial advice.
+          </div>
+        </div>
+      </div>
+
+      <div class="content-section">
+        <h2>What a $4,000 Dental Implant Really Costs</h2>
+
+        <p>
+          A dental implant can involve more than the implant post itself. Consultations, imaging, extraction, bone grafting, abutments, crowns, sedation, follow-up visits, and insurance limits can all affect the final out-of-pocket cost.
+        </p>
+
+        <p>
+          A $4,000 dental implant may be reasonable if it protects long-term dental function and fits your current financial picture. It becomes more stressful when the procedure drains emergency savings, requires high-interest financing, or competes with rent, groceries, insurance, and debt payments.
+        </p>
+      </div>
+
+      <WhenSpendingMakesSense
+        title="When Paying for a Dental Implant Makes Sense"
+        items={[
+          "The implant prevents longer-term dental problems or protects basic chewing function.",
+          "You can pay without draining your emergency savings completely.",
+          "Your monthly cash flow remains stable after the procedure.",
+          "You understand whether extraction, bone grafting, abutment, and crown costs are included.",
+          "You have compared the implant against bridges, partial dentures, or other realistic options.",
+        ]}
+      />
+
+      <div class="content-section">
+        <h2>When You Should Slow Down Before Committing</h2>
+
+        <p>
+          You may want to slow down before paying if the estimate is unclear, the procedure requires multiple phases, or the financing terms are hard to understand.
+        </p>
+
+        <p>
+          Implant pricing can vary significantly. Before draining savings or accepting financing, ask for a written treatment plan, confirm what each phase costs, check insurance maximums, and consider whether a second opinion could clarify the best path.
+        </p>
+      </div>
+
+      <KeyCostCategories
+        items={[
+          {
+            title: "Implant post and surgical placement",
+            description:
+              "The implant post and placement procedure are major cost drivers, especially if a specialist is involved.",
+          },
+          {
+            title: "Abutment and crown",
+            description:
+              "The visible tooth replacement often has separate costs, and those charges may not be included in the first quote.",
+          },
+          {
+            title: "Extraction or bone grafting",
+            description:
+              "Some implant cases require extraction, grafting, imaging, or additional prep work before the implant can be placed.",
+          },
+          {
+            title: "Insurance and financing limits",
+            description:
+              "Dental insurance may cover only part of the treatment, and financing terms can change the real cost over time.",
+          },
+        ]}
+      />
+
+      <ReduceCostTips
+        items={[
+          "Ask for a complete written treatment plan with every phase included.",
+          "Confirm whether the quote includes the implant post, abutment, crown, imaging, and follow-up visits.",
+          "Compare at least two providers if the procedure is not urgent.",
+          "Ask whether a bridge, partial denture, or staged treatment plan is appropriate.",
+          "Check HSA or FSA eligibility before paying out of pocket.",
+          "Avoid high-interest dental financing when possible.",
+        ]}
+      />
+
+      <FinancialRedFlags
+        items={[
+          "The provider cannot clearly explain the full treatment sequence and total cost.",
+          "The implant would drain most of your emergency savings.",
+          "You need high-interest debt to afford the procedure.",
+          "You are unsure whether the crown, abutment, extraction, or grafting are included.",
+          "The payment would make rent, utilities, groceries, insurance, or debt payments difficult.",
+        ]}
+      />
+
+      <CalculatorAssumptions
+        items={[
+          "The calculator treats a dental implant as a medically important but often planned dental expense.",
+          "Monthly income means take-home pay after taxes and payroll deductions.",
+          "Monthly debt payments include credit cards, car loans, student loans, personal loans, and other required debt payments.",
+          "The calculator assumes financed dental balances still create financial pressure even if payments are delayed.",
+          "The estimate does not evaluate dental urgency, provider quality, insurance disputes, treatment alternatives, or medical outcomes.",
+        ]}
+      />
+
+      <FAQSection
+        title="Dental Implant Spending FAQ"
+        faqs={[
+          {
+            question: "Is $4,000 too much for a dental implant?",
+            answer:
+              "It depends on whether the quote includes the implant post, abutment, crown, imaging, extraction, bone grafting, and follow-up care. A $4,000 implant can be realistic, but the final cost should be confirmed in writing.",
+          },
+          {
+            question: "Should I finance a dental implant?",
+            answer:
+              "Financing may help if the payment fits your budget and the terms are clear. Be careful with high APRs, deferred interest, or payment plans that make other essential bills harder to cover.",
+          },
+          {
+            question: "Should I use emergency savings for a dental implant?",
+            answer:
+              "Using savings may be safer than high-interest debt, but draining your emergency fund can create risk. The safer choice depends on how much cushion remains after the procedure.",
+          },
+          {
+            question: "Why are dental implants so expensive?",
+            answer:
+              "Implants can involve surgery, imaging, specialist work, custom parts, crowns, lab fees, follow-up care, and sometimes bone grafting or extraction. The total cost often reflects several phases of treatment.",
+          },
+          {
+            question: "Are there cheaper alternatives to a dental implant?",
+            answer:
+              "Sometimes. Bridges, partial dentures, staged treatment, or different providers may reduce upfront cost. A dentist can explain which options are medically appropriate for your situation.",
+          },
+        ]}
+      />
+
+      <MethodologySection category="medical spending" updated="May 2026" />
+
+      <RelatedGuides
+        guides={[
+          {
+            title: "Medical Calculators",
+            href: "/medical-calculators",
+            description:
+              "Browse medical spending calculators for dental costs, procedures, bills, and healthcare affordability decisions.",
+          },
+          {
+            title: "What Counts as Debt?",
+            href: "/what-counts-as-debt",
+            description:
+              "Understand which monthly obligations should be included when estimating financial pressure.",
+          },
+        ]}
+      />
+
+      <RelatedCalculators
+        calculators={[
+          {
+            category: "Medical",
+            title: "Should I Spend $5,000 on LASIK?",
+            href: "/should-i-spend-5000-on-lasik",
+          },
+          {
+            category: "Medical",
+            title: "Should I Spend $2,500 on an ER Bill?",
+            href: "/should-i-spend-2500-on-an-er-bill",
+          },
+          {
+            category: "Medical",
+            title: "Should I Spend $3,000 on a Root Canal?",
+            href: "/should-i-spend-3000-on-a-root-canal",
+          },
+          {
+            category: "Medical",
+            title: "Browse Medical Calculators",
+            href: "/medical-calculators",
+          },
+        ]}
+      />
+    </CalculatorPageShell>
+  </div>
+
+  <script is:inline>
+    const clamp = (value, min, max) => Math.min(Math.max(value, min), max);
+
+    const getNumber = (id) => {
+      const rawValue = document.getElementById(id)?.value;
+      const value = Number(rawValue);
+      return Number.isFinite(value) && value >= 0 ? value : 0;
+    };
+
+    function getPressureLevel(score) {
+      if (score <= 30) {
+        return {
+          label: "Low Pressure",
+          stress: "Low pressure",
+          color: "#16a34a",
+          action: "Proceed only after confirming the full treatment plan, insurance limits, and total implant cost.",
+        };
+      }
+
+      if (score <= 60) {
+        return {
+          label: "Moderate Pressure",
+          stress: "Moderate pressure",
+          color: "#ca8a04",
+          action: "Compare quotes, confirm every phase of treatment, and review financing carefully before committing.",
+        };
+      }
+
+      return {
+        label: "High Pressure",
+        stress: "High pressure",
+        color: "#dc2626",
+        action: "Avoid aggressive financing, request a full written estimate, and protect essential monthly bills first.",
+      };
+    }
+
+    function calculateImplant() {
+      const cost = getNumber("cost");
+      const income = getNumber("income");
+      const savings = getNumber("savings");
+      const expenses = getNumber("expenses");
+      const debt = getNumber("debt");
+      const financed = getNumber("financed");
+
+      const result = document.getElementById("result");
+      const scoreEl = document.getElementById("score");
+      const barFill = document.getElementById("barFill");
+      const stressEl = document.getElementById("stress");
+      const cashFlowEl = document.getElementById("cashFlow");
+      const savingsImpactEl = document.getElementById("savingsImpact");
+      const financingImpactEl = document.getElementById("financingImpact");
+      const guidanceEl = document.getElementById("guidance");
+
+      result.style.display = "block";
+
+      if (cost <= 0 || income <= 0) {
+        scoreEl.textContent = "Add your numbers first";
+        barFill.style.width = "0%";
+        barFill.style.background = "#16a34a";
+        stressEl.innerHTML = "";
+        cashFlowEl.innerHTML = "";
+        savingsImpactEl.innerHTML = "";
+        financingImpactEl.innerHTML = "";
+        guidanceEl.textContent =
+          "Enter a positive dental implant cost and monthly take-home income so the calculator can estimate financial pressure.";
+        return;
+      }
+
+      const outOfPocket = Math.max(cost - financed, 0);
+      const monthlyRemaining = income - expenses - debt;
+      const remainingSavings = savings - outOfPocket;
+      const savingsImpact = savings > 0 ? (outOfPocket / savings) * 100 : 100;
+      const incomeImpact = (cost / income) * 100;
+      const fixedObligationRatio = income > 0 ? ((expenses + debt) / income) * 100 : 100;
+      const emergencyMonths =
+        expenses > 0 ? remainingSavings / expenses : remainingSavings > 0 ? 12 : 0;
+      const financedShare = cost > 0 ? (financed / cost) * 100 : 0;
+
+      let pressureScore = 0;
+
+      pressureScore += clamp(incomeImpact * 0.3, 0, 30);
+      pressureScore += clamp(savingsImpact * 0.24, 0, 30);
+      pressureScore += clamp(fixedObligationRatio * 0.24, 0, 24);
+
+      if (remainingSavings < 0) pressureScore += 24;
+      else if (emergencyMonths < 1 && income < 12000) pressureScore += 18;
+      else if (emergencyMonths < 3 && income < 15000) pressureScore += 10;
+      else if (emergencyMonths >= 6) pressureScore -= 8;
+
+      if (financed > 0) pressureScore += clamp(financedShare * 0.15, 4, 15);
+
+      if (monthlyRemaining < 0) pressureScore += 18;
+      else if (monthlyRemaining < income * 0.1) pressureScore += 10;
+      else if (monthlyRemaining > income * 0.35) pressureScore -= 6;
+
+      if (income >= 12000 && remainingSavings > 0 && fixedObligationRatio < 65) {
+        pressureScore -= 10;
+      }
+
+      if (income >= 20000 && remainingSavings > 0 && fixedObligationRatio < 55) {
+        pressureScore -= 12;
+      }
+
+      if (
+        incomeImpact < 12 &&
+        savingsImpact < 15 &&
+        emergencyMonths >= 6 &&
+        fixedObligationRatio < 55
+      ) {
+        pressureScore = Math.min(pressureScore, 28);
+      }
+
+      if (
+        incomeImpact < 6 &&
+        savingsImpact < 8 &&
+        emergencyMonths >= 9 &&
+        fixedObligationRatio < 45
+      ) {
+        pressureScore = Math.min(pressureScore, 15);
+      }
+
+      pressureScore = Math.round(clamp(pressureScore, 0, 100));
+
+      const level = getPressureLevel(pressureScore);
+
+      let guidance = "";
+
+      if (pressureScore <= 30) {
+        guidance =
+          `This dental implant expense appears financially manageable based on the numbers provided. The procedure equals about ${incomeImpact.toFixed(1)}% of one month’s take-home income, and your estimated emergency cushion remains around ${Math.max(emergencyMonths, 0).toFixed(1)} months after the out-of-pocket cost.`;
+      } else if (pressureScore <= 60) {
+        guidance =
+          `This dental implant expense may work, but it creates noticeable financial pressure. The procedure equals about ${incomeImpact.toFixed(1)}% of one month’s take-home income, and the out-of-pocket portion uses about ${savingsImpact.toFixed(1)}% of available savings.`;
+      } else {
+        guidance =
+          `This dental implant expense could create real financial strain. The procedure equals about ${incomeImpact.toFixed(1)}% of one month’s take-home income, and the combination of savings impact, financing, debt, or monthly obligations suggests you should slow down before committing aggressively.`;
+      }
+
+      scoreEl.textContent = `${level.label} — ${pressureScore}/100`;
+      scoreEl.style.color = level.color;
+      barFill.style.width = `${pressureScore}%`;
+      barFill.style.background = level.color;
+
+      stressEl.innerHTML = `<strong>Pressure level:</strong> ${level.stress}`;
+      cashFlowEl.innerHTML = `<strong>Monthly cash flow after bills and debt:</strong> $${monthlyRemaining.toLocaleString()}`;
+      savingsImpactEl.innerHTML = `<strong>Savings after out-of-pocket implant cost:</strong> $${remainingSavings.toLocaleString()}`;
+      financingImpactEl.innerHTML = `<strong>Financed portion:</strong> ${financedShare.toFixed(1)}% of implant cost`;
+      guidanceEl.textContent = `${guidance} Recommended next step: ${level.action}`;
+    }
+
+    document
+      .getElementById("implantButton")
+      .addEventListener("click", calculateImplant);
+  </script>
+</Layout>

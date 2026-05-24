@@ -1,0 +1,554 @@
+---
+import Layout from "../layouts/Layout.astro";
+import CalculatorPageShell from "../components/CalculatorPageShell.astro";
+import FAQSection from "../components/FAQSection.astro";
+import RelatedCalculators from "../components/RelatedCalculators.astro";
+import RelatedGuides from "../components/RelatedGuides.astro";
+import MethodologySection from "../components/MethodologySection.astro";
+import FinancialRedFlags from "../components/FinancialRedFlags.astro";
+import CalculatorAssumptions from "../components/CalculatorAssumptions.astro";
+import KeyCostCategories from "../components/KeyCostCategories.astro";
+import ReduceCostTips from "../components/ReduceCostTips.astro";
+import WhenSpendingMakesSense from "../components/WhenSpendingMakesSense.astro";
+---
+
+<Layout
+  title="Should I Spend $20,000 on a Kitchen Remodel?"
+  description="Use this kitchen remodel calculator to decide whether a $20,000 renovation fits your income, savings, debt, financing, home value, and monthly cash flow."
+>
+  <style>
+    .container {
+      max-width: 950px;
+      margin: 0 auto;
+      padding: 60px 20px;
+    }
+
+    .content-section {
+      max-width: 760px;
+      margin: 72px auto 0;
+    }
+
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 28px;
+      padding: 34px;
+    }
+
+    h2 {
+      margin-top: 0;
+      font-size: 2rem;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 22px;
+      margin-bottom: 28px;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 10px;
+      font-weight: 700;
+    }
+
+    input {
+      width: 100%;
+      padding: 18px;
+      border-radius: 14px;
+      border: 1px solid var(--border);
+      font-size: 1.1rem;
+      box-sizing: border-box;
+    }
+
+    button {
+      background: #0f172a;
+      color: white;
+      border: none;
+      padding: 16px 28px;
+      border-radius: 14px;
+      font-size: 1rem;
+      font-weight: 700;
+      cursor: pointer;
+      margin-top: 10px;
+      width: 100%;
+      display: block;
+    }
+
+    button:hover {
+      opacity: 0.92;
+    }
+
+    .result {
+      margin-top: 40px;
+      border: 1px solid var(--border);
+      border-radius: 24px;
+      padding: 28px;
+      display: none;
+      background: #f8fafc;
+    }
+
+    .score {
+      font-size: 3rem;
+      font-weight: 800;
+      margin-bottom: 16px;
+    }
+
+    .bar {
+      width: 100%;
+      height: 16px;
+      background: #dbe3ee;
+      border-radius: 999px;
+      overflow: hidden;
+      margin-bottom: 24px;
+    }
+
+    .fill {
+      height: 100%;
+      width: 0%;
+      background: #16a34a;
+      border-radius: 999px;
+      transition: width 0.4s ease;
+    }
+
+    .metric {
+      margin-bottom: 14px;
+      font-size: 1.05rem;
+    }
+
+    .guidance {
+      margin-top: 26px;
+      font-size: 1.15rem;
+      line-height: 1.7;
+    }
+
+    .disclaimer {
+      margin-top: 30px;
+      font-size: 0.9rem;
+      color: var(--muted);
+    }
+
+    .helper-link {
+      margin-top: 10px;
+      font-size: 0.9rem;
+    }
+
+    .helper-link a {
+      color: var(--primary);
+      font-weight: 600;
+    }
+
+    .content-section p,
+    .content-section li {
+      line-height: 1.8;
+    }
+  </style>
+
+  <div class="container">
+    <CalculatorPageShell
+      eyebrow="Home Improvement Calculator"
+      title="Should I Spend $20,000 on a Kitchen Remodel?"
+      description="Estimate whether a $20,000 kitchen remodel fits your income, emergency savings, debt load, monthly expenses, home value, and financing options."
+    >
+      <div class="card">
+        <h2>Kitchen Remodel Pressure Verdict</h2>
+
+        <div class="grid">
+          <div>
+            <label for="cost">Kitchen Remodel Cost</label>
+            <input id="cost" type="number" placeholder="20000" min="0" inputmode="decimal" />
+          </div>
+
+          <div>
+            <label for="income">Monthly Take-Home Income</label>
+            <input id="income" type="number" placeholder="9000" min="0" inputmode="decimal" />
+          </div>
+
+          <div>
+            <label for="savings">Emergency Savings</label>
+            <input id="savings" type="number" placeholder="30000" min="0" inputmode="decimal" />
+          </div>
+
+          <div>
+            <label for="expenses">Monthly Expenses</label>
+            <input id="expenses" type="number" placeholder="5500" min="0" inputmode="decimal" />
+          </div>
+
+          <div>
+            <label for="debt">Monthly Debt Payments</label>
+            <input id="debt" type="number" placeholder="900" min="0" inputmode="decimal" />
+
+            <div class="helper-link">
+              <a href="/what-counts-as-debt">
+                Not sure what counts as debt? Read the debt guide
+              </a>
+            </div>
+          </div>
+
+          <div>
+            <label for="homeValue">Estimated Home Value</label>
+            <input id="homeValue" type="number" placeholder="350000" min="0" inputmode="decimal" />
+          </div>
+
+          <div>
+            <label for="financed">Amount Financed</label>
+            <input id="financed" type="number" placeholder="0" min="0" inputmode="decimal" />
+          </div>
+        </div>
+
+        <button id="kitchenButton" type="button">
+          Calculate Financial Pressure
+        </button>
+
+        <div class="result" id="result">
+          <div class="score" id="score"></div>
+
+          <div class="bar">
+            <div class="fill" id="barFill"></div>
+          </div>
+
+          <div class="metric" id="stress"></div>
+          <div class="metric" id="cashFlow"></div>
+          <div class="metric" id="savingsImpact"></div>
+          <div class="metric" id="homeValueImpact"></div>
+
+          <div class="guidance" id="guidance"></div>
+
+          <div class="disclaimer">
+            This is a general educational estimate, not contractor, real estate, appraisal, lending, or financial advice.
+          </div>
+        </div>
+      </div>
+
+      <div class="content-section">
+        <h2>What a $20,000 Kitchen Remodel Really Costs</h2>
+
+        <p>
+          A kitchen remodel can include cabinets, countertops, flooring, lighting, appliances, plumbing, electrical work, permits, demolition, disposal, backsplash, paint, trim, and unexpected repairs behind walls or under floors.
+        </p>
+
+        <p>
+          A $20,000 kitchen remodel may be reasonable if it improves daily use, fits the home’s value, and does not damage emergency savings. It becomes more stressful when the project depends on high-interest debt, grows beyond the original scope, or competes with urgent home repairs.
+        </p>
+      </div>
+
+      <WhenSpendingMakesSense
+        title="When Paying for a Kitchen Remodel Makes Sense"
+        items={[
+          "The kitchen is outdated, inefficient, damaged, or limiting normal daily use.",
+          "The remodel budget fits the value of the home and neighborhood.",
+          "You can cover the project without wiping out emergency savings.",
+          "The estimate includes cabinets, counters, appliances, labor, permits, and contingency money.",
+          "The project improves function and long-term enjoyment without creating serious debt pressure.",
+        ]}
+      />
+
+      <div class="content-section">
+        <h2>When You Should Slow Down Before Starting</h2>
+
+        <p>
+          Slow down if the remodel is mostly cosmetic, the quote does not include a contingency, or financing would create a monthly payment that makes the rest of your budget tight.
+        </p>
+
+        <p>
+          Before committing, compare bids, separate must-haves from upgrades, price materials carefully, and leave room for surprises. Kitchen remodels often grow when plumbing, electrical, flooring, or layout issues appear during demolition.
+        </p>
+      </div>
+
+      <KeyCostCategories
+        items={[
+          {
+            title: "Cabinets and countertops",
+            description:
+              "Cabinetry, counters, hardware, and installation often drive a large share of the kitchen remodel budget.",
+          },
+          {
+            title: "Appliances and fixtures",
+            description:
+              "Refrigerators, ranges, dishwashers, sinks, faucets, lighting, and ventilation can quickly expand the total cost.",
+          },
+          {
+            title: "Labor, permits, and hidden work",
+            description:
+              "Electrical, plumbing, flooring, demolition, disposal, permits, and repairs behind walls can add meaningful cost.",
+          },
+          {
+            title: "Financing and resale fit",
+            description:
+              "A remodel should fit both monthly cash flow and the value of the home rather than overbuilding for the neighborhood.",
+          },
+        ]}
+      />
+
+      <ReduceCostTips
+        items={[
+          "Keep the existing kitchen layout if plumbing and electrical moves are expensive.",
+          "Compare cabinet refacing, painting, or partial replacement before buying full custom cabinets.",
+          "Choose one or two premium upgrades instead of upgrading every category.",
+          "Keep a contingency fund for hidden electrical, plumbing, or flooring issues.",
+          "Avoid high-interest financing when possible.",
+          "Get multiple written bids with labor, materials, permits, and cleanup clearly separated.",
+        ]}
+      />
+
+      <FinancialRedFlags
+        items={[
+          "The remodel would drain nearly all emergency savings.",
+          "The project depends on high-interest credit cards or unclear contractor financing.",
+          "The budget does not include a contingency for surprises.",
+          "The remodel is mostly cosmetic while urgent repairs remain unfunded.",
+          "The monthly payment would make mortgage, utilities, groceries, insurance, or debt payments difficult.",
+        ]}
+      />
+
+      <CalculatorAssumptions
+        items={[
+          "The calculator treats a kitchen remodel as a planned home improvement rather than an emergency repair.",
+          "Monthly income means take-home pay after taxes and payroll deductions.",
+          "Estimated home value is used only as a rough check against overbuilding.",
+          "Monthly debt payments include credit cards, car loans, student loans, personal loans, and other required debt payments.",
+          "The estimate does not evaluate contractor quality, resale value, appraisal impact, permits, building codes, or design choices.",
+        ]}
+      />
+
+      <FAQSection
+        title="Kitchen Remodel Spending FAQ"
+        faqs={[
+          {
+            question: "Is $20,000 too much for a kitchen remodel?",
+            answer:
+              "It depends on kitchen size, materials, labor costs, appliances, layout changes, and local pricing. A $20,000 kitchen remodel can be reasonable for a modest renovation, but the scope should be clearly defined.",
+          },
+          {
+            question: "Should I finance a kitchen remodel?",
+            answer:
+              "Financing may make sense if the payment fits comfortably and the remodel improves long-term function. Be careful with high interest, long repayment terms, or payments that make the rest of your budget tight.",
+          },
+          {
+            question: "How much should I spend on a kitchen remodel?",
+            answer:
+              "A safe remodel budget should fit your savings, income, debt load, and home value. The project should also leave room for unexpected costs instead of using every available dollar.",
+          },
+          {
+            question: "Does a kitchen remodel increase home value?",
+            answer:
+              "It can, but not always dollar-for-dollar. Function, market conditions, material choices, and whether the remodel fits the home and neighborhood all matter.",
+          },
+          {
+            question: "Should I use emergency savings for a kitchen remodel?",
+            answer:
+              "Because kitchen remodels are usually planned projects, draining emergency savings is risky. It is usually safer to preserve a cushion and scale the project to fit available cash.",
+          },
+        ]}
+      />
+
+      <MethodologySection category="home improvement spending" updated="May 2026" />
+
+      <RelatedGuides
+        guides={[
+          {
+            title: "Home Improvement Calculators",
+            href: "/home-improvement-calculators",
+            description:
+              "Browse home repair and renovation calculators for urgent repairs, upgrades, and major homeowner decisions.",
+          },
+          {
+            title: "What Counts as Debt?",
+            href: "/what-counts-as-debt",
+            description:
+              "Understand which monthly obligations should be included when estimating financial pressure.",
+          },
+        ]}
+      />
+
+      <RelatedCalculators
+        calculators={[
+          {
+            category: "Home Improvement",
+            title: "Should I Spend $10,000 on a Roof Replacement?",
+            href: "/should-i-spend-10000-on-a-roof-replacement",
+          },
+          {
+            category: "Home Improvement",
+            title: "Should I Spend $8,000 on HVAC Replacement?",
+            href: "/should-i-spend-8000-on-hvac-replacement",
+          },
+          {
+            category: "Home Improvement",
+            title: "Should I Spend $15,000 on Foundation Repair?",
+            href: "/should-i-spend-15000-on-foundation-repair",
+          },
+          {
+            category: "Home Improvement",
+            title: "Browse Home Improvement Calculators",
+            href: "/home-improvement-calculators",
+          },
+        ]}
+      />
+    </CalculatorPageShell>
+  </div>
+
+  <script is:inline>
+    const clamp = (value, min, max) => Math.min(Math.max(value, min), max);
+
+    const getNumber = (id) => {
+      const rawValue = document.getElementById(id)?.value;
+      const value = Number(rawValue);
+      return Number.isFinite(value) && value >= 0 ? value : 0;
+    };
+
+    function getPressureLevel(score) {
+      if (score <= 30) {
+        return {
+          label: "Low Pressure",
+          stress: "Low pressure",
+          color: "#16a34a",
+          action: "Proceed only after confirming scope, comparing bids, and keeping a remodel contingency.",
+        };
+      }
+
+      if (score <= 60) {
+        return {
+          label: "Moderate Pressure",
+          stress: "Moderate pressure",
+          color: "#ca8a04",
+          action: "Trim upgrades, protect emergency savings, and avoid financing that strains monthly cash flow.",
+        };
+      }
+
+      return {
+        label: "High Pressure",
+        stress: "High pressure",
+        color: "#dc2626",
+        action: "Scale back the remodel, delay the project, or save more before committing.",
+      };
+    }
+
+    function calculateKitchen() {
+      const cost = getNumber("cost");
+      const income = getNumber("income");
+      const savings = getNumber("savings");
+      const expenses = getNumber("expenses");
+      const debt = getNumber("debt");
+      const homeValue = getNumber("homeValue");
+      const financed = getNumber("financed");
+
+      const result = document.getElementById("result");
+      const scoreEl = document.getElementById("score");
+      const barFill = document.getElementById("barFill");
+      const stressEl = document.getElementById("stress");
+      const cashFlowEl = document.getElementById("cashFlow");
+      const savingsImpactEl = document.getElementById("savingsImpact");
+      const homeValueImpactEl = document.getElementById("homeValueImpact");
+      const guidanceEl = document.getElementById("guidance");
+
+      result.style.display = "block";
+
+      if (cost <= 0 || income <= 0) {
+        scoreEl.textContent = "Add your numbers first";
+        barFill.style.width = "0%";
+        barFill.style.background = "#16a34a";
+        stressEl.innerHTML = "";
+        cashFlowEl.innerHTML = "";
+        savingsImpactEl.innerHTML = "";
+        homeValueImpactEl.innerHTML = "";
+        guidanceEl.textContent =
+          "Enter a positive kitchen remodel cost and monthly take-home income so the calculator can estimate financial pressure.";
+        return;
+      }
+
+      const outOfPocket = Math.max(cost - financed, 0);
+      const monthlyRemaining = income - expenses - debt;
+      const remainingSavings = savings - outOfPocket;
+      const savingsImpact = savings > 0 ? (outOfPocket / savings) * 100 : 100;
+      const incomeImpact = (cost / income) * 100;
+      const fixedObligationRatio = income > 0 ? ((expenses + debt) / income) * 100 : 100;
+      const emergencyMonths =
+        expenses > 0 ? remainingSavings / expenses : remainingSavings > 0 ? 12 : 0;
+      const financedShare = cost > 0 ? (financed / cost) * 100 : 0;
+      const homeValueRatio = homeValue > 0 ? (cost / homeValue) * 100 : 0;
+
+      let pressureScore = 0;
+
+      pressureScore += clamp(incomeImpact * 0.24, 0, 30);
+      pressureScore += clamp(savingsImpact * 0.26, 0, 34);
+      pressureScore += clamp(fixedObligationRatio * 0.22, 0, 24);
+
+      if (remainingSavings < 0) pressureScore += 30;
+      else if (emergencyMonths < 1 && income < 12000) pressureScore += 22;
+      else if (emergencyMonths < 3 && income < 15000) pressureScore += 14;
+      else if (emergencyMonths >= 6) pressureScore -= 8;
+
+      if (financed > 0) pressureScore += clamp(financedShare * 0.16, 4, 18);
+
+      if (homeValue > 0 && homeValueRatio > 12) pressureScore += 10;
+      else if (homeValue > 0 && homeValueRatio > 8) pressureScore += 6;
+      else if (homeValue > 0 && homeValueRatio <= 5) pressureScore -= 4;
+
+      if (monthlyRemaining < 0) pressureScore += 18;
+      else if (monthlyRemaining < income * 0.1) pressureScore += 10;
+      else if (monthlyRemaining > income * 0.35) pressureScore -= 6;
+
+      if (income >= 12000 && remainingSavings > 0 && fixedObligationRatio < 65) {
+        pressureScore -= 8;
+      }
+
+      if (income >= 20000 && remainingSavings > 0 && fixedObligationRatio < 55) {
+        pressureScore -= 12;
+      }
+
+      if (
+        incomeImpact < 20 &&
+        savingsImpact < 20 &&
+        emergencyMonths >= 6 &&
+        fixedObligationRatio < 55 &&
+        homeValueRatio <= 8
+      ) {
+        pressureScore = Math.min(pressureScore, 30);
+      }
+
+      if (
+        incomeImpact < 10 &&
+        savingsImpact < 10 &&
+        emergencyMonths >= 9 &&
+        fixedObligationRatio < 45 &&
+        homeValueRatio <= 5
+      ) {
+        pressureScore = Math.min(pressureScore, 16);
+      }
+
+      pressureScore = Math.round(clamp(pressureScore, 0, 100));
+
+      const level = getPressureLevel(pressureScore);
+
+      let guidance = "";
+
+      if (pressureScore <= 30) {
+        guidance =
+          `This kitchen remodel appears financially manageable based on the numbers provided. The project equals about ${incomeImpact.toFixed(1)}% of one month’s take-home income, and your estimated emergency cushion remains around ${Math.max(emergencyMonths, 0).toFixed(1)} months after the out-of-pocket cost.`;
+      } else if (pressureScore <= 60) {
+        guidance =
+          `This kitchen remodel may work, but it creates noticeable financial pressure. The project equals about ${incomeImpact.toFixed(1)}% of one month’s take-home income, and the out-of-pocket portion uses about ${savingsImpact.toFixed(1)}% of available savings.`;
+      } else {
+        guidance =
+          `This kitchen remodel could create real financial strain. The project equals about ${incomeImpact.toFixed(1)}% of one month’s take-home income, and the combination of savings impact, financing, debt, or home-value fit suggests you should scale back or wait.`;
+      }
+
+      scoreEl.textContent = `${level.label} — ${pressureScore}/100`;
+      scoreEl.style.color = level.color;
+      barFill.style.width = `${pressureScore}%`;
+      barFill.style.background = level.color;
+
+      stressEl.innerHTML = `<strong>Pressure level:</strong> ${level.stress}`;
+      cashFlowEl.innerHTML = `<strong>Monthly cash flow after bills and debt:</strong> $${monthlyRemaining.toLocaleString()}`;
+      savingsImpactEl.innerHTML = `<strong>Savings after out-of-pocket remodel cost:</strong> $${remainingSavings.toLocaleString()}`;
+      homeValueImpactEl.innerHTML = `<strong>Project cost as share of home value:</strong> ${homeValueRatio.toFixed(1)}%`;
+      guidanceEl.textContent = `${guidance} Recommended next step: ${level.action}`;
+    }
+
+    document
+      .getElementById("kitchenButton")
+      .addEventListener("click", calculateKitchen);
+  </script>
+</Layout>

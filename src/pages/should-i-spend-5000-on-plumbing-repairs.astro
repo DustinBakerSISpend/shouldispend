@@ -1,0 +1,552 @@
+---
+import Layout from "../layouts/Layout.astro";
+import CalculatorPageShell from "../components/CalculatorPageShell.astro";
+import FAQSection from "../components/FAQSection.astro";
+import RelatedCalculators from "../components/RelatedCalculators.astro";
+import RelatedGuides from "../components/RelatedGuides.astro";
+import MethodologySection from "../components/MethodologySection.astro";
+import FinancialRedFlags from "../components/FinancialRedFlags.astro";
+import CalculatorAssumptions from "../components/CalculatorAssumptions.astro";
+import KeyCostCategories from "../components/KeyCostCategories.astro";
+import ReduceCostTips from "../components/ReduceCostTips.astro";
+import WhenSpendingMakesSense from "../components/WhenSpendingMakesSense.astro";
+---
+
+<Layout
+  title="Should I Spend $5,000 on Plumbing Repairs?"
+  description="Use this plumbing repair calculator to decide whether a $5,000 plumbing project fits your income, savings, debt, insurance help, and monthly cash flow."
+>
+  <style>
+    .container {
+      max-width: 950px;
+      margin: 0 auto;
+      padding: 60px 20px;
+    }
+
+    .content-section {
+      max-width: 760px;
+      margin: 72px auto 0;
+    }
+
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 28px;
+      padding: 34px;
+    }
+
+    h2 {
+      margin-top: 0;
+      font-size: 2rem;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 22px;
+      margin-bottom: 28px;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 10px;
+      font-weight: 700;
+    }
+
+    input {
+      width: 100%;
+      padding: 18px;
+      border-radius: 14px;
+      border: 1px solid var(--border);
+      font-size: 1.1rem;
+      box-sizing: border-box;
+    }
+
+    button {
+      background: #0f172a;
+      color: white;
+      border: none;
+      padding: 16px 28px;
+      border-radius: 14px;
+      font-size: 1rem;
+      font-weight: 700;
+      cursor: pointer;
+      margin-top: 10px;
+      width: 100%;
+      display: block;
+    }
+
+    button:hover {
+      opacity: 0.92;
+    }
+
+    .result {
+      margin-top: 40px;
+      border: 1px solid var(--border);
+      border-radius: 24px;
+      padding: 28px;
+      display: none;
+      background: #f8fafc;
+    }
+
+    .score {
+      font-size: 3rem;
+      font-weight: 800;
+      margin-bottom: 16px;
+    }
+
+    .bar {
+      width: 100%;
+      height: 16px;
+      background: #dbe3ee;
+      border-radius: 999px;
+      overflow: hidden;
+      margin-bottom: 24px;
+    }
+
+    .fill {
+      height: 100%;
+      width: 0%;
+      background: #16a34a;
+      border-radius: 999px;
+      transition: width 0.4s ease;
+    }
+
+    .metric {
+      margin-bottom: 14px;
+      font-size: 1.05rem;
+    }
+
+    .guidance {
+      margin-top: 26px;
+      font-size: 1.15rem;
+      line-height: 1.7;
+    }
+
+    .disclaimer {
+      margin-top: 30px;
+      font-size: 0.9rem;
+      color: var(--muted);
+    }
+
+    .helper-link {
+      margin-top: 10px;
+      font-size: 0.9rem;
+    }
+
+    .helper-link a {
+      color: var(--primary);
+      font-weight: 600;
+    }
+
+    .content-section p,
+    .content-section li {
+      line-height: 1.8;
+    }
+  </style>
+
+  <div class="container">
+    <CalculatorPageShell
+      eyebrow="Home Improvement Calculator"
+      title="Should I Spend $5,000 on Plumbing Repairs?"
+      description="Estimate whether a $5,000 plumbing repair fits your income, emergency savings, debt load, monthly expenses, insurance help, and financing options."
+    >
+      <div class="card">
+        <h2>Plumbing Repair Pressure Verdict</h2>
+
+        <div class="grid">
+          <div>
+            <label for="cost">Plumbing Repair Cost</label>
+            <input id="cost" type="number" placeholder="5000" min="0" inputmode="decimal" />
+          </div>
+
+          <div>
+            <label for="income">Monthly Take-Home Income</label>
+            <input id="income" type="number" placeholder="7000" min="0" inputmode="decimal" />
+          </div>
+
+          <div>
+            <label for="savings">Emergency Savings</label>
+            <input id="savings" type="number" placeholder="12000" min="0" inputmode="decimal" />
+          </div>
+
+          <div>
+            <label for="expenses">Monthly Expenses</label>
+            <input id="expenses" type="number" placeholder="4500" min="0" inputmode="decimal" />
+          </div>
+
+          <div>
+            <label for="debt">Monthly Debt Payments</label>
+            <input id="debt" type="number" placeholder="700" min="0" inputmode="decimal" />
+
+            <div class="helper-link">
+              <a href="/what-counts-as-debt">
+                Not sure what counts as debt? Read the debt guide
+              </a>
+            </div>
+          </div>
+
+          <div>
+            <label for="insurance">Insurance or Reimbursement Help</label>
+            <input id="insurance" type="number" placeholder="0" min="0" inputmode="decimal" />
+          </div>
+
+          <div>
+            <label for="financed">Amount Financed</label>
+            <input id="financed" type="number" placeholder="0" min="0" inputmode="decimal" />
+          </div>
+        </div>
+
+        <button id="plumbingButton" type="button">
+          Calculate Financial Pressure
+        </button>
+
+        <div class="result" id="result">
+          <div class="score" id="score"></div>
+
+          <div class="bar">
+            <div class="fill" id="barFill"></div>
+          </div>
+
+          <div class="metric" id="stress"></div>
+          <div class="metric" id="cashFlow"></div>
+          <div class="metric" id="savingsImpact"></div>
+          <div class="metric" id="financingImpact"></div>
+
+          <div class="guidance" id="guidance"></div>
+
+          <div class="disclaimer">
+            This is a general educational estimate, not plumbing, contractor, insurance, legal, or financial advice.
+          </div>
+        </div>
+      </div>
+
+      <div class="content-section">
+        <h2>What a $5,000 Plumbing Repair Really Costs</h2>
+
+        <p>
+          Plumbing repairs can become expensive quickly when the problem involves hidden leaks, sewer lines, water damage, pipe replacement, excavation, wall access, cleanup, permits, or emergency service calls.
+        </p>
+
+        <p>
+          A $5,000 plumbing repair may be manageable if it prevents water damage and you have savings, insurance help, or reasonable financing. It becomes more stressful when the repair is urgent, the damage is spreading, or the project requires high-interest debt.
+        </p>
+      </div>
+
+      <WhenSpendingMakesSense
+        title="When Paying for Plumbing Repairs Makes Sense"
+        items={[
+          "The repair prevents water damage, mold, sewage backup, or a worsening home problem.",
+          "You have confirmed whether homeowners insurance may cover part of the damage.",
+          "You can cover the net cost without wiping out emergency savings.",
+          "The plumber has provided a written estimate with labor, materials, access work, and cleanup clearly explained.",
+          "The repair protects the home from a more expensive problem later.",
+        ]}
+      />
+
+      <div class="content-section">
+        <h2>When You Should Slow Down Before Signing</h2>
+
+        <p>
+          Slow down if the problem is not actively causing damage, the quote is vague, or the plumber has not explained repair options.
+        </p>
+
+        <p>
+          Before committing, ask whether the problem can be isolated, whether a camera inspection is needed, whether insurance applies, and whether a smaller repair could safely buy time.
+        </p>
+      </div>
+
+      <KeyCostCategories
+        items={[
+          {
+            title: "Labor and access work",
+            description:
+              "Plumbing repairs can require cutting into walls, floors, ceilings, or yards before the actual pipe repair begins.",
+          },
+          {
+            title: "Pipe, sewer, or drain repairs",
+            description:
+              "Main line issues, sewer backups, slab leaks, and major pipe replacement can push costs far above a basic repair call.",
+          },
+          {
+            title: "Water damage and cleanup",
+            description:
+              "Drywall, flooring, mold prevention, drying equipment, and restoration work can add major costs beyond the plumbing repair itself.",
+          },
+          {
+            title: "Insurance and financing",
+            description:
+              "Some water damage may be covered, but exclusions, deductibles, and financing terms can materially affect the final pressure.",
+          },
+        ]}
+      />
+
+      <ReduceCostTips
+        items={[
+          "Get a clear written estimate before approving major plumbing work.",
+          "Ask whether a temporary repair is safe while you compare options.",
+          "Check whether homeowners insurance may cover resulting water damage.",
+          "Request a camera inspection for sewer or drain-line problems before approving excavation.",
+          "Avoid high-interest financing when possible.",
+          "Ask what cleanup, wall repair, or restoration work is included.",
+        ]}
+      />
+
+      <FinancialRedFlags
+        items={[
+          "The plumber pressures you to approve expensive work without explaining the cause.",
+          "The repair would drain nearly all emergency savings.",
+          "The financing terms are unclear or carry a high interest rate.",
+          "The quote does not explain labor, materials, access work, cleanup, or restoration.",
+          "The payment would make mortgage, utilities, groceries, insurance, or debt payments difficult.",
+        ]}
+      />
+
+      <CalculatorAssumptions
+        items={[
+          "The calculator treats plumbing repairs as a major home repair that may be urgent or semi-urgent.",
+          "Monthly income means take-home pay after taxes and payroll deductions.",
+          "Insurance help means expected reimbursement, claim proceeds, or other outside help that reduces your net cost.",
+          "Monthly debt payments include credit cards, car loans, student loans, personal loans, and other required debt payments.",
+          "The estimate does not evaluate plumbing diagnosis, contractor quality, insurance claim rights, water damage, or code requirements.",
+        ]}
+      />
+
+      <FAQSection
+        title="Plumbing Repair Spending FAQ"
+        faqs={[
+          {
+            question: "Is $5,000 too much for plumbing repairs?",
+            answer:
+              "It depends on the problem. Basic repairs may cost far less, but sewer lines, slab leaks, major pipe replacement, excavation, or water-damage restoration can make a $5,000 plumbing bill realistic.",
+          },
+          {
+            question: "Should I finance plumbing repairs?",
+            answer:
+              "Financing may make sense if the repair is urgent and the monthly payment fits comfortably. Be careful with high interest, unclear terms, or financing that makes other bills harder to cover.",
+          },
+          {
+            question: "Will homeowners insurance cover plumbing repairs?",
+            answer:
+              "Insurance may cover some sudden water damage, but it often treats pipe repair, wear and tear, slow leaks, and maintenance issues differently. Review your policy and claim details.",
+          },
+          {
+            question: "Should I use emergency savings for plumbing repairs?",
+            answer:
+              "Using emergency savings can make sense if the repair prevents water damage or keeps the home functional. The key is keeping enough cushion afterward for the next emergency.",
+          },
+          {
+            question: "Should I get a second quote for plumbing work?",
+            answer:
+              "For major plumbing repairs, a second quote is usually smart unless water damage is actively spreading and immediate action is needed.",
+          },
+        ]}
+      />
+
+      <MethodologySection category="home improvement spending" updated="May 2026" />
+
+      <RelatedGuides
+        guides={[
+          {
+            title: "Home Improvement Calculators",
+            href: "/home-improvement-calculators",
+            description:
+              "Browse home repair and renovation calculators for urgent repairs, upgrades, and major homeowner decisions.",
+          },
+          {
+            title: "What Counts as Debt?",
+            href: "/what-counts-as-debt",
+            description:
+              "Understand which monthly obligations should be included when estimating financial pressure.",
+          },
+        ]}
+      />
+
+      <RelatedCalculators
+        calculators={[
+          {
+            category: "Home Improvement",
+            title: "Should I Spend $10,000 on a Roof Replacement?",
+            href: "/should-i-spend-10000-on-a-roof-replacement",
+          },
+          {
+            category: "Home Improvement",
+            title: "Should I Spend $8,000 on HVAC Replacement?",
+            href: "/should-i-spend-8000-on-hvac-replacement",
+          },
+          {
+            category: "Home Improvement",
+            title: "Should I Spend $15,000 on Foundation Repair?",
+            href: "/should-i-spend-15000-on-foundation-repair",
+          },
+          {
+            category: "Home Improvement",
+            title: "Browse Home Improvement Calculators",
+            href: "/home-improvement-calculators",
+          },
+        ]}
+      />
+    </CalculatorPageShell>
+  </div>
+
+  <script is:inline>
+    const clamp = (value, min, max) => Math.min(Math.max(value, min), max);
+
+    const getNumber = (id) => {
+      const rawValue = document.getElementById(id)?.value;
+      const value = Number(rawValue);
+      return Number.isFinite(value) && value >= 0 ? value : 0;
+    };
+
+    function getPressureLevel(score) {
+      if (score <= 30) {
+        return {
+          label: "Low Pressure",
+          stress: "Low pressure",
+          color: "#16a34a",
+          action: "Proceed only after confirming the diagnosis, written estimate, and emergency-fund impact.",
+        };
+      }
+
+      if (score <= 60) {
+        return {
+          label: "Moderate Pressure",
+          stress: "Moderate pressure",
+          color: "#ca8a04",
+          action: "Compare repair options, check insurance, and avoid financing that strains monthly cash flow.",
+        };
+      }
+
+      return {
+        label: "High Pressure",
+        stress: "High pressure",
+        color: "#dc2626",
+        action: "Protect essential bills first, ask about payment options, and get another quote if damage is not actively spreading.",
+      };
+    }
+
+    function calculatePlumbing() {
+      const cost = getNumber("cost");
+      const income = getNumber("income");
+      const savings = getNumber("savings");
+      const expenses = getNumber("expenses");
+      const debt = getNumber("debt");
+      const insurance = getNumber("insurance");
+      const financed = getNumber("financed");
+
+      const result = document.getElementById("result");
+      const scoreEl = document.getElementById("score");
+      const barFill = document.getElementById("barFill");
+      const stressEl = document.getElementById("stress");
+      const cashFlowEl = document.getElementById("cashFlow");
+      const savingsImpactEl = document.getElementById("savingsImpact");
+      const financingImpactEl = document.getElementById("financingImpact");
+      const guidanceEl = document.getElementById("guidance");
+
+      result.style.display = "block";
+
+      if (cost <= 0 || income <= 0) {
+        scoreEl.textContent = "Add your numbers first";
+        barFill.style.width = "0%";
+        barFill.style.background = "#16a34a";
+        stressEl.innerHTML = "";
+        cashFlowEl.innerHTML = "";
+        savingsImpactEl.innerHTML = "";
+        financingImpactEl.innerHTML = "";
+        guidanceEl.textContent =
+          "Enter a positive plumbing repair cost and monthly take-home income so the calculator can estimate financial pressure.";
+        return;
+      }
+
+      const netCost = Math.max(cost - insurance, 0);
+      const outOfPocket = Math.max(netCost - financed, 0);
+      const monthlyRemaining = income - expenses - debt;
+      const remainingSavings = savings - outOfPocket;
+      const savingsImpact = savings > 0 ? (outOfPocket / savings) * 100 : 100;
+      const incomeImpact = (netCost / income) * 100;
+      const fixedObligationRatio = income > 0 ? ((expenses + debt) / income) * 100 : 100;
+      const emergencyMonths =
+        expenses > 0 ? remainingSavings / expenses : remainingSavings > 0 ? 12 : 0;
+      const financedShare = netCost > 0 ? (financed / netCost) * 100 : 0;
+
+      let pressureScore = 0;
+
+      pressureScore += clamp(incomeImpact * 0.28, 0, 30);
+      pressureScore += clamp(savingsImpact * 0.24, 0, 30);
+      pressureScore += clamp(fixedObligationRatio * 0.22, 0, 24);
+
+      if (remainingSavings < 0) pressureScore += 26;
+      else if (emergencyMonths < 1 && income < 12000) pressureScore += 18;
+      else if (emergencyMonths < 3 && income < 15000) pressureScore += 10;
+      else if (emergencyMonths >= 6) pressureScore -= 8;
+
+      if (financed > 0) pressureScore += clamp(financedShare * 0.14, 4, 14);
+
+      if (monthlyRemaining < 0) pressureScore += 18;
+      else if (monthlyRemaining < income * 0.1) pressureScore += 10;
+      else if (monthlyRemaining > income * 0.35) pressureScore -= 6;
+
+      if (insurance >= cost * 0.25 && remainingSavings > 0) {
+        pressureScore -= 6;
+      }
+
+      if (income >= 12000 && remainingSavings > 0 && fixedObligationRatio < 65) {
+        pressureScore -= 10;
+      }
+
+      if (income >= 20000 && remainingSavings > 0 && fixedObligationRatio < 55) {
+        pressureScore -= 12;
+      }
+
+      if (
+        incomeImpact < 15 &&
+        savingsImpact < 15 &&
+        emergencyMonths >= 6 &&
+        fixedObligationRatio < 55
+      ) {
+        pressureScore = Math.min(pressureScore, 28);
+      }
+
+      if (
+        incomeImpact < 8 &&
+        savingsImpact < 8 &&
+        emergencyMonths >= 9 &&
+        fixedObligationRatio < 45
+      ) {
+        pressureScore = Math.min(pressureScore, 15);
+      }
+
+      pressureScore = Math.round(clamp(pressureScore, 0, 100));
+
+      const level = getPressureLevel(pressureScore);
+
+      let guidance = "";
+
+      if (pressureScore <= 30) {
+        guidance =
+          `This plumbing repair appears financially manageable based on the numbers provided. The net cost equals about ${incomeImpact.toFixed(1)}% of one month’s take-home income, and your estimated emergency cushion remains around ${Math.max(emergencyMonths, 0).toFixed(1)} months after the out-of-pocket cost.`;
+      } else if (pressureScore <= 60) {
+        guidance =
+          `This plumbing repair may work, but it creates noticeable financial pressure. The net cost equals about ${incomeImpact.toFixed(1)}% of one month’s take-home income, and the out-of-pocket portion uses about ${savingsImpact.toFixed(1)}% of available savings.`;
+      } else {
+        guidance =
+          `This plumbing repair could create real financial strain. The net cost equals about ${incomeImpact.toFixed(1)}% of one month’s take-home income, and the combination of savings impact, financing, debt, or monthly obligations suggests you should slow down before committing aggressively.`;
+      }
+
+      scoreEl.textContent = `${level.label} — ${pressureScore}/100`;
+      scoreEl.style.color = level.color;
+      barFill.style.width = `${pressureScore}%`;
+      barFill.style.background = level.color;
+
+      stressEl.innerHTML = `<strong>Pressure level:</strong> ${level.stress}`;
+      cashFlowEl.innerHTML = `<strong>Monthly cash flow after bills and debt:</strong> $${monthlyRemaining.toLocaleString()}`;
+      savingsImpactEl.innerHTML = `<strong>Savings after out-of-pocket plumbing cost:</strong> $${remainingSavings.toLocaleString()}`;
+      financingImpactEl.innerHTML = `<strong>Financed portion of net cost:</strong> ${financedShare.toFixed(1)}%`;
+      guidanceEl.textContent = `${guidance} Recommended next step: ${level.action}`;
+    }
+
+    document
+      .getElementById("plumbingButton")
+      .addEventListener("click", calculatePlumbing);
+  </script>
+</Layout>

@@ -1,0 +1,552 @@
+---
+import Layout from "../layouts/Layout.astro";
+import CalculatorPageShell from "../components/CalculatorPageShell.astro";
+import FAQSection from "../components/FAQSection.astro";
+import RelatedCalculators from "../components/RelatedCalculators.astro";
+import RelatedGuides from "../components/RelatedGuides.astro";
+import MethodologySection from "../components/MethodologySection.astro";
+import FinancialRedFlags from "../components/FinancialRedFlags.astro";
+import CalculatorAssumptions from "../components/CalculatorAssumptions.astro";
+import KeyCostCategories from "../components/KeyCostCategories.astro";
+import ReduceCostTips from "../components/ReduceCostTips.astro";
+import WhenSpendingMakesSense from "../components/WhenSpendingMakesSense.astro";
+---
+
+<Layout
+  title="Should I Spend $15,000 on Foundation Repair?"
+  description="Use this foundation repair calculator to decide whether a $15,000 structural repair fits your income, savings, debt, financing, and monthly cash flow."
+>
+  <style>
+    .container {
+      max-width: 950px;
+      margin: 0 auto;
+      padding: 60px 20px;
+    }
+
+    .content-section {
+      max-width: 760px;
+      margin: 72px auto 0;
+    }
+
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 28px;
+      padding: 34px;
+    }
+
+    h2 {
+      margin-top: 0;
+      font-size: 2rem;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 22px;
+      margin-bottom: 28px;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 10px;
+      font-weight: 700;
+    }
+
+    input {
+      width: 100%;
+      padding: 18px;
+      border-radius: 14px;
+      border: 1px solid var(--border);
+      font-size: 1.1rem;
+      box-sizing: border-box;
+    }
+
+    button {
+      background: #0f172a;
+      color: white;
+      border: none;
+      padding: 16px 28px;
+      border-radius: 14px;
+      font-size: 1rem;
+      font-weight: 700;
+      cursor: pointer;
+      margin-top: 10px;
+      width: 100%;
+      display: block;
+    }
+
+    button:hover {
+      opacity: 0.92;
+    }
+
+    .result {
+      margin-top: 40px;
+      border: 1px solid var(--border);
+      border-radius: 24px;
+      padding: 28px;
+      display: none;
+      background: #f8fafc;
+    }
+
+    .score {
+      font-size: 3rem;
+      font-weight: 800;
+      margin-bottom: 16px;
+    }
+
+    .bar {
+      width: 100%;
+      height: 16px;
+      background: #dbe3ee;
+      border-radius: 999px;
+      overflow: hidden;
+      margin-bottom: 24px;
+    }
+
+    .fill {
+      height: 100%;
+      width: 0%;
+      background: #16a34a;
+      border-radius: 999px;
+      transition: width 0.4s ease;
+    }
+
+    .metric {
+      margin-bottom: 14px;
+      font-size: 1.05rem;
+    }
+
+    .guidance {
+      margin-top: 26px;
+      font-size: 1.15rem;
+      line-height: 1.7;
+    }
+
+    .disclaimer {
+      margin-top: 30px;
+      font-size: 0.9rem;
+      color: var(--muted);
+    }
+
+    .helper-link {
+      margin-top: 10px;
+      font-size: 0.9rem;
+    }
+
+    .helper-link a {
+      color: var(--primary);
+      font-weight: 600;
+    }
+
+    .content-section p,
+    .content-section li {
+      line-height: 1.8;
+    }
+  </style>
+
+  <div class="container">
+    <CalculatorPageShell
+      eyebrow="Home Improvement Calculator"
+      title="Should I Spend $15,000 on Foundation Repair?"
+      description="Estimate whether a $15,000 foundation repair fits your income, emergency savings, debt load, monthly expenses, insurance help, and financing options."
+    >
+      <div class="card">
+        <h2>Foundation Repair Pressure Verdict</h2>
+
+        <div class="grid">
+          <div>
+            <label for="cost">Foundation Repair Cost</label>
+            <input id="cost" type="number" placeholder="15000" min="0" inputmode="decimal" />
+          </div>
+
+          <div>
+            <label for="income">Monthly Take-Home Income</label>
+            <input id="income" type="number" placeholder="8000" min="0" inputmode="decimal" />
+          </div>
+
+          <div>
+            <label for="savings">Emergency Savings</label>
+            <input id="savings" type="number" placeholder="25000" min="0" inputmode="decimal" />
+          </div>
+
+          <div>
+            <label for="expenses">Monthly Expenses</label>
+            <input id="expenses" type="number" placeholder="5000" min="0" inputmode="decimal" />
+          </div>
+
+          <div>
+            <label for="debt">Monthly Debt Payments</label>
+            <input id="debt" type="number" placeholder="800" min="0" inputmode="decimal" />
+
+            <div class="helper-link">
+              <a href="/what-counts-as-debt">
+                Not sure what counts as debt? Read the debt guide
+              </a>
+            </div>
+          </div>
+
+          <div>
+            <label for="insurance">Insurance or Reimbursement Help</label>
+            <input id="insurance" type="number" placeholder="0" min="0" inputmode="decimal" />
+          </div>
+
+          <div>
+            <label for="financed">Amount Financed</label>
+            <input id="financed" type="number" placeholder="0" min="0" inputmode="decimal" />
+          </div>
+        </div>
+
+        <button id="foundationButton" type="button">
+          Calculate Financial Pressure
+        </button>
+
+        <div class="result" id="result">
+          <div class="score" id="score"></div>
+
+          <div class="bar">
+            <div class="fill" id="barFill"></div>
+          </div>
+
+          <div class="metric" id="stress"></div>
+          <div class="metric" id="cashFlow"></div>
+          <div class="metric" id="savingsImpact"></div>
+          <div class="metric" id="financingImpact"></div>
+
+          <div class="guidance" id="guidance"></div>
+
+          <div class="disclaimer">
+            This is a general educational estimate, not structural, engineering, contractor, insurance, legal, or financial advice.
+          </div>
+        </div>
+      </div>
+
+      <div class="content-section">
+        <h2>What a $15,000 Foundation Repair Really Costs</h2>
+
+        <p>
+          Foundation repair can include engineering inspections, pier installation, wall stabilization, crack repair, waterproofing, drainage work, excavation, permits, landscaping repairs, and interior damage cleanup.
+        </p>
+
+        <p>
+          A $15,000 foundation repair may be financially reasonable if it protects the structure, prevents water intrusion, and preserves home value. It becomes more stressful when the work is urgent, the diagnosis is unclear, or the project requires high-interest financing.
+        </p>
+      </div>
+
+      <WhenSpendingMakesSense
+        title="When Paying for Foundation Repair Makes Sense"
+        items={[
+          "The repair addresses structural movement, water intrusion, or worsening foundation damage.",
+          "You have received a clear diagnosis from a reputable contractor or structural professional.",
+          "You can cover the net cost without wiping out emergency savings.",
+          "The estimate explains piers, wall anchors, drainage, excavation, waterproofing, and warranty terms.",
+          "The repair protects home value and prevents a much larger problem later.",
+        ]}
+      />
+
+      <div class="content-section">
+        <h2>When You Should Slow Down Before Signing</h2>
+
+        <p>
+          Slow down if the contractor cannot clearly explain the cause, the quote feels rushed, or you have not received a second opinion.
+        </p>
+
+        <p>
+          Foundation work is expensive and technical. Before committing, compare multiple estimates, ask whether drainage fixes are needed, confirm warranty terms, and consider an independent structural evaluation for major repairs.
+        </p>
+      </div>
+
+      <KeyCostCategories
+        items={[
+          {
+            title: "Structural repair method",
+            description:
+              "Piers, wall anchors, beams, crack repair, slab lifting, and stabilization systems can vary widely in cost and scope.",
+          },
+          {
+            title: "Drainage and waterproofing",
+            description:
+              "Grading, gutters, downspouts, sump systems, exterior drains, and waterproofing may be needed to prevent the problem from returning.",
+          },
+          {
+            title: "Engineering and permits",
+            description:
+              "Some repairs may require engineering review, permits, inspections, or documentation for resale.",
+          },
+          {
+            title: "Financing and home-risk pressure",
+            description:
+              "Foundation financing can preserve cash, but high rates or unclear terms can create long-term budget strain.",
+          },
+        ]}
+      />
+
+      <ReduceCostTips
+        items={[
+          "Get at least two or three foundation repair estimates before signing.",
+          "Ask whether drainage or grading improvements could reduce the scope.",
+          "Consider an independent structural evaluation for major repairs.",
+          "Confirm whether the warranty transfers if you sell the home.",
+          "Avoid high-interest financing when possible.",
+          "Ask whether the work can be safely phased without increasing structural risk.",
+        ]}
+      />
+
+      <FinancialRedFlags
+        items={[
+          "The contractor pressures you to sign without explaining the cause of the foundation issue.",
+          "The project would drain nearly all emergency savings.",
+          "The financing terms are unclear or carry a high interest rate.",
+          "The quote does not explain repair method, drainage, warranty, permits, or inspection needs.",
+          "The payment would make mortgage, utilities, groceries, insurance, or debt payments difficult.",
+        ]}
+      />
+
+      <CalculatorAssumptions
+        items={[
+          "The calculator treats foundation repair as a major home repair that may be urgent or semi-urgent.",
+          "Monthly income means take-home pay after taxes and payroll deductions.",
+          "Insurance help means expected reimbursement, claim proceeds, or other outside help that reduces your net cost.",
+          "Monthly debt payments include credit cards, car loans, student loans, personal loans, and other required debt payments.",
+          "The estimate does not evaluate structural safety, contractor quality, engineering findings, insurance claim rights, code requirements, or resale impact.",
+        ]}
+      />
+
+      <FAQSection
+        title="Foundation Repair Spending FAQ"
+        faqs={[
+          {
+            question: "Is $15,000 too much for foundation repair?",
+            answer:
+              "It depends on the repair method, home size, soil conditions, drainage issues, structural movement, and local labor costs. A $15,000 repair can be realistic for significant foundation work, but multiple estimates are important.",
+          },
+          {
+            question: "Should I finance foundation repair?",
+            answer:
+              "Financing may make sense if the repair is urgent and the monthly payment fits comfortably. Be careful with high interest, long repayment terms, or financing that strains essential bills.",
+          },
+          {
+            question: "Will homeowners insurance cover foundation repair?",
+            answer:
+              "Often, foundation problems caused by settling, drainage, soil movement, or maintenance issues are not covered. Sudden covered events may be treated differently, so policy details matter.",
+          },
+          {
+            question: "Should I use emergency savings for foundation repair?",
+            answer:
+              "Using savings can make sense if the repair protects the structure and prevents worsening damage. The key is keeping enough cushion afterward for other emergencies.",
+          },
+          {
+            question: "Should I get a structural engineer before foundation repair?",
+            answer:
+              "For major repairs, an independent structural opinion can be useful. It may help confirm the diagnosis, compare repair methods, and avoid overpaying for unnecessary work.",
+          },
+        ]}
+      />
+
+      <MethodologySection category="home improvement spending" updated="May 2026" />
+
+      <RelatedGuides
+        guides={[
+          {
+            title: "Home Improvement Calculators",
+            href: "/home-improvement-calculators",
+            description:
+              "Browse home repair and renovation calculators for urgent repairs, upgrades, and major homeowner decisions.",
+          },
+          {
+            title: "What Counts as Debt?",
+            href: "/what-counts-as-debt",
+            description:
+              "Understand which monthly obligations should be included when estimating financial pressure.",
+          },
+        ]}
+      />
+
+      <RelatedCalculators
+        calculators={[
+          {
+            category: "Home Improvement",
+            title: "Should I Spend $10,000 on a Roof Replacement?",
+            href: "/should-i-spend-10000-on-a-roof-replacement",
+          },
+          {
+            category: "Home Improvement",
+            title: "Should I Spend $8,000 on HVAC Replacement?",
+            href: "/should-i-spend-8000-on-hvac-replacement",
+          },
+          {
+            category: "Home Improvement",
+            title: "Should I Spend $5,000 on Plumbing Repairs?",
+            href: "/should-i-spend-5000-on-plumbing-repairs",
+          },
+          {
+            category: "Home Improvement",
+            title: "Browse Home Improvement Calculators",
+            href: "/home-improvement-calculators",
+          },
+        ]}
+      />
+    </CalculatorPageShell>
+  </div>
+
+  <script is:inline>
+    const clamp = (value, min, max) => Math.min(Math.max(value, min), max);
+
+    const getNumber = (id) => {
+      const rawValue = document.getElementById(id)?.value;
+      const value = Number(rawValue);
+      return Number.isFinite(value) && value >= 0 ? value : 0;
+    };
+
+    function getPressureLevel(score) {
+      if (score <= 30) {
+        return {
+          label: "Low Pressure",
+          stress: "Low pressure",
+          color: "#16a34a",
+          action: "Proceed only after comparing quotes, confirming the diagnosis, and protecting your emergency fund.",
+        };
+      }
+
+      if (score <= 60) {
+        return {
+          label: "Moderate Pressure",
+          stress: "Moderate pressure",
+          color: "#ca8a04",
+          action: "Get another estimate, confirm the repair method, and avoid financing that strains monthly cash flow.",
+        };
+      }
+
+      return {
+        label: "High Pressure",
+        stress: "High pressure",
+        color: "#dc2626",
+        action: "Slow down before signing, protect essential bills, and consider a second structural opinion.",
+      };
+    }
+
+    function calculateFoundation() {
+      const cost = getNumber("cost");
+      const income = getNumber("income");
+      const savings = getNumber("savings");
+      const expenses = getNumber("expenses");
+      const debt = getNumber("debt");
+      const insurance = getNumber("insurance");
+      const financed = getNumber("financed");
+
+      const result = document.getElementById("result");
+      const scoreEl = document.getElementById("score");
+      const barFill = document.getElementById("barFill");
+      const stressEl = document.getElementById("stress");
+      const cashFlowEl = document.getElementById("cashFlow");
+      const savingsImpactEl = document.getElementById("savingsImpact");
+      const financingImpactEl = document.getElementById("financingImpact");
+      const guidanceEl = document.getElementById("guidance");
+
+      result.style.display = "block";
+
+      if (cost <= 0 || income <= 0) {
+        scoreEl.textContent = "Add your numbers first";
+        barFill.style.width = "0%";
+        barFill.style.background = "#16a34a";
+        stressEl.innerHTML = "";
+        cashFlowEl.innerHTML = "";
+        savingsImpactEl.innerHTML = "";
+        financingImpactEl.innerHTML = "";
+        guidanceEl.textContent =
+          "Enter a positive foundation repair cost and monthly take-home income so the calculator can estimate financial pressure.";
+        return;
+      }
+
+      const netCost = Math.max(cost - insurance, 0);
+      const outOfPocket = Math.max(netCost - financed, 0);
+      const monthlyRemaining = income - expenses - debt;
+      const remainingSavings = savings - outOfPocket;
+      const savingsImpact = savings > 0 ? (outOfPocket / savings) * 100 : 100;
+      const incomeImpact = (netCost / income) * 100;
+      const fixedObligationRatio = income > 0 ? ((expenses + debt) / income) * 100 : 100;
+      const emergencyMonths =
+        expenses > 0 ? remainingSavings / expenses : remainingSavings > 0 ? 12 : 0;
+      const financedShare = netCost > 0 ? (financed / netCost) * 100 : 0;
+
+      let pressureScore = 0;
+
+      pressureScore += clamp(incomeImpact * 0.28, 0, 34);
+      pressureScore += clamp(savingsImpact * 0.24, 0, 32);
+      pressureScore += clamp(fixedObligationRatio * 0.22, 0, 24);
+
+      if (remainingSavings < 0) pressureScore += 28;
+      else if (emergencyMonths < 1 && income < 12000) pressureScore += 20;
+      else if (emergencyMonths < 3 && income < 15000) pressureScore += 12;
+      else if (emergencyMonths >= 6) pressureScore -= 8;
+
+      if (financed > 0) pressureScore += clamp(financedShare * 0.15, 4, 16);
+
+      if (monthlyRemaining < 0) pressureScore += 18;
+      else if (monthlyRemaining < income * 0.1) pressureScore += 10;
+      else if (monthlyRemaining > income * 0.35) pressureScore -= 6;
+
+      if (insurance >= cost * 0.25 && remainingSavings > 0) {
+        pressureScore -= 6;
+      }
+
+      if (income >= 12000 && remainingSavings > 0 && fixedObligationRatio < 65) {
+        pressureScore -= 10;
+      }
+
+      if (income >= 20000 && remainingSavings > 0 && fixedObligationRatio < 55) {
+        pressureScore -= 12;
+      }
+
+      if (
+        incomeImpact < 18 &&
+        savingsImpact < 15 &&
+        emergencyMonths >= 6 &&
+        fixedObligationRatio < 55
+      ) {
+        pressureScore = Math.min(pressureScore, 30);
+      }
+
+      if (
+        incomeImpact < 10 &&
+        savingsImpact < 8 &&
+        emergencyMonths >= 9 &&
+        fixedObligationRatio < 45
+      ) {
+        pressureScore = Math.min(pressureScore, 16);
+      }
+
+      pressureScore = Math.round(clamp(pressureScore, 0, 100));
+
+      const level = getPressureLevel(pressureScore);
+
+      let guidance = "";
+
+      if (pressureScore <= 30) {
+        guidance =
+          `This foundation repair appears financially manageable based on the numbers provided. The net cost equals about ${incomeImpact.toFixed(1)}% of one month’s take-home income, and your estimated emergency cushion remains around ${Math.max(emergencyMonths, 0).toFixed(1)} months after the out-of-pocket cost.`;
+      } else if (pressureScore <= 60) {
+        guidance =
+          `This foundation repair may work, but it creates noticeable financial pressure. The net cost equals about ${incomeImpact.toFixed(1)}% of one month’s take-home income, and the out-of-pocket portion uses about ${savingsImpact.toFixed(1)}% of available savings.`;
+      } else {
+        guidance =
+          `This foundation repair could create real financial strain. The net cost equals about ${incomeImpact.toFixed(1)}% of one month’s take-home income, and the combination of savings impact, financing, debt, or monthly obligations suggests you should slow down before committing aggressively.`;
+      }
+
+      scoreEl.textContent = `${level.label} — ${pressureScore}/100`;
+      scoreEl.style.color = level.color;
+      barFill.style.width = `${pressureScore}%`;
+      barFill.style.background = level.color;
+
+      stressEl.innerHTML = `<strong>Pressure level:</strong> ${level.stress}`;
+      cashFlowEl.innerHTML = `<strong>Monthly cash flow after bills and debt:</strong> $${monthlyRemaining.toLocaleString()}`;
+      savingsImpactEl.innerHTML = `<strong>Savings after out-of-pocket foundation cost:</strong> $${remainingSavings.toLocaleString()}`;
+      financingImpactEl.innerHTML = `<strong>Financed portion of net cost:</strong> ${financedShare.toFixed(1)}%`;
+      guidanceEl.textContent = `${guidance} Recommended next step: ${level.action}`;
+    }
+
+    document
+      .getElementById("foundationButton")
+      .addEventListener("click", calculateFoundation);
+  </script>
+</Layout>

@@ -1,0 +1,541 @@
+---
+import Layout from "../layouts/Layout.astro";
+import CalculatorPageShell from "../components/CalculatorPageShell.astro";
+import FAQSection from "../components/FAQSection.astro";
+import RelatedCalculators from "../components/RelatedCalculators.astro";
+import RelatedGuides from "../components/RelatedGuides.astro";
+import MethodologySection from "../components/MethodologySection.astro";
+import FinancialRedFlags from "../components/FinancialRedFlags.astro";
+import CalculatorAssumptions from "../components/CalculatorAssumptions.astro";
+import KeyCostCategories from "../components/KeyCostCategories.astro";
+import ReduceCostTips from "../components/ReduceCostTips.astro";
+import WhenSpendingMakesSense from "../components/WhenSpendingMakesSense.astro";
+---
+
+<Layout
+  title="Should I Spend $3,000 on a Root Canal?"
+  description="Use this root canal calculator to decide whether a $3,000 dental procedure fits your income, savings, debt, insurance coverage, and monthly cash flow."
+>
+  <style>
+    .container {
+      max-width: 950px;
+      margin: 0 auto;
+      padding: 60px 20px;
+    }
+
+    .content-section {
+      max-width: 760px;
+      margin: 72px auto 0;
+    }
+
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 28px;
+      padding: 34px;
+    }
+
+    h2 {
+      margin-top: 0;
+      font-size: 2rem;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 22px;
+      margin-bottom: 28px;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 10px;
+      font-weight: 700;
+    }
+
+    input {
+      width: 100%;
+      padding: 18px;
+      border-radius: 14px;
+      border: 1px solid var(--border);
+      font-size: 1.1rem;
+      box-sizing: border-box;
+    }
+
+    button {
+      background: #0f172a;
+      color: white;
+      border: none;
+      padding: 16px 28px;
+      border-radius: 14px;
+      font-size: 1rem;
+      font-weight: 700;
+      cursor: pointer;
+      margin-top: 10px;
+      width: 100%;
+      display: block;
+    }
+
+    button:hover {
+      opacity: 0.92;
+    }
+
+    .result {
+      margin-top: 40px;
+      border: 1px solid var(--border);
+      border-radius: 24px;
+      padding: 28px;
+      display: none;
+      background: #f8fafc;
+    }
+
+    .score {
+      font-size: 3rem;
+      font-weight: 800;
+      margin-bottom: 16px;
+    }
+
+    .bar {
+      width: 100%;
+      height: 16px;
+      background: #dbe3ee;
+      border-radius: 999px;
+      overflow: hidden;
+      margin-bottom: 24px;
+    }
+
+    .fill {
+      height: 100%;
+      width: 0%;
+      background: #16a34a;
+      border-radius: 999px;
+      transition: width 0.4s ease;
+    }
+
+    .metric {
+      margin-bottom: 14px;
+      font-size: 1.05rem;
+    }
+
+    .guidance {
+      margin-top: 26px;
+      font-size: 1.15rem;
+      line-height: 1.7;
+    }
+
+    .disclaimer {
+      margin-top: 30px;
+      font-size: 0.9rem;
+      color: var(--muted);
+    }
+
+    .helper-link {
+      margin-top: 10px;
+      font-size: 0.9rem;
+    }
+
+    .helper-link a {
+      color: var(--primary);
+      font-weight: 600;
+    }
+
+    .content-section p,
+    .content-section li {
+      line-height: 1.8;
+    }
+  </style>
+
+  <div class="container">
+    <CalculatorPageShell
+      eyebrow="Medical Calculator"
+      title="Should I Spend $3,000 on a Root Canal?"
+      description="Estimate whether a $3,000 root canal procedure fits your income, emergency savings, debt load, monthly expenses, and dental financing options."
+    >
+      <div class="card">
+        <h2>Root Canal Pressure Verdict</h2>
+
+        <div class="grid">
+          <div>
+            <label for="cost">Root Canal Cost</label>
+            <input id="cost" type="number" placeholder="3000" min="0" inputmode="decimal" />
+          </div>
+
+          <div>
+            <label for="income">Monthly Take-Home Income</label>
+            <input id="income" type="number" placeholder="6000" min="0" inputmode="decimal" />
+          </div>
+
+          <div>
+            <label for="savings">Emergency Savings</label>
+            <input id="savings" type="number" placeholder="10000" min="0" inputmode="decimal" />
+          </div>
+
+          <div>
+            <label for="expenses">Monthly Expenses</label>
+            <input id="expenses" type="number" placeholder="3500" min="0" inputmode="decimal" />
+          </div>
+
+          <div>
+            <label for="debt">Monthly Debt Payments</label>
+            <input id="debt" type="number" placeholder="500" min="0" inputmode="decimal" />
+
+            <div class="helper-link">
+              <a href="/what-counts-as-debt">
+                Not sure what counts as debt? Read the debt guide
+              </a>
+            </div>
+          </div>
+
+          <div>
+            <label for="financed">Amount Financed</label>
+            <input id="financed" type="number" placeholder="0" min="0" inputmode="decimal" />
+          </div>
+        </div>
+
+        <button id="rootCanalButton" type="button">
+          Calculate Financial Pressure
+        </button>
+
+        <div class="result" id="result">
+          <div class="score" id="score"></div>
+
+          <div class="bar">
+            <div class="fill" id="barFill"></div>
+          </div>
+
+          <div class="metric" id="stress"></div>
+          <div class="metric" id="cashFlow"></div>
+          <div class="metric" id="savingsImpact"></div>
+          <div class="metric" id="financingImpact"></div>
+
+          <div class="guidance" id="guidance"></div>
+
+          <div class="disclaimer">
+            This is a general educational estimate, not dental, medical, insurance, or financial advice.
+          </div>
+        </div>
+      </div>
+
+      <div class="content-section">
+        <h2>What a $3,000 Root Canal Really Costs</h2>
+
+        <p>
+          A root canal bill may include more than the procedure itself. X-rays, consultations, temporary crowns, permanent crowns, specialist fees, sedation, follow-up visits, and insurance gaps can all increase the final out-of-pocket cost.
+        </p>
+
+        <p>
+          A $3,000 root canal may be manageable if you have stable income, savings, and reasonable financing terms. It becomes more stressful when the procedure competes with rent, debt payments, groceries, or emergency savings goals.
+        </p>
+      </div>
+
+      <WhenSpendingMakesSense
+        title="When Paying for a Root Canal Makes Sense"
+        items={[
+          "You are preventing a worsening dental issue that could become more expensive later.",
+          "You can pay without draining your emergency savings completely.",
+          "Your monthly cash flow remains stable after the procedure.",
+          "You understand whether crowns, follow-ups, or additional dental work are included.",
+          "You are avoiding high-interest financing when possible.",
+        ]}
+      />
+
+      <div class="content-section">
+        <h2>When You Should Slow Down Before Committing</h2>
+
+        <p>
+          You may want to slow down before paying if the quote is unclear, insurance has not finalized coverage, or financing terms could create long-term debt pressure.
+        </p>
+
+        <p>
+          Dental bills vary widely. Before draining savings or financing aggressively, compare providers, confirm crown pricing, request a treatment breakdown, and understand what insurance actually covers.
+        </p>
+      </div>
+
+      <KeyCostCategories
+        items={[
+          {
+            title: "Procedure and specialist fees",
+            description:
+              "Root canal costs vary by tooth location, specialist involvement, sedation, complexity, and regional pricing.",
+          },
+          {
+            title: "Crowns and restoration",
+            description:
+              "Many root canals require crowns afterward, which can significantly increase the final cost beyond the procedure itself.",
+          },
+          {
+            title: "Insurance limitations",
+            description:
+              "Dental insurance often has annual maximums, exclusions, waiting periods, or partial coverage that affect out-of-pocket costs.",
+          },
+          {
+            title: "Financing and payment plans",
+            description:
+              "Monthly financing may reduce immediate strain, but high-interest dental financing can create longer-term financial pressure.",
+          },
+        ]}
+      />
+
+      <ReduceCostTips
+        items={[
+          "Request a full written treatment estimate before scheduling.",
+          "Ask whether crown costs are included in the quote.",
+          "Compare at least two dental providers if the situation is not urgent.",
+          "Check whether your HSA or FSA can reduce the out-of-pocket burden.",
+          "Avoid high-interest financing if possible.",
+          "Confirm insurance coverage and annual maximums before treatment.",
+        ]}
+      />
+
+      <FinancialRedFlags
+        items={[
+          "The dental office cannot clearly explain the treatment estimate.",
+          "The procedure would drain most of your emergency savings.",
+          "You would need high-interest debt to afford treatment.",
+          "You are unsure whether crown costs are included.",
+          "The payment would make rent, utilities, food, or insurance difficult to cover.",
+        ]}
+      />
+
+      <CalculatorAssumptions
+        items={[
+          "The calculator treats a root canal as a medically important dental expense.",
+          "Monthly income means take-home pay after taxes and payroll deductions.",
+          "Monthly debt payments include credit cards, car loans, student loans, personal loans, and other required debt payments.",
+          "The calculator assumes financed dental balances still create financial pressure even when monthly payments are delayed.",
+          "The estimate does not evaluate dental urgency, provider quality, insurance disputes, or medical outcomes.",
+        ]}
+      />
+
+      <FAQSection
+        title="Root Canal Spending FAQ"
+        faqs={[
+          {
+            question: "Is $3,000 too much for a root canal?",
+            answer:
+              "It depends on the tooth, crown needs, specialist involvement, insurance coverage, and regional pricing. A $3,000 total bill can be realistic when crowns and specialist fees are included.",
+          },
+          {
+            question: "Should I finance a root canal?",
+            answer:
+              "Financing may help preserve cash flow, but high-interest dental financing can create longer-term pressure. Compare payment plans carefully before committing.",
+          },
+          {
+            question: "Should I use emergency savings for dental work?",
+            answer:
+              "Using savings may be safer than high-interest debt, especially for medically important dental treatment. The key is avoiding a situation where the procedure leaves you financially exposed afterward.",
+          },
+          {
+            question: "Why are root canals so expensive?",
+            answer:
+              "Costs can include specialist fees, imaging, sedation, temporary work, crowns, lab costs, and insurance limitations. Molars are often more expensive because they are more complex to treat.",
+          },
+          {
+            question: "Can delaying a root canal make things worse?",
+            answer:
+              "Potentially. Delaying treatment can sometimes lead to worsening pain, infection, extraction, or more expensive dental work later.",
+          },
+        ]}
+      />
+
+      <MethodologySection category="medical spending" updated="May 2026" />
+
+      <RelatedGuides
+        guides={[
+          {
+            title: "Medical Calculators",
+            href: "/medical-calculators",
+            description:
+              "Browse medical spending calculators for dental costs, procedures, bills, and healthcare affordability decisions.",
+          },
+          {
+            title: "What Counts as Debt?",
+            href: "/what-counts-as-debt",
+            description:
+              "Understand which monthly obligations should be included when estimating financial pressure.",
+          },
+        ]}
+      />
+
+      <RelatedCalculators
+        calculators={[
+          {
+            category: "Medical",
+            title: "Should I Spend $5,000 on LASIK?",
+            href: "/should-i-spend-5000-on-lasik",
+          },
+          {
+            category: "Medical",
+            title: "Should I Spend $2,500 on an ER Bill?",
+            href: "/should-i-spend-2500-on-an-er-bill",
+          },
+          {
+            category: "Medical",
+            title: "Should I Spend $4,000 on a Dental Implant?",
+            href: "/should-i-spend-4000-on-a-dental-implant",
+          },
+          {
+            category: "Medical",
+            title: "Browse Medical Calculators",
+            href: "/medical-calculators",
+          },
+        ]}
+      />
+    </CalculatorPageShell>
+  </div>
+
+  <script is:inline>
+    const clamp = (value, min, max) => Math.min(Math.max(value, min), max);
+
+    const getNumber = (id) => {
+      const rawValue = document.getElementById(id)?.value;
+      const value = Number(rawValue);
+      return Number.isFinite(value) && value >= 0 ? value : 0;
+    };
+
+    function getPressureLevel(score) {
+      if (score <= 30) {
+        return {
+          label: "Low Pressure",
+          stress: "Low pressure",
+          color: "#16a34a",
+          action: "Proceed only after confirming total treatment costs, insurance coverage, and crown pricing.",
+        };
+      }
+
+      if (score <= 60) {
+        return {
+          label: "Moderate Pressure",
+          stress: "Moderate pressure",
+          color: "#ca8a04",
+          action: "Compare quotes, review financing carefully, and protect your emergency savings where possible.",
+        };
+      }
+
+      return {
+        label: "High Pressure",
+        stress: "High pressure",
+        color: "#dc2626",
+        action: "Avoid aggressive financing, confirm all treatment costs first, and stabilize cash flow before committing.",
+      };
+    }
+
+    function calculateRootCanal() {
+      const cost = getNumber("cost");
+      const income = getNumber("income");
+      const savings = getNumber("savings");
+      const expenses = getNumber("expenses");
+      const debt = getNumber("debt");
+      const financed = getNumber("financed");
+
+      const result = document.getElementById("result");
+      const scoreEl = document.getElementById("score");
+      const barFill = document.getElementById("barFill");
+      const stressEl = document.getElementById("stress");
+      const cashFlowEl = document.getElementById("cashFlow");
+      const savingsImpactEl = document.getElementById("savingsImpact");
+      const financingImpactEl = document.getElementById("financingImpact");
+      const guidanceEl = document.getElementById("guidance");
+
+      result.style.display = "block";
+
+      if (cost <= 0 || income <= 0) {
+        scoreEl.textContent = "Add your numbers first";
+        barFill.style.width = "0%";
+        barFill.style.background = "#16a34a";
+        stressEl.innerHTML = "";
+        cashFlowEl.innerHTML = "";
+        savingsImpactEl.innerHTML = "";
+        financingImpactEl.innerHTML = "";
+        guidanceEl.textContent =
+          "Enter a positive root canal cost and monthly take-home income so the calculator can estimate financial pressure.";
+        return;
+      }
+
+      const outOfPocket = Math.max(cost - financed, 0);
+      const monthlyRemaining = income - expenses - debt;
+      const remainingSavings = savings - outOfPocket;
+      const savingsImpact = savings > 0 ? (outOfPocket / savings) * 100 : 100;
+      const incomeImpact = (cost / income) * 100;
+      const fixedObligationRatio = income > 0 ? ((expenses + debt) / income) * 100 : 100;
+      const emergencyMonths =
+        expenses > 0 ? remainingSavings / expenses : remainingSavings > 0 ? 12 : 0;
+      const financedShare = cost > 0 ? (financed / cost) * 100 : 0;
+
+      let pressureScore = 0;
+
+      pressureScore += clamp(incomeImpact * 0.3, 0, 28);
+      pressureScore += clamp(savingsImpact * 0.24, 0, 30);
+      pressureScore += clamp(fixedObligationRatio * 0.24, 0, 24);
+
+      if (remainingSavings < 0) pressureScore += 24;
+      else if (emergencyMonths < 1 && income < 12000) pressureScore += 18;
+      else if (emergencyMonths < 3 && income < 15000) pressureScore += 10;
+      else if (emergencyMonths >= 6) pressureScore -= 8;
+
+      if (financed > 0) pressureScore += clamp(financedShare * 0.14, 4, 14);
+
+      if (monthlyRemaining < 0) pressureScore += 18;
+      else if (monthlyRemaining < income * 0.1) pressureScore += 10;
+      else if (monthlyRemaining > income * 0.35) pressureScore -= 6;
+
+      if (income >= 12000 && remainingSavings > 0 && fixedObligationRatio < 65) {
+        pressureScore -= 10;
+      }
+
+      if (income >= 20000 && remainingSavings > 0 && fixedObligationRatio < 55) {
+        pressureScore -= 12;
+      }
+
+      if (
+        incomeImpact < 12 &&
+        savingsImpact < 15 &&
+        emergencyMonths >= 6 &&
+        fixedObligationRatio < 55
+      ) {
+        pressureScore = Math.min(pressureScore, 28);
+      }
+
+      if (
+        incomeImpact < 6 &&
+        savingsImpact < 8 &&
+        emergencyMonths >= 9 &&
+        fixedObligationRatio < 45
+      ) {
+        pressureScore = Math.min(pressureScore, 15);
+      }
+
+      pressureScore = Math.round(clamp(pressureScore, 0, 100));
+
+      const level = getPressureLevel(pressureScore);
+
+      let guidance = "";
+
+      if (pressureScore <= 30) {
+        guidance =
+          `This root canal expense appears financially manageable based on the numbers provided. The procedure equals about ${incomeImpact.toFixed(1)}% of one month’s take-home income, and your estimated emergency cushion remains around ${Math.max(emergencyMonths, 0).toFixed(1)} months after the out-of-pocket cost.`;
+      } else if (pressureScore <= 60) {
+        guidance =
+          `This root canal expense may work, but it creates noticeable financial pressure. The procedure equals about ${incomeImpact.toFixed(1)}% of one month’s take-home income, and the out-of-pocket portion uses about ${savingsImpact.toFixed(1)}% of available savings.`;
+      } else {
+        guidance =
+          `This root canal expense could create real financial strain. The procedure equals about ${incomeImpact.toFixed(1)}% of one month’s take-home income, and the combination of savings impact, financing, debt, or monthly obligations suggests you should slow down before committing aggressively.`;
+      }
+
+      scoreEl.textContent = `${level.label} — ${pressureScore}/100`;
+      scoreEl.style.color = level.color;
+      barFill.style.width = `${pressureScore}%`;
+      barFill.style.background = level.color;
+
+      stressEl.innerHTML = `<strong>Pressure level:</strong> ${level.stress}`;
+      cashFlowEl.innerHTML = `<strong>Monthly cash flow after bills and debt:</strong> $${monthlyRemaining.toLocaleString()}`;
+      savingsImpactEl.innerHTML = `<strong>Savings after out-of-pocket treatment cost:</strong> $${remainingSavings.toLocaleString()}`;
+      financingImpactEl.innerHTML = `<strong>Financed portion:</strong> ${financedShare.toFixed(1)}% of treatment cost`;
+      guidanceEl.textContent = `${guidance} Recommended next step: ${level.action}`;
+    }
+
+    document
+      .getElementById("rootCanalButton")
+      .addEventListener("click", calculateRootCanal);
+  </script>
+</Layout>

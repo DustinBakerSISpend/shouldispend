@@ -1,0 +1,541 @@
+---
+import Layout from "../layouts/Layout.astro";
+import CalculatorPageShell from "../components/CalculatorPageShell.astro";
+import FAQSection from "../components/FAQSection.astro";
+import RelatedCalculators from "../components/RelatedCalculators.astro";
+import RelatedGuides from "../components/RelatedGuides.astro";
+import MethodologySection from "../components/MethodologySection.astro";
+import FinancialRedFlags from "../components/FinancialRedFlags.astro";
+import CalculatorAssumptions from "../components/CalculatorAssumptions.astro";
+import KeyCostCategories from "../components/KeyCostCategories.astro";
+import ReduceCostTips from "../components/ReduceCostTips.astro";
+import WhenSpendingMakesSense from "../components/WhenSpendingMakesSense.astro";
+---
+
+<Layout
+  title="Should I Spend $5,000 on LASIK?"
+  description="Use this LASIK calculator to decide whether a $5,000 eye surgery expense fits your income, savings, debt, and monthly cash flow."
+>
+  <style>
+    .container {
+      max-width: 950px;
+      margin: 0 auto;
+      padding: 60px 20px;
+    }
+
+    .content-section {
+      max-width: 760px;
+      margin: 72px auto 0;
+    }
+
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 28px;
+      padding: 34px;
+    }
+
+    h2 {
+      margin-top: 0;
+      font-size: 2rem;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 22px;
+      margin-bottom: 28px;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 10px;
+      font-weight: 700;
+    }
+
+    input {
+      width: 100%;
+      padding: 18px;
+      border-radius: 14px;
+      border: 1px solid var(--border);
+      font-size: 1.1rem;
+      box-sizing: border-box;
+    }
+
+    button {
+      background: #0f172a;
+      color: white;
+      border: none;
+      padding: 16px 28px;
+      border-radius: 14px;
+      font-size: 1rem;
+      font-weight: 700;
+      cursor: pointer;
+      margin-top: 10px;
+      width: 100%;
+      display: block;
+    }
+
+    button:hover {
+      opacity: 0.92;
+    }
+
+    .result {
+      margin-top: 40px;
+      border: 1px solid var(--border);
+      border-radius: 24px;
+      padding: 28px;
+      display: none;
+      background: #f8fafc;
+    }
+
+    .score {
+      font-size: 3rem;
+      font-weight: 800;
+      margin-bottom: 16px;
+    }
+
+    .bar {
+      width: 100%;
+      height: 16px;
+      background: #dbe3ee;
+      border-radius: 999px;
+      overflow: hidden;
+      margin-bottom: 24px;
+    }
+
+    .fill {
+      height: 100%;
+      width: 0%;
+      background: #16a34a;
+      border-radius: 999px;
+      transition: width 0.4s ease;
+    }
+
+    .metric {
+      margin-bottom: 14px;
+      font-size: 1.05rem;
+    }
+
+    .guidance {
+      margin-top: 26px;
+      font-size: 1.15rem;
+      line-height: 1.7;
+    }
+
+    .disclaimer {
+      margin-top: 30px;
+      font-size: 0.9rem;
+      color: var(--muted);
+    }
+
+    .helper-link {
+      margin-top: 10px;
+      font-size: 0.9rem;
+    }
+
+    .helper-link a {
+      color: var(--primary);
+      font-weight: 600;
+    }
+
+    .content-section p,
+    .content-section li {
+      line-height: 1.8;
+    }
+  </style>
+
+  <div class="container">
+    <CalculatorPageShell
+      eyebrow="Medical Calculator"
+      title="Should I Spend $5,000 on LASIK?"
+      description="Estimate whether a $5,000 LASIK procedure fits your income, emergency savings, debt load, monthly expenses, and financing plan."
+    >
+      <div class="card">
+        <h2>LASIK Pressure Verdict</h2>
+
+        <div class="grid">
+          <div>
+            <label for="cost">LASIK Cost</label>
+            <input id="cost" type="number" placeholder="5000" min="0" inputmode="decimal" />
+          </div>
+
+          <div>
+            <label for="income">Monthly Take-Home Income</label>
+            <input id="income" type="number" placeholder="6000" min="0" inputmode="decimal" />
+          </div>
+
+          <div>
+            <label for="savings">Emergency Savings</label>
+            <input id="savings" type="number" placeholder="15000" min="0" inputmode="decimal" />
+          </div>
+
+          <div>
+            <label for="expenses">Monthly Expenses</label>
+            <input id="expenses" type="number" placeholder="3500" min="0" inputmode="decimal" />
+          </div>
+
+          <div>
+            <label for="debt">Monthly Debt Payments</label>
+            <input id="debt" type="number" placeholder="500" min="0" inputmode="decimal" />
+
+            <div class="helper-link">
+              <a href="/what-counts-as-debt">
+                Not sure what counts as debt? Read the debt guide
+              </a>
+            </div>
+          </div>
+
+          <div>
+            <label for="financed">Amount Financed</label>
+            <input id="financed" type="number" placeholder="0" min="0" inputmode="decimal" />
+          </div>
+        </div>
+
+        <button id="lasikButton" type="button">
+          Calculate Financial Pressure
+        </button>
+
+        <div class="result" id="result">
+          <div class="score" id="score"></div>
+
+          <div class="bar">
+            <div class="fill" id="barFill"></div>
+          </div>
+
+          <div class="metric" id="stress"></div>
+          <div class="metric" id="cashFlow"></div>
+          <div class="metric" id="savingsImpact"></div>
+          <div class="metric" id="financingImpact"></div>
+
+          <div class="guidance" id="guidance"></div>
+
+          <div class="disclaimer">
+            This is a general educational estimate, not medical or financial advice.
+          </div>
+        </div>
+      </div>
+
+      <div class="content-section">
+        <h2>What a $5,000 LASIK Procedure Really Costs</h2>
+
+        <p>
+          LASIK is often framed as a one-time quality-of-life purchase, but the financial impact depends on more than the quoted procedure price. Pre-op exams, follow-up visits, prescription drops, time off work, financing fees, and retreatment policies can all affect the final cost.
+        </p>
+
+        <p>
+          A $5,000 LASIK procedure may be manageable if it leaves your emergency savings intact and does not create high-interest debt. It becomes riskier when the procedure drains savings, adds another monthly payment, or competes with rent, medical bills, car payments, or credit card balances.
+        </p>
+      </div>
+
+      <WhenSpendingMakesSense
+        title="When $5,000 on LASIK Makes Sense"
+        items={[
+          "You can pay for the procedure without draining your emergency fund.",
+          "Your monthly cash flow remains healthy after normal expenses and debt payments.",
+          "You understand the full quoted cost, follow-up policy, and financing terms.",
+          "The procedure may reduce long-term spending on contacts, glasses, exams, and supplies.",
+          "The quality-of-life improvement is meaningful and affordable within your current budget.",
+        ]}
+      />
+
+      <div class="content-section">
+        <h2>When You Should Wait</h2>
+
+        <p>
+          Waiting may be smarter if the procedure would leave you with little cash, force credit card debt, or add pressure to an already tight monthly budget.
+        </p>
+
+        <p>
+          LASIK can still be a good goal. The safer move may be saving for a few more months, comparing financing terms, checking HSA or FSA options, or getting another quote before committing.
+        </p>
+      </div>
+
+      <KeyCostCategories
+        items={[
+          {
+            title: "Procedure quote",
+            description:
+              "The advertised LASIK price may vary by provider, eye prescription, technology used, and whether both eyes are included.",
+          },
+          {
+            title: "Follow-up care",
+            description:
+              "Ask whether post-op visits, enhancements, prescription drops, or complications are included in the quoted price.",
+          },
+          {
+            title: "Financing terms",
+            description:
+              "Zero-interest promotions can be useful, but deferred interest or high APRs can make LASIK much more expensive.",
+          },
+          {
+            title: "Emergency cushion",
+            description:
+              "Because LASIK is usually elective, preserving emergency savings should matter heavily in the decision.",
+          },
+        ]}
+      />
+
+      <ReduceCostTips
+        items={[
+          "Compare at least two reputable LASIK providers before booking.",
+          "Ask whether the quoted price includes both eyes, follow-ups, and enhancements.",
+          "Check whether HSA or FSA funds can be used for the procedure.",
+          "Avoid high-interest credit card financing if possible.",
+          "Delay the procedure a few months if that protects your emergency fund.",
+          "Compare the cost against your annual spending on contacts, glasses, exams, and supplies.",
+        ]}
+      />
+
+      <FinancialRedFlags
+        items={[
+          "The procedure would drain most of your emergency savings.",
+          "You need high-interest debt to make the payment work.",
+          "Your monthly expenses and debt already consume most of your income.",
+          "You have not confirmed what is included in the quoted LASIK price.",
+          "You are rushing because of a limited-time discount or sales pressure.",
+        ]}
+      />
+
+      <CalculatorAssumptions
+        items={[
+          "The calculator treats LASIK as a mostly elective one-time medical expense.",
+          "Monthly income means take-home pay after taxes and payroll deductions.",
+          "Monthly debt payments include credit cards, car loans, student loans, personal loans, and other required debt payments.",
+          "The calculator assumes financed LASIK creates additional financial pressure even when the monthly payment is not entered separately.",
+          "The estimate does not evaluate medical eligibility, surgical risk, provider quality, or insurance coverage.",
+        ]}
+      />
+
+      <FAQSection
+        title="LASIK Spending FAQ"
+        faqs={[
+          {
+            question: "Is $5,000 too much to spend on LASIK?",
+            answer:
+              "It depends on your income, savings, monthly obligations, and whether you need financing. A $5,000 LASIK procedure can be reasonable if it does not damage your emergency fund or create high-interest debt.",
+          },
+          {
+            question: "Should I finance LASIK?",
+            answer:
+              "Financing may be reasonable if the payment is affordable and the terms are clear. Be careful with deferred-interest offers, high APRs, or any plan that turns an elective procedure into long-term financial stress.",
+          },
+          {
+            question: "Can LASIK save money over time?",
+            answer:
+              "LASIK may reduce future spending on contacts, glasses, exams, solutions, and replacement lenses. The payback period depends on how much you currently spend on vision correction.",
+          },
+          {
+            question: "Should I use emergency savings for LASIK?",
+            answer:
+              "Using savings is safer than high-interest debt, but draining emergency savings for an elective procedure can create risk. A stronger cushion usually makes the decision safer.",
+          },
+          {
+            question: "What should I ask before paying for LASIK?",
+            answer:
+              "Ask whether the quote includes both eyes, consultations, follow-up visits, enhancements, drops, financing fees, and what happens if your vision needs retreatment.",
+          },
+        ]}
+      />
+
+      <MethodologySection category="medical spending" updated="May 2026" />
+
+      <RelatedGuides
+        guides={[
+          {
+            title: "Medical Calculators",
+            href: "/medical-calculators",
+            description:
+              "Browse medical spending calculators for bills, procedures, dental costs, and out-of-pocket healthcare decisions.",
+          },
+          {
+            title: "What Counts as Debt?",
+            href: "/what-counts-as-debt",
+            description:
+              "Understand which monthly obligations should be included when estimating financial pressure.",
+          },
+        ]}
+      />
+
+      <RelatedCalculators
+        calculators={[
+          {
+            category: "Medical",
+            title: "Should I Spend $2,500 on an ER Bill?",
+            href: "/should-i-spend-2500-on-an-er-bill",
+          },
+          {
+            category: "Medical",
+            title: "Should I Spend $4,000 on a Dental Implant?",
+            href: "/should-i-spend-4000-on-a-dental-implant",
+          },
+          {
+            category: "Medical",
+            title: "Should I Spend $3,000 on a Root Canal?",
+            href: "/should-i-spend-3000-on-a-root-canal",
+          },
+          {
+            category: "Medical",
+            title: "Browse Medical Calculators",
+            href: "/medical-calculators",
+          },
+        ]}
+      />
+    </CalculatorPageShell>
+  </div>
+
+  <script is:inline>
+    const clamp = (value, min, max) => Math.min(Math.max(value, min), max);
+
+    const getNumber = (id) => {
+      const rawValue = document.getElementById(id)?.value;
+      const value = Number(rawValue);
+      return Number.isFinite(value) && value >= 0 ? value : 0;
+    };
+
+    function getPressureLevel(score) {
+      if (score <= 30) {
+        return {
+          label: "Low Pressure",
+          stress: "Low pressure",
+          color: "#16a34a",
+          action: "Proceed only after confirming the full procedure cost and keeping your emergency fund intact.",
+        };
+      }
+
+      if (score <= 60) {
+        return {
+          label: "Moderate Pressure",
+          stress: "Moderate pressure",
+          color: "#ca8a04",
+          action: "Compare quotes, review financing terms, and consider saving more before booking.",
+        };
+      }
+
+      return {
+        label: "High Pressure",
+        stress: "High pressure",
+        color: "#dc2626",
+        action: "Delay the procedure, reduce financing risk, or rebuild savings first.",
+      };
+    }
+
+    function calculateLasik() {
+      const cost = getNumber("cost");
+      const income = getNumber("income");
+      const savings = getNumber("savings");
+      const expenses = getNumber("expenses");
+      const debt = getNumber("debt");
+      const financed = getNumber("financed");
+
+      const result = document.getElementById("result");
+      const scoreEl = document.getElementById("score");
+      const barFill = document.getElementById("barFill");
+      const stressEl = document.getElementById("stress");
+      const cashFlowEl = document.getElementById("cashFlow");
+      const savingsImpactEl = document.getElementById("savingsImpact");
+      const financingImpactEl = document.getElementById("financingImpact");
+      const guidanceEl = document.getElementById("guidance");
+
+      result.style.display = "block";
+
+      if (cost <= 0 || income <= 0) {
+        scoreEl.textContent = "Add your numbers first";
+        barFill.style.width = "0%";
+        barFill.style.background = "#16a34a";
+        stressEl.innerHTML = "";
+        cashFlowEl.innerHTML = "";
+        savingsImpactEl.innerHTML = "";
+        financingImpactEl.innerHTML = "";
+        guidanceEl.textContent =
+          "Enter a positive LASIK cost and monthly take-home income so the calculator can estimate financial pressure.";
+        return;
+      }
+
+      const outOfPocket = Math.max(cost - financed, 0);
+      const monthlyRemaining = income - expenses - debt;
+      const remainingSavings = savings - outOfPocket;
+      const savingsImpact = savings > 0 ? (outOfPocket / savings) * 100 : 100;
+      const incomeImpact = (cost / income) * 100;
+      const fixedObligationRatio = income > 0 ? ((expenses + debt) / income) * 100 : 100;
+      const emergencyMonths =
+        expenses > 0 ? remainingSavings / expenses : remainingSavings > 0 ? 12 : 0;
+      const financedShare = cost > 0 ? (financed / cost) * 100 : 0;
+
+      let pressureScore = 0;
+
+      pressureScore += clamp(incomeImpact * 0.28, 0, 28);
+      pressureScore += clamp(savingsImpact * 0.22, 0, 28);
+      pressureScore += clamp(fixedObligationRatio * 0.24, 0, 24);
+
+      if (remainingSavings < 0) pressureScore += 24;
+      else if (emergencyMonths < 1 && income < 12000) pressureScore += 18;
+      else if (emergencyMonths < 3 && income < 15000) pressureScore += 10;
+      else if (emergencyMonths >= 6) pressureScore -= 8;
+
+      if (financed > 0) pressureScore += clamp(financedShare * 0.16, 4, 16);
+
+      if (monthlyRemaining < 0) pressureScore += 18;
+      else if (monthlyRemaining < income * 0.1) pressureScore += 10;
+      else if (monthlyRemaining > income * 0.35) pressureScore -= 6;
+
+      if (income >= 12000 && remainingSavings > 0 && fixedObligationRatio < 65) {
+        pressureScore -= 10;
+      }
+
+      if (income >= 20000 && remainingSavings > 0 && fixedObligationRatio < 55) {
+        pressureScore -= 12;
+      }
+
+      if (
+        incomeImpact < 15 &&
+        savingsImpact < 15 &&
+        emergencyMonths >= 6 &&
+        fixedObligationRatio < 55
+      ) {
+        pressureScore = Math.min(pressureScore, 28);
+      }
+
+      if (
+        incomeImpact < 8 &&
+        savingsImpact < 8 &&
+        emergencyMonths >= 9 &&
+        fixedObligationRatio < 45
+      ) {
+        pressureScore = Math.min(pressureScore, 15);
+      }
+
+      pressureScore = Math.round(clamp(pressureScore, 0, 100));
+
+      const level = getPressureLevel(pressureScore);
+
+      let guidance = "";
+
+      if (pressureScore <= 30) {
+        guidance =
+          `This LASIK expense appears financially manageable based on the numbers provided. The procedure equals about ${incomeImpact.toFixed(1)}% of one month’s take-home income, and your estimated emergency cushion remains around ${Math.max(emergencyMonths, 0).toFixed(1)} months after the out-of-pocket cost.`;
+      } else if (pressureScore <= 60) {
+        guidance =
+          `This LASIK expense may work, but it creates noticeable financial pressure. The procedure equals about ${incomeImpact.toFixed(1)}% of one month’s take-home income, and the out-of-pocket portion uses about ${savingsImpact.toFixed(1)}% of available savings.`;
+      } else {
+        guidance =
+          `This LASIK expense could create real strain. The procedure equals about ${incomeImpact.toFixed(1)}% of one month’s take-home income, and the combination of savings impact, financing, debt, or monthly obligations suggests waiting may be safer.`;
+      }
+
+      scoreEl.textContent = `${level.label} — ${pressureScore}/100`;
+      scoreEl.style.color = level.color;
+      barFill.style.width = `${pressureScore}%`;
+      barFill.style.background = level.color;
+
+      stressEl.innerHTML = `<strong>Pressure level:</strong> ${level.stress}`;
+      cashFlowEl.innerHTML = `<strong>Monthly cash flow after bills and debt:</strong> $${monthlyRemaining.toLocaleString()}`;
+      savingsImpactEl.innerHTML = `<strong>Savings after out-of-pocket LASIK cost:</strong> $${remainingSavings.toLocaleString()}`;
+      financingImpactEl.innerHTML = `<strong>Financed portion:</strong> ${financedShare.toFixed(1)}% of procedure cost`;
+      guidanceEl.textContent = `${guidance} Recommended next step: ${level.action}`;
+    }
+
+    document
+      .getElementById("lasikButton")
+      .addEventListener("click", calculateLasik);
+  </script>
+</Layout>

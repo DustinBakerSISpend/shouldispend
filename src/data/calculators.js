@@ -237,12 +237,98 @@ export const calculators = [
 },
 
 {
+  id: "lasik-5000",
+  category: "Medical",
+  title: "Should I Spend $5,000 on LASIK?",
+  description:
+    "Evaluate LASIK affordability using income, emergency savings, debt, financing, monthly expenses, and financial flexibility.",
+  href: "/should-i-spend-5000-on-lasik",
+},
+
+{
+  id: "er-bill-2500",
+  category: "Medical",
+  title: "Should I Spend $2,500 on an ER Bill?",
+  description:
+    "Evaluate whether a large emergency room bill fits your savings, payment plan options, debt pressure, and monthly cash flow.",
+  href: "/should-i-spend-2500-on-an-er-bill",
+},
+
+{
+  id: "dental-implant-4000",
+  category: "Medical",
+  title: "Should I Spend $4,000 on a Dental Implant?",
+  description:
+    "Analyze dental implant affordability using income, emergency savings, financing, insurance gaps, and debt pressure.",
+  href: "/should-i-spend-4000-on-a-dental-implant",
+},
+
+{
+  id: "root-canal-3000",
+  category: "Medical",
+  title: "Should I Spend $3,000 on a Root Canal?",
+  description:
+    "Evaluate root canal affordability using savings, monthly cash flow, dental financing, and overall financial flexibility.",
+  href: "/should-i-spend-3000-on-a-root-canal",
+},
+
+{
   id: "home-repairs-cost",
   category: "Home Improvement",
   title: "Should I Spend This Much on Home Repairs?",
   description:
     "Evaluate home repair costs using emergency savings, urgency, debt pressure, income stability, and long-term flexibility.",
   href: "/should-i-spend-this-much-on-home-repairs",
+},
+
+{
+  id: "roof-replacement-10000",
+  category: "Home Improvement",
+  title: "Should I Spend $10,000 on a Roof Replacement?",
+  description:
+    "Evaluate roof replacement affordability using insurance help, emergency savings, debt pressure, income, and monthly cash flow.",
+  href: "/should-i-spend-10000-on-a-roof-replacement",
+},
+
+{
+  id: "hvac-replacement-8000",
+  category: "Home Improvement",
+  title: "Should I Spend $8,000 on HVAC Replacement?",
+  description:
+    "Evaluate HVAC replacement affordability using emergency savings, repair urgency, financing, debt pressure, and monthly cash flow.",
+  href: "/should-i-spend-8000-on-hvac-replacement",
+},
+{
+  id: "plumbing-repairs-5000",
+  category: "Home Improvement",
+  title: "Should I Spend $5,000 on Plumbing Repairs?",
+  description:
+    "Evaluate plumbing repair affordability using emergency savings, urgency, insurance help, debt pressure, and monthly cash flow.",
+  href: "/should-i-spend-5000-on-plumbing-repairs",
+},
+{
+  id: "foundation-repair-15000",
+  category: "Home Improvement",
+  title: "Should I Spend $15,000 on Foundation Repair?",
+  description:
+    "Evaluate foundation repair affordability using savings, urgency, financing, home risk, debt pressure, and monthly flexibility.",
+  href: "/should-i-spend-15000-on-foundation-repair",
+},
+{
+  id: "kitchen-remodel-20000",
+  category: "Home Improvement",
+  title: "Should I Spend $20,000 on a Kitchen Remodel?",
+  description:
+    "Evaluate kitchen remodel affordability using savings, home value, financing, debt pressure, and monthly cash flow.",
+  href: "/should-i-spend-20000-on-a-kitchen-remodel",
+},
+{
+  id: "tree-removal-3000",
+  category: "Home Improvement",
+  title: "Should I Spend $3,000 on Tree Removal?",
+  description:
+    "Evaluate tree removal affordability using urgency, insurance help, emergency savings, debt pressure, and monthly cash flow.",
+  href: "/should-i-spend-3000-on-tree-removal",
 },
 
 ];

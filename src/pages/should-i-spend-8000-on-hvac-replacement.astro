@@ -1,0 +1,552 @@
+---
+import Layout from "../layouts/Layout.astro";
+import CalculatorPageShell from "../components/CalculatorPageShell.astro";
+import FAQSection from "../components/FAQSection.astro";
+import RelatedCalculators from "../components/RelatedCalculators.astro";
+import RelatedGuides from "../components/RelatedGuides.astro";
+import MethodologySection from "../components/MethodologySection.astro";
+import FinancialRedFlags from "../components/FinancialRedFlags.astro";
+import CalculatorAssumptions from "../components/CalculatorAssumptions.astro";
+import KeyCostCategories from "../components/KeyCostCategories.astro";
+import ReduceCostTips from "../components/ReduceCostTips.astro";
+import WhenSpendingMakesSense from "../components/WhenSpendingMakesSense.astro";
+---
+
+<Layout
+  title="Should I Spend $8,000 on HVAC Replacement?"
+  description="Use this HVAC replacement calculator to decide whether an $8,000 furnace or AC replacement fits your income, savings, debt, financing, and monthly cash flow."
+>
+  <style>
+    .container {
+      max-width: 950px;
+      margin: 0 auto;
+      padding: 60px 20px;
+    }
+
+    .content-section {
+      max-width: 760px;
+      margin: 72px auto 0;
+    }
+
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 28px;
+      padding: 34px;
+    }
+
+    h2 {
+      margin-top: 0;
+      font-size: 2rem;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 22px;
+      margin-bottom: 28px;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 10px;
+      font-weight: 700;
+    }
+
+    input {
+      width: 100%;
+      padding: 18px;
+      border-radius: 14px;
+      border: 1px solid var(--border);
+      font-size: 1.1rem;
+      box-sizing: border-box;
+    }
+
+    button {
+      background: #0f172a;
+      color: white;
+      border: none;
+      padding: 16px 28px;
+      border-radius: 14px;
+      font-size: 1rem;
+      font-weight: 700;
+      cursor: pointer;
+      margin-top: 10px;
+      width: 100%;
+      display: block;
+    }
+
+    button:hover {
+      opacity: 0.92;
+    }
+
+    .result {
+      margin-top: 40px;
+      border: 1px solid var(--border);
+      border-radius: 24px;
+      padding: 28px;
+      display: none;
+      background: #f8fafc;
+    }
+
+    .score {
+      font-size: 3rem;
+      font-weight: 800;
+      margin-bottom: 16px;
+    }
+
+    .bar {
+      width: 100%;
+      height: 16px;
+      background: #dbe3ee;
+      border-radius: 999px;
+      overflow: hidden;
+      margin-bottom: 24px;
+    }
+
+    .fill {
+      height: 100%;
+      width: 0%;
+      background: #16a34a;
+      border-radius: 999px;
+      transition: width 0.4s ease;
+    }
+
+    .metric {
+      margin-bottom: 14px;
+      font-size: 1.05rem;
+    }
+
+    .guidance {
+      margin-top: 26px;
+      font-size: 1.15rem;
+      line-height: 1.7;
+    }
+
+    .disclaimer {
+      margin-top: 30px;
+      font-size: 0.9rem;
+      color: var(--muted);
+    }
+
+    .helper-link {
+      margin-top: 10px;
+      font-size: 0.9rem;
+    }
+
+    .helper-link a {
+      color: var(--primary);
+      font-weight: 600;
+    }
+
+    .content-section p,
+    .content-section li {
+      line-height: 1.8;
+    }
+  </style>
+
+  <div class="container">
+    <CalculatorPageShell
+      eyebrow="Home Improvement Calculator"
+      title="Should I Spend $8,000 on HVAC Replacement?"
+      description="Estimate whether an $8,000 HVAC replacement fits your income, emergency savings, debt load, monthly expenses, and financing options."
+    >
+      <div class="card">
+        <h2>HVAC Replacement Pressure Verdict</h2>
+
+        <div class="grid">
+          <div>
+            <label for="cost">HVAC Replacement Cost</label>
+            <input id="cost" type="number" placeholder="8000" min="0" inputmode="decimal" />
+          </div>
+
+          <div>
+            <label for="income">Monthly Take-Home Income</label>
+            <input id="income" type="number" placeholder="7000" min="0" inputmode="decimal" />
+          </div>
+
+          <div>
+            <label for="savings">Emergency Savings</label>
+            <input id="savings" type="number" placeholder="15000" min="0" inputmode="decimal" />
+          </div>
+
+          <div>
+            <label for="expenses">Monthly Expenses</label>
+            <input id="expenses" type="number" placeholder="4500" min="0" inputmode="decimal" />
+          </div>
+
+          <div>
+            <label for="debt">Monthly Debt Payments</label>
+            <input id="debt" type="number" placeholder="700" min="0" inputmode="decimal" />
+
+            <div class="helper-link">
+              <a href="/what-counts-as-debt">
+                Not sure what counts as debt? Read the debt guide
+              </a>
+            </div>
+          </div>
+
+          <div>
+            <label for="rebates">Rebates or Utility Incentives</label>
+            <input id="rebates" type="number" placeholder="0" min="0" inputmode="decimal" />
+          </div>
+
+          <div>
+            <label for="financed">Amount Financed</label>
+            <input id="financed" type="number" placeholder="0" min="0" inputmode="decimal" />
+          </div>
+        </div>
+
+        <button id="hvacButton" type="button">
+          Calculate Financial Pressure
+        </button>
+
+        <div class="result" id="result">
+          <div class="score" id="score"></div>
+
+          <div class="bar">
+            <div class="fill" id="barFill"></div>
+          </div>
+
+          <div class="metric" id="stress"></div>
+          <div class="metric" id="cashFlow"></div>
+          <div class="metric" id="savingsImpact"></div>
+          <div class="metric" id="financingImpact"></div>
+
+          <div class="guidance" id="guidance"></div>
+
+          <div class="disclaimer">
+            This is a general educational estimate, not HVAC, contractor, utility, or financial advice.
+          </div>
+        </div>
+      </div>
+
+      <div class="content-section">
+        <h2>What an $8,000 HVAC Replacement Really Costs</h2>
+
+        <p>
+          HVAC replacement costs can include more than the furnace or air conditioner itself. Installation labor, ductwork, electrical work, thermostats, permits, refrigerant, line-set replacement, emergency service fees, and warranty upgrades can all increase the final bill.
+        </p>
+
+        <p>
+          An $8,000 HVAC replacement may be manageable if the system is failing and you have savings, rebates, or reasonable financing. It becomes more stressful when the project arrives unexpectedly during extreme weather or requires high-interest financing to complete quickly.
+        </p>
+      </div>
+
+      <WhenSpendingMakesSense
+        title="When Paying for HVAC Replacement Makes Sense"
+        items={[
+          "The furnace or AC is failing, unsafe, inefficient, or near the end of its lifespan.",
+          "You have compared repair versus replacement costs realistically.",
+          "You can cover the net cost without destroying your emergency fund.",
+          "You have reviewed rebates, utility incentives, or financing terms.",
+          "The replacement improves reliability, efficiency, and long-term operating costs.",
+        ]}
+      />
+
+      <div class="content-section">
+        <h2>When You Should Slow Down Before Signing</h2>
+
+        <p>
+          Slow down if the system can still be repaired safely, the contractor pressures you into immediate replacement, or financing terms are unclear.
+        </p>
+
+        <p>
+          Before committing, compare at least two quotes, confirm system sizing, ask about efficiency ratings, review warranty terms, and avoid financing that turns an urgent repair into a long-term budget problem.
+        </p>
+      </div>
+
+      <KeyCostCategories
+        items={[
+          {
+            title: "Equipment and installation",
+            description:
+              "The HVAC unit, installation labor, ductwork changes, permits, and electrical work often drive the total replacement cost.",
+          },
+          {
+            title: "Efficiency upgrades",
+            description:
+              "Higher-efficiency systems may qualify for rebates or reduce long-term utility bills, but they often increase the upfront price.",
+          },
+          {
+            title: "Emergency replacement timing",
+            description:
+              "Urgent winter or summer replacements can reduce shopping flexibility and increase financial pressure.",
+          },
+          {
+            title: "Financing and monthly payments",
+            description:
+              "HVAC financing may preserve cash flow, but high rates or long repayment terms can create lasting budget strain.",
+          },
+        ]}
+      />
+
+      <ReduceCostTips
+        items={[
+          "Get at least two or three HVAC replacement quotes before choosing a contractor.",
+          "Ask whether repair is still realistic before replacing the system.",
+          "Check utility-company rebates and manufacturer incentives.",
+          "Compare efficiency ratings instead of automatically buying the highest-tier system.",
+          "Avoid high-interest financing when possible.",
+          "Confirm warranty coverage for both parts and labor.",
+        ]}
+      />
+
+      <FinancialRedFlags
+        items={[
+          "The contractor pressures you to replace the system immediately without explaining repair options.",
+          "The project would drain nearly all emergency savings.",
+          "The financing terms are unclear or carry a high interest rate.",
+          "The quote does not explain labor, permits, warranty coverage, or efficiency ratings.",
+          "The monthly payment would make mortgage, utilities, groceries, or debt payments difficult.",
+        ]}
+      />
+
+      <CalculatorAssumptions
+        items={[
+          "The calculator treats HVAC replacement as a major home repair that may be urgent or semi-urgent.",
+          "Monthly income means take-home pay after taxes and payroll deductions.",
+          "Rebates and incentives reduce the effective net cost of the project.",
+          "Monthly debt payments include credit cards, car loans, student loans, personal loans, and other required debt payments.",
+          "The estimate does not evaluate contractor quality, equipment sizing, utility savings, or HVAC system lifespan.",
+        ]}
+      />
+
+      <FAQSection
+        title="HVAC Replacement Spending FAQ"
+        faqs={[
+          {
+            question: "Is $8,000 too much for HVAC replacement?",
+            answer:
+              "It depends on the size of the system, labor, efficiency level, ductwork changes, permits, and regional pricing. An $8,000 HVAC replacement can be reasonable, but comparing quotes is important.",
+          },
+          {
+            question: "Should I repair or replace my HVAC system?",
+            answer:
+              "Repair may make sense for newer systems with isolated problems. Replacement becomes more realistic when the system is old, unreliable, inefficient, or facing expensive recurring repairs.",
+          },
+          {
+            question: "Should I finance HVAC replacement?",
+            answer:
+              "Financing may make sense if the system is urgent and the monthly payment fits comfortably into your budget. Be careful with long terms or high-interest offers.",
+          },
+          {
+            question: "Can rebates reduce HVAC replacement cost?",
+            answer:
+              "Potentially. Utility companies, manufacturers, and government programs sometimes offer rebates or tax incentives for higher-efficiency systems.",
+          },
+          {
+            question: "Should I use emergency savings for HVAC replacement?",
+            answer:
+              "Using savings can be appropriate if the system is failing or unsafe. The key is protecting enough emergency cushion after the project is complete.",
+          },
+        ]}
+      />
+
+      <MethodologySection category="home improvement spending" updated="May 2026" />
+
+      <RelatedGuides
+        guides={[
+          {
+            title: "Home Improvement Calculators",
+            href: "/home-improvement-calculators",
+            description:
+              "Browse home repair and renovation calculators for urgent repairs, upgrades, and major homeowner decisions.",
+          },
+          {
+            title: "What Counts as Debt?",
+            href: "/what-counts-as-debt",
+            description:
+              "Understand which monthly obligations should be included when estimating financial pressure.",
+          },
+        ]}
+      />
+
+      <RelatedCalculators
+        calculators={[
+          {
+            category: "Home Improvement",
+            title: "Should I Spend $10,000 on a Roof Replacement?",
+            href: "/should-i-spend-10000-on-a-roof-replacement",
+          },
+          {
+            category: "Home Improvement",
+            title: "Should I Spend $5,000 on Plumbing Repairs?",
+            href: "/should-i-spend-5000-on-plumbing-repairs",
+          },
+          {
+            category: "Home Improvement",
+            title: "Should I Spend $15,000 on Foundation Repair?",
+            href: "/should-i-spend-15000-on-foundation-repair",
+          },
+          {
+            category: "Home Improvement",
+            title: "Browse Home Improvement Calculators",
+            href: "/home-improvement-calculators",
+          },
+        ]}
+      />
+    </CalculatorPageShell>
+  </div>
+
+  <script is:inline>
+    const clamp = (value, min, max) => Math.min(Math.max(value, min), max);
+
+    const getNumber = (id) => {
+      const rawValue = document.getElementById(id)?.value;
+      const value = Number(rawValue);
+      return Number.isFinite(value) && value >= 0 ? value : 0;
+    };
+
+    function getPressureLevel(score) {
+      if (score <= 30) {
+        return {
+          label: "Low Pressure",
+          stress: "Low pressure",
+          color: "#16a34a",
+          action: "Proceed only after comparing quotes, confirming system sizing, and protecting your emergency fund.",
+        };
+      }
+
+      if (score <= 60) {
+        return {
+          label: "Moderate Pressure",
+          stress: "Moderate pressure",
+          color: "#ca8a04",
+          action: "Review repair versus replacement carefully and avoid financing that strains monthly cash flow.",
+        };
+      }
+
+      return {
+        label: "High Pressure",
+        stress: "High pressure",
+        color: "#dc2626",
+        action: "Slow down before signing, compare more quotes, and protect essential monthly bills first.",
+      };
+    }
+
+    function calculateHVAC() {
+      const cost = getNumber("cost");
+      const income = getNumber("income");
+      const savings = getNumber("savings");
+      const expenses = getNumber("expenses");
+      const debt = getNumber("debt");
+      const rebates = getNumber("rebates");
+      const financed = getNumber("financed");
+
+      const result = document.getElementById("result");
+      const scoreEl = document.getElementById("score");
+      const barFill = document.getElementById("barFill");
+      const stressEl = document.getElementById("stress");
+      const cashFlowEl = document.getElementById("cashFlow");
+      const savingsImpactEl = document.getElementById("savingsImpact");
+      const financingImpactEl = document.getElementById("financingImpact");
+      const guidanceEl = document.getElementById("guidance");
+
+      result.style.display = "block";
+
+      if (cost <= 0 || income <= 0) {
+        scoreEl.textContent = "Add your numbers first";
+        barFill.style.width = "0%";
+        barFill.style.background = "#16a34a";
+        stressEl.innerHTML = "";
+        cashFlowEl.innerHTML = "";
+        savingsImpactEl.innerHTML = "";
+        financingImpactEl.innerHTML = "";
+        guidanceEl.textContent =
+          "Enter a positive HVAC replacement cost and monthly take-home income so the calculator can estimate financial pressure.";
+        return;
+      }
+
+      const netCost = Math.max(cost - rebates, 0);
+      const outOfPocket = Math.max(netCost - financed, 0);
+      const monthlyRemaining = income - expenses - debt;
+      const remainingSavings = savings - outOfPocket;
+      const savingsImpact = savings > 0 ? (outOfPocket / savings) * 100 : 100;
+      const incomeImpact = (netCost / income) * 100;
+      const fixedObligationRatio = income > 0 ? ((expenses + debt) / income) * 100 : 100;
+      const emergencyMonths =
+        expenses > 0 ? remainingSavings / expenses : remainingSavings > 0 ? 12 : 0;
+      const financedShare = netCost > 0 ? (financed / netCost) * 100 : 0;
+
+      let pressureScore = 0;
+
+      pressureScore += clamp(incomeImpact * 0.28, 0, 30);
+      pressureScore += clamp(savingsImpact * 0.24, 0, 30);
+      pressureScore += clamp(fixedObligationRatio * 0.22, 0, 24);
+
+      if (remainingSavings < 0) pressureScore += 26;
+      else if (emergencyMonths < 1 && income < 12000) pressureScore += 18;
+      else if (emergencyMonths < 3 && income < 15000) pressureScore += 10;
+      else if (emergencyMonths >= 6) pressureScore -= 8;
+
+      if (financed > 0) pressureScore += clamp(financedShare * 0.14, 4, 14);
+
+      if (monthlyRemaining < 0) pressureScore += 18;
+      else if (monthlyRemaining < income * 0.1) pressureScore += 10;
+      else if (monthlyRemaining > income * 0.35) pressureScore -= 6;
+
+      if (rebates >= cost * 0.15 && remainingSavings > 0) {
+        pressureScore -= 6;
+      }
+
+      if (income >= 12000 && remainingSavings > 0 && fixedObligationRatio < 65) {
+        pressureScore -= 10;
+      }
+
+      if (income >= 20000 && remainingSavings > 0 && fixedObligationRatio < 55) {
+        pressureScore -= 12;
+      }
+
+      if (
+        incomeImpact < 15 &&
+        savingsImpact < 15 &&
+        emergencyMonths >= 6 &&
+        fixedObligationRatio < 55
+      ) {
+        pressureScore = Math.min(pressureScore, 28);
+      }
+
+      if (
+        incomeImpact < 8 &&
+        savingsImpact < 8 &&
+        emergencyMonths >= 9 &&
+        fixedObligationRatio < 45
+      ) {
+        pressureScore = Math.min(pressureScore, 15);
+      }
+
+      pressureScore = Math.round(clamp(pressureScore, 0, 100));
+
+      const level = getPressureLevel(pressureScore);
+
+      let guidance = "";
+
+      if (pressureScore <= 30) {
+        guidance =
+          `This HVAC replacement appears financially manageable based on the numbers provided. The net cost equals about ${incomeImpact.toFixed(1)}% of one month’s take-home income, and your estimated emergency cushion remains around ${Math.max(emergencyMonths, 0).toFixed(1)} months after the out-of-pocket cost.`;
+      } else if (pressureScore <= 60) {
+        guidance =
+          `This HVAC replacement may work, but it creates noticeable financial pressure. The net cost equals about ${incomeImpact.toFixed(1)}% of one month’s take-home income, and the out-of-pocket portion uses about ${savingsImpact.toFixed(1)}% of available savings.`;
+      } else {
+        guidance =
+          `This HVAC replacement could create real financial strain. The net cost equals about ${incomeImpact.toFixed(1)}% of one month’s take-home income, and the combination of savings impact, financing, debt, or monthly obligations suggests you should slow down before committing aggressively.`;
+      }
+
+      scoreEl.textContent = `${level.label} — ${pressureScore}/100`;
+      scoreEl.style.color = level.color;
+      barFill.style.width = `${pressureScore}%`;
+      barFill.style.background = level.color;
+
+      stressEl.innerHTML = `<strong>Pressure level:</strong> ${level.stress}`;
+      cashFlowEl.innerHTML = `<strong>Monthly cash flow after bills and debt:</strong> $${monthlyRemaining.toLocaleString()}`;
+      savingsImpactEl.innerHTML = `<strong>Savings after out-of-pocket HVAC cost:</strong> $${remainingSavings.toLocaleString()}`;
+      financingImpactEl.innerHTML = `<strong>Financed portion of net cost:</strong> ${financedShare.toFixed(1)}%`;
+      guidanceEl.textContent = `${guidance} Recommended next step: ${level.action}`;
+    }
+
+    document
+      .getElementById("hvacButton")
+      .addEventListener("click", calculateHVAC);
+  </script>
+</Layout>
