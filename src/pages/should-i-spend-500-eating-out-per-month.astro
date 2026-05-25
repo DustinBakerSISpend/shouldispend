@@ -1,0 +1,554 @@
+---
+import Layout from "../layouts/Layout.astro";
+import CalculatorPageShell from "../components/CalculatorPageShell.astro";
+import FAQSection from "../components/FAQSection.astro";
+import RelatedCalculators from "../components/RelatedCalculators.astro";
+import RelatedGuides from "../components/RelatedGuides.astro";
+import MethodologySection from "../components/MethodologySection.astro";
+import FinancialRedFlags from "../components/FinancialRedFlags.astro";
+import CalculatorAssumptions from "../components/CalculatorAssumptions.astro";
+import KeyCostCategories from "../components/KeyCostCategories.astro";
+import ReduceCostTips from "../components/ReduceCostTips.astro";
+import WhenSpendingMakesSense from "../components/WhenSpendingMakesSense.astro";
+---
+
+<Layout
+  title="Should I Spend $500 Eating Out Per Month?"
+  description="Use this eating-out calculator to decide whether spending $500 per month on restaurants, takeout, delivery, and coffee fits your income, groceries, savings, debt, and monthly cash flow."
+>
+  <style>
+    .container {
+      max-width: 950px;
+      margin: 0 auto;
+      padding: 60px 20px;
+    }
+
+    .content-section {
+      max-width: 760px;
+      margin: 72px auto 0;
+    }
+
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 28px;
+      padding: 34px;
+    }
+
+    h2 {
+      margin-top: 0;
+      font-size: 2rem;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 22px;
+      margin-bottom: 28px;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 10px;
+      font-weight: 700;
+    }
+
+    input {
+      width: 100%;
+      padding: 18px;
+      border-radius: 14px;
+      border: 1px solid var(--border);
+      font-size: 1.1rem;
+      box-sizing: border-box;
+    }
+
+    button {
+      background: #0f172a;
+      color: white;
+      border: none;
+      padding: 16px 28px;
+      border-radius: 14px;
+      font-size: 1rem;
+      font-weight: 700;
+      cursor: pointer;
+      margin-top: 10px;
+      width: 100%;
+      display: block;
+    }
+
+    button:hover {
+      opacity: 0.92;
+    }
+
+    .result {
+      margin-top: 40px;
+      border: 1px solid var(--border);
+      border-radius: 24px;
+      padding: 28px;
+      display: none;
+      background: #f8fafc;
+    }
+
+    .score {
+      font-size: 3rem;
+      font-weight: 800;
+      margin-bottom: 16px;
+    }
+
+    .bar {
+      width: 100%;
+      height: 16px;
+      background: #dbe3ee;
+      border-radius: 999px;
+      overflow: hidden;
+      margin-bottom: 24px;
+    }
+
+    .fill {
+      height: 100%;
+      width: 0%;
+      background: #16a34a;
+      border-radius: 999px;
+      transition: width 0.4s ease;
+    }
+
+    .metric {
+      margin-bottom: 14px;
+      font-size: 1.05rem;
+    }
+
+    .guidance {
+      margin-top: 26px;
+      font-size: 1.15rem;
+      line-height: 1.7;
+    }
+
+    .disclaimer {
+      margin-top: 30px;
+      font-size: 0.9rem;
+      color: var(--muted);
+    }
+
+    .helper-link {
+      margin-top: 10px;
+      font-size: 0.9rem;
+    }
+
+    .helper-link a {
+      color: var(--primary);
+      font-weight: 600;
+    }
+
+    .content-section p,
+    .content-section li {
+      line-height: 1.8;
+    }
+  </style>
+
+  <div class="container">
+    <CalculatorPageShell
+      eyebrow="Eating Out Calculator"
+      title="Should I Spend $500 Eating Out Per Month?"
+      description="Estimate whether a $500 monthly restaurant, takeout, delivery, and coffee budget fits your income, grocery spending, emergency savings, debt load, and housing costs."
+    >
+      <div class="card">
+        <h2>$500 Eating Out Pressure Verdict</h2>
+
+        <div class="grid">
+          <div>
+            <label for="eatingOut">Monthly Eating Out / Delivery</label>
+            <input id="eatingOut" type="number" placeholder="500" min="0" inputmode="decimal" />
+          </div>
+
+          <div>
+            <label for="income">Monthly Take-Home Income</label>
+            <input id="income" type="number" placeholder="5500" min="0" inputmode="decimal" />
+          </div>
+
+          <div>
+            <label for="groceryCost">Monthly Grocery Spending</label>
+            <input id="groceryCost" type="number" placeholder="700" min="0" inputmode="decimal" />
+          </div>
+
+          <div>
+            <label for="household">Household Size</label>
+            <input id="household" type="number" placeholder="2" min="1" inputmode="numeric" />
+          </div>
+
+          <div>
+            <label for="savings">Emergency Savings</label>
+            <input id="savings" type="number" placeholder="10000" min="0" inputmode="decimal" />
+          </div>
+
+          <div>
+            <label for="housing">Monthly Rent or Mortgage</label>
+            <input id="housing" type="number" placeholder="1600" min="0" inputmode="decimal" />
+          </div>
+
+          <div>
+            <label for="debt">Monthly Debt Payments</label>
+            <input id="debt" type="number" placeholder="500" min="0" inputmode="decimal" />
+
+            <div class="helper-link">
+              <a href="/what-counts-as-debt">
+                Not sure what counts as debt? Read the debt guide
+              </a>
+            </div>
+          </div>
+        </div>
+
+        <button id="eatingOutButton" type="button">
+          Calculate Financial Pressure
+        </button>
+
+        <div class="result" id="result">
+          <div class="score" id="score"></div>
+
+          <div class="bar">
+            <div class="fill" id="barFill"></div>
+          </div>
+
+          <div class="metric" id="foodShare"></div>
+          <div class="metric" id="eatingOutShare"></div>
+          <div class="metric" id="cashFlow"></div>
+          <div class="metric" id="savingsCushion"></div>
+
+          <div class="guidance" id="guidance"></div>
+
+          <div class="disclaimer">
+            This is a general educational estimate, not personal financial, tax, nutrition, household, or budgeting advice.
+          </div>
+        </div>
+      </div>
+
+      <div class="content-section">
+        <h2>What $500 Eating Out Per Month Really Means</h2>
+
+        <p>
+          Spending $500 per month eating out can be reasonable if it fits your income, replaces other entertainment, and does not crowd out groceries, savings, or debt payments.
+        </p>
+
+        <p>
+          The risk is that restaurants, takeout, coffee, snacks, and delivery fees often feel small individually but become a major recurring expense when added together.
+        </p>
+      </div>
+
+      <WhenSpendingMakesSense
+        title="When Spending $500 Eating Out Makes Sense"
+        items={[
+          "Your income comfortably supports the spending after groceries, housing, debt, and savings.",
+          "The $500 includes planned meals, social spending, dates, coffee, or convenience that you genuinely value.",
+          "You are not carrying credit card debt from normal food or lifestyle spending.",
+          "Your grocery spending stays controlled and food is not being wasted at home.",
+          "You can still save money each month without relying on credit cards.",
+        ]}
+      />
+
+      <div class="content-section">
+        <h2>When $500 Eating Out Deserves a Closer Look</h2>
+
+        <p>
+          A $500 monthly eating-out habit deserves attention if it happens on top of a full grocery budget, rising debt, or a thin emergency fund.
+        </p>
+
+        <p>
+          The first step is not necessarily eliminating restaurants. It is separating restaurants, takeout, delivery, coffee, and groceries so you can see the real monthly food number.
+        </p>
+      </div>
+
+      <KeyCostCategories
+        items={[
+          {
+            title: "Restaurant and takeout frequency",
+            description:
+              "$500 can disappear quickly through lunches, coffee, delivery fees, tips, and weekend meals.",
+          },
+          {
+            title: "Grocery overlap",
+            description:
+              "Eating out becomes more expensive when groceries are also high or food at home goes unused.",
+          },
+          {
+            title: "Income and fixed bills",
+            description:
+              "Housing, debt, utilities, insurance, and required expenses determine whether restaurant spending fits.",
+          },
+          {
+            title: "Savings cushion",
+            description:
+              "Dining out is less risky when emergency savings and monthly cash flow are already healthy.",
+          },
+        ]}
+      />
+
+      <ReduceCostTips
+        items={[
+          "Separate restaurants, delivery, coffee, snacks, and groceries into different categories.",
+          "Set a weekly restaurant number instead of letting the full month drift.",
+          "Pick two or three meals you genuinely want to eat out and cut the forgettable convenience meals.",
+          "Use pickup instead of delivery when fees and tips are driving the total higher.",
+          "Keep easy backup meals at home to prevent emergency takeout.",
+          "Review subscriptions, apps, and saved cards that make impulse delivery too easy.",
+        ]}
+      />
+
+      <FinancialRedFlags
+        items={[
+          "You spend $500 eating out while carrying credit card debt.",
+          "You regularly throw away groceries because restaurants or delivery replace planned meals.",
+          "You do not know how much of the total is coffee, delivery fees, tips, or convenience spending.",
+          "The spending causes you to miss savings goals or dip into emergency funds.",
+          "You feel like eating out is necessary because the rest of the budget or schedule is unmanageable.",
+        ]}
+      />
+
+      <CalculatorAssumptions
+        items={[
+          "The calculator treats eating out as restaurants, takeout, delivery, coffee, snacks, and similar food spending outside groceries.",
+          "Monthly income means take-home pay after taxes and payroll deductions.",
+          "Monthly groceries are included to show total food pressure, not just restaurant pressure.",
+          "Monthly debt payments include credit cards, car loans, student loans, personal loans, and other required debt payments.",
+          "The calculator does not judge food quality, social life, work schedules, family needs, or local restaurant prices.",
+          "The result is educational guidance, not financial advice.",
+        ]}
+      />
+
+      <FAQSection
+        title="$500 Eating Out FAQ"
+        faqs={[
+          {
+            question: "Is $500 a month eating out too much?",
+            answer:
+              "It depends on your income, groceries, debt, savings, and household needs. $500 may be manageable for some households and stressful for others, especially if it comes on top of high grocery spending.",
+          },
+          {
+            question: "Should coffee and delivery count as eating out?",
+            answer:
+              "Yes. Coffee, delivery fees, tips, convenience snacks, takeout, and restaurants should usually be grouped together when estimating eating-out pressure.",
+          },
+          {
+            question: "How do I know if eating out is hurting my budget?",
+            answer:
+              "Look for credit card reliance, missed savings goals, unused groceries, low emergency savings, or a food budget that feels hard to explain at the end of the month.",
+          },
+          {
+            question: "Can eating out be worth it?",
+            answer:
+              "Yes. Eating out can be worth it when it fits your budget, supports your lifestyle, creates real enjoyment, and does not undermine savings, debt payoff, or essential bills.",
+          },
+          {
+            question: "What is the easiest way to reduce restaurant spending?",
+            answer:
+              "Start by cutting forgettable convenience meals, delivery fees, and impulse coffee runs while keeping the restaurant spending you actually value.",
+          },
+        ]}
+      />
+
+      <MethodologySection category="grocery spending" updated="May 2026" />
+
+      <RelatedGuides
+        guides={[
+          {
+            title: "Grocery Calculators",
+            href: "/grocery-calculators",
+            description:
+              "Browse grocery, food budget, and eating-out calculators for monthly household spending decisions.",
+          },
+          {
+            title: "What Counts as Debt?",
+            href: "/what-counts-as-debt",
+            description:
+              "Understand which monthly obligations should be included when estimating financial pressure.",
+          },
+        ]}
+      />
+
+      <RelatedCalculators
+        calculators={[
+          {
+            category: "Groceries",
+            title: "Should I Spend This Much Eating Out Per Month?",
+            href: "/should-i-spend-this-much-eating-out-per-month",
+          },
+          {
+            category: "Groceries",
+            title: "Should I Spend $1,000 Eating Out Per Month?",
+            href: "/should-i-spend-1000-eating-out-per-month",
+          },
+          {
+            category: "Groceries",
+            title: "Should I Spend This Much on Groceries Per Month?",
+            href: "/should-i-spend-this-much-on-groceries-per-month",
+          },
+          {
+            category: "Groceries",
+            title: "Should I Spend $1,000 on Groceries Per Month?",
+            href: "/should-i-spend-1000-on-groceries-per-month",
+          },
+        ]}
+      />
+    </CalculatorPageShell>
+  </div>
+
+  <script is:inline>
+    const clamp = (value, min, max) => Math.min(Math.max(value, min), max);
+
+    const getNumber = (id) => {
+      const rawValue = document.getElementById(id)?.value;
+      const value = Number(rawValue);
+      return Number.isFinite(value) && value >= 0 ? value : 0;
+    };
+
+    function getPressureLevel(score) {
+      if (score <= 30) {
+        return {
+          label: "Low Pressure",
+          stress: "Low pressure",
+          color: "#16a34a",
+          action: "Keep the restaurant budget intentional, separate groceries from takeout, and protect monthly savings.",
+        };
+      }
+
+      if (score <= 60) {
+        return {
+          label: "Moderate Pressure",
+          stress: "Moderate pressure",
+          color: "#ca8a04",
+          action: "Watch delivery fees, coffee runs, unused groceries, and whether restaurants are crowding out savings.",
+        };
+      }
+
+      return {
+        label: "High Pressure",
+        stress: "High pressure",
+        color: "#dc2626",
+        action: "Slow down, separate food categories, cut low-value convenience spending, and protect essential bills.",
+      };
+    }
+
+    function calculateEatingOut() {
+      const eatingOut = getNumber("eatingOut");
+      const income = getNumber("income");
+      const groceryCost = getNumber("groceryCost");
+      const household = getNumber("household");
+      const savings = getNumber("savings");
+      const housing = getNumber("housing");
+      const debt = getNumber("debt");
+
+      const result = document.getElementById("result");
+      const scoreEl = document.getElementById("score");
+      const barFill = document.getElementById("barFill");
+      const foodShareEl = document.getElementById("foodShare");
+      const eatingOutShareEl = document.getElementById("eatingOutShare");
+      const cashFlowEl = document.getElementById("cashFlow");
+      const savingsCushionEl = document.getElementById("savingsCushion");
+      const guidanceEl = document.getElementById("guidance");
+
+      result.style.display = "block";
+
+      if (eatingOut <= 0 || income <= 0) {
+        scoreEl.textContent = "Add your numbers first";
+        barFill.style.width = "0%";
+        barFill.style.background = "#16a34a";
+        foodShareEl.innerHTML = "";
+        eatingOutShareEl.innerHTML = "";
+        cashFlowEl.innerHTML = "";
+        savingsCushionEl.innerHTML = "";
+        guidanceEl.textContent =
+          "Enter a positive monthly eating-out amount and monthly take-home income so the calculator can estimate financial pressure.";
+        return;
+      }
+
+      const householdSize = household > 0 ? household : 1;
+      const totalFood = groceryCost + eatingOut;
+      const eatingOutIncomeShare = (eatingOut / income) * 100;
+      const totalFoodShare = (totalFood / income) * 100;
+      const eatingOutPerPerson = eatingOut / householdSize;
+      const fixedObligationRatio = ((housing + debt) / income) * 100;
+      const monthlyRemaining = income - housing - debt - totalFood;
+      const monthlyCoreOutflow = housing + debt + totalFood;
+      const emergencyMonths =
+        monthlyCoreOutflow > 0 ? savings / monthlyCoreOutflow : savings > 0 ? 12 : 0;
+
+      let pressureScore = 0;
+
+      pressureScore += clamp(eatingOutIncomeShare * 2.4, 0, 36);
+      pressureScore += clamp(totalFoodShare * 1.05, 0, 30);
+      pressureScore += clamp(fixedObligationRatio * 0.22, 0, 24);
+
+      if (monthlyRemaining < 0) pressureScore += 26;
+      else if (monthlyRemaining < income * 0.08) pressureScore += 15;
+      else if (monthlyRemaining > income * 0.3) pressureScore -= 7;
+
+      if (emergencyMonths < 1 && income < 12000) pressureScore += 20;
+      else if (emergencyMonths < 3 && income < 15000) pressureScore += 10;
+      else if (emergencyMonths >= 6) pressureScore -= 8;
+
+      if (groceryCost > 0 && eatingOut > groceryCost) pressureScore += 12;
+      else if (groceryCost > 0 && eatingOut > groceryCost * 0.6) pressureScore += 7;
+
+      if (householdSize === 1 && eatingOutPerPerson > 500) pressureScore += 8;
+      else if (householdSize >= 2 && eatingOutPerPerson > 350) pressureScore += 6;
+
+      if (income >= 9000 && monthlyRemaining > income * 0.25 && emergencyMonths >= 3) {
+        pressureScore -= 9;
+      }
+
+      if (income >= 15000 && monthlyRemaining > income * 0.3 && emergencyMonths >= 3) {
+        pressureScore -= 12;
+      }
+
+      if (
+        eatingOutIncomeShare < 8 &&
+        totalFoodShare < 18 &&
+        emergencyMonths >= 6 &&
+        fixedObligationRatio < 50 &&
+        monthlyRemaining > income * 0.25
+      ) {
+        pressureScore = Math.min(pressureScore, 28);
+      }
+
+      if (
+        eatingOutIncomeShare < 5 &&
+        totalFoodShare < 12 &&
+        emergencyMonths >= 9 &&
+        fixedObligationRatio < 40 &&
+        monthlyRemaining > income * 0.35
+      ) {
+        pressureScore = Math.min(pressureScore, 14);
+      }
+
+      pressureScore = Math.round(clamp(pressureScore, 0, 100));
+
+      const level = getPressureLevel(pressureScore);
+
+      let guidance = "";
+
+      if (pressureScore <= 30) {
+        guidance =
+          `This $500 eating-out budget appears financially manageable based on the numbers provided. Total food spending equals about ${totalFoodShare.toFixed(1)}% of monthly take-home income, and eating out alone equals about ${eatingOutIncomeShare.toFixed(1)}%.`;
+      } else if (pressureScore <= 60) {
+        guidance =
+          `This $500 eating-out budget may work, but it creates noticeable pressure. Eating out equals about ${eatingOutIncomeShare.toFixed(1)}% of take-home income, and total food spending equals about ${totalFoodShare.toFixed(1)}%.`;
+      } else {
+        guidance =
+          `This $500 eating-out budget could create real strain. Eating out equals about ${eatingOutIncomeShare.toFixed(1)}% of take-home income, and the combination of groceries, restaurants, fixed bills, debt, or savings suggests you should review the full food budget.`;
+      }
+
+      scoreEl.textContent = `${level.label} — ${pressureScore}/100`;
+      scoreEl.style.color = level.color;
+      barFill.style.width = `${pressureScore}%`;
+      barFill.style.background = level.color;
+
+      foodShareEl.innerHTML = `<strong>Total food spending share:</strong> ${totalFoodShare.toFixed(1)}% of take-home income`;
+      eatingOutShareEl.innerHTML = `<strong>Eating out share:</strong> ${eatingOutIncomeShare.toFixed(1)}% of take-home income`;
+      cashFlowEl.innerHTML = `<strong>Monthly cash flow after housing, debt, and food:</strong> $${Math.round(monthlyRemaining).toLocaleString()}`;
+      savingsCushionEl.innerHTML = `<strong>Estimated emergency cushion:</strong> ${Math.max(emergencyMonths, 0).toFixed(1)} months`;
+      guidanceEl.textContent = `${guidance} Recommended next step: ${level.action}`;
+    }
+
+    document
+      .getElementById("eatingOutButton")
+      .addEventListener("click", calculateEatingOut);
+  </script>
+</Layout>

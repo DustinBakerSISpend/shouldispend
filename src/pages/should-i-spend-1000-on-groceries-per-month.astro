@@ -1,0 +1,554 @@
+---
+import Layout from "../layouts/Layout.astro";
+import CalculatorPageShell from "../components/CalculatorPageShell.astro";
+import FAQSection from "../components/FAQSection.astro";
+import RelatedCalculators from "../components/RelatedCalculators.astro";
+import RelatedGuides from "../components/RelatedGuides.astro";
+import MethodologySection from "../components/MethodologySection.astro";
+import FinancialRedFlags from "../components/FinancialRedFlags.astro";
+import CalculatorAssumptions from "../components/CalculatorAssumptions.astro";
+import KeyCostCategories from "../components/KeyCostCategories.astro";
+import ReduceCostTips from "../components/ReduceCostTips.astro";
+import WhenSpendingMakesSense from "../components/WhenSpendingMakesSense.astro";
+---
+
+<Layout
+  title="Should I Spend $1,000 on Groceries Per Month?"
+  description="Use this grocery budget calculator to decide whether spending $1,000 per month on groceries fits your income, household size, savings, debt, eating-out habits, and monthly cash flow."
+>
+  <style>
+    .container {
+      max-width: 950px;
+      margin: 0 auto;
+      padding: 60px 20px;
+    }
+
+    .content-section {
+      max-width: 760px;
+      margin: 72px auto 0;
+    }
+
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 28px;
+      padding: 34px;
+    }
+
+    h2 {
+      margin-top: 0;
+      font-size: 2rem;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 22px;
+      margin-bottom: 28px;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 10px;
+      font-weight: 700;
+    }
+
+    input {
+      width: 100%;
+      padding: 18px;
+      border-radius: 14px;
+      border: 1px solid var(--border);
+      font-size: 1.1rem;
+      box-sizing: border-box;
+    }
+
+    button {
+      background: #0f172a;
+      color: white;
+      border: none;
+      padding: 16px 28px;
+      border-radius: 14px;
+      font-size: 1rem;
+      font-weight: 700;
+      cursor: pointer;
+      margin-top: 10px;
+      width: 100%;
+      display: block;
+    }
+
+    button:hover {
+      opacity: 0.92;
+    }
+
+    .result {
+      margin-top: 40px;
+      border: 1px solid var(--border);
+      border-radius: 24px;
+      padding: 28px;
+      display: none;
+      background: #f8fafc;
+    }
+
+    .score {
+      font-size: 3rem;
+      font-weight: 800;
+      margin-bottom: 16px;
+    }
+
+    .bar {
+      width: 100%;
+      height: 16px;
+      background: #dbe3ee;
+      border-radius: 999px;
+      overflow: hidden;
+      margin-bottom: 24px;
+    }
+
+    .fill {
+      height: 100%;
+      width: 0%;
+      background: #16a34a;
+      border-radius: 999px;
+      transition: width 0.4s ease;
+    }
+
+    .metric {
+      margin-bottom: 14px;
+      font-size: 1.05rem;
+    }
+
+    .guidance {
+      margin-top: 26px;
+      font-size: 1.15rem;
+      line-height: 1.7;
+    }
+
+    .disclaimer {
+      margin-top: 30px;
+      font-size: 0.9rem;
+      color: var(--muted);
+    }
+
+    .helper-link {
+      margin-top: 10px;
+      font-size: 0.9rem;
+    }
+
+    .helper-link a {
+      color: var(--primary);
+      font-weight: 600;
+    }
+
+    .content-section p,
+    .content-section li {
+      line-height: 1.8;
+    }
+  </style>
+
+  <div class="container">
+    <CalculatorPageShell
+      eyebrow="Grocery Calculator"
+      title="Should I Spend $1,000 on Groceries Per Month?"
+      description="Estimate whether a $1,000 monthly grocery budget fits your income, household size, emergency savings, debt load, housing costs, and eating-out habits."
+    >
+      <div class="card">
+        <h2>$1,000 Grocery Budget Pressure Verdict</h2>
+
+        <div class="grid">
+          <div>
+            <label for="groceryCost">Monthly Grocery Spending</label>
+            <input id="groceryCost" type="number" placeholder="1000" min="0" inputmode="decimal" />
+          </div>
+
+          <div>
+            <label for="income">Monthly Take-Home Income</label>
+            <input id="income" type="number" placeholder="6500" min="0" inputmode="decimal" />
+          </div>
+
+          <div>
+            <label for="household">Household Size</label>
+            <input id="household" type="number" placeholder="4" min="1" inputmode="numeric" />
+          </div>
+
+          <div>
+            <label for="eatingOut">Monthly Eating Out / Delivery</label>
+            <input id="eatingOut" type="number" placeholder="450" min="0" inputmode="decimal" />
+          </div>
+
+          <div>
+            <label for="savings">Emergency Savings</label>
+            <input id="savings" type="number" placeholder="12000" min="0" inputmode="decimal" />
+          </div>
+
+          <div>
+            <label for="housing">Monthly Rent or Mortgage</label>
+            <input id="housing" type="number" placeholder="1800" min="0" inputmode="decimal" />
+          </div>
+
+          <div>
+            <label for="debt">Monthly Debt Payments</label>
+            <input id="debt" type="number" placeholder="700" min="0" inputmode="decimal" />
+
+            <div class="helper-link">
+              <a href="/what-counts-as-debt">
+                Not sure what counts as debt? Read the debt guide
+              </a>
+            </div>
+          </div>
+        </div>
+
+        <button id="groceryButton" type="button">
+          Calculate Financial Pressure
+        </button>
+
+        <div class="result" id="result">
+          <div class="score" id="score"></div>
+
+          <div class="bar">
+            <div class="fill" id="barFill"></div>
+          </div>
+
+          <div class="metric" id="foodShare"></div>
+          <div class="metric" id="groceryPerPerson"></div>
+          <div class="metric" id="cashFlow"></div>
+          <div class="metric" id="savingsCushion"></div>
+
+          <div class="guidance" id="guidance"></div>
+
+          <div class="disclaimer">
+            This is a general educational estimate, not personal financial, nutrition, household, tax, or budgeting advice.
+          </div>
+        </div>
+      </div>
+
+      <div class="content-section">
+        <h2>What a $1,000 Grocery Budget Really Means</h2>
+
+        <p>
+          A $1,000 monthly grocery budget can be reasonable for a larger household, especially when it replaces restaurants, delivery, and convenience food. The same number can feel heavy for a smaller household or anyone already dealing with debt, high housing costs, or thin emergency savings.
+        </p>
+
+        <p>
+          The real issue is not the grocery number by itself. It is whether groceries, restaurants, housing, debt, and savings still leave enough room for the rest of your life.
+        </p>
+      </div>
+
+      <WhenSpendingMakesSense
+        title="When Spending $1,000 on Groceries Makes Sense"
+        items={[
+          "You have a larger household and the grocery bill covers most meals at home.",
+          "Your total food spending is controlled because eating out and delivery are limited.",
+          "You can afford the grocery bill while still saving money each month.",
+          "The spending includes planned staples, school lunches, household basics, or bulk items that actually get used.",
+          "You are not relying on credit cards to cover normal food spending.",
+        ]}
+      />
+
+      <div class="content-section">
+        <h2>When a $1,000 Grocery Bill Deserves a Closer Look</h2>
+
+        <p>
+          Slow down if $1,000 in groceries is happening alongside heavy restaurant spending, rising credit card balances, or frequent savings withdrawals.
+        </p>
+
+        <p>
+          Food spending is easy to underestimate because groceries, coffee, restaurants, delivery fees, snacks, alcohol, and household supplies often blur together. Separating those categories can reveal whether the problem is groceries or total food behavior.
+        </p>
+      </div>
+
+      <KeyCostCategories
+        items={[
+          {
+            title: "Household size",
+            description:
+              "A $1,000 grocery bill looks very different for one person than it does for a family of four, five, or six.",
+          },
+          {
+            title: "Total food spending",
+            description:
+              "Groceries should be evaluated together with restaurants, takeout, coffee, delivery, snacks, and convenience purchases.",
+          },
+          {
+            title: "Income and fixed bills",
+            description:
+              "Housing, debt, insurance, utilities, and other required bills determine how much room the grocery budget really has.",
+          },
+          {
+            title: "Savings cushion",
+            description:
+              "A grocery budget is less stressful when emergency savings can absorb a bad month without credit card reliance.",
+          },
+        ]}
+      />
+
+      <ReduceCostTips
+        items={[
+          "Separate groceries from restaurants, takeout, delivery, coffee, and convenience food.",
+          "Use pickup orders to reduce impulse spending.",
+          "Build two or three repeatable low-cost dinners into each week.",
+          "Track food waste for two weeks before cutting quality or nutrition.",
+          "Buy bulk items only when your household actually uses them before they expire.",
+          "Set a separate eating-out cap so restaurants do not quietly double your food budget.",
+        ]}
+      />
+
+      <FinancialRedFlags
+        items={[
+          "You spend $1,000 on groceries and still spend heavily on restaurants or delivery.",
+          "You carry credit card debt while food spending keeps rising.",
+          "You regularly dip into savings to cover normal groceries.",
+          "Your emergency fund is thin and the grocery bill cannot be reduced quickly.",
+          "You do not know whether household supplies, alcohol, pet food, diapers, or restaurants are included in the total.",
+        ]}
+      />
+
+      <CalculatorAssumptions
+        items={[
+          "The calculator treats groceries as a recurring monthly household expense.",
+          "Monthly income means take-home pay after taxes and payroll deductions.",
+          "Eating out includes restaurants, takeout, delivery, coffee, snacks, and similar food spending outside groceries.",
+          "Monthly debt payments include credit cards, car loans, student loans, personal loans, and other required debt payments.",
+          "The calculator does not judge food quality, dietary needs, regional grocery prices, or medical nutrition needs.",
+          "The result is educational guidance, not financial advice.",
+        ]}
+      />
+
+      <FAQSection
+        title="$1,000 Grocery Budget FAQ"
+        faqs={[
+          {
+            question: "Is $1,000 a month on groceries too much?",
+            answer:
+              "It depends on your household size, income, location, debt, savings, and whether that number replaces restaurant spending. For a larger household, $1,000 may be reasonable. For a smaller household with debt or low savings, it may create pressure.",
+          },
+          {
+            question: "Should groceries and eating out be tracked separately?",
+            answer:
+              "Yes. A $1,000 grocery budget looks very different if you spend very little at restaurants compared with spending another several hundred dollars on takeout, coffee, and delivery.",
+          },
+          {
+            question: "What makes grocery spending financially stressful?",
+            answer:
+              "Grocery spending becomes stressful when it crowds out savings, adds to credit card balances, combines with heavy dining-out spending, or leaves too little room after housing and debt payments.",
+          },
+          {
+            question: "Can a high grocery bill still be smart?",
+            answer:
+              "Yes. Higher grocery spending can be financially smart if it replaces restaurants, supports meal planning, reduces waste, and fits comfortably within monthly cash flow.",
+          },
+          {
+            question: "What is the easiest way to reduce grocery pressure?",
+            answer:
+              "Start by separating groceries from restaurants and delivery. Then look for food waste, impulse purchases, duplicate snacks, and meals that could be repeated more cheaply.",
+          },
+        ]}
+      />
+
+      <MethodologySection category="grocery spending" updated="May 2026" />
+
+      <RelatedGuides
+        guides={[
+          {
+            title: "Grocery Calculators",
+            href: "/grocery-calculators",
+            description:
+              "Browse grocery, food budget, and eating-out calculators for monthly household spending decisions.",
+          },
+          {
+            title: "What Counts as Debt?",
+            href: "/what-counts-as-debt",
+            description:
+              "Understand which monthly obligations should be included when estimating financial pressure.",
+          },
+        ]}
+      />
+
+      <RelatedCalculators
+        calculators={[
+          {
+            category: "Groceries",
+            title: "Should I Spend This Much on Groceries Per Month?",
+            href: "/should-i-spend-this-much-on-groceries-per-month",
+          },
+          {
+            category: "Groceries",
+            title: "Should I Spend $1,500 on Groceries Per Month?",
+            href: "/should-i-spend-1500-on-groceries-per-month",
+          },
+          {
+            category: "Groceries",
+            title: "Should I Spend This Much Eating Out Per Month?",
+            href: "/should-i-spend-this-much-eating-out-per-month",
+          },
+          {
+            category: "Groceries",
+            title: "Browse Grocery Calculators",
+            href: "/grocery-calculators",
+          },
+        ]}
+      />
+    </CalculatorPageShell>
+  </div>
+
+  <script is:inline>
+    const clamp = (value, min, max) => Math.min(Math.max(value, min), max);
+
+    const getNumber = (id) => {
+      const rawValue = document.getElementById(id)?.value;
+      const value = Number(rawValue);
+      return Number.isFinite(value) && value >= 0 ? value : 0;
+    };
+
+    function getPressureLevel(score) {
+      if (score <= 30) {
+        return {
+          label: "Low Pressure",
+          stress: "Low pressure",
+          color: "#16a34a",
+          action: "Keep groceries planned, separate restaurant spending, and protect the savings cushion.",
+        };
+      }
+
+      if (score <= 60) {
+        return {
+          label: "Moderate Pressure",
+          stress: "Moderate pressure",
+          color: "#ca8a04",
+          action: "Watch restaurant overlap, food waste, and whether groceries are crowding out monthly savings.",
+        };
+      }
+
+      return {
+        label: "High Pressure",
+        stress: "High pressure",
+        color: "#dc2626",
+        action: "Slow down, separate all food categories, reduce waste, and protect essential bills before treating this as normal.",
+      };
+    }
+
+    function calculateGrocery() {
+      const groceryCost = getNumber("groceryCost");
+      const income = getNumber("income");
+      const household = getNumber("household");
+      const eatingOut = getNumber("eatingOut");
+      const savings = getNumber("savings");
+      const housing = getNumber("housing");
+      const debt = getNumber("debt");
+
+      const result = document.getElementById("result");
+      const scoreEl = document.getElementById("score");
+      const barFill = document.getElementById("barFill");
+      const foodShareEl = document.getElementById("foodShare");
+      const groceryPerPersonEl = document.getElementById("groceryPerPerson");
+      const cashFlowEl = document.getElementById("cashFlow");
+      const savingsCushionEl = document.getElementById("savingsCushion");
+      const guidanceEl = document.getElementById("guidance");
+
+      result.style.display = "block";
+
+      if (groceryCost <= 0 || income <= 0) {
+        scoreEl.textContent = "Add your numbers first";
+        barFill.style.width = "0%";
+        barFill.style.background = "#16a34a";
+        foodShareEl.innerHTML = "";
+        groceryPerPersonEl.innerHTML = "";
+        cashFlowEl.innerHTML = "";
+        savingsCushionEl.innerHTML = "";
+        guidanceEl.textContent =
+          "Enter a positive monthly grocery amount and monthly take-home income so the calculator can estimate financial pressure.";
+        return;
+      }
+
+      const householdSize = household > 0 ? household : 1;
+      const totalFood = groceryCost + eatingOut;
+      const groceryIncomeShare = (groceryCost / income) * 100;
+      const totalFoodShare = (totalFood / income) * 100;
+      const groceryPerPerson = groceryCost / householdSize;
+      const fixedObligationRatio = ((housing + debt) / income) * 100;
+      const monthlyRemaining = income - housing - debt - totalFood;
+      const monthlyCoreOutflow = housing + debt + totalFood;
+      const emergencyMonths =
+        monthlyCoreOutflow > 0 ? savings / monthlyCoreOutflow : savings > 0 ? 12 : 0;
+
+      let pressureScore = 0;
+
+      pressureScore += clamp(groceryIncomeShare * 1.45, 0, 34);
+      pressureScore += clamp(totalFoodShare * 1.05, 0, 32);
+      pressureScore += clamp(fixedObligationRatio * 0.22, 0, 24);
+
+      if (monthlyRemaining < 0) pressureScore += 24;
+      else if (monthlyRemaining < income * 0.08) pressureScore += 14;
+      else if (monthlyRemaining > income * 0.3) pressureScore -= 7;
+
+      if (emergencyMonths < 1 && income < 12000) pressureScore += 20;
+      else if (emergencyMonths < 3 && income < 15000) pressureScore += 10;
+      else if (emergencyMonths >= 6) pressureScore -= 8;
+
+      if (householdSize >= 5) pressureScore -= 9;
+      else if (householdSize >= 3) pressureScore -= 6;
+      else if (householdSize === 2 && groceryPerPerson > 500) pressureScore += 7;
+      else if (householdSize === 1 && groceryPerPerson > 650) pressureScore += 13;
+
+      if (eatingOut > groceryCost * 0.75) pressureScore += 12;
+      else if (eatingOut > groceryCost * 0.4) pressureScore += 7;
+
+      if (income >= 12000 && monthlyRemaining > income * 0.25 && emergencyMonths >= 3) {
+        pressureScore -= 12;
+      }
+
+      if (income >= 20000 && monthlyRemaining > income * 0.3 && emergencyMonths >= 3) {
+        pressureScore -= 14;
+      }
+
+      if (
+        totalFoodShare < 14 &&
+        emergencyMonths >= 6 &&
+        fixedObligationRatio < 50 &&
+        monthlyRemaining > income * 0.25
+      ) {
+        pressureScore = Math.min(pressureScore, 28);
+      }
+
+      if (
+        totalFoodShare < 9 &&
+        emergencyMonths >= 9 &&
+        fixedObligationRatio < 40 &&
+        monthlyRemaining > income * 0.35
+      ) {
+        pressureScore = Math.min(pressureScore, 14);
+      }
+
+      pressureScore = Math.round(clamp(pressureScore, 0, 100));
+
+      const level = getPressureLevel(pressureScore);
+
+      let guidance = "";
+
+      if (pressureScore <= 30) {
+        guidance =
+          `This grocery budget appears financially manageable based on the numbers provided. Total food spending equals about ${totalFoodShare.toFixed(1)}% of monthly take-home income, and your emergency cushion is about ${Math.max(emergencyMonths, 0).toFixed(1)} months based on the entered bills.`;
+      } else if (pressureScore <= 60) {
+        guidance =
+          `This grocery budget may work, but it creates noticeable pressure. Total food spending equals about ${totalFoodShare.toFixed(1)}% of take-home income, and groceries average about $${Math.round(groceryPerPerson).toLocaleString()} per person per month.`;
+      } else {
+        guidance =
+          `This grocery budget could create real strain. Total food spending equals about ${totalFoodShare.toFixed(1)}% of take-home income, and the combination of groceries, eating out, fixed bills, debt, or savings suggests you should tighten the food budget before accepting this as normal.`;
+      }
+
+      scoreEl.textContent = `${level.label} — ${pressureScore}/100`;
+      scoreEl.style.color = level.color;
+      barFill.style.width = `${pressureScore}%`;
+      barFill.style.background = level.color;
+
+      foodShareEl.innerHTML = `<strong>Total food spending share:</strong> ${totalFoodShare.toFixed(1)}% of take-home income`;
+      groceryPerPersonEl.innerHTML = `<strong>Groceries per person:</strong> $${Math.round(groceryPerPerson).toLocaleString()} per month`;
+      cashFlowEl.innerHTML = `<strong>Monthly cash flow after housing, debt, and food:</strong> $${Math.round(monthlyRemaining).toLocaleString()}`;
+      savingsCushionEl.innerHTML = `<strong>Estimated emergency cushion:</strong> ${Math.max(emergencyMonths, 0).toFixed(1)} months`;
+      guidanceEl.textContent = `${guidance} Recommended next step: ${level.action}`;
+    }
+
+    document
+      .getElementById("groceryButton")
+      .addEventListener("click", calculateGrocery);
+  </script>
+</Layout>

@@ -1,0 +1,623 @@
+---
+import Layout from "../layouts/Layout.astro";
+import CalculatorPageShell from "../components/CalculatorPageShell.astro";
+import FAQSection from "../components/FAQSection.astro";
+import RelatedCalculators from "../components/RelatedCalculators.astro";
+import RelatedGuides from "../components/RelatedGuides.astro";
+import MethodologySection from "../components/MethodologySection.astro";
+import FinancialRedFlags from "../components/FinancialRedFlags.astro";
+import CalculatorAssumptions from "../components/CalculatorAssumptions.astro";
+import KeyCostCategories from "../components/KeyCostCategories.astro";
+import ReduceCostTips from "../components/ReduceCostTips.astro";
+import WhenSpendingMakesSense from "../components/WhenSpendingMakesSense.astro";
+---
+
+<Layout
+  title="Should I Lease or Buy a Car?"
+  description="Use this lease vs buy calculator to compare monthly payments, mileage, ownership plans, savings, debt, insurance, and long-term vehicle affordability."
+>
+  <style>
+    .container {
+      max-width: 950px;
+      margin: 0 auto;
+      padding: 60px 20px;
+    }
+
+    .content-section {
+      max-width: 760px;
+      margin: 72px auto 0;
+    }
+
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 28px;
+      padding: 34px;
+    }
+
+    h2 {
+      margin-top: 0;
+      font-size: 2rem;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 22px;
+      margin-bottom: 28px;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 10px;
+      font-weight: 700;
+    }
+
+    input {
+      width: 100%;
+      padding: 18px;
+      border-radius: 14px;
+      border: 1px solid var(--border);
+      font-size: 1.1rem;
+      box-sizing: border-box;
+    }
+
+    button {
+      background: #0f172a;
+      color: white;
+      border: none;
+      padding: 16px 28px;
+      border-radius: 14px;
+      font-size: 1rem;
+      font-weight: 700;
+      cursor: pointer;
+      margin-top: 10px;
+      width: 100%;
+      display: block;
+    }
+
+    button:hover {
+      opacity: 0.92;
+    }
+
+    .result {
+      margin-top: 40px;
+      border: 1px solid var(--border);
+      border-radius: 24px;
+      padding: 28px;
+      display: none;
+      background: #f8fafc;
+    }
+
+    .score {
+      font-size: 3rem;
+      font-weight: 800;
+      margin-bottom: 16px;
+    }
+
+    .bar {
+      width: 100%;
+      height: 16px;
+      background: #dbe3ee;
+      border-radius: 999px;
+      overflow: hidden;
+      margin-bottom: 24px;
+    }
+
+    .fill {
+      height: 100%;
+      width: 0%;
+      background: #16a34a;
+      border-radius: 999px;
+      transition: width 0.4s ease;
+    }
+
+    .metric {
+      margin-bottom: 14px;
+      font-size: 1.05rem;
+    }
+
+    .guidance {
+      margin-top: 26px;
+      font-size: 1.15rem;
+      line-height: 1.7;
+    }
+
+    .disclaimer {
+      margin-top: 30px;
+      font-size: 0.9rem;
+      color: var(--muted);
+    }
+
+    .helper-link {
+      margin-top: 10px;
+      font-size: 0.9rem;
+    }
+
+    .helper-link a {
+      color: var(--primary);
+      font-weight: 600;
+    }
+
+    .content-section p,
+    .content-section li {
+      line-height: 1.8;
+    }
+  </style>
+
+  <div class="container">
+    <CalculatorPageShell
+      eyebrow="Lease vs Buy Calculator"
+      title="Should I Lease or Buy a Car?"
+      description="Compare leasing versus buying based on monthly cost, mileage, insurance, maintenance, savings, debt, and how long you plan to keep the vehicle."
+    >
+      <div class="card">
+        <h2>Lease vs Buy Pressure Verdict</h2>
+
+        <div class="grid">
+          <div>
+            <label for="leasePayment">Monthly Lease Payment</label>
+            <input id="leasePayment" type="number" placeholder="550" min="0" inputmode="decimal" />
+          </div>
+
+          <div>
+            <label for="buyPayment">Monthly Buy Payment</label>
+            <input id="buyPayment" type="number" placeholder="750" min="0" inputmode="decimal" />
+          </div>
+
+          <div>
+            <label for="income">Monthly Take-Home Income</label>
+            <input id="income" type="number" placeholder="7500" min="0" inputmode="decimal" />
+          </div>
+
+          <div>
+            <label for="insurance">Monthly Insurance Estimate</label>
+            <input id="insurance" type="number" placeholder="220" min="0" inputmode="decimal" />
+          </div>
+
+          <div>
+            <label for="fuelMaintenance">Monthly Fuel + Maintenance</label>
+            <input id="fuelMaintenance" type="number" placeholder="350" min="0" inputmode="decimal" />
+          </div>
+
+          <div>
+            <label for="miles">Expected Miles Per Year</label>
+            <input id="miles" type="number" placeholder="12000" min="0" inputmode="decimal" />
+          </div>
+
+          <div>
+            <label for="years">Years You Plan to Keep Vehicle</label>
+            <input id="years" type="number" placeholder="5" min="0" inputmode="decimal" />
+          </div>
+
+          <div>
+            <label for="savings">Emergency Savings</label>
+            <input id="savings" type="number" placeholder="16000" min="0" inputmode="decimal" />
+          </div>
+
+          <div>
+            <label for="housing">Monthly Rent or Mortgage</label>
+            <input id="housing" type="number" placeholder="1900" min="0" inputmode="decimal" />
+          </div>
+
+          <div>
+            <label for="debt">Other Monthly Debt Payments</label>
+            <input id="debt" type="number" placeholder="650" min="0" inputmode="decimal" />
+
+            <div class="helper-link">
+              <a href="/what-counts-as-debt">
+                Not sure what counts as debt? Read the debt guide
+              </a>
+            </div>
+          </div>
+        </div>
+
+        <button id="leaseBuyButton" type="button">
+          Compare Lease vs Buy
+        </button>
+
+        <div class="result" id="result">
+          <div class="score" id="score"></div>
+
+          <div class="bar">
+            <div class="fill" id="barFill"></div>
+          </div>
+
+          <div class="metric" id="recommendation"></div>
+          <div class="metric" id="leaseShare"></div>
+          <div class="metric" id="buyShare"></div>
+          <div class="metric" id="cashFlow"></div>
+
+          <div class="guidance" id="guidance"></div>
+
+          <div class="disclaimer">
+            This is a general educational estimate, not personal financial, lending, tax, insurance, or vehicle-buying advice.
+          </div>
+        </div>
+      </div>
+
+      <div class="content-section">
+        <h2>What Lease vs Buy Really Means</h2>
+
+        <p>
+          Leasing usually lowers the monthly payment but limits mileage, customization, and long-term ownership. Buying often costs more each month but can build equity and make more sense if you keep vehicles for many years.
+        </p>
+
+        <p>
+          The right choice depends on cash flow, driving habits, insurance, maintenance, debt, savings, and whether you value flexibility or ownership more.
+        </p>
+      </div>
+
+      <WhenSpendingMakesSense
+        title="When Leasing May Make Sense"
+        items={[
+          "You drive predictable mileage and stay within the lease limit.",
+          "You prefer newer vehicles and lower monthly payments.",
+          "You do not want long-term repair risk after the warranty period.",
+          "You can avoid excessive wear, mileage penalties, and early termination fees.",
+          "The lease payment fits comfortably after housing, debt, insurance, and savings.",
+        ]}
+      />
+
+      <div class="content-section">
+        <h2>When Buying May Make More Sense</h2>
+
+        <p>
+          Buying usually makes more sense if you drive a lot, keep vehicles for a long time, want ownership flexibility, or dislike mileage and wear restrictions.
+        </p>
+
+        <p>
+          The monthly payment may be higher, but long-term ownership can become cheaper after the loan is paid off — especially if the vehicle remains reliable.
+        </p>
+      </div>
+
+      <KeyCostCategories
+        items={[
+          {
+            title: "Monthly payment difference",
+            description:
+              "Leases often have lower monthly payments, but buying may create more long-term value.",
+          },
+          {
+            title: "Mileage",
+            description:
+              "High mileage can make leasing risky because overage fees can be expensive.",
+          },
+          {
+            title: "Ownership timeline",
+            description:
+              "Buying usually improves when you keep the vehicle beyond the loan term.",
+          },
+          {
+            title: "Flexibility and risk",
+            description:
+              "Leasing limits ownership risk, while buying provides more control, resale value, and long-term flexibility.",
+          },
+        ]}
+      />
+
+      <ReduceCostTips
+        items={[
+          "Compare total monthly transportation cost, not just lease versus loan payment.",
+          "Estimate your real annual mileage before considering a lease.",
+          "Get insurance quotes for both options before deciding.",
+          "Avoid rolling old negative equity into a new lease or loan.",
+          "Consider buying used if new-car depreciation is the biggest concern.",
+          "Choose leasing only if you understand fees, mileage limits, wear charges, and early termination rules.",
+        ]}
+      />
+
+      <FinancialRedFlags
+        items={[
+          "You drive more miles than the lease allows.",
+          "You need a lease only because buying is unaffordable.",
+          "You would roll old debt or negative equity into the next deal.",
+          "You have weak savings and both options strain monthly cash flow.",
+          "You frequently change vehicles and keep restarting payments.",
+          "You do not understand lease fees, mileage penalties, or end-of-lease charges.",
+        ]}
+      />
+
+      <CalculatorAssumptions
+        items={[
+          "The calculator compares monthly lease and buy payments as recurring transportation costs.",
+          "Monthly income means take-home pay after taxes and payroll deductions.",
+          "Insurance, fuel, maintenance, housing, debt, and savings are included to estimate financial pressure.",
+          "Mileage and ownership timeline influence whether leasing or buying appears more practical.",
+          "The calculator does not estimate APR, residual value, depreciation, tax credits, lease fees, repair risk, or resale value.",
+          "The result is educational guidance, not financial advice.",
+        ]}
+      />
+
+      <FAQSection
+        title="Lease vs Buy FAQ"
+        faqs={[
+          {
+            question: "Is it better to lease or buy a car?",
+            answer:
+              "It depends on your mileage, income, savings, debt, ownership timeline, and whether you prefer lower payments or long-term ownership.",
+          },
+          {
+            question: "When is leasing a car a bad idea?",
+            answer:
+              "Leasing can be a bad fit if you drive high mileage, have unpredictable vehicle needs, want to modify the car, or may need to end the lease early.",
+          },
+          {
+            question: "When is buying a car better?",
+            answer:
+              "Buying is often better if you keep vehicles for many years, drive a lot, want ownership flexibility, or want to avoid mileage and wear restrictions.",
+          },
+          {
+            question: "Is leasing cheaper than buying?",
+            answer:
+              "Leasing often has a lower monthly payment, but buying may be cheaper long term if you keep the vehicle after the loan is paid off.",
+          },
+          {
+            question: "Should I lease if I have debt?",
+            answer:
+              "Be careful. Leasing may lower the payment, but it still adds a recurring obligation and can create fees if your mileage or finances change.",
+          },
+        ]}
+      />
+
+      <MethodologySection category="lease vs buy affordability" updated="May 2026" />
+
+      <RelatedGuides
+        guides={[
+          {
+            title: "Car Calculators",
+            href: "/car-calculators",
+            description:
+              "Browse car payment, truck affordability, insurance, and transportation-cost calculators.",
+          },
+          {
+            title: "What Counts as Debt?",
+            href: "/what-counts-as-debt",
+            description:
+              "Understand which monthly obligations should be included when estimating financial pressure.",
+          },
+        ]}
+      />
+
+      <RelatedCalculators
+        calculators={[
+          {
+            category: "Cars",
+            title: "How Much Car Can I Afford?",
+            href: "/how-much-car-can-i-afford",
+          },
+          {
+            category: "Cars",
+            title: "Should I Spend $500 on a Car Payment?",
+            href: "/should-i-spend-500-on-a-car-payment",
+          },
+          {
+            category: "Cars",
+            title: "How Much Truck Can I Afford?",
+            href: "/how-much-truck-can-i-afford",
+          },
+          {
+            category: "Debt",
+            title: "How Much Debt Is Too Much?",
+            href: "/how-much-debt-is-too-much",
+          },
+        ]}
+      />
+    </CalculatorPageShell>
+  </div>
+
+  <script is:inline>
+    const clamp = (value, min, max) => Math.min(Math.max(value, min), max);
+
+    const getNumber = (id) => {
+      const rawValue = document.getElementById(id)?.value;
+      const value = Number(rawValue);
+      return Number.isFinite(value) && value >= 0 ? value : 0;
+    };
+
+    function getPressureLevel(score) {
+      if (score <= 30) {
+        return {
+          label: "Low Pressure",
+          stress: "Low pressure",
+          color: "#16a34a",
+        };
+      }
+
+      if (score <= 60) {
+        return {
+          label: "Moderate Pressure",
+          stress: "Moderate pressure",
+          color: "#ca8a04",
+        };
+      }
+
+      return {
+        label: "High Pressure",
+        stress: "High pressure",
+        color: "#dc2626",
+      };
+    }
+
+    function calculateLeaseBuy() {
+      const leasePayment = getNumber("leasePayment");
+      const buyPayment = getNumber("buyPayment");
+      const income = getNumber("income");
+      const insurance = getNumber("insurance");
+      const fuelMaintenance = getNumber("fuelMaintenance");
+      const miles = getNumber("miles");
+      const years = getNumber("years");
+      const savings = getNumber("savings");
+      const housing = getNumber("housing");
+      const debt = getNumber("debt");
+
+      const result = document.getElementById("result");
+      const scoreEl = document.getElementById("score");
+      const barFill = document.getElementById("barFill");
+      const recommendationEl = document.getElementById("recommendation");
+      const leaseShareEl = document.getElementById("leaseShare");
+      const buyShareEl = document.getElementById("buyShare");
+      const cashFlowEl = document.getElementById("cashFlow");
+      const guidanceEl = document.getElementById("guidance");
+
+      result.style.display = "block";
+
+      if (income <= 0 || (leasePayment <= 0 && buyPayment <= 0)) {
+        scoreEl.textContent = "Add your numbers first";
+        barFill.style.width = "0%";
+        barFill.style.background = "#16a34a";
+        recommendationEl.innerHTML = "";
+        leaseShareEl.innerHTML = "";
+        buyShareEl.innerHTML = "";
+        cashFlowEl.innerHTML = "";
+        guidanceEl.textContent =
+          "Enter monthly take-home income and at least one lease or buy payment so the calculator can compare the options.";
+        return;
+      }
+
+      const leaseTotal = leasePayment + insurance + fuelMaintenance;
+      const buyTotal = buyPayment + insurance + fuelMaintenance;
+      const leaseShare = (leaseTotal / income) * 100;
+      const buyShare = (buyTotal / income) * 100;
+
+      const leaseRemaining = income - housing - debt - leaseTotal;
+      const buyRemaining = income - housing - debt - buyTotal;
+
+      const leaseFixedRatio = ((housing + debt + leasePayment) / income) * 100;
+      const buyFixedRatio = ((housing + debt + buyPayment) / income) * 100;
+
+      const bestMonthlyCost = Math.min(
+        leasePayment > 0 ? leaseTotal : Number.POSITIVE_INFINITY,
+        buyPayment > 0 ? buyTotal : Number.POSITIVE_INFINITY
+      );
+
+      const monthlyCoreOutflow = housing + debt + bestMonthlyCost;
+      const emergencyMonths =
+        monthlyCoreOutflow > 0 ? savings / monthlyCoreOutflow : savings > 0 ? 12 : 0;
+
+      let leaseScore = 0;
+      let buyScore = 0;
+
+      leaseScore += clamp(leaseShare * 1.45, 0, 38);
+      buyScore += clamp(buyShare * 1.35, 0, 36);
+
+      leaseScore += clamp(leaseFixedRatio * 0.24, 0, 26);
+      buyScore += clamp(buyFixedRatio * 0.24, 0, 26);
+
+      if (leaseRemaining < 0) leaseScore += 30;
+      else if (leaseRemaining < income * 0.08) leaseScore += 18;
+      else if (leaseRemaining > income * 0.3) leaseScore -= 8;
+
+      if (buyRemaining < 0) buyScore += 30;
+      else if (buyRemaining < income * 0.08) buyScore += 18;
+      else if (buyRemaining > income * 0.3) buyScore -= 8;
+
+      if (miles > 15000) leaseScore += 18;
+      else if (miles > 12000) leaseScore += 8;
+
+      if (years >= 6) leaseScore += 14;
+      else if (years <= 3 && years > 0) buyScore += 6;
+
+      if (years >= 6) buyScore -= 10;
+      if (miles > 18000) buyScore -= 4;
+
+      if (emergencyMonths < 1 && income < 12000) {
+        leaseScore += 18;
+        buyScore += 18;
+      } else if (emergencyMonths < 3 && income < 15000) {
+        leaseScore += 9;
+        buyScore += 9;
+      } else if (emergencyMonths >= 6) {
+        leaseScore -= 7;
+        buyScore -= 7;
+      }
+
+      if (income >= 12000 && emergencyMonths >= 3) {
+        leaseScore -= 6;
+        buyScore -= 6;
+      }
+
+      if (savings >= 1000000) {
+        leaseScore -= 20;
+        buyScore -= 20;
+      }
+
+      if (savings >= 5000000) {
+        leaseScore -= 30;
+        buyScore -= 30;
+      }
+
+      if (savings >= 10000000) {
+        leaseScore -= 40;
+        buyScore -= 40;
+      }
+
+      leaseScore = clamp(leaseScore, 0, 100);
+      buyScore = clamp(buyScore, 0, 100);
+
+      let recommendation = "Leasing may fit better";
+      let selectedScore = leaseScore;
+      let selectedRemaining = leaseRemaining;
+
+      if (buyScore + 5 < leaseScore) {
+        recommendation = "Buying may fit better";
+        selectedScore = buyScore;
+        selectedRemaining = buyRemaining;
+      }
+
+      if (miles > 15000 || years >= 6) {
+        recommendation = "Buying may fit better";
+        selectedScore = buyScore;
+        selectedRemaining = buyRemaining;
+      }
+
+      if (leasePayment <= 0 && buyPayment > 0) {
+        recommendation = "Buying is the only option entered";
+        selectedScore = buyScore;
+        selectedRemaining = buyRemaining;
+      }
+
+      if (buyPayment <= 0 && leasePayment > 0) {
+        recommendation = "Leasing is the only option entered";
+        selectedScore = leaseScore;
+        selectedRemaining = leaseRemaining;
+      }
+
+      const pressureScore = Math.round(clamp(selectedScore, 0, 100));
+      const level = getPressureLevel(pressureScore);
+
+      let guidance = "";
+
+      if (recommendation.includes("Buying")) {
+        guidance =
+          `Buying looks stronger based on the inputs, especially if you drive higher mileage or plan to keep the vehicle longer. The buy option uses about ${buyShare.toFixed(1)}% of take-home income including insurance, fuel, and maintenance.`;
+      } else {
+        guidance =
+          `Leasing looks stronger based on the inputs, especially if you drive predictable mileage and value lower monthly payments. The lease option uses about ${leaseShare.toFixed(1)}% of take-home income including insurance, fuel, and maintenance.`;
+      }
+
+      if (pressureScore > 60) {
+        guidance += " However, the better option still creates high financial pressure, so consider a cheaper vehicle or delaying the decision.";
+      } else if (pressureScore > 30) {
+        guidance += " The better option may work, but it still deserves a careful review before committing.";
+      } else {
+        guidance += " The better option appears financially manageable based on the numbers provided.";
+      }
+
+      scoreEl.textContent = `${level.label} — ${pressureScore}/100`;
+      scoreEl.style.color = level.color;
+      barFill.style.width = `${pressureScore}%`;
+      barFill.style.background = level.color;
+
+      recommendationEl.innerHTML = `<strong>Recommendation:</strong> ${recommendation}`;
+      leaseShareEl.innerHTML = `<strong>Lease total cost share:</strong> ${leaseShare.toFixed(1)}% of take-home income`;
+      buyShareEl.innerHTML = `<strong>Buy total cost share:</strong> ${buyShare.toFixed(1)}% of take-home income`;
+      cashFlowEl.innerHTML = `<strong>Estimated monthly cash flow after better option:</strong> $${Math.round(selectedRemaining).toLocaleString()}`;
+      guidanceEl.textContent = guidance;
+    }
+
+    document
+      .getElementById("leaseBuyButton")
+      .addEventListener("click", calculateLeaseBuy);
+  </script>
+</Layout>

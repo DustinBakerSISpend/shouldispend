@@ -1,0 +1,574 @@
+---
+import Layout from "../layouts/Layout.astro";
+import CalculatorPageShell from "../components/CalculatorPageShell.astro";
+import FAQSection from "../components/FAQSection.astro";
+import RelatedCalculators from "../components/RelatedCalculators.astro";
+import RelatedGuides from "../components/RelatedGuides.astro";
+import MethodologySection from "../components/MethodologySection.astro";
+import FinancialRedFlags from "../components/FinancialRedFlags.astro";
+import CalculatorAssumptions from "../components/CalculatorAssumptions.astro";
+import KeyCostCategories from "../components/KeyCostCategories.astro";
+import ReduceCostTips from "../components/ReduceCostTips.astro";
+import WhenSpendingMakesSense from "../components/WhenSpendingMakesSense.astro";
+---
+
+<Layout
+  title="Should I Spend $1,500 on a Car Payment?"
+  description="Use this luxury car payment calculator to decide whether a $1,500 monthly vehicle payment fits your income, insurance costs, debt, savings, housing expenses, and overall financial flexibility."
+>
+  <style>
+    .container {
+      max-width: 950px;
+      margin: 0 auto;
+      padding: 60px 20px;
+    }
+
+    .content-section {
+      max-width: 760px;
+      margin: 72px auto 0;
+    }
+
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 28px;
+      padding: 34px;
+    }
+
+    h2 {
+      margin-top: 0;
+      font-size: 2rem;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 22px;
+      margin-bottom: 28px;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 10px;
+      font-weight: 700;
+    }
+
+    input {
+      width: 100%;
+      padding: 18px;
+      border-radius: 14px;
+      border: 1px solid var(--border);
+      font-size: 1.1rem;
+      box-sizing: border-box;
+    }
+
+    button {
+      background: #0f172a;
+      color: white;
+      border: none;
+      padding: 16px 28px;
+      border-radius: 14px;
+      font-size: 1rem;
+      font-weight: 700;
+      cursor: pointer;
+      margin-top: 10px;
+      width: 100%;
+      display: block;
+    }
+
+    button:hover {
+      opacity: 0.92;
+    }
+
+    .result {
+      margin-top: 40px;
+      border: 1px solid var(--border);
+      border-radius: 24px;
+      padding: 28px;
+      display: none;
+      background: #f8fafc;
+    }
+
+    .score {
+      font-size: 3rem;
+      font-weight: 800;
+      margin-bottom: 16px;
+    }
+
+    .bar {
+      width: 100%;
+      height: 16px;
+      background: #dbe3ee;
+      border-radius: 999px;
+      overflow: hidden;
+      margin-bottom: 24px;
+    }
+
+    .fill {
+      height: 100%;
+      width: 0%;
+      background: #16a34a;
+      border-radius: 999px;
+      transition: width 0.4s ease;
+    }
+
+    .metric {
+      margin-bottom: 14px;
+      font-size: 1.05rem;
+    }
+
+    .guidance {
+      margin-top: 26px;
+      font-size: 1.15rem;
+      line-height: 1.7;
+    }
+
+    .disclaimer {
+      margin-top: 30px;
+      font-size: 0.9rem;
+      color: var(--muted);
+    }
+
+    .helper-link {
+      margin-top: 10px;
+      font-size: 0.9rem;
+    }
+
+    .helper-link a {
+      color: var(--primary);
+      font-weight: 600;
+    }
+
+    .content-section p,
+    .content-section li {
+      line-height: 1.8;
+    }
+  </style>
+
+  <div class="container">
+    <CalculatorPageShell
+      eyebrow="Luxury Vehicle Calculator"
+      title="Should I Spend $1,500 on a Car Payment?"
+      description="Estimate whether a luxury SUV, truck, EV, or high-end vehicle payment realistically fits your income, debt, insurance, savings, and monthly financial flexibility."
+    >
+      <div class="card">
+        <h2>$1,500 Car Payment Pressure Verdict</h2>
+
+        <div class="grid">
+          <div>
+            <label for="carPayment">Monthly Car Payment</label>
+            <input id="carPayment" type="number" placeholder="1500" min="0" inputmode="decimal" />
+          </div>
+
+          <div>
+            <label for="income">Monthly Take-Home Income</label>
+            <input id="income" type="number" placeholder="18000" min="0" inputmode="decimal" />
+          </div>
+
+          <div>
+            <label for="insurance">Monthly Car Insurance</label>
+            <input id="insurance" type="number" placeholder="350" min="0" inputmode="decimal" />
+          </div>
+
+          <div>
+            <label for="fuelMaintenance">Monthly Fuel + Maintenance</label>
+            <input id="fuelMaintenance" type="number" placeholder="550" min="0" inputmode="decimal" />
+          </div>
+
+          <div>
+            <label for="savings">Emergency Savings</label>
+            <input id="savings" type="number" placeholder="45000" min="0" inputmode="decimal" />
+          </div>
+
+          <div>
+            <label for="housing">Monthly Rent or Mortgage</label>
+            <input id="housing" type="number" placeholder="3200" min="0" inputmode="decimal" />
+          </div>
+
+          <div>
+            <label for="debt">Other Monthly Debt Payments</label>
+            <input id="debt" type="number" placeholder="1200" min="0" inputmode="decimal" />
+
+            <div class="helper-link">
+              <a href="/what-counts-as-debt">
+                Not sure what counts as debt? Read the debt guide
+              </a>
+            </div>
+          </div>
+        </div>
+
+        <button id="carButton" type="button">
+          Calculate Financial Pressure
+        </button>
+
+        <div class="result" id="result">
+          <div class="score" id="score"></div>
+
+          <div class="bar">
+            <div class="fill" id="barFill"></div>
+          </div>
+
+          <div class="metric" id="paymentShare"></div>
+          <div class="metric" id="transportationShare"></div>
+          <div class="metric" id="cashFlow"></div>
+          <div class="metric" id="savingsCushion"></div>
+
+          <div class="guidance" id="guidance"></div>
+
+          <div class="disclaimer">
+            This is a general educational estimate, not personal financial, lending, tax, insurance, or vehicle-buying advice.
+          </div>
+        </div>
+      </div>
+
+      <div class="content-section">
+        <h2>What a $1,500 Car Payment Really Means</h2>
+
+        <p>
+          A $1,500 monthly car payment usually represents a luxury vehicle, premium truck, high-end SUV, expensive EV, or heavily optioned new vehicle. At this level, the total ownership cost matters far more than the payment alone.
+        </p>
+
+        <p>
+          Insurance, depreciation, fuel, maintenance, registration, and opportunity cost can push total transportation spending dramatically higher than expected — even for high earners.
+        </p>
+      </div>
+
+      <WhenSpendingMakesSense
+        title="When a $1,500 Car Payment May Make Sense"
+        items={[
+          "Your income comfortably supports the payment after housing, debt, taxes, savings, and investments.",
+          "You still maintain strong emergency savings and monthly cash-flow flexibility.",
+          "The vehicle fits a real business, lifestyle, towing, family, or commuting need.",
+          "You understand the long-term ownership cost beyond the payment itself.",
+          "You are not sacrificing retirement contributions or building credit card debt to support the vehicle.",
+        ]}
+      />
+
+      <div class="content-section">
+        <h2>When a $1,500 Car Payment Becomes Risky</h2>
+
+        <p>
+          A luxury-level vehicle payment becomes dangerous when it is supported by stretched loan terms, weak savings, rising credit card balances, or a fragile monthly budget.
+        </p>
+
+        <p>
+          The biggest mistake is assuming high income automatically makes the payment safe. What matters is remaining flexibility after all major obligations are included.
+        </p>
+      </div>
+
+      <KeyCostCategories
+        items={[
+          {
+            title: "Luxury payment pressure",
+            description:
+              "A $1,500 payment can absorb a major portion of take-home income even for high earners.",
+          },
+          {
+            title: "Insurance and depreciation",
+            description:
+              "Luxury vehicles, trucks, and premium EVs often carry much higher insurance and depreciation costs.",
+          },
+          {
+            title: "Fuel, tires, and maintenance",
+            description:
+              "Large SUVs, trucks, performance vehicles, and luxury brands can dramatically increase recurring operating costs.",
+          },
+          {
+            title: "Debt and housing overlap",
+            description:
+              "Luxury transportation becomes risky when combined with expensive housing or existing debt obligations.",
+          },
+        ]}
+      />
+
+      <ReduceCostTips
+        items={[
+          "Compare the total transportation cost, not just the loan payment.",
+          "Avoid ultra-long loan terms that hide the true vehicle cost.",
+          "Get insurance quotes before committing to the vehicle.",
+          "Protect emergency savings even if you can technically afford the payment.",
+          "Compare slightly used alternatives before buying new.",
+          "Consider whether the vehicle improves your life enough to justify the monthly pressure.",
+        ]}
+      />
+
+      <FinancialRedFlags
+        items={[
+          "The payment only works with a long loan term.",
+          "You would reduce savings or investments to support the vehicle.",
+          "You rely on bonuses, overtime, or uncertain income to justify the payment.",
+          "Housing, debt, and transportation together consume most of your income.",
+          "You are already carrying meaningful credit card debt.",
+          "The vehicle payment creates anxiety despite high income.",
+        ]}
+      />
+
+      <CalculatorAssumptions
+        items={[
+          "The calculator treats the car payment as a recurring monthly transportation expense.",
+          "Monthly income means take-home pay after taxes and payroll deductions.",
+          "Insurance, fuel, maintenance, and repair estimates are included to estimate realistic ownership pressure.",
+          "Other debt payments include credit cards, student loans, personal loans, medical debt payments, and required monthly obligations.",
+          "The calculator does not estimate resale value, APR, taxes, registration, depreciation, investment returns, or opportunity cost.",
+          "The result is educational guidance, not financial advice.",
+        ]}
+      />
+
+      <FAQSection
+        title="$1,500 Car Payment FAQ"
+        faqs={[
+          {
+            question: "Is a $1,500 car payment too much?",
+            answer:
+              "For many households, yes. A $1,500 payment is extremely high unless income, savings, and monthly flexibility are also very strong.",
+          },
+          {
+            question: "What salary supports a $1,500 car payment?",
+            answer:
+              "The answer depends on housing, debt, insurance, taxes, savings, and total transportation cost — not salary alone.",
+          },
+          {
+            question: "Should luxury vehicles be evaluated differently?",
+            answer:
+              "Yes. Luxury vehicles often create higher insurance, maintenance, tire, fuel, repair, and depreciation costs than mainstream vehicles.",
+          },
+          {
+            question: "Can high earners still overspend on cars?",
+            answer:
+              "Absolutely. High income can mask poor cash-flow flexibility if housing, debt, taxes, and lifestyle inflation are already high.",
+          },
+          {
+            question: "What matters more than the payment itself?",
+            answer:
+              "Total transportation cost matters more than the payment alone. Insurance, fuel, maintenance, debt, savings, and housing determine real affordability.",
+          },
+        ]}
+      />
+
+      <MethodologySection category="luxury vehicle affordability" updated="May 2026" />
+
+      <RelatedGuides
+        guides={[
+          {
+            title: "Car Calculators",
+            href: "/car-calculators",
+            description:
+              "Browse vehicle affordability, transportation-cost, and car payment calculators.",
+          },
+          {
+            title: "What Counts as Debt?",
+            href: "/what-counts-as-debt",
+            description:
+              "Understand which monthly obligations should be included when estimating financial pressure.",
+          },
+        ]}
+      />
+
+      <RelatedCalculators
+        calculators={[
+          {
+            category: "Cars",
+            title: "Should I Spend $500 on a Car Payment?",
+            href: "/should-i-spend-500-on-a-car-payment",
+          },
+          {
+            category: "Cars",
+            title: "Should I Spend $700 on a Car Payment?",
+            href: "/should-i-spend-700-on-a-car-payment",
+          },
+          {
+            category: "Cars",
+            title: "Should I Spend $1,000 on a Car Payment?",
+            href: "/should-i-spend-1000-on-a-car-payment",
+          },
+          {
+            category: "Debt",
+            title: "How Much Debt Is Too Much?",
+            href: "/how-much-debt-is-too-much",
+          },
+        ]}
+      />
+    </CalculatorPageShell>
+  </div>
+
+  <script is:inline>
+    const clamp = (value, min, max) => Math.min(Math.max(value, min), max);
+
+    const getNumber = (id) => {
+      const rawValue = document.getElementById(id)?.value;
+      const value = Number(rawValue);
+      return Number.isFinite(value) && value >= 0 ? value : 0;
+    };
+
+    function getPressureLevel(score) {
+      if (score <= 30) {
+        return {
+          label: "Low Pressure",
+          stress: "Low pressure",
+          color: "#16a34a",
+          action: "Keep protecting savings and avoid treating high income as unlimited flexibility.",
+        };
+      }
+
+      if (score <= 60) {
+        return {
+          label: "Moderate Pressure",
+          stress: "Moderate pressure",
+          color: "#ca8a04",
+          action: "Review insurance, depreciation, savings goals, and whether the vehicle meaningfully improves your life.",
+        };
+      }
+
+      return {
+        label: "High Pressure",
+        stress: "High pressure",
+        color: "#dc2626",
+        action: "Slow down before signing and reassess the full transportation cost against your long-term flexibility.",
+      };
+    }
+
+    function calculateCarPayment() {
+      const carPayment = getNumber("carPayment");
+      const income = getNumber("income");
+      const insurance = getNumber("insurance");
+      const fuelMaintenance = getNumber("fuelMaintenance");
+      const savings = getNumber("savings");
+      const housing = getNumber("housing");
+      const debt = getNumber("debt");
+
+      const result = document.getElementById("result");
+      const scoreEl = document.getElementById("score");
+      const barFill = document.getElementById("barFill");
+      const paymentShareEl = document.getElementById("paymentShare");
+      const transportationShareEl = document.getElementById("transportationShare");
+      const cashFlowEl = document.getElementById("cashFlow");
+      const savingsCushionEl = document.getElementById("savingsCushion");
+      const guidanceEl = document.getElementById("guidance");
+
+      result.style.display = "block";
+
+      if (carPayment <= 0 || income <= 0) {
+        scoreEl.textContent = "Add your numbers first";
+        barFill.style.width = "0%";
+        barFill.style.background = "#16a34a";
+        paymentShareEl.innerHTML = "";
+        transportationShareEl.innerHTML = "";
+        cashFlowEl.innerHTML = "";
+        savingsCushionEl.innerHTML = "";
+        guidanceEl.textContent =
+          "Enter a positive monthly car payment and monthly take-home income so the calculator can estimate financial pressure.";
+        return;
+      }
+
+      const totalVehicleCost = carPayment + insurance + fuelMaintenance;
+      const paymentIncomeShare = (carPayment / income) * 100;
+      const transportationIncomeShare = (totalVehicleCost / income) * 100;
+      const fixedObligationRatio = ((housing + debt + carPayment) / income) * 100;
+      const monthlyRemaining = income - housing - debt - totalVehicleCost;
+      const monthlyCoreOutflow = housing + debt + totalVehicleCost;
+
+      const emergencyMonths =
+        monthlyCoreOutflow > 0 ? savings / monthlyCoreOutflow : savings > 0 ? 12 : 0;
+
+      let pressureScore = 0;
+
+      pressureScore += clamp(paymentIncomeShare * 2.1, 0, 32);
+      pressureScore += clamp(transportationIncomeShare * 1.7, 0, 40);
+      pressureScore += clamp(fixedObligationRatio * 0.28, 0, 30);
+
+      if (monthlyRemaining < 0) pressureScore += 34;
+      else if (monthlyRemaining < income * 0.08) pressureScore += 18;
+      else if (monthlyRemaining < income * 0.15) pressureScore += 10;
+      else if (monthlyRemaining > income * 0.3) pressureScore -= 8;
+
+      if (emergencyMonths < 1 && income < 18000) pressureScore += 24;
+      else if (emergencyMonths < 3 && income < 22000) pressureScore += 12;
+      else if (emergencyMonths >= 6) pressureScore -= 8;
+
+      if (transportationIncomeShare >= 30) pressureScore += 22;
+      else if (transportationIncomeShare >= 22) pressureScore += 12;
+
+      if (paymentIncomeShare >= 18) pressureScore += 18;
+      else if (paymentIncomeShare >= 12) pressureScore += 10;
+
+      if (income >= 20000 && monthlyRemaining > income * 0.25 && emergencyMonths >= 3) {
+        pressureScore -= 10;
+      }
+
+      if (income >= 30000 && monthlyRemaining > income * 0.35 && emergencyMonths >= 6) {
+        pressureScore -= 16;
+      }
+
+      if (
+        paymentIncomeShare < 8 &&
+        transportationIncomeShare < 14 &&
+        emergencyMonths >= 9 &&
+        fixedObligationRatio < 45 &&
+        monthlyRemaining > income * 0.35
+      ) {
+        pressureScore = Math.min(pressureScore, 24);
+      }
+
+      if (
+        paymentIncomeShare < 5 &&
+        transportationIncomeShare < 10 &&
+        emergencyMonths >= 12 &&
+        fixedObligationRatio < 35 &&
+        monthlyRemaining > income * 0.45
+      ) {
+        pressureScore = Math.min(pressureScore, 10);
+      }
+
+      // Massive liquidity adjustment
+
+if (savings >= 1000000 && monthlyRemaining > 0) {
+  pressureScore -= 20;
+}
+
+if (savings >= 5000000 && monthlyRemaining > 0) {
+  pressureScore -= 30;
+}
+
+if (savings >= 10000000 && monthlyRemaining > 0) {
+  pressureScore -= 40;
+}
+
+      pressureScore = Math.round(clamp(pressureScore, 0, 100));
+
+      const level = getPressureLevel(pressureScore);
+
+      let guidance = "";
+
+      if (pressureScore <= 30) {
+        guidance =
+          `This $1,500 car payment appears financially manageable based on the numbers provided. The payment equals about ${paymentIncomeShare.toFixed(1)}% of take-home income, while total transportation costs equal about ${transportationIncomeShare.toFixed(1)}%.`;
+      } else if (pressureScore <= 60) {
+        guidance =
+          `This $1,500 car payment may work, but it creates noticeable financial pressure. The payment equals about ${paymentIncomeShare.toFixed(1)}% of take-home income, and total transportation costs equal about ${transportationIncomeShare.toFixed(1)}%.`;
+      } else {
+        guidance =
+          `This $1,500 car payment could create serious long-term pressure. The payment equals about ${paymentIncomeShare.toFixed(1)}% of take-home income, and the combination of transportation costs, housing, debt, or savings suggests you should reconsider the full ownership picture before committing.`;
+      }
+
+      scoreEl.textContent = `${level.label} — ${pressureScore}/100`;
+      scoreEl.style.color = level.color;
+
+      barFill.style.width = `${pressureScore}%`;
+      barFill.style.background = level.color;
+
+      paymentShareEl.innerHTML = `<strong>Car payment share:</strong> ${paymentIncomeShare.toFixed(1)}% of take-home income`;
+
+      transportationShareEl.innerHTML = `<strong>Total vehicle cost share:</strong> ${transportationIncomeShare.toFixed(1)}% of take-home income`;
+
+      cashFlowEl.innerHTML = `<strong>Monthly cash flow after housing, debt, and vehicle costs:</strong> $${Math.round(monthlyRemaining).toLocaleString()}`;
+
+      savingsCushionEl.innerHTML = `<strong>Estimated emergency cushion:</strong> ${Math.max(emergencyMonths, 0).toFixed(1)} months`;
+
+      guidanceEl.textContent = `${guidance} Recommended next step: ${level.action}`;
+    }
+
+    document
+      .getElementById("carButton")
+      .addEventListener("click", calculateCarPayment);
+  </script>
+</Layout>

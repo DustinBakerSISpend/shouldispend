@@ -1,0 +1,581 @@
+---
+import Layout from "../layouts/Layout.astro";
+import CalculatorPageShell from "../components/CalculatorPageShell.astro";
+import FAQSection from "../components/FAQSection.astro";
+import RelatedCalculators from "../components/RelatedCalculators.astro";
+import RelatedGuides from "../components/RelatedGuides.astro";
+import MethodologySection from "../components/MethodologySection.astro";
+import FinancialRedFlags from "../components/FinancialRedFlags.astro";
+import CalculatorAssumptions from "../components/CalculatorAssumptions.astro";
+import KeyCostCategories from "../components/KeyCostCategories.astro";
+import ReduceCostTips from "../components/ReduceCostTips.astro";
+import WhenSpendingMakesSense from "../components/WhenSpendingMakesSense.astro";
+---
+
+<Layout
+  title="How Much of a Truck Can I Afford?"
+  description="Use this truck affordability calculator to estimate whether a pickup truck payment fits your income, insurance, fuel, maintenance, debt, savings, housing, and towing needs."
+>
+  <style>
+    .container {
+      max-width: 950px;
+      margin: 0 auto;
+      padding: 60px 20px;
+    }
+
+    .content-section {
+      max-width: 760px;
+      margin: 72px auto 0;
+    }
+
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 28px;
+      padding: 34px;
+    }
+
+    h2 {
+      margin-top: 0;
+      font-size: 2rem;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 22px;
+      margin-bottom: 28px;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 10px;
+      font-weight: 700;
+    }
+
+    input {
+      width: 100%;
+      padding: 18px;
+      border-radius: 14px;
+      border: 1px solid var(--border);
+      font-size: 1.1rem;
+      box-sizing: border-box;
+    }
+
+    button {
+      background: #0f172a;
+      color: white;
+      border: none;
+      padding: 16px 28px;
+      border-radius: 14px;
+      font-size: 1rem;
+      font-weight: 700;
+      cursor: pointer;
+      margin-top: 10px;
+      width: 100%;
+      display: block;
+    }
+
+    button:hover {
+      opacity: 0.92;
+    }
+
+    .result {
+      margin-top: 40px;
+      border: 1px solid var(--border);
+      border-radius: 24px;
+      padding: 28px;
+      display: none;
+      background: #f8fafc;
+    }
+
+    .score {
+      font-size: 3rem;
+      font-weight: 800;
+      margin-bottom: 16px;
+    }
+
+    .bar {
+      width: 100%;
+      height: 16px;
+      background: #dbe3ee;
+      border-radius: 999px;
+      overflow: hidden;
+      margin-bottom: 24px;
+    }
+
+    .fill {
+      height: 100%;
+      width: 0%;
+      background: #16a34a;
+      border-radius: 999px;
+      transition: width 0.4s ease;
+    }
+
+    .metric {
+      margin-bottom: 14px;
+      font-size: 1.05rem;
+    }
+
+    .guidance {
+      margin-top: 26px;
+      font-size: 1.15rem;
+      line-height: 1.7;
+    }
+
+    .disclaimer {
+      margin-top: 30px;
+      font-size: 0.9rem;
+      color: var(--muted);
+    }
+
+    .helper-link {
+      margin-top: 10px;
+      font-size: 0.9rem;
+    }
+
+    .helper-link a {
+      color: var(--primary);
+      font-weight: 600;
+    }
+
+    .content-section p,
+    .content-section li {
+      line-height: 1.8;
+    }
+  </style>
+
+  <div class="container">
+    <CalculatorPageShell
+      eyebrow="Truck Affordability Calculator"
+      title="How Much Truck Can I Afford?"
+      description="Estimate whether a pickup truck payment fits your income, fuel costs, insurance, maintenance, towing or work needs, savings, debt, and monthly financial flexibility."
+    >
+      <div class="card">
+        <h2>Truck Affordability Pressure Verdict</h2>
+
+        <div class="grid">
+          <div>
+            <label for="truckPayment">Estimated Monthly Truck Payment</label>
+            <input id="truckPayment" type="number" placeholder="900" min="0" inputmode="decimal" />
+          </div>
+
+          <div>
+            <label for="income">Monthly Take-Home Income</label>
+            <input id="income" type="number" placeholder="8500" min="0" inputmode="decimal" />
+          </div>
+
+          <div>
+            <label for="insurance">Monthly Truck Insurance</label>
+            <input id="insurance" type="number" placeholder="250" min="0" inputmode="decimal" />
+          </div>
+
+          <div>
+            <label for="fuelMaintenance">Monthly Fuel + Maintenance</label>
+            <input id="fuelMaintenance" type="number" placeholder="550" min="0" inputmode="decimal" />
+          </div>
+
+          <div>
+            <label for="savings">Emergency Savings</label>
+            <input id="savings" type="number" placeholder="20000" min="0" inputmode="decimal" />
+          </div>
+
+          <div>
+            <label for="housing">Monthly Rent or Mortgage</label>
+            <input id="housing" type="number" placeholder="2200" min="0" inputmode="decimal" />
+          </div>
+
+          <div>
+            <label for="debt">Other Monthly Debt Payments</label>
+            <input id="debt" type="number" placeholder="800" min="0" inputmode="decimal" />
+
+            <div class="helper-link">
+              <a href="/what-counts-as-debt">
+                Not sure what counts as debt? Read the debt guide
+              </a>
+            </div>
+          </div>
+
+          <div>
+            <label for="workValue">Monthly Work / Business Value</label>
+            <input id="workValue" type="number" placeholder="0" min="0" inputmode="decimal" />
+          </div>
+        </div>
+
+        <button id="truckButton" type="button">
+          Calculate Truck Affordability
+        </button>
+
+        <div class="result" id="result">
+          <div class="score" id="score"></div>
+
+          <div class="bar">
+            <div class="fill" id="barFill"></div>
+          </div>
+
+          <div class="metric" id="paymentShare"></div>
+          <div class="metric" id="truckCostShare"></div>
+          <div class="metric" id="cashFlow"></div>
+          <div class="metric" id="savingsCushion"></div>
+
+          <div class="guidance" id="guidance"></div>
+
+          <div class="disclaimer">
+            This is a general educational estimate, not personal financial, lending, tax, insurance, business, or vehicle-buying advice.
+          </div>
+        </div>
+      </div>
+
+      <div class="content-section">
+        <h2>What Truck Affordability Really Means</h2>
+
+        <p>
+          A truck can be useful, practical, and even necessary — but it can also become one of the most expensive monthly decisions in a household budget. The payment is only the start.
+        </p>
+
+        <p>
+          Fuel, insurance, tires, maintenance, towing needs, repairs, registration, depreciation, and existing debt all determine whether the truck truly fits your financial life.
+        </p>
+      </div>
+
+      <WhenSpendingMakesSense
+        title="When Buying a Truck Makes Sense"
+        items={[
+          "You need the truck for work, towing, hauling, family needs, weather, or regular practical use.",
+          "Your income comfortably supports the payment after housing, debt, insurance, fuel, and savings.",
+          "You have priced insurance and operating costs before committing.",
+          "The truck does not force you to rely on credit cards for normal expenses.",
+          "You still have emergency savings after accounting for higher repair and tire costs.",
+        ]}
+      />
+
+      <div class="content-section">
+        <h2>When a Truck Purchase Deserves a Closer Look</h2>
+
+        <p>
+          A truck becomes risky when the payment only looks affordable before fuel, insurance, maintenance, tires, and existing debt are included.
+        </p>
+
+        <p>
+          This is especially important with full-size trucks, diesel models, lifted trucks, luxury trims, and heavy towing setups because operating costs can be far higher than a regular car.
+        </p>
+      </div>
+
+      <KeyCostCategories
+        items={[
+          {
+            title: "Truck payment",
+            description:
+              "The monthly loan or lease payment is the visible cost, but it does not capture the full cost of owning a pickup.",
+          },
+          {
+            title: "Fuel and maintenance",
+            description:
+              "Trucks often cost more to fuel, maintain, repair, and equip than smaller vehicles.",
+          },
+          {
+            title: "Insurance and registration",
+            description:
+              "Truck insurance and registration can rise quickly with newer, heavier, more expensive, or higher-trim models.",
+          },
+          {
+            title: "Work or towing value",
+            description:
+              "A truck that creates real work value or replaces rental costs deserves different treatment than a purely lifestyle purchase.",
+          },
+        ]}
+      />
+
+      <ReduceCostTips
+        items={[
+          "Get an insurance quote before choosing the truck.",
+          "Estimate fuel costs using your real weekly mileage.",
+          "Compare trim levels before paying for features you will rarely use.",
+          "Avoid stretching the loan term just to make the payment feel comfortable.",
+          "Price tires, repairs, towing equipment, and maintenance before buying.",
+          "Consider used or lower-trim trucks if the payment strains savings or cash flow.",
+        ]}
+      />
+
+      <FinancialRedFlags
+        items={[
+          "The truck payment only works before fuel and insurance are included.",
+          "You would need a very long loan term to make the payment feel affordable.",
+          "You want the truck mainly for image while debt or savings are already tight.",
+          "The truck would cause you to pause savings or use credit cards for normal life.",
+          "Housing, debt, and truck costs together consume most of your take-home income.",
+          "You have little emergency savings and the truck would be expensive to repair.",
+        ]}
+      />
+
+      <CalculatorAssumptions
+        items={[
+          "The calculator treats truck ownership as a recurring transportation expense.",
+          "Monthly income means take-home pay after taxes and payroll deductions.",
+          "Fuel, maintenance, insurance, and repair estimates are included to estimate realistic truck pressure.",
+          "Work or business value reduces pressure only when the truck creates real monthly financial utility.",
+          "Other debt payments include credit cards, student loans, personal loans, medical debt payments, and required monthly obligations.",
+          "The calculator does not estimate APR, taxes, registration, depreciation, resale value, business deductions, or tax treatment.",
+        ]}
+      />
+
+      <FAQSection
+        title="Truck Affordability FAQ"
+        faqs={[
+          {
+            question: "How much truck can I afford?",
+            answer:
+              "The answer depends on your income, truck payment, insurance, fuel, maintenance, debt, housing costs, savings, and whether the truck creates real work or lifestyle value.",
+          },
+          {
+            question: "Is a truck more expensive than a car?",
+            answer:
+              "Often, yes. Trucks can cost more to buy, insure, fuel, maintain, repair, and equip than many cars or small SUVs.",
+          },
+          {
+            question: "Should towing needs change my budget?",
+            answer:
+              "Yes. If you genuinely need towing or hauling capacity, a truck may provide real utility. But towing needs can also push you toward higher trims, bigger engines, and higher costs.",
+          },
+          {
+            question: "Should I buy a truck if I have debt?",
+            answer:
+              "Be careful. A truck payment is harder to manage when credit card debt, personal loans, student loans, or high housing costs already reduce flexibility.",
+          },
+          {
+            question: "What matters more than the truck payment?",
+            answer:
+              "Total truck cost matters more than the payment alone. Insurance, fuel, maintenance, tires, repairs, debt, savings, and housing determine real affordability.",
+          },
+        ]}
+      />
+
+      <MethodologySection category="truck affordability" updated="May 2026" />
+
+      <RelatedGuides
+        guides={[
+          {
+            title: "Car Calculators",
+            href: "/car-calculators",
+            description:
+              "Browse car payment, truck affordability, insurance, and transportation-cost calculators.",
+          },
+          {
+            title: "What Counts as Debt?",
+            href: "/what-counts-as-debt",
+            description:
+              "Understand which monthly obligations should be included when estimating financial pressure.",
+          },
+        ]}
+      />
+
+      <RelatedCalculators
+        calculators={[
+          {
+            category: "Cars",
+            title: "How Much Car Can I Afford?",
+            href: "/how-much-car-can-i-afford",
+          },
+          {
+            category: "Cars",
+            title: "Should I Spend $500 on a Car Payment?",
+            href: "/should-i-spend-500-on-a-car-payment",
+          },
+          {
+            category: "Cars",
+            title: "Should I Spend $1,500 on a Car Payment?",
+            href: "/should-i-spend-1500-on-a-car-payment",
+          },
+          {
+            category: "Debt",
+            title: "How Much Debt Is Too Much?",
+            href: "/how-much-debt-is-too-much",
+          },
+        ]}
+      />
+    </CalculatorPageShell>
+  </div>
+
+  <script is:inline>
+    const clamp = (value, min, max) => Math.min(Math.max(value, min), max);
+
+    const getNumber = (id) => {
+      const rawValue = document.getElementById(id)?.value;
+      const value = Number(rawValue);
+      return Number.isFinite(value) && value >= 0 ? value : 0;
+    };
+
+    function getPressureLevel(score) {
+      if (score <= 30) {
+        return {
+          label: "Low Pressure",
+          stress: "Low pressure",
+          color: "#16a34a",
+          action: "Keep total truck costs visible and protect savings before upgrading trims or stretching the loan.",
+        };
+      }
+
+      if (score <= 60) {
+        return {
+          label: "Moderate Pressure",
+          stress: "Moderate pressure",
+          color: "#ca8a04",
+          action: "Review insurance, fuel, maintenance, work value, and whether the truck crowds out savings.",
+        };
+      }
+
+      return {
+        label: "High Pressure",
+        stress: "High pressure",
+        color: "#dc2626",
+        action: "Slow down before buying and consider a cheaper truck, used model, lower trim, or delaying the purchase.",
+      };
+    }
+
+    function calculateTruck() {
+      const truckPayment = getNumber("truckPayment");
+      const income = getNumber("income");
+      const insurance = getNumber("insurance");
+      const fuelMaintenance = getNumber("fuelMaintenance");
+      const savings = getNumber("savings");
+      const housing = getNumber("housing");
+      const debt = getNumber("debt");
+      const workValue = getNumber("workValue");
+
+      const result = document.getElementById("result");
+      const scoreEl = document.getElementById("score");
+      const barFill = document.getElementById("barFill");
+      const paymentShareEl = document.getElementById("paymentShare");
+      const truckCostShareEl = document.getElementById("truckCostShare");
+      const cashFlowEl = document.getElementById("cashFlow");
+      const savingsCushionEl = document.getElementById("savingsCushion");
+      const guidanceEl = document.getElementById("guidance");
+
+      result.style.display = "block";
+
+      if (truckPayment <= 0 || income <= 0) {
+        scoreEl.textContent = "Add your numbers first";
+        barFill.style.width = "0%";
+        barFill.style.background = "#16a34a";
+        paymentShareEl.innerHTML = "";
+        truckCostShareEl.innerHTML = "";
+        cashFlowEl.innerHTML = "";
+        savingsCushionEl.innerHTML = "";
+        guidanceEl.textContent =
+          "Enter a positive estimated truck payment and monthly take-home income so the calculator can estimate affordability pressure.";
+        return;
+      }
+
+      const totalTruckCost = truckPayment + insurance + fuelMaintenance;
+      const netTruckCost = Math.max(totalTruckCost - workValue, 0);
+      const paymentIncomeShare = (truckPayment / income) * 100;
+      const truckCostShare = (totalTruckCost / income) * 100;
+      const netTruckCostShare = (netTruckCost / income) * 100;
+      const fixedObligationRatio = ((housing + debt + truckPayment) / income) * 100;
+      const monthlyRemaining = income - housing - debt - totalTruckCost + workValue;
+      const monthlyCoreOutflow = housing + debt + totalTruckCost;
+      const emergencyMonths =
+        monthlyCoreOutflow > 0 ? savings / monthlyCoreOutflow : savings > 0 ? 12 : 0;
+
+      let pressureScore = 0;
+
+      pressureScore += clamp(paymentIncomeShare * 2.25, 0, 34);
+      pressureScore += clamp(netTruckCostShare * 1.75, 0, 40);
+      pressureScore += clamp(fixedObligationRatio * 0.26, 0, 28);
+
+      if (monthlyRemaining < 0) pressureScore += 30;
+      else if (monthlyRemaining < income * 0.08) pressureScore += 18;
+      else if (monthlyRemaining < income * 0.15) pressureScore += 10;
+      else if (monthlyRemaining > income * 0.3) pressureScore -= 8;
+
+      if (emergencyMonths < 1 && income < 15000) pressureScore += 22;
+      else if (emergencyMonths < 3 && income < 20000) pressureScore += 12;
+      else if (emergencyMonths >= 6) pressureScore -= 8;
+
+      if (truckCostShare >= 28) pressureScore += 18;
+      else if (truckCostShare >= 20) pressureScore += 10;
+
+      if (paymentIncomeShare >= 16) pressureScore += 14;
+      else if (paymentIncomeShare >= 11) pressureScore += 7;
+
+      if (workValue >= totalTruckCost * 0.5 && monthlyRemaining > 0) {
+        pressureScore -= 12;
+      } else if (workValue >= totalTruckCost * 0.25 && monthlyRemaining > 0) {
+        pressureScore -= 6;
+      }
+
+      if (income >= 15000 && monthlyRemaining > income * 0.25 && emergencyMonths >= 3) {
+        pressureScore -= 9;
+      }
+
+      if (income >= 25000 && monthlyRemaining > income * 0.35 && emergencyMonths >= 6) {
+        pressureScore -= 14;
+      }
+
+      if (
+        paymentIncomeShare < 8 &&
+        truckCostShare < 16 &&
+        emergencyMonths >= 6 &&
+        fixedObligationRatio < 50 &&
+        monthlyRemaining > income * 0.25
+      ) {
+        pressureScore = Math.min(pressureScore, 26);
+      }
+
+      if (
+        paymentIncomeShare < 5 &&
+        truckCostShare < 11 &&
+        emergencyMonths >= 9 &&
+        fixedObligationRatio < 40 &&
+        monthlyRemaining > income * 0.35
+      ) {
+        pressureScore = Math.min(pressureScore, 12);
+      }
+
+      if (savings >= 1000000 && monthlyRemaining > 0) {
+        pressureScore -= 20;
+      }
+
+      if (savings >= 5000000 && monthlyRemaining > 0) {
+        pressureScore -= 30;
+      }
+
+      if (savings >= 10000000 && monthlyRemaining > 0) {
+        pressureScore -= 40;
+      }
+
+      pressureScore = Math.round(clamp(pressureScore, 0, 100));
+
+      const level = getPressureLevel(pressureScore);
+
+      let guidance = "";
+
+      if (pressureScore <= 30) {
+        guidance =
+          `This truck appears financially manageable based on the numbers provided. The payment equals about ${paymentIncomeShare.toFixed(1)}% of take-home income, while total truck costs equal about ${truckCostShare.toFixed(1)}%.`;
+      } else if (pressureScore <= 60) {
+        guidance =
+          `This truck may work, but it creates noticeable pressure. The payment equals about ${paymentIncomeShare.toFixed(1)}% of take-home income, and total truck costs equal about ${truckCostShare.toFixed(1)}%.`;
+      } else {
+        guidance =
+          `This truck could create real financial strain. The payment equals about ${paymentIncomeShare.toFixed(1)}% of take-home income, and the combination of insurance, fuel, maintenance, housing, debt, or savings suggests you should review the full truck cost before committing.`;
+      }
+
+      scoreEl.textContent = `${level.label} — ${pressureScore}/100`;
+      scoreEl.style.color = level.color;
+      barFill.style.width = `${pressureScore}%`;
+      barFill.style.background = level.color;
+
+      paymentShareEl.innerHTML = `<strong>Truck payment share:</strong> ${paymentIncomeShare.toFixed(1)}% of take-home income`;
+      truckCostShareEl.innerHTML = `<strong>Total truck cost share:</strong> ${truckCostShare.toFixed(1)}% of take-home income`;
+      cashFlowEl.innerHTML = `<strong>Monthly cash flow after housing, debt, and truck costs:</strong> $${Math.round(monthlyRemaining).toLocaleString()}`;
+      savingsCushionEl.innerHTML = `<strong>Estimated emergency cushion:</strong> ${Math.max(emergencyMonths, 0).toFixed(1)} months`;
+
+      guidanceEl.textContent = `${guidance} Recommended next step: ${level.action}`;
+    }
+
+    document
+      .getElementById("truckButton")
+      .addEventListener("click", calculateTruck);
+  </script>
+</Layout>
