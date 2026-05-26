@@ -1,0 +1,583 @@
+---
+import Layout from "../layouts/Layout.astro";
+import CalculatorPageShell from "../components/CalculatorPageShell.astro";
+import FAQSection from "../components/FAQSection.astro";
+import RelatedCalculators from "../components/RelatedCalculators.astro";
+import RelatedGuides from "../components/RelatedGuides.astro";
+import MethodologySection from "../components/MethodologySection.astro";
+import FinancialRedFlags from "../components/FinancialRedFlags.astro";
+import CalculatorAssumptions from "../components/CalculatorAssumptions.astro";
+import KeyCostCategories from "../components/KeyCostCategories.astro";
+import ReduceCostTips from "../components/ReduceCostTips.astro";
+import WhenSpendingMakesSense from "../components/WhenSpendingMakesSense.astro";
+---
+
+<Layout
+  title="How Much Disney Vacation Can I Afford?"
+  description="Use this Disney vacation affordability calculator to estimate how much you can spend on Disney based on income, savings, debt, emergency cushion, and trip pressure."
+>
+  <style>
+    .container {
+      max-width: 950px;
+      margin: 0 auto;
+      padding: 60px 20px;
+    }
+
+    .content-section {
+      max-width: 760px;
+      margin: 72px auto 0;
+    }
+
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 28px;
+      padding: 34px;
+    }
+
+    h2 {
+      margin-top: 0;
+      font-size: 2rem;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 22px;
+      margin-bottom: 28px;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 10px;
+      font-weight: 700;
+    }
+
+    input {
+      width: 100%;
+      padding: 18px;
+      border-radius: 14px;
+      border: 1px solid var(--border);
+      font-size: 1.1rem;
+      box-sizing: border-box;
+    }
+
+    button {
+      background: #0f766e;
+      color: white;
+      border: none;
+      padding: 16px 28px;
+      border-radius: 14px;
+      font-size: 1rem;
+      font-weight: 700;
+      cursor: pointer;
+      margin-top: 10px;
+      display: inline-block;
+    }
+
+    button:hover {
+      opacity: 0.92;
+    }
+
+    .result {
+      margin-top: 40px;
+      border: 1px solid var(--border);
+      border-radius: 24px;
+      padding: 28px;
+      display: none;
+      background: #f8fafc;
+    }
+
+    .score {
+      font-size: 3rem;
+      font-weight: 800;
+      margin-bottom: 16px;
+    }
+
+    .bar {
+      width: 100%;
+      height: 16px;
+      background: #dbe3ee;
+      border-radius: 999px;
+      overflow: hidden;
+      margin-bottom: 24px;
+    }
+
+    .fill {
+      height: 100%;
+      width: 0%;
+      background: #16a34a;
+      border-radius: 999px;
+      transition: width 0.4s ease;
+    }
+
+    .metric {
+      margin-bottom: 14px;
+      font-size: 1.05rem;
+    }
+
+    .guidance {
+      margin-top: 26px;
+      font-size: 1.15rem;
+      line-height: 1.7;
+    }
+
+    .disclaimer {
+      margin-top: 30px;
+      font-size: 0.9rem;
+      color: var(--muted);
+    }
+
+    .helper-link {
+      margin-top: 10px;
+      font-size: 0.9rem;
+    }
+
+    .helper-link a {
+      color: var(--primary);
+      font-weight: 600;
+    }
+
+    .content-section p,
+    .content-section li {
+      line-height: 1.8;
+    }
+  </style>
+
+  <div class="container">
+    <CalculatorPageShell
+      eyebrow="Disney Vacation Affordability Calculator"
+      title="How Much Disney Vacation Can I Afford?"
+      description="Estimate a safer Disney vacation budget based on your income, savings, debt, emergency cushion, tickets, hotel, flights, food, Genie+/Lightning Lane costs, and daily spending."
+    >
+      <div class="card">
+        <h2>Disney Vacation Affordability Verdict</h2>
+
+        <div class="grid">
+          <div>
+            <label for="income">Annual Household Income</label>
+            <input id="income" type="number" placeholder="120000" />
+          </div>
+
+          <div>
+            <label for="savings">Total Savings</label>
+            <input id="savings" type="number" placeholder="25000" />
+          </div>
+
+          <div>
+            <label for="vacation">Planned Disney Vacation Cost</label>
+            <input id="vacation" type="number" placeholder="8000" />
+          </div>
+
+          <div>
+            <label for="debt">Total Debt</label>
+            <input id="debt" type="number" placeholder="18000" />
+
+            <div class="helper-link">
+              <a href="/what-counts-as-debt">
+                Not sure what counts as debt? Read the debt guide
+              </a>
+            </div>
+          </div>
+        </div>
+
+        <button id="vacationButton" type="button">
+          Get Disney Vacation Verdict
+        </button>
+
+        <div class="result" id="result">
+          <div class="score" id="score"></div>
+
+          <div class="bar">
+            <div class="fill" id="barFill"></div>
+          </div>
+
+          <div class="metric" id="stress"></div>
+          <div class="metric" id="recommendedBudget"></div>
+          <div class="metric" id="savingsImpact"></div>
+          <div class="metric" id="incomeImpact"></div>
+          <div class="metric" id="monthlyIncomeImpact"></div>
+          <div class="metric" id="debtRatio"></div>
+
+          <div class="guidance" id="guidance"></div>
+
+          <div class="disclaimer">
+            This is a general educational estimate, not financial advice.
+          </div>
+        </div>
+      </div>
+
+      <div class="content-section">
+        <h2>What a Disney Vacation Budget Really Includes</h2>
+
+        <p>
+          A Disney vacation is rarely just tickets and a hotel. The full cost can
+          include park tickets, lodging, flights or gas, airport transfers, rental
+          car costs, parking, resort fees, food, snacks, character meals, Genie+
+          or Lightning Lane purchases, souvenirs, stroller rentals, travel
+          insurance, and rest-day spending.
+        </p>
+
+        <p>
+          The right Disney budget depends on family size, trip length, resort
+          choice, park days, dining style, airfare, and how much convenience you
+          want to buy. A value hotel and quick-service meals can create a very
+          different trip from a deluxe resort, table-service dining, park-hopper
+          tickets, and premium line-skipping costs.
+        </p>
+
+        <p>
+          This calculator estimates whether your planned Disney number fits your
+          finances and gives a practical affordability range. It is built to help
+          you avoid the common mistake of pricing the dream version first and
+          solving the money problem later.
+        </p>
+      </div>
+
+      <div class="content-section">
+        <h2>Why Disney Trips Need a Different Affordability Test</h2>
+
+        <p>
+          Disney spending is emotional, layered, and easy to justify in the
+          moment. Families often frame the trip as once-in-a-childhood, which can
+          make upgrades feel urgent even when the budget is already stretched.
+        </p>
+
+        <p>
+          The safest Disney budget leaves room for normal life after the trip.
+          A vacation that technically fits on a credit card can still be too
+          expensive if it delays bills, weakens the emergency fund, or forces
+          months of payoff stress after everyone gets home.
+        </p>
+      </div>
+
+      <WhenSpendingMakesSense
+        title="When a Bigger Disney Vacation Budget Makes Sense"
+        items={[
+          "You can pay for the trip without carrying high-interest credit card debt.",
+          "Your emergency fund remains intact after tickets, hotel, transportation, food, and extras.",
+          "The trip fits a rare family window, milestone birthday, anniversary, reunion, or once-in-a-childhood moment.",
+          "The budget includes realistic food, souvenirs, Lightning Lane, parking, tips, and backup costs.",
+          "The trip will not delay housing stability, debt payoff, medical needs, childcare, or core savings goals.",
+        ]}
+      />
+
+      <div class="content-section">
+        <h2>When You Should Lower the Disney Budget</h2>
+
+        <p>
+          A smaller Disney trip may be smarter if the planned number would drain
+          savings, require debt, or make the next few months financially tight.
+          Disney can still be memorable without every upgrade.
+        </p>
+
+        <p>
+          Consider fewer park days, a value resort, off-site lodging, fewer
+          table-service meals, one special paid experience instead of several,
+          driving instead of flying, or delaying the trip until the emergency
+          cushion is stronger.
+        </p>
+      </div>
+
+      <KeyCostCategories
+        items={[
+          {
+            title: "Park tickets and add-ons",
+            description:
+              "Tickets, park-hopper upgrades, Lightning Lane purchases, special events, and date-based pricing can change the total quickly.",
+          },
+          {
+            title: "Resort, hotel, and transportation",
+            description:
+              "On-property hotels, off-site rooms, flights, gas, rental cars, airport transfers, parking, and resort fees should be counted before booking.",
+          },
+          {
+            title: "Food, snacks, and dining style",
+            description:
+              "Quick-service meals, character dining, table-service restaurants, groceries, snacks, drinks, and mobile-order convenience can become a major category.",
+          },
+          {
+            title: "Souvenirs, comfort, and backup costs",
+            description:
+              "Strollers, ponchos, fans, souvenirs, rest-day spending, medicine, tips, and unexpected purchases belong in the real Disney budget.",
+          },
+        ]}
+      />
+
+      <ReduceCostTips
+        items={[
+          "Choose fewer park days and build in a lower-cost pool or resort day.",
+          "Compare value resorts, off-site hotels, and vacation rentals before booking.",
+          "Set a souvenir budget for each person before the trip starts.",
+          "Use groceries, breakfast in the room, and quick-service meals to reduce food costs.",
+          "Avoid stacking park-hopper tickets, premium dining, and paid line-skipping on every day.",
+          "Travel outside peak school-break and holiday windows when possible.",
+        ]}
+      />
+
+      <FinancialRedFlags
+        items={[
+          "The Disney trip would require credit card debt without a clear payoff plan.",
+          "The vacation would wipe out most of your emergency savings.",
+          "The estimate only includes hotel and tickets, not food, transportation, add-ons, souvenirs, and backup costs.",
+          "You are already behind on bills, debt payments, or savings goals.",
+          "You would return home financially stressed after trying to create a perfect trip.",
+        ]}
+      />
+
+      <CalculatorAssumptions
+        items={[
+          "The calculator assumes the Disney vacation is primarily paid with savings instead of high-interest debt.",
+          "The planned trip cost should include tickets, lodging, transportation, meals, add-ons, souvenirs, and emergency costs.",
+          "The calculator assumes income and debt obligations are relatively stable.",
+          "Family size, travel dates, resort level, airfare, and park-day count can significantly change the affordable range.",
+          "The calculator assumes you still maintain an emergency cushion after booking the trip.",
+        ]}
+      />
+
+      <FAQSection
+        title="Disney Vacation Affordability FAQ"
+        faqs={[
+          {
+            question: "How much Disney vacation can I afford?",
+            answer:
+              "A safer Disney vacation budget usually depends on your income, savings, debt, emergency fund, and whether the trip can be paid without high-interest debt. This calculator estimates a realistic range based on those factors.",
+          },
+          {
+            question: "Is $8,000 too much for a Disney vacation?",
+            answer:
+              "It depends on family size, income, savings, debt, and trip details. An $8,000 Disney trip may be manageable for one household and risky for another if it drains savings or creates credit card debt.",
+          },
+          {
+            question: "What should I include in a Disney vacation budget?",
+            answer:
+              "Include park tickets, hotel, flights or gas, transportation, parking, food, snacks, dining reservations, Lightning Lane, souvenirs, tips, stroller rentals, travel insurance, and emergency spending.",
+          },
+          {
+            question: "Should I finance a Disney vacation?",
+            answer:
+              "Financing a Disney vacation can create long-term stress, especially with credit card interest. Paying from savings while keeping an emergency fund intact is usually safer.",
+          },
+          {
+            question: "How can I make a Disney vacation cheaper?",
+            answer:
+              "Reduce park days, choose a value hotel, stay off-site, travel during lower-demand dates, limit paid add-ons, eat some meals outside the parks, and set souvenir limits before the trip.",
+          },
+        ]}
+      />
+
+      <MethodologySection category="Disney vacation affordability" updated="May 2026" />
+
+      <RelatedGuides
+        guides={[
+          {
+            title: "How to Avoid Vacation Debt",
+            href: "/how-to-avoid-vacation-debt",
+            description:
+              "Learn how to plan major travel without turning the trip into long-term financial pressure.",
+          },
+          {
+            title: "Travel Budget Calculators",
+            href: "/travel-calculators",
+            description:
+              "Compare Disney, Europe, cruise, honeymoon, family vacation, and weekend getaway calculators before booking.",
+          },
+        ]}
+      />
+
+      <RelatedCalculators
+        calculators={[
+          {
+            category: "Travel",
+            title: "Should I Spend $8,000 on a Disney Vacation?",
+            href: "/should-i-spend-8000-on-a-disney-vacation",
+          },
+          {
+            category: "Travel",
+            title: "Should I Spend $5,000 on a Vacation?",
+            href: "/should-i-spend-5000-on-a-vacation",
+          },
+          {
+            category: "Travel",
+            title: "Should I Spend $20,000 on a Family Vacation?",
+            href: "/should-i-spend-20000-on-a-family-vacation",
+          },
+          {
+            category: "Travel",
+            title: "Browse Travel Calculators",
+            href: "/travel-calculators",
+          },
+        ]}
+      />
+    </CalculatorPageShell>
+  </div>
+
+  <script is:inline>
+    const clamp = (value, min, max) => Math.min(Math.max(value, min), max);
+
+    const getNumber = (id) => {
+      const rawValue = document.getElementById(id)?.value;
+      const value = Number(rawValue);
+      return Number.isFinite(value) && value >= 0 ? value : 0;
+    };
+
+    const formatMoney = (value) => {
+      return Math.round(value).toLocaleString("en-US", {
+        style: "currency",
+        currency: "USD",
+        maximumFractionDigits: 0,
+      });
+    };
+
+    function getPressureLevel(score) {
+      if (score <= 30) {
+        return {
+          label: "Low Pressure",
+          stress: "Low pressure",
+          color: "#16a34a",
+          action: "Proceed only after building the full Disney line-item budget.",
+        };
+      }
+
+      if (score <= 60) {
+        return {
+          label: "Moderate Pressure",
+          stress: "Moderate pressure",
+          color: "#ca8a04",
+          action: "Lower the Disney budget or build more cushion before booking.",
+        };
+      }
+
+      return {
+        label: "High Pressure",
+        stress: "High pressure",
+        color: "#dc2626",
+        action: "Delay, shorten the trip, choose cheaper lodging, or save more first.",
+      };
+    }
+
+    function calculateVacation() {
+      const income = getNumber("income");
+      const savings = getNumber("savings");
+      const vacation = getNumber("vacation");
+      const debt = getNumber("debt");
+
+      const result = document.getElementById("result");
+      const scoreEl = document.getElementById("score");
+      const barFill = document.getElementById("barFill");
+      const stressEl = document.getElementById("stress");
+      const recommendedBudgetEl = document.getElementById("recommendedBudget");
+      const savingsImpactEl = document.getElementById("savingsImpact");
+      const incomeImpactEl = document.getElementById("incomeImpact");
+      const monthlyIncomeImpactEl = document.getElementById("monthlyIncomeImpact");
+      const debtRatioEl = document.getElementById("debtRatio");
+      const guidanceEl = document.getElementById("guidance");
+
+      result.style.display = "block";
+
+      if (income <= 0 || savings <= 0 || vacation <= 0) {
+        scoreEl.textContent = "Add your numbers first";
+        barFill.style.width = "0%";
+        barFill.style.background = "#16a34a";
+        stressEl.innerHTML = "";
+        recommendedBudgetEl.innerHTML = "";
+        savingsImpactEl.innerHTML = "";
+        incomeImpactEl.innerHTML = "";
+        monthlyIncomeImpactEl.innerHTML = "";
+        debtRatioEl.innerHTML = "";
+        guidanceEl.textContent =
+          "Enter a positive income, savings amount, planned Disney vacation cost, and debt so the calculator can estimate your affordable range.";
+        return;
+      }
+
+      const monthlyIncome = income / 12;
+      const savingsImpact = (vacation / savings) * 100;
+      const annualIncomeImpact = (vacation / income) * 100;
+      const monthlyIncomeImpact = (vacation / monthlyIncome) * 100;
+      const debtRatio = (debt / income) * 100;
+      const remainingSavings = savings - vacation;
+      const remainingSavingsMonths = remainingSavings / monthlyIncome;
+
+      const conservativeBudget = Math.max(0, Math.min(income * 0.04, savings * 0.18));
+      const flexibleBudget = Math.max(0, Math.min(income * 0.07, savings * 0.28));
+      const stretchBudget = Math.max(0, Math.min(income * 0.1, savings * 0.38));
+
+      let pressureScore = 0;
+
+      pressureScore += clamp(savingsImpact * 0.38, 0, 38);
+      pressureScore += clamp(monthlyIncomeImpact * 0.24, 0, 25);
+      pressureScore += clamp(debtRatio * 0.2, 0, 15);
+
+      if (vacation > savings) pressureScore += 25;
+
+      if (remainingSavingsMonths < 1 && income < 100000) {
+        pressureScore += 18;
+      } else if (remainingSavingsMonths < 3 && income < 150000) {
+        pressureScore += 10;
+      } else if (remainingSavingsMonths >= 6) {
+        pressureScore -= 8;
+      }
+
+      if (debtRatio >= 75) pressureScore += 10;
+      else if (debtRatio >= 40) pressureScore += 6;
+
+      if (annualIncomeImpact < 2 && savingsImpact < 10 && remainingSavingsMonths >= 6) {
+        pressureScore -= 12;
+      }
+
+      if (annualIncomeImpact < 0.75 && monthlyIncomeImpact < 8 && debtRatio < 10) {
+        pressureScore = Math.min(pressureScore, 18);
+      }
+
+      if (annualIncomeImpact < 0.25 && monthlyIncomeImpact < 3 && debtRatio < 5) {
+        pressureScore = Math.min(pressureScore, 8);
+      }
+
+      if (
+        annualIncomeImpact < 0.1 &&
+        monthlyIncomeImpact < 1.5 &&
+        savingsImpact < 1 &&
+        debtRatio < 3 &&
+        remainingSavingsMonths >= 12
+      ) {
+        pressureScore = 0;
+      }
+
+      pressureScore = clamp(Math.round(pressureScore), 0, 100);
+
+      const level = getPressureLevel(pressureScore);
+
+      let guidance = "";
+
+      if (pressureScore === 0) {
+        guidance =
+          `This Disney vacation appears financially tiny relative to the numbers provided. The planned trip equals about ${monthlyIncomeImpact.toFixed(1)}% of one month’s income and ${savingsImpact.toFixed(1)}% of savings, so the decision is mainly about trip value, timing, family priorities, and whether the Disney experience is worth the opportunity cost.`;
+      } else if (pressureScore <= 30) {
+        guidance =
+          `This Disney vacation appears manageable based on the numbers provided. The planned trip equals about ${monthlyIncomeImpact.toFixed(1)}% of one month’s income and ${savingsImpact.toFixed(1)}% of savings, so the main priority is keeping tickets, hotel, transportation, food, Lightning Lane, souvenirs, and backup costs inside the planned budget.`;
+      } else if (pressureScore <= 60) {
+        guidance =
+          `This Disney vacation may work, but it deserves caution. The planned trip equals about ${monthlyIncomeImpact.toFixed(1)}% of one month’s income and ${savingsImpact.toFixed(1)}% of savings, which means resort choice, park days, dining, paid add-ons, and souvenir spending should be capped before booking.`;
+      } else {
+        guidance =
+          `This Disney vacation could create real financial strain. The planned trip equals about ${monthlyIncomeImpact.toFixed(1)}% of one month’s income and ${savingsImpact.toFixed(1)}% of savings, so fewer park days, cheaper lodging, off-site hotels, fewer paid add-ons, or more time to save would likely be safer.`;
+      }
+
+      scoreEl.textContent = `${level.label} — ${pressureScore}/100`;
+      barFill.style.width = `${pressureScore}%`;
+      barFill.style.background = level.color;
+
+      stressEl.innerHTML = `<strong>Pressure level:</strong> ${level.stress}`;
+      recommendedBudgetEl.innerHTML = `<strong>Estimated Disney range:</strong> ${formatMoney(conservativeBudget)} conservative / ${formatMoney(flexibleBudget)} flexible / ${formatMoney(stretchBudget)} stretch`;
+      savingsImpactEl.innerHTML = `<strong>Savings impact:</strong> ${savingsImpact.toFixed(1)}% of savings`;
+      incomeImpactEl.innerHTML = `<strong>Annual income impact:</strong> ${annualIncomeImpact.toFixed(1)}% of annual income`;
+      monthlyIncomeImpactEl.innerHTML = `<strong>Monthly income impact:</strong> ${monthlyIncomeImpact.toFixed(1)}% of one month’s income`;
+      debtRatioEl.innerHTML = `<strong>Debt ratio:</strong> ${debtRatio.toFixed(1)}% of annual income`;
+      guidanceEl.textContent = `${guidance} Recommended next step: ${level.action}`;
+    }
+
+    document
+      .getElementById("vacationButton")
+      .addEventListener("click", calculateVacation);
+  </script>
+</Layout>

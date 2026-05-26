@@ -1,0 +1,641 @@
+---
+import Layout from "../layouts/Layout.astro";
+import CalculatorPageShell from "../components/CalculatorPageShell.astro";
+import FAQSection from "../components/FAQSection.astro";
+import RelatedCalculators from "../components/RelatedCalculators.astro";
+import RelatedGuides from "../components/RelatedGuides.astro";
+import MethodologySection from "../components/MethodologySection.astro";
+import FinancialRedFlags from "../components/FinancialRedFlags.astro";
+import CalculatorAssumptions from "../components/CalculatorAssumptions.astro";
+import KeyCostCategories from "../components/KeyCostCategories.astro";
+import ReduceCostTips from "../components/ReduceCostTips.astro";
+import WhenSpendingMakesSense from "../components/WhenSpendingMakesSense.astro";
+---
+
+<Layout
+  title="Should I Spend $25,000 on a Luxury Vacation?"
+  description="Use this luxury vacation calculator to decide whether spending $25,000 on premium travel, resorts, flights, private tours, dining, and upgrades fits your income, savings, debt, and financial goals."
+>
+  <style>
+    .container {
+      max-width: 950px;
+      margin: 0 auto;
+      padding: 60px 20px;
+    }
+
+    .content-section {
+      max-width: 760px;
+      margin: 72px auto 0;
+    }
+
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 28px;
+      padding: 34px;
+    }
+
+    h2 {
+      margin-top: 0;
+      font-size: 2rem;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 22px;
+      margin-bottom: 28px;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 10px;
+      font-weight: 700;
+    }
+
+    input,
+    select {
+      width: 100%;
+      padding: 18px;
+      border-radius: 14px;
+      border: 1px solid var(--border);
+      font-size: 1.1rem;
+      box-sizing: border-box;
+      background: white;
+    }
+
+    button {
+      background: #0f172a;
+      color: white;
+      border: none;
+      padding: 16px 28px;
+      border-radius: 14px;
+      font-size: 1rem;
+      font-weight: 700;
+      cursor: pointer;
+      margin-top: 10px;
+      width: 100%;
+      display: block;
+    }
+
+    button:hover {
+      opacity: 0.92;
+    }
+
+    .result {
+      margin-top: 40px;
+      border: 1px solid var(--border);
+      border-radius: 24px;
+      padding: 28px;
+      display: none;
+      background: #f8fafc;
+    }
+
+    .score {
+      font-size: 3rem;
+      font-weight: 800;
+      margin-bottom: 16px;
+    }
+
+    .bar {
+      width: 100%;
+      height: 16px;
+      background: #dbe3ee;
+      border-radius: 999px;
+      overflow: hidden;
+      margin-bottom: 24px;
+    }
+
+    .fill {
+      height: 100%;
+      width: 0%;
+      border-radius: 999px;
+      transition: width 0.4s ease;
+    }
+
+    .metric {
+      margin-bottom: 14px;
+      font-size: 1.05rem;
+    }
+
+    .guidance {
+      margin-top: 26px;
+      font-size: 1.15rem;
+      line-height: 1.7;
+    }
+
+    .disclaimer {
+      margin-top: 30px;
+      font-size: 0.9rem;
+      color: var(--muted);
+    }
+
+    .helper-link {
+      margin-top: 10px;
+      font-size: 0.9rem;
+    }
+
+    .helper-link a {
+      color: var(--primary);
+      font-weight: 600;
+    }
+
+    .content-section p,
+    .content-section li {
+      line-height: 1.8;
+    }
+  </style>
+
+  <div class="container">
+    <CalculatorPageShell
+      eyebrow="Luxury Vacation Calculator"
+      title="Should I Spend $25,000 on a Luxury Vacation?"
+      description="Estimate whether a $25,000 luxury trip fits your annual income, savings, debt, emergency cushion, upgrade choices, and long-term financial flexibility."
+    >
+      <div class="card">
+        <h2>$25,000 Luxury Vacation Pressure Verdict</h2>
+
+        <div class="grid">
+          <div>
+            <label for="tripCost">Estimated Luxury Trip Cost</label>
+            <input id="tripCost" type="number" placeholder="25000" min="0" inputmode="decimal" />
+          </div>
+
+          <div>
+            <label for="income">Annual Take-Home Income</label>
+            <input id="income" type="number" placeholder="180000" min="0" inputmode="decimal" />
+          </div>
+
+          <div>
+            <label for="savings">Emergency Savings</label>
+            <input id="savings" type="number" placeholder="60000" min="0" inputmode="decimal" />
+          </div>
+
+          <div>
+            <label for="debt">Monthly Debt Payments</label>
+            <input id="debt" type="number" placeholder="1200" min="0" inputmode="decimal" />
+
+            <div class="helper-link">
+              <a href="/what-counts-as-debt">
+                Not sure what counts as debt? Read the debt guide
+              </a>
+            </div>
+          </div>
+
+          <div>
+            <label for="housing">Monthly Rent or Mortgage</label>
+            <input id="housing" type="number" placeholder="3500" min="0" inputmode="decimal" />
+          </div>
+
+          <div>
+            <label for="travelers">Number of Travelers</label>
+            <input id="travelers" type="number" placeholder="2" min="1" inputmode="numeric" />
+          </div>
+
+          <div>
+            <label for="nights">Trip Length in Nights</label>
+            <input id="nights" type="number" placeholder="10" min="1" inputmode="numeric" />
+          </div>
+
+          <div>
+            <label for="financedAmount">Amount Put on Credit or Loan</label>
+            <input id="financedAmount" type="number" placeholder="0" min="0" inputmode="decimal" />
+          </div>
+
+          <div>
+            <label for="upgradeStyle">Luxury Style</label>
+            <select id="upgradeStyle">
+              <option value="controlled">Controlled luxury with clear limits</option>
+              <option value="premium">Premium hotels and dining</option>
+              <option value="ultra">Ultra-luxury or once-in-a-lifetime trip</option>
+              <option value="points">Luxury partly offset by points or miles</option>
+            </select>
+          </div>
+        </div>
+
+        <button id="luxuryButton" type="button">
+          Calculate Luxury Vacation Pressure
+        </button>
+
+        <div class="result" id="result">
+          <div class="score" id="score"></div>
+
+          <div class="bar">
+            <div class="fill" id="barFill"></div>
+          </div>
+
+          <div class="metric" id="tripShare"></div>
+          <div class="metric" id="savingsImpact"></div>
+          <div class="metric" id="perPersonCost"></div>
+          <div class="metric" id="perNightCost"></div>
+          <div class="metric" id="cashFlow"></div>
+          <div class="metric" id="savingsCushion"></div>
+          <div class="metric" id="recoveryTime"></div>
+
+          <div class="guidance" id="guidance"></div>
+
+          <div class="disclaimer">
+            This is a general educational estimate, not personal financial, tax, travel, lending, investment, or budgeting advice.
+          </div>
+        </div>
+      </div>
+
+      <div class="content-section">
+        <h2>What a $25,000 Luxury Vacation Really Means</h2>
+
+        <p>
+          A $25,000 luxury vacation is not just a larger version of a normal trip. The financial pressure often comes from premium hotels, upgraded flights, private tours, fine dining, resort experiences, spa spending, and the temptation to keep upgrading once the trip already feels expensive.
+        </p>
+
+        <p>
+          For some households, a luxury trip can be a planned reward that fits easily into savings and income. For others, the same trip can quietly compete with emergency savings, debt payoff, home goals, retirement contributions, or a year’s worth of smaller experiences.
+        </p>
+      </div>
+
+      <WhenSpendingMakesSense
+        title="When Spending $25,000 on a Luxury Vacation Can Make Sense"
+        items={[
+          "You can pay for the trip from planned savings without carrying credit card debt.",
+          "Emergency savings, retirement contributions, housing stability, and debt payoff remain on track.",
+          "The trip is a deliberate priority, not a reaction to burnout, comparison, or lifestyle pressure.",
+          "You have already included premium flights, hotels, dining, tips, excursions, taxes, resort fees, and upgrades.",
+          "Both the experience and the opportunity cost feel acceptable after the trip is over.",
+        ]}
+      />
+
+      <div class="content-section">
+        <h2>Why Luxury Trips Create Different Pressure</h2>
+
+        <p>
+          Luxury travel has a different psychology than ordinary vacation spending. Once the trip is framed as premium, it becomes easier to justify upgraded rooms, private transfers, tasting menus, business-class flights, spa days, excursions, and “we may never do this again” purchases.
+        </p>
+
+        <p>
+          That does not make the trip wrong. It simply means the calculator should evaluate more than affordability. A luxury vacation should also be tested against opportunity cost: what the same money could do for savings, debt, investing, housing, family needs, or several smaller trips.
+        </p>
+      </div>
+
+      <KeyCostCategories
+        items={[
+          {
+            title: "Premium lodging",
+            description:
+              "Luxury hotels, villas, resort fees, taxes, service charges, and upgraded rooms can dominate the budget before the trip begins.",
+          },
+          {
+            title: "Flight upgrades",
+            description:
+              "Business class, premium economy, better routing, lounge access, and flexible tickets can add thousands before lodging or activities.",
+          },
+          {
+            title: "Dining and experiences",
+            description:
+              "Fine dining, private tours, excursions, spa services, tastings, and concierge-planned activities can turn a budget into a moving target.",
+          },
+          {
+            title: "Opportunity cost",
+            description:
+              "$25,000 may also represent debt payoff, emergency savings, home repairs, investing, family needs, or several smaller vacations.",
+          },
+        ]}
+      />
+
+      <ReduceCostTips
+        items={[
+          "Choose one or two luxury splurges instead of upgrading every part of the trip.",
+          "Use points or miles for flights or hotels, but still budget for taxes, fees, meals, and activities.",
+          "Set a daily discretionary limit for dining, drinks, spa services, tours, and shopping.",
+          "Compare premium economy with business class before assuming the full upgrade is worth it.",
+          "Book fewer nights at a better property instead of stretching the entire trip at luxury pricing.",
+          "Decide before booking what you are unwilling to sacrifice financially after returning.",
+        ]}
+      />
+
+      <FinancialRedFlags
+        items={[
+          "The trip requires credit card debt, a personal loan, or a repayment plan.",
+          "The vacation would drain most of your emergency savings.",
+          "You are justifying the cost mainly because of burnout, social comparison, or pressure to match someone else’s lifestyle.",
+          "The trip delays important goals like debt payoff, home savings, medical needs, retirement contributions, or essential repairs.",
+          "You have not included upgrades, taxes, resort fees, dining, tips, excursions, shopping, and transportation.",
+        ]}
+      />
+
+      <CalculatorAssumptions
+        items={[
+          "The calculator treats luxury vacation cost as the total estimated cost for transportation, lodging, meals, activities, taxes, fees, upgrades, and discretionary spending.",
+          "Annual income means take-home income after taxes and payroll deductions.",
+          "Emergency savings means cash reserves available after normal monthly expenses.",
+          "Monthly debt payments include credit cards, student loans, car loans, personal loans, medical payment plans, and other required debt payments.",
+          "The luxury style input adds pressure for premium or ultra-luxury trips because those trips often carry more upgrade risk and opportunity cost.",
+          "The calculator caps extreme income inputs for display and pressure-scoring purposes so unusual test values do not distort the result.",
+          "The calculator does not account for points, miles, reimbursements, family gifts, business travel overlap, exact destination prices, or every personal priority.",
+          "The result is educational guidance, not financial advice.",
+        ]}
+      />
+
+      <FAQSection
+        title="$25,000 Luxury Vacation FAQ"
+        faqs={[
+          {
+            question: "Is $25,000 too much to spend on a vacation?",
+            answer:
+              "$25,000 may be reasonable for a high-income household with strong savings and no financing need. It becomes risky when the trip drains emergency funds, delays major goals, or requires credit card debt or a loan.",
+          },
+          {
+            question: "What counts as a luxury vacation?",
+            answer:
+              "A luxury vacation usually includes premium lodging, upgraded flights, private or high-end experiences, fine dining, resort services, or a destination where comfort and convenience are major parts of the cost.",
+          },
+          {
+            question: "Should I use credit cards for a luxury trip?",
+            answer:
+              "Using a credit card for rewards can be fine if the balance is paid in full. Carrying a balance for a luxury vacation is much riskier because interest can make the trip cost far more after it is over.",
+          },
+          {
+            question: "How should I think about opportunity cost?",
+            answer:
+              "Opportunity cost means asking what else the same money could do. A $25,000 trip may compete with debt payoff, emergency savings, investing, home goals, family needs, or multiple smaller vacations.",
+          },
+          {
+            question: "Can a luxury vacation be worth it?",
+            answer:
+              "Yes. A luxury vacation can be worth it when it is planned intentionally, paid from savings, aligned with your values, and does not weaken financial stability after the trip.",
+          },
+        ]}
+      />
+
+      <MethodologySection category="travel affordability" updated="May 2026" />
+
+      <RelatedGuides
+        guides={[
+          {
+            title: "Travel Calculators",
+            href: "/travel-calculators",
+            description:
+              "Browse vacation affordability calculators for luxury travel, Hawaii, Europe, Disney, cruises, honeymoons, and family trips.",
+          },
+          {
+            title: "How Much Vacation Can I Afford?",
+            href: "/how-much-vacation-can-i-afford",
+            description:
+              "Learn how income, savings, debt, emergency funds, and hidden travel costs affect vacation affordability.",
+          },
+          {
+            title: "How to Avoid Vacation Debt",
+            href: "/how-to-avoid-vacation-debt",
+            description:
+              "Plan travel without turning a memorable trip into long-term credit card pressure.",
+          },
+        ]}
+      />
+
+      <RelatedCalculators
+        calculators={[
+          {
+            category: "Travel",
+            title: "Should I Spend $12,000 on a Hawaii Vacation?",
+            href: "/should-i-spend-12000-on-a-hawaii-vacation",
+          },
+          {
+            category: "Travel",
+            title: "Should I Spend $20,000 on a Family Vacation?",
+            href: "/should-i-spend-20000-on-a-family-vacation",
+          },
+          {
+            category: "Travel",
+            title: "Should I Spend $15,000 on a Honeymoon?",
+            href: "/should-i-spend-15000-on-a-honeymoon",
+          },
+          {
+            category: "Travel",
+            title: "Should I Spend $12,000 on a Cruise?",
+            href: "/should-i-spend-12000-on-a-cruise",
+          },
+        ]}
+      />
+    </CalculatorPageShell>
+  </div>
+
+  <script is:inline>
+  const clamp = (value, min, max) => Math.min(Math.max(value, min), max);
+
+  const getNumber = (id) => {
+    const rawValue = document.getElementById(id)?.value;
+    const value = Number(rawValue);
+    return Number.isFinite(value) && value >= 0 ? value : 0;
+  };
+
+  function getPressureLevel(score) {
+    if (score <= 30) {
+      return {
+        label: "Low Pressure",
+        color: "#16a34a",
+        action:
+          "Book deliberately, keep the luxury choices intentional, and avoid turning upgrades into an open-ended budget.",
+      };
+    }
+
+    if (score <= 65) {
+      return {
+        label: "Moderate Pressure",
+        color: "#ca8a04",
+        action:
+          "Recheck the opportunity cost, upgrade choices, financing plan, and post-trip savings before booking.",
+      };
+    }
+
+    return {
+      label: "High Pressure",
+      color: "#dc2626",
+      action:
+        "Slow down before booking. Reduce the trip cost, delay the trip, avoid financing, or rebuild savings first.",
+    };
+  }
+
+  function calculateLuxuryVacation() {
+    const tripCost = getNumber("tripCost");
+    const annualIncomeRaw = getNumber("income");
+    const savings = getNumber("savings");
+    const debt = getNumber("debt");
+    const housing = getNumber("housing");
+    const travelers = getNumber("travelers") || 1;
+    const nights = getNumber("nights") || 1;
+    const financedAmount = getNumber("financedAmount");
+    const upgradeStyle =
+      document.getElementById("upgradeStyle")?.value || "controlled";
+
+    const result = document.getElementById("result");
+    const scoreEl = document.getElementById("score");
+    const barFill = document.getElementById("barFill");
+    const tripShareEl = document.getElementById("tripShare");
+    const savingsImpactEl = document.getElementById("savingsImpact");
+    const perPersonCostEl = document.getElementById("perPersonCost");
+    const perNightCostEl = document.getElementById("perNightCost");
+    const cashFlowEl = document.getElementById("cashFlow");
+    const savingsCushionEl = document.getElementById("savingsCushion");
+    const recoveryTimeEl = document.getElementById("recoveryTime");
+    const guidanceEl = document.getElementById("guidance");
+
+    result.style.display = "block";
+
+    if (tripCost <= 0 || annualIncomeRaw <= 0) {
+      scoreEl.textContent = "Add your numbers first";
+      barFill.style.width = "0%";
+      barFill.style.background = "#16a34a";
+      tripShareEl.innerHTML = "";
+      savingsImpactEl.innerHTML = "";
+      perPersonCostEl.innerHTML = "";
+      perNightCostEl.innerHTML = "";
+      cashFlowEl.innerHTML = "";
+      savingsCushionEl.innerHTML = "";
+      recoveryTimeEl.innerHTML = "";
+      guidanceEl.textContent =
+        "Enter a positive luxury trip cost and annual take-home income so the calculator can estimate financial pressure.";
+      return;
+    }
+
+    const scoringAnnualIncome = Math.min(annualIncomeRaw, 1000000);
+    const displayAnnualIncome = Math.min(annualIncomeRaw, 1000000);
+    const monthlyIncome = scoringAnnualIncome / 12;
+    const displayMonthlyIncome = displayAnnualIncome / 12;
+
+    const tripIncomeShare = (tripCost / scoringAnnualIncome) * 100;
+    const savingsImpact = savings > 0 ? (tripCost / savings) * 100 : 100;
+    const remainingSavings = savings - tripCost;
+    const monthlyFixedOutflow = housing + debt;
+    const monthlyFlexibility = displayMonthlyIncome - monthlyFixedOutflow;
+
+    const emergencyMonthsAfter =
+      monthlyFixedOutflow > 0
+        ? Math.max(remainingSavings, 0) / monthlyFixedOutflow
+        : remainingSavings > 0
+          ? 12
+          : 0;
+
+    const monthlySavingsCapacity = Math.max(monthlyFlexibility * 0.45, 0);
+
+    const recoveryMonths =
+      monthlySavingsCapacity > 0 ? tripCost / monthlySavingsCapacity : 99;
+
+    const perPersonCost = tripCost / travelers;
+    const perNightCost = tripCost / nights;
+    const financedShare = (financedAmount / tripCost) * 100;
+
+    let pressureScore = 0;
+
+    pressureScore += clamp(tripIncomeShare * 1.9, 0, 30);
+    pressureScore += clamp(savingsImpact * 0.18, 0, 24);
+
+    if (savings <= 0) pressureScore += 22;
+    else if (remainingSavings < 0) pressureScore += 22;
+    else if (emergencyMonthsAfter < 1) pressureScore += 14;
+    else if (emergencyMonthsAfter < 3) pressureScore += 9;
+    else if (emergencyMonthsAfter >= 6) pressureScore -= 8;
+
+    if (financedShare > 75) pressureScore += 34;
+    else if (financedShare > 50) pressureScore += 25;
+    else if (financedShare > 25) pressureScore += 16;
+    else if (financedShare > 0) pressureScore += 8;
+
+    if (monthlyFixedOutflow > monthlyIncome * 0.7) pressureScore += 18;
+    else if (monthlyFixedOutflow > monthlyIncome * 0.55) pressureScore += 10;
+    else if (monthlyFixedOutflow < monthlyIncome * 0.35) pressureScore -= 5;
+
+    if (recoveryMonths > 12) pressureScore += 16;
+    else if (recoveryMonths > 6) pressureScore += 10;
+    else if (recoveryMonths <= 3) pressureScore -= 8;
+
+    if (upgradeStyle === "premium") pressureScore += 7;
+    if (upgradeStyle === "ultra") pressureScore += 15;
+    if (upgradeStyle === "points") pressureScore -= 6;
+
+    if (perPersonCost > 10000) pressureScore += 7;
+    if (perNightCost > 3000) pressureScore += 7;
+
+    if (remainingSavings <= 0 && recoveryMonths > 6) {
+      pressureScore = Math.max(pressureScore, 68);
+    } else if (remainingSavings <= 0 && recoveryMonths > 3) {
+      pressureScore = Math.max(pressureScore, 58);
+    } else if (remainingSavings <= 0) {
+      pressureScore = Math.max(pressureScore, 36);
+    }
+
+    if (
+      tripIncomeShare < 8 &&
+      financedAmount === 0 &&
+      recoveryMonths <= 3 &&
+      monthlyFlexibility > displayMonthlyIncome * 0.35
+    ) {
+      pressureScore = Math.min(pressureScore, 32);
+    }
+
+    if (
+      tripIncomeShare < 5 &&
+      financedAmount === 0 &&
+      recoveryMonths <= 2 &&
+      monthlyFlexibility > displayMonthlyIncome * 0.45
+    ) {
+      pressureScore = Math.min(pressureScore, 24);
+    }
+
+    pressureScore = Math.round(clamp(pressureScore, 0, 100));
+if (
+  annualIncomeRaw >= 5000000 &&
+  financedAmount === 0 &&
+  monthlyFixedOutflow < displayMonthlyIncome * 0.25 &&
+  recoveryMonths <= 1
+) {
+  pressureScore = 0;
+}
+    const level = getPressureLevel(pressureScore);
+
+    let guidance = "";
+
+    if (pressureScore <= 30) {
+      guidance =
+        `This luxury vacation appears financially manageable based on the numbers provided. The trip equals about ${tripIncomeShare.toFixed(1)}% of annual take-home income and would use about ${savingsImpact.toFixed(1)}% of current emergency savings.`;
+    } else if (pressureScore <= 65) {
+      guidance =
+        `This luxury vacation may work, but it deserves a closer look. The trip equals about ${tripIncomeShare.toFixed(1)}% of annual take-home income and would use about ${savingsImpact.toFixed(1)}% of current emergency savings.`;
+    } else {
+      guidance =
+        `This luxury vacation could create real financial strain. The trip equals about ${tripIncomeShare.toFixed(1)}% of annual take-home income, and the combination of savings impact, financing, upgrade risk, or post-trip cushion suggests caution.`;
+    }
+
+    if (remainingSavings <= 0 && recoveryMonths <= 3) {
+      guidance +=
+        " The emergency fund would be wiped out, but the income shown suggests the savings could potentially be rebuilt quickly if spending stays controlled.";
+    } else if (remainingSavings <= 0) {
+      guidance +=
+        " The main concern is that the trip would wipe out the current emergency cushion.";
+    }
+
+    if (annualIncomeRaw > 1000000) {
+      guidance +=
+        " Extremely high income entries are capped for scoring and display so unusual test values do not distort the calculator.";
+    }
+
+    scoreEl.textContent = `${level.label} — ${pressureScore}/100`;
+    scoreEl.style.color = level.color;
+    barFill.style.width = `${pressureScore}%`;
+    barFill.style.background = level.color;
+
+    tripShareEl.innerHTML = `<strong>Trip share of annual take-home income:</strong> ${tripIncomeShare.toFixed(1)}%`;
+    savingsImpactEl.innerHTML = `<strong>Savings impact:</strong> ${savingsImpact.toFixed(1)}% of current emergency savings`;
+    perPersonCostEl.innerHTML = `<strong>Estimated cost per traveler:</strong> $${Math.round(perPersonCost).toLocaleString()}`;
+    perNightCostEl.innerHTML = `<strong>Estimated cost per night:</strong> $${Math.round(perNightCost).toLocaleString()}`;
+    cashFlowEl.innerHTML = `<strong>Estimated monthly flexibility before trip savings:</strong> $${Math.round(monthlyFlexibility).toLocaleString()}`;
+    savingsCushionEl.innerHTML = `<strong>Emergency cushion after trip:</strong> ${Math.max(emergencyMonthsAfter, 0).toFixed(1)} months`;
+    recoveryTimeEl.innerHTML = `<strong>Estimated recovery time:</strong> ${
+      recoveryMonths >= 99 ? "unclear with current cash flow" : `${recoveryMonths.toFixed(1)} months`
+    }`;
+
+    guidanceEl.textContent = `${guidance} Recommended next step: ${level.action}`;
+  }
+
+  document
+    .getElementById("luxuryButton")
+    .addEventListener("click", calculateLuxuryVacation);
+</script>
+</Layout>

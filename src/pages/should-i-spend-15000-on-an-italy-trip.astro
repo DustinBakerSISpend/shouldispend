@@ -1,0 +1,587 @@
+---
+import Layout from "../layouts/Layout.astro";
+import CalculatorPageShell from "../components/CalculatorPageShell.astro";
+import FAQSection from "../components/FAQSection.astro";
+import RelatedCalculators from "../components/RelatedCalculators.astro";
+import RelatedGuides from "../components/RelatedGuides.astro";
+import MethodologySection from "../components/MethodologySection.astro";
+import FinancialRedFlags from "../components/FinancialRedFlags.astro";
+import CalculatorAssumptions from "../components/CalculatorAssumptions.astro";
+import KeyCostCategories from "../components/KeyCostCategories.astro";
+import ReduceCostTips from "../components/ReduceCostTips.astro";
+import WhenSpendingMakesSense from "../components/WhenSpendingMakesSense.astro";
+---
+
+<Layout
+  title="Should I Spend $15,000 on an Italy Trip?"
+  description="Use this Italy trip calculator to decide whether a $15,000 Italy vacation fits your income, savings, debt, emergency cushion, flights, hotels, trains, food, and tours."
+>
+  <style>
+    .container {
+      max-width: 950px;
+      margin: 0 auto;
+      padding: 60px 20px;
+    }
+
+    .content-section {
+      max-width: 760px;
+      margin: 72px auto 0;
+    }
+
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 28px;
+      padding: 34px;
+    }
+
+    h2 {
+      margin-top: 0;
+      font-size: 2rem;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 22px;
+      margin-bottom: 28px;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 10px;
+      font-weight: 700;
+    }
+
+    input {
+      width: 100%;
+      padding: 18px;
+      border-radius: 14px;
+      border: 1px solid var(--border);
+      font-size: 1.1rem;
+      box-sizing: border-box;
+    }
+
+    button {
+      background: #0f766e;
+      color: white;
+      border: none;
+      padding: 16px 28px;
+      border-radius: 14px;
+      font-size: 1rem;
+      font-weight: 700;
+      cursor: pointer;
+      margin-top: 10px;
+      display: inline-block;
+    }
+
+    button:hover {
+      opacity: 0.92;
+    }
+
+    .result {
+      margin-top: 40px;
+      border: 1px solid var(--border);
+      border-radius: 24px;
+      padding: 28px;
+      display: none;
+      background: #f8fafc;
+    }
+
+    .score {
+      font-size: 3rem;
+      font-weight: 800;
+      margin-bottom: 16px;
+    }
+
+    .bar {
+      width: 100%;
+      height: 16px;
+      background: #dbe3ee;
+      border-radius: 999px;
+      overflow: hidden;
+      margin-bottom: 24px;
+    }
+
+    .fill {
+      height: 100%;
+      width: 0%;
+      background: #16a34a;
+      border-radius: 999px;
+      transition: width 0.4s ease;
+    }
+
+    .metric {
+      margin-bottom: 14px;
+      font-size: 1.05rem;
+    }
+
+    .guidance {
+      margin-top: 26px;
+      font-size: 1.15rem;
+      line-height: 1.7;
+    }
+
+    .disclaimer {
+      margin-top: 30px;
+      font-size: 0.9rem;
+      color: var(--muted);
+    }
+
+    .helper-link {
+      margin-top: 10px;
+      font-size: 0.9rem;
+    }
+
+    .helper-link a {
+      color: var(--primary);
+      font-weight: 600;
+    }
+
+    .content-section p,
+    .content-section li {
+      line-height: 1.8;
+    }
+  </style>
+
+  <div class="container">
+    <CalculatorPageShell
+      eyebrow="Italy Trip Calculator"
+      title="Should I Spend $15,000 on an Italy Trip?"
+      description="Estimate whether a $15,000 Italy vacation fits your income, savings, debt, emergency cushion, airfare, hotels, trains, meals, tours, museums, and daily spending."
+    >
+      <div class="card">
+        <h2>Italy Trip Pressure Verdict</h2>
+
+        <div class="grid">
+          <div>
+            <label for="income">Annual Household Income</label>
+            <input id="income" type="number" placeholder="140000" />
+          </div>
+
+          <div>
+            <label for="savings">Total Savings</label>
+            <input id="savings" type="number" placeholder="35000" />
+          </div>
+
+          <div>
+            <label for="vacation">Italy Trip Cost</label>
+            <input id="vacation" type="number" value="15000" />
+          </div>
+
+          <div>
+            <label for="debt">Total Debt</label>
+            <input id="debt" type="number" placeholder="20000" />
+
+            <div class="helper-link">
+              <a href="/what-counts-as-debt">
+                Not sure what counts as debt? Read the debt guide
+              </a>
+            </div>
+          </div>
+        </div>
+
+        <button id="vacationButton" type="button">
+          Get Italy Trip Verdict
+        </button>
+
+        <div class="result" id="result">
+          <div class="score" id="score"></div>
+
+          <div class="bar">
+            <div class="fill" id="barFill"></div>
+          </div>
+
+          <div class="metric" id="stress"></div>
+          <div class="metric" id="recommendedBudget"></div>
+          <div class="metric" id="savingsImpact"></div>
+          <div class="metric" id="incomeImpact"></div>
+          <div class="metric" id="monthlyIncomeImpact"></div>
+          <div class="metric" id="debtRatio"></div>
+
+          <div class="guidance" id="guidance"></div>
+
+          <div class="disclaimer">
+            This is a general educational estimate, not financial advice.
+          </div>
+        </div>
+      </div>
+
+      <div class="content-section">
+        <h2>What a $15,000 Italy Trip Really Costs</h2>
+
+        <p>
+          A $15,000 Italy trip can be reasonable for a family, multi-city itinerary,
+          summer vacation, or first major Europe trip, but the real number depends
+          on more than airfare and hotels. Italy costs can include international
+          flights, city lodging, train tickets, taxis, museum reservations, guided
+          tours, food, gelato, espresso stops, luggage storage, airport transfers,
+          tips, travel insurance, and extra cash for surprises.
+        </p>
+
+        <p>
+          Cities also behave differently. Rome and Florence can create heavy
+          sightseeing and tour costs. Venice can add transportation and hotel
+          premiums. Naples, the Amalfi Coast, Capri, Milan, and Lake Como can shift
+          the budget depending on season, lodging style, day trips, and how much
+          convenience you buy.
+        </p>
+
+        <p>
+          The safest Italy budget includes the whole trip before booking the first
+          flight. A $15,000 estimate can work well when it covers the entire
+          experience, but it becomes riskier when flights and hotels consume most
+          of the budget before food, trains, tours, and daily spending are counted.
+        </p>
+      </div>
+
+      <div class="content-section">
+        <h2>Why Italy Trips Need Extra Cushion</h2>
+
+        <p>
+          Italy travel often involves multiple cities, train stations, timed
+          museum entries, restaurant reservations, and day trips. Those logistics
+          can make the trip unforgettable, but they also create more chances for
+          small costs to pile up.
+        </p>
+
+        <p>
+          International travel also has less room for improvising cheaply once you
+          are there. Missed trains, bad weather, luggage issues, heat, tired kids,
+          taxis, extra meals, and last-minute ticket changes can all turn into
+          real expenses. A good Italy budget should protect the trip and protect
+          your finances after you get home.
+        </p>
+      </div>
+
+      <WhenSpendingMakesSense
+        title="When a $15,000 Italy Trip Makes Sense"
+        items={[
+          "You can pay for the trip without carrying high-interest credit card debt.",
+          "Your emergency fund remains intact after flights, hotels, trains, meals, tours, and daily spending.",
+          "The trip fits a rare family window, anniversary, milestone birthday, long-planned Europe trip, or once-in-a-decade opportunity.",
+          "The budget includes airfare, lodging, trains, airport transfers, food, museums, tours, tips, luggage, and backup costs.",
+          "The trip will not delay debt payoff, housing stability, medical needs, childcare, retirement savings, or other core goals.",
+        ]}
+      />
+
+      <div class="content-section">
+        <h2>When You Should Lower the Italy Budget</h2>
+
+        <p>
+          A cheaper Italy trip may be smarter if the $15,000 version would drain
+          savings, require debt, or make normal life feel tight afterward. Italy
+          can still be excellent with fewer cities, fewer hotel changes, simpler
+          meals, and a tighter sightseeing plan.
+        </p>
+
+        <p>
+          Consider trimming one city, choosing fewer paid tours, booking apartments
+          or family rooms with kitchens, using trains instead of private transfers,
+          traveling outside peak summer dates, or postponing the trip until the
+          emergency cushion is stronger.
+        </p>
+      </div>
+
+      <KeyCostCategories
+        items={[
+          {
+            title: "International flights and baggage",
+            description:
+              "Airfare, seat selection, checked bags, airport meals, travel insurance, and schedule convenience can take a large share of the Italy budget before the trip begins.",
+          },
+          {
+            title: "Hotels, apartments, and city premiums",
+            description:
+              "Rome, Florence, Venice, Milan, Naples, coastal towns, and popular summer destinations can vary widely by location, room size, air conditioning, and cancellation flexibility.",
+          },
+          {
+            title: "Trains, transfers, and local transportation",
+            description:
+              "High-speed rail, regional trains, airport transfers, taxis, vaporetto rides, luggage storage, parking, and rideshares should be counted before the itinerary is finalized.",
+          },
+          {
+            title: "Food, museums, tours, and daily spending",
+            description:
+              "Restaurants, cafes, gelato, groceries, Vatican or Colosseum tours, museum tickets, day trips, souvenirs, tips, and backup plans belong in the real trip number.",
+          },
+        ]}
+      />
+
+      <ReduceCostTips
+        items={[
+          "Limit the number of cities so train costs, hotel changes, and logistics stay under control.",
+          "Travel outside peak summer and holiday windows when possible.",
+          "Use apartments or hotels with breakfast to reduce daily food pressure.",
+          "Book key museum and tour tickets early, then avoid stacking paid tours every day.",
+          "Use high-speed trains strategically instead of private transfers when the route is simple.",
+          "Set a daily food, gelato, souvenir, and taxi budget before leaving.",
+        ]}
+      />
+
+      <FinancialRedFlags
+        items={[
+          "The Italy trip would require credit card debt without a clear payoff plan.",
+          "The vacation would wipe out most of your emergency savings.",
+          "The $15,000 estimate only includes flights and hotels, not food, trains, tours, transfers, tips, and daily spending.",
+          "You are already behind on bills, debt payments, or savings goals.",
+          "You would return home financially stressed after trying to force a dream itinerary.",
+        ]}
+      />
+
+      <CalculatorAssumptions
+        items={[
+          "The calculator assumes the Italy trip is primarily paid with savings instead of high-interest debt.",
+          "The estimate should include flights, lodging, trains, transfers, food, museum tickets, tours, souvenirs, insurance, and emergency costs.",
+          "The calculator assumes income and debt obligations are relatively stable.",
+          "Family size, travel season, city mix, hotel level, airfare, and trip length can significantly change the total cost.",
+          "The calculator assumes you still maintain an emergency cushion after booking the trip.",
+        ]}
+      />
+
+      <FAQSection
+        title="Italy Trip FAQ"
+        faqs={[
+          {
+            question: "Is $15,000 too much for an Italy trip?",
+            answer:
+              "It depends on income, savings, debt, family size, trip length, season, and itinerary. A $15,000 Italy trip can be reasonable if it covers the full trip and does not create debt pressure or drain your emergency fund.",
+          },
+          {
+            question: "What should be included in an Italy trip budget?",
+            answer:
+              "Include flights, hotels or apartments, trains, airport transfers, taxis, meals, groceries, museum tickets, tours, tips, travel insurance, luggage costs, souvenirs, and emergency spending.",
+          },
+          {
+            question: "Why can Italy trips get expensive quickly?",
+            answer:
+              "Italy trips often involve multiple cities, timed attractions, train travel, restaurant spending, museum tickets, and convenience costs. Summer dates, central hotels, and popular destinations can raise the total quickly.",
+          },
+          {
+            question: "Should I finance an Italy trip?",
+            answer:
+              "Financing an Italy trip can create long-term stress, especially with credit card interest. Paying from savings while keeping an emergency fund intact is usually safer.",
+          },
+          {
+            question: "How can I make an Italy trip cheaper?",
+            answer:
+              "Travel outside peak dates, visit fewer cities, use trains carefully, choose apartments or hotels with breakfast, limit paid tours, book early, and set a daily food and spending budget.",
+          },
+        ]}
+      />
+
+      <MethodologySection category="Italy trip spending" updated="May 2026" />
+
+      <RelatedGuides
+        guides={[
+          {
+            title: "How to Avoid Vacation Debt",
+            href: "/how-to-avoid-vacation-debt",
+            description:
+              "Learn how to plan major travel without turning the trip into long-term financial pressure.",
+          },
+          {
+            title: "Travel Budget Calculators",
+            href: "/travel-calculators",
+            description:
+              "Compare Italy, Disney, Europe, cruise, honeymoon, family vacation, and weekend getaway calculators before booking.",
+          },
+        ]}
+      />
+
+      <RelatedCalculators
+        calculators={[
+          {
+            category: "Travel",
+            title: "Should I Spend $10,000 on a Europe Trip?",
+            href: "/should-i-spend-10000-on-a-europe-trip",
+          },
+          {
+            category: "Travel",
+            title: "Should I Spend $20,000 on a Family Vacation?",
+            href: "/should-i-spend-20000-on-a-family-vacation",
+          },
+          {
+            category: "Travel",
+            title: "How Much Disney Vacation Can I Afford?",
+            href: "/how-much-disney-vacation-can-i-afford",
+          },
+          {
+            category: "Travel",
+            title: "Browse Travel Calculators",
+            href: "/travel-calculators",
+          },
+        ]}
+      />
+    </CalculatorPageShell>
+  </div>
+
+  <script is:inline>
+    const clamp = (value, min, max) => Math.min(Math.max(value, min), max);
+
+    const getNumber = (id) => {
+      const rawValue = document.getElementById(id)?.value;
+      const value = Number(rawValue);
+      return Number.isFinite(value) && value >= 0 ? value : 0;
+    };
+
+    const formatMoney = (value) => {
+      return Math.round(value).toLocaleString("en-US", {
+        style: "currency",
+        currency: "USD",
+        maximumFractionDigits: 0,
+      });
+    };
+
+    function getPressureLevel(score) {
+      if (score <= 30) {
+        return {
+          label: "Low Pressure",
+          stress: "Low pressure",
+          color: "#16a34a",
+          action: "Proceed only after building the full Italy line-item budget.",
+        };
+      }
+
+      if (score <= 60) {
+        return {
+          label: "Moderate Pressure",
+          stress: "Moderate pressure",
+          color: "#ca8a04",
+          action: "Lower the Italy budget or build more cushion before booking.",
+        };
+      }
+
+      return {
+        label: "High Pressure",
+        stress: "High pressure",
+        color: "#dc2626",
+        action: "Delay, shorten the trip, choose cheaper lodging, or save more first.",
+      };
+    }
+
+    function calculateVacation() {
+      const income = getNumber("income");
+      const savings = getNumber("savings");
+      const vacation = getNumber("vacation");
+      const debt = getNumber("debt");
+
+      const result = document.getElementById("result");
+      const scoreEl = document.getElementById("score");
+      const barFill = document.getElementById("barFill");
+      const stressEl = document.getElementById("stress");
+      const recommendedBudgetEl = document.getElementById("recommendedBudget");
+      const savingsImpactEl = document.getElementById("savingsImpact");
+      const incomeImpactEl = document.getElementById("incomeImpact");
+      const monthlyIncomeImpactEl = document.getElementById("monthlyIncomeImpact");
+      const debtRatioEl = document.getElementById("debtRatio");
+      const guidanceEl = document.getElementById("guidance");
+
+      result.style.display = "block";
+
+      if (income <= 0 || savings <= 0 || vacation <= 0) {
+        scoreEl.textContent = "Add your numbers first";
+        barFill.style.width = "0%";
+        barFill.style.background = "#16a34a";
+        stressEl.innerHTML = "";
+        recommendedBudgetEl.innerHTML = "";
+        savingsImpactEl.innerHTML = "";
+        incomeImpactEl.innerHTML = "";
+        monthlyIncomeImpactEl.innerHTML = "";
+        debtRatioEl.innerHTML = "";
+        guidanceEl.textContent =
+          "Enter a positive income, savings amount, Italy trip cost, and debt so the calculator can estimate financial pressure.";
+        return;
+      }
+
+      const monthlyIncome = income / 12;
+      const savingsImpact = (vacation / savings) * 100;
+      const annualIncomeImpact = (vacation / income) * 100;
+      const monthlyIncomeImpact = (vacation / monthlyIncome) * 100;
+      const debtRatio = (debt / income) * 100;
+      const remainingSavings = savings - vacation;
+      const remainingSavingsMonths = remainingSavings / monthlyIncome;
+
+      const conservativeBudget = Math.max(0, Math.min(income * 0.045, savings * 0.18));
+      const flexibleBudget = Math.max(0, Math.min(income * 0.075, savings * 0.3));
+      const stretchBudget = Math.max(0, Math.min(income * 0.11, savings * 0.4));
+
+      let pressureScore = 0;
+
+      pressureScore += clamp(savingsImpact * 0.38, 0, 38);
+      pressureScore += clamp(monthlyIncomeImpact * 0.24, 0, 25);
+      pressureScore += clamp(debtRatio * 0.2, 0, 15);
+
+      if (vacation > savings) pressureScore += 25;
+
+      if (remainingSavingsMonths < 1 && income < 100000) {
+        pressureScore += 18;
+      } else if (remainingSavingsMonths < 3 && income < 150000) {
+        pressureScore += 10;
+      } else if (remainingSavingsMonths >= 6) {
+        pressureScore -= 8;
+      }
+
+      if (debtRatio >= 75) pressureScore += 10;
+      else if (debtRatio >= 40) pressureScore += 6;
+
+      if (annualIncomeImpact < 2 && savingsImpact < 10 && remainingSavingsMonths >= 6) {
+        pressureScore -= 12;
+      }
+
+      if (annualIncomeImpact < 0.75 && monthlyIncomeImpact < 8 && debtRatio < 10) {
+        pressureScore = Math.min(pressureScore, 18);
+      }
+
+      if (annualIncomeImpact < 0.25 && monthlyIncomeImpact < 3 && debtRatio < 5) {
+        pressureScore = Math.min(pressureScore, 8);
+      }
+
+      if (
+        annualIncomeImpact < 0.1 &&
+        monthlyIncomeImpact < 1.5 &&
+        savingsImpact < 1 &&
+        debtRatio < 3 &&
+        remainingSavingsMonths >= 12
+      ) {
+        pressureScore = 0;
+      }
+
+      pressureScore = clamp(Math.round(pressureScore), 0, 100);
+
+      const level = getPressureLevel(pressureScore);
+
+      let guidance = "";
+
+      if (pressureScore === 0) {
+        guidance =
+          `This Italy trip appears financially tiny relative to the numbers provided. The trip equals about ${monthlyIncomeImpact.toFixed(1)}% of one month’s income and ${savingsImpact.toFixed(1)}% of savings, so the decision is mainly about timing, itinerary value, travel priorities, and opportunity cost.`;
+      } else if (pressureScore <= 30) {
+        guidance =
+          `This Italy trip appears manageable based on the numbers provided. The trip equals about ${monthlyIncomeImpact.toFixed(1)}% of one month’s income and ${savingsImpact.toFixed(1)}% of savings, so the main priority is keeping flights, hotels, trains, food, tours, transfers, and daily spending inside the planned budget.`;
+      } else if (pressureScore <= 60) {
+        guidance =
+          `This Italy trip may work, but it deserves caution. The trip equals about ${monthlyIncomeImpact.toFixed(1)}% of one month’s income and ${savingsImpact.toFixed(1)}% of savings, which means city count, hotel level, train costs, tours, meals, and daily spending should be capped before booking.`;
+      } else {
+        guidance =
+          `This Italy trip could create real financial strain. The trip equals about ${monthlyIncomeImpact.toFixed(1)}% of one month’s income and ${savingsImpact.toFixed(1)}% of savings, so fewer cities, cheaper lodging, fewer paid tours, simpler meals, or more time to save would likely be safer.`;
+      }
+
+      scoreEl.textContent = `${level.label} — ${pressureScore}/100`;
+      barFill.style.width = `${pressureScore}%`;
+      barFill.style.background = level.color;
+
+      stressEl.innerHTML = `<strong>Pressure level:</strong> ${level.stress}`;
+      recommendedBudgetEl.innerHTML = `<strong>Estimated Italy range:</strong> ${formatMoney(conservativeBudget)} conservative / ${formatMoney(flexibleBudget)} flexible / ${formatMoney(stretchBudget)} stretch`;
+      savingsImpactEl.innerHTML = `<strong>Savings impact:</strong> ${savingsImpact.toFixed(1)}% of savings`;
+      incomeImpactEl.innerHTML = `<strong>Annual income impact:</strong> ${annualIncomeImpact.toFixed(1)}% of annual income`;
+      monthlyIncomeImpactEl.innerHTML = `<strong>Monthly income impact:</strong> ${monthlyIncomeImpact.toFixed(1)}% of one month’s income`;
+      debtRatioEl.innerHTML = `<strong>Debt ratio:</strong> ${debtRatio.toFixed(1)}% of annual income`;
+      guidanceEl.textContent = `${guidance} Recommended next step: ${level.action}`;
+    }
+
+    document
+      .getElementById("vacationButton")
+      .addEventListener("click", calculateVacation);
+  </script>
+</Layout>

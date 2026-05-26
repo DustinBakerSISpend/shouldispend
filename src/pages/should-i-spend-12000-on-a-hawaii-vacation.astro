@@ -1,0 +1,643 @@
+---
+import Layout from "../layouts/Layout.astro";
+import CalculatorPageShell from "../components/CalculatorPageShell.astro";
+import FAQSection from "../components/FAQSection.astro";
+import RelatedCalculators from "../components/RelatedCalculators.astro";
+import RelatedGuides from "../components/RelatedGuides.astro";
+import MethodologySection from "../components/MethodologySection.astro";
+import FinancialRedFlags from "../components/FinancialRedFlags.astro";
+import CalculatorAssumptions from "../components/CalculatorAssumptions.astro";
+import KeyCostCategories from "../components/KeyCostCategories.astro";
+import ReduceCostTips from "../components/ReduceCostTips.astro";
+import WhenSpendingMakesSense from "../components/WhenSpendingMakesSense.astro";
+---
+
+<Layout
+  title="Should I Spend $12,000 on a Hawaii Vacation?"
+  description="Use this Hawaii vacation calculator to decide whether spending $12,000 on flights, lodging, food, rental cars, resort fees, and activities fits your income, savings, debt, and monthly flexibility."
+>
+  <style>
+    .container {
+      max-width: 950px;
+      margin: 0 auto;
+      padding: 60px 20px;
+    }
+
+    .content-section {
+      max-width: 760px;
+      margin: 72px auto 0;
+    }
+
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 28px;
+      padding: 34px;
+    }
+
+    h2 {
+      margin-top: 0;
+      font-size: 2rem;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 22px;
+      margin-bottom: 28px;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 10px;
+      font-weight: 700;
+    }
+
+    input,
+    select {
+      width: 100%;
+      padding: 18px;
+      border-radius: 14px;
+      border: 1px solid var(--border);
+      font-size: 1.1rem;
+      box-sizing: border-box;
+      background: white;
+    }
+
+    button {
+      background: #0f172a;
+      color: white;
+      border: none;
+      padding: 16px 28px;
+      border-radius: 14px;
+      font-size: 1rem;
+      font-weight: 700;
+      cursor: pointer;
+      margin-top: 10px;
+      width: 100%;
+      display: block;
+    }
+
+    button:hover {
+      opacity: 0.92;
+    }
+
+    .result {
+      margin-top: 40px;
+      border: 1px solid var(--border);
+      border-radius: 24px;
+      padding: 28px;
+      display: none;
+      background: #f8fafc;
+    }
+
+    .score {
+      font-size: 3rem;
+      font-weight: 800;
+      margin-bottom: 16px;
+    }
+
+    .bar {
+      width: 100%;
+      height: 16px;
+      background: #dbe3ee;
+      border-radius: 999px;
+      overflow: hidden;
+      margin-bottom: 24px;
+    }
+
+    .fill {
+      height: 100%;
+      width: 0%;
+      border-radius: 999px;
+      transition: width 0.4s ease;
+    }
+
+    .metric {
+      margin-bottom: 14px;
+      font-size: 1.05rem;
+    }
+
+    .guidance {
+      margin-top: 26px;
+      font-size: 1.15rem;
+      line-height: 1.7;
+    }
+
+    .disclaimer {
+      margin-top: 30px;
+      font-size: 0.9rem;
+      color: var(--muted);
+    }
+
+    .helper-link {
+      margin-top: 10px;
+      font-size: 0.9rem;
+    }
+
+    .helper-link a {
+      color: var(--primary);
+      font-weight: 600;
+    }
+
+    .content-section p,
+    .content-section li {
+      line-height: 1.8;
+    }
+  </style>
+
+  <div class="container">
+    <CalculatorPageShell
+      eyebrow="Hawaii Vacation Calculator"
+      title="Should I Spend $12,000 on a Hawaii Vacation?"
+      description="Estimate whether a $12,000 Hawaii trip fits your annual income, savings, debt, emergency cushion, travel style, and post-vacation flexibility."
+    >
+      <div class="card">
+        <h2>$12,000 Hawaii Vacation Pressure Verdict</h2>
+
+        <div class="grid">
+          <div>
+            <label for="tripCost">Estimated Hawaii Trip Cost</label>
+            <input id="tripCost" type="number" placeholder="12000" min="0" inputmode="decimal" />
+          </div>
+
+          <div>
+            <label for="income">Annual Take-Home Income</label>
+            <input id="income" type="number" placeholder="90000" min="0" inputmode="decimal" />
+          </div>
+
+          <div>
+            <label for="savings">Emergency Savings</label>
+            <input id="savings" type="number" placeholder="25000" min="0" inputmode="decimal" />
+          </div>
+
+          <div>
+            <label for="debt">Monthly Debt Payments</label>
+            <input id="debt" type="number" placeholder="700" min="0" inputmode="decimal" />
+
+            <div class="helper-link">
+              <a href="/what-counts-as-debt">
+                Not sure what counts as debt? Read the debt guide
+              </a>
+            </div>
+          </div>
+
+          <div>
+            <label for="housing">Monthly Rent or Mortgage</label>
+            <input id="housing" type="number" placeholder="1700" min="0" inputmode="decimal" />
+          </div>
+
+          <div>
+            <label for="travelers">Number of Travelers</label>
+            <input id="travelers" type="number" placeholder="4" min="1" inputmode="numeric" />
+          </div>
+
+          <div>
+            <label for="nights">Trip Length in Nights</label>
+            <input id="nights" type="number" placeholder="6" min="1" inputmode="numeric" />
+          </div>
+
+          <div>
+            <label for="financedAmount">Amount Put on Credit or Loan</label>
+            <input id="financedAmount" type="number" placeholder="0" min="0" inputmode="decimal" />
+          </div>
+
+          <div>
+            <label for="tripStyle">Trip Style</label>
+            <select id="tripStyle">
+              <option value="balanced">Balanced hotel or condo trip</option>
+              <option value="resort">Resort-heavy trip</option>
+              <option value="luxury">Luxury or premium trip</option>
+              <option value="budget">Budget-conscious trip</option>
+            </select>
+          </div>
+        </div>
+
+        <button id="hawaiiButton" type="button">
+          Calculate Hawaii Vacation Pressure
+        </button>
+
+        <div class="result" id="result">
+          <div class="score" id="score"></div>
+
+          <div class="bar">
+            <div class="fill" id="barFill"></div>
+          </div>
+
+          <div class="metric" id="tripShare"></div>
+          <div class="metric" id="savingsImpact"></div>
+          <div class="metric" id="perPersonCost"></div>
+          <div class="metric" id="perNightCost"></div>
+          <div class="metric" id="cashFlow"></div>
+          <div class="metric" id="savingsCushion"></div>
+          <div class="metric" id="recoveryTime"></div>
+
+          <div class="guidance" id="guidance"></div>
+
+          <div class="disclaimer">
+            This is a general educational estimate, not personal financial, tax, travel, lending, or budgeting advice.
+          </div>
+        </div>
+      </div>
+
+      <div class="content-section">
+        <h2>What a $12,000 Hawaii Vacation Really Means</h2>
+
+        <p>
+          A $12,000 Hawaii vacation is different from many mainland trips because major costs often arrive early: flights, lodging, rental cars, resort fees, food, and activity deposits.
+        </p>
+
+        <p>
+          The trip can still be worth it. Hawaii may be a family milestone, anniversary trip, bucket-list vacation, or rare chance to travel with kids before schedules change. The key question is whether the cost leaves enough savings, flexibility, and breathing room after the trip is over.
+        </p>
+      </div>
+
+      <WhenSpendingMakesSense
+        title="When Spending $12,000 on Hawaii Can Make Sense"
+        items={[
+          "You can pay for the trip mostly or entirely from planned savings.",
+          "Emergency savings will still be healthy after flights, lodging, food, rental cars, and activities.",
+          "The trip does not require credit card debt or a personal loan.",
+          "You have already accounted for resort fees, food prices, parking, excursions, and transportation.",
+          "The vacation fits your family priorities without delaying more urgent goals like housing, debt payoff, or medical needs.",
+        ]}
+      />
+
+      <div class="content-section">
+        <h2>Why Hawaii Trips Can Get Expensive Fast</h2>
+
+        <p>
+          Hawaii has a different cost structure than many mainland trips. Flights are often expensive for families, hotels and resorts can carry high nightly rates, rental cars may be needed depending on the island, and food prices can surprise travelers who are used to mainland vacation costs.
+        </p>
+
+        <p>
+          A Hawaii budget also depends heavily on island choice. Oahu can offer more hotel and food options, while Maui, Kauai, and the Big Island may create different tradeoffs around rental cars, excursions, resort areas, and activity costs.
+        </p>
+      </div>
+
+      <KeyCostCategories
+        items={[
+          {
+            title: "Flights and timing",
+            description:
+              "Airfare can swing heavily by season, departure city, family size, and whether you are traveling during school breaks.",
+          },
+          {
+            title: "Lodging and resort fees",
+            description:
+              "Hotels, condos, resort fees, parking, taxes, and room upgrades can make the nightly rate only part of the true lodging cost.",
+          },
+          {
+            title: "Food and groceries",
+            description:
+              "Restaurants, snacks, groceries, coffee, and convenience food can run higher than expected, especially for families.",
+          },
+          {
+            title: "Rental cars and activities",
+            description:
+              "Excursions, luaus, snorkeling tours, parking, fuel, inter-island flights, and rental cars can quickly change the final number.",
+          },
+        ]}
+      />
+
+      <ReduceCostTips
+        items={[
+          "Choose one island instead of adding inter-island flights and extra transportation days.",
+          "Compare condo-style lodging with kitchens against resort rooms and restaurant-heavy plans.",
+          "Price flights before locking lodging dates, especially for families traveling during school breaks.",
+          "Set a daily food target before the trip so restaurants, coffee, snacks, and groceries do not drift.",
+          "Pick two or three paid excursions and leave room for beaches, hikes, scenic drives, and low-cost days.",
+          "Check resort fees, parking charges, rental car costs, and taxes before treating the hotel price as final.",
+        ]}
+      />
+
+      <FinancialRedFlags
+        items={[
+          "You need a credit card balance or personal loan to make the trip happen.",
+          "The vacation would drain most of your emergency savings.",
+          "You have not included resort fees, rental cars, parking, food, taxes, or activities.",
+          "The trip delays more urgent financial needs like rent stability, debt payoff, medical bills, or essential repairs.",
+          "The budget depends on future income, bonuses, refunds, or money that is not guaranteed.",
+        ]}
+      />
+
+      <CalculatorAssumptions
+        items={[
+          "The calculator treats the Hawaii trip cost as the total estimated cost for flights, lodging, food, transportation, activities, taxes, fees, and other travel expenses.",
+          "Annual income means take-home income after taxes and payroll deductions.",
+          "Emergency savings means cash reserves available after normal monthly expenses.",
+          "Monthly debt payments include credit cards, student loans, car loans, personal loans, medical payment plans, and other required debt payments.",
+          "The trip style input adds pressure for resort-heavy or luxury trips because those plans often create more hidden costs and upgrade risk.",
+          "The calculator does not account for points, miles, family gifts, employer travel benefits, exact airfare, island choice, or every local price difference.",
+          "The result is educational guidance, not financial advice.",
+        ]}
+      />
+
+      <FAQSection
+        title="$12,000 Hawaii Vacation FAQ"
+        faqs={[
+          {
+            question: "Is $12,000 too much for a Hawaii vacation?",
+            answer:
+              "$12,000 may be reasonable for a family Hawaii trip if it is paid from planned savings and does not weaken emergency reserves. It becomes riskier when the trip requires debt, drains savings, or ignores hidden costs like resort fees, food, parking, rental cars, and excursions.",
+          },
+          {
+            question: "Is $6,000 enough for Hawaii?",
+            answer:
+              "$6,000 may work for a shorter, more budget-conscious Hawaii trip for fewer travelers, especially with good airfare and modest lodging. For many families, however, $6,000 can be tight once flights, lodging, food, local transportation, taxes, and activities are included.",
+          },
+          {
+            question: "What is the biggest hidden cost of a Hawaii trip?",
+            answer:
+              "The biggest surprise is often the combination of lodging fees, food prices, rental cars, parking, and activities. Travelers may budget for flights and hotel but underestimate daily costs after arriving.",
+          },
+          {
+            question: "Should I finance a Hawaii vacation?",
+            answer:
+              "Financing a Hawaii vacation is risky if it creates credit card interest or a long repayment period. A vacation is usually safer when it is mostly paid from cash savings after protecting emergency funds and essential bills.",
+          },
+          {
+            question: "How can I make a Hawaii vacation more affordable?",
+            answer:
+              "Choose one island, compare condo lodging with kitchens, travel outside peak school breaks if possible, limit paid excursions, watch resort fees, and set daily food and transportation targets before booking.",
+          },
+        ]}
+      />
+
+      <MethodologySection category="travel affordability" updated="May 2026" />
+
+      <RelatedGuides
+        guides={[
+          {
+            title: "Travel Calculators",
+            href: "/travel-calculators",
+            description:
+              "Browse vacation affordability calculators for Hawaii, Europe, Disney, cruises, honeymoons, and family trips.",
+          },
+          {
+            title: "How Much Vacation Can I Afford?",
+            href: "/how-much-vacation-can-i-afford",
+            description:
+              "Learn how income, savings, debt, emergency funds, and hidden travel costs affect vacation affordability.",
+          },
+          {
+            title: "How to Avoid Vacation Debt",
+            href: "/how-to-avoid-vacation-debt",
+            description:
+              "Plan travel without turning a memorable trip into long-term credit card pressure.",
+          },
+        ]}
+      />
+
+      <RelatedCalculators
+        calculators={[
+          {
+            category: "Travel",
+            title: "Should I Spend $10,000 on a Europe Trip?",
+            href: "/should-i-spend-10000-on-a-europe-trip",
+          },
+          {
+            category: "Travel",
+            title: "Should I Spend $12,000 on a Cruise?",
+            href: "/should-i-spend-12000-on-a-cruise",
+          },
+          {
+            category: "Travel",
+            title: "Should I Spend $20,000 on a Family Vacation?",
+            href: "/should-i-spend-20000-on-a-family-vacation",
+          },
+          {
+            category: "Travel",
+            title: "Should I Spend $8,000 on a Disney Vacation?",
+            href: "/should-i-spend-8000-on-a-disney-vacation",
+          },
+        ]}
+      />
+    </CalculatorPageShell>
+  </div>
+
+  <script is:inline>
+    const clamp = (value, min, max) => Math.min(Math.max(value, min), max);
+
+    const getNumber = (id) => {
+      const rawValue = document.getElementById(id)?.value;
+      const value = Number(rawValue);
+      return Number.isFinite(value) && value >= 0 ? value : 0;
+    };
+
+    function getPressureLevel(score) {
+      if (score <= 30) {
+        return {
+          label: "Low Pressure",
+          color: "#16a34a",
+          action:
+            "Book deliberately, keep the trip paid from savings, and preserve enough emergency cushion for the months after returning.",
+        };
+      }
+
+      if (score <= 65) {
+        return {
+          label: "Moderate Pressure",
+          color: "#ca8a04",
+          action:
+            "Review airfare, lodging fees, food, rental cars, and activities before booking. A lower trip cost or longer savings runway may help.",
+        };
+      }
+
+      return {
+        label: "High Pressure",
+        color: "#dc2626",
+        action:
+          "Slow down before booking. Reduce the trip cost, delay the vacation, avoid financing, or rebuild savings before committing.",
+      };
+    }
+
+    function calculateHawaiiVacation() {
+      const tripCost = getNumber("tripCost");
+      const annualIncome = getNumber("income");
+      const savings = getNumber("savings");
+      const debt = getNumber("debt");
+      const housing = getNumber("housing");
+      const travelers = getNumber("travelers") || 1;
+      const nights = getNumber("nights") || 1;
+      const financedAmount = getNumber("financedAmount");
+      const tripStyle = document.getElementById("tripStyle")?.value || "balanced";
+
+      const result = document.getElementById("result");
+      const scoreEl = document.getElementById("score");
+      const barFill = document.getElementById("barFill");
+      const tripShareEl = document.getElementById("tripShare");
+      const savingsImpactEl = document.getElementById("savingsImpact");
+      const perPersonCostEl = document.getElementById("perPersonCost");
+      const perNightCostEl = document.getElementById("perNightCost");
+      const cashFlowEl = document.getElementById("cashFlow");
+      const savingsCushionEl = document.getElementById("savingsCushion");
+      const recoveryTimeEl = document.getElementById("recoveryTime");
+      const guidanceEl = document.getElementById("guidance");
+
+      result.style.display = "block";
+
+      if (tripCost <= 0 || annualIncome <= 0) {
+        scoreEl.textContent = "Add your numbers first";
+        barFill.style.width = "0%";
+        barFill.style.background = "#16a34a";
+        tripShareEl.innerHTML = "";
+        savingsImpactEl.innerHTML = "";
+        perPersonCostEl.innerHTML = "";
+        perNightCostEl.innerHTML = "";
+        cashFlowEl.innerHTML = "";
+        savingsCushionEl.innerHTML = "";
+        recoveryTimeEl.innerHTML = "";
+        guidanceEl.textContent =
+          "Enter a positive Hawaii trip cost and annual take-home income so the calculator can estimate financial pressure.";
+        return;
+      }
+
+      const normalizedAnnualIncome = Math.min(annualIncome, 1000000);
+const monthlyIncome = normalizedAnnualIncome / 12;
+const tripIncomeShare = (tripCost / normalizedAnnualIncome) * 100;
+      const savingsImpact = savings > 0 ? (tripCost / savings) * 100 : 100;
+      const remainingSavings = savings - tripCost;
+      const monthlyFixedOutflow = housing + debt;
+      const monthlyRemainingBeforeTrip = monthlyIncome - monthlyFixedOutflow;
+      const emergencyMonthsBefore =
+        monthlyFixedOutflow > 0 ? savings / monthlyFixedOutflow : savings > 0 ? 12 : 0;
+      const emergencyMonthsAfter =
+        monthlyFixedOutflow > 0
+          ? Math.max(remainingSavings, 0) / monthlyFixedOutflow
+          : remainingSavings > 0
+            ? 12
+            : 0;
+      const monthlySavingsCapacity = Math.max(monthlyRemainingBeforeTrip * 0.5, 0);
+      const estimatedRecoveryMonths =
+        monthlySavingsCapacity > 0 && tripCost > 0
+          ? tripCost / monthlySavingsCapacity
+          : 99;
+      const perPersonCost = tripCost / travelers;
+      const perNightCost = tripCost / nights;
+      const financedShare = (financedAmount / tripCost) * 100;
+
+      let pressureScore = 0;
+
+      pressureScore += clamp(tripIncomeShare * 1.8, 0, 26);
+      pressureScore += clamp(savingsImpact * 0.24, 0, 28);
+
+      if (savings <= 0) pressureScore += 22;
+      else if (remainingSavings < 0) pressureScore += 24;
+      else if (emergencyMonthsAfter < 1) pressureScore += 18;
+      else if (emergencyMonthsAfter < 3) pressureScore += 11;
+      else if (emergencyMonthsAfter >= 6) pressureScore -= 8;
+
+      if (financedShare > 75) pressureScore += 30;
+      else if (financedShare > 50) pressureScore += 22;
+      else if (financedShare > 25) pressureScore += 14;
+      else if (financedShare > 0) pressureScore += 6;
+
+      if (monthlyFixedOutflow > monthlyIncome * 0.7) pressureScore += 18;
+      else if (monthlyFixedOutflow > monthlyIncome * 0.55) pressureScore += 10;
+      else if (monthlyFixedOutflow < monthlyIncome * 0.35) pressureScore -= 6;
+
+      if (estimatedRecoveryMonths > 12) pressureScore += 16;
+      else if (estimatedRecoveryMonths > 6) pressureScore += 10;
+      else if (estimatedRecoveryMonths <= 3) pressureScore -= 8;
+
+      if (tripStyle === "resort") pressureScore += 5;
+      if (tripStyle === "luxury") pressureScore += 11;
+      if (tripStyle === "budget") pressureScore -= 5;
+
+      if (perPersonCost > 4500) pressureScore += 6;
+      if (perNightCost > 2300) pressureScore += 5;
+
+      if (
+        tripIncomeShare <= 10 &&
+        financedAmount === 0 &&
+        monthlyRemainingBeforeTrip > monthlyIncome * 0.35 &&
+        estimatedRecoveryMonths <= 4
+      ) {
+        pressureScore -= 10;
+      }
+
+      if (
+        remainingSavings <= 0 &&
+        financedAmount === 0 &&
+        monthlyRemainingBeforeTrip > monthlyIncome * 0.5 &&
+        estimatedRecoveryMonths <= 3
+      ) {
+        pressureScore = Math.min(pressureScore, 62);
+      }
+
+      if (
+        tripIncomeShare < 8 &&
+        savingsImpact < 35 &&
+        emergencyMonthsAfter >= 6 &&
+        financedAmount === 0 &&
+        monthlyRemainingBeforeTrip > monthlyIncome * 0.25
+      ) {
+        pressureScore = Math.min(pressureScore, 28);
+      }
+
+      if (
+        tripIncomeShare < 5 &&
+        savingsImpact < 20 &&
+        emergencyMonthsAfter >= 9 &&
+        financedAmount === 0 &&
+        monthlyRemainingBeforeTrip > monthlyIncome * 0.35
+      ) {
+        pressureScore = Math.min(pressureScore, 16);
+      }
+
+      if (remainingSavings <= 0) {
+  pressureScore = Math.max(pressureScore, 68);
+}
+
+if (remainingSavings <= 0) {
+  pressureScore = Math.max(pressureScore, 68);
+}
+
+if (remainingSavings <= 0 && financedAmount === 0 && monthlyRemainingBeforeTrip > monthlyIncome * 0.4) {
+  pressureScore = Math.max(pressureScore, 58);
+}
+
+      pressureScore = Math.round(clamp(pressureScore, 0, 100));
+
+      const level = getPressureLevel(pressureScore);
+
+      let guidance = "";
+
+      if (pressureScore <= 30) {
+        guidance =
+          `This Hawaii vacation appears financially manageable based on the numbers provided. The trip equals about ${tripIncomeShare.toFixed(1)}% of annual take-home income and would use about ${savingsImpact.toFixed(1)}% of current emergency savings.`;
+      } else if (pressureScore <= 65) {
+        guidance =
+          `This Hawaii vacation may work, but it creates noticeable pressure. The trip equals about ${tripIncomeShare.toFixed(1)}% of annual take-home income and would use about ${savingsImpact.toFixed(1)}% of current emergency savings.`;
+      } else {
+        guidance =
+          `This Hawaii vacation could create real financial strain. The trip equals about ${tripIncomeShare.toFixed(1)}% of annual take-home income, and the combination of savings impact, debt, financing, or post-trip cushion suggests caution.`;
+      }
+
+      if (remainingSavings <= 0 && monthlyRemainingBeforeTrip > monthlyIncome * 0.4) {
+        guidance +=
+          " The main issue is not monthly income; it is that the trip would wipe out the current emergency cushion.";
+      }
+
+      scoreEl.textContent = `${level.label} — ${pressureScore}/100`;
+      scoreEl.style.color = level.color;
+      barFill.style.width = `${pressureScore}%`;
+      barFill.style.background = level.color;
+
+      tripShareEl.innerHTML = `<strong>Trip share of annual take-home income:</strong> ${tripIncomeShare.toFixed(1)}%`;
+      savingsImpactEl.innerHTML = `<strong>Savings impact:</strong> ${savingsImpact.toFixed(1)}% of current emergency savings`;
+      perPersonCostEl.innerHTML = `<strong>Estimated cost per traveler:</strong> $${Math.round(perPersonCost).toLocaleString()}`;
+      perNightCostEl.innerHTML = `<strong>Estimated cost per night:</strong> $${Math.round(perNightCost).toLocaleString()}`;
+      cashFlowEl.innerHTML = `<strong>Estimated monthly flexibility before trip savings:</strong> $${Math.round(monthlyRemainingBeforeTrip).toLocaleString()}`;
+      savingsCushionEl.innerHTML = `<strong>Emergency cushion after trip:</strong> ${Math.max(emergencyMonthsAfter, 0).toFixed(1)} months`;
+      recoveryTimeEl.innerHTML = `<strong>Estimated recovery time:</strong> ${estimatedRecoveryMonths >= 99 ? "unclear with current cash flow" : `${estimatedRecoveryMonths.toFixed(1)} months`}`;
+
+      guidanceEl.textContent = `${guidance} Recommended next step: ${level.action}`;
+    }
+
+    document
+      .getElementById("hawaiiButton")
+      .addEventListener("click", calculateHawaiiVacation);
+  </script>
+</Layout>

@@ -87,62 +87,103 @@ export const calculators = [
     "Evaluate whether your car insurance premium fits your income, vehicle value, deductible, driving history, and monthly budget.",
   href: "/how-much-car-insurance-is-too-much",
 },
-  {
-    id: "vacation-affordability-guide",
-    category: "Travel",
-    title: "How Much Vacation Can I Afford?",
-    description:
-      "Learn how savings, debt, emergency funds, hidden travel costs, and post-trip flexibility affect vacation affordability.",
-    href: "/how-much-vacation-can-i-afford",
-  },
-  {
-    id: "vacation-5000",
-    category: "Travel",
-    title: "Should I Spend $5,000 on a Vacation?",
-    description:
-      "Evaluate whether a moderate vacation expense fits your income, savings, debt load, and long-term flexibility.",
-    href: "/should-i-spend-5000-on-a-vacation",
-  },
-  {
-    id: "disney-vacation-8000",
-    category: "Travel",
-    title: "Should I Spend $8,000 on a Disney Vacation?",
-    description:
-      "Analyze Disney trip affordability across tickets, lodging, meals, add-ons, savings, debt, and family budget pressure.",
-    href: "/should-i-spend-8000-on-a-disney-vacation",
-  },
-  {
-    id: "europe-trip-10000",
-    category: "Travel",
-    title: "Should I Spend $10,000 on a Europe Trip?",
-    description:
-      "Evaluate whether a major Europe trip fits your savings, income, debt load, travel costs, and long-term goals.",
-    href: "/should-i-spend-10000-on-a-europe-trip",
-  },
-  {
-    id: "cruise-12000",
-    category: "Travel",
-    title: "Should I Spend $12,000 on a Cruise?",
-    description:
-      "Evaluate cruise affordability across fare, gratuities, excursions, flights, onboard spending, savings, and debt.",
-    href: "/should-i-spend-12000-on-a-cruise",
-  },
-  {
-    id: "honeymoon-15000",
-    category: "Travel",
-    title: "Should I Spend $15,000 on a Honeymoon?",
-    description:
-      "Evaluate honeymoon affordability based on post-wedding savings, income, debt, travel costs, and first-year cash flow.",
-    href: "/should-i-spend-15000-on-a-honeymoon",
-  },
-  {
-    id: "family-vacation-20000",
-    category: "Travel",
-    title: "Should I Spend $20,000 on a Family Vacation?",
-    description:
-      "Evaluate whether a major family vacation fits your income, savings, debt, airfare, lodging, meals, and activities.",
-    href: "/should-i-spend-20000-on-a-family-vacation",
-  },
+
+    {
+  id: "vacation-affordability-guide",
+  category: "Travel",
+  title: "How Much Vacation Can I Afford?",
+  description:
+    "Learn how savings, debt, emergency funds, hidden travel costs, and post-trip flexibility affect vacation affordability.",
+  href: "/how-much-vacation-can-i-afford",
+},
+{
+  id: "vacation-5000",
+  category: "Travel",
+  title: "Should I Spend $5,000 on a Vacation?",
+  description:
+    "Evaluate whether a moderate vacation expense fits your income, savings, debt load, and long-term flexibility.",
+  href: "/should-i-spend-5000-on-a-vacation",
+},
+{
+  id: "weekend-getaway-3000",
+  category: "Travel",
+  title: "Should I Spend $3,000 on a Weekend Getaway?",
+  description:
+    "Pressure-test a short trip, concert weekend, city escape, or couples getaway against income, savings, debt, and impulse-spending risk.",
+  href: "/should-i-spend-3000-on-a-weekend-getaway",
+},
+{
+  id: "disney-vacation-affordability",
+  category: "Travel",
+  title: "How Much Disney Vacation Can I Afford?",
+  description:
+    "Estimate a realistic Disney vacation budget using tickets, hotels, meals, flights, add-ons, savings, debt, and family cash flow.",
+  href: "/how-much-disney-vacation-can-i-afford",
+},
+{
+  id: "disney-vacation-8000",
+  category: "Travel",
+  title: "Should I Spend $8,000 on a Disney Vacation?",
+  description:
+    "Analyze Disney trip affordability across tickets, lodging, meals, add-ons, savings, debt, and family budget pressure.",
+  href: "/should-i-spend-8000-on-a-disney-vacation",
+},
+{
+  id: "europe-trip-10000",
+  category: "Travel",
+  title: "Should I Spend $10,000 on a Europe Trip?",
+  description:
+    "Evaluate whether a major Europe trip fits your savings, income, debt load, travel costs, and long-term goals.",
+  href: "/should-i-spend-10000-on-a-europe-trip",
+},
+{
+  id: "italy-trip-15000",
+  category: "Travel",
+  title: "Should I Spend $15,000 on an Italy Trip?",
+  description:
+    "Evaluate Italy trip affordability across airfare, hotels, trains, food, tours, family size, savings, debt, and post-trip flexibility.",
+  href: "/should-i-spend-15000-on-an-italy-trip",
+},
+{
+  id: "hawaii-vacation-12000",
+  category: "Travel",
+  title: "Should I Spend $12,000 on a Hawaii Vacation?",
+  description:
+    "Evaluate Hawaii vacation affordability across flights, lodging, rental cars, resort fees, food, excursions, savings, and debt.",
+  href: "/should-i-spend-12000-on-a-hawaii-vacation",
+},
+{
+  id: "cruise-12000",
+  category: "Travel",
+  title: "Should I Spend $12,000 on a Cruise?",
+  description:
+    "Evaluate cruise affordability across fare, gratuities, excursions, flights, onboard spending, savings, and debt.",
+  href: "/should-i-spend-12000-on-a-cruise",
+},
+{
+  id: "honeymoon-15000",
+  category: "Travel",
+  title: "Should I Spend $15,000 on a Honeymoon?",
+  description:
+    "Evaluate honeymoon affordability based on post-wedding savings, income, debt, travel costs, and first-year cash flow.",
+  href: "/should-i-spend-15000-on-a-honeymoon",
+},
+{
+  id: "family-vacation-20000",
+  category: "Travel",
+  title: "Should I Spend $20,000 on a Family Vacation?",
+  description:
+    "Evaluate whether a major family vacation fits your income, savings, debt, airfare, lodging, meals, and activities.",
+  href: "/should-i-spend-20000-on-a-family-vacation",
+},
+{
+  id: "luxury-vacation-25000",
+  category: "Travel",
+  title: "Should I Spend $25,000 on a Luxury Vacation?",
+  description:
+    "Evaluate luxury vacation pressure across premium hotels, business-class flights, private tours, savings impact, debt, and opportunity cost.",
+  href: "/should-i-spend-25000-on-a-luxury-vacation",
+},
   {
     id: "rent-affordability-guide",
     category: "Rent",

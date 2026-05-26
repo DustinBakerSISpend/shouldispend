@@ -1,0 +1,568 @@
+---
+import Layout from "../layouts/Layout.astro";
+import CalculatorPageShell from "../components/CalculatorPageShell.astro";
+import FAQSection from "../components/FAQSection.astro";
+import RelatedCalculators from "../components/RelatedCalculators.astro";
+import RelatedGuides from "../components/RelatedGuides.astro";
+import MethodologySection from "../components/MethodologySection.astro";
+import FinancialRedFlags from "../components/FinancialRedFlags.astro";
+import CalculatorAssumptions from "../components/CalculatorAssumptions.astro";
+import KeyCostCategories from "../components/KeyCostCategories.astro";
+import ReduceCostTips from "../components/ReduceCostTips.astro";
+import WhenSpendingMakesSense from "../components/WhenSpendingMakesSense.astro";
+---
+
+<Layout
+  title="Should I Spend $3,000 on a Weekend Getaway?"
+  description="Use this weekend getaway calculator to decide whether a $3,000 trip fits your income, savings, debt, emergency cushion, and travel budget."
+>
+  <style>
+    .container {
+      max-width: 950px;
+      margin: 0 auto;
+      padding: 60px 20px;
+    }
+
+    .content-section {
+      max-width: 760px;
+      margin: 72px auto 0;
+    }
+
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 28px;
+      padding: 34px;
+    }
+
+    h2 {
+      margin-top: 0;
+      font-size: 2rem;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 22px;
+      margin-bottom: 28px;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 10px;
+      font-weight: 700;
+    }
+
+    input {
+      width: 100%;
+      padding: 18px;
+      border-radius: 14px;
+      border: 1px solid var(--border);
+      font-size: 1.1rem;
+      box-sizing: border-box;
+    }
+
+    button {
+      background: #0f766e;
+      color: white;
+      border: none;
+      padding: 16px 28px;
+      border-radius: 14px;
+      font-size: 1rem;
+      font-weight: 700;
+      cursor: pointer;
+      margin-top: 10px;
+      display: inline-block;
+    }
+
+    button:hover {
+      opacity: 0.92;
+    }
+
+    .result {
+      margin-top: 40px;
+      border: 1px solid var(--border);
+      border-radius: 24px;
+      padding: 28px;
+      display: none;
+      background: #f8fafc;
+    }
+
+    .score {
+      font-size: 3rem;
+      font-weight: 800;
+      margin-bottom: 16px;
+    }
+
+    .bar {
+      width: 100%;
+      height: 16px;
+      background: #dbe3ee;
+      border-radius: 999px;
+      overflow: hidden;
+      margin-bottom: 24px;
+    }
+
+    .fill {
+      height: 100%;
+      width: 0%;
+      background: #16a34a;
+      border-radius: 999px;
+      transition: width 0.4s ease;
+    }
+
+    .metric {
+      margin-bottom: 14px;
+      font-size: 1.05rem;
+    }
+
+    .guidance {
+      margin-top: 26px;
+      font-size: 1.15rem;
+      line-height: 1.7;
+    }
+
+    .disclaimer {
+      margin-top: 30px;
+      font-size: 0.9rem;
+      color: var(--muted);
+    }
+
+    .helper-link {
+      margin-top: 10px;
+      font-size: 0.9rem;
+    }
+
+    .helper-link a {
+      color: var(--primary);
+      font-weight: 600;
+    }
+
+    .content-section p,
+    .content-section li {
+      line-height: 1.8;
+    }
+  </style>
+
+  <div class="container">
+    <CalculatorPageShell
+      eyebrow="Weekend Getaway Calculator"
+      title="Should I Spend $3,000 on a Weekend Getaway?"
+      description="Estimate whether a $3,000 weekend trip fits your income, savings, debt, emergency cushion, hotel costs, transportation, meals, and activities."
+    >
+      <div class="card">
+        <h2>Weekend Getaway Pressure Verdict</h2>
+
+        <div class="grid">
+          <div>
+            <label for="income">Annual Household Income</label>
+            <input id="income" type="number" placeholder="90000" />
+          </div>
+
+          <div>
+            <label for="savings">Total Savings</label>
+            <input id="savings" type="number" placeholder="15000" />
+          </div>
+
+          <div>
+            <label for="vacation">Weekend Getaway Cost</label>
+            <input id="vacation" type="number" value="3000" />
+          </div>
+
+          <div>
+            <label for="debt">Total Debt</label>
+            <input id="debt" type="number" placeholder="12000" />
+
+            <div class="helper-link">
+              <a href="/what-counts-as-debt">
+                Not sure what counts as debt? Read the debt guide
+              </a>
+            </div>
+          </div>
+        </div>
+
+        <button id="vacationButton" type="button">
+          Get Weekend Getaway Verdict
+        </button>
+
+        <div class="result" id="result">
+          <div class="score" id="score"></div>
+
+          <div class="bar">
+            <div class="fill" id="barFill"></div>
+          </div>
+
+          <div class="metric" id="stress"></div>
+          <div class="metric" id="savingsImpact"></div>
+          <div class="metric" id="incomeImpact"></div>
+          <div class="metric" id="monthlyIncomeImpact"></div>
+          <div class="metric" id="debtRatio"></div>
+
+          <div class="guidance" id="guidance"></div>
+
+          <div class="disclaimer">
+            This is a general educational estimate, not financial advice.
+          </div>
+        </div>
+      </div>
+
+      <div class="content-section">
+        <h2>What a $3,000 Weekend Getaway Really Costs</h2>
+
+        <p>
+          A $3,000 weekend getaway can sound small compared with a major vacation,
+          but the cost can climb quickly because the trip is compressed into only
+          a few days. Flights, hotel rates, resort fees, rideshares, parking,
+          restaurants, drinks, activities, tips, and last-minute convenience costs
+          can turn a short escape into a real budget event.
+        </p>
+
+        <p>
+          The number may be reasonable for a luxury hotel weekend, anniversary
+          trip, concert getaway, spa weekend, sporting event, quick beach trip,
+          or last-minute flight. It becomes riskier when the $3,000 estimate only
+          covers the room and transportation while meals, entertainment, fees,
+          and shopping are ignored.
+        </p>
+
+        <p>
+          Weekend trips also come with a time-value tradeoff. Because the trip is
+          short, every paid hour matters more. A pricey hotel, premium flight, or
+          expensive restaurant may be worth it for a rare celebration, but less
+          sensible if the trip creates stress after you return home.
+        </p>
+      </div>
+
+      <div class="content-section">
+        <h2>Why Short Trips Can Feel Surprisingly Expensive</h2>
+
+        <p>
+          Longer vacations spread airfare, luggage, parking, and fixed fees over
+          more days. A weekend getaway does the opposite. You may pay almost the
+          same transportation cost for two nights that you would pay for five or
+          six nights somewhere else.
+        </p>
+
+        <p>
+          Convenience is usually the expensive part. Nonstop flights, better hotel
+          locations, late checkout, rideshares, restaurants near the hotel, and
+          event tickets can all make the weekend smoother, but they also reduce
+          the financial efficiency of the trip.
+        </p>
+      </div>
+
+      <WhenSpendingMakesSense
+        title="When a $3,000 Weekend Getaway Makes Sense"
+        items={[
+          "You can pay for the trip without carrying credit card debt.",
+          "Your emergency fund remains strong after booking the hotel, transportation, meals, and activities.",
+          "The getaway is tied to a rare event, anniversary, birthday, wedding, concert, game, or meaningful reset.",
+          "The full budget includes lodging, transportation, food, drinks, fees, parking, tips, and spending money.",
+          "The trip will not interfere with rent, debt payoff, savings goals, or upcoming bills.",
+        ]}
+      />
+
+      <div class="content-section">
+        <h2>When You Should Wait</h2>
+
+        <p>
+          Waiting may be smarter if the weekend would erase your emergency cushion,
+          require a credit card balance, or make the next month feel tight.
+          A short trip should not create a long financial hangover.
+        </p>
+
+        <p>
+          A smaller version can still work. Consider driving instead of flying,
+          choosing one expensive meal instead of several, booking a less central
+          hotel, using points, shortening the itinerary, or finding a closer
+          destination with the same mood for less money.
+        </p>
+      </div>
+
+      <KeyCostCategories
+        items={[
+          {
+            title: "Hotel, fees, and location premium",
+            description:
+              "Weekend hotels can carry higher nightly rates, resort fees, parking charges, taxes, and location premiums near beaches, arenas, downtown districts, or event venues.",
+          },
+          {
+            title: "Transportation for a short window",
+            description:
+              "Flights, gas, rental cars, rideshares, airport parking, baggage, and schedule convenience can consume a large share of the total budget.",
+          },
+          {
+            title: "Meals, drinks, and celebration spending",
+            description:
+              "Restaurants, coffee, drinks, room service, tips, snacks, and special-occasion meals often cost more on weekend getaways than people expect.",
+          },
+          {
+            title: "Tickets, activities, and extras",
+            description:
+              "Concerts, games, spa treatments, tours, museums, beach rentals, shopping, and backup plans should be included before the trip is booked.",
+          },
+        ]}
+      />
+
+      <ReduceCostTips
+        items={[
+          "Drive to a closer destination instead of flying if the time tradeoff is reasonable.",
+          "Book one premium experience and keep the rest of the weekend simple.",
+          "Use hotel points, credit card rewards, or flexible dates when available.",
+          "Compare downtown hotels with nearby neighborhoods that have cheaper parking and lower nightly rates.",
+          "Set a restaurant and drinks budget before the trip starts.",
+          "Avoid last-minute event weekends unless the occasion is worth the premium.",
+        ]}
+      />
+
+      <FinancialRedFlags
+        items={[
+          "The getaway would require credit card debt without a clear payoff plan.",
+          "The trip would wipe out most of your emergency savings.",
+          "The $3,000 estimate only includes hotel and transportation, not food, drinks, fees, activities, and extras.",
+          "You are already behind on bills, debt payments, or savings goals.",
+          "You would return home anxious about money instead of refreshed.",
+        ]}
+      />
+
+      <CalculatorAssumptions
+        items={[
+          "The calculator assumes the getaway is mainly paid from savings rather than high-interest debt.",
+          "The trip estimate should include lodging, transportation, meals, drinks, parking, fees, activities, and spending money.",
+          "The calculator assumes your income and debt obligations are relatively stable.",
+          "Event weekends, holiday dates, luxury hotels, and last-minute bookings can significantly raise the total cost.",
+          "The calculator assumes you still maintain an emergency cushion after booking the weekend getaway.",
+        ]}
+      />
+
+      <FAQSection
+        title="Weekend Getaway FAQ"
+        faqs={[
+          {
+            question: "Is $3,000 too much for a weekend getaway?",
+            answer:
+              "It depends on your income, savings, debt, destination, and reason for the trip. A $3,000 weekend getaway can be reasonable for a special occasion if it does not create debt pressure or drain your emergency fund.",
+          },
+          {
+            question: "What should be included in a weekend getaway budget?",
+            answer:
+              "Include hotel, taxes, resort fees, parking, flights or gas, rideshares, meals, drinks, tips, activities, tickets, shopping, and a small emergency cushion.",
+          },
+          {
+            question: "Why can a weekend trip cost so much?",
+            answer:
+              "Short trips often compress expensive categories into a few days. Hotels, flights, parking, event tickets, restaurants, and convenience costs may not be spread across a longer vacation.",
+          },
+          {
+            question: "Should I use a credit card for a weekend getaway?",
+            answer:
+              "Using a credit card for rewards can be fine if you pay it off immediately. Carrying a balance for a short trip can make the getaway far more expensive after interest.",
+          },
+          {
+            question: "How can I make a $3,000 getaway cheaper?",
+            answer:
+              "Choose a closer destination, drive instead of flying, book fewer premium meals, use points, avoid peak event dates, compare hotel neighborhoods, and set a firm spending limit before leaving.",
+          },
+        ]}
+      />
+
+      <MethodologySection category="weekend getaway spending" updated="May 2026" />
+
+      <RelatedGuides
+        guides={[
+          {
+            title: "How to Avoid Vacation Debt",
+            href: "/how-to-avoid-vacation-debt",
+            description:
+              "Learn how to plan travel without turning a short trip into long-term financial pressure.",
+          },
+          {
+            title: "Travel Budget Calculators",
+            href: "/travel-calculators",
+            description:
+              "Compare weekend getaway, vacation, Disney, Europe, cruise, honeymoon, and family trip calculators before booking.",
+          },
+        ]}
+      />
+
+      <RelatedCalculators
+        calculators={[
+          {
+            category: "Travel",
+            title: "Should I Spend $5,000 on a Vacation?",
+            href: "/should-i-spend-5000-on-a-vacation",
+          },
+          {
+            category: "Travel",
+            title: "Should I Spend $8,000 on a Disney Vacation?",
+            href: "/should-i-spend-8000-on-a-disney-vacation",
+          },
+          {
+            category: "Travel",
+            title: "Should I Spend $20,000 on a Family Vacation?",
+            href: "/should-i-spend-20000-on-a-family-vacation",
+          },
+          {
+            category: "Travel",
+            title: "Browse Travel Calculators",
+            href: "/travel-calculators",
+          },
+        ]}
+      />
+    </CalculatorPageShell>
+  </div>
+
+  <script is:inline>
+    const clamp = (value, min, max) => Math.min(Math.max(value, min), max);
+
+    const getNumber = (id) => {
+      const rawValue = document.getElementById(id)?.value;
+      const value = Number(rawValue);
+      return Number.isFinite(value) && value >= 0 ? value : 0;
+    };
+
+    function getPressureLevel(score) {
+      if (score <= 30) {
+        return {
+          label: "Low Pressure",
+          stress: "Low pressure",
+          color: "#16a34a",
+          action: "Book only after confirming the full weekend budget.",
+        };
+      }
+
+      if (score <= 60) {
+        return {
+          label: "Moderate Pressure",
+          stress: "Moderate pressure",
+          color: "#ca8a04",
+          action: "Lower the trip cost or build more cushion before booking.",
+        };
+      }
+
+      return {
+        label: "High Pressure",
+        stress: "High pressure",
+        color: "#dc2626",
+        action: "Delay, choose a cheaper getaway, or save more first.",
+      };
+    }
+
+    function calculateVacation() {
+      const income = getNumber("income");
+      const savings = getNumber("savings");
+      const vacation = getNumber("vacation");
+      const debt = getNumber("debt");
+
+      const result = document.getElementById("result");
+      const scoreEl = document.getElementById("score");
+      const barFill = document.getElementById("barFill");
+      const stressEl = document.getElementById("stress");
+      const savingsImpactEl = document.getElementById("savingsImpact");
+      const incomeImpactEl = document.getElementById("incomeImpact");
+      const monthlyIncomeImpactEl = document.getElementById("monthlyIncomeImpact");
+      const debtRatioEl = document.getElementById("debtRatio");
+      const guidanceEl = document.getElementById("guidance");
+
+      result.style.display = "block";
+
+      if (income <= 0 || savings <= 0 || vacation <= 0) {
+        scoreEl.textContent = "Add your numbers first";
+        barFill.style.width = "0%";
+        barFill.style.background = "#16a34a";
+        stressEl.innerHTML = "";
+        savingsImpactEl.innerHTML = "";
+        incomeImpactEl.innerHTML = "";
+        monthlyIncomeImpactEl.innerHTML = "";
+        debtRatioEl.innerHTML = "";
+        guidanceEl.textContent =
+          "Enter a positive income, savings amount, weekend getaway cost, and debt so the calculator can estimate financial pressure.";
+        return;
+      }
+
+      const monthlyIncome = income / 12;
+      const savingsImpact = (vacation / savings) * 100;
+      const annualIncomeImpact = (vacation / income) * 100;
+      const monthlyIncomeImpact = (vacation / monthlyIncome) * 100;
+      const debtRatio = (debt / income) * 100;
+      const remainingSavings = savings - vacation;
+      const remainingSavingsMonths = remainingSavings / monthlyIncome;
+
+      let pressureScore = 0;
+
+      pressureScore += clamp(savingsImpact * 0.4, 0, 40);
+      pressureScore += clamp(monthlyIncomeImpact * 0.22, 0, 24);
+      pressureScore += clamp(debtRatio * 0.2, 0, 15);
+
+      if (vacation > savings) pressureScore += 25;
+
+      if (remainingSavingsMonths < 1 && income < 75000) {
+        pressureScore += 18;
+      } else if (remainingSavingsMonths < 3 && income < 125000) {
+        pressureScore += 10;
+      } else if (remainingSavingsMonths >= 6) {
+        pressureScore -= 8;
+      }
+
+      if (debtRatio >= 75) pressureScore += 10;
+      else if (debtRatio >= 40) pressureScore += 6;
+
+      if (annualIncomeImpact < 2 && savingsImpact < 10 && remainingSavingsMonths >= 6) {
+        pressureScore -= 12;
+      }
+
+      if (annualIncomeImpact < 0.75 && monthlyIncomeImpact < 8 && debtRatio < 10) {
+        pressureScore = Math.min(pressureScore, 18);
+      }
+
+      if (annualIncomeImpact < 0.25 && monthlyIncomeImpact < 3 && debtRatio < 5) {
+        pressureScore = Math.min(pressureScore, 8);
+      }
+
+      if (
+        annualIncomeImpact < 0.1 &&
+        monthlyIncomeImpact < 1.5 &&
+        savingsImpact < 1 &&
+        debtRatio < 3 &&
+        remainingSavingsMonths >= 12
+      ) {
+        pressureScore = 0;
+      }
+
+      pressureScore = clamp(Math.round(pressureScore), 0, 100);
+
+      const level = getPressureLevel(pressureScore);
+
+      let guidance = "";
+
+      if (pressureScore === 0) {
+        guidance =
+          `This weekend getaway appears financially tiny relative to the numbers provided. The cost equals about ${monthlyIncomeImpact.toFixed(1)}% of one month’s income and ${savingsImpact.toFixed(1)}% of savings, so the decision is mainly about whether the trip is worth the time, logistics, and opportunity cost.`;
+      } else if (pressureScore <= 30) {
+        guidance =
+          `This weekend getaway appears manageable based on the numbers provided. The cost equals about ${monthlyIncomeImpact.toFixed(1)}% of one month’s income and ${savingsImpact.toFixed(1)}% of savings, so the main priority is keeping hotel, transportation, meals, activities, fees, and extras inside the planned budget.`;
+      } else if (pressureScore <= 60) {
+        guidance =
+          `This weekend getaway may work, but it deserves caution. The cost equals about ${monthlyIncomeImpact.toFixed(1)}% of one month’s income and ${savingsImpact.toFixed(1)}% of savings, which means hotel choice, restaurant spending, event tickets, and transportation should be capped before booking.`;
+      } else {
+        guidance =
+          `This weekend getaway could create real financial strain. The cost equals about ${monthlyIncomeImpact.toFixed(1)}% of one month’s income and ${savingsImpact.toFixed(1)}% of savings, so a closer destination, cheaper hotel, fewer paid activities, or more time to save would likely be safer.`;
+      }
+
+      scoreEl.textContent = `${level.label} — ${pressureScore}/100`;
+      barFill.style.width = `${pressureScore}%`;
+      barFill.style.background = level.color;
+
+      stressEl.innerHTML = `<strong>Pressure level:</strong> ${level.stress}`;
+      savingsImpactEl.innerHTML = `<strong>Savings impact:</strong> ${savingsImpact.toFixed(1)}% of savings`;
+      incomeImpactEl.innerHTML = `<strong>Annual income impact:</strong> ${annualIncomeImpact.toFixed(1)}% of annual income`;
+      monthlyIncomeImpactEl.innerHTML = `<strong>Monthly income impact:</strong> ${monthlyIncomeImpact.toFixed(1)}% of one month’s income`;
+      debtRatioEl.innerHTML = `<strong>Debt ratio:</strong> ${debtRatio.toFixed(1)}% of annual income`;
+      guidanceEl.textContent = `${guidance} Recommended next step: ${level.action}`;
+    }
+
+    document
+      .getElementById("vacationButton")
+      .addEventListener("click", calculateVacation);
+  </script>
+</Layout>
