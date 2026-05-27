@@ -1,379 +1,812 @@
 ---
 import Layout from "../layouts/Layout.astro";
+import CalculatorPageShell from "../components/CalculatorPageShell.astro";
 import FAQSection from "../components/FAQSection.astro";
+import RelatedCalculators from "../components/RelatedCalculators.astro";
+import RelatedGuides from "../components/RelatedGuides.astro";
+import MethodologySection from "../components/MethodologySection.astro";
+import FinancialRedFlags from "../components/FinancialRedFlags.astro";
+import CalculatorAssumptions from "../components/CalculatorAssumptions.astro";
+import KeyCostCategories from "../components/KeyCostCategories.astro";
+import ReduceCostTips from "../components/ReduceCostTips.astro";
+import WhenSpendingMakesSense from "../components/WhenSpendingMakesSense.astro";
 
-const housingFaqs = [
-  {
-    question: "How much house can I realistically afford?",
-    answer:
-      "A house is usually affordable when the monthly payment still leaves room for emergency savings, retirement contributions, utilities, maintenance, debt payments, transportation, groceries, and normal life expenses.",
-  },
-  {
-    question: "What percentage of income should go toward housing?",
-    answer:
-      "Many lenders use broad percentage guidelines, but real affordability depends on debt load, savings, taxes, insurance, childcare, transportation costs, and overall monthly flexibility.",
-  },
-  {
-    question: "Should I buy a cheaper house than the bank approves?",
-    answer:
-      "Often yes. Mortgage approval does not automatically mean the payment will feel comfortable once maintenance, repairs, insurance, taxes, and daily life expenses are included.",
-  },
-  {
-    question: "How much emergency savings should I have before buying a house?",
-    answer:
-      "Most buyers benefit from keeping a strong emergency fund after closing because homeownership often creates surprise expenses beyond the mortgage itself.",
-  },
-  {
-    question: "What hidden housing costs do people underestimate?",
-    answer:
-      "Property taxes, insurance, maintenance, repairs, utilities, HOA fees, furnishing costs, lawn care, appliances, and unexpected repairs are commonly underestimated.",
-  },
-];
+const pageUrl = "https://shouldispend.com/how-much-house-can-i-afford";
+
+const faqSchema = {
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  mainEntity: [
+    {
+      "@type": "Question",
+      name: "How much house can I realistically afford?",
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: "A house is usually affordable when the monthly payment still leaves room for emergency savings, retirement contributions, utilities, maintenance, debt payments, transportation, groceries, and normal life expenses.",
+      },
+    },
+    {
+      "@type": "Question",
+      name: "What percentage of income should go toward housing?",
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: "Many buyers use broad housing percentage guidelines, but real affordability depends on debt load, savings, taxes, insurance, maintenance, childcare, transportation costs, and monthly flexibility.",
+      },
+    },
+    {
+      "@type": "Question",
+      name: "Should I buy less house than the bank approves?",
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: "Often yes. Mortgage approval does not automatically mean the payment will feel comfortable once maintenance, repairs, insurance, taxes, utilities, and daily life expenses are included.",
+      },
+    },
+    {
+      "@type": "Question",
+      name: "How much emergency savings should I keep after buying a house?",
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: "Most buyers benefit from keeping several months of core expenses available after closing because homeownership often creates surprise costs beyond the mortgage itself.",
+      },
+    },
+    {
+      "@type": "Question",
+      name: "What hidden housing costs do buyers underestimate?",
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: "Property taxes, homeowners insurance, maintenance, repairs, utilities, HOA fees, appliances, furnishing costs, lawn care, and surprise repairs are commonly underestimated.",
+      },
+    },
+  ],
+};
+
+const webAppSchema = {
+  "@context": "https://schema.org",
+  "@type": "WebApplication",
+  name: "How Much House Can I Afford Calculator",
+  url: pageUrl,
+  applicationCategory: "FinanceApplication",
+  operatingSystem: "All",
+  description:
+    "A home affordability calculator that estimates housing pressure using income, mortgage payment, taxes, insurance, HOA fees, debt, savings, down payment, and repair costs.",
+};
+
+const breadcrumbSchema = {
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  itemListElement: [
+    {
+      "@type": "ListItem",
+      position: 1,
+      name: "Home",
+      item: "https://shouldispend.com/",
+    },
+    {
+      "@type": "ListItem",
+      position: 2,
+      name: "Rent Calculators",
+      item: "https://shouldispend.com/rent-calculators",
+    },
+    {
+      "@type": "ListItem",
+      position: 3,
+      name: "How Much House Can I Afford?",
+      item: pageUrl,
+    },
+  ],
+};
 ---
 
 <Layout
-  title="How Much House Can I Afford?"
-  description="Learn how to calculate a realistic home budget using income, savings, debt, emergency funds, taxes, insurance, down payments, and long-term affordability."
+  title="How Much House Can I Afford? Calculator | ShouldISpend"
+  description="Use this house affordability calculator to estimate a realistic home budget based on income, mortgage payment, taxes, insurance, HOA fees, debt, savings, and repairs."
 >
+  <script type="application/ld+json" set:html={JSON.stringify(faqSchema)} />
+  <script type="application/ld+json" set:html={JSON.stringify(webAppSchema)} />
+  <script type="application/ld+json" set:html={JSON.stringify(breadcrumbSchema)} />
+
   <style>
     .container {
-      max-width: 920px;
+      max-width: 950px;
       margin: 0 auto;
-      padding: 80px 24px;
-    }
-
-    .eyebrow {
-      color: #0f766e;
-      text-transform: uppercase;
-      letter-spacing: 2px;
-      font-size: 0.8rem;
-      font-weight: 800;
-      margin-bottom: 18px;
-    }
-
-    h1 {
-      font-size: clamp(3rem, 7vw, 5rem);
-      line-height: 0.95;
-      margin-bottom: 28px;
-      color: #0f172a;
-      max-width: 860px;
-    }
-
-    .intro {
-      font-size: 1.12rem;
-      line-height: 1.9;
-      color: #334155;
-      max-width: 820px;
-      margin-bottom: 60px;
+      padding: 60px 20px;
     }
 
     .content-section {
-      margin-top: 72px;
+      max-width: 760px;
+      margin: 72px auto 0;
     }
 
-    .content-section h2 {
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 28px;
+      padding: 34px;
+    }
+
+    h2 {
+      margin-top: 0;
       font-size: 2rem;
-      line-height: 1.2;
-      margin-bottom: 24px;
-      color: #0f172a;
     }
 
-    .content-section h3 {
-      font-size: 1.3rem;
-      margin-top: 34px;
-      margin-bottom: 12px;
-      color: #0f172a;
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 22px;
+      margin-bottom: 28px;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 10px;
+      font-weight: 700;
+    }
+
+    input {
+      width: 100%;
+      padding: 18px;
+      border-radius: 14px;
+      border: 1px solid var(--border);
+      font-size: 1.1rem;
+      box-sizing: border-box;
+    }
+
+    button {
+      background: #0f766e;
+      color: white;
+      border: none;
+      padding: 16px 28px;
+      border-radius: 14px;
+      font-size: 1rem;
+      font-weight: 700;
+      cursor: pointer;
+      margin-top: 10px;
+      display: inline-block;
+    }
+
+    button:hover {
+      opacity: 0.92;
+    }
+
+    .result {
+      margin-top: 40px;
+      border: 1px solid var(--border);
+      border-radius: 24px;
+      padding: 28px;
+      display: none;
+      background: #f8fafc;
+    }
+
+    .score {
+      font-size: 3rem;
+      font-weight: 800;
+      margin-bottom: 16px;
+      line-height: 1.05;
+    }
+
+    .bar {
+      width: 100%;
+      height: 16px;
+      background: #dbe3ee;
+      border-radius: 999px;
+      overflow: hidden;
+      margin-bottom: 24px;
+    }
+
+    .fill {
+      height: 100%;
+      width: 0%;
+      background: #16a34a;
+      border-radius: 999px;
+      transition: width 0.4s ease;
+    }
+
+    .metric {
+      margin-bottom: 14px;
+      font-size: 1.05rem;
+    }
+
+    .guidance {
+      margin-top: 26px;
+      font-size: 1.15rem;
+      line-height: 1.7;
+    }
+
+    .disclaimer {
+      margin-top: 30px;
+      font-size: 0.9rem;
+      color: var(--muted);
+    }
+
+    .helper-link {
+      margin-top: 10px;
+      font-size: 0.9rem;
+    }
+
+    .helper-link a {
+      color: var(--primary);
+      font-weight: 600;
     }
 
     .content-section p,
     .content-section li {
-      color: #334155;
-      line-height: 1.9;
-      font-size: 1.06rem;
-      margin-bottom: 22px;
-    }
-
-    .callout {
-      background: #f8fafc;
-      border: 1px solid #dbe4ee;
-      border-radius: 22px;
-      padding: 26px;
-      margin-top: 32px;
-    }
-
-    .callout p {
-      margin: 0;
-      font-size: 1.08rem;
-    }
-
-    .link-grid,
-    .info-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-      gap: 20px;
-      margin-top: 28px;
-    }
-
-    .link-card,
-    .info-card {
-      display: block;
-      background: white;
-      border: 1px solid #dbe4ee;
-      border-radius: 18px;
-      padding: 22px;
-      text-decoration: none;
-      color: inherit;
-      transition: transform 0.15s ease;
-    }
-
-    .link-card:hover {
-      transform: translateY(-2px);
-    }
-
-    .link-card strong,
-    .info-card h3 {
-      display: block;
-      margin-bottom: 10px;
-      color: #0f172a;
-      line-height: 1.3;
-    }
-
-    .link-card span,
-    .info-card p {
-      color: #334155;
-      line-height: 1.7;
-      font-size: 0.96rem;
-      margin: 0;
+      line-height: 1.8;
     }
   </style>
 
-  <main class="container">
-    <div class="eyebrow">Housing Affordability Guide</div>
+  <div class="container">
+    <CalculatorPageShell
+      eyebrow="Home Affordability Calculator"
+      title="How Much House Can I Afford?"
+      description="Estimate a realistic home budget by testing mortgage payment, taxes, insurance, HOA fees, debt, savings, down payment, closing costs, repairs, and monthly breathing room."
+    >
+      <div class="card">
+        <h2>House Affordability Pressure Verdict</h2>
 
-    <h1>How Much House Can I Afford?</h1>
+        <div class="grid">
+          <div>
+            <label for="grossIncome">Annual Household Income</label>
+            <input id="grossIncome" type="number" placeholder="140000" />
+          </div>
 
-    <p class="intro">
-      Buying a house involves more than qualifying for a mortgage. Property
-      taxes, insurance, repairs, utilities, maintenance, debt payments, and
-      emergency savings all affect whether a home truly fits your financial
-      life. This guide helps you estimate a realistic housing budget without
-      creating long-term financial pressure.
-    </p>
+          <div>
+            <label for="takeHomePay">Monthly Take-Home Pay</label>
+            <input id="takeHomePay" type="number" placeholder="9000" />
+          </div>
 
-    <section class="content-section">
-      <h2>Mortgage Approval Is Not the Same as Affordability</h2>
+          <div>
+            <label for="mortgage">Monthly Mortgage Payment</label>
+            <input id="mortgage" type="number" placeholder="2800" />
+          </div>
 
-      <p>
-        Many buyers begin with the mortgage amount a lender approves. But
-        approval does not automatically mean the payment will feel comfortable
-        once taxes, insurance, repairs, utilities, furnishing costs, and normal
-        life expenses are included.
-      </p>
+          <div>
+            <label for="taxInsuranceHoa">Taxes, Insurance, HOA</label>
+            <input id="taxInsuranceHoa" type="number" placeholder="900" />
+          </div>
 
-      <p>
-        A safer housing budget leaves enough room for savings, emergencies,
-        retirement contributions, transportation, food, and unexpected repairs
-        after the mortgage is paid each month.
-      </p>
+          <div>
+            <label for="utilitiesMaintenance">Utilities and Maintenance Reserve</label>
+            <input id="utilitiesMaintenance" type="number" placeholder="800" />
+          </div>
 
-      <ul>
-        <li>How much emergency savings will remain after closing?</li>
-        <li>Will the monthly payment create stress after moving in?</li>
-        <li>Can you comfortably absorb surprise repairs?</li>
-        <li>Will homeownership slow debt payoff or retirement savings?</li>
-        <li>Are utilities and taxes realistically included?</li>
-      </ul>
+          <div>
+            <label for="monthlyDebt">Monthly Debt Payments</label>
+            <input id="monthlyDebt" type="number" placeholder="750" />
 
-      <div class="callout">
+            <div class="helper-link">
+              <a href="/what-counts-as-debt">
+                Not sure what counts as debt? Read the debt guide
+              </a>
+            </div>
+          </div>
+
+          <div>
+            <label for="otherBills">Other Monthly Bills</label>
+            <input id="otherBills" type="number" placeholder="2200" />
+          </div>
+
+          <div>
+            <label for="savings">Total Savings Before Purchase</label>
+            <input id="savings" type="number" placeholder="70000" />
+          </div>
+
+          <div>
+            <label for="cashToClose">Down Payment and Closing Costs</label>
+            <input id="cashToClose" type="number" placeholder="45000" />
+          </div>
+
+          <div>
+            <label for="firstYearRepairs">First-Year Repair/Furnishing Buffer</label>
+            <input id="firstYearRepairs" type="number" placeholder="8000" />
+          </div>
+        </div>
+
+        <button id="houseButton" type="button">
+          Get House Affordability Verdict
+        </button>
+
+        <div class="result" id="result">
+          <div class="score" id="score"></div>
+
+          <div class="bar">
+            <div class="fill" id="barFill"></div>
+          </div>
+
+          <div class="metric" id="housingRatio"></div>
+          <div class="metric" id="takeHomeRatio"></div>
+          <div class="metric" id="leftoverCash"></div>
+          <div class="metric" id="recommendedPayment"></div>
+          <div class="metric" id="savingsCushion"></div>
+          <div class="metric" id="cashToCloseImpact"></div>
+          <div class="metric" id="debtPressure"></div>
+
+          <div class="guidance" id="guidance"></div>
+
+          <div class="disclaimer">
+            This is a general educational estimate, not financial advice or mortgage approval.
+          </div>
+        </div>
+      </div>
+
+      <div class="content-section">
+        <h2>Mortgage Approval Is Not the Same as Affordability</h2>
+
         <p>
-          A house should improve long-term stability — not create constant
-          financial pressure after move-in day.
+          The mortgage amount a lender approves is only one version of the
+          answer. Real affordability depends on what the payment does to your
+          monthly life after taxes, insurance, utilities, maintenance, repairs,
+          debt payments, groceries, transportation, savings, and normal surprises
+          are included.
+        </p>
+
+        <p>
+          A home can be technically approvable and still feel too expensive
+          after move-in. That is why this calculator looks beyond the mortgage
+          payment and estimates the pressure created by the full housing cost.
+        </p>
+
+        <p>
+          A safer home budget leaves enough cash after the monthly payment to
+          keep saving, handle repairs, avoid credit card reliance, and maintain
+          a real emergency fund after closing.
         </p>
       </div>
-    </section>
 
-    <section class="content-section">
-      <h2>The Real Cost of Homeownership</h2>
+      <div class="content-section">
+        <h2>The Real Cost of Owning a House</h2>
 
-      <p>
-        The mortgage payment is only one part of the equation. Many homeowners
-        underestimate how quickly total housing costs rise once taxes,
-        insurance, maintenance, furnishing, and repairs begin stacking together.
-      </p>
+        <p>
+          Homeownership adds costs that renters often do not face directly.
+          Property taxes, homeowners insurance, HOA fees, larger utilities,
+          appliance replacement, roof repairs, HVAC issues, plumbing problems,
+          lawn care, furnishing, and maintenance can all change the real monthly
+          number.
+        </p>
 
-      <div class="info-grid">
-        <div class="info-card">
-          <h3>Property Taxes and Insurance</h3>
-
-          <p>
-            Taxes and homeowners insurance can significantly increase monthly
-            housing costs beyond the mortgage itself.
-          </p>
-        </div>
-
-        <div class="info-card">
-          <h3>Maintenance and Repairs</h3>
-
-          <p>
-            Roofs, HVAC systems, appliances, plumbing, landscaping, and surprise
-            repairs eventually require money and planning.
-          </p>
-        </div>
-
-        <div class="info-card">
-          <h3>Utilities and Furnishing</h3>
-
-          <p>
-            Larger homes often create higher utility bills and furnishing costs
-            than buyers initially expect.
-          </p>
-        </div>
-
-        <div class="info-card">
-          <h3>HOA and Long-Term Costs</h3>
-
-          <p>
-            HOA fees, future renovations, property upkeep, and rising taxes can
-            change affordability over time.
-          </p>
-        </div>
+        <p>
+          The strongest home-buying decision includes a repair buffer from the
+          beginning. A mortgage that looks manageable without maintenance may
+          become stressful when the first big repair arrives.
+        </p>
       </div>
-    </section>
 
-    <section class="content-section">
-      <h2>When a More Expensive Home Can Make Sense</h2>
+      <WhenSpendingMakesSense
+        title="When Buying This Much House Makes Sense"
+        items={[
+          "The full housing cost still leaves room for savings, retirement contributions, groceries, transportation, insurance, and normal bills.",
+          "You keep a real emergency fund after the down payment, closing costs, moving costs, and first-year repair buffer.",
+          "Debt payments are low enough that the mortgage does not crowd out other obligations.",
+          "Your income is stable and you are not relying on uncertain bonuses, overtime, or future raises to make the payment work.",
+          "The home fits a long-term need such as family stability, school access, work location, space, safety, or predictable housing costs.",
+        ]}
+      />
 
-      <p>
-        A larger housing budget can be reasonable when income is stable,
-        emergency savings remain strong after closing, and the payment still
-        leaves enough room for long-term financial flexibility.
-      </p>
+      <div class="content-section">
+        <h2>When You Should Buy Less House</h2>
 
-      <p>
-        A more expensive house may make sense if:
-      </p>
+        <p>
+          Buying less house may be smarter if the payment would leave little
+          monthly flexibility, drain savings at closing, delay urgent debt
+          payoff, or make repairs feel scary. A smaller mortgage can still
+          deliver homeownership while preserving the ability to handle life.
+        </p>
 
-      <ul>
-        <li>You still maintain strong emergency savings after purchase</li>
-        <li>Your monthly payment remains manageable after taxes and insurance</li>
-        <li>You are not relying heavily on overtime or future raises</li>
-        <li>Your debt payments stay under control</li>
-        <li>The home fits long-term family or lifestyle goals</li>
-      </ul>
-    </section>
-
-    <section class="content-section">
-      <h2>When You Should Wait or Buy Less House</h2>
-
-      <p>
-        Waiting may be smarter if the purchase would drain emergency savings,
-        stretch monthly cash flow, delay debt payoff, or create ongoing stress
-        around repairs and normal bills.
-      </p>
-
-      <p>
-        A smaller home, lower property taxes, cheaper market, or larger down
-        payment can significantly reduce long-term pressure while still allowing
-        homeownership.
-      </p>
-    </section>
-
-    <section class="content-section">
-      <h2>Housing and Rent Affordability Tools</h2>
-
-      <div class="link-grid">
-        <a class="link-card" href="/how-much-rent-can-i-afford">
-          <strong>How Much Rent Can I Afford?</strong>
-
-          <span>
-            Learn how income, debt, utilities, transportation, and emergency
-            savings affect safe rent levels.
-          </span>
-        </a>
-
-        <a class="link-card" href="/should-i-spend-2000-on-rent">
-          <strong>$2,000 Rent Calculator</strong>
-
-          <span>
-            Evaluate whether a $2,000 monthly rent payment fits your current
-            budget and flexibility.
-          </span>
-        </a>
-
-        <a class="link-card" href="/should-i-spend-2500-on-rent">
-          <strong>$2,500 Rent Calculator</strong>
-
-          <span>
-            See whether a higher monthly housing payment creates pressure on
-            savings and debt payoff.
-          </span>
-        </a>
-
-        <a class="link-card" href="/should-i-spend-3000-on-rent">
-          <strong>$3,000 Rent Calculator</strong>
-
-          <span>
-            Estimate whether a luxury-level rent payment fits your financial
-            picture realistically.
-          </span>
-        </a>
-
-        <a class="link-card" href="/should-i-spend-40-percent-income-on-rent">
-          <strong>40% Income on Rent Calculator</strong>
-
-          <span>
-            Measure whether a 40% housing ratio leaves enough room for normal
-            expenses and savings.
-          </span>
-        </a>
-
-        <a class="link-card" href="/should-i-spend-50-percent-income-on-rent">
-          <strong>50% Income on Rent Calculator</strong>
-
-          <span>
-            Evaluate whether spending half your income on housing creates
-            long-term financial risk.
-          </span>
-        </a>
+        <p>
+          The warning sign is a purchase that only works if nothing goes wrong.
+          Houses eventually need money. The affordability question should include
+          the first bad month, not just the first good one.
+        </p>
       </div>
-    </section>
 
-    <section class="content-section">
-      <h2>Emergency Savings Matter More Than Most Buyers Expect</h2>
+      <KeyCostCategories
+        items={[
+          {
+            title: "Principal and interest",
+            description:
+              "The base mortgage payment is the largest visible cost, but it is only one part of the full homeownership budget.",
+          },
+          {
+            title: "Taxes, insurance, and HOA fees",
+            description:
+              "Property taxes, homeowners insurance, mortgage insurance, and HOA dues can significantly raise the monthly housing payment.",
+          },
+          {
+            title: "Utilities, maintenance, and repairs",
+            description:
+              "Larger utility bills, lawn care, appliances, HVAC, plumbing, roofing, and surprise repairs should be treated as real housing costs.",
+          },
+          {
+            title: "Cash needed at purchase",
+            description:
+              "Down payment, closing costs, moving costs, furniture, inspections, immediate repairs, and setup expenses can weaken savings quickly.",
+          },
+        ]}
+      />
 
-      <p>
-        One of the biggest homeownership mistakes is using nearly all available
-        cash on the down payment and closing costs. Houses eventually create
-        surprise expenses, and strong emergency savings help prevent normal
-        repairs from turning into debt problems.
-      </p>
+      <ReduceCostTips
+        items={[
+          "Compare the full monthly payment, not just principal and interest.",
+          "Keep emergency savings after the down payment and closing costs.",
+          "Budget a monthly maintenance reserve before deciding the house is affordable.",
+          "Avoid using every available dollar to maximize the purchase price.",
+          "Get realistic insurance, tax, HOA, and utility estimates before offering.",
+          "Consider a smaller house, different neighborhood, larger down payment, or longer savings window if the payment feels tight.",
+        ]}
+      />
 
-      <p>
-        Before buying, review your
-        <a href="/how-much-emergency-savings-should-i-have">
-          emergency savings plan
-        </a>
-        alongside the mortgage itself.
-      </p>
-    </section>
+      <FinancialRedFlags
+        items={[
+          "The monthly payment leaves little or no room for savings after normal bills.",
+          "Closing costs and the down payment would drain most of your emergency fund.",
+          "You would need credit cards for furniture, repairs, utilities, groceries, or routine expenses after moving in.",
+          "The purchase depends on uncertain bonuses, overtime, side income, or a raise that has not happened yet.",
+          "Debt payments already make the monthly budget tight.",
+          "You are ignoring taxes, insurance, HOA fees, utilities, maintenance, or first-year repair costs.",
+        ]}
+      />
 
-    <section class="content-section">
-      <h2>Simple Housing Rules That Actually Matter</h2>
+      <CalculatorAssumptions
+        items={[
+          "The calculator treats home affordability as a monthly cash-flow and savings-cushion decision, not a mortgage approval estimate.",
+          "Monthly housing cost includes mortgage payment, taxes, homeowners insurance, HOA fees, utilities, and maintenance reserve.",
+          "Cash to close includes down payment, closing costs, moving costs, and other purchase-related cash needs.",
+          "The calculator assumes repairs and furnishing can create meaningful first-year costs after purchase.",
+          "The calculator is designed for general education and does not replace personalized financial, legal, tax, or mortgage advice.",
+        ]}
+      />
 
-      <p>
-        Good housing decisions are usually built around monthly flexibility, not
-        maximum approval amounts. A payment that technically fits may still feel
-        stressful once maintenance, taxes, insurance, childcare, transportation,
-        and normal life expenses are added back into the budget.
-      </p>
+      <div class="content-section">
+        <h2>How Much House Fits a Comfortable Budget?</h2>
 
-      <p>
-        The strongest housing budgets protect emergency savings, reduce stress,
-        and still leave room for retirement contributions and future goals after
-        the mortgage is paid each month.
-      </p>
-    </section>
+        <p>
+          A comfortable house budget usually has two layers. The first layer is
+          the monthly payment: mortgage, taxes, insurance, HOA fees, utilities,
+          and maintenance. The second layer is cash after purchase: savings left
+          after down payment, closing costs, moving costs, and early repairs.
+        </p>
 
-    <FAQSection title="Housing Affordability FAQ" faqs={housingFaqs} />
-  </main>
+        <p>
+          Buyers get into trouble when they focus only on the first layer. The
+          house may look affordable monthly, but the purchase can still be risky
+          if it empties savings and leaves no money for repairs.
+        </p>
+      </div>
+
+      <div class="content-section">
+        <h2>Emergency Savings Matter More for Homeowners</h2>
+
+        <p>
+          Renting limits some repair exposure. Owning does not. A broken furnace,
+          roof leak, appliance failure, plumbing issue, or insurance deductible
+          can become your responsibility quickly.
+        </p>
+
+        <p>
+          Before buying, review your
+          <a href="/how-much-emergency-savings-should-i-have">
+            emergency savings plan
+          </a>
+          alongside the mortgage itself. The safer purchase leaves you with cash
+          after closing, not just keys.
+        </p>
+      </div>
+
+      <FAQSection
+        title="House Affordability FAQ"
+        faqs={[
+          {
+            question: "How much house can I realistically afford?",
+            answer:
+              "A realistic house budget is one where the full monthly payment still leaves room for savings, debt payments, utilities, maintenance, transportation, groceries, insurance, and normal life after closing.",
+          },
+          {
+            question: "Should I buy less house than the bank approves?",
+            answer:
+              "Often yes. Mortgage approval does not automatically mean the payment will feel comfortable once repairs, taxes, insurance, utilities, furniture, and daily expenses are included.",
+          },
+          {
+            question: "What should I include in a home affordability calculation?",
+            answer:
+              "Include mortgage principal and interest, property taxes, homeowners insurance, HOA fees, mortgage insurance, utilities, maintenance, repairs, debt payments, savings, closing costs, and moving costs.",
+          },
+          {
+            question: "How much savings should I have after buying a house?",
+            answer:
+              "Many buyers are safer with several months of core expenses remaining after closing, plus extra room for repairs, utilities, furniture, and surprise homeownership costs.",
+          },
+          {
+            question: "Can high income make a larger house payment safe?",
+            answer:
+              "Yes, but only if the full payment still leaves strong monthly cash flow and savings after debt, taxes, insurance, maintenance, and other obligations are included.",
+          },
+        ]}
+      />
+
+      <MethodologySection category="home affordability" updated="May 2026" />
+
+      <RelatedGuides
+        guides={[
+          {
+            title: "How Much Rent Can I Afford?",
+            href: "/how-much-rent-can-i-afford",
+            description:
+              "Compare rent affordability against income, take-home pay, debt, utilities, and emergency savings.",
+          },
+          {
+            title: "How Much Emergency Savings Should I Have?",
+            href: "/how-much-emergency-savings-should-i-have",
+            description:
+              "Estimate how much cushion to keep before taking on a large housing payment.",
+          },
+          {
+            title: "What Counts as Debt?",
+            href: "/what-counts-as-debt",
+            description:
+              "See which monthly obligations should be included when judging housing affordability.",
+          },
+        ]}
+      />
+
+      <RelatedCalculators
+        calculators={[
+          {
+            category: "Rent",
+            title: "Should I Spend 30% of My Income on Rent?",
+            href: "/should-i-spend-30-percent-income-on-rent",
+          },
+          {
+            category: "Rent",
+            title: "Should I Spend 40% of My Income on Rent?",
+            href: "/should-i-spend-40-percent-income-on-rent",
+          },
+          {
+            category: "Rent",
+            title: "Should I Spend 50% of My Income on Rent?",
+            href: "/should-i-spend-50-percent-income-on-rent",
+          },
+          {
+            category: "Rent",
+            title: "Should I Spend $3,000 on Rent?",
+            href: "/should-i-spend-3000-on-rent",
+          },
+          {
+            category: "Rent",
+            title: "Should I Spend $4,000 on Rent?",
+            href: "/should-i-spend-4000-on-rent",
+          },
+        ]}
+      />
+    </CalculatorPageShell>
+  </div>
+
+  <script is:inline>
+    const clamp = (value, min, max) => Math.min(Math.max(value, min), max);
+
+    const getNumber = (id) => {
+      const rawValue = document.getElementById(id)?.value;
+      const value = Number(rawValue);
+      return Number.isFinite(value) && value >= 0 ? value : 0;
+    };
+
+    const formatMoney = (value) => {
+      return Math.round(value).toLocaleString("en-US", {
+        style: "currency",
+        currency: "USD",
+        maximumFractionDigits: 0,
+      });
+    };
+
+    function getPressureLevel(score) {
+      if (score <= 30) {
+        return {
+          label: "Low Pressure",
+          stress: "Low pressure",
+          color: "#16a34a",
+          action:
+            "This home purchase appears manageable, but verify taxes, insurance, repairs, closing costs, and post-closing savings before moving forward.",
+        };
+      }
+
+      if (score <= 60) {
+        return {
+          label: "Moderate Pressure",
+          stress: "Moderate pressure",
+          color: "#ca8a04",
+          action:
+            "This home may work, but compare a lower payment and protect your post-closing emergency fund.",
+        };
+      }
+
+      return {
+        label: "High Pressure",
+        stress: "High pressure",
+        color: "#dc2626",
+        action:
+          "This home could create serious strain. Consider a cheaper home, larger down payment, lower debt, stronger savings, or more income first.",
+      };
+    }
+
+    function calculateHouse() {
+      const grossIncome = getNumber("grossIncome");
+      const takeHomePay = getNumber("takeHomePay");
+      const mortgage = getNumber("mortgage");
+      const taxInsuranceHoa = getNumber("taxInsuranceHoa");
+      const utilitiesMaintenance = getNumber("utilitiesMaintenance");
+      const monthlyDebt = getNumber("monthlyDebt");
+      const otherBills = getNumber("otherBills");
+      const savings = getNumber("savings");
+      const cashToClose = getNumber("cashToClose");
+      const firstYearRepairs = getNumber("firstYearRepairs");
+
+      const result = document.getElementById("result");
+      const scoreEl = document.getElementById("score");
+      const barFill = document.getElementById("barFill");
+      const housingRatioEl = document.getElementById("housingRatio");
+      const takeHomeRatioEl = document.getElementById("takeHomeRatio");
+      const leftoverCashEl = document.getElementById("leftoverCash");
+      const recommendedPaymentEl = document.getElementById("recommendedPayment");
+      const savingsCushionEl = document.getElementById("savingsCushion");
+      const cashToCloseImpactEl = document.getElementById("cashToCloseImpact");
+      const debtPressureEl = document.getElementById("debtPressure");
+      const guidanceEl = document.getElementById("guidance");
+
+      result.style.display = "block";
+
+      if (grossIncome <= 0 || takeHomePay <= 0 || mortgage <= 0) {
+        scoreEl.textContent = "Add your numbers first";
+        barFill.style.width = "0%";
+        barFill.style.background = "#16a34a";
+        housingRatioEl.innerHTML = "";
+        takeHomeRatioEl.innerHTML = "";
+        leftoverCashEl.innerHTML = "";
+        recommendedPaymentEl.innerHTML = "";
+        savingsCushionEl.innerHTML = "";
+        cashToCloseImpactEl.innerHTML = "";
+        debtPressureEl.innerHTML = "";
+        guidanceEl.textContent =
+          "Enter positive numbers for annual income, monthly take-home pay, and mortgage payment so the calculator can estimate home affordability pressure.";
+        return;
+      }
+
+      const monthlyGrossIncome = grossIncome / 12;
+      const totalHousingCost = mortgage + taxInsuranceHoa + utilitiesMaintenance;
+      const totalCommittedMonthly = totalHousingCost + monthlyDebt + otherBills;
+      const leftoverAfterBills = takeHomePay - totalCommittedMonthly;
+      const housingGrossRatio = (totalHousingCost / monthlyGrossIncome) * 100;
+      const housingTakeHomeRatio = (totalHousingCost / takeHomePay) * 100;
+      const debtTakeHomeRatio = (monthlyDebt / takeHomePay) * 100;
+      const leftoverRatio = (leftoverAfterBills / takeHomePay) * 100;
+      const totalUpfrontCash = cashToClose + firstYearRepairs;
+      const postCloseSavings = savings - totalUpfrontCash;
+      const emergencyMonths =
+        totalCommittedMonthly > 0 ? savings / totalCommittedMonthly : 0;
+      const postCloseSavingsMonths =
+        totalCommittedMonthly > 0 ? postCloseSavings / totalCommittedMonthly : 0;
+      const cashToCloseImpact =
+        savings > 0 ? (totalUpfrontCash / savings) * 100 : totalUpfrontCash > 0 ? 100 : 0;
+
+      const conservativePayment = Math.max(0, Math.min(monthlyGrossIncome * 0.25, takeHomePay * 0.28));
+      const balancedPayment = Math.max(0, Math.min(monthlyGrossIncome * 0.3, takeHomePay * 0.35));
+      const stretchPayment = Math.max(0, Math.min(monthlyGrossIncome * 0.4, takeHomePay * 0.45));
+
+      let pressureScore = 0;
+
+      pressureScore += clamp((housingGrossRatio - 22) * 1.05, 0, 28);
+      pressureScore += clamp((housingTakeHomeRatio - 28) * 1.15, 0, 34);
+      pressureScore += clamp(debtTakeHomeRatio * 0.55, 0, 16);
+
+      if (leftoverAfterBills < 0) {
+        pressureScore += 30;
+      } else if (leftoverRatio < 8) {
+        pressureScore += 22;
+      } else if (leftoverRatio < 15) {
+        pressureScore += 14;
+      } else if (leftoverRatio >= 35) {
+        pressureScore -= 8;
+      } else if (leftoverRatio >= 25) {
+        pressureScore -= 4;
+      }
+
+      if (savings <= 0 && totalUpfrontCash > 0) {
+        pressureScore += 22;
+      } else if (postCloseSavings < 0) {
+        pressureScore += 24;
+      } else if (postCloseSavingsMonths < 1 && grossIncome < 150000) {
+        pressureScore += 18;
+      } else if (postCloseSavingsMonths < 3 && grossIncome < 220000) {
+        pressureScore += 12;
+      } else if (postCloseSavingsMonths >= 6) {
+        pressureScore -= 9;
+      }
+
+      if (cashToCloseImpact >= 85) pressureScore += 14;
+      else if (cashToCloseImpact >= 65) pressureScore += 10;
+      else if (cashToCloseImpact >= 45) pressureScore += 6;
+      else if (cashToCloseImpact <= 15 && savings > 0) pressureScore -= 4;
+
+      if (housingGrossRatio >= 60) pressureScore += 18;
+      else if (housingGrossRatio >= 50) pressureScore += 12;
+      else if (housingGrossRatio >= 40) pressureScore += 7;
+
+      if (housingTakeHomeRatio >= 65) pressureScore += 20;
+      else if (housingTakeHomeRatio >= 55) pressureScore += 14;
+      else if (housingTakeHomeRatio >= 45) pressureScore += 8;
+
+      if (
+        housingGrossRatio < 25 &&
+        housingTakeHomeRatio < 32 &&
+        leftoverRatio >= 30 &&
+        postCloseSavingsMonths >= 4 &&
+        debtTakeHomeRatio < 10
+      ) {
+        pressureScore -= 12;
+      }
+
+      if (
+        housingGrossRatio < 14 &&
+        housingTakeHomeRatio < 18 &&
+        leftoverRatio >= 50 &&
+        postCloseSavingsMonths >= 8 &&
+        debtTakeHomeRatio < 5
+      ) {
+        pressureScore = Math.min(pressureScore, 10);
+      }
+
+      if (
+        housingGrossRatio < 7 &&
+        housingTakeHomeRatio < 9 &&
+        leftoverRatio >= 65 &&
+        postCloseSavingsMonths >= 12 &&
+        debtTakeHomeRatio < 3
+      ) {
+        pressureScore = 0;
+      }
+
+      if (
+  housingGrossRatio < 1 &&
+  housingTakeHomeRatio < 2 &&
+  leftoverRatio >= 90 &&
+  debtTakeHomeRatio < 3
+) {
+  pressureScore = 0;
+}
+
+      pressureScore = clamp(Math.round(pressureScore), 0, 100);
+
+      const level = getPressureLevel(pressureScore);
+
+      let guidance = "";
+
+      if (pressureScore === 0) {
+        guidance =
+          `This home payment appears financially tiny relative to the numbers provided. Full housing would use about ${housingGrossRatio.toFixed(1)}% of gross income and ${housingTakeHomeRatio.toFixed(1)}% of take-home pay, leaving substantial flexibility after listed bills. The decision is mainly about location, home condition, opportunity cost, and long-term fit.`;
+      } else if (pressureScore <= 30) {
+        guidance =
+          `This home payment appears manageable based on the numbers provided. Full housing would use about ${housingGrossRatio.toFixed(1)}% of gross income and ${housingTakeHomeRatio.toFixed(1)}% of take-home pay, while leaving about ${formatMoney(leftoverAfterBills)} after listed housing, debt, and bill obligations.`;
+      } else if (pressureScore <= 60) {
+        guidance =
+          `This home purchase may work, but it deserves caution. Full housing would use about ${housingGrossRatio.toFixed(1)}% of gross income and ${housingTakeHomeRatio.toFixed(1)}% of take-home pay, so taxes, insurance, repairs, debt payments, cash to close, and post-closing savings should be checked carefully.`;
+      } else {
+        guidance =
+          `This home purchase could create significant financial pressure. Full housing would use about ${housingGrossRatio.toFixed(1)}% of gross income and ${housingTakeHomeRatio.toFixed(1)}% of take-home pay, which may leave too little flexibility after debt, bills, savings needs, repairs, and emergencies.`;
+      }
+
+      scoreEl.textContent = `${level.label} — ${pressureScore}/100`;
+      barFill.style.width = `${pressureScore}%`;
+      barFill.style.background = level.color;
+
+      housingRatioEl.innerHTML = `<strong>Housing-to-gross-income ratio:</strong> ${housingGrossRatio.toFixed(1)}%`;
+      takeHomeRatioEl.innerHTML = `<strong>Housing-to-take-home-pay ratio:</strong> ${housingTakeHomeRatio.toFixed(1)}%`;
+      leftoverCashEl.innerHTML = `<strong>Estimated leftover after listed bills:</strong> ${formatMoney(leftoverAfterBills)}`;
+      recommendedPaymentEl.innerHTML = `<strong>Estimated full-payment range:</strong> ${formatMoney(conservativePayment)} conservative / ${formatMoney(balancedPayment)} balanced / ${formatMoney(stretchPayment)} stretch`;
+      savingsCushionEl.innerHTML = `<strong>Emergency cushion:</strong> ${emergencyMonths.toFixed(1)} months before purchase / ${postCloseSavingsMonths.toFixed(1)} months after cash to close and repair buffer`;
+      cashToCloseImpactEl.innerHTML = `<strong>Cash-to-close and repair impact:</strong> ${cashToCloseImpact.toFixed(1)}% of savings`;
+      debtPressureEl.innerHTML = `<strong>Debt payment pressure:</strong> ${debtTakeHomeRatio.toFixed(1)}% of take-home pay`;
+      guidanceEl.textContent = `${guidance} Recommended next step: ${level.action}`;
+    }
+
+    document
+      .getElementById("houseButton")
+      .addEventListener("click", calculateHouse);
+  </script>
 </Layout>

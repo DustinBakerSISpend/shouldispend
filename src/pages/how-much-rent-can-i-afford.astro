@@ -1,482 +1,804 @@
 ---
 import Layout from "../layouts/Layout.astro";
+import CalculatorPageShell from "../components/CalculatorPageShell.astro";
+import FAQSection from "../components/FAQSection.astro";
+import RelatedCalculators from "../components/RelatedCalculators.astro";
+import RelatedGuides from "../components/RelatedGuides.astro";
+import MethodologySection from "../components/MethodologySection.astro";
+import FinancialRedFlags from "../components/FinancialRedFlags.astro";
+import CalculatorAssumptions from "../components/CalculatorAssumptions.astro";
+import KeyCostCategories from "../components/KeyCostCategories.astro";
+import ReduceCostTips from "../components/ReduceCostTips.astro";
+import WhenSpendingMakesSense from "../components/WhenSpendingMakesSense.astro";
+
+const pageUrl = "https://shouldispend.com/how-much-rent-can-i-afford";
+
+const faqSchema = {
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  mainEntity: [
+    {
+      "@type": "Question",
+      name: "How much rent can I afford?",
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: "A common starting point is keeping rent near 30% of gross income, but true affordability depends on take-home pay, debt, utilities, emergency savings, transportation, and other monthly obligations.",
+      },
+    },
+    {
+      "@type": "Question",
+      name: "Is the 30% rent rule always safe?",
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: "No. The 30% rent rule is a useful guideline, but it does not account for debt, savings, childcare, medical costs, car payments, insurance, or local cost of living.",
+      },
+    },
+    {
+      "@type": "Question",
+      name: "Should rent affordability be based on gross income or take-home pay?",
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: "Take-home pay is usually more realistic because taxes, insurance, retirement contributions, and payroll deductions reduce the money available for rent and other expenses.",
+      },
+    },
+    {
+      "@type": "Question",
+      name: "Should utilities be included when calculating rent affordability?",
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: "Yes. Utilities, internet, parking, renter’s insurance, pet fees, laundry, storage, and commuting changes should be included when estimating the true cost of housing.",
+      },
+    },
+    {
+      "@type": "Question",
+      name: "Is spending 50% or 60% of income on rent too much?",
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: "For most households, spending 50% or 60% of income on rent creates high financial pressure unless income is very high, debt is low, savings are strong, and other monthly costs are unusually light.",
+      },
+    },
+  ],
+};
+
+const webAppSchema = {
+  "@context": "https://schema.org",
+  "@type": "WebApplication",
+  name: "How Much Rent Can I Afford Calculator",
+  url: pageUrl,
+  applicationCategory: "FinanceApplication",
+  operatingSystem: "All",
+  description:
+    "A rent affordability calculator that estimates housing pressure using income, take-home pay, rent, utilities, debt, monthly bills, and emergency savings.",
+};
+
+const breadcrumbSchema = {
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  itemListElement: [
+    {
+      "@type": "ListItem",
+      position: 1,
+      name: "Home",
+      item: "https://shouldispend.com/",
+    },
+    {
+      "@type": "ListItem",
+      position: 2,
+      name: "Rent Calculators",
+      item: "https://shouldispend.com/rent-calculators",
+    },
+    {
+      "@type": "ListItem",
+      position: 3,
+      name: "How Much Rent Can I Afford?",
+      item: pageUrl,
+    },
+  ],
+};
 ---
 
 <Layout
-  title="How Much Rent Can I Afford? | ShouldISpend"
-  description="Learn how much rent you can realistically afford using income, take-home pay, debt, emergency savings, utilities, monthly bills, and overall financial pressure."
+  title="How Much Rent Can I Afford? Rent Calculator | ShouldISpend"
+  description="Use this rent affordability calculator to estimate how much rent you can afford based on income, take-home pay, debt, utilities, bills, savings, and housing pressure."
 >
+  <script type="application/ld+json" set:html={JSON.stringify(faqSchema)} />
+  <script type="application/ld+json" set:html={JSON.stringify(webAppSchema)} />
+  <script type="application/ld+json" set:html={JSON.stringify(breadcrumbSchema)} />
+
   <style>
     .container {
-      max-width: 900px;
+      max-width: 950px;
       margin: 0 auto;
-      padding: 80px 24px;
+      padding: 60px 20px;
     }
 
-    .eyebrow {
-      color: var(--accent);
-      text-transform: uppercase;
-      letter-spacing: 2px;
-      font-size: 0.8rem;
-      font-weight: 700;
-      margin-bottom: 16px;
-    }
-
-    h1 {
-      font-size: clamp(2.6rem, 7vw, 4.5rem);
-      line-height: 1;
-      margin-bottom: 24px;
-      max-width: 850px;
-    }
-
-    .intro {
+    .content-section {
       max-width: 760px;
-      color: var(--muted);
-      font-size: 1.15rem;
-      line-height: 1.8;
-      margin-bottom: 48px;
+      margin: 72px auto 0;
     }
 
-    section {
-      margin-top: 64px;
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 28px;
+      padding: 34px;
     }
 
     h2 {
+      margin-top: 0;
       font-size: 2rem;
-      margin-bottom: 18px;
-      line-height: 1.2;
     }
 
-    h3 {
-      font-size: 1.25rem;
-      margin-top: 30px;
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 22px;
+      margin-bottom: 28px;
+    }
+
+    label {
+      display: block;
       margin-bottom: 10px;
-    }
-
-    p,
-    li {
-      color: var(--muted);
-      line-height: 1.85;
-      margin-bottom: 18px;
-      font-size: 1.05rem;
-    }
-
-    ul {
-      padding-left: 24px;
-    }
-
-    a {
-      color: var(--teal);
       font-weight: 700;
     }
 
-    .callout {
+    input {
+      width: 100%;
+      padding: 18px;
+      border-radius: 14px;
       border: 1px solid var(--border);
-      background: var(--card);
+      font-size: 1.1rem;
+      box-sizing: border-box;
+    }
+
+    button {
+      background: #0f766e;
+      color: white;
+      border: none;
+      padding: 16px 28px;
+      border-radius: 14px;
+      font-size: 1rem;
+      font-weight: 700;
+      cursor: pointer;
+      margin-top: 10px;
+      display: inline-block;
+    }
+
+    button:hover {
+      opacity: 0.92;
+    }
+
+    .result {
+      margin-top: 40px;
+      border: 1px solid var(--border);
       border-radius: 24px;
       padding: 28px;
-      margin: 40px 0;
+      display: none;
+      background: #f8fafc;
     }
 
-    .callout strong {
-      color: var(--text);
+    .score {
+      font-size: 3rem;
+      font-weight: 800;
+      margin-bottom: 16px;
+      line-height: 1.05;
     }
 
-    .link-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-      gap: 16px;
-      margin-top: 24px;
+    .bar {
+      width: 100%;
+      height: 16px;
+      background: #dbe3ee;
+      border-radius: 999px;
+      overflow: hidden;
+      margin-bottom: 24px;
     }
 
-    .link-card {
-      display: block;
-      border: 1px solid var(--border);
-      background: var(--card);
-      border-radius: 18px;
-      padding: 18px;
-      text-decoration: none;
-      color: inherit;
-      transition: transform 0.15s ease;
+    .fill {
+      height: 100%;
+      width: 0%;
+      background: #16a34a;
+      border-radius: 999px;
+      transition: width 0.4s ease;
     }
 
-    .link-card:hover {
-      transform: translateY(-2px);
+    .metric {
+      margin-bottom: 14px;
+      font-size: 1.05rem;
     }
 
-    .link-card strong {
-      display: block;
-      margin-bottom: 8px;
-      color: var(--text);
+    .guidance {
+      margin-top: 26px;
+      font-size: 1.15rem;
+      line-height: 1.7;
     }
 
-    .link-card span {
+    .disclaimer {
+      margin-top: 30px;
+      font-size: 0.9rem;
       color: var(--muted);
-      line-height: 1.6;
-      font-size: 0.95rem;
+    }
+
+    .helper-link {
+      margin-top: 10px;
+      font-size: 0.9rem;
+    }
+
+    .helper-link a {
+      color: var(--primary);
+      font-weight: 600;
+    }
+
+    .content-section p,
+    .content-section li {
+      line-height: 1.8;
     }
   </style>
 
-  <main class="container">
-    <div class="eyebrow">Housing Budget Guide</div>
-
-    <h1>How Much Rent Can I Afford?</h1>
-
-    <p class="intro">
-      Affordable rent depends on more than income alone. Savings, debt,
-      emergency cushion, transportation costs, utilities, and long-term goals
-      all matter when deciding how much rent is realistically safe.
-    </p>
-
-    <div class="callout">
-      <p>
-        <strong>Quick check:</strong> rent is usually safer when it still leaves
-        room for bills, debt payments, savings, and a real
-        <a href="/how-much-emergency-savings-should-i-have">
-          emergency fund
-        </a>.
-      </p>
-    </div>
-
-    <section>
-      <h2>The 30% Rent Rule</h2>
-
-      <p>
-        A common guideline says rent should stay around 30% of gross monthly
-        income. That rule can be helpful as a starting point, but it does not
-        work perfectly for every household or every city.
-      </p>
-
-      <p>
-        Someone with low debt, stable income, strong savings, and no car payment
-        may comfortably handle higher rent than someone with student loans,
-        credit card balances, childcare costs, medical bills, or irregular
-        income.
-      </p>
-
-      <p>
-        Rent rules are most useful when they are treated as warning signs, not
-        absolute laws.
-      </p>
-    </section>
-
-    <section>
-      <h2>Why Take-Home Pay Matters More Than Gross Income</h2>
-
-      <p>
-        Gross income can make apartments look more affordable than they really
-        are. Taxes, insurance, retirement contributions, healthcare deductions,
-        and payroll withholdings all reduce how much money is actually available
-        each month.
-      </p>
-
-      <p>
-        That is why many renters feel “house poor” even when they technically
-        qualify for an apartment. The lease may fit gross income rules while
-        still leaving very little breathing room afterward.
-      </p>
-
-      <p>
-        In practice, take-home pay is often the more realistic number for
-        evaluating monthly housing pressure.
-      </p>
-    </section>
-
-    <section>
-      <h2>What Should Count as Housing Cost?</h2>
-
-      <p>
-        Rent is only the starting point. A realistic housing budget should
-        include the full monthly cost of living in that apartment or house.
-      </p>
-
-      <ul>
-        <li>Monthly rent</li>
-        <li>Utilities</li>
-        <li>Internet</li>
-        <li>Parking</li>
-        <li>Renter’s insurance</li>
-        <li>Laundry costs</li>
-        <li>Pet fees</li>
-        <li>Transportation costs tied to location</li>
-        <li>Higher grocery or commuting costs</li>
-        <li>Storage fees or building charges</li>
-      </ul>
-
-      <p>
-        Sometimes a “cheaper” apartment becomes more expensive after commute
-        costs, parking, or utility bills are added back in.
-      </p>
-    </section>
-
-    <section>
-      <h2>Debt Changes the Rent Answer</h2>
-
-      <p>
-        A rent payment that looks affordable before debt may feel very different
-        after debt payments are included. Credit cards, student loans, auto
-        loans, medical debt, personal loans, and other obligations all reduce
-        how much rent is realistically safe.
-      </p>
-
-      <p>
-        If you are unsure what to include, read the
-        <a href="/what-counts-as-debt">debt guide</a> before using a rent
-        calculator.
-      </p>
-
-      <p>
-        High debt loads make flexibility more important because emergencies,
-        job changes, repairs, or medical expenses become harder to absorb.
-      </p>
-    </section>
-
-    <section>
-      <h2>What 30%, 40%, and 50% Rent Really Mean</h2>
-
-      <h3>Around 30% of Income</h3>
-
-      <p>
-        Around 30% is usually considered a balanced range because it often
-        leaves room for savings, transportation, groceries, debt payoff, and
-        emergency expenses.
-      </p>
-
-      <h3>Around 40% of Income</h3>
-
-      <p>
-        Around 40% can work in expensive cities or high-income careers, but it
-        usually requires stronger budgeting discipline and fewer financial
-        surprises.
-      </p>
-
-      <h3>Around 50% of Income</h3>
-
-      <p>
-        Spending half of income on rent is usually risky unless the rest of your
-        expenses are unusually low. At that level, a single emergency or income
-        disruption can create serious pressure quickly.
-      </p>
-    </section>
-
-    <section>
-      <h2>When Higher Rent Can Actually Make Sense</h2>
-
-      <p>
-        Higher rent is not automatically a mistake. Sometimes paying more for
-        housing improves daily life enough to justify the tradeoff.
-      </p>
-
-      <p>
-        A more expensive apartment may make sense if it:
-      </p>
-
-      <ul>
-        <li>Shortens a difficult commute</li>
-        <li>Eliminates the need for a second car</li>
-        <li>Improves safety or stability</li>
-        <li>Supports work or school opportunities</li>
-        <li>Reduces transportation costs</li>
-        <li>Improves mental health or family logistics</li>
-      </ul>
-
-      <p>
-        The key question is whether the improvement still leaves enough room for
-        savings and normal financial flexibility afterward.
-      </p>
-    </section>
-
-    <section>
-      <h2>Signs Your Rent Is Creating Financial Pressure</h2>
-
-      <p>
-        Rent may be too high when it consistently prevents saving money, paying
-        down debt, building an emergency fund, or covering unexpected expenses
-        comfortably.
-      </p>
-
-      <p>
-        Housing costs become especially risky when they force you to rely on
-        credit cards for normal spending or leave no room for repairs, medical
-        bills, moving costs, childcare, or job disruption.
-      </p>
-
-      <p>
-        Rent is also one of the hardest expenses to change quickly. A tight rent
-        decision can affect your finances every month for an entire lease.
-      </p>
-    </section>
-
-    <section>
-      <h2>Emergency Savings Matter More Than Most Rent Calculators Admit</h2>
-
-      <p>
-        Many rent calculators only compare rent against income. That can miss
-        one of the biggest financial risks: what happens after an emergency.
-      </p>
-
-      <p>
-        A strong emergency cushion makes higher rent safer because unexpected
-        costs become easier to absorb. Weak savings make the same apartment much
-        riskier, even if the monthly payment technically fits.
-      </p>
-
-      <p>
-        Before stretching for higher rent, it is worth asking whether the
-        apartment still makes sense after a car repair, medical bill, job
-        change, or family emergency.
-      </p>
-    </section>
-
-    <section>
-      <h2>Rent Affordability FAQ</h2>
-
-      <h3>Is spending 30% of income on rent always safe?</h3>
-
-      <p>
-        Not always. The 30% rule does not account for debt, savings,
-        transportation, insurance, childcare, or local cost of living.
-      </p>
-
-      <h3>Is spending 50% of income on rent too much?</h3>
-
-      <p>
-        Usually, yes. Spending half of income on rent can leave very little room
-        for emergencies, savings, debt payoff, or flexibility.
-      </p>
-
-      <h3>Should I include utilities in rent affordability?</h3>
-
-      <p>
-        Yes. Utilities, internet, parking, renter’s insurance, transportation,
-        and other recurring costs should all be included.
-      </p>
-
-      <h3>Should I rent a cheaper place to save money?</h3>
-
-      <p>
-  Around 30% is usually considered a balanced range because it often
-  leaves room for savings, transportation,
-  <a href="/should-i-spend-this-much-on-groceries-per-month">
-    groceries
-  </a>,
-  <a href="/how-much-debt-is-too-much">
-    debt payoff
-  </a>,
-  and emergency expenses.
-</p>
-
-      <h3>Can high rent ever be worth it?</h3>
-
-      <p>
-        Sometimes. Higher rent can make sense if it meaningfully improves
-        commute time, safety, transportation costs, or work stability without
-        damaging your financial cushion.
-      </p>
-    </section>
-
-    <section>
-      <h2>Related Rent Tools</h2>
-
-      <div class="link-grid">
-        <a class="link-card" href="/rent-calculators">
-          <strong>Rent Calculators</strong>
-
-          <span>
-            Browse rent affordability tools and housing budget calculators.
-          </span>
-        </a>
-
-        <a
-          class="link-card"
-          href="/should-i-spend-2000-on-rent"
-        >
-          <strong>$2,000 Rent Calculator</strong>
-
-          <span>
-            Estimate whether a $2,000 monthly rent payment fits your finances.
-          </span>
-        </a>
-
-        <a
-          class="link-card"
-          href="/should-i-spend-2500-on-rent"
-        >
-          <strong>$2,500 Rent Calculator</strong>
-
-          <span>
-            Check whether a mid-range rent payment fits your income and savings.
-          </span>
-        </a>
-
-        <a
-          class="link-card"
-          href="/should-i-spend-3000-on-rent"
-        >
-          <strong>$3,000 Rent Calculator</strong>
-
-          <span>
-            Evaluate whether a higher monthly rent payment creates financial pressure.
-          </span>
-        </a>
-
-        <a
-          class="link-card"
-          href="/should-i-spend-40-percent-of-income-on-rent"
-        >
-          <strong>40% Rent Rule Calculator</strong>
-
-          <span>
-            Understand the risks and tradeoffs of spending 40% of income on rent.
-          </span>
-        </a>
-
-        <a
-          class="link-card"
-          href="/should-i-spend-50-percent-of-income-on-rent"
-        >
-          <strong>50% Rent Rule Calculator</strong>
-
-          <span>
-            Estimate the financial pressure created by very high housing costs.
-          </span>
-        </a>
-
-<a
-  class="link-card"
-  href="/should-i-spend-this-much-on-groceries-per-month"
->
-  <strong>Monthly Grocery Spending Calculator</strong>
-
-  <span>
-    Compare rent costs against groceries, debt payments,
-    emergency savings, and monthly flexibility.
-  </span>
-</a>
-
-<a
-  class="link-card"
-  href="/should-i-spend-10000-on-a-funeral"
->
-  <strong>$10,000 Funeral Calculator</strong>
-
-  <span>
-    Evaluate how unexpected major expenses interact with rent,
-    savings, debt pressure, and recurring monthly obligations.
-  </span>
-</a>
-
-        <a
-          class="link-card"
-          href="/how-much-emergency-savings-should-i-have"
-        >
-          <strong>Emergency Savings Guide</strong>
-
-          <span>
-            Learn how much cushion to keep before committing to large monthly bills.
-          </span>
-        </a>
+  <div class="container">
+    <CalculatorPageShell
+      eyebrow="Rent Affordability Calculator"
+      title="How Much Rent Can I Afford?"
+      description="Estimate how much rent fits your real monthly life by comparing income, take-home pay, rent, utilities, debt, bills, emergency savings, and leftover breathing room."
+    >
+      <div class="card">
+        <h2>Rent Affordability Pressure Verdict</h2>
+
+        <div class="grid">
+          <div>
+            <label for="grossIncome">Annual Household Income</label>
+            <input id="grossIncome" type="number" placeholder="85000" />
+          </div>
+
+          <div>
+            <label for="takeHomePay">Monthly Take-Home Pay</label>
+            <input id="takeHomePay" type="number" placeholder="5600" />
+          </div>
+
+          <div>
+            <label for="rent">Monthly Rent</label>
+            <input id="rent" type="number" placeholder="2000" />
+          </div>
+
+          <div>
+            <label for="utilities">Utilities, Internet, Parking, Fees</label>
+            <input id="utilities" type="number" placeholder="350" />
+          </div>
+
+          <div>
+            <label for="monthlyDebt">Monthly Debt Payments</label>
+            <input id="monthlyDebt" type="number" placeholder="650" />
+
+            <div class="helper-link">
+              <a href="/what-counts-as-debt">
+                Not sure what counts as debt? Read the debt guide
+              </a>
+            </div>
+          </div>
+
+          <div>
+            <label for="otherBills">Other Monthly Bills</label>
+            <input id="otherBills" type="number" placeholder="1600" />
+          </div>
+
+          <div>
+            <label for="savings">Total Emergency Savings</label>
+            <input id="savings" type="number" placeholder="15000" />
+          </div>
+
+          <div>
+            <label for="movingCost">Estimated Move-In Cost</label>
+            <input id="movingCost" type="number" placeholder="4500" />
+          </div>
+        </div>
+
+        <button id="rentButton" type="button">
+          Get Rent Affordability Verdict
+        </button>
+
+        <div class="result" id="result">
+          <div class="score" id="score"></div>
+
+          <div class="bar">
+            <div class="fill" id="barFill"></div>
+          </div>
+
+          <div class="metric" id="housingRatio"></div>
+          <div class="metric" id="takeHomeRatio"></div>
+          <div class="metric" id="leftoverCash"></div>
+          <div class="metric" id="recommendedRent"></div>
+          <div class="metric" id="savingsCushion"></div>
+          <div class="metric" id="moveInImpact"></div>
+          <div class="metric" id="debtPressure"></div>
+
+          <div class="guidance" id="guidance"></div>
+
+          <div class="disclaimer">
+            This is a general educational estimate, not financial advice.
+          </div>
+        </div>
       </div>
-    </section>
-  </main>
+
+      <div class="content-section">
+        <h2>What This Rent Calculator Measures</h2>
+
+        <p>
+          Rent affordability is not just a percentage of income. A realistic rent
+          decision has to account for take-home pay, utilities, recurring bills,
+          debt payments, emergency savings, move-in costs, commuting tradeoffs,
+          and the amount of cash left after the lease is signed.
+        </p>
+
+        <p>
+          This calculator estimates housing pressure by looking at both gross
+          income and monthly cash flow. That matters because an apartment can
+          look affordable on paper while still leaving too little room for food,
+          transportation, medical costs, childcare, insurance, savings, and
+          normal surprises.
+        </p>
+
+        <p>
+          The best rent number is the one that keeps your life stable after the
+          rent is paid. A slightly cheaper place with breathing room can be worth
+          more than a nicer apartment that makes every month feel tight.
+        </p>
+      </div>
+
+      <div class="content-section">
+        <h2>The 30% Rent Rule Is Only a Starting Point</h2>
+
+        <p>
+          The classic rent rule says to keep rent around 30% of gross monthly
+          income. That can be a helpful first screen, but it is too simple for
+          real life. It does not know whether you have credit card debt, a car
+          payment, student loans, medical bills, childcare, unstable income, or
+          a thin emergency fund.
+        </p>
+
+        <p>
+          A renter with high income, no debt, strong savings, and low monthly
+          bills may safely spend more than 30%. A renter with lower take-home
+          pay, major debt, or weak savings may feel stretched even below 30%.
+        </p>
+
+        <p>
+          Treat the 30% rule as a warning light, not a final answer.
+        </p>
+      </div>
+
+      <div class="content-section">
+        <h2>Why Take-Home Pay Matters More Than Gross Income</h2>
+
+        <p>
+          Gross income can make rent look easier than it feels. Taxes, insurance,
+          retirement contributions, payroll deductions, and healthcare premiums
+          all reduce the money available for housing and everything else.
+        </p>
+
+        <p>
+          Take-home pay shows the actual monthly room you have. If rent and
+          utilities eat too much of that number, the apartment can create
+          pressure even when a landlord, website, or old rule says it technically
+          fits.
+        </p>
+      </div>
+
+      <WhenSpendingMakesSense
+        title="When Higher Rent Can Make Sense"
+        items={[
+          "The apartment shortens a difficult commute or eliminates a transportation cost.",
+          "The rent still leaves room for groceries, debt payments, insurance, savings, and normal monthly bills.",
+          "You have a stable income and enough emergency savings after move-in costs.",
+          "The location improves work, school, childcare, safety, or family logistics in a meaningful way.",
+          "The higher rent prevents another major cost, such as needing a second car, extra parking, or long-distance commuting.",
+        ]}
+      />
+
+      <KeyCostCategories
+        items={[
+          {
+            title: "Base rent",
+            description:
+              "The advertised rent is the starting point, but it rarely represents the full monthly housing cost.",
+          },
+          {
+            title: "Utilities and recurring housing fees",
+            description:
+              "Electricity, heat, water, trash, internet, parking, renter’s insurance, laundry, pet rent, and storage can change the real affordability number.",
+          },
+          {
+            title: "Move-in costs",
+            description:
+              "Application fees, deposits, first month’s rent, last month’s rent, movers, furniture, supplies, and utility setup can reduce savings quickly.",
+          },
+          {
+            title: "Location-based tradeoffs",
+            description:
+              "A cheaper rent payment may become less attractive if it adds commuting costs, parking costs, safety concerns, or more time away from work and family.",
+          },
+        ]}
+      />
+
+      <ReduceCostTips
+        items={[
+          "Compare rent plus utilities, not rent alone.",
+          "Ask about parking, trash, pet fees, laundry, storage, and required insurance before applying.",
+          "Avoid signing a lease that leaves no room for emergency savings.",
+          "Use take-home pay instead of gross income when testing monthly comfort.",
+          "Consider a slightly smaller unit, different neighborhood, roommate, or longer search window if the payment feels tight.",
+          "Check whether higher rent reduces transportation costs enough to justify the move.",
+        ]}
+      />
+
+      <FinancialRedFlags
+        items={[
+          "Rent and utilities would consume more than half of take-home pay.",
+          "You would need credit cards to cover normal monthly spending after paying rent.",
+          "Move-in costs would wipe out most of your emergency savings.",
+          "You are already behind on debt payments, medical bills, or basic expenses.",
+          "The apartment only works if every month goes perfectly.",
+          "You are counting bonuses, overtime, side income, or uncertain raises as required rent money.",
+        ]}
+      />
+
+      <CalculatorAssumptions
+        items={[
+          "The calculator assumes rent is a recurring monthly obligation, not a one-time purchase.",
+          "Monthly housing cost includes rent plus utilities, internet, parking, renter’s insurance, pet fees, and other required housing charges.",
+          "The calculator assumes take-home pay is the most realistic number for monthly breathing room.",
+          "Move-in costs are treated as an immediate savings hit because deposits, movers, fees, and setup costs can reduce emergency cushion.",
+          "The calculator is designed for general education and does not replace personalized financial advice.",
+        ]}
+      />
+
+      <div class="content-section">
+        <h2>How to Think About 30%, 40%, 50%, and 60% Rent</h2>
+
+        <p>
+          Around 30% of gross income is usually a balanced target. It often
+          leaves room for debt payments, groceries, insurance, savings,
+          transportation, and occasional emergencies.
+        </p>
+
+        <p>
+          Around 40% can work in expensive cities or high-income households, but
+          the margin gets thinner. It usually requires lower debt, stronger
+          savings, stable income, and careful control of other recurring bills.
+        </p>
+
+        <p>
+          Around 50% or 60% creates serious pressure for most renters. Those
+          levels can be survivable for unusually high earners with low debt and
+          strong savings, but they are dangerous when the rest of the budget is
+          already crowded.
+        </p>
+      </div>
+
+      <div class="content-section">
+        <h2>Emergency Savings Can Change the Rent Answer</h2>
+
+        <p>
+          Savings matter because rent is hard to change quickly. Once a lease is
+          signed, the payment stays with you every month. A strong emergency fund
+          makes a higher rent payment safer because you can absorb job changes,
+          car repairs, medical bills, family emergencies, or moving surprises.
+        </p>
+
+        <p>
+          Weak savings make the same rent payment more dangerous. Even if the
+          monthly math works, one unexpected cost can push the budget onto credit
+          cards.
+        </p>
+
+        <p>
+          Before stretching for a nicer apartment, check whether you would still
+          have a real cushion after deposits, movers, furniture, and the first
+          month of rent.
+        </p>
+      </div>
+
+      <FAQSection
+        title="Rent Affordability FAQ"
+        faqs={[
+          {
+            question: "How much rent can I afford?",
+            answer:
+              "A common starting point is 30% of gross income, but a better answer depends on take-home pay, debt, utilities, monthly bills, emergency savings, and how much cash remains after rent is paid.",
+          },
+          {
+            question: "Is spending 30% of income on rent safe?",
+            answer:
+              "Usually, 30% is a reasonable target, but it is not automatically safe. A renter with high debt, weak savings, or expensive transportation may still feel pressure at 30%.",
+          },
+          {
+            question: "Should I calculate rent using gross income or take-home pay?",
+            answer:
+              "Use both, but take-home pay is more realistic. Gross income is useful for rules of thumb, while take-home pay shows what you can actually spend each month.",
+          },
+          {
+            question: "Should utilities be included in rent affordability?",
+            answer:
+              "Yes. Utilities, internet, parking, renter’s insurance, laundry, pet fees, storage, and commuting changes should be counted as part of the real housing cost.",
+          },
+          {
+            question: "Is spending 50% or 60% of income on rent too much?",
+            answer:
+              "For most renters, yes. Spending 50% or 60% of income on rent can leave too little room for savings, debt payoff, groceries, transportation, emergencies, and flexibility.",
+          },
+        ]}
+      />
+
+      <MethodologySection category="rent affordability" updated="May 2026" />
+
+      <RelatedGuides
+        guides={[
+          {
+            title: "What Counts as Debt?",
+            href: "/what-counts-as-debt",
+            description:
+              "Understand which monthly obligations should be included when judging rent affordability.",
+          },
+          {
+            title: "How Much Emergency Savings Should I Have?",
+            href: "/how-much-emergency-savings-should-i-have",
+            description:
+              "Estimate the cushion you should keep before committing to a larger monthly housing payment.",
+          },
+          {
+            title: "Rent Calculators",
+            href: "/rent-calculators",
+            description:
+              "Browse rent affordability calculators for specific rent levels and income percentages.",
+          },
+        ]}
+      />
+
+      <RelatedCalculators
+        calculators={[
+          {
+            category: "Rent",
+            title: "Should I Spend $2,000 on Rent?",
+            href: "/should-i-spend-2000-on-rent",
+          },
+          {
+            category: "Rent",
+            title: "Should I Spend $2,500 on Rent?",
+            href: "/should-i-spend-2500-on-rent",
+          },
+          {
+            category: "Rent",
+            title: "Should I Spend $3,000 on Rent?",
+            href: "/should-i-spend-3000-on-rent",
+          },
+          {
+            category: "Rent",
+            title: "Should I Spend 40% of My Income on Rent?",
+            href: "/should-i-spend-40-percent-of-income-on-rent",
+          },
+          {
+            category: "Rent",
+            title: "Should I Spend 50% of My Income on Rent?",
+            href: "/should-i-spend-50-percent-of-income-on-rent",
+          },
+        ]}
+      />
+    </CalculatorPageShell>
+  </div>
+
+  <script is:inline>
+    const clamp = (value, min, max) => Math.min(Math.max(value, min), max);
+
+    const getNumber = (id) => {
+      const rawValue = document.getElementById(id)?.value;
+      const value = Number(rawValue);
+      return Number.isFinite(value) && value >= 0 ? value : 0;
+    };
+
+    const formatMoney = (value) => {
+      return Math.round(value).toLocaleString("en-US", {
+        style: "currency",
+        currency: "USD",
+        maximumFractionDigits: 0,
+      });
+    };
+
+    function getPressureLevel(score) {
+      if (score <= 30) {
+        return {
+          label: "Low Pressure",
+          stress: "Low pressure",
+          color: "#16a34a",
+          action:
+            "This rent range appears manageable, but confirm the full monthly cost before signing.",
+        };
+      }
+
+      if (score <= 60) {
+        return {
+          label: "Moderate Pressure",
+          stress: "Moderate pressure",
+          color: "#ca8a04",
+          action:
+            "This rent may work, but compare cheaper options and protect your emergency cushion.",
+        };
+      }
+
+      return {
+        label: "High Pressure",
+        stress: "High pressure",
+        color: "#dc2626",
+        action:
+          "This rent could create real strain. Consider a cheaper unit, roommate, different neighborhood, or more time to save.",
+      };
+    }
+
+    function calculateRent() {
+      const grossIncome = getNumber("grossIncome");
+      const takeHomePay = getNumber("takeHomePay");
+      const rent = getNumber("rent");
+      const utilities = getNumber("utilities");
+      const monthlyDebt = getNumber("monthlyDebt");
+      const otherBills = getNumber("otherBills");
+      const savings = getNumber("savings");
+      const movingCost = getNumber("movingCost");
+
+      const result = document.getElementById("result");
+      const scoreEl = document.getElementById("score");
+      const barFill = document.getElementById("barFill");
+      const housingRatioEl = document.getElementById("housingRatio");
+      const takeHomeRatioEl = document.getElementById("takeHomeRatio");
+      const leftoverCashEl = document.getElementById("leftoverCash");
+      const recommendedRentEl = document.getElementById("recommendedRent");
+      const savingsCushionEl = document.getElementById("savingsCushion");
+      const moveInImpactEl = document.getElementById("moveInImpact");
+      const debtPressureEl = document.getElementById("debtPressure");
+      const guidanceEl = document.getElementById("guidance");
+
+      result.style.display = "block";
+
+      if (grossIncome <= 0 || takeHomePay <= 0 || rent <= 0) {
+        scoreEl.textContent = "Add your numbers first";
+        barFill.style.width = "0%";
+        barFill.style.background = "#16a34a";
+        housingRatioEl.innerHTML = "";
+        takeHomeRatioEl.innerHTML = "";
+        leftoverCashEl.innerHTML = "";
+        recommendedRentEl.innerHTML = "";
+        savingsCushionEl.innerHTML = "";
+        moveInImpactEl.innerHTML = "";
+        debtPressureEl.innerHTML = "";
+        guidanceEl.textContent =
+          "Enter positive numbers for annual income, monthly take-home pay, and rent so the calculator can estimate housing pressure.";
+        return;
+      }
+
+      const monthlyGrossIncome = grossIncome / 12;
+      const totalHousingCost = rent + utilities;
+      const totalCommittedMonthly = totalHousingCost + monthlyDebt + otherBills;
+      const leftoverAfterBills = takeHomePay - totalCommittedMonthly;
+      const housingGrossRatio = (totalHousingCost / monthlyGrossIncome) * 100;
+      const housingTakeHomeRatio = (totalHousingCost / takeHomePay) * 100;
+      const debtTakeHomeRatio = (monthlyDebt / takeHomePay) * 100;
+      const leftoverRatio = (leftoverAfterBills / takeHomePay) * 100;
+      const postMoveSavings = savings - movingCost;
+      const postMoveSavingsMonths =
+        totalCommittedMonthly > 0 ? postMoveSavings / totalCommittedMonthly : 0;
+      const emergencyMonths =
+        totalCommittedMonthly > 0 ? savings / totalCommittedMonthly : 0;
+      const moveInSavingsImpact =
+        savings > 0 ? (movingCost / savings) * 100 : movingCost > 0 ? 100 : 0;
+
+      const conservativeRent = Math.max(0, Math.min(monthlyGrossIncome * 0.25, takeHomePay * 0.28));
+      const balancedRent = Math.max(0, Math.min(monthlyGrossIncome * 0.3, takeHomePay * 0.35));
+      const stretchRent = Math.max(0, Math.min(monthlyGrossIncome * 0.4, takeHomePay * 0.45));
+
+      let pressureScore = 0;
+
+      pressureScore += clamp((housingGrossRatio - 20) * 1.05, 0, 28);
+      pressureScore += clamp((housingTakeHomeRatio - 25) * 1.15, 0, 34);
+      pressureScore += clamp(debtTakeHomeRatio * 0.55, 0, 16);
+
+      if (leftoverAfterBills < 0) {
+        pressureScore += 28;
+      } else if (leftoverRatio < 8) {
+        pressureScore += 20;
+      } else if (leftoverRatio < 15) {
+        pressureScore += 12;
+      } else if (leftoverRatio >= 35) {
+        pressureScore -= 8;
+      } else if (leftoverRatio >= 25) {
+        pressureScore -= 4;
+      }
+
+      if (savings <= 0 && movingCost > 0) {
+        pressureScore += 18;
+      } else if (postMoveSavings < 0) {
+        pressureScore += 20;
+      } else if (postMoveSavingsMonths < 1 && grossIncome < 120000) {
+        pressureScore += 16;
+      } else if (postMoveSavingsMonths < 3 && grossIncome < 180000) {
+        pressureScore += 10;
+      } else if (postMoveSavingsMonths >= 6) {
+        pressureScore -= 8;
+      }
+
+      if (moveInSavingsImpact >= 75) pressureScore += 12;
+      else if (moveInSavingsImpact >= 50) pressureScore += 8;
+      else if (moveInSavingsImpact <= 10 && savings > 0) pressureScore -= 3;
+
+      if (housingGrossRatio >= 60) pressureScore += 18;
+      else if (housingGrossRatio >= 50) pressureScore += 12;
+      else if (housingGrossRatio >= 40) pressureScore += 7;
+
+      if (housingTakeHomeRatio >= 65) pressureScore += 20;
+      else if (housingTakeHomeRatio >= 55) pressureScore += 14;
+      else if (housingTakeHomeRatio >= 45) pressureScore += 8;
+
+      if (
+        housingGrossRatio < 22 &&
+        housingTakeHomeRatio < 28 &&
+        leftoverRatio >= 30 &&
+        emergencyMonths >= 4 &&
+        debtTakeHomeRatio < 10
+      ) {
+        pressureScore -= 12;
+      }
+
+      if (
+        housingGrossRatio < 12 &&
+        housingTakeHomeRatio < 16 &&
+        leftoverRatio >= 50 &&
+        emergencyMonths >= 8 &&
+        debtTakeHomeRatio < 5
+      ) {
+        pressureScore = Math.min(pressureScore, 10);
+      }
+
+      if (
+        housingGrossRatio < 6 &&
+        housingTakeHomeRatio < 8 &&
+        leftoverRatio >= 65 &&
+        emergencyMonths >= 12 &&
+        debtTakeHomeRatio < 3
+      ) {
+        pressureScore = 0;
+      }
+
+      pressureScore = clamp(Math.round(pressureScore), 0, 100);
+
+      const level = getPressureLevel(pressureScore);
+
+      let guidance = "";
+
+      if (pressureScore === 0) {
+        guidance =
+          `This rent appears financially tiny relative to the numbers provided. Housing would use about ${housingGrossRatio.toFixed(1)}% of gross income and ${housingTakeHomeRatio.toFixed(1)}% of take-home pay, leaving substantial monthly flexibility. The decision is mainly about location, lease terms, lifestyle value, and opportunity cost.`;
+      } else if (pressureScore <= 30) {
+        guidance =
+          `This rent appears manageable based on the numbers provided. Housing would use about ${housingGrossRatio.toFixed(1)}% of gross income and ${housingTakeHomeRatio.toFixed(1)}% of take-home pay, while leaving about ${formatMoney(leftoverAfterBills)} after listed housing, debt, and bill obligations.`;
+      } else if (pressureScore <= 60) {
+        guidance =
+          `This rent may work, but it deserves caution. Housing would use about ${housingGrossRatio.toFixed(1)}% of gross income and ${housingTakeHomeRatio.toFixed(1)}% of take-home pay, so utilities, deposits, debt payments, and savings cushion should be checked carefully before signing.`;
+      } else {
+        guidance =
+          `This rent could create significant financial pressure. Housing would use about ${housingGrossRatio.toFixed(1)}% of gross income and ${housingTakeHomeRatio.toFixed(1)}% of take-home pay, which may leave too little flexibility after bills, debt, savings needs, and emergencies.`;
+      }
+
+      scoreEl.textContent = `${level.label} — ${pressureScore}/100`;
+      barFill.style.width = `${pressureScore}%`;
+      barFill.style.background = level.color;
+
+      housingRatioEl.innerHTML = `<strong>Housing-to-gross-income ratio:</strong> ${housingGrossRatio.toFixed(1)}%`;
+      takeHomeRatioEl.innerHTML = `<strong>Housing-to-take-home-pay ratio:</strong> ${housingTakeHomeRatio.toFixed(1)}%`;
+      leftoverCashEl.innerHTML = `<strong>Estimated leftover after listed bills:</strong> ${formatMoney(leftoverAfterBills)}`;
+      recommendedRentEl.innerHTML = `<strong>Estimated rent range:</strong> ${formatMoney(conservativeRent)} conservative / ${formatMoney(balancedRent)} balanced / ${formatMoney(stretchRent)} stretch`;
+      savingsCushionEl.innerHTML = `<strong>Emergency cushion:</strong> ${emergencyMonths.toFixed(1)} months before move-in / ${postMoveSavingsMonths.toFixed(1)} months after move-in costs`;
+      moveInImpactEl.innerHTML = `<strong>Move-in savings impact:</strong> ${moveInSavingsImpact.toFixed(1)}% of savings`;
+      debtPressureEl.innerHTML = `<strong>Debt payment pressure:</strong> ${debtTakeHomeRatio.toFixed(1)}% of take-home pay`;
+      guidanceEl.textContent = `${guidance} Recommended next step: ${level.action}`;
+    }
+
+    document
+      .getElementById("rentButton")
+      .addEventListener("click", calculateRent);
+  </script>
 </Layout>

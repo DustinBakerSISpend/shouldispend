@@ -1,0 +1,576 @@
+---
+import Layout from "../layouts/Layout.astro";
+import CalculatorPageShell from "../components/CalculatorPageShell.astro";
+import FAQSection from "../components/FAQSection.astro";
+import RelatedCalculators from "../components/RelatedCalculators.astro";
+import RelatedGuides from "../components/RelatedGuides.astro";
+import MethodologySection from "../components/MethodologySection.astro";
+import FinancialRedFlags from "../components/FinancialRedFlags.astro";
+import CalculatorAssumptions from "../components/CalculatorAssumptions.astro";
+import KeyCostCategories from "../components/KeyCostCategories.astro";
+import ReduceCostTips from "../components/ReduceCostTips.astro";
+import WhenSpendingMakesSense from "../components/WhenSpendingMakesSense.astro";
+
+const pageUrl = "https://shouldispend.com/should-i-spend-10000-on-a-destination-wedding";
+
+const faqSchema = {
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  mainEntity: [
+    {
+      "@type": "Question",
+      name: "Is $10,000 too much for a destination wedding?",
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: "$10,000 can be reasonable or risky depending on income, savings, debt, travel costs, guest expectations, included resort services, and whether the trip creates pressure after the wedding.",
+      },
+    },
+    {
+      "@type": "Question",
+      name: "What should be included in a destination wedding budget?",
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: "Include travel, lodging, ceremony package, attire, photography, legal paperwork, excursions, meals, tips, welcome events, guest support, insurance, passports, and a buffer for surprises.",
+      },
+    },
+    {
+      "@type": "Question",
+      name: "Can a $10,000 destination wedding be cheaper than a traditional wedding?",
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: "Yes. A destination wedding can be cheaper if guest count is smaller, the resort includes ceremony services, and the couple avoids extra parties, upgrades, and travel debt.",
+      },
+    },
+    {
+      "@type": "Question",
+      name: "When is a destination wedding too expensive?",
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: "It may be too expensive if it requires debt, drains emergency savings, creates guest-pressure costs, or delays housing, debt payoff, medical needs, or other priorities.",
+      },
+    },
+    {
+      "@type": "Question",
+      name: "How can I lower destination wedding costs?",
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: "Choose a cheaper destination, reduce guest support costs, travel off-season, use a resort package, limit excursions, shorten the trip, or separate the wedding from the honeymoon.",
+      },
+    },
+  ],
+};
+
+const webAppSchema = {
+  "@context": "https://schema.org",
+  "@type": "WebApplication",
+  name: "Should I Spend $10,000 on a Destination Wedding Calculator",
+  url: pageUrl,
+  applicationCategory: "FinanceApplication",
+  operatingSystem: "All",
+  description:
+    "A destination wedding affordability calculator that estimates pressure from a $10,000 destination wedding using income, savings, debt, travel costs, guest support, and post-wedding flexibility.",
+};
+
+const breadcrumbSchema = {
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  itemListElement: [
+    { "@type": "ListItem", position: 1, name: "Home", item: "https://shouldispend.com/" },
+    { "@type": "ListItem", position: 2, name: "Wedding Calculators", item: "https://shouldispend.com/wedding-calculators" },
+    { "@type": "ListItem", position: 3, name: "Should I Spend $10,000 on a Destination Wedding?", item: pageUrl },
+  ],
+};
+---
+
+<Layout
+  title="Should I Spend $10,000 on a Destination Wedding? Calculator | ShouldISpend"
+  description="Use this $10,000 destination wedding calculator to decide whether the trip fits your income, savings, debt, travel costs, guest plans, and flexibility."
+>
+  <script type="application/ld+json" set:html={JSON.stringify(faqSchema)} />
+  <script type="application/ld+json" set:html={JSON.stringify(webAppSchema)} />
+  <script type="application/ld+json" set:html={JSON.stringify(breadcrumbSchema)} />
+
+  <style>
+    .container { max-width: 950px; margin: 0 auto; padding: 60px 20px; }
+    .content-section { max-width: 760px; margin: 72px auto 0; }
+    .card { background: var(--card); border: 1px solid var(--border); border-radius: 28px; padding: 34px; }
+    h2 { margin-top: 0; font-size: 2rem; }
+    .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 22px; margin-bottom: 28px; }
+    label { display: block; margin-bottom: 10px; font-weight: 700; }
+    input { width: 100%; padding: 18px; border-radius: 14px; border: 1px solid var(--border); font-size: 1.1rem; box-sizing: border-box; }
+    button { background: #0f766e; color: white; border: none; padding: 16px 28px; border-radius: 14px; font-size: 1rem; font-weight: 700; cursor: pointer; margin-top: 10px; display: inline-block; width: auto; height: auto; min-height: 0; }
+    button:hover { opacity: 0.92; }
+    .result { margin-top: 40px; border: 1px solid var(--border); border-radius: 24px; padding: 28px; display: none; background: #f8fafc; }
+    .score { font-size: 3rem; font-weight: 800; margin-bottom: 16px; line-height: 1.05; }
+    .bar { width: 100%; height: 16px; background: #dbe3ee; border-radius: 999px; overflow: hidden; margin-bottom: 24px; }
+    .fill { height: 100%; width: 0%; background: #16a34a; border-radius: 999px; transition: width 0.4s ease; }
+    .metric { margin-bottom: 14px; font-size: 1.05rem; }
+    .guidance { margin-top: 26px; font-size: 1.15rem; line-height: 1.7; }
+    .disclaimer { margin-top: 30px; font-size: 0.9rem; color: var(--muted); }
+    .helper-link { margin-top: 10px; font-size: 0.9rem; }
+    .helper-link a { color: var(--primary); font-weight: 600; }
+    .content-section p, .content-section li { line-height: 1.8; }
+  </style>
+
+  <div class="container">
+    <CalculatorPageShell
+      eyebrow="Destination Wedding Calculator"
+      title="Should I Spend $10,000 on a Destination Wedding?"
+      description="Estimate whether a $10,000 destination wedding is a smart smaller celebration or a travel-heavy budget risk after income, savings, debt, guest costs, and post-wedding goals."
+    >
+      <div class="card">
+        <h2>$10,000 Destination Wedding Pressure Verdict</h2>
+
+        <div class="grid">
+          <div>
+            <label for="income">Combined Annual Income</label>
+            <input id="income" type="number" placeholder="120000" />
+          </div>
+
+          <div>
+            <label for="savings">Total Savings</label>
+            <input id="savings" type="number" placeholder="35000" />
+          </div>
+
+          <div>
+            <label for="destinationCost">Destination Wedding Cost</label>
+            <input id="destinationCost" type="number" value="10000" />
+          </div>
+
+          <div>
+            <label for="debt">Current Debt</label>
+            <input id="debt" type="number" placeholder="12000" />
+            <div class="helper-link">
+              <a href="/what-counts-as-debt">Not sure what counts as debt? Read the debt guide</a>
+            </div>
+          </div>
+
+          <div>
+            <label for="guestSupport">Guest Travel Support / Extra Events</label>
+            <input id="guestSupport" type="number" placeholder="3000" />
+          </div>
+
+          <div>
+            <label for="monthlyTakeHome">Monthly Take-Home Pay</label>
+            <input id="monthlyTakeHome" type="number" placeholder="7600" />
+          </div>
+        </div>
+
+        <button id="destinationButton" type="button">Get Destination Wedding Verdict</button>
+
+        <div class="result" id="result">
+          <div class="score" id="score"></div>
+          <div class="bar"><div class="fill" id="barFill"></div></div>
+
+          <div class="metric" id="stress"></div>
+          <div class="metric" id="savingsImpact"></div>
+          <div class="metric" id="incomeImpact"></div>
+          <div class="metric" id="monthlyImpact"></div>
+          <div class="metric" id="debtRatio"></div>
+          <div class="metric" id="travelStack"></div>
+          <div class="metric" id="remainingSavings"></div>
+
+          <div class="guidance" id="guidance"></div>
+          <div class="disclaimer">This is a general educational estimate, not financial advice.</div>
+        </div>
+      </div>
+
+      <div class="content-section">
+        <h2>Is $10,000 Too Much for a Destination Wedding?</h2>
+        <p>
+          A $10,000 destination wedding can be a smart, contained alternative to a larger traditional wedding, or it can become an expensive travel decision disguised as a smaller event. The answer depends on what the package includes, how many guests are involved, who is paying for travel, and whether the trip creates debt or drains savings.
+        </p>
+        <p>
+          Destination weddings are different from venue-only decisions because the costs blend ceremony, travel, lodging, meals, guest logistics, legal paperwork, and sometimes the honeymoon itself. That can simplify planning, but it can also make the final cost harder to see clearly.
+        </p>
+        <p>
+          The safest version of a $10,000 destination wedding leaves emergency savings intact, avoids high-interest debt, respects guest finances, and does not delay housing, debt payoff, medical needs, or other early-marriage priorities.
+        </p>
+      </div>
+
+      <div class="content-section">
+        <h2>Why Destination Wedding Costs Can Be Misleading</h2>
+        <p>
+          A resort package may advertise a clean wedding price, but the real total can include flights, hotel nights, transfers, passports, attire, photography, excursions, welcome bags, guest support, tips, insurance, legal documents, and extra events.
+        </p>
+        <p>
+          The guest list also changes the math. A small destination wedding can be cheaper than a ballroom wedding. A destination wedding with heavy guest support, multiple events, upgrades, and family travel help can become much more expensive than expected.
+        </p>
+      </div>
+
+      <WhenSpendingMakesSense
+        title="When a $10,000 Destination Wedding Makes Sense"
+        items={[
+          "You can pay for the wedding and travel without high-interest debt.",
+          "The package replaces major traditional wedding costs like venue, ceremony setup, coordination, and some food or drink costs.",
+          "Emergency savings remain strong after travel, deposits, tips, and final invoices.",
+          "Guest expectations are realistic and the couple is not quietly absorbing too many travel costs.",
+          "Both partners agree the smaller guest list, location, and travel tradeoffs are worth it.",
+        ]}
+      />
+
+      <div class="content-section">
+        <h2>When a Destination Wedding Becomes Too Expensive</h2>
+        <p>
+          A destination wedding may be too expensive if the couple must borrow money, cover guest travel they did not plan for, drain emergency savings, or pay for extra events to make the trip feel worth it. It can also create pressure if important guests cannot afford to attend and the couple starts subsidizing more than expected.
+        </p>
+        <p>
+          The warning sign is a wedding that was supposed to simplify the budget but starts creating travel stress, family pressure, and post-wedding debt.
+        </p>
+      </div>
+
+      <KeyCostCategories
+        items={[
+          {
+            title: "Travel and lodging",
+            description:
+              "Flights, hotel nights, resort fees, airport transfers, luggage, passports, parking, rental cars, and travel insurance can change the real cost.",
+          },
+          {
+            title: "Wedding package and upgrades",
+            description:
+              "Ceremony package, photography, flowers, music, officiant, coordination, decor, reception meal, bar package, cake, and private-event upgrades may not all be included.",
+          },
+          {
+            title: "Guest support and extra events",
+            description:
+              "Welcome dinners, excursions, room blocks, transportation, welcome bags, family travel help, and post-wedding brunches can expand the cost quickly.",
+          },
+          {
+            title: "Legal and timing costs",
+            description:
+              "Marriage paperwork, document translation, local rules, travel delays, weather risk, cancellation policies, and backup plans should be part of the decision.",
+          },
+        ]}
+      />
+
+      <ReduceCostTips
+        items={[
+          "Choose a destination with simpler flights and lower lodging costs.",
+          "Travel off-season or shoulder-season instead of peak wedding dates.",
+          "Keep the guest list intentionally small.",
+          "Use a resort package only after confirming what is actually included.",
+          "Limit welcome events, excursions, upgrades, and guest subsidies.",
+          "Consider a small legal ceremony at home and a symbolic ceremony abroad.",
+        ]}
+      />
+
+      <FinancialRedFlags
+        items={[
+          "The destination wedding would require high-interest credit card debt.",
+          "The trip would drain most emergency savings.",
+          "Guest travel support is growing beyond the original plan.",
+          "The couple has not included flights, lodging, tips, legal paperwork, insurance, excursions, and extra events.",
+          "Important financial goals would be delayed after the trip.",
+          "The destination is being chosen because it looks cheaper before the real travel math is complete.",
+        ]}
+      />
+
+      <CalculatorAssumptions
+        items={[
+          "The calculator treats the destination wedding as a wedding-and-travel decision, not just a ceremony package.",
+          "Destination wedding cost should include ceremony package, travel, lodging, food, photography, attire, tips, insurance, and expected travel-related costs.",
+          "Guest support includes optional help with travel, lodging, transportation, extra meals, excursions, welcome events, or family support.",
+          "Debt should include credit cards, student loans, auto loans, personal loans, medical debt, and other major obligations.",
+          "The calculator is designed for general education and does not replace personalized financial advice.",
+        ]}
+      />
+
+      <div class="content-section">
+        <h2>A Destination Wedding Can Be Cheaper — But Only If It Stays Simple</h2>
+        <p>
+          The financial advantage usually comes from a smaller guest list and a bundled package. If the couple starts adding private dinners, excursions, upgraded photography, guest subsidies, extended lodging, and a larger travel group, the original savings can disappear.
+        </p>
+        <p>
+          A stronger plan defines what the destination wedding is meant to replace, what it is not meant to include, and how much cash should remain afterward.
+        </p>
+      </div>
+
+      <div class="content-section">
+        <h2>Guest Cost Matters More Than People Admit</h2>
+        <p>
+          Destination weddings shift some cost onto guests. Flights, hotels, time off work, childcare, passports, and travel stress can affect attendance and relationships. That does not make the wedding wrong, but it should be acknowledged honestly.
+        </p>
+        <p>
+          The best destination wedding budget respects both the couple’s finances and the practical reality for guests.
+        </p>
+      </div>
+
+      <FAQSection
+        title="$10,000 Destination Wedding FAQ"
+        faqs={[
+          {
+            question: "Is $10,000 too much for a destination wedding?",
+            answer:
+              "$10,000 can be reasonable or risky depending on income, savings, debt, travel costs, guest expectations, included services, and whether the wedding creates pressure afterward.",
+          },
+          {
+            question: "Can a destination wedding be cheaper than a traditional wedding?",
+            answer:
+              "Yes. It can be cheaper if the guest list is smaller, the package includes meaningful services, and the couple avoids extra events, upgrades, and travel debt.",
+          },
+          {
+            question: "What costs should I include in a destination wedding budget?",
+            answer:
+              "Include flights, lodging, ceremony package, photography, attire, meals, tips, transfers, passports, legal paperwork, insurance, guest support, excursions, and a buffer.",
+          },
+          {
+            question: "Should I help guests pay for a destination wedding?",
+            answer:
+              "You can, but guest support should be budgeted clearly. Quietly covering rooms, transportation, meals, or excursions can make the wedding much more expensive.",
+          },
+          {
+            question: "How can I make a destination wedding cheaper?",
+            answer:
+              "Reduce guest count, choose a cheaper destination, travel off-season, use a simpler package, limit upgrades, and avoid paying for extra events that are not essential.",
+          },
+        ]}
+      />
+
+      <MethodologySection category="destination wedding affordability" updated="May 2026" />
+
+      <RelatedGuides
+        guides={[
+          {
+            title: "How to Budget for a Wedding Without Going Into Debt",
+            href: "/how-to-budget-for-a-wedding-without-going-into-debt",
+            description:
+              "Build a wedding budget around savings, vendor tradeoffs, debt avoidance, and life after the celebration.",
+          },
+          {
+            title: "What Counts as Debt?",
+            href: "/what-counts-as-debt",
+            description:
+              "See which obligations should be included when judging wedding and travel pressure.",
+          },
+          {
+            title: "How Much Emergency Savings Should I Have?",
+            href: "/how-much-emergency-savings-should-i-have",
+            description:
+              "Estimate how much cushion to protect before paying for major wedding travel.",
+          },
+        ]}
+      />
+
+      <RelatedCalculators
+        calculators={[
+          {
+            category: "Weddings",
+            title: "Should I Spend $40,000 on a Wedding?",
+            href: "/should-i-spend-40000-on-a-wedding",
+          },
+          {
+            category: "Weddings",
+            title: "Should I Spend $20,000 on a Wedding Venue?",
+            href: "/should-i-spend-20000-on-a-wedding-venue",
+          },
+          {
+            category: "Weddings",
+            title: "Should I Spend $8,000 on a Honeymoon?",
+            href: "/should-i-spend-8000-on-a-honeymoon",
+          },
+          {
+            category: "Weddings",
+            title: "Should I Spend $5,000 on an Engagement Ring?",
+            href: "/should-i-spend-5000-on-an-engagement-ring",
+          },
+          {
+            category: "Weddings",
+            title: "Should I Spend $30,000 on a Wedding?",
+            href: "/should-i-spend-30000-on-a-wedding",
+          },
+        ]}
+      />
+    </CalculatorPageShell>
+  </div>
+
+  <script is:inline>
+    const clamp = (value, min, max) => Math.min(Math.max(value, min), max);
+
+    const getNumber = (id) => {
+      const rawValue = document.getElementById(id)?.value;
+      const value = Number(rawValue);
+      return Number.isFinite(value) && value >= 0 ? value : 0;
+    };
+
+    const formatMoney = (value) => {
+      return Math.round(value).toLocaleString("en-US", {
+        style: "currency",
+        currency: "USD",
+        maximumFractionDigits: 0,
+      });
+    };
+
+    function getPressureLevel(score) {
+      if (score <= 30) {
+        return {
+          label: "Low Pressure",
+          stress: "Low pressure",
+          color: "#16a34a",
+          action:
+            "This destination wedding appears manageable, but verify the full travel cost and protect emergency savings.",
+        };
+      }
+
+      if (score <= 60) {
+        return {
+          label: "Moderate Pressure",
+          stress: "Moderate pressure",
+          color: "#ca8a04",
+          action:
+            "This destination wedding may work, but compare the full trip cost, guest support, and post-wedding savings carefully.",
+        };
+      }
+
+      return {
+        label: "High Pressure",
+        stress: "High pressure",
+        color: "#dc2626",
+        action:
+          "This destination wedding could create real strain. Consider a cheaper destination, smaller guest list, delayed trip, or more time to save.",
+      };
+    }
+
+    function calculateDestinationWedding() {
+      const income = getNumber("income");
+      const savings = getNumber("savings");
+      const destinationCost = getNumber("destinationCost");
+      const debt = getNumber("debt");
+      const guestSupport = getNumber("guestSupport");
+      const monthlyTakeHome = getNumber("monthlyTakeHome");
+
+      const result = document.getElementById("result");
+      const scoreEl = document.getElementById("score");
+      const barFill = document.getElementById("barFill");
+      const stressEl = document.getElementById("stress");
+      const savingsImpactEl = document.getElementById("savingsImpact");
+      const incomeImpactEl = document.getElementById("incomeImpact");
+      const monthlyImpactEl = document.getElementById("monthlyImpact");
+      const debtRatioEl = document.getElementById("debtRatio");
+      const travelStackEl = document.getElementById("travelStack");
+      const remainingSavingsEl = document.getElementById("remainingSavings");
+      const guidanceEl = document.getElementById("guidance");
+
+      result.style.display = "block";
+
+      if (income <= 0 || savings <= 0 || destinationCost <= 0) {
+        scoreEl.textContent = "Add your numbers first";
+        barFill.style.width = "0%";
+        barFill.style.background = "#16a34a";
+        stressEl.innerHTML = "";
+        savingsImpactEl.innerHTML = "";
+        incomeImpactEl.innerHTML = "";
+        monthlyImpactEl.innerHTML = "";
+        debtRatioEl.innerHTML = "";
+        travelStackEl.innerHTML = "";
+        remainingSavingsEl.innerHTML = "";
+        guidanceEl.textContent =
+          "Enter a positive income, savings amount, destination wedding cost, debt, guest support costs, and take-home pay so the calculator can estimate pressure.";
+        return;
+      }
+
+      const monthlyIncome = monthlyTakeHome > 0 ? monthlyTakeHome : income / 12;
+      const totalTravelWeddingCost = destinationCost + guestSupport;
+      const savingsImpact = (totalTravelWeddingCost / savings) * 100;
+      const annualIncomeImpact = (totalTravelWeddingCost / income) * 100;
+      const monthlyIncomeImpact = (totalTravelWeddingCost / monthlyIncome) * 100;
+      const debtRatio = (debt / income) * 100;
+      const guestSupportShare = totalTravelWeddingCost > 0 ? (guestSupport / totalTravelWeddingCost) * 100 : 0;
+      const remainingSavings = savings - totalTravelWeddingCost;
+      const remainingSavingsMonths = remainingSavings / monthlyIncome;
+
+      let pressureScore = 0;
+
+      pressureScore += clamp(savingsImpact * 0.36, 0, 34);
+      pressureScore += clamp(monthlyIncomeImpact * 0.2, 0, 22);
+      pressureScore += clamp(debtRatio * 0.2, 0, 16);
+
+      if (totalTravelWeddingCost > savings) pressureScore += 28;
+
+      if (remainingSavingsMonths < 1 && income < 100000) {
+        pressureScore += 18;
+      } else if (remainingSavingsMonths < 3 && income < 160000) {
+        pressureScore += 10;
+      } else if (remainingSavingsMonths >= 6) {
+        pressureScore -= 8;
+      }
+
+      if (debtRatio >= 75) pressureScore += 12;
+      else if (debtRatio >= 40) pressureScore += 8;
+
+      if (guestSupport > 0) {
+        if (guestSupportShare >= 40) pressureScore += 10;
+        else if (guestSupportShare >= 25) pressureScore += 6;
+        else if (guestSupportShare >= 15) pressureScore += 3;
+      }
+
+      if (
+        annualIncomeImpact < 2 &&
+        savingsImpact < 10 &&
+        remainingSavingsMonths >= 6 &&
+        debtRatio < 15
+      ) {
+        pressureScore -= 12;
+      }
+
+      if (
+        savingsImpact < 1 &&
+        debtRatio < 10 &&
+        remainingSavingsMonths >= 24
+      ) {
+        pressureScore = 0;
+      } else if (
+        savingsImpact < 3 &&
+        debtRatio < 15 &&
+        remainingSavingsMonths >= 12
+      ) {
+        pressureScore = Math.min(pressureScore, 5);
+      } else if (
+        annualIncomeImpact < 0.25 &&
+        monthlyIncomeImpact < 3 &&
+        savingsImpact < 5 &&
+        debtRatio < 5
+      ) {
+        pressureScore = Math.min(pressureScore, 8);
+      }
+
+      pressureScore = clamp(Math.round(pressureScore), 0, 100);
+
+      const level = getPressureLevel(pressureScore);
+
+      let guidance = "";
+
+      if (pressureScore === 0) {
+        guidance =
+          `This ${formatMoney(totalTravelWeddingCost)} destination wedding appears financially tiny relative to the numbers provided. The full wedding-and-travel stack equals about ${annualIncomeImpact.toFixed(1)}% of annual income and ${savingsImpact.toFixed(1)}% of savings, so the decision is mainly about destination value, guest experience, and opportunity cost.`;
+      } else if (pressureScore <= 30) {
+        guidance =
+          `This ${formatMoney(totalTravelWeddingCost)} destination wedding appears manageable based on the numbers provided. The full wedding-and-travel stack equals about ${annualIncomeImpact.toFixed(1)}% of annual income and ${savingsImpact.toFixed(1)}% of savings, so the main priority is confirming the true travel total and avoiding budget creep.`;
+      } else if (pressureScore <= 60) {
+        guidance =
+          `This ${formatMoney(totalTravelWeddingCost)} destination wedding may work, but it deserves caution. Guest support makes up about ${guestSupportShare.toFixed(1)}% of the listed total, so travel help, extra events, and final trip costs should be checked carefully.`;
+      } else {
+        guidance =
+          `This ${formatMoney(totalTravelWeddingCost)} destination wedding could create real financial strain. The full wedding-and-travel stack equals about ${savingsImpact.toFixed(1)}% of savings, so a cheaper destination, smaller guest list, or longer savings window would likely be safer.`;
+      }
+
+      scoreEl.textContent = `${level.label} — ${pressureScore}/100`;
+      barFill.style.width = `${pressureScore}%`;
+      barFill.style.background = level.color;
+
+      stressEl.innerHTML = `<strong>Pressure level:</strong> ${level.stress}`;
+      savingsImpactEl.innerHTML = `<strong>Savings impact:</strong> ${savingsImpact.toFixed(1)}% of savings`;
+      incomeImpactEl.innerHTML = `<strong>Annual income impact:</strong> ${annualIncomeImpact.toFixed(1)}% of annual income`;
+      monthlyImpactEl.innerHTML = `<strong>Monthly take-home impact:</strong> ${monthlyIncomeImpact.toFixed(1)}% of one month’s take-home pay`;
+      debtRatioEl.innerHTML = `<strong>Debt ratio:</strong> ${debtRatio.toFixed(1)}% of annual income`;
+      travelStackEl.innerHTML = `<strong>Destination wedding + guest support:</strong> ${formatMoney(totalTravelWeddingCost)} total / guest support is ${guestSupportShare.toFixed(1)}%`;
+      remainingSavingsEl.innerHTML = `<strong>Estimated savings after destination wedding:</strong> ${formatMoney(remainingSavings)} / ${remainingSavingsMonths.toFixed(1)} months of take-home pay`;
+
+      guidanceEl.textContent = `${guidance} Recommended next step: ${level.action}`;
+    }
+
+    document
+      .getElementById("destinationButton")
+      .addEventListener("click", calculateDestinationWedding);
+  </script>
+</Layout>

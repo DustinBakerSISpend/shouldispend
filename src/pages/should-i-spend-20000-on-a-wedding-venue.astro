@@ -1,0 +1,579 @@
+---
+import Layout from "../layouts/Layout.astro";
+import CalculatorPageShell from "../components/CalculatorPageShell.astro";
+import FAQSection from "../components/FAQSection.astro";
+import RelatedCalculators from "../components/RelatedCalculators.astro";
+import RelatedGuides from "../components/RelatedGuides.astro";
+import MethodologySection from "../components/MethodologySection.astro";
+import FinancialRedFlags from "../components/FinancialRedFlags.astro";
+import CalculatorAssumptions from "../components/CalculatorAssumptions.astro";
+import KeyCostCategories from "../components/KeyCostCategories.astro";
+import ReduceCostTips from "../components/ReduceCostTips.astro";
+import WhenSpendingMakesSense from "../components/WhenSpendingMakesSense.astro";
+
+const pageUrl = "https://shouldispend.com/should-i-spend-20000-on-a-wedding-venue";
+
+const faqSchema = {
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  mainEntity: [
+    {
+      "@type": "Question",
+      name: "Is $20,000 too much to spend on a wedding venue?",
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: "$20,000 can be reasonable or risky depending on income, savings, total wedding budget, guest count, included services, debt, and whether the venue leaves enough room for the rest of the wedding.",
+      },
+    },
+    {
+      "@type": "Question",
+      name: "What should be included in a $20,000 wedding venue cost?",
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: "Include the rental fee, catering minimums, bar minimums, ceremony fee, staffing, tables, chairs, linens, service charges, taxes, gratuities, parking, security, and overtime.",
+      },
+    },
+    {
+      "@type": "Question",
+      name: "Can a $20,000 wedding venue be worth it?",
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: "Yes, especially if the venue includes food, bar, rentals, coordination, ceremony space, staffing, and setup that would otherwise be separate costs.",
+      },
+    },
+    {
+      "@type": "Question",
+      name: "When is a $20,000 wedding venue too expensive?",
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: "It may be too expensive if it consumes most of the total wedding budget, requires debt, drains emergency savings, or leaves too little for food, photography, attire, music, flowers, and the honeymoon.",
+      },
+    },
+    {
+      "@type": "Question",
+      name: "How can I lower wedding venue costs?",
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: "Lower venue costs by reducing guest count, choosing an off-season date, booking a Friday or Sunday, comparing included services, limiting bar packages, or choosing a simpler venue.",
+      },
+    },
+  ],
+};
+
+const webAppSchema = {
+  "@context": "https://schema.org",
+  "@type": "WebApplication",
+  name: "Should I Spend $20,000 on a Wedding Venue Calculator",
+  url: pageUrl,
+  applicationCategory: "FinanceApplication",
+  operatingSystem: "All",
+  description:
+    "A wedding venue affordability calculator that estimates pressure from a $20,000 venue using income, savings, debt, total wedding budget, emergency cushion, and venue tradeoffs.",
+};
+
+const breadcrumbSchema = {
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  itemListElement: [
+    { "@type": "ListItem", position: 1, name: "Home", item: "https://shouldispend.com/" },
+    { "@type": "ListItem", position: 2, name: "Wedding Calculators", item: "https://shouldispend.com/wedding-calculators" },
+    { "@type": "ListItem", position: 3, name: "Should I Spend $20,000 on a Wedding Venue?", item: pageUrl },
+  ],
+};
+---
+
+<Layout
+  title="Should I Spend $20,000 on a Wedding Venue? Calculator | ShouldISpend"
+  description="Use this $20,000 wedding venue calculator to decide whether the venue fits your income, savings, debt, total wedding budget, and post-wedding flexibility."
+>
+  <script type="application/ld+json" set:html={JSON.stringify(faqSchema)} />
+  <script type="application/ld+json" set:html={JSON.stringify(webAppSchema)} />
+  <script type="application/ld+json" set:html={JSON.stringify(breadcrumbSchema)} />
+
+  <style>
+    .container { max-width: 950px; margin: 0 auto; padding: 60px 20px; }
+    .content-section { max-width: 760px; margin: 72px auto 0; }
+    .card { background: var(--card); border: 1px solid var(--border); border-radius: 28px; padding: 34px; }
+    h2 { margin-top: 0; font-size: 2rem; }
+    .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 22px; margin-bottom: 28px; }
+    label { display: block; margin-bottom: 10px; font-weight: 700; }
+    input { width: 100%; padding: 18px; border-radius: 14px; border: 1px solid var(--border); font-size: 1.1rem; box-sizing: border-box; }
+    button { background: #0f766e; color: white; border: none; padding: 16px 28px; border-radius: 14px; font-size: 1rem; font-weight: 700; cursor: pointer; margin-top: 10px; display: inline-block; width: auto; height: auto; min-height: 0; }
+    button:hover { opacity: 0.92; }
+    .result { margin-top: 40px; border: 1px solid var(--border); border-radius: 24px; padding: 28px; display: none; background: #f8fafc; }
+    .score { font-size: 3rem; font-weight: 800; margin-bottom: 16px; line-height: 1.05; }
+    .bar { width: 100%; height: 16px; background: #dbe3ee; border-radius: 999px; overflow: hidden; margin-bottom: 24px; }
+    .fill { height: 100%; width: 0%; background: #16a34a; border-radius: 999px; transition: width 0.4s ease; }
+    .metric { margin-bottom: 14px; font-size: 1.05rem; }
+    .guidance { margin-top: 26px; font-size: 1.15rem; line-height: 1.7; }
+    .disclaimer { margin-top: 30px; font-size: 0.9rem; color: var(--muted); }
+    .helper-link { margin-top: 10px; font-size: 0.9rem; }
+    .helper-link a { color: var(--primary); font-weight: 600; }
+    .content-section p, .content-section li { line-height: 1.8; }
+  </style>
+
+  <div class="container">
+    <CalculatorPageShell
+      eyebrow="Wedding Venue Calculator"
+      title="Should I Spend $20,000 on a Wedding Venue?"
+      description="Estimate whether a $20,000 venue is a smart anchor for the wedding or a budget trap after income, savings, debt, full wedding cost, and post-wedding goals."
+    >
+      <div class="card">
+        <h2>$20,000 Wedding Venue Pressure Verdict</h2>
+
+        <div class="grid">
+          <div>
+            <label for="income">Combined Annual Income</label>
+            <input id="income" type="number" placeholder="150000" />
+          </div>
+
+          <div>
+            <label for="savings">Total Savings</label>
+            <input id="savings" type="number" placeholder="60000" />
+          </div>
+
+          <div>
+            <label for="venueCost">Venue Cost</label>
+            <input id="venueCost" type="number" value="20000" />
+          </div>
+
+          <div>
+            <label for="debt">Current Debt</label>
+            <input id="debt" type="number" placeholder="15000" />
+            <div class="helper-link">
+              <a href="/what-counts-as-debt">Not sure what counts as debt? Read the debt guide</a>
+            </div>
+          </div>
+
+          <div>
+            <label for="totalWeddingBudget">Total Wedding Budget</label>
+            <input id="totalWeddingBudget" type="number" placeholder="40000" />
+          </div>
+
+          <div>
+            <label for="monthlyTakeHome">Monthly Take-Home Pay</label>
+            <input id="monthlyTakeHome" type="number" placeholder="9500" />
+          </div>
+        </div>
+
+        <button id="venueButton" type="button">Get Venue Verdict</button>
+
+        <div class="result" id="result">
+          <div class="score" id="score"></div>
+          <div class="bar"><div class="fill" id="barFill"></div></div>
+
+          <div class="metric" id="stress"></div>
+          <div class="metric" id="savingsImpact"></div>
+          <div class="metric" id="incomeImpact"></div>
+          <div class="metric" id="monthlyImpact"></div>
+          <div class="metric" id="debtRatio"></div>
+          <div class="metric" id="budgetShare"></div>
+          <div class="metric" id="remainingSavings"></div>
+
+          <div class="guidance" id="guidance"></div>
+          <div class="disclaimer">This is a general educational estimate, not financial advice.</div>
+        </div>
+      </div>
+
+      <div class="content-section">
+        <h2>Is $20,000 Too Much for a Wedding Venue?</h2>
+        <p>
+          A $20,000 wedding venue can be a reasonable centerpiece or the expense that breaks the rest of the budget. The answer depends on what the venue includes, how much of the total wedding budget it consumes, and whether it leaves room for food, photography, music, attire, flowers, transportation, taxes, tips, and the honeymoon.
+        </p>
+        <p>
+          Venue pricing is tricky because the headline number may mean different things. One venue may include tables, chairs, linens, catering, staffing, ceremony space, and coordination. Another may charge a rental fee first and add required vendors, bar minimums, service charges, and overtime later.
+        </p>
+        <p>
+          The safest $20,000 venue is one that fits inside the full wedding plan, avoids debt, and still leaves emergency savings intact after deposits and final invoices.
+        </p>
+      </div>
+
+      <div class="content-section">
+        <h2>The Venue Can Control the Whole Wedding Budget</h2>
+        <p>
+          The venue often shapes guest count, catering rules, bar packages, rentals, setup time, transportation, ceremony logistics, and vendor choices. A beautiful space can save money if it includes important items. It can also create hidden pressure if it forces expensive preferred vendors or minimum spending levels.
+        </p>
+        <p>
+          Before judging the venue cost, compare the all-in number. That means rental fee, minimums, taxes, service charges, staffing, setup, teardown, security, parking, gratuities, and required insurance.
+        </p>
+      </div>
+
+      <WhenSpendingMakesSense
+        title="When a $20,000 Wedding Venue Makes Sense"
+        items={[
+          "The venue includes meaningful value such as catering, bar, rentals, ceremony space, coordination, staffing, or setup.",
+          "The venue does not consume too much of the total wedding budget.",
+          "You can pay deposits and balances without high-interest debt.",
+          "Emergency savings remain strong after venue payments and other wedding costs.",
+          "Both partners agree the venue is worth the tradeoff against honeymoon, housing, debt payoff, or guest-count choices.",
+        ]}
+      />
+
+      <div class="content-section">
+        <h2>When the Venue Is Too Expensive</h2>
+        <p>
+          A $20,000 venue may be too expensive if it leaves too little for catering, photography, music, flowers, attire, transportation, tips, or the honeymoon. It may also be too aggressive if the deposit drains savings or the payment schedule forces credit card use.
+        </p>
+        <p>
+          The warning sign is a venue that looks perfect but makes every other wedding decision feel financially cramped.
+        </p>
+      </div>
+
+      <KeyCostCategories
+        items={[
+          {
+            title: "Venue fee and minimums",
+            description:
+              "Rental fee, ceremony fee, food minimums, bar minimums, staffing minimums, and required packages can all affect the true cost.",
+          },
+          {
+            title: "Taxes, service charges, and gratuities",
+            description:
+              "A venue quote can rise sharply once taxes, service charges, admin fees, tips, overtime, and staffing costs are included.",
+          },
+          {
+            title: "Included rentals and coordination",
+            description:
+              "Tables, chairs, linens, dinnerware, lighting, setup, teardown, and coordination may be included or may require separate vendors.",
+          },
+          {
+            title: "Guest count and vendor restrictions",
+            description:
+              "A venue can raise costs by encouraging a larger guest list or requiring specific caterers, bar vendors, security, insurance, or transportation.",
+          },
+        ]}
+      />
+
+      <ReduceCostTips
+        items={[
+          "Ask for the all-in venue estimate, not just the rental fee.",
+          "Compare included rentals, catering, bar, staffing, setup, teardown, and coordination.",
+          "Choose an off-season date, Friday, Sunday, brunch, or shorter event window.",
+          "Reduce guest count before cutting the most meaningful parts of the day.",
+          "Avoid venues that force expensive vendors unless the total value is clear.",
+          "Set a hard venue cap before touring spaces that can stretch the budget.",
+        ]}
+      />
+
+      <FinancialRedFlags
+        items={[
+          "The venue would consume most of the total wedding budget.",
+          "The deposit or payment schedule would drain emergency savings.",
+          "The venue requires credit cards, personal loans, or borrowed money.",
+          "Required vendors, service charges, taxes, or minimums are not included in the estimate.",
+          "The venue pushes guest count higher than the couple actually wants.",
+          "Choosing the venue would delay housing, debt payoff, medical needs, or other urgent goals.",
+        ]}
+      />
+
+      <CalculatorAssumptions
+        items={[
+          "The calculator treats the venue as one part of the total wedding budget, not the entire wedding cost.",
+          "Venue cost should include rental fee, ceremony fee, required minimums, taxes, service charges, staffing, and required venue fees when known.",
+          "Total wedding budget is used to estimate whether the venue is taking too much space from the rest of the event.",
+          "Debt should include credit cards, student loans, auto loans, personal loans, medical debt, and other major obligations.",
+          "The calculator is designed for general education and does not replace personalized financial advice.",
+        ]}
+      />
+
+      <div class="content-section">
+        <h2>A Venue Quote Is Not Always the Final Venue Cost</h2>
+        <p>
+          Venue quotes can be deceptively clean. A space may advertise a rental fee, then add food and beverage minimums, staffing charges, ceremony fees, security, parking, cleaning, overtime, insurance, and service charges.
+        </p>
+        <p>
+          A stronger decision compares the final expected venue bill against the rest of the wedding budget, not just the brochure price.
+        </p>
+      </div>
+
+      <div class="content-section">
+        <h2>Venue Value Depends on What It Replaces</h2>
+        <p>
+          A $20,000 venue can be more reasonable if it replaces other costs: catering, rentals, coordination, ceremony space, setup, teardown, lighting, tables, chairs, linens, or transportation complexity.
+        </p>
+        <p>
+          It becomes less attractive when the price buys only access to the space and leaves most major wedding costs still ahead.
+        </p>
+      </div>
+
+      <FAQSection
+        title="$20,000 Wedding Venue FAQ"
+        faqs={[
+          {
+            question: "Is $20,000 too much for a wedding venue?",
+            answer:
+              "$20,000 may be reasonable or risky depending on income, savings, total wedding budget, guest count, included services, debt, and whether the venue leaves enough room for the rest of the wedding.",
+          },
+          {
+            question: "What should be included in a wedding venue budget?",
+            answer:
+              "Include rental fee, ceremony fee, catering minimums, bar minimums, staffing, tables, chairs, linens, taxes, service charges, gratuities, security, parking, and overtime.",
+          },
+          {
+            question: "Can a $20,000 venue be worth it?",
+            answer:
+              "Yes, if it includes major services that would otherwise cost extra and still leaves enough budget for food, photography, music, attire, flowers, and the honeymoon.",
+          },
+          {
+            question: "What percentage of the wedding budget should the venue take?",
+            answer:
+              "There is no perfect percentage, but the venue becomes riskier when it consumes so much of the budget that every other category feels squeezed.",
+          },
+          {
+            question: "How can I reduce wedding venue costs?",
+            answer:
+              "Reduce guest count, choose off-season dates, consider Fridays or Sundays, compare included services, limit bar packages, avoid high-minimum venues, or choose a simpler space.",
+          },
+        ]}
+      />
+
+      <MethodologySection category="wedding venue affordability" updated="May 2026" />
+
+      <RelatedGuides
+        guides={[
+          {
+            title: "How to Budget for a Wedding Without Going Into Debt",
+            href: "/how-to-budget-for-a-wedding-without-going-into-debt",
+            description:
+              "Build a wedding budget around savings, vendor tradeoffs, debt avoidance, and life after the celebration.",
+          },
+          {
+            title: "What Counts as Debt?",
+            href: "/what-counts-as-debt",
+            description:
+              "See which obligations should be included when judging wedding venue pressure.",
+          },
+          {
+            title: "How Much Emergency Savings Should I Have?",
+            href: "/how-much-emergency-savings-should-i-have",
+            description:
+              "Estimate how much cushion to protect before paying major wedding deposits.",
+          },
+        ]}
+      />
+
+      <RelatedCalculators
+        calculators={[
+          {
+            category: "Weddings",
+            title: "Should I Spend $40,000 on a Wedding?",
+            href: "/should-i-spend-40000-on-a-wedding",
+          },
+          {
+            category: "Weddings",
+            title: "Should I Spend $30,000 on a Wedding?",
+            href: "/should-i-spend-30000-on-a-wedding",
+          },
+          {
+            category: "Weddings",
+            title: "Should I Spend $5,000 on an Engagement Ring?",
+            href: "/should-i-spend-5000-on-an-engagement-ring",
+          },
+          {
+            category: "Weddings",
+            title: "Should I Spend $8,000 on a Honeymoon?",
+            href: "/should-i-spend-8000-on-a-honeymoon",
+          },
+          {
+            category: "Weddings",
+            title: "Should I Spend $10,000 on a Destination Wedding?",
+            href: "/should-i-spend-10000-on-a-destination-wedding",
+          },
+        ]}
+      />
+    </CalculatorPageShell>
+  </div>
+
+  <script is:inline>
+    const clamp = (value, min, max) => Math.min(Math.max(value, min), max);
+
+    const getNumber = (id) => {
+      const rawValue = document.getElementById(id)?.value;
+      const value = Number(rawValue);
+      return Number.isFinite(value) && value >= 0 ? value : 0;
+    };
+
+    const formatMoney = (value) => {
+      return Math.round(value).toLocaleString("en-US", {
+        style: "currency",
+        currency: "USD",
+        maximumFractionDigits: 0,
+      });
+    };
+
+    function getPressureLevel(score) {
+      if (score <= 30) {
+        return {
+          label: "Low Pressure",
+          stress: "Low pressure",
+          color: "#16a34a",
+          action:
+            "This venue appears manageable, but verify the full venue contract and protect the rest of the wedding budget.",
+        };
+      }
+
+      if (score <= 60) {
+        return {
+          label: "Moderate Pressure",
+          stress: "Moderate pressure",
+          color: "#ca8a04",
+          action:
+            "This venue may work, but compare included services, payment schedule, guest count, and remaining budget carefully.",
+        };
+      }
+
+      return {
+        label: "High Pressure",
+        stress: "High pressure",
+        color: "#dc2626",
+        action:
+          "This venue could create real strain. Consider a cheaper venue, lower guest count, or more time to save.",
+      };
+    }
+
+    function calculateVenue() {
+      const income = getNumber("income");
+      const savings = getNumber("savings");
+      const venueCost = getNumber("venueCost");
+      const debt = getNumber("debt");
+      const totalWeddingBudget = getNumber("totalWeddingBudget");
+      const monthlyTakeHome = getNumber("monthlyTakeHome");
+
+      const result = document.getElementById("result");
+      const scoreEl = document.getElementById("score");
+      const barFill = document.getElementById("barFill");
+      const stressEl = document.getElementById("stress");
+      const savingsImpactEl = document.getElementById("savingsImpact");
+      const incomeImpactEl = document.getElementById("incomeImpact");
+      const monthlyImpactEl = document.getElementById("monthlyImpact");
+      const debtRatioEl = document.getElementById("debtRatio");
+      const budgetShareEl = document.getElementById("budgetShare");
+      const remainingSavingsEl = document.getElementById("remainingSavings");
+      const guidanceEl = document.getElementById("guidance");
+
+      result.style.display = "block";
+
+      if (income <= 0 || savings <= 0 || venueCost <= 0) {
+        scoreEl.textContent = "Add your numbers first";
+        barFill.style.width = "0%";
+        barFill.style.background = "#16a34a";
+        stressEl.innerHTML = "";
+        savingsImpactEl.innerHTML = "";
+        incomeImpactEl.innerHTML = "";
+        monthlyImpactEl.innerHTML = "";
+        debtRatioEl.innerHTML = "";
+        budgetShareEl.innerHTML = "";
+        remainingSavingsEl.innerHTML = "";
+        guidanceEl.textContent =
+          "Enter a positive income, savings amount, venue cost, debt, total wedding budget, and take-home pay so the calculator can estimate pressure.";
+        return;
+      }
+
+      const monthlyIncome = monthlyTakeHome > 0 ? monthlyTakeHome : income / 12;
+      const budgetForShare = totalWeddingBudget > 0 ? totalWeddingBudget : venueCost;
+      const savingsImpact = (venueCost / savings) * 100;
+      const annualIncomeImpact = (venueCost / income) * 100;
+      const monthlyIncomeImpact = (venueCost / monthlyIncome) * 100;
+      const debtRatio = (debt / income) * 100;
+      const venueBudgetShare = (venueCost / budgetForShare) * 100;
+      const remainingWeddingBudget = Math.max(0, budgetForShare - venueCost);
+      const remainingSavings = savings - venueCost;
+      const remainingSavingsMonths = remainingSavings / monthlyIncome;
+
+      let pressureScore = 0;
+
+      pressureScore += clamp(savingsImpact * 0.36, 0, 34);
+      pressureScore += clamp(monthlyIncomeImpact * 0.2, 0, 22);
+      pressureScore += clamp(debtRatio * 0.2, 0, 16);
+
+      if (venueCost > savings) pressureScore += 26;
+
+      if (remainingSavingsMonths < 1 && income < 100000) {
+        pressureScore += 18;
+      } else if (remainingSavingsMonths < 3 && income < 160000) {
+        pressureScore += 10;
+      } else if (remainingSavingsMonths >= 6) {
+        pressureScore -= 8;
+      }
+
+      if (debtRatio >= 75) pressureScore += 12;
+      else if (debtRatio >= 40) pressureScore += 8;
+
+      if (totalWeddingBudget > 0) {
+        if (venueBudgetShare >= 70) pressureScore += 18;
+        else if (venueBudgetShare >= 55) pressureScore += 12;
+        else if (venueBudgetShare >= 45) pressureScore += 7;
+        else if (venueBudgetShare <= 30) pressureScore -= 4;
+      }
+
+      if (
+        annualIncomeImpact < 2 &&
+        savingsImpact < 10 &&
+        remainingSavingsMonths >= 6 &&
+        debtRatio < 15 &&
+        venueBudgetShare <= 50
+      ) {
+        pressureScore -= 12;
+      }
+
+      if (
+        savingsImpact < 1 &&
+        debtRatio < 10 &&
+        remainingSavingsMonths >= 24
+      ) {
+        pressureScore = 0;
+      } else if (
+        savingsImpact < 3 &&
+        debtRatio < 15 &&
+        remainingSavingsMonths >= 12
+      ) {
+        pressureScore = Math.min(pressureScore, 5);
+      } else if (
+        annualIncomeImpact < 0.25 &&
+        monthlyIncomeImpact < 3 &&
+        savingsImpact < 5 &&
+        debtRatio < 5
+      ) {
+        pressureScore = Math.min(pressureScore, 8);
+      }
+
+      pressureScore = clamp(Math.round(pressureScore), 0, 100);
+
+      const level = getPressureLevel(pressureScore);
+
+      let guidance = "";
+
+      if (pressureScore === 0) {
+        guidance =
+          `This ${formatMoney(venueCost)} venue appears financially tiny relative to the numbers provided. The venue equals about ${annualIncomeImpact.toFixed(1)}% of annual income and ${savingsImpact.toFixed(1)}% of savings, so the decision is mainly about contract terms, included services, guest experience, and opportunity cost.`;
+      } else if (pressureScore <= 30) {
+        guidance =
+          `This ${formatMoney(venueCost)} venue appears manageable based on the numbers provided. The venue equals about ${annualIncomeImpact.toFixed(1)}% of annual income and ${savingsImpact.toFixed(1)}% of savings, so the main priority is confirming what the contract includes and protecting the remaining wedding budget.`;
+      } else if (pressureScore <= 60) {
+        guidance =
+          `This ${formatMoney(venueCost)} venue may work, but it deserves caution. The venue equals about ${venueBudgetShare.toFixed(1)}% of the listed wedding budget, so the rest of the event may feel tight if catering, bar, rentals, or service charges are not already included.`;
+      } else {
+        guidance =
+          `This ${formatMoney(venueCost)} venue could create real financial strain. The venue equals about ${venueBudgetShare.toFixed(1)}% of the listed wedding budget and ${savingsImpact.toFixed(1)}% of savings, so a cheaper venue, smaller guest list, or longer savings window would likely be safer.`;
+      }
+
+      scoreEl.textContent = `${level.label} — ${pressureScore}/100`;
+      barFill.style.width = `${pressureScore}%`;
+      barFill.style.background = level.color;
+
+      stressEl.innerHTML = `<strong>Pressure level:</strong> ${level.stress}`;
+      savingsImpactEl.innerHTML = `<strong>Savings impact:</strong> ${savingsImpact.toFixed(1)}% of savings`;
+      incomeImpactEl.innerHTML = `<strong>Annual income impact:</strong> ${annualIncomeImpact.toFixed(1)}% of annual income`;
+      monthlyImpactEl.innerHTML = `<strong>Monthly take-home impact:</strong> ${monthlyIncomeImpact.toFixed(1)}% of one month’s take-home pay`;
+      debtRatioEl.innerHTML = `<strong>Debt ratio:</strong> ${debtRatio.toFixed(1)}% of annual income`;
+      budgetShareEl.innerHTML = `<strong>Venue share of wedding budget:</strong> ${venueBudgetShare.toFixed(1)}% / ${formatMoney(remainingWeddingBudget)} left for other wedding costs`;
+      remainingSavingsEl.innerHTML = `<strong>Estimated savings after venue:</strong> ${formatMoney(remainingSavings)} / ${remainingSavingsMonths.toFixed(1)} months of take-home pay`;
+
+      guidanceEl.textContent = `${guidance} Recommended next step: ${level.action}`;
+    }
+
+    document
+      .getElementById("venueButton")
+      .addEventListener("click", calculateVenue);
+  </script>
+</Layout>

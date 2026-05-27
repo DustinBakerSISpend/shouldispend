@@ -1,0 +1,761 @@
+---
+import Layout from "../layouts/Layout.astro";
+import CalculatorPageShell from "../components/CalculatorPageShell.astro";
+import FAQSection from "../components/FAQSection.astro";
+import RelatedCalculators from "../components/RelatedCalculators.astro";
+import RelatedGuides from "../components/RelatedGuides.astro";
+import MethodologySection from "../components/MethodologySection.astro";
+import FinancialRedFlags from "../components/FinancialRedFlags.astro";
+import CalculatorAssumptions from "../components/CalculatorAssumptions.astro";
+import KeyCostCategories from "../components/KeyCostCategories.astro";
+import ReduceCostTips from "../components/ReduceCostTips.astro";
+import WhenSpendingMakesSense from "../components/WhenSpendingMakesSense.astro";
+
+const pageUrl = "https://shouldispend.com/should-i-spend-40000-on-a-wedding";
+
+const faqSchema = {
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  mainEntity: [
+    {
+      "@type": "Question",
+      name: "Is $40,000 too much to spend on a wedding?",
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: "$40,000 can be manageable for some couples and risky for others. The answer depends on income, savings, debt, emergency cushion, payment method, and whether the wedding delays major financial goals.",
+      },
+    },
+    {
+      "@type": "Question",
+      name: "Should I finance a $40,000 wedding?",
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: "Financing a $40,000 wedding can create long-term pressure after the event. Paying in cash while preserving emergency savings is usually safer.",
+      },
+    },
+    {
+      "@type": "Question",
+      name: "What should be included in a $40,000 wedding budget?",
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: "Include venue, catering, bar, photography, video, entertainment, attire, flowers, decor, rentals, transportation, taxes, service charges, tips, stationery, and a final buffer.",
+      },
+    },
+    {
+      "@type": "Question",
+      name: "Can a $40,000 wedding be financially responsible?",
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: "Yes, if the couple has strong income, low debt, enough savings after the wedding, and a clear plan that avoids high-interest debt.",
+      },
+    },
+    {
+      "@type": "Question",
+      name: "How can I lower a $40,000 wedding budget?",
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: "Start with guest count, venue, catering, bar package, florals, rentals, photography add-ons, and extra weekend events. Those categories usually create the biggest savings opportunities.",
+      },
+    },
+  ],
+};
+
+const webAppSchema = {
+  "@context": "https://schema.org",
+  "@type": "WebApplication",
+  name: "Should I Spend $40,000 on a Wedding Calculator",
+  url: pageUrl,
+  applicationCategory: "FinanceApplication",
+  operatingSystem: "All",
+  description:
+    "A $40,000 wedding affordability calculator that estimates pressure using income, savings, debt, emergency cushion, wedding budget, and post-wedding flexibility.",
+};
+
+const breadcrumbSchema = {
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  itemListElement: [
+    {
+      "@type": "ListItem",
+      position: 1,
+      name: "Home",
+      item: "https://shouldispend.com/",
+    },
+    {
+      "@type": "ListItem",
+      position: 2,
+      name: "Wedding Calculators",
+      item: "https://shouldispend.com/wedding-calculators",
+    },
+    {
+      "@type": "ListItem",
+      position: 3,
+      name: "Should I Spend $40,000 on a Wedding?",
+      item: pageUrl,
+    },
+  ],
+};
+---
+
+<Layout
+  title="Should I Spend $40,000 on a Wedding? Calculator | ShouldISpend"
+  description="Use this $40,000 wedding calculator to decide whether the budget fits your income, savings, debt, emergency fund, payment plan, and long-term flexibility."
+>
+  <script type="application/ld+json" set:html={JSON.stringify(faqSchema)} />
+  <script type="application/ld+json" set:html={JSON.stringify(webAppSchema)} />
+  <script type="application/ld+json" set:html={JSON.stringify(breadcrumbSchema)} />
+
+  <style>
+    .container {
+      max-width: 950px;
+      margin: 0 auto;
+      padding: 60px 20px;
+    }
+
+    .content-section {
+      max-width: 760px;
+      margin: 72px auto 0;
+    }
+
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 28px;
+      padding: 34px;
+    }
+
+    h2 {
+      margin-top: 0;
+      font-size: 2rem;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 22px;
+      margin-bottom: 28px;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 10px;
+      font-weight: 700;
+    }
+
+    input {
+      width: 100%;
+      padding: 18px;
+      border-radius: 14px;
+      border: 1px solid var(--border);
+      font-size: 1.1rem;
+      box-sizing: border-box;
+    }
+
+    button {
+      background: #0f766e;
+      color: white;
+      border: none;
+      padding: 16px 28px;
+      border-radius: 14px;
+      font-size: 1rem;
+      font-weight: 700;
+      cursor: pointer;
+      margin-top: 10px;
+      display: inline-block;
+    }
+
+    button:hover {
+      opacity: 0.92;
+    }
+
+    .result {
+      margin-top: 40px;
+      border: 1px solid var(--border);
+      border-radius: 24px;
+      padding: 28px;
+      display: none;
+      background: #f8fafc;
+    }
+
+    .score {
+      font-size: 3rem;
+      font-weight: 800;
+      margin-bottom: 16px;
+      line-height: 1.05;
+    }
+
+    .bar {
+      width: 100%;
+      height: 16px;
+      background: #dbe3ee;
+      border-radius: 999px;
+      overflow: hidden;
+      margin-bottom: 24px;
+    }
+
+    .fill {
+      height: 100%;
+      width: 0%;
+      background: #16a34a;
+      border-radius: 999px;
+      transition: width 0.4s ease;
+    }
+
+    .metric {
+      margin-bottom: 14px;
+      font-size: 1.05rem;
+    }
+
+    .guidance {
+      margin-top: 26px;
+      font-size: 1.15rem;
+      line-height: 1.7;
+    }
+
+    .disclaimer {
+      margin-top: 30px;
+      font-size: 0.9rem;
+      color: var(--muted);
+    }
+
+    .helper-link {
+      margin-top: 10px;
+      font-size: 0.9rem;
+    }
+
+    .helper-link a {
+      color: var(--primary);
+      font-weight: 600;
+    }
+
+    .content-section p,
+    .content-section li {
+      line-height: 1.8;
+    }
+  </style>
+
+  <div class="container">
+    <CalculatorPageShell
+      eyebrow="Wedding Spending Calculator"
+      title="Should I Spend $40,000 on a Wedding?"
+      description="Estimate whether a $40,000 wedding is a manageable celebration, a meaningful stretch, or a risky expense after income, savings, debt, emergency cushion, and post-wedding goals."
+    >
+      <div class="card">
+        <h2>$40,000 Wedding Pressure Verdict</h2>
+
+        <div class="grid">
+          <div>
+            <label for="income">Combined Annual Income</label>
+            <input id="income" type="number" placeholder="170000" />
+          </div>
+
+          <div>
+            <label for="savings">Total Savings</label>
+            <input id="savings" type="number" placeholder="70000" />
+          </div>
+
+          <div>
+            <label for="weddingCost">Wedding Cost</label>
+            <input id="weddingCost" type="number" value="40000" />
+          </div>
+
+          <div>
+            <label for="debt">Current Debt</label>
+            <input id="debt" type="number" placeholder="18000" />
+
+            <div class="helper-link">
+              <a href="/what-counts-as-debt">
+                Not sure what counts as debt? Read the debt guide
+              </a>
+            </div>
+          </div>
+
+          <div>
+            <label for="monthlyTakeHome">Monthly Take-Home Pay</label>
+            <input id="monthlyTakeHome" type="number" placeholder="10500" />
+          </div>
+
+          <div>
+  <label for="postWeddingGoals">Upcoming Big Expenses</label>
+  <input id="postWeddingGoals" type="number" placeholder="25000" />
+</div>
+</div>
+
+<button id="weddingButton" type="button">
+  Get Wedding Verdict
+</button>
+
+        <div class="result" id="result">
+          <div class="score" id="score"></div>
+
+          <div class="bar">
+            <div class="fill" id="barFill"></div>
+          </div>
+
+          <div class="metric" id="stress"></div>
+          <div class="metric" id="savingsImpact"></div>
+          <div class="metric" id="incomeImpact"></div>
+          <div class="metric" id="monthlyImpact"></div>
+          <div class="metric" id="debtRatio"></div>
+          <div class="metric" id="goalStack"></div>
+          <div class="metric" id="remainingSavings"></div>
+
+          <div class="guidance" id="guidance"></div>
+
+          <div class="disclaimer">
+            This is a general educational estimate, not financial advice.
+          </div>
+        </div>
+      </div>
+
+      <div class="content-section">
+        <h2>Is $40,000 Too Much for a Wedding?</h2>
+
+        <p>
+          A $40,000 wedding is a major financial event. It may be reasonable for
+          a couple with strong income, substantial savings, low debt, and a clear
+          cash plan. It can also become risky if it drains emergency savings,
+          depends on credit cards, or delays housing, travel, medical, debt, or
+          family goals.
+        </p>
+
+        <p>
+          This budget level often covers more than a basic ceremony and
+          reception. Venue minimums, catering, bar service, photography, video,
+          flowers, attire, rentals, entertainment, transportation, gratuities,
+          service charges, and final-week decisions can all shape the real cost.
+        </p>
+
+        <p>
+          The healthiest question is not whether the wedding feels worth it on
+          the day itself. The better question is whether the couple still feels
+          financially stable after the honeymoon, final invoices, and first
+          normal month of married life.
+        </p>
+      </div>
+
+      <div class="content-section">
+        <h2>Why $40,000 Needs a Post-Wedding Test</h2>
+
+        <p>
+          Wedding costs often collide with other goals. Couples may be saving for
+          a house, planning a honeymoon, paying down student loans, preparing for
+          children, moving cities, or trying to protect an emergency fund.
+        </p>
+
+        <p>
+          A $40,000 wedding can be much safer when those goals are already funded
+          or intentionally delayed. It becomes more stressful when the wedding
+          silently takes money from every next step.
+        </p>
+      </div>
+
+      <WhenSpendingMakesSense
+        title="When a $40,000 Wedding Makes Sense"
+        items={[
+          "You can pay for the wedding without high-interest debt.",
+          "Emergency savings remain strong after the event and final invoices.",
+          "Both partners agree the experience is worth the tradeoff.",
+          "Housing, debt payoff, medical needs, family plans, and retirement contributions remain on track.",
+          "The budget includes taxes, tips, service charges, vendor meals, attire, decor, transportation, and a final buffer.",
+        ]}
+      />
+
+      <div class="content-section">
+        <h2>When You Should Scale Back</h2>
+
+        <p>
+          Scaling back may be smarter if $40,000 would consume most of your
+          savings, require financing, delay important goals, or create stress
+          between partners. A smaller wedding can still be beautiful, personal,
+          and memorable without creating a long recovery period.
+        </p>
+
+        <p>
+          At this price level, small cuts may not be enough. The biggest savings
+          usually come from the guest count, venue, catering, bar package,
+          rentals, florals, and extra wedding-weekend events.
+        </p>
+      </div>
+
+      <KeyCostCategories
+        items={[
+          {
+            title: "Venue, catering, and bar",
+            description:
+              "Guest count, food service, open bar, staffing, venue minimums, service charges, and gratuities often drive the largest share of a $40,000 wedding.",
+          },
+          {
+            title: "Photography, video, and entertainment",
+            description:
+              "Photo, video, DJ, live music, ceremony audio, lighting, and reception production can add meaningful cost beyond the venue contract.",
+          },
+          {
+            title: "Florals, design, attire, and rentals",
+            description:
+              "Flowers, linens, furniture, signage, decor, lighting, attire, alterations, hair, makeup, and upgraded rentals can quietly raise the final bill.",
+          },
+          {
+            title: "Final-week and weekend costs",
+            description:
+              "Welcome parties, rehearsal dinners, transportation, vendor meals, hotel blocks, overtime, tips, and last-minute upgrades often appear late.",
+          },
+        ]}
+      />
+
+      <ReduceCostTips
+        items={[
+          "Reduce guest count before cutting the parts of the day that matter most.",
+          "Set a hard ceiling for venue, catering, and bar before touring spaces.",
+          "Choose one or two premium vendor categories instead of upgrading everything.",
+          "Keep a separate buffer for taxes, tips, service charges, and final invoices.",
+          "Limit extra wedding-weekend events if they are pushing the budget higher.",
+          "Compare what each upgrade costs against your post-wedding goals.",
+        ]}
+      />
+
+      <FinancialRedFlags
+        items={[
+          "The wedding would require high-interest credit card debt or personal loans.",
+          "The budget would drain most emergency savings.",
+          "The cost would delay housing, debt payoff, medical needs, or other near-term goals.",
+          "The final plan depends on uncertain gifts, family contributions, bonuses, or future income.",
+          "One partner feels pressured into a budget they do not actually want.",
+          "The couple has not included taxes, tips, service charges, attire, transportation, or final-week expenses.",
+        ]}
+      />
+
+      <CalculatorAssumptions
+        items={[
+          "The calculator treats the wedding as a major one-time event expense, not just a venue deposit.",
+          "Wedding cost should include venue, catering, bar, photography, video, music, flowers, rentals, attire, transportation, taxes, tips, and a final buffer.",
+          "Near-term goal costs represent money needed soon for housing, honeymoon, moving, medical needs, debt payoff, or other priorities.",
+          "Debt should include credit cards, student loans, auto loans, personal loans, medical debt, and other major obligations.",
+          "The calculator is designed for general education and does not replace personalized financial advice.",
+        ]}
+      />
+
+      <div class="content-section">
+        <h2>What a $40,000 Wedding Really Means</h2>
+
+        <p>
+          A $40,000 wedding can feel like one number, but it is usually a bundle
+          of choices: guest list, food, bar, photos, video, music, flowers,
+          rentals, attire, transportation, and weekend events. Each choice may
+          feel reasonable alone while the full budget becomes heavy.
+        </p>
+
+        <p>
+          The best version of this budget is intentional. The couple knows what
+          they are buying, what they are not buying, and what the money will not
+          be used for afterward.
+        </p>
+      </div>
+
+      <div class="content-section">
+        <h2>How to Protect the Marriage After the Wedding</h2>
+
+        <p>
+          A wedding budget should support the relationship, not become the first
+          major financial stressor of the marriage. That means both partners
+          should understand the tradeoffs before deposits are paid.
+        </p>
+
+        <p>
+          Clear spending caps, shared priorities, honest family-contribution
+          conversations, and a protected emergency fund can make a large wedding
+          feel much safer.
+        </p>
+      </div>
+
+      <FAQSection
+        title="$40,000 Wedding FAQ"
+        faqs={[
+          {
+            question: "Is $40,000 too much to spend on a wedding?",
+            answer:
+              "$40,000 may be manageable or risky depending on income, savings, debt, emergency fund, payment method, and whether the wedding delays important goals.",
+          },
+          {
+            question: "How much income do I need for a $40,000 wedding?",
+            answer:
+              "There is no single income number. The budget is safer when it represents a manageable share of income, does not drain savings, and avoids high-interest debt.",
+          },
+          {
+            question: "Should I finance a $40,000 wedding?",
+            answer:
+              "Be cautious. Financing can create long-term pressure after the celebration, especially if interest rates are high or the monthly payments compete with housing, debt payoff, or emergency savings.",
+          },
+          {
+            question: "What costs should be included in a $40,000 wedding budget?",
+            answer:
+              "Include venue, catering, bar, photography, video, music, flowers, rentals, attire, transportation, stationery, taxes, tips, service charges, vendor meals, and a final buffer.",
+          },
+          {
+            question: "How can I reduce a $40,000 wedding budget?",
+            answer:
+              "Start with guest count, venue, catering, bar, rentals, florals, photo/video add-ons, transportation, and extra weekend events. Those categories usually create the largest savings.",
+          },
+        ]}
+      />
+
+      <MethodologySection category="wedding affordability" updated="May 2026" />
+
+      <RelatedGuides
+        guides={[
+          {
+            title: "How to Budget for a Wedding Without Going Into Debt",
+            href: "/how-to-budget-for-a-wedding-without-going-into-debt",
+            description:
+              "Build a wedding budget around cash flow, savings protection, vendor tradeoffs, and life after the celebration.",
+          },
+          {
+            title: "What Counts as Debt?",
+            href: "/what-counts-as-debt",
+            description:
+              "See which obligations should be included when judging wedding affordability.",
+          },
+          {
+            title: "How Much Emergency Savings Should I Have?",
+            href: "/how-much-emergency-savings-should-i-have",
+            description:
+              "Estimate how much cushion to protect before committing to a major wedding budget.",
+          },
+        ]}
+      />
+
+      <RelatedCalculators
+        calculators={[
+          {
+            category: "Weddings",
+            title: "Should I Spend $5,000 on an Engagement Ring?",
+            href: "/should-i-spend-5000-on-an-engagement-ring",
+          },
+          {
+            category: "Weddings",
+            title: "Should I Spend $30,000 on a Wedding?",
+            href: "/should-i-spend-30000-on-a-wedding",
+          },
+          {
+            category: "Weddings",
+            title: "Should I Spend $50,000 on a Wedding?",
+            href: "/should-i-spend-50000-on-a-wedding",
+          },
+          {
+            category: "Weddings",
+            title: "Should I Spend $8,000 on a Honeymoon?",
+            href: "/should-i-spend-8000-on-a-honeymoon",
+          },
+          {
+            category: "Weddings",
+            title: "Should I Spend $20,000 on a Wedding Venue?",
+            href: "/should-i-spend-20000-on-a-wedding-venue",
+          },
+        ]}
+      />
+    </CalculatorPageShell>
+  </div>
+
+  <script is:inline>
+    const clamp = (value, min, max) => Math.min(Math.max(value, min), max);
+
+    const getNumber = (id) => {
+      const rawValue = document.getElementById(id)?.value;
+      const value = Number(rawValue);
+      return Number.isFinite(value) && value >= 0 ? value : 0;
+    };
+
+    const formatMoney = (value) => {
+      return Math.round(value).toLocaleString("en-US", {
+        style: "currency",
+        currency: "USD",
+        maximumFractionDigits: 0,
+      });
+    };
+
+    function getPressureLevel(score) {
+      if (score <= 30) {
+        return {
+          label: "Low Pressure",
+          stress: "Low pressure",
+          color: "#16a34a",
+          action:
+            "This wedding budget appears manageable, but keep deposits, final invoices, and emergency savings protected.",
+        };
+      }
+
+      if (score <= 60) {
+        return {
+          label: "Moderate Pressure",
+          stress: "Moderate pressure",
+          color: "#ca8a04",
+          action:
+            "This wedding may work, but set firmer guardrails around guest count, venue, catering, bar, and upgrades.",
+        };
+      }
+
+      return {
+        label: "High Pressure",
+        stress: "High pressure",
+        color: "#dc2626",
+        action:
+          "This wedding could create real strain. Consider lowering the budget, delaying, or protecting savings first.",
+      };
+    }
+
+    function calculateWedding() {
+      const income = getNumber("income");
+      const savings = getNumber("savings");
+      const weddingCost = getNumber("weddingCost");
+      const debt = getNumber("debt");
+      const monthlyTakeHome = getNumber("monthlyTakeHome");
+      const postWeddingGoals = getNumber("postWeddingGoals");
+
+      const result = document.getElementById("result");
+      const scoreEl = document.getElementById("score");
+      const barFill = document.getElementById("barFill");
+      const stressEl = document.getElementById("stress");
+      const savingsImpactEl = document.getElementById("savingsImpact");
+      const incomeImpactEl = document.getElementById("incomeImpact");
+      const monthlyImpactEl = document.getElementById("monthlyImpact");
+      const debtRatioEl = document.getElementById("debtRatio");
+      const goalStackEl = document.getElementById("goalStack");
+      const remainingSavingsEl = document.getElementById("remainingSavings");
+      const guidanceEl = document.getElementById("guidance");
+
+      result.style.display = "block";
+
+      if (income <= 0 || savings <= 0 || weddingCost <= 0) {
+        scoreEl.textContent = "Add your numbers first";
+        barFill.style.width = "0%";
+        barFill.style.background = "#16a34a";
+        stressEl.innerHTML = "";
+        savingsImpactEl.innerHTML = "";
+        incomeImpactEl.innerHTML = "";
+        monthlyImpactEl.innerHTML = "";
+        debtRatioEl.innerHTML = "";
+        goalStackEl.innerHTML = "";
+        remainingSavingsEl.innerHTML = "";
+        guidanceEl.textContent =
+          "Enter a positive income, savings amount, wedding cost, debt, take-home pay, and near-term goal costs so the calculator can estimate pressure.";
+        return;
+      }
+
+      const monthlyIncome = monthlyTakeHome > 0 ? monthlyTakeHome : income / 12;
+      const savingsImpact = (weddingCost / savings) * 100;
+      const annualIncomeImpact = (weddingCost / income) * 100;
+      const monthlyIncomeImpact = (weddingCost / monthlyIncome) * 100;
+      const debtRatio = (debt / income) * 100;
+      const totalGoalStack = weddingCost + postWeddingGoals;
+      const goalStackIncomeImpact = (totalGoalStack / income) * 100;
+      const goalStackSavingsImpact = savings > 0 ? (totalGoalStack / savings) * 100 : 0;
+      const remainingSavings = savings - weddingCost;
+      const remainingSavingsMonths = remainingSavings / monthlyIncome;
+
+      let pressureScore = 0;
+
+      pressureScore += clamp(savingsImpact * 0.4, 0, 40);
+      pressureScore += clamp(monthlyIncomeImpact * 0.24, 0, 26);
+      pressureScore += clamp(debtRatio * 0.22, 0, 18);
+
+      if (weddingCost > savings) pressureScore += 30;
+
+      if (remainingSavingsMonths < 1 && income < 120000) {
+        pressureScore += 20;
+      } else if (remainingSavingsMonths < 3 && income < 180000) {
+        pressureScore += 12;
+      } else if (remainingSavingsMonths >= 6) {
+        pressureScore -= 8;
+      }
+
+      if (debtRatio >= 75) pressureScore += 12;
+      else if (debtRatio >= 40) pressureScore += 8;
+
+      if (postWeddingGoals > 0) {
+        if (goalStackSavingsImpact >= 90) pressureScore += 14;
+        else if (goalStackSavingsImpact >= 60) pressureScore += 9;
+        else if (goalStackSavingsImpact >= 35) pressureScore += 5;
+
+        if (goalStackIncomeImpact >= 50) pressureScore += 10;
+        else if (goalStackIncomeImpact >= 30) pressureScore += 6;
+      }
+
+      if (
+        annualIncomeImpact < 2 &&
+        savingsImpact < 10 &&
+        remainingSavingsMonths >= 6 &&
+        debtRatio < 15
+      ) {
+        pressureScore -= 12;
+      }
+
+      if (
+        annualIncomeImpact < 0.75 &&
+        monthlyIncomeImpact < 8 &&
+        debtRatio < 10
+      ) {
+        pressureScore = Math.min(pressureScore, 18);
+      }
+
+      if (
+        annualIncomeImpact < 0.25 &&
+        monthlyIncomeImpact < 3 &&
+        debtRatio < 5
+      ) {
+        pressureScore = Math.min(pressureScore, 8);
+      }
+
+      if (
+  savingsImpact < 1 &&
+  debtRatio < 10 &&
+  remainingSavingsMonths >= 24
+) {
+  pressureScore = 0;
+} else if (
+  savingsImpact < 3 &&
+  debtRatio < 15 &&
+  remainingSavingsMonths >= 12
+) {
+  pressureScore = Math.min(pressureScore, 5);
+}
+
+      pressureScore = clamp(Math.round(pressureScore), 0, 100);
+
+      const level = getPressureLevel(pressureScore);
+
+      let guidance = "";
+
+      if (pressureScore === 0) {
+        guidance =
+          `This ${formatMoney(weddingCost)} wedding appears financially tiny relative to the numbers provided. The wedding equals about ${annualIncomeImpact.toFixed(1)}% of annual income and ${savingsImpact.toFixed(1)}% of savings, so the decision is mainly about priorities, family expectations, and opportunity cost.`;
+      } else if (pressureScore <= 30) {
+        guidance =
+          `This ${formatMoney(weddingCost)} wedding appears manageable based on the numbers provided. The wedding equals about ${annualIncomeImpact.toFixed(1)}% of annual income and ${savingsImpact.toFixed(1)}% of savings, so the main priority is avoiding budget creep and preserving post-wedding savings.`;
+      } else if (pressureScore <= 60) {
+        guidance =
+          `This ${formatMoney(weddingCost)} wedding may work, but it deserves caution. The wedding equals about ${annualIncomeImpact.toFixed(1)}% of annual income and ${savingsImpact.toFixed(1)}% of savings, and near-term goals may add pressure if costs keep rising.`;
+      } else {
+        guidance =
+          `This ${formatMoney(weddingCost)} wedding could create real financial strain. The wedding equals about ${annualIncomeImpact.toFixed(1)}% of annual income and ${savingsImpact.toFixed(1)}% of savings, so lowering the budget, trimming the guest list, or saving longer would likely be safer.`;
+      }
+
+      scoreEl.textContent = `${level.label} — ${pressureScore}/100`;
+      barFill.style.width = `${pressureScore}%`;
+      barFill.style.background = level.color;
+
+      stressEl.innerHTML = `<strong>Pressure level:</strong> ${level.stress}`;
+      savingsImpactEl.innerHTML = `<strong>Savings impact:</strong> ${savingsImpact.toFixed(1)}% of savings`;
+      incomeImpactEl.innerHTML = `<strong>Annual income impact:</strong> ${annualIncomeImpact.toFixed(1)}% of annual income`;
+      monthlyImpactEl.innerHTML = `<strong>Monthly take-home impact:</strong> ${monthlyIncomeImpact.toFixed(1)}% of one month’s take-home pay`;
+      debtRatioEl.innerHTML = `<strong>Debt ratio:</strong> ${debtRatio.toFixed(1)}% of annual income`;
+      goalStackEl.innerHTML = `<strong>Wedding + near-term goal stack:</strong> ${formatMoney(totalGoalStack)} total / ${goalStackIncomeImpact.toFixed(1)}% of annual income`;
+      remainingSavingsEl.innerHTML = `<strong>Estimated savings after wedding:</strong> ${formatMoney(remainingSavings)} / ${remainingSavingsMonths.toFixed(1)} months of take-home pay`;
+
+      guidanceEl.textContent = `${guidance} Recommended next step: ${level.action}`;
+    }
+
+    document
+      .getElementById("weddingButton")
+      .addEventListener("click", calculateWedding);
+  </script>
+</Layout>

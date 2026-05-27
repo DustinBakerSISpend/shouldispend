@@ -1,0 +1,757 @@
+---
+import Layout from "../layouts/Layout.astro";
+import CalculatorPageShell from "../components/CalculatorPageShell.astro";
+import FAQSection from "../components/FAQSection.astro";
+import RelatedCalculators from "../components/RelatedCalculators.astro";
+import RelatedGuides from "../components/RelatedGuides.astro";
+import MethodologySection from "../components/MethodologySection.astro";
+import FinancialRedFlags from "../components/FinancialRedFlags.astro";
+import CalculatorAssumptions from "../components/CalculatorAssumptions.astro";
+import KeyCostCategories from "../components/KeyCostCategories.astro";
+import ReduceCostTips from "../components/ReduceCostTips.astro";
+import WhenSpendingMakesSense from "../components/WhenSpendingMakesSense.astro";
+
+const pageUrl = "https://shouldispend.com/should-i-spend-5000-on-an-engagement-ring";
+
+const faqSchema = {
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  mainEntity: [
+    {
+      "@type": "Question",
+      name: "Is $5,000 too much to spend on an engagement ring?",
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: "$5,000 can be reasonable or risky depending on income, savings, debt, wedding plans, emergency cushion, and whether the ring requires financing.",
+      },
+    },
+    {
+      "@type": "Question",
+      name: "Should I finance a $5,000 engagement ring?",
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: "Financing an engagement ring can add pressure before wedding costs begin. Paying in cash while preserving emergency savings is usually safer.",
+      },
+    },
+    {
+      "@type": "Question",
+      name: "How much should I spend on an engagement ring?",
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: "A safer ring budget is one that fits your income and savings without creating debt, weakening your emergency fund, or crowding out wedding and housing goals.",
+      },
+    },
+    {
+      "@type": "Question",
+      name: "Is the three-month salary rule still useful?",
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: "The three-month salary rule is not a good affordability test. Real affordability depends on cash flow, debt, savings, and shared financial priorities.",
+      },
+    },
+    {
+      "@type": "Question",
+      name: "Can a cheaper engagement ring still be meaningful?",
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: "Yes. A ring’s meaning does not depend on maximizing the price. Many couples are happier when the ring fits comfortably within the larger financial plan.",
+      },
+    },
+  ],
+};
+
+const webAppSchema = {
+  "@context": "https://schema.org",
+  "@type": "WebApplication",
+  name: "Should I Spend $5,000 on an Engagement Ring Calculator",
+  url: pageUrl,
+  applicationCategory: "FinanceApplication",
+  operatingSystem: "All",
+  description:
+    "An engagement ring affordability calculator that estimates pressure from a $5,000 ring using income, savings, debt, wedding plans, and emergency cushion.",
+};
+
+const breadcrumbSchema = {
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  itemListElement: [
+    {
+      "@type": "ListItem",
+      position: 1,
+      name: "Home",
+      item: "https://shouldispend.com/",
+    },
+    {
+      "@type": "ListItem",
+      position: 2,
+      name: "Wedding Calculators",
+      item: "https://shouldispend.com/wedding-calculators",
+    },
+    {
+      "@type": "ListItem",
+      position: 3,
+      name: "Should I Spend $5,000 on an Engagement Ring?",
+      item: pageUrl,
+    },
+  ],
+};
+---
+
+<Layout
+  title="Should I Spend $5,000 on an Engagement Ring? Calculator | ShouldISpend"
+  description="Use this $5,000 engagement ring calculator to decide whether the ring fits your income, savings, debt, emergency fund, wedding plans, and monthly flexibility."
+>
+  <script type="application/ld+json" set:html={JSON.stringify(faqSchema)} />
+  <script type="application/ld+json" set:html={JSON.stringify(webAppSchema)} />
+  <script type="application/ld+json" set:html={JSON.stringify(breadcrumbSchema)} />
+
+  <style>
+    .container {
+      max-width: 950px;
+      margin: 0 auto;
+      padding: 60px 20px;
+    }
+
+    .content-section {
+      max-width: 760px;
+      margin: 72px auto 0;
+    }
+
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 28px;
+      padding: 34px;
+    }
+
+    h2 {
+      margin-top: 0;
+      font-size: 2rem;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 22px;
+      margin-bottom: 28px;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 10px;
+      font-weight: 700;
+    }
+
+    input {
+      width: 100%;
+      padding: 18px;
+      border-radius: 14px;
+      border: 1px solid var(--border);
+      font-size: 1.1rem;
+      box-sizing: border-box;
+    }
+
+    button {
+      background: #0f766e;
+      color: white;
+      border: none;
+      padding: 16px 28px;
+      border-radius: 14px;
+      font-size: 1rem;
+      font-weight: 700;
+      cursor: pointer;
+      margin-top: 10px;
+      display: inline-block;
+    }
+
+    button:hover {
+      opacity: 0.92;
+    }
+
+    .result {
+      margin-top: 40px;
+      border: 1px solid var(--border);
+      border-radius: 24px;
+      padding: 28px;
+      display: none;
+      background: #f8fafc;
+    }
+
+    .score {
+      font-size: 3rem;
+      font-weight: 800;
+      margin-bottom: 16px;
+      line-height: 1.05;
+    }
+
+    .bar {
+      width: 100%;
+      height: 16px;
+      background: #dbe3ee;
+      border-radius: 999px;
+      overflow: hidden;
+      margin-bottom: 24px;
+    }
+
+    .fill {
+      height: 100%;
+      width: 0%;
+      background: #16a34a;
+      border-radius: 999px;
+      transition: width 0.4s ease;
+    }
+
+    .metric {
+      margin-bottom: 14px;
+      font-size: 1.05rem;
+    }
+
+    .guidance {
+      margin-top: 26px;
+      font-size: 1.15rem;
+      line-height: 1.7;
+    }
+
+    .disclaimer {
+      margin-top: 30px;
+      font-size: 0.9rem;
+      color: var(--muted);
+    }
+
+    .helper-link {
+      margin-top: 10px;
+      font-size: 0.9rem;
+    }
+
+    .helper-link a {
+      color: var(--primary);
+      font-weight: 600;
+    }
+
+    .content-section p,
+    .content-section li {
+      line-height: 1.8;
+    }
+  </style>
+
+  <div class="container">
+    <CalculatorPageShell
+      eyebrow="Engagement Ring Calculator"
+      title="Should I Spend $5,000 on an Engagement Ring?"
+      description="Estimate whether a $5,000 engagement ring is a comfortable purchase, a manageable stretch, or a risky pre-wedding expense after income, savings, debt, emergency cushion, and wedding plans."
+    >
+      <div class="card">
+        <h2>$5,000 Engagement Ring Pressure Verdict</h2>
+
+        <div class="grid">
+          <div>
+            <label for="income">Annual Household Income</label>
+            <input id="income" type="number" placeholder="95000" />
+          </div>
+
+          <div>
+            <label for="savings">Total Savings</label>
+            <input id="savings" type="number" placeholder="22000" />
+          </div>
+
+          <div>
+            <label for="ringCost">Engagement Ring Cost</label>
+            <input id="ringCost" type="number" value="5000" />
+          </div>
+
+          <div>
+            <label for="debt">Total Debt</label>
+            <input id="debt" type="number" placeholder="12000" />
+
+            <div class="helper-link">
+              <a href="/what-counts-as-debt">
+                Not sure what counts as debt? Read the debt guide
+              </a>
+            </div>
+          </div>
+
+          <div>
+            <label for="weddingBudget">Expected Wedding Budget</label>
+            <input id="weddingBudget" type="number" placeholder="30000" />
+          </div>
+
+          <div>
+            <label for="monthlyTakeHome">Monthly Take-Home Pay</label>
+            <input id="monthlyTakeHome" type="number" placeholder="6200" />
+          </div>
+        </div>
+
+        <button id="ringButton" type="button">
+          Get Engagement Ring Verdict
+        </button>
+
+        <div class="result" id="result">
+          <div class="score" id="score"></div>
+
+          <div class="bar">
+            <div class="fill" id="barFill"></div>
+          </div>
+
+          <div class="metric" id="stress"></div>
+          <div class="metric" id="savingsImpact"></div>
+          <div class="metric" id="incomeImpact"></div>
+          <div class="metric" id="monthlyImpact"></div>
+          <div class="metric" id="debtRatio"></div>
+          <div class="metric" id="weddingStack"></div>
+          <div class="metric" id="remainingSavings"></div>
+
+          <div class="guidance" id="guidance"></div>
+
+          <div class="disclaimer">
+            This is a general educational estimate, not financial advice.
+          </div>
+        </div>
+      </div>
+
+      <div class="content-section">
+        <h2>Is $5,000 Too Much for an Engagement Ring?</h2>
+
+        <p>
+          A $5,000 engagement ring can be a meaningful, reasonable purchase for
+          some couples and a stressful financial decision for others. The number
+          itself matters less than what the purchase does to savings, debt,
+          emergency cushion, wedding plans, and the financial life you are
+          building together.
+        </p>
+
+        <p>
+          Engagement rings are emotionally loaded purchases. Tradition, family
+          expectations, social comparison, proposal pressure, and old salary
+          rules can push the budget higher than what actually feels comfortable.
+          A healthier ring budget starts with cash flow and shared priorities,
+          not pressure to hit a symbolic number.
+        </p>
+
+        <p>
+          The safest version of a $5,000 ring is one you can buy without
+          high-interest debt, without draining emergency savings, and without
+          weakening the wedding, housing, travel, or debt-payoff goals that may
+          come next.
+        </p>
+      </div>
+
+      <div class="content-section">
+        <h2>Why the Ring Budget Should Not Be Separate from the Wedding Budget</h2>
+
+        <p>
+          The ring often arrives before the most expensive part of the engagement
+          season. Venue deposits, photography, attire, flowers, travel, honeymoon
+          plans, showers, parties, and moving or housing goals may follow quickly.
+        </p>
+
+        <p>
+          That is why a ring can look manageable by itself and still create
+          pressure when combined with the larger wedding timeline. A $5,000 ring
+          is safer when the couple has already discussed the bigger financial
+          picture.
+        </p>
+      </div>
+
+      <WhenSpendingMakesSense
+        title="When a $5,000 Engagement Ring Makes Sense"
+        items={[
+          "You can pay for the ring without high-interest credit card debt.",
+          "Emergency savings remain intact after the purchase.",
+          "The ring does not delay urgent debt payoff, rent stability, housing goals, or medical needs.",
+          "Both partners are comfortable with the tradeoff between the ring and future wedding costs.",
+          "The purchase reflects real priorities instead of pressure from outdated salary rules or social comparison.",
+        ]}
+      />
+
+      <div class="content-section">
+        <h2>When You Should Spend Less on the Ring</h2>
+
+        <p>
+          A lower ring budget may be smarter if $5,000 would wipe out savings,
+          require financing, add stress before the wedding, or make upcoming
+          expenses harder to handle. A proposal can still be deeply meaningful
+          with a smaller ring, a different stone, a vintage ring, a simpler
+          setting, or a plan to upgrade later.
+        </p>
+
+        <p>
+          The warning sign is a ring that creates a financial recovery period
+          before the engagement has even begun.
+        </p>
+      </div>
+
+      <KeyCostCategories
+        items={[
+          {
+            title: "Ring price and financing terms",
+            description:
+              "The sticker price matters, but interest rates, payment plans, credit card balances, and promotional financing deadlines can change the real cost.",
+          },
+          {
+            title: "Emergency savings impact",
+            description:
+              "A ring purchase should not leave the couple exposed to normal surprises like car repairs, medical bills, moving costs, or job changes.",
+          },
+          {
+            title: "Wedding and honeymoon overlap",
+            description:
+              "The engagement ring may compete with venue deposits, photography, attire, travel, honeymoon plans, and other wedding-related costs.",
+          },
+          {
+            title: "Insurance and long-term care",
+            description:
+              "A more expensive ring may also require jewelry insurance, resizing, repairs, appraisal paperwork, and safe storage.",
+          },
+        ]}
+      />
+
+      <ReduceCostTips
+        items={[
+          "Compare lab-grown diamonds, alternative stones, vintage rings, and simpler settings.",
+          "Set the ring budget before shopping so emotions do not raise the price in-store.",
+          "Avoid high-interest credit cards or financing plans with risky promotional deadlines.",
+          "Consider spending less now and upgrading later if income and savings improve.",
+          "Ask about insurance, resizing, appraisal, warranty, and maintenance costs before buying.",
+          "Keep the ring budget separate from emergency savings needed for real life.",
+        ]}
+      />
+
+      <FinancialRedFlags
+        items={[
+          "The ring would require high-interest credit card debt.",
+          "The purchase would drain most of your emergency savings.",
+          "You are already carrying stressful debt or struggling with monthly bills.",
+          "The ring would delay rent, housing, medical, or debt-payoff priorities.",
+          "The price is driven mostly by pressure, comparison, or fear of disappointing someone.",
+          "The payment plan only works if future income, bonuses, or side income arrive.",
+        ]}
+      />
+
+      <CalculatorAssumptions
+        items={[
+          "The calculator treats the engagement ring as a one-time major purchase, not a recurring bill.",
+          "The calculator assumes the ring should be judged alongside savings, debt, wedding plans, and emergency cushion.",
+          "Wedding budget is used as a pressure signal because ring spending often overlaps with other engagement and wedding costs.",
+          "Debt should include credit cards, student loans, auto loans, personal loans, medical debt, and other major obligations.",
+          "The calculator is designed for general education and does not replace personalized financial advice.",
+        ]}
+      />
+
+      <div class="content-section">
+        <h2>Forget the Three-Month Salary Rule</h2>
+
+        <p>
+          The old three-month salary rule is a poor affordability test. It does
+          not know your debt, savings, rent, medical expenses, wedding plans,
+          housing goals, or emergency fund. It also treats the ring like a
+          status test instead of a financial decision.
+        </p>
+
+        <p>
+          A better rule is simpler: buy a ring that feels meaningful and still
+          leaves your financial life stable the next morning.
+        </p>
+      </div>
+
+      <div class="content-section">
+        <h2>How to Think About Ring Value</h2>
+
+        <p>
+          Engagement ring value is not only about carat size or price. The value
+          comes from meaning, taste, durability, comfort, and whether the purchase
+          fits the couple’s broader life. A ring that creates relief and pride is
+          often better than one that creates anxiety and payments.
+        </p>
+
+        <p>
+          The best ring budget is one that lets the proposal feel special without
+          turning the engagement into a financial stress test.
+        </p>
+      </div>
+
+      <FAQSection
+        title="$5,000 Engagement Ring FAQ"
+        faqs={[
+          {
+            question: "Is $5,000 too much to spend on an engagement ring?",
+            answer:
+              "$5,000 can be reasonable or risky depending on income, savings, debt, emergency fund, wedding plans, and whether the ring requires financing.",
+          },
+          {
+            question: "How much income do I need for a $5,000 engagement ring?",
+            answer:
+              "There is no single income number. The ring is safer when it represents a small share of annual income and does not drain savings, add debt, or crowd out wedding and housing goals.",
+          },
+          {
+            question: "Should I finance a $5,000 engagement ring?",
+            answer:
+              "Be cautious. Financing can add pressure before wedding costs begin, especially if interest rates are high or promotional terms expire before the balance is paid.",
+          },
+          {
+            question: "Is the three-month salary rule still useful?",
+            answer:
+              "No. The three-month salary rule ignores savings, debt, emergency cushion, wedding plans, rent, and real monthly cash flow.",
+          },
+          {
+            question: "What are cheaper alternatives to a $5,000 engagement ring?",
+            answer:
+              "Lab-grown diamonds, smaller stones, alternative gemstones, vintage rings, simpler settings, family rings, and later upgrades can all reduce pressure while keeping the proposal meaningful.",
+          },
+        ]}
+      />
+
+      <MethodologySection category="engagement ring affordability" updated="May 2026" />
+
+      <RelatedGuides
+        guides={[
+          {
+            title: "How to Budget for a Wedding Without Going Into Debt",
+            href: "/how-to-budget-for-a-wedding-without-going-into-debt",
+            description:
+              "Build a wedding budget around savings, vendor tradeoffs, debt avoidance, and life after the celebration.",
+          },
+          {
+            title: "What Counts as Debt?",
+            href: "/what-counts-as-debt",
+            description:
+              "See which obligations should be included when judging ring, wedding, and honeymoon pressure.",
+          },
+          {
+            title: "How Much Emergency Savings Should I Have?",
+            href: "/how-much-emergency-savings-should-i-have",
+            description:
+              "Estimate how much cushion to protect before making major engagement or wedding purchases.",
+          },
+        ]}
+      />
+
+      <RelatedCalculators
+        calculators={[
+          {
+            category: "Weddings",
+            title: "Should I Spend $30,000 on a Wedding?",
+            href: "/should-i-spend-30000-on-a-wedding",
+          },
+          {
+            category: "Weddings",
+            title: "Should I Spend $40,000 on a Wedding?",
+            href: "/should-i-spend-40000-on-a-wedding",
+          },
+          {
+            category: "Weddings",
+            title: "Should I Spend $8,000 on a Honeymoon?",
+            href: "/should-i-spend-8000-on-a-honeymoon",
+          },
+          {
+            category: "Weddings",
+            title: "Should I Spend $20,000 on a Wedding Venue?",
+            href: "/should-i-spend-20000-on-a-wedding-venue",
+          },
+          {
+            category: "Weddings",
+            title: "Should I Spend $10,000 on a Destination Wedding?",
+            href: "/should-i-spend-10000-on-a-destination-wedding",
+          },
+        ]}
+      />
+    </CalculatorPageShell>
+  </div>
+
+  <script is:inline>
+  const clamp = (value, min, max) => Math.min(Math.max(value, min), max);
+
+  const getNumber = (id) => {
+    const rawValue = document.getElementById(id)?.value;
+    const value = Number(rawValue);
+    return Number.isFinite(value) && value >= 0 ? value : 0;
+  };
+
+  const formatMoney = (value) => {
+    return Math.round(value).toLocaleString("en-US", {
+      style: "currency",
+      currency: "USD",
+      maximumFractionDigits: 0,
+    });
+  };
+
+  function getPressureLevel(score) {
+    if (score <= 30) {
+      return {
+        label: "Low Pressure",
+        stress: "Low pressure",
+        color: "#16a34a",
+        action:
+          "This ring purchase appears manageable, but keep the full wedding and emergency-savings picture in view.",
+      };
+    }
+
+    if (score <= 60) {
+      return {
+        label: "Moderate Pressure",
+        stress: "Moderate pressure",
+        color: "#ca8a04",
+        action:
+          "This ring may work, but consider lowering the price, avoiding financing, or rebuilding savings first.",
+      };
+    }
+
+    return {
+      label: "High Pressure",
+      stress: "High pressure",
+      color: "#dc2626",
+      action:
+        "This ring could create real strain. Consider a lower-cost ring, delayed upgrade, or more time to save.",
+    };
+  }
+
+  function calculateRing() {
+    const income = getNumber("income");
+    const savings = getNumber("savings");
+    const ringCost = getNumber("ringCost");
+    const debt = getNumber("debt");
+    const weddingBudget = getNumber("weddingBudget");
+    const monthlyTakeHome = getNumber("monthlyTakeHome");
+
+    const result = document.getElementById("result");
+    const scoreEl = document.getElementById("score");
+    const barFill = document.getElementById("barFill");
+    const stressEl = document.getElementById("stress");
+    const savingsImpactEl = document.getElementById("savingsImpact");
+    const incomeImpactEl = document.getElementById("incomeImpact");
+    const monthlyImpactEl = document.getElementById("monthlyImpact");
+    const debtRatioEl = document.getElementById("debtRatio");
+    const weddingStackEl = document.getElementById("weddingStack");
+    const remainingSavingsEl = document.getElementById("remainingSavings");
+    const guidanceEl = document.getElementById("guidance");
+
+    result.style.display = "block";
+
+    if (income <= 0 || savings <= 0 || ringCost <= 0) {
+      scoreEl.textContent = "Add your numbers first";
+      barFill.style.width = "0%";
+      barFill.style.background = "#16a34a";
+      stressEl.innerHTML = "";
+      savingsImpactEl.innerHTML = "";
+      incomeImpactEl.innerHTML = "";
+      monthlyImpactEl.innerHTML = "";
+      debtRatioEl.innerHTML = "";
+      weddingStackEl.innerHTML = "";
+      remainingSavingsEl.innerHTML = "";
+      guidanceEl.textContent =
+        "Enter a positive income, savings amount, ring cost, debt, expected wedding budget, and take-home pay so the calculator can estimate pressure.";
+      return;
+    }
+
+    const monthlyIncome = monthlyTakeHome > 0 ? monthlyTakeHome : income / 12;
+    const savingsImpact = (ringCost / savings) * 100;
+    const annualIncomeImpact = (ringCost / income) * 100;
+    const monthlyIncomeImpact = (ringCost / monthlyIncome) * 100;
+    const debtRatio = (debt / income) * 100;
+    const engagementStack = ringCost + weddingBudget;
+    const engagementStackIncomeImpact = (engagementStack / income) * 100;
+    const engagementStackSavingsImpact = savings > 0 ? (engagementStack / savings) * 100 : 0;
+    const remainingSavings = savings - ringCost;
+    const remainingSavingsMonths = remainingSavings / monthlyIncome;
+
+    let pressureScore = 0;
+
+    pressureScore += clamp(savingsImpact * 0.38, 0, 36);
+    pressureScore += clamp(monthlyIncomeImpact * 0.22, 0, 24);
+    pressureScore += clamp(debtRatio * 0.2, 0, 16);
+
+    if (ringCost > savings) pressureScore += 26;
+
+    if (remainingSavingsMonths < 1 && income < 100000) {
+      pressureScore += 18;
+    } else if (remainingSavingsMonths < 3 && income < 150000) {
+      pressureScore += 10;
+    } else if (remainingSavingsMonths >= 6) {
+      pressureScore -= 8;
+    }
+
+    if (debtRatio >= 75) pressureScore += 12;
+    else if (debtRatio >= 40) pressureScore += 8;
+
+    if (weddingBudget > 0) {
+      if (engagementStackSavingsImpact >= 90) pressureScore += 14;
+      else if (engagementStackSavingsImpact >= 60) pressureScore += 9;
+      else if (engagementStackSavingsImpact >= 35) pressureScore += 5;
+
+      if (engagementStackIncomeImpact >= 45) pressureScore += 10;
+      else if (engagementStackIncomeImpact >= 25) pressureScore += 6;
+    }
+
+    if (
+      annualIncomeImpact < 2 &&
+      savingsImpact < 10 &&
+      remainingSavingsMonths >= 6 &&
+      debtRatio < 15
+    ) {
+      pressureScore -= 12;
+    }
+
+    if (
+      annualIncomeImpact < 0.75 &&
+      monthlyIncomeImpact < 8 &&
+      debtRatio < 10
+    ) {
+      pressureScore = Math.min(pressureScore, 18);
+    }
+
+    if (
+      annualIncomeImpact < 0.25 &&
+      monthlyIncomeImpact < 3 &&
+      debtRatio < 5
+    ) {
+      pressureScore = Math.min(pressureScore, 8);
+    }
+
+    if (
+      annualIncomeImpact < 0.1 &&
+      monthlyIncomeImpact < 1.5 &&
+      savingsImpact < 1 &&
+      debtRatio < 3 &&
+      remainingSavingsMonths >= 12
+    ) {
+      pressureScore = 0;
+    }
+
+    pressureScore = clamp(Math.round(pressureScore), 0, 100);
+
+    const level = getPressureLevel(pressureScore);
+
+    let guidance = "";
+
+    if (pressureScore === 0) {
+      guidance =
+        `This ${formatMoney(ringCost)} engagement ring appears financially tiny relative to the numbers provided. The ring equals about ${annualIncomeImpact.toFixed(1)}% of annual income and ${savingsImpact.toFixed(1)}% of savings, so the decision is mainly about preference, proposal priorities, and opportunity cost.`;
+    } else if (pressureScore <= 30) {
+      guidance =
+        `This ${formatMoney(ringCost)} engagement ring appears manageable based on the numbers provided. The ring equals about ${annualIncomeImpact.toFixed(1)}% of annual income and ${savingsImpact.toFixed(1)}% of savings, so the main priority is avoiding financing and keeping future wedding costs controlled.`;
+    } else if (pressureScore <= 60) {
+      guidance =
+        `This ${formatMoney(ringCost)} engagement ring may work, but it deserves caution. The ring equals about ${annualIncomeImpact.toFixed(1)}% of annual income and ${savingsImpact.toFixed(1)}% of savings, and the larger engagement season may add pressure if wedding costs are already high.`;
+    } else {
+      guidance =
+        `This ${formatMoney(ringCost)} engagement ring could create real financial strain. The ring equals about ${annualIncomeImpact.toFixed(1)}% of annual income and ${savingsImpact.toFixed(1)}% of savings, so a lower-cost ring, delayed upgrade, or longer savings window would likely be safer.`;
+    }
+
+    scoreEl.textContent = `${level.label} — ${pressureScore}/100`;
+    barFill.style.width = `${pressureScore}%`;
+    barFill.style.background = level.color;
+
+    stressEl.innerHTML = `<strong>Pressure level:</strong> ${level.stress}`;
+    savingsImpactEl.innerHTML = `<strong>Savings impact:</strong> ${savingsImpact.toFixed(1)}% of savings`;
+    incomeImpactEl.innerHTML = `<strong>Annual income impact:</strong> ${annualIncomeImpact.toFixed(1)}% of annual income`;
+    monthlyImpactEl.innerHTML = `<strong>Monthly take-home impact:</strong> ${monthlyIncomeImpact.toFixed(1)}% of one month’s take-home pay`;
+    debtRatioEl.innerHTML = `<strong>Debt ratio:</strong> ${debtRatio.toFixed(1)}% of annual income`;
+    weddingStackEl.innerHTML = `<strong>Ring + expected wedding budget:</strong> ${formatMoney(engagementStack)} total / ${engagementStackIncomeImpact.toFixed(1)}% of annual income`;
+    remainingSavingsEl.innerHTML = `<strong>Estimated savings after ring:</strong> ${formatMoney(remainingSavings)} / ${remainingSavingsMonths.toFixed(1)} months of take-home pay`;
+
+    guidanceEl.textContent = `${guidance} Recommended next step: ${level.action}`;
+  }
+
+  document
+    .getElementById("ringButton")
+    .addEventListener("click", calculateRing);
+</script>

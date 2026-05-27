@@ -1,28 +1,68 @@
 export const calculators = [
   {
-    id: "wedding-30000",
-    category: "Weddings",
-    title: "Should I Spend $30,000 on a Wedding?",
-    description:
-      "Analyze wedding affordability based on income, savings, debt, financial stress, and long-term flexibility.",
-    href: "/should-i-spend-30000-on-a-wedding",
-  },
-  {
-    id: "wedding-15000",
-    category: "Weddings",
-    title: "Should I Spend $15,000 on a Wedding?",
-    description:
-      "Evaluate whether a smaller wedding budget fits your income, savings, debt, and overall financial comfort.",
-    href: "/should-i-spend-15000-on-a-wedding",
-  },
-  {
-    id: "wedding-50000",
-    category: "Weddings",
-    title: "Should I Spend $50,000 on a Wedding?",
-    description:
-      "Analyze whether a high-end wedding budget creates financial pressure based on savings, income, debt, and tradeoffs.",
-    href: "/should-i-spend-50000-on-a-wedding",
-  },
+  id: "engagement-ring-5000",
+  category: "Weddings",
+  title: "Should I Spend $5,000 on an Engagement Ring?",
+  description:
+    "Evaluate whether a $5,000 engagement ring fits your income, savings, debt, emergency fund, wedding plans, and financial comfort.",
+  href: "/should-i-spend-5000-on-an-engagement-ring",
+},
+{
+  id: "wedding-15000",
+  category: "Weddings",
+  title: "Should I Spend $15,000 on a Wedding?",
+  description:
+    "Evaluate whether a smaller wedding budget fits your income, savings, debt, emergency cushion, and overall financial comfort.",
+  href: "/should-i-spend-15000-on-a-wedding",
+},
+{
+  id: "honeymoon-8000",
+  category: "Weddings",
+  title: "Should I Spend $8,000 on a Honeymoon?",
+  description:
+    "Estimate whether an $8,000 honeymoon fits your income, savings, debt, travel priorities, wedding costs, and emergency cushion.",
+  href: "/should-i-spend-8000-on-a-honeymoon",
+},
+{
+  id: "destination-wedding-10000",
+  category: "Weddings",
+  title: "Should I Spend $10,000 on a Destination Wedding?",
+  description:
+    "Analyze whether a $10,000 destination wedding fits your savings, travel costs, guest plans, income, debt, and post-wedding flexibility.",
+  href: "/should-i-spend-10000-on-a-destination-wedding",
+},
+{
+  id: "wedding-venue-20000",
+  category: "Weddings",
+  title: "Should I Spend $20,000 on a Wedding Venue?",
+  description:
+    "Decide whether a $20,000 wedding venue creates manageable celebration value or too much pressure on the rest of your wedding budget.",
+  href: "/should-i-spend-20000-on-a-wedding-venue",
+},
+{
+  id: "wedding-30000",
+  category: "Weddings",
+  title: "Should I Spend $30,000 on a Wedding?",
+  description:
+    "Analyze wedding affordability based on income, savings, debt, emergency cushion, financial stress, and long-term flexibility.",
+  href: "/should-i-spend-30000-on-a-wedding",
+},
+{
+  id: "wedding-40000",
+  category: "Weddings",
+  title: "Should I Spend $40,000 on a Wedding?",
+  description:
+    "Evaluate whether a $40,000 wedding budget is a meaningful stretch or a risky expense based on income, savings, debt, and tradeoffs.",
+  href: "/should-i-spend-40000-on-a-wedding",
+},
+{
+  id: "wedding-50000",
+  category: "Weddings",
+  title: "Should I Spend $50,000 on a Wedding?",
+  description:
+    "Analyze whether a high-end wedding budget creates financial pressure based on savings, income, debt, emergency cushion, and tradeoffs.",
+  href: "/should-i-spend-50000-on-a-wedding",
+},
   {
   id: "car-affordability-guide",
   category: "Cars",
@@ -185,53 +225,93 @@ export const calculators = [
   href: "/should-i-spend-25000-on-a-luxury-vacation",
 },
   {
-    id: "rent-affordability-guide",
-    category: "Rent",
-    title: "How Much Rent Can I Afford?",
-    description:
-      "Learn how income, debt, utilities, transportation, emergency savings, and flexibility affect safe rent levels.",
-    href: "/how-much-rent-can-i-afford",
-  },
-  {
-    id: "rent-2000",
-    category: "Rent",
-    title: "Should I Spend $2,000 on Rent?",
-    description:
-      "Evaluate whether a $2,000 monthly rent payment fits your take-home income, savings, debt, utilities, and flexibility.",
-    href: "/should-i-spend-2000-on-rent",
-  },
-  {
-    id: "rent-2500",
-    category: "Rent",
-    title: "Should I Spend $2,500 on Rent?",
-    description:
-      "Evaluate whether a $2,500 monthly rent payment fits your take-home income, savings, debt, utilities, and flexibility.",
-    href: "/should-i-spend-2500-on-rent",
-  },
-  {
-    id: "rent-3000",
-    category: "Rent",
-    title: "Should I Spend $3,000 on Rent?",
-    description:
-      "Evaluate whether a $3,000 monthly rent payment fits your take-home income, savings, debt, utilities, and flexibility.",
-    href: "/should-i-spend-3000-on-rent",
-  },
-  {
-    id: "rent-40-percent",
-    category: "Rent",
-    title: "Should I Spend 40% of My Income on Rent?",
-    description:
-      "See whether a 40% rent ratio leaves enough room for savings, debt payments, utilities, and normal expenses.",
-    href: "/should-i-spend-40-percent-income-on-rent",
-  },
-  {
-    id: "rent-50-percent",
-    category: "Rent",
-    title: "Should I Spend 50% of My Income on Rent?",
-    description:
-      "Analyze whether spending half your income on housing creates financial pressure, debt risk, or long-term budget strain.",
-    href: "/should-i-spend-50-percent-income-on-rent",
-  },
+  id: "rent-affordability-guide",
+  category: "Rent",
+  title: "How Much Rent Can I Afford?",
+  description:
+    "Use a rent affordability calculator to compare income, take-home pay, debt, utilities, bills, emergency savings, and monthly flexibility.",
+  href: "/how-much-rent-can-i-afford",
+},
+{
+  id: "house-affordability",
+  category: "Rent",
+  title: "How Much House Can I Afford?",
+  description:
+    "Estimate how much house fits your income, down payment, debt, savings, monthly payment, taxes, insurance, and long-term flexibility.",
+  href: "/how-much-house-can-i-afford",
+},
+{
+  id: "rent-1500",
+  category: "Rent",
+  title: "Should I Spend $1,500 on Rent?",
+  description:
+    "Evaluate whether a $1,500 monthly rent payment fits your take-home pay, savings, debt, utilities, move-in costs, and monthly breathing room.",
+  href: "/should-i-spend-1500-on-rent",
+},
+{
+  id: "rent-2000",
+  category: "Rent",
+  title: "Should I Spend $2,000 on Rent?",
+  description:
+    "Evaluate whether a $2,000 monthly rent payment fits your take-home income, savings, debt, utilities, and flexibility.",
+  href: "/should-i-spend-2000-on-rent",
+},
+{
+  id: "rent-2500",
+  category: "Rent",
+  title: "Should I Spend $2,500 on Rent?",
+  description:
+    "Evaluate whether a $2,500 monthly rent payment fits your take-home income, savings, debt, utilities, and flexibility.",
+  href: "/should-i-spend-2500-on-rent",
+},
+{
+  id: "rent-3000",
+  category: "Rent",
+  title: "Should I Spend $3,000 on Rent?",
+  description:
+    "Evaluate whether a $3,000 monthly rent payment fits your take-home income, savings, debt, utilities, and flexibility.",
+  href: "/should-i-spend-3000-on-rent",
+},
+{
+  id: "rent-4000",
+  category: "Rent",
+  title: "Should I Spend $4,000 on Rent?",
+  description:
+    "Analyze whether a $4,000 monthly rent payment creates safe housing flexibility or serious pressure based on income, savings, debt, utilities, and bills.",
+  href: "/should-i-spend-4000-on-rent",
+},
+{
+  id: "rent-30-percent",
+  category: "Rent",
+  title: "Should I Spend 30% of My Income on Rent?",
+  description:
+    "Check whether the classic 30% rent rule works for your income, take-home pay, debt, utilities, emergency savings, and monthly obligations.",
+  href: "/should-i-spend-30-percent-income-on-rent",
+},
+{
+  id: "rent-40-percent",
+  category: "Rent",
+  title: "Should I Spend 40% of My Income on Rent?",
+  description:
+    "See whether a 40% rent ratio leaves enough room for savings, debt payments, utilities, and normal expenses.",
+  href: "/should-i-spend-40-percent-income-on-rent",
+},
+{
+  id: "rent-50-percent",
+  category: "Rent",
+  title: "Should I Spend 50% of My Income on Rent?",
+  description:
+    "Analyze whether spending half your income on housing creates financial pressure, debt risk, or long-term budget strain.",
+  href: "/should-i-spend-50-percent-income-on-rent",
+},
+{
+  id: "rent-60-percent",
+  category: "Rent",
+  title: "Should I Spend 60% of My Income on Rent?",
+  description:
+    "Estimate whether spending 60% of income on rent creates dangerous housing pressure, savings risk, debt strain, or a survivable high-income exception.",
+  href: "/should-i-spend-60-percent-income-on-rent",
+},
   {
     id: "house-affordability-guide",
     category: "Budget Rules",
