@@ -1,0 +1,618 @@
+---
+import Layout from "../layouts/Layout.astro";
+import CalculatorPageShell from "../components/CalculatorPageShell.astro";
+import FAQSection from "../components/FAQSection.astro";
+import RelatedCalculators from "../components/RelatedCalculators.astro";
+import RelatedGuides from "../components/RelatedGuides.astro";
+import MethodologySection from "../components/MethodologySection.astro";
+import FinancialRedFlags from "../components/FinancialRedFlags.astro";
+import CalculatorAssumptions from "../components/CalculatorAssumptions.astro";
+import KeyCostCategories from "../components/KeyCostCategories.astro";
+import ReduceCostTips from "../components/ReduceCostTips.astro";
+import WhenSpendingMakesSense from "../components/WhenSpendingMakesSense.astro";
+---
+
+<Layout
+  title="Should I Spend $6,000 on Electrical Panel Replacement?"
+  description="Use this electrical panel replacement calculator to decide whether a $6,000 project fits your income, savings, debt, safety risk, home value, and financing options."
+>
+  <style>
+    .container {
+      max-width: 950px;
+      margin: 0 auto;
+      padding: 60px 20px;
+    }
+
+    .content-section {
+      max-width: 760px;
+      margin: 72px auto 0;
+    }
+
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 28px;
+      padding: 34px;
+    }
+
+    h2 {
+      margin-top: 0;
+      font-size: 2rem;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 22px;
+      margin-bottom: 28px;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 10px;
+      font-weight: 700;
+    }
+
+    input,
+    select {
+      width: 100%;
+      padding: 18px;
+      border-radius: 14px;
+      border: 1px solid var(--border);
+      font-size: 1.1rem;
+      box-sizing: border-box;
+      background: white;
+    }
+
+    button {
+      background: #0f172a;
+      color: white;
+      border: none;
+      padding: 16px 28px;
+      border-radius: 14px;
+      font-size: 1rem;
+      font-weight: 700;
+      cursor: pointer;
+      margin-top: 10px;
+      width: 100%;
+      display: block;
+    }
+
+    button:hover {
+      opacity: 0.92;
+    }
+
+    .result {
+      margin-top: 40px;
+      border: 1px solid var(--border);
+      border-radius: 24px;
+      padding: 28px;
+      display: none;
+      background: #f8fafc;
+    }
+
+    .score {
+      font-size: 3rem;
+      font-weight: 800;
+      margin-bottom: 16px;
+    }
+
+    .bar {
+      width: 100%;
+      height: 16px;
+      background: #dbe3ee;
+      border-radius: 999px;
+      overflow: hidden;
+      margin-bottom: 24px;
+    }
+
+    .fill {
+      height: 100%;
+      width: 0%;
+      background: #16a34a;
+      border-radius: 999px;
+      transition: width 0.4s ease;
+    }
+
+    .metric {
+      margin-bottom: 14px;
+      font-size: 1.05rem;
+    }
+
+    .guidance {
+      margin-top: 26px;
+      font-size: 1.15rem;
+      line-height: 1.7;
+    }
+
+    .disclaimer {
+      margin-top: 30px;
+      font-size: 0.9rem;
+      color: var(--muted);
+    }
+
+    .helper-link {
+      margin-top: 10px;
+      font-size: 0.9rem;
+    }
+
+    .helper-link a {
+      color: var(--primary);
+      font-weight: 600;
+    }
+
+    .content-section p,
+    .content-section li {
+      line-height: 1.8;
+    }
+  </style>
+
+  <div class="container">
+    <CalculatorPageShell
+      eyebrow="Home Improvement Calculator"
+      title="Should I Spend $6,000 on Electrical Panel Replacement?"
+      description="Estimate whether a $6,000 electrical panel replacement fits your income, emergency savings, debt load, monthly expenses, safety risk, home value, and financing options."
+    >
+      <div class="card">
+        <h2>Electrical Panel Replacement Pressure Verdict</h2>
+
+        <div class="grid">
+          <div>
+            <label for="cost">Electrical Panel Replacement Cost</label>
+            <input id="cost" type="number" placeholder="6000" min="0" inputmode="decimal" />
+          </div>
+
+          <div>
+            <label for="income">Monthly Take-Home Income</label>
+            <input id="income" type="number" placeholder="8500" min="0" inputmode="decimal" />
+          </div>
+
+          <div>
+            <label for="savings">Emergency Savings</label>
+            <input id="savings" type="number" placeholder="25000" min="0" inputmode="decimal" />
+          </div>
+
+          <div>
+            <label for="expenses">Monthly Expenses</label>
+            <input id="expenses" type="number" placeholder="5200" min="0" inputmode="decimal" />
+          </div>
+
+          <div>
+            <label for="debt">Monthly Debt Payments</label>
+            <input id="debt" type="number" placeholder="800" min="0" inputmode="decimal" />
+
+            <div class="helper-link">
+              <a href="/what-counts-as-debt">
+                Not sure what counts as debt? Read the debt guide
+              </a>
+            </div>
+          </div>
+
+          <div>
+            <label for="homeValue">Estimated Home Value</label>
+            <input id="homeValue" type="number" placeholder="350000" min="0" inputmode="decimal" />
+          </div>
+
+          <div>
+            <label for="safetyRisk">Electrical Problem Severity</label>
+            <select id="safetyRisk">
+              <option value="1">Upgrade for capacity or convenience</option>
+              <option value="2">Frequent breaker trips or outdated panel</option>
+              <option value="3">Burning smell, heat, sparks, or major safety concern</option>
+            </select>
+          </div>
+
+          <div>
+            <label for="financed">Amount Financed</label>
+            <input id="financed" type="number" placeholder="0" min="0" inputmode="decimal" />
+          </div>
+        </div>
+
+        <button id="panelButton" type="button">
+          Calculate Financial Pressure
+        </button>
+
+        <div class="result" id="result">
+          <div class="score" id="score"></div>
+
+          <div class="bar">
+            <div class="fill" id="barFill"></div>
+          </div>
+
+          <div class="metric" id="stress"></div>
+          <div class="metric" id="cashFlow"></div>
+          <div class="metric" id="savingsImpact"></div>
+          <div class="metric" id="riskImpact"></div>
+          <div class="metric" id="homeValueImpact"></div>
+
+          <div class="guidance" id="guidance"></div>
+
+          <div class="disclaimer">
+            This is a general educational estimate, not electrical, contractor, code, inspection, insurance, lending, or financial advice. Electrical safety concerns should be evaluated by a licensed electrician.
+          </div>
+        </div>
+      </div>
+
+      <div class="content-section">
+        <h2>What a $6,000 Electrical Panel Replacement Really Costs</h2>
+
+        <p>
+          Electrical panel replacement can include the new panel, breakers, labor, permits, utility coordination, grounding upgrades, service mast work, meter socket changes, surge protection, code corrections, drywall access, and inspection fees.
+        </p>
+
+        <p>
+          A $6,000 panel replacement may make sense when the current panel is unsafe, overloaded, obsolete, undersized, or blocking other home upgrades such as HVAC, an EV charger, appliances, a remodel, or finished-basement work. It becomes more stressful when the issue is optional, the quote is vague, or financing turns a safety repair into a long-term payment problem.
+        </p>
+      </div>
+
+      <WhenSpendingMakesSense
+        title="When Paying for Electrical Panel Replacement Makes Sense"
+        items={[
+          "The panel is outdated, overloaded, damaged, unsafe, or no longer adequate for the home.",
+          "Breakers trip frequently, circuits are crowded, or future upgrades require more capacity.",
+          "A licensed electrician has explained the safety issue, permit needs, and code requirements.",
+          "You can pay for the project without wiping out emergency savings.",
+          "The work protects the home, supports future upgrades, and reduces electrical risk.",
+        ]}
+      />
+
+      <div class="content-section">
+        <h2>When You Should Slow Down Before Replacing the Panel</h2>
+
+        <p>
+          Slow down if the panel replacement is being sold as part of a larger upgrade without a clear safety or capacity reason. A panel can be important, but the quote should explain the actual problem, whether service capacity must increase, and what work is required beyond the panel itself.
+        </p>
+
+        <p>
+          Before committing, get a written scope, ask about permits and inspection, confirm whether the utility must be involved, and compare bids from licensed electricians. Electrical work is a safety category where the cheapest bid is not always the best choice.
+        </p>
+      </div>
+
+      <KeyCostCategories
+        items={[
+          {
+            title: "Panel, breakers, and service capacity",
+            description:
+              "The cost depends on panel size, breaker requirements, service amperage, grounding, meter work, and whether the home needs a service upgrade.",
+          },
+          {
+            title: "Labor, permits, and inspection",
+            description:
+              "Licensed labor, local permits, utility coordination, and final inspection can make up a major share of the project.",
+          },
+          {
+            title: "Safety and code corrections",
+            description:
+              "Old wiring, poor grounding, overloaded circuits, damaged equipment, or code issues can expand the project beyond a basic panel swap.",
+          },
+          {
+            title: "Financing and future upgrades",
+            description:
+              "A new panel may support future HVAC, appliance, EV charger, remodel, or basement projects, but the monthly payment still has to fit.",
+          },
+        ]}
+      />
+
+      <ReduceCostTips
+        items={[
+          "Get at least two written bids from licensed electricians.",
+          "Ask whether you need a full service upgrade or only a panel replacement.",
+          "Confirm permits, inspection, utility coordination, and cleanup are included.",
+          "Avoid bundling optional upgrades unless they clearly solve a near-term need.",
+          "Ask whether any rebates or utility programs apply to related electrical upgrades.",
+          "Avoid high-interest financing when the project can be scheduled after saving more cash.",
+        ]}
+      />
+
+      <FinancialRedFlags
+        items={[
+          "The panel shows heat damage, buzzing, burning smells, sparks, or other urgent safety signs.",
+          "The quote does not mention permits, inspection, service size, or code requirements.",
+          "The project would drain nearly all emergency savings.",
+          "The work is being financed at a high rate with unclear fees.",
+          "The monthly payment would make mortgage, utilities, groceries, insurance, or debt payments difficult.",
+        ]}
+      />
+
+      <CalculatorAssumptions
+        items={[
+          "The calculator treats electrical panel replacement as a safety and capacity project, not a cosmetic upgrade.",
+          "Monthly income means take-home pay after taxes and payroll deductions.",
+          "Problem severity is a rough risk input and does not replace an electrician’s inspection.",
+          "Estimated home value is used only as a rough project-size check.",
+          "Monthly debt payments include credit cards, car loans, student loans, personal loans, and other required debt payments.",
+          "The estimate does not evaluate electrical code, permit rules, utility requirements, fire risk, insurance coverage, electrician quality, or whether a full service upgrade is required.",
+        ]}
+      />
+
+      <FAQSection
+        title="Electrical Panel Replacement Spending FAQ"
+        faqs={[
+          {
+            question: "Is $6,000 too much for electrical panel replacement?",
+            answer:
+              "It depends on service size, local labor costs, permit requirements, grounding, meter work, utility coordination, and whether the home needs a full service upgrade. A $6,000 quote can be reasonable, but it should clearly explain the scope.",
+          },
+          {
+            question: "When is electrical panel replacement urgent?",
+            answer:
+              "Heat, burning smells, buzzing, sparks, corrosion, repeated breaker trips, visible damage, or an unsafe obsolete panel can make the project urgent. Those signs should be evaluated by a licensed electrician quickly.",
+          },
+          {
+            question: "Should I finance an electrical panel replacement?",
+            answer:
+              "Financing can make sense when the safety issue is real and the payment fits comfortably. Be cautious with high interest, unclear fees, or financing that creates budget stress after the repair.",
+          },
+          {
+            question: "Does a new electrical panel increase home value?",
+            answer:
+              "It may help resale confidence, safety, insurability, and future upgrades, but it usually should be viewed as infrastructure rather than a cosmetic value boost.",
+          },
+          {
+            question: "Should I replace my panel before a remodel or EV charger?",
+            answer:
+              "Maybe. Larger appliances, HVAC work, finished basements, kitchen remodels, and EV chargers may require more capacity. An electrician can tell whether the current panel and service can handle the planned load.",
+          },
+        ]}
+      />
+
+      <MethodologySection category="home improvement spending" updated="May 2026" />
+
+      <RelatedGuides
+        guides={[
+          {
+            title: "Home Improvement Calculators",
+            href: "/home-improvement-calculators",
+            description:
+              "Browse home repair and renovation calculators for urgent repairs, upgrades, and major homeowner decisions.",
+          },
+          {
+            title: "What Counts as Debt?",
+            href: "/what-counts-as-debt",
+            description:
+              "Understand which monthly obligations should be included when estimating financial pressure.",
+          },
+        ]}
+      />
+
+      <RelatedCalculators
+        calculators={[
+          {
+            category: "Home Improvement",
+            title: "Should I Spend $7,000 on Basement Waterproofing?",
+            href: "/should-i-spend-7000-on-basement-waterproofing",
+          },
+          {
+            category: "Home Improvement",
+            title: "Should I Spend $8,000 on HVAC Replacement?",
+            href: "/should-i-spend-8000-on-hvac-replacement",
+          },
+          {
+            category: "Home Improvement",
+            title: "Should I Spend $10,000 on a Roof Replacement?",
+            href: "/should-i-spend-10000-on-a-roof-replacement",
+          },
+          {
+            category: "Home Improvement",
+            title: "Browse Home Improvement Calculators",
+            href: "/home-improvement-calculators",
+          },
+        ]}
+      />
+    </CalculatorPageShell>
+  </div>
+
+  <script is:inline>
+    const clamp = (value, min, max) => Math.min(Math.max(value, min), max);
+
+    const getNumber = (id) => {
+      const rawValue = document.getElementById(id)?.value;
+      const value = Number(rawValue);
+      return Number.isFinite(value) && value >= 0 ? value : 0;
+    };
+
+    function getPressureLevel(score) {
+      if (score <= 30) {
+        return {
+          label: "Low Pressure",
+          stress: "Low pressure",
+          color: "#16a34a",
+          action:
+            "Proceed after comparing licensed electricians, confirming permits, and keeping a cash cushion after the work.",
+        };
+      }
+
+      if (score <= 60) {
+        return {
+          label: "Moderate Pressure",
+          stress: "Moderate pressure",
+          color: "#ca8a04",
+          action:
+            "Confirm the safety need, compare bids, protect emergency savings, and avoid financing that strains cash flow.",
+        };
+      }
+
+      return {
+        label: "High Pressure",
+        stress: "High pressure",
+        color: "#dc2626",
+        action:
+          "Get additional quotes, confirm urgency, avoid risky financing, or save more before committing if the repair can safely wait.",
+      };
+    }
+
+    function calculatePanel() {
+      const cost = getNumber("cost");
+      const income = getNumber("income");
+      const savings = getNumber("savings");
+      const expenses = getNumber("expenses");
+      const debt = getNumber("debt");
+      const homeValue = getNumber("homeValue");
+      const safetyRisk = getNumber("safetyRisk");
+      const financed = getNumber("financed");
+
+      const result = document.getElementById("result");
+      const scoreEl = document.getElementById("score");
+      const barFill = document.getElementById("barFill");
+      const stressEl = document.getElementById("stress");
+      const cashFlowEl = document.getElementById("cashFlow");
+      const savingsImpactEl = document.getElementById("savingsImpact");
+      const riskImpactEl = document.getElementById("riskImpact");
+      const homeValueImpactEl = document.getElementById("homeValueImpact");
+      const guidanceEl = document.getElementById("guidance");
+
+      result.style.display = "block";
+
+      if (cost <= 0 || income <= 0) {
+        scoreEl.textContent = "Add your numbers first";
+        barFill.style.width = "0%";
+        barFill.style.background = "#16a34a";
+        stressEl.innerHTML = "";
+        cashFlowEl.innerHTML = "";
+        savingsImpactEl.innerHTML = "";
+        riskImpactEl.innerHTML = "";
+        homeValueImpactEl.innerHTML = "";
+        guidanceEl.textContent =
+          "Enter a positive electrical panel replacement cost and monthly take-home income so the calculator can estimate financial pressure.";
+        return;
+      }
+
+      const outOfPocket = Math.max(cost - financed, 0);
+      const monthlyRemaining = income - expenses - debt;
+      const monthlyFixedCosts = expenses + debt;
+      const remainingSavings = savings - outOfPocket;
+
+      const savingsImpact = savings > 0 ? (outOfPocket / savings) * 100 : 100;
+      const incomeImpact = (cost / income) * 100;
+      const incomeRecoveryPower = cost / income;
+      const fixedObligationRatio = (monthlyFixedCosts / income) * 100;
+      const financedShare = cost > 0 ? (financed / cost) * 100 : 0;
+      const homeValueRatio = homeValue > 0 ? (cost / homeValue) * 100 : 0;
+
+      const emergencyMonths =
+        monthlyFixedCosts > 0
+          ? remainingSavings / monthlyFixedCosts
+          : remainingSavings > 0
+            ? 999
+            : 0;
+
+      const riskLabel =
+        safetyRisk >= 3
+          ? "Burning smell, heat, sparks, or major safety concern"
+          : safetyRisk === 2
+            ? "Frequent breaker trips or outdated panel"
+            : "Upgrade for capacity or convenience";
+
+      let pressureScore = 0;
+
+      const ultraSafeSavings =
+        savings >= cost * 20 &&
+        remainingSavings >= cost * 15 &&
+        savingsImpact <= 5 &&
+        financedShare === 0 &&
+        monthlyRemaining > 0;
+
+      const ultraSafeIncome =
+        incomeRecoveryPower <= 0.5 &&
+        monthlyRemaining > cost * 0.5 &&
+        fixedObligationRatio <= 35 &&
+        financedShare === 0;
+
+      const extremeSavings =
+        savingsImpact <= 1 &&
+        emergencyMonths >= 12 &&
+        financedShare === 0 &&
+        monthlyRemaining > 0;
+
+      if (ultraSafeSavings || ultraSafeIncome || extremeSavings) {
+        pressureScore = 0;
+      } else {
+        pressureScore += clamp(incomeImpact * 0.14, 0, 22);
+        pressureScore += clamp(savingsImpact * 0.18, 0, 26);
+        pressureScore += clamp(fixedObligationRatio * 0.18, 0, 22);
+
+        if (remainingSavings < 0) pressureScore += 30;
+        else if (emergencyMonths < 1 && incomeRecoveryPower >= 1) pressureScore += 22;
+        else if (emergencyMonths < 3 && incomeRecoveryPower >= 0.75) pressureScore += 14;
+        else if (emergencyMonths >= 6) pressureScore -= 8;
+
+        if (financed > 0) pressureScore += clamp(financedShare * 0.14, 4, 18);
+
+        if (homeValue > 0 && homeValueRatio > 8) pressureScore += 5;
+        else if (homeValue > 0 && homeValueRatio > 5) pressureScore += 3;
+        else if (homeValue > 0 && homeValueRatio <= 3) pressureScore -= 4;
+
+        if (safetyRisk >= 3) pressureScore -= 8;
+        else if (safetyRisk === 2) pressureScore -= 4;
+        else pressureScore += 2;
+
+        if (monthlyRemaining < 0) pressureScore += 20;
+        else if (monthlyRemaining < income * 0.1) pressureScore += 10;
+        else if (monthlyRemaining > income * 0.35) pressureScore -= 8;
+
+        if (
+          savingsImpact <= 2 &&
+          fixedObligationRatio < 45 &&
+          emergencyMonths >= 12 &&
+          financedShare === 0
+        ) {
+          pressureScore = 0;
+        } else if (
+          savingsImpact <= 5 &&
+          fixedObligationRatio < 50 &&
+          emergencyMonths >= 6 &&
+          financedShare <= 25
+        ) {
+          pressureScore = Math.min(pressureScore, 5);
+        } else if (
+          incomeRecoveryPower < 1 &&
+          fixedObligationRatio < 35 &&
+          monthlyRemaining > cost * 0.5
+        ) {
+          pressureScore = Math.min(pressureScore, 10);
+        }
+
+        pressureScore = Math.round(clamp(pressureScore, 0, 100));
+      }
+
+      const level = getPressureLevel(pressureScore);
+
+      let guidance = "";
+
+      if (pressureScore <= 30) {
+        guidance = `This electrical panel replacement appears financially manageable based on the numbers provided. The project equals about ${incomeImpact.toFixed(
+          1
+        )}% of one month’s take-home income, and your estimated emergency cushion remains around ${Math.max(
+          emergencyMonths,
+          0
+        ).toFixed(1)} months after the out-of-pocket cost.`;
+      } else if (pressureScore <= 60) {
+        guidance = `This electrical panel replacement may work, but it creates noticeable financial pressure. The project equals about ${incomeImpact.toFixed(
+          1
+        )}% of one month’s take-home income, and the out-of-pocket portion uses about ${savingsImpact.toFixed(
+          1
+        )}% of available savings.`;
+      } else {
+        guidance = `This electrical panel replacement could create real financial strain. The project equals about ${incomeImpact.toFixed(
+          1
+        )}% of one month’s take-home income, and the combination of savings impact, financing, debt, and monthly cash flow suggests you should compare options before committing unless the repair is urgent.`;
+      }
+
+      scoreEl.textContent = `${level.label} — ${pressureScore}/100`;
+      scoreEl.style.color = level.color;
+      barFill.style.width = `${pressureScore}%`;
+      barFill.style.background = level.color;
+
+      stressEl.innerHTML = `<strong>Pressure level:</strong> ${level.stress}`;
+      cashFlowEl.innerHTML = `<strong>Monthly cash flow after bills and debt:</strong> $${monthlyRemaining.toLocaleString()}`;
+      savingsImpactEl.innerHTML = `<strong>Savings after out-of-pocket panel cost:</strong> $${remainingSavings.toLocaleString()}`;
+      riskImpactEl.innerHTML = `<strong>Electrical problem severity:</strong> ${riskLabel}`;
+      homeValueImpactEl.innerHTML = `<strong>Project cost as share of home value:</strong> ${homeValueRatio.toFixed(1)}%`;
+      guidanceEl.textContent = `${guidance} Recommended next step: ${level.action}`;
+    }
+
+    document
+      .getElementById("panelButton")
+      .addEventListener("click", calculatePanel);
+  </script>
+</Layout>

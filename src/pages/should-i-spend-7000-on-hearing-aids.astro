@@ -1,0 +1,595 @@
+---
+import Layout from "../layouts/Layout.astro";
+import CalculatorPageShell from "../components/CalculatorPageShell.astro";
+import FAQSection from "../components/FAQSection.astro";
+import RelatedCalculators from "../components/RelatedCalculators.astro";
+import RelatedGuides from "../components/RelatedGuides.astro";
+import MethodologySection from "../components/MethodologySection.astro";
+import FinancialRedFlags from "../components/FinancialRedFlags.astro";
+import CalculatorAssumptions from "../components/CalculatorAssumptions.astro";
+import KeyCostCategories from "../components/KeyCostCategories.astro";
+import ReduceCostTips from "../components/ReduceCostTips.astro";
+import WhenSpendingMakesSense from "../components/WhenSpendingMakesSense.astro";
+
+const pageTitle = "Should I Spend $7,000 on Hearing Aids?";
+const pageDescription =
+  "Use this hearing aid affordability calculator to decide whether a $7,000 pair fits your income, savings, insurance, financing, debt, and monthly cash flow.";
+---
+
+<Layout title={pageTitle} description={pageDescription}>
+  <style>
+    .container {
+      max-width: 950px;
+      margin: 0 auto;
+      padding: 60px 20px;
+    }
+
+    .content-section {
+      max-width: 760px;
+      margin: 72px auto 0;
+    }
+
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 28px;
+      padding: 34px;
+    }
+
+    h2 {
+      margin-top: 0;
+      font-size: 2rem;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 22px;
+      margin-bottom: 28px;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 10px;
+      font-weight: 700;
+    }
+
+    input {
+      width: 100%;
+      padding: 18px;
+      border-radius: 14px;
+      border: 1px solid var(--border);
+      font-size: 1.1rem;
+      box-sizing: border-box;
+    }
+
+    button {
+      background: #0f172a;
+      color: white;
+      border: none;
+      padding: 16px 28px;
+      border-radius: 14px;
+      font-size: 1rem;
+      font-weight: 700;
+      cursor: pointer;
+      margin-top: 10px;
+      width: 100%;
+      display: block;
+    }
+
+    button:hover {
+      opacity: 0.92;
+    }
+
+    .result {
+      margin-top: 40px;
+      border: 1px solid var(--border);
+      border-radius: 24px;
+      padding: 28px;
+      display: none;
+      background: #f8fafc;
+    }
+
+    .score {
+      font-size: 3rem;
+      font-weight: 800;
+      margin-bottom: 16px;
+    }
+
+    .bar {
+      width: 100%;
+      height: 16px;
+      background: #dbe3ee;
+      border-radius: 999px;
+      overflow: hidden;
+      margin-bottom: 24px;
+    }
+
+    .fill {
+      height: 100%;
+      width: 0%;
+      background: #16a34a;
+      border-radius: 999px;
+      transition: width 0.4s ease;
+    }
+
+    .metric {
+      margin-bottom: 14px;
+      font-size: 1.05rem;
+    }
+
+    .guidance {
+      margin-top: 26px;
+      font-size: 1.15rem;
+      line-height: 1.7;
+    }
+
+    .disclaimer {
+      margin-top: 30px;
+      font-size: 0.9rem;
+      color: var(--muted);
+    }
+
+    .helper-link {
+      margin-top: 10px;
+      font-size: 0.9rem;
+    }
+
+    .helper-link a {
+      color: var(--primary);
+      font-weight: 600;
+    }
+
+    .content-section p,
+    .content-section li {
+      line-height: 1.8;
+    }
+  </style>
+
+  <div class="container">
+    <CalculatorPageShell
+      eyebrow="Medical Calculator"
+      title="Should I Spend $7,000 on Hearing Aids?"
+      description="Estimate whether hearing aids fit your budget after insurance, savings, financing, monthly expenses, debt, and long-term replacement costs."
+    >
+      <div class="card">
+        <h2>Hearing Aid Pressure Verdict</h2>
+
+        <div class="grid">
+          <div>
+            <label for="cost">Total Hearing Aid Cost</label>
+            <input id="cost" type="number" placeholder="7000" min="0" inputmode="decimal" />
+          </div>
+
+          <div>
+            <label for="insurance">Insurance or Benefit Contribution</label>
+            <input id="insurance" type="number" placeholder="1000" min="0" inputmode="decimal" />
+          </div>
+
+          <div>
+            <label for="income">Monthly Take-Home Income</label>
+            <input id="income" type="number" placeholder="6500" min="0" inputmode="decimal" />
+          </div>
+
+          <div>
+            <label for="savings">Emergency Savings</label>
+            <input id="savings" type="number" placeholder="16000" min="0" inputmode="decimal" />
+          </div>
+
+          <div>
+            <label for="expenses">Monthly Expenses</label>
+            <input id="expenses" type="number" placeholder="4000" min="0" inputmode="decimal" />
+          </div>
+
+          <div>
+            <label for="debt">Monthly Debt Payments</label>
+            <input id="debt" type="number" placeholder="500" min="0" inputmode="decimal" />
+
+            <div class="helper-link">
+              <a href="/what-counts-as-debt">
+                Not sure what counts as debt? Read the debt guide
+              </a>
+            </div>
+          </div>
+
+          <div>
+            <label for="financed">Amount Financed</label>
+            <input id="financed" type="number" placeholder="3000" min="0" inputmode="decimal" />
+          </div>
+        </div>
+
+        <button id="hearingAidsButton" type="button">
+          Calculate Financial Pressure
+        </button>
+
+        <div class="result" id="result">
+          <div class="score" id="score"></div>
+
+          <div class="bar">
+            <div class="fill" id="barFill"></div>
+          </div>
+
+          <div class="metric" id="stress"></div>
+          <div class="metric" id="netCost"></div>
+          <div class="metric" id="cashFlow"></div>
+          <div class="metric" id="savingsImpact"></div>
+          <div class="metric" id="financingImpact"></div>
+
+          <div class="guidance" id="guidance"></div>
+
+          <div class="disclaimer">
+            This is a general educational estimate, not audiology, medical, insurance, Medicare, or financial advice.
+          </div>
+        </div>
+      </div>
+
+      <div class="content-section">
+        <h2>What a $7,000 Hearing Aid Decision Really Means</h2>
+
+        <p>
+          Hearing aids are one of the stranger financial decisions in healthcare because they can be expensive, life-improving, and poorly covered all at once. A $7,000 pair may include advanced prescription devices, fitting appointments, follow-up programming, warranties, service visits, rechargeable batteries, or bundled audiology care.
+        </p>
+
+        <p>
+          The decision is not only about whether you can afford the devices today. It is also about whether better hearing changes daily life, work, safety, conversations, isolation, and quality of life enough to justify the cost. The financial pressure rises when the quote is vague, the devices are heavily financed, insurance contributes little, or the purchase wipes out the emergency cushion that protects the rest of the household.
+        </p>
+      </div>
+
+      <WhenSpendingMakesSense
+        title="When Spending $7,000 on Hearing Aids Makes Sense"
+        items={[
+          "The hearing loss is affecting work, family conversations, safety, social life, or daily independence.",
+          "The quote includes fitting, programming, follow-up visits, warranty coverage, and service support.",
+          "You have compared prescription hearing aids with lower-cost OTC or alternative options when appropriate.",
+          "Insurance, employer benefits, HSA funds, FSA funds, or other assistance reduce the real out-of-pocket cost.",
+          "The purchase does not wipe out your emergency fund or create high-interest debt.",
+          "You understand replacement timelines, battery costs, repair coverage, and what happens if the devices do not work well for you.",
+        ]}
+      />
+
+      <div class="content-section">
+        <h2>When Hearing Aids Become a Financial Stretch</h2>
+
+        <p>
+          Hearing aids become financially risky when the decision is based on a single quote, a rushed consultation, or a monthly payment that hides the full price. A premium pair may be appropriate for some people, but the most expensive option should earn its place in the budget.
+        </p>
+
+        <p>
+          Before committing, ask what is included, what happens during the trial period, whether the devices can be returned, how much repairs cost after the warranty, and whether a lower-cost pair could solve the same problem.
+        </p>
+      </div>
+
+      <KeyCostCategories
+        items={[
+          {
+            title: "Devices and technology level",
+            description:
+              "Premium hearing aids may cost more because of noise processing, Bluetooth features, rechargeability, directional microphones, app controls, tinnitus features, and customization.",
+          },
+          {
+            title: "Audiology care and fitting",
+            description:
+              "A higher quote may include hearing tests, fitting, real-ear measurements, adjustments, follow-up visits, cleaning, and long-term service support.",
+          },
+          {
+            title: "Insurance, Medicare, and benefit gaps",
+            description:
+              "Coverage varies widely. Some plans offer hearing aid benefits, while others cover exams but not devices. Medicare coverage can also be limited depending on the plan.",
+          },
+          {
+            title: "Replacement and repair costs",
+            description:
+              "Hearing aids may need replacement after several years. Batteries, domes, receivers, repairs, warranties, and lost-device coverage can affect the real lifetime cost.",
+          },
+        ]}
+      />
+
+      <ReduceCostTips
+        items={[
+          "Ask for an itemized quote that separates devices, fitting, follow-up care, warranty, repairs, and service visits.",
+          "Compare at least one other audiologist or hearing aid provider before committing to a premium pair.",
+          "Ask whether OTC hearing aids are appropriate for your level of hearing loss.",
+          "Check insurance, Medicare Advantage, employer benefits, HSA eligibility, FSA eligibility, and nonprofit assistance options.",
+          "Confirm the trial period, return policy, restocking fees, and warranty coverage in writing.",
+          "Ask whether a lower technology tier would solve the same hearing problems.",
+          "Avoid high-interest medical financing if a slower savings plan or lower-cost device would work.",
+        ]}
+      />
+
+      <FinancialRedFlags
+        items={[
+          "The provider cannot clearly explain what is included in the $7,000 quote.",
+          "The purchase would drain most of your emergency savings.",
+          "You would need high-interest credit to afford the devices.",
+          "You have not compared prescription hearing aids with lower-cost alternatives.",
+          "The return policy, trial period, warranty, or repair costs are unclear.",
+          "The monthly payment sounds manageable, but the total financed balance would add long-term debt pressure.",
+          "You are already behind on housing, utilities, insurance, taxes, or other essential bills.",
+        ]}
+      />
+
+      <CalculatorAssumptions
+        items={[
+          "The calculator treats hearing aids as a quality-of-life medical expense that may be important but still requires affordability testing.",
+          "Monthly income means take-home pay after taxes and payroll deductions.",
+          "Monthly expenses should include housing, food, utilities, transportation, childcare, insurance, prescriptions, and other required living costs.",
+          "Monthly debt payments include credit cards, car loans, student loans, personal loans, medical debt, and other required debt payments.",
+          "Insurance or benefit contribution means money that directly reduces your out-of-pocket hearing aid cost.",
+          "The calculator assumes financed balances still create pressure even when payments are spread out.",
+          "The estimate does not judge hearing-loss severity, audiologist quality, device fit, Medicare eligibility, or medical necessity.",
+        ]}
+      />
+
+      <FAQSection
+        title="Hearing Aid Spending FAQ"
+        faqs={[
+          {
+            question: "Is $7,000 too much for hearing aids?",
+            answer:
+              "It depends on the technology level, whether the price includes audiology care, your insurance benefits, and how much the devices improve daily life. A $7,000 pair can be reasonable for advanced prescription hearing aids, but it should be compared with lower-cost options and the full out-of-pocket cost.",
+          },
+          {
+            question: "Should I finance hearing aids?",
+            answer:
+              "Financing can make sense if the terms are low-interest, the payment fits comfortably, and the devices are important for work, safety, or quality of life. Be careful with high-interest medical credit or long terms that make the purchase feel cheaper than it really is.",
+          },
+          {
+            question: "Are OTC hearing aids a better option?",
+            answer:
+              "OTC hearing aids may be worth exploring for some adults with perceived mild to moderate hearing loss. Prescription devices may be more appropriate for complex hearing loss, severe loss, custom fitting needs, or cases where professional programming and follow-up care matter.",
+          },
+          {
+            question: "Does insurance usually cover hearing aids?",
+            answer:
+              "Coverage varies widely. Some plans provide a hearing aid allowance, some cover hearing exams only, and some provide little or no device coverage. Check the exact benefit before assuming insurance will reduce the final bill.",
+          },
+          {
+            question: "What should I ask before buying hearing aids?",
+            answer:
+              "Ask whether the quote includes fitting, follow-up programming, warranty coverage, repairs, replacement for loss or damage, trial period rules, restocking fees, batteries, chargers, and future service visits.",
+          },
+        ]}
+      />
+
+      <MethodologySection category="medical spending" updated="May 2026" />
+
+      <RelatedGuides
+        guides={[
+          {
+            title: "Medical Calculators",
+            href: "/medical-calculators",
+            description:
+              "Browse medical spending calculators for dental costs, healthcare bills, procedures, and treatment affordability decisions.",
+          },
+          {
+            title: "What Counts as Debt?",
+            href: "/what-counts-as-debt",
+            description:
+              "Understand which monthly obligations should be included when estimating financial pressure.",
+          },
+        ]}
+      />
+
+      <RelatedCalculators
+        calculators={[
+          {
+            category: "Medical",
+            title: "Should I Spend $8,000 on Invisalign?",
+            href: "/should-i-spend-8000-on-invisalign",
+          },
+          {
+            category: "Medical",
+            title: "Should I Spend $5,000 on LASIK?",
+            href: "/should-i-spend-5000-on-lasik",
+          },
+          {
+            category: "Medical",
+            title: "Should I Spend $2,500 on an ER Bill?",
+            href: "/should-i-spend-2500-on-an-er-bill",
+          },
+          {
+            category: "Medical",
+            title: "Browse Medical Calculators",
+            href: "/medical-calculators",
+          },
+        ]}
+      />
+    </CalculatorPageShell>
+  </div>
+
+  <script is:inline>
+    const clamp = (value, min, max) => Math.min(Math.max(value, min), max);
+
+    const getNumber = (id) => {
+      const rawValue = document.getElementById(id)?.value;
+      const value = Number(rawValue);
+      return Number.isFinite(value) && value >= 0 ? value : 0;
+    };
+
+    function getPressureLevel(score) {
+      if (score <= 30) {
+        return {
+          label: "Low Pressure",
+          stress: "Low pressure",
+          color: "#16a34a",
+          action:
+            "Proceed only after confirming the trial period, warranty, service visits, insurance benefit, and full out-of-pocket price.",
+        };
+      }
+
+      if (score <= 60) {
+        return {
+          label: "Moderate Pressure",
+          stress: "Moderate pressure",
+          color: "#ca8a04",
+          action:
+            "Compare providers, review lower-cost options, and protect your emergency savings before committing.",
+        };
+      }
+
+      return {
+        label: "High Pressure",
+        stress: "High pressure",
+        color: "#dc2626",
+        action:
+          "Slow down before buying, get another quote, check benefit options, and avoid high-interest financing while cash flow is tight.",
+      };
+    }
+
+    function calculateHearingAids() {
+      const cost = getNumber("cost");
+      const insurance = getNumber("insurance");
+      const income = getNumber("income");
+      const savings = getNumber("savings");
+      const expenses = getNumber("expenses");
+      const debt = getNumber("debt");
+      const financed = getNumber("financed");
+
+      const result = document.getElementById("result");
+      const scoreEl = document.getElementById("score");
+      const barFill = document.getElementById("barFill");
+      const stressEl = document.getElementById("stress");
+      const netCostEl = document.getElementById("netCost");
+      const cashFlowEl = document.getElementById("cashFlow");
+      const savingsImpactEl = document.getElementById("savingsImpact");
+      const financingImpactEl = document.getElementById("financingImpact");
+      const guidanceEl = document.getElementById("guidance");
+
+      result.style.display = "block";
+
+      if (cost <= 0 || income <= 0) {
+        scoreEl.textContent = "Add your numbers first";
+        scoreEl.style.color = "#16a34a";
+        barFill.style.width = "0%";
+        barFill.style.background = "#16a34a";
+        stressEl.innerHTML = "";
+        netCostEl.innerHTML = "";
+        cashFlowEl.innerHTML = "";
+        savingsImpactEl.innerHTML = "";
+        financingImpactEl.innerHTML = "";
+        guidanceEl.textContent =
+          "Enter a positive hearing aid cost and monthly take-home income so the calculator can estimate financial pressure.";
+        return;
+      }
+
+      const coveredAmount = Math.min(insurance, cost);
+      const netTreatmentCost = Math.max(cost - coveredAmount, 0);
+      const financedAmount = Math.min(financed, netTreatmentCost);
+      const outOfPocket = Math.max(netTreatmentCost - financedAmount, 0);
+
+      const monthlyRemaining = income - expenses - debt;
+      const remainingSavings = savings - outOfPocket;
+
+      const savingsImpact = savings > 0 ? (outOfPocket / savings) * 100 : outOfPocket > 0 ? 100 : 0;
+      const incomeImpact = (netTreatmentCost / income) * 100;
+      const fixedObligationRatio = income > 0 ? ((expenses + debt) / income) * 100 : 100;
+      const debtRatio = income > 0 ? (debt / income) * 100 : 100;
+      const remainingSavingsMonths =
+        expenses > 0 ? remainingSavings / expenses : remainingSavings > 0 ? 36 : 0;
+      const financedShare = netTreatmentCost > 0 ? (financedAmount / netTreatmentCost) * 100 : 0;
+
+      let pressureScore = 0;
+
+      pressureScore += clamp(incomeImpact * 0.27, 0, 28);
+      pressureScore += clamp(savingsImpact * 0.27, 0, 30);
+      pressureScore += clamp(fixedObligationRatio * 0.22, 0, 24);
+      pressureScore += clamp(debtRatio * 0.28, 0, 14);
+
+      if (remainingSavings < 0) pressureScore += 26;
+      else if (remainingSavingsMonths < 1 && income < 15000) pressureScore += 20;
+      else if (remainingSavingsMonths < 3 && income < 18000) pressureScore += 12;
+      else if (remainingSavingsMonths >= 12) pressureScore -= 12;
+      else if (remainingSavingsMonths >= 6) pressureScore -= 8;
+
+      if (financedAmount > 0) {
+        pressureScore += clamp(financedShare * 0.12, 3, 13);
+      }
+
+      if (monthlyRemaining < 0) pressureScore += 22;
+      else if (monthlyRemaining < income * 0.08) pressureScore += 14;
+      else if (monthlyRemaining < income * 0.15) pressureScore += 7;
+      else if (monthlyRemaining > income * 0.5) pressureScore -= 11;
+      else if (monthlyRemaining > income * 0.35) pressureScore -= 7;
+
+      if (coveredAmount >= cost * 0.3) pressureScore -= 5;
+
+      if (income >= 12000 && remainingSavings > 0 && fixedObligationRatio < 65) {
+        pressureScore -= 10;
+      }
+
+      if (income >= 20000 && remainingSavings > 0 && fixedObligationRatio < 55) {
+        pressureScore -= 14;
+      }
+
+      if (income >= 30000 && remainingSavingsMonths >= 6 && fixedObligationRatio < 50) {
+        pressureScore -= 18;
+      }
+
+      if (
+        incomeImpact < 12 &&
+        savingsImpact < 15 &&
+        remainingSavingsMonths >= 6 &&
+        fixedObligationRatio < 55
+      ) {
+        pressureScore = Math.min(pressureScore, 25);
+      }
+
+      if (
+        incomeImpact < 6 &&
+        savingsImpact < 8 &&
+        remainingSavingsMonths >= 9 &&
+        fixedObligationRatio < 45
+      ) {
+        pressureScore = Math.min(pressureScore, 12);
+      }
+
+      if (
+        savingsImpact < 1 &&
+        debtRatio < 10 &&
+        remainingSavingsMonths >= 24
+      ) {
+        pressureScore = 0;
+      } else if (
+        savingsImpact < 3 &&
+        debtRatio < 15 &&
+        remainingSavingsMonths >= 12
+      ) {
+        pressureScore = Math.min(pressureScore, 5);
+      }
+
+      pressureScore = Math.round(clamp(pressureScore, 0, 100));
+
+      const level = getPressureLevel(pressureScore);
+
+      let guidance = "";
+
+      if (pressureScore <= 30) {
+        guidance =
+          `This hearing aid expense appears financially manageable based on the numbers provided. Your estimated net cost is about ${incomeImpact.toFixed(1)}% of one month’s take-home income, and your emergency cushion remains around ${Math.max(remainingSavingsMonths, 0).toFixed(1)} months after the upfront out-of-pocket cost.`;
+      } else if (pressureScore <= 60) {
+        guidance =
+          `This hearing aid expense may be workable, but it creates noticeable pressure. Your estimated net cost equals about ${incomeImpact.toFixed(1)}% of one month’s take-home income, while the upfront portion uses about ${savingsImpact.toFixed(1)}% of available savings.`;
+      } else {
+        guidance =
+          `This hearing aid expense could create real financial strain. The combination of device cost, savings impact, monthly obligations, debt, or financing suggests this may be a decision to compare carefully before committing.`;
+      }
+
+      scoreEl.textContent = `${level.label} — ${pressureScore}/100`;
+      scoreEl.style.color = level.color;
+      barFill.style.width = `${pressureScore}%`;
+      barFill.style.background = level.color;
+
+      stressEl.innerHTML = `<strong>Pressure level:</strong> ${level.stress}`;
+      netCostEl.innerHTML = `<strong>Estimated net hearing aid cost after insurance/benefits:</strong> $${Math.round(netTreatmentCost).toLocaleString()}`;
+      cashFlowEl.innerHTML = `<strong>Monthly cash flow after bills and debt:</strong> $${Math.round(monthlyRemaining).toLocaleString()}`;
+      savingsImpactEl.innerHTML = `<strong>Savings after upfront out-of-pocket cost:</strong> $${Math.round(remainingSavings).toLocaleString()}`;
+      financingImpactEl.innerHTML = `<strong>Financed portion of net cost:</strong> ${financedShare.toFixed(1)}%`;
+
+      guidanceEl.textContent = `${guidance} Recommended next step: ${level.action}`;
+    }
+
+    document
+      .getElementById("hearingAidsButton")
+      .addEventListener("click", calculateHearingAids);
+  </script>
+</Layout>

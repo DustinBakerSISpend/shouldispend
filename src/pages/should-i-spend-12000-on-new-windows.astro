@@ -1,0 +1,609 @@
+---
+import Layout from "../layouts/Layout.astro";
+import CalculatorPageShell from "../components/CalculatorPageShell.astro";
+import FAQSection from "../components/FAQSection.astro";
+import RelatedCalculators from "../components/RelatedCalculators.astro";
+import RelatedGuides from "../components/RelatedGuides.astro";
+import MethodologySection from "../components/MethodologySection.astro";
+import FinancialRedFlags from "../components/FinancialRedFlags.astro";
+import CalculatorAssumptions from "../components/CalculatorAssumptions.astro";
+import KeyCostCategories from "../components/KeyCostCategories.astro";
+import ReduceCostTips from "../components/ReduceCostTips.astro";
+import WhenSpendingMakesSense from "../components/WhenSpendingMakesSense.astro";
+---
+
+<Layout
+  title="Should I Spend $12,000 on New Windows?"
+  description="Use this window replacement calculator to decide whether a $12,000 project fits your income, savings, debt, home value, energy savings, and financing options."
+>
+  <style>
+    .container {
+      max-width: 950px;
+      margin: 0 auto;
+      padding: 60px 20px;
+    }
+
+    .content-section {
+      max-width: 760px;
+      margin: 72px auto 0;
+    }
+
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 28px;
+      padding: 34px;
+    }
+
+    h2 {
+      margin-top: 0;
+      font-size: 2rem;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 22px;
+      margin-bottom: 28px;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 10px;
+      font-weight: 700;
+    }
+
+    input {
+      width: 100%;
+      padding: 18px;
+      border-radius: 14px;
+      border: 1px solid var(--border);
+      font-size: 1.1rem;
+      box-sizing: border-box;
+    }
+
+    button {
+      background: #0f172a;
+      color: white;
+      border: none;
+      padding: 16px 28px;
+      border-radius: 14px;
+      font-size: 1rem;
+      font-weight: 700;
+      cursor: pointer;
+      margin-top: 10px;
+      width: 100%;
+      display: block;
+    }
+
+    button:hover {
+      opacity: 0.92;
+    }
+
+    .result {
+      margin-top: 40px;
+      border: 1px solid var(--border);
+      border-radius: 24px;
+      padding: 28px;
+      display: none;
+      background: #f8fafc;
+    }
+
+    .score {
+      font-size: 3rem;
+      font-weight: 800;
+      margin-bottom: 16px;
+    }
+
+    .bar {
+      width: 100%;
+      height: 16px;
+      background: #dbe3ee;
+      border-radius: 999px;
+      overflow: hidden;
+      margin-bottom: 24px;
+    }
+
+    .fill {
+      height: 100%;
+      width: 0%;
+      background: #16a34a;
+      border-radius: 999px;
+      transition: width 0.4s ease;
+    }
+
+    .metric {
+      margin-bottom: 14px;
+      font-size: 1.05rem;
+    }
+
+    .guidance {
+      margin-top: 26px;
+      font-size: 1.15rem;
+      line-height: 1.7;
+    }
+
+    .disclaimer {
+      margin-top: 30px;
+      font-size: 0.9rem;
+      color: var(--muted);
+    }
+
+    .helper-link {
+      margin-top: 10px;
+      font-size: 0.9rem;
+    }
+
+    .helper-link a {
+      color: var(--primary);
+      font-weight: 600;
+    }
+
+    .content-section p,
+    .content-section li {
+      line-height: 1.8;
+    }
+  </style>
+
+  <div class="container">
+    <CalculatorPageShell
+      eyebrow="Home Improvement Calculator"
+      title="Should I Spend $12,000 on New Windows?"
+      description="Estimate whether a $12,000 window replacement project fits your income, savings, debt load, monthly expenses, home value, energy savings, and financing options."
+    >
+      <div class="card">
+        <h2>Window Replacement Pressure Verdict</h2>
+
+        <div class="grid">
+          <div>
+            <label for="cost">Window Replacement Cost</label>
+            <input id="cost" type="number" placeholder="12000" min="0" inputmode="decimal" />
+          </div>
+
+          <div>
+            <label for="income">Monthly Take-Home Income</label>
+            <input id="income" type="number" placeholder="8500" min="0" inputmode="decimal" />
+          </div>
+
+          <div>
+            <label for="savings">Emergency Savings</label>
+            <input id="savings" type="number" placeholder="25000" min="0" inputmode="decimal" />
+          </div>
+
+          <div>
+            <label for="expenses">Monthly Expenses</label>
+            <input id="expenses" type="number" placeholder="5200" min="0" inputmode="decimal" />
+          </div>
+
+          <div>
+            <label for="debt">Monthly Debt Payments</label>
+            <input id="debt" type="number" placeholder="800" min="0" inputmode="decimal" />
+
+            <div class="helper-link">
+              <a href="/what-counts-as-debt">
+                Not sure what counts as debt? Read the debt guide
+              </a>
+            </div>
+          </div>
+
+          <div>
+            <label for="homeValue">Estimated Home Value</label>
+            <input id="homeValue" type="number" placeholder="350000" min="0" inputmode="decimal" />
+          </div>
+
+          <div>
+            <label for="energySavings">Estimated Monthly Energy Savings</label>
+            <input id="energySavings" type="number" placeholder="75" min="0" inputmode="decimal" />
+          </div>
+
+          <div>
+            <label for="financed">Amount Financed</label>
+            <input id="financed" type="number" placeholder="0" min="0" inputmode="decimal" />
+          </div>
+        </div>
+
+        <button id="windowsButton" type="button">
+          Calculate Financial Pressure
+        </button>
+
+        <div class="result" id="result">
+          <div class="score" id="score"></div>
+
+          <div class="bar">
+            <div class="fill" id="barFill"></div>
+          </div>
+
+          <div class="metric" id="stress"></div>
+          <div class="metric" id="cashFlow"></div>
+          <div class="metric" id="savingsImpact"></div>
+          <div class="metric" id="paybackImpact"></div>
+          <div class="metric" id="homeValueImpact"></div>
+
+          <div class="guidance" id="guidance"></div>
+
+          <div class="disclaimer">
+            This is a general educational estimate, not contractor, real estate, appraisal, lending, energy-efficiency, tax, or financial advice.
+          </div>
+        </div>
+      </div>
+
+      <div class="content-section">
+        <h2>What a $12,000 Window Replacement Really Costs</h2>
+
+        <p>
+          New windows can involve more than the window units themselves. The full project may include measurements, removal, disposal, installation labor, trim repair, insulation, flashing, caulking, permit requirements, interior touch-up work, and upgrades for energy-efficient glass or custom sizing.
+        </p>
+
+        <p>
+          A $12,000 window replacement can make sense when old windows are drafty, damaged, difficult to open, leaking, fogged between panes, or hurting comfort inside the home. It becomes more questionable when the project is mainly cosmetic, financed at a high rate, or sold with unrealistic promises about energy savings.
+        </p>
+      </div>
+
+      <WhenSpendingMakesSense
+        title="When Paying for New Windows Makes Sense"
+        items={[
+          "Your current windows leak air, collect condensation, stick, rot, or let water into the home.",
+          "The project improves comfort, safety, resale presentation, or long-term maintenance.",
+          "You can pay for the windows without draining emergency savings.",
+          "The quote clearly separates window quality, installation labor, trim work, disposal, and warranty terms.",
+          "The project fits the value of the home instead of over-improving for the neighborhood.",
+        ]}
+      />
+
+      <div class="content-section">
+        <h2>When You Should Slow Down Before Replacing Windows</h2>
+
+        <p>
+          Slow down if the sales pitch relies heavily on monthly-payment framing, dramatic energy-savings claims, or same-day discounts that pressure you to sign immediately. Window replacement can be valuable, but the financial case should stand on its own without urgency tactics.
+        </p>
+
+        <p>
+          Before committing, compare multiple bids, ask whether full replacement or insert replacement is being quoted, confirm warranty transferability, and check whether repairing a smaller set of problem windows would solve the real issue for less money.
+        </p>
+      </div>
+
+      <KeyCostCategories
+        items={[
+          {
+            title: "Window type and glass package",
+            description:
+              "Double-pane, triple-pane, low-E coatings, gas fills, frame material, and custom sizing can all change the final price.",
+          },
+          {
+            title: "Installation and trim work",
+            description:
+              "Labor, flashing, insulation, caulking, sill repair, interior trim, exterior finish work, and disposal can meaningfully affect the total.",
+          },
+          {
+            title: "Energy savings and comfort",
+            description:
+              "Lower utility bills may help, but comfort, drafts, moisture control, and maintenance are often bigger reasons to replace windows.",
+          },
+          {
+            title: "Financing and warranty risk",
+            description:
+              "A window quote should be judged by total project cost, interest rate, payment terms, installation quality, and warranty coverage.",
+          },
+        ]}
+      />
+
+      <ReduceCostTips
+        items={[
+          "Replace the worst windows first instead of doing the entire house at once.",
+          "Compare insert replacement versus full-frame replacement if the existing frames are still sound.",
+          "Avoid same-day sales pressure and get at least two or three written bids.",
+          "Ask for separate pricing on standard windows, upgraded glass, trim work, and disposal.",
+          "Check whether rebates, utility incentives, or tax credits may apply before signing.",
+          "Be careful with long-term financing that makes a high total cost look cheap through a small monthly payment.",
+        ]}
+      />
+
+      <FinancialRedFlags
+        items={[
+          "The project would wipe out most of your emergency savings.",
+          "The salesperson focuses on a monthly payment instead of the total installed price.",
+          "The financing rate, term, or fees are unclear.",
+          "The quote promises energy savings that seem too high for your current utility bills.",
+          "The windows are mostly cosmetic while urgent roof, foundation, plumbing, or electrical repairs remain unfunded.",
+        ]}
+      />
+
+      <CalculatorAssumptions
+        items={[
+          "The calculator treats new windows as a planned home improvement rather than an emergency repair.",
+          "Monthly income means take-home pay after taxes and payroll deductions.",
+          "Estimated energy savings are only a rough monthly estimate and may not match actual utility-bill changes.",
+          "Estimated home value is used only as a rough check against over-improving.",
+          "Monthly debt payments include credit cards, car loans, student loans, personal loans, and other required debt payments.",
+          "The estimate does not evaluate window quality, contractor skill, local rebates, tax credits, building codes, appraisal impact, or exact energy performance.",
+        ]}
+      />
+
+      <FAQSection
+        title="Window Replacement Spending FAQ"
+        faqs={[
+          {
+            question: "Is $12,000 too much to spend on new windows?",
+            answer:
+              "It depends on the number of windows, frame material, glass package, installation type, labor costs, and local pricing. A $12,000 quote can be reasonable for a larger or higher-quality project, but it should be compared against multiple written bids.",
+          },
+          {
+            question: "Do new windows pay for themselves through energy savings?",
+            answer:
+              "Usually not quickly. New windows may reduce utility bills, but the payback period can be long. Comfort, drafts, condensation, maintenance, and resale presentation often matter as much as energy savings.",
+          },
+          {
+            question: "Should I finance new windows?",
+            answer:
+              "Financing may work if the payment fits comfortably and the interest rate is reasonable. Be cautious when the offer hides the total cost, stretches payments for many years, or uses a promotional rate that later becomes expensive.",
+          },
+          {
+            question: "Should I replace all windows at once?",
+            answer:
+              "Not always. If only a few windows are leaking, rotting, fogged, or drafty, replacing the worst ones first may solve the biggest problem while protecting cash flow.",
+          },
+          {
+            question: "Are expensive replacement windows worth it?",
+            answer:
+              "They can be worth it when the installation quality, warranty, durability, comfort improvement, and home fit justify the price. Premium windows are harder to justify if the home has more urgent repair needs or the quote strains savings.",
+          },
+        ]}
+      />
+
+      <MethodologySection category="home improvement spending" updated="May 2026" />
+
+      <RelatedGuides
+        guides={[
+          {
+            title: "Home Improvement Calculators",
+            href: "/home-improvement-calculators",
+            description:
+              "Browse home repair and renovation calculators for urgent repairs, upgrades, and major homeowner decisions.",
+          },
+          {
+            title: "What Counts as Debt?",
+            href: "/what-counts-as-debt",
+            description:
+              "Understand which monthly obligations should be included when estimating financial pressure.",
+          },
+        ]}
+      />
+
+      <RelatedCalculators
+        calculators={[
+          {
+            category: "Home Improvement",
+            title: "Should I Spend $10,000 on a Roof Replacement?",
+            href: "/should-i-spend-10000-on-a-roof-replacement",
+          },
+          {
+            category: "Home Improvement",
+            title: "Should I Spend $8,000 on HVAC Replacement?",
+            href: "/should-i-spend-8000-on-hvac-replacement",
+          },
+          {
+            category: "Home Improvement",
+            title: "Should I Spend $20,000 on a Kitchen Remodel?",
+            href: "/should-i-spend-20000-on-a-kitchen-remodel",
+          },
+          {
+            category: "Home Improvement",
+            title: "Browse Home Improvement Calculators",
+            href: "/home-improvement-calculators",
+          },
+        ]}
+      />
+    </CalculatorPageShell>
+  </div>
+
+  <script is:inline>
+  const clamp = (value, min, max) => Math.min(Math.max(value, min), max);
+
+  const getNumber = (id) => {
+    const rawValue = document.getElementById(id)?.value;
+    const value = Number(rawValue);
+    return Number.isFinite(value) && value >= 0 ? value : 0;
+  };
+
+  function getPressureLevel(score) {
+    if (score <= 30) {
+      return {
+        label: "Low Pressure",
+        stress: "Low pressure",
+        color: "#16a34a",
+        action:
+          "Proceed only after comparing bids, confirming warranty terms, and keeping a cash cushion after installation.",
+      };
+    }
+
+    if (score <= 60) {
+      return {
+        label: "Moderate Pressure",
+        stress: "Moderate pressure",
+        color: "#ca8a04",
+        action:
+          "Consider replacing the worst windows first, lowering upgrades, or avoiding financing that strains monthly cash flow.",
+      };
+    }
+
+    return {
+      label: "High Pressure",
+      stress: "High pressure",
+      color: "#dc2626",
+      action:
+        "Delay the project, replace fewer windows, get additional bids, or save more before committing.",
+    };
+  }
+
+  function calculateWindows() {
+    const cost = getNumber("cost");
+    const income = getNumber("income");
+    const savings = getNumber("savings");
+    const expenses = getNumber("expenses");
+    const debt = getNumber("debt");
+    const homeValue = getNumber("homeValue");
+    const energySavings = getNumber("energySavings");
+    const financed = getNumber("financed");
+
+    const result = document.getElementById("result");
+    const scoreEl = document.getElementById("score");
+    const barFill = document.getElementById("barFill");
+    const stressEl = document.getElementById("stress");
+    const cashFlowEl = document.getElementById("cashFlow");
+    const savingsImpactEl = document.getElementById("savingsImpact");
+    const paybackImpactEl = document.getElementById("paybackImpact");
+    const homeValueImpactEl = document.getElementById("homeValueImpact");
+    const guidanceEl = document.getElementById("guidance");
+
+    result.style.display = "block";
+
+    if (cost <= 0 || income <= 0) {
+      scoreEl.textContent = "Add your numbers first";
+      barFill.style.width = "0%";
+      barFill.style.background = "#16a34a";
+      stressEl.innerHTML = "";
+      cashFlowEl.innerHTML = "";
+      savingsImpactEl.innerHTML = "";
+      paybackImpactEl.innerHTML = "";
+      homeValueImpactEl.innerHTML = "";
+      guidanceEl.textContent =
+        "Enter a positive window replacement cost and monthly take-home income so the calculator can estimate financial pressure.";
+      return;
+    }
+
+    const outOfPocket = Math.max(cost - financed, 0);
+    const monthlyRemaining = income - expenses - debt;
+    const monthlyFixedCosts = expenses + debt;
+    const remainingSavings = savings - outOfPocket;
+
+    const savingsImpact = savings > 0 ? (outOfPocket / savings) * 100 : 100;
+    const incomeImpact = (cost / income) * 100;
+    const incomeRecoveryPower = cost / income;
+    const fixedObligationRatio = (monthlyFixedCosts / income) * 100;
+    const financedShare = cost > 0 ? (financed / cost) * 100 : 0;
+    const homeValueRatio = homeValue > 0 ? (cost / homeValue) * 100 : 0;
+    const emergencyMonths =
+      monthlyFixedCosts > 0
+        ? remainingSavings / monthlyFixedCosts
+        : remainingSavings > 0
+          ? 999
+          : 0;
+
+    const paybackYears =
+      energySavings > 0 ? cost / (energySavings * 12) : null;
+
+    let pressureScore = 0;
+
+    const ultraSafeSavings =
+      savings >= cost * 25 &&
+      remainingSavings > cost * 20 &&
+      savingsImpact < 5 &&
+      financedShare === 0;
+
+    const ultraSafeIncome =
+      incomeRecoveryPower < 0.5 &&
+      monthlyRemaining > 0 &&
+      fixedObligationRatio < 25 &&
+      financedShare === 0;
+
+    if (ultraSafeSavings || ultraSafeIncome) {
+      pressureScore = 0;
+    } else {
+      pressureScore += clamp(incomeImpact * 0.14, 0, 22);
+      pressureScore += clamp(savingsImpact * 0.18, 0, 26);
+      pressureScore += clamp(fixedObligationRatio * 0.18, 0, 22);
+
+      if (remainingSavings < 0) pressureScore += 30;
+      else if (emergencyMonths < 1 && incomeRecoveryPower >= 1) pressureScore += 22;
+      else if (emergencyMonths < 3 && incomeRecoveryPower >= 0.75) pressureScore += 14;
+      else if (emergencyMonths >= 6) pressureScore -= 8;
+
+      if (financed > 0) pressureScore += clamp(financedShare * 0.14, 4, 18);
+
+      if (homeValue > 0 && homeValueRatio > 12) pressureScore += 7;
+      else if (homeValue > 0 && homeValueRatio > 8) pressureScore += 4;
+      else if (homeValue > 0 && homeValueRatio <= 5) pressureScore -= 4;
+
+      if (paybackYears !== null) {
+        if (paybackYears <= 8) pressureScore -= 6;
+        else if (paybackYears <= 15) pressureScore -= 2;
+        else if (paybackYears > 25) pressureScore += 4;
+      } else {
+        pressureScore += 2;
+      }
+
+      if (monthlyRemaining < 0) pressureScore += 20;
+      else if (monthlyRemaining < income * 0.1) pressureScore += 10;
+      else if (monthlyRemaining > income * 0.35) pressureScore -= 8;
+
+      if (
+        savingsImpact < 1 &&
+        fixedObligationRatio < 40 &&
+        emergencyMonths >= 24 &&
+        financedShare === 0
+      ) {
+        pressureScore = 0;
+      } else if (
+        savingsImpact < 3 &&
+        fixedObligationRatio < 45 &&
+        emergencyMonths >= 12 &&
+        financedShare <= 25
+      ) {
+        pressureScore = Math.min(pressureScore, 5);
+      } else if (
+        incomeRecoveryPower < 1 &&
+        fixedObligationRatio < 30 &&
+        monthlyRemaining > cost * 0.5
+      ) {
+        pressureScore = Math.min(pressureScore, 12);
+      }
+
+      pressureScore = Math.round(clamp(pressureScore, 0, 100));
+    }
+
+    const level = getPressureLevel(pressureScore);
+
+    const paybackText =
+      paybackYears === null
+        ? "No energy-savings estimate entered"
+        : `${paybackYears.toFixed(1)} years based on your energy-savings estimate`;
+
+    let guidance = "";
+
+    if (pressureScore <= 30) {
+      guidance = `This window replacement project appears financially manageable based on the numbers provided. The project equals about ${incomeImpact.toFixed(
+        1
+      )}% of one month’s take-home income, and your estimated emergency cushion remains around ${Math.max(
+        emergencyMonths,
+        0
+      ).toFixed(1)} months after the out-of-pocket cost.`;
+    } else if (pressureScore <= 60) {
+      guidance = `This window replacement project may work, but it creates noticeable financial pressure. The project equals about ${incomeImpact.toFixed(
+        1
+      )}% of one month’s take-home income, and the out-of-pocket portion uses about ${savingsImpact.toFixed(
+        1
+      )}% of available savings.`;
+    } else {
+      guidance = `This window replacement project could create real financial strain. The project equals about ${incomeImpact.toFixed(
+        1
+      )}% of one month’s take-home income, and the combination of savings impact, financing, debt, or limited payback suggests you should scale back or wait.`;
+    }
+
+    scoreEl.textContent = `${level.label} — ${pressureScore}/100`;
+    scoreEl.style.color = level.color;
+    barFill.style.width = `${pressureScore}%`;
+    barFill.style.background = level.color;
+
+    stressEl.innerHTML = `<strong>Pressure level:</strong> ${level.stress}`;
+    cashFlowEl.innerHTML = `<strong>Monthly cash flow after bills and debt:</strong> $${monthlyRemaining.toLocaleString()}`;
+    savingsImpactEl.innerHTML = `<strong>Savings after out-of-pocket window cost:</strong> $${remainingSavings.toLocaleString()}`;
+    paybackImpactEl.innerHTML = `<strong>Estimated energy-savings payback:</strong> ${paybackText}`;
+    homeValueImpactEl.innerHTML = `<strong>Project cost as share of home value:</strong> ${homeValueRatio.toFixed(1)}%`;
+    guidanceEl.textContent = `${guidance} Recommended next step: ${level.action}`;
+  }
+
+  document
+    .getElementById("windowsButton")
+    .addEventListener("click", calculateWindows);
+</script>
+</Layout>

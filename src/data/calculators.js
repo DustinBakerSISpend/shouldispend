@@ -443,16 +443,6 @@ export const calculators = [
     "Evaluate whether using emergency savings for healthcare costs creates financial pressure or protects long-term stability.",
   href: "/should-i-use-emergency-savings-for-medical-bills",
 },
-
-{
-  id: "lasik-5000",
-  category: "Medical",
-  title: "Should I Spend $5,000 on LASIK?",
-  description:
-    "Evaluate LASIK affordability using income, emergency savings, debt, financing, monthly expenses, and financial flexibility.",
-  href: "/should-i-spend-5000-on-lasik",
-},
-
 {
   id: "er-bill-2500",
   category: "Medical",
@@ -461,7 +451,22 @@ export const calculators = [
     "Evaluate whether a large emergency room bill fits your savings, payment plan options, debt pressure, and monthly cash flow.",
   href: "/should-i-spend-2500-on-an-er-bill",
 },
-
+{
+  id: "lasik-5000",
+  category: "Medical",
+  title: "Should I Spend $5,000 on LASIK?",
+  description:
+    "Evaluate LASIK affordability using income, emergency savings, debt, financing, monthly expenses, and financial flexibility.",
+  href: "/should-i-spend-5000-on-lasik",
+},
+{
+  id: "invisalign-8000",
+  category: "Medical",
+  title: "Should I Spend $8,000 on Invisalign?",
+  description:
+    "Evaluate Invisalign affordability using insurance coverage, savings, financing, monthly cash flow, and debt pressure.",
+  href: "/should-i-spend-8000-on-invisalign",
+},
 {
   id: "dental-implant-4000",
   category: "Medical",
@@ -470,7 +475,6 @@ export const calculators = [
     "Analyze dental implant affordability using income, emergency savings, financing, insurance gaps, and debt pressure.",
   href: "/should-i-spend-4000-on-a-dental-implant",
 },
-
 {
   id: "root-canal-3000",
   category: "Medical",
@@ -479,13 +483,45 @@ export const calculators = [
     "Evaluate root canal affordability using savings, monthly cash flow, dental financing, and overall financial flexibility.",
   href: "/should-i-spend-3000-on-a-root-canal",
 },
+{
+  id: "hearing-aids-7000",
+  category: "Medical",
+  title: "Should I Spend $7,000 on Hearing Aids?",
+  description:
+    "Evaluate hearing aid affordability using insurance coverage, savings, financing, replacement costs, and monthly flexibility.",
+  href: "/should-i-spend-7000-on-hearing-aids",
+},
+{
+  id: "fertility-treatments-6000",
+  category: "Medical",
+  title: "Should I Spend $6,000 on Fertility Treatments?",
+  description:
+    "Evaluate fertility treatment costs using savings, insurance gaps, repeat-cycle risk, financing, and monthly cash flow.",
+  href: "/should-i-spend-6000-on-fertility-treatments",
+},
+{
+  id: "dermatology-treatment-2500",
+  category: "Medical",
+  title: "Should I Spend $2,500 on Dermatology Treatment?",
+  description:
+    "Evaluate dermatology treatment affordability using insurance coverage, savings, procedure type, financing, and debt pressure.",
+  href: "/should-i-spend-2500-on-dermatology-treatment",
+},
+{
+  id: "mental-health-therapy-5000",
+  category: "Medical",
+  title: "Should I Spend $5,000 on Mental Health Therapy?",
+  description:
+    "Evaluate therapy affordability using session costs, insurance coverage, savings, monthly cash flow, and long-term care needs.",
+  href: "/should-i-spend-5000-on-mental-health-therapy",
+},
 
 {
   id: "home-repairs-cost",
   category: "Home Improvement",
   title: "Should I Spend This Much on Home Repairs?",
   description:
-    "Evaluate home repair costs using emergency savings, urgency, debt pressure, income stability, and long-term flexibility.",
+    "Evaluate home repair affordability using emergency savings, urgency, debt pressure, financing risk, and long-term financial flexibility.",
   href: "/should-i-spend-this-much-on-home-repairs",
 },
 
@@ -494,8 +530,17 @@ export const calculators = [
   category: "Home Improvement",
   title: "Should I Spend $10,000 on a Roof Replacement?",
   description:
-    "Evaluate roof replacement affordability using insurance help, emergency savings, debt pressure, income, and monthly cash flow.",
+    "Evaluate roof replacement affordability using insurance coverage, emergency savings, financing pressure, debt load, and monthly cash flow.",
   href: "/should-i-spend-10000-on-a-roof-replacement",
+},
+
+{
+  id: "new-windows-12000",
+  category: "Home Improvement",
+  title: "Should I Spend $12,000 on New Windows?",
+  description:
+    "Evaluate window replacement affordability using energy savings, emergency reserves, financing costs, debt pressure, and long-term home value.",
+  href: "/should-i-spend-12000-on-new-windows",
 },
 
 {
@@ -503,40 +548,89 @@ export const calculators = [
   category: "Home Improvement",
   title: "Should I Spend $8,000 on HVAC Replacement?",
   description:
-    "Evaluate HVAC replacement affordability using emergency savings, repair urgency, financing, debt pressure, and monthly cash flow.",
+    "Evaluate HVAC replacement affordability using repair urgency, emergency savings, financing risk, debt pressure, and monthly cash flow.",
   href: "/should-i-spend-8000-on-hvac-replacement",
 },
+
+{
+  id: "basement-waterproofing-7000",
+  category: "Home Improvement",
+  title: "Should I Spend $7,000 on Basement Waterproofing?",
+  description:
+    "Evaluate basement waterproofing affordability using water damage risk, emergency savings, debt pressure, financing costs, and home protection value.",
+  href: "/should-i-spend-7000-on-basement-waterproofing",
+},
+
+{
+  id: "electrical-panel-6000",
+  category: "Home Improvement",
+  title: "Should I Spend $6,000 on Electrical Panel Replacement?",
+  description:
+    "Evaluate electrical panel replacement affordability using safety risk, emergency savings, financing pressure, debt load, and future repair exposure.",
+  href: "/should-i-spend-6000-on-electrical-panel-replacement",
+},
+
 {
   id: "plumbing-repairs-5000",
   category: "Home Improvement",
   title: "Should I Spend $5,000 on Plumbing Repairs?",
   description:
-    "Evaluate plumbing repair affordability using emergency savings, urgency, insurance help, debt pressure, and monthly cash flow.",
+    "Evaluate plumbing repair affordability using repair urgency, insurance help, emergency savings, debt pressure, and monthly flexibility.",
   href: "/should-i-spend-5000-on-plumbing-repairs",
 },
+
 {
-  id: "foundation-repair-15000",
-  category: "Home Improvement",
-  title: "Should I Spend $15,000 on Foundation Repair?",
+  id: "mental-health-therapy-5000",
+  category: "Medical",
+  title: "Should I Spend $5,000 on Mental Health Therapy?",
   description:
-    "Evaluate foundation repair affordability using savings, urgency, financing, home risk, debt pressure, and monthly flexibility.",
-  href: "/should-i-spend-15000-on-foundation-repair",
+    "Evaluate therapy affordability using savings, insurance coverage, debt pressure, income stability, and long-term personal wellbeing.",
+  href: "/should-i-spend-5000-on-mental-health-therapy",
 },
+
 {
-  id: "kitchen-remodel-20000",
+  id: "mold-remediation-4000",
   category: "Home Improvement",
-  title: "Should I Spend $20,000 on a Kitchen Remodel?",
+  title: "Should I Spend $4,000 on Mold Remediation?",
   description:
-    "Evaluate kitchen remodel affordability using savings, home value, financing, debt pressure, and monthly cash flow.",
-  href: "/should-i-spend-20000-on-a-kitchen-remodel",
+    "Evaluate mold remediation affordability using health risk, repair urgency, emergency savings, debt pressure, and long-term home damage exposure.",
+  href: "/should-i-spend-4000-on-mold-remediation",
 },
+
 {
   id: "tree-removal-3000",
   category: "Home Improvement",
   title: "Should I Spend $3,000 on Tree Removal?",
   description:
-    "Evaluate tree removal affordability using urgency, insurance help, emergency savings, debt pressure, and monthly cash flow.",
+    "Evaluate tree removal affordability using safety risk, insurance exposure, emergency savings, debt pressure, and monthly cash flow.",
   href: "/should-i-spend-3000-on-tree-removal",
+},
+
+{
+  id: "foundation-repair-15000",
+  category: "Home Improvement",
+  title: "Should I Spend $15,000 on Foundation Repair?",
+  description:
+    "Evaluate foundation repair affordability using structural risk, emergency savings, financing pressure, debt load, and long-term home stability.",
+  href: "/should-i-spend-15000-on-foundation-repair",
+},
+
+{
+  id: "kitchen-remodel-20000",
+  category: "Home Improvement",
+  title: "Should I Spend $20,000 on a Kitchen Remodel?",
+  description:
+    "Evaluate kitchen remodel affordability using savings, financing costs, debt pressure, resale value, and long-term financial flexibility.",
+  href: "/should-i-spend-20000-on-a-kitchen-remodel",
+},
+
+{
+  id: "bathroom-remodel-25000",
+  category: "Home Improvement",
+  title: "Should I Spend $25,000 on a Bathroom Remodel?",
+  description:
+    "Evaluate bathroom remodel affordability using savings, financing pressure, debt load, resale value, and monthly cash flow stability.",
+  href: "/should-i-spend-25000-on-a-bathroom-remodel",
 },
 
 ];

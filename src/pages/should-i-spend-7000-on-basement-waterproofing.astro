@@ -1,0 +1,611 @@
+---
+import Layout from "../layouts/Layout.astro";
+import CalculatorPageShell from "../components/CalculatorPageShell.astro";
+import FAQSection from "../components/FAQSection.astro";
+import RelatedCalculators from "../components/RelatedCalculators.astro";
+import RelatedGuides from "../components/RelatedGuides.astro";
+import MethodologySection from "../components/MethodologySection.astro";
+import FinancialRedFlags from "../components/FinancialRedFlags.astro";
+import CalculatorAssumptions from "../components/CalculatorAssumptions.astro";
+import KeyCostCategories from "../components/KeyCostCategories.astro";
+import ReduceCostTips from "../components/ReduceCostTips.astro";
+import WhenSpendingMakesSense from "../components/WhenSpendingMakesSense.astro";
+---
+
+<Layout
+  title="Should I Spend $7,000 on Basement Waterproofing?"
+  description="Use this basement waterproofing calculator to decide whether a $7,000 project fits your income, savings, debt, water risk, home value, and financing options."
+>
+  <style>
+    .container {
+      max-width: 950px;
+      margin: 0 auto;
+      padding: 60px 20px;
+    }
+
+    .content-section {
+      max-width: 760px;
+      margin: 72px auto 0;
+    }
+
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 28px;
+      padding: 34px;
+    }
+
+    h2 {
+      margin-top: 0;
+      font-size: 2rem;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 22px;
+      margin-bottom: 28px;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 10px;
+      font-weight: 700;
+    }
+
+    input,
+    select {
+      width: 100%;
+      padding: 18px;
+      border-radius: 14px;
+      border: 1px solid var(--border);
+      font-size: 1.1rem;
+      box-sizing: border-box;
+      background: white;
+    }
+
+    button {
+      background: #0f172a;
+      color: white;
+      border: none;
+      padding: 16px 28px;
+      border-radius: 14px;
+      font-size: 1rem;
+      font-weight: 700;
+      cursor: pointer;
+      margin-top: 10px;
+      width: 100%;
+      display: block;
+    }
+
+    button:hover {
+      opacity: 0.92;
+    }
+
+    .result {
+      margin-top: 40px;
+      border: 1px solid var(--border);
+      border-radius: 24px;
+      padding: 28px;
+      display: none;
+      background: #f8fafc;
+    }
+
+    .score {
+      font-size: 3rem;
+      font-weight: 800;
+      margin-bottom: 16px;
+    }
+
+    .bar {
+      width: 100%;
+      height: 16px;
+      background: #dbe3ee;
+      border-radius: 999px;
+      overflow: hidden;
+      margin-bottom: 24px;
+    }
+
+    .fill {
+      height: 100%;
+      width: 0%;
+      background: #16a34a;
+      border-radius: 999px;
+      transition: width 0.4s ease;
+    }
+
+    .metric {
+      margin-bottom: 14px;
+      font-size: 1.05rem;
+    }
+
+    .guidance {
+      margin-top: 26px;
+      font-size: 1.15rem;
+      line-height: 1.7;
+    }
+
+    .disclaimer {
+      margin-top: 30px;
+      font-size: 0.9rem;
+      color: var(--muted);
+    }
+
+    .helper-link {
+      margin-top: 10px;
+      font-size: 0.9rem;
+    }
+
+    .helper-link a {
+      color: var(--primary);
+      font-weight: 600;
+    }
+
+    .content-section p,
+    .content-section li {
+      line-height: 1.8;
+    }
+  </style>
+
+  <div class="container">
+    <CalculatorPageShell
+      eyebrow="Home Improvement Calculator"
+      title="Should I Spend $7,000 on Basement Waterproofing?"
+      description="Estimate whether a $7,000 basement waterproofing project fits your income, savings, debt load, monthly expenses, home value, water risk, and financing options."
+    >
+      <div class="card">
+        <h2>Basement Waterproofing Pressure Verdict</h2>
+
+        <div class="grid">
+          <div>
+            <label for="cost">Waterproofing Cost</label>
+            <input id="cost" type="number" placeholder="7000" min="0" inputmode="decimal" />
+          </div>
+
+          <div>
+            <label for="income">Monthly Take-Home Income</label>
+            <input id="income" type="number" placeholder="8500" min="0" inputmode="decimal" />
+          </div>
+
+          <div>
+            <label for="savings">Emergency Savings</label>
+            <input id="savings" type="number" placeholder="25000" min="0" inputmode="decimal" />
+          </div>
+
+          <div>
+            <label for="expenses">Monthly Expenses</label>
+            <input id="expenses" type="number" placeholder="5200" min="0" inputmode="decimal" />
+          </div>
+
+          <div>
+            <label for="debt">Monthly Debt Payments</label>
+            <input id="debt" type="number" placeholder="800" min="0" inputmode="decimal" />
+
+            <div class="helper-link">
+              <a href="/what-counts-as-debt">
+                Not sure what counts as debt? Read the debt guide
+              </a>
+            </div>
+          </div>
+
+          <div>
+            <label for="homeValue">Estimated Home Value</label>
+            <input id="homeValue" type="number" placeholder="350000" min="0" inputmode="decimal" />
+          </div>
+
+          <div>
+            <label for="waterRisk">Water Problem Severity</label>
+            <select id="waterRisk">
+              <option value="1">Minor dampness or occasional seepage</option>
+              <option value="2">Recurring water after heavy rain</option>
+              <option value="3">Active leaks, standing water, or mold risk</option>
+            </select>
+          </div>
+
+          <div>
+            <label for="financed">Amount Financed</label>
+            <input id="financed" type="number" placeholder="0" min="0" inputmode="decimal" />
+          </div>
+        </div>
+
+        <button id="waterproofingButton" type="button">
+          Calculate Financial Pressure
+        </button>
+
+        <div class="result" id="result">
+          <div class="score" id="score"></div>
+
+          <div class="bar">
+            <div class="fill" id="barFill"></div>
+          </div>
+
+          <div class="metric" id="stress"></div>
+          <div class="metric" id="cashFlow"></div>
+          <div class="metric" id="savingsImpact"></div>
+          <div class="metric" id="riskImpact"></div>
+          <div class="metric" id="homeValueImpact"></div>
+
+          <div class="guidance" id="guidance"></div>
+
+          <div class="disclaimer">
+            This is a general educational estimate, not contractor, structural, mold, insurance, real estate, lending, or financial advice.
+          </div>
+        </div>
+      </div>
+
+      <div class="content-section">
+        <h2>What a $7,000 Basement Waterproofing Project Really Costs</h2>
+
+        <p>
+          Basement waterproofing can include interior drain tile, sump pump work, crack repair, vapor barriers, grading fixes, downspout extensions, wall sealing, exterior excavation, foundation drainage, mold cleanup, drywall removal, flooring replacement, and permits.
+        </p>
+
+        <p>
+          A $7,000 waterproofing project may be worth doing when water is recurring, the basement is finished, mold risk is rising, or the problem could damage the foundation or living space. It becomes more questionable when the quote is vague, the fix treats symptoms instead of drainage, or financing turns a repair into long-term debt pressure.
+        </p>
+      </div>
+
+      <WhenSpendingMakesSense
+        title="When Paying for Basement Waterproofing Makes Sense"
+        items={[
+          "Water enters the basement repeatedly after rain or snowmelt.",
+          "The project protects finished living space, stored property, mechanical systems, or the foundation.",
+          "You can pay for the work without wiping out emergency savings.",
+          "The quote identifies the likely source of water instead of only sealing visible symptoms.",
+          "The project reduces future mold, flooring, drywall, and structural repair risk.",
+        ]}
+      />
+
+      <div class="content-section">
+        <h2>When You Should Slow Down Before Waterproofing</h2>
+
+        <p>
+          Slow down if the contractor cannot explain where the water is coming from, the quote jumps straight to an expensive system, or cheaper exterior fixes have not been considered. Gutters, grading, downspouts, window wells, and soil slope can sometimes solve or reduce the problem.
+        </p>
+
+        <p>
+          Before committing, compare bids, ask whether the fix is interior or exterior, confirm sump pump backup plans, and understand what happens if water returns. A basement water problem is serious, but the right solution depends on the source.
+        </p>
+      </div>
+
+      <KeyCostCategories
+        items={[
+          {
+            title: "Drainage and water source",
+            description:
+              "Interior drain systems, exterior excavation, grading, gutters, window wells, and downspouts all solve different water problems.",
+          },
+          {
+            title: "Sump pump and backup protection",
+            description:
+              "A pump system may need battery backup, discharge routing, pit work, alarms, or replacement parts to reduce future flood risk.",
+          },
+          {
+            title: "Mold and finished-basement damage",
+            description:
+              "Drywall, flooring, insulation, trim, storage items, and mold remediation can turn a water issue into a larger repair.",
+          },
+          {
+            title: "Financing and warranty terms",
+            description:
+              "The total cost should include warranty coverage, what is excluded, repayment terms, and whether the fix addresses the actual cause.",
+          },
+        ]}
+      />
+
+      <ReduceCostTips
+        items={[
+          "Check gutters, downspouts, grading, and window wells before assuming the basement needs a full system.",
+          "Get multiple written bids that explain the water source and proposed fix.",
+          "Ask whether a smaller repair can solve the problem before approving full drain tile or excavation.",
+          "Protect cash flow by avoiding high-interest financing when possible.",
+          "Price backup sump protection separately if pump failure is a major risk.",
+          "Keep a contingency fund for drywall, flooring, or mold work discovered after waterproofing begins.",
+        ]}
+      />
+
+      <FinancialRedFlags
+        items={[
+          "The project would drain almost all emergency savings.",
+          "The basement has active mold, standing water, or electrical hazards that need urgent professional attention.",
+          "The quote does not explain the source of the water.",
+          "The contractor pressures you into same-day financing.",
+          "The repair is cosmetic while water continues entering the home.",
+          "The monthly payment would make mortgage, utilities, groceries, insurance, or debt payments difficult.",
+        ]}
+      />
+
+      <CalculatorAssumptions
+        items={[
+          "The calculator treats basement waterproofing as a protective home repair, not a cosmetic upgrade.",
+          "Monthly income means take-home pay after taxes and payroll deductions.",
+          "Water problem severity is a rough risk input and does not replace a professional inspection.",
+          "Estimated home value is used only as a rough check against project size.",
+          "Monthly debt payments include credit cards, car loans, student loans, personal loans, and other required debt payments.",
+          "The estimate does not evaluate foundation engineering, mold testing, insurance coverage, contractor quality, warranty enforceability, permits, or local soil conditions.",
+        ]}
+      />
+
+      <FAQSection
+        title="Basement Waterproofing Spending FAQ"
+        faqs={[
+          {
+            question: "Is $7,000 too much for basement waterproofing?",
+            answer:
+              "It depends on the cause of the water, basement size, whether the work is interior or exterior, sump pump needs, mold damage, and local labor costs. A $7,000 quote can be reasonable, but it should clearly explain the water source and the proposed fix.",
+          },
+          {
+            question: "Should I waterproof my basement before finishing it?",
+            answer:
+              "Usually yes. Finishing a basement before solving water intrusion can put flooring, drywall, furniture, insulation, and electrical work at risk. Waterproofing first may prevent a much larger repair later.",
+          },
+          {
+            question: "Can I finance basement waterproofing?",
+            answer:
+              "Financing may make sense if the water problem is urgent and the payment fits comfortably. Be careful with high rates, unclear fees, or long repayment terms that make a repair much more expensive.",
+          },
+          {
+            question: "What should I check before paying for basement waterproofing?",
+            answer:
+              "Start with gutters, downspouts, grading, window wells, cracks, sump pump function, and where water appears. A good quote should connect the fix to the likely source of water.",
+          },
+          {
+            question: "Is basement waterproofing worth it for resale?",
+            answer:
+              "It can help if the home has a known water issue, especially if the repair is documented and transferable. Buyers may still care about the quality of the fix, warranty terms, and whether water has caused mold or structural damage.",
+          },
+        ]}
+      />
+
+      <MethodologySection category="home improvement spending" updated="May 2026" />
+
+      <RelatedGuides
+        guides={[
+          {
+            title: "Home Improvement Calculators",
+            href: "/home-improvement-calculators",
+            description:
+              "Browse home repair and renovation calculators for urgent repairs, upgrades, and major homeowner decisions.",
+          },
+          {
+            title: "What Counts as Debt?",
+            href: "/what-counts-as-debt",
+            description:
+              "Understand which monthly obligations should be included when estimating financial pressure.",
+          },
+        ]}
+      />
+
+      <RelatedCalculators
+        calculators={[
+          {
+            category: "Home Improvement",
+            title: "Should I Spend $12,000 on New Windows?",
+            href: "/should-i-spend-12000-on-new-windows",
+          },
+          {
+            category: "Home Improvement",
+            title: "Should I Spend $8,000 on HVAC Replacement?",
+            href: "/should-i-spend-8000-on-hvac-replacement",
+          },
+          {
+            category: "Home Improvement",
+            title: "Should I Spend $15,000 on Foundation Repair?",
+            href: "/should-i-spend-15000-on-foundation-repair",
+          },
+          {
+            category: "Home Improvement",
+            title: "Browse Home Improvement Calculators",
+            href: "/home-improvement-calculators",
+          },
+        ]}
+      />
+    </CalculatorPageShell>
+  </div>
+
+  <script is:inline>
+    const clamp = (value, min, max) => Math.min(Math.max(value, min), max);
+
+    const getNumber = (id) => {
+      const rawValue = document.getElementById(id)?.value;
+      const value = Number(rawValue);
+      return Number.isFinite(value) && value >= 0 ? value : 0;
+    };
+
+    function getPressureLevel(score) {
+      if (score <= 30) {
+        return {
+          label: "Low Pressure",
+          stress: "Low pressure",
+          color: "#16a34a",
+          action:
+            "Proceed after comparing bids, confirming the water source, and keeping a cash cushion for related repairs.",
+        };
+      }
+
+      if (score <= 60) {
+        return {
+          label: "Moderate Pressure",
+          stress: "Moderate pressure",
+          color: "#ca8a04",
+          action:
+            "Compare smaller fixes first, protect emergency savings, and avoid financing that strains monthly cash flow.",
+        };
+      }
+
+      return {
+        label: "High Pressure",
+        stress: "High pressure",
+        color: "#dc2626",
+        action:
+          "Get additional inspections, price lower-cost drainage fixes, delay if possible, or save more before committing.",
+      };
+    }
+
+    function calculateWaterproofing() {
+      const cost = getNumber("cost");
+      const income = getNumber("income");
+      const savings = getNumber("savings");
+      const expenses = getNumber("expenses");
+      const debt = getNumber("debt");
+      const homeValue = getNumber("homeValue");
+      const waterRisk = getNumber("waterRisk");
+      const financed = getNumber("financed");
+
+      const result = document.getElementById("result");
+      const scoreEl = document.getElementById("score");
+      const barFill = document.getElementById("barFill");
+      const stressEl = document.getElementById("stress");
+      const cashFlowEl = document.getElementById("cashFlow");
+      const savingsImpactEl = document.getElementById("savingsImpact");
+      const riskImpactEl = document.getElementById("riskImpact");
+      const homeValueImpactEl = document.getElementById("homeValueImpact");
+      const guidanceEl = document.getElementById("guidance");
+
+      result.style.display = "block";
+
+      if (cost <= 0 || income <= 0) {
+        scoreEl.textContent = "Add your numbers first";
+        barFill.style.width = "0%";
+        barFill.style.background = "#16a34a";
+        stressEl.innerHTML = "";
+        cashFlowEl.innerHTML = "";
+        savingsImpactEl.innerHTML = "";
+        riskImpactEl.innerHTML = "";
+        homeValueImpactEl.innerHTML = "";
+        guidanceEl.textContent =
+          "Enter a positive basement waterproofing cost and monthly take-home income so the calculator can estimate financial pressure.";
+        return;
+      }
+
+      const outOfPocket = Math.max(cost - financed, 0);
+      const monthlyRemaining = income - expenses - debt;
+      const monthlyFixedCosts = expenses + debt;
+      const remainingSavings = savings - outOfPocket;
+
+      const savingsImpact = savings > 0 ? (outOfPocket / savings) * 100 : 100;
+      const incomeImpact = (cost / income) * 100;
+      const incomeRecoveryPower = cost / income;
+      const fixedObligationRatio = (monthlyFixedCosts / income) * 100;
+      const financedShare = cost > 0 ? (financed / cost) * 100 : 0;
+      const homeValueRatio = homeValue > 0 ? (cost / homeValue) * 100 : 0;
+      const emergencyMonths =
+        monthlyFixedCosts > 0
+          ? remainingSavings / monthlyFixedCosts
+          : remainingSavings > 0
+            ? 999
+            : 0;
+
+      const riskLabel =
+        waterRisk >= 3
+          ? "Active leaks, standing water, or mold risk"
+          : waterRisk === 2
+            ? "Recurring water after heavy rain"
+            : "Minor dampness or occasional seepage";
+
+      let pressureScore = 0;
+
+      const ultraSafeSavings =
+        savings >= cost * 25 &&
+        remainingSavings > cost * 20 &&
+        savingsImpact < 5 &&
+        financedShare === 0;
+
+      const ultraSafeIncome =
+        incomeRecoveryPower < 0.5 &&
+        monthlyRemaining > 0 &&
+        fixedObligationRatio < 25 &&
+        financedShare === 0;
+
+      if (ultraSafeSavings || ultraSafeIncome) {
+        pressureScore = 0;
+      } else {
+        pressureScore += clamp(incomeImpact * 0.14, 0, 22);
+        pressureScore += clamp(savingsImpact * 0.18, 0, 26);
+        pressureScore += clamp(fixedObligationRatio * 0.18, 0, 22);
+
+        if (remainingSavings < 0) pressureScore += 30;
+        else if (emergencyMonths < 1 && incomeRecoveryPower >= 1) pressureScore += 22;
+        else if (emergencyMonths < 3 && incomeRecoveryPower >= 0.75) pressureScore += 14;
+        else if (emergencyMonths >= 6) pressureScore -= 8;
+
+        if (financed > 0) pressureScore += clamp(financedShare * 0.14, 4, 18);
+
+        if (homeValue > 0 && homeValueRatio > 8) pressureScore += 6;
+        else if (homeValue > 0 && homeValueRatio > 5) pressureScore += 3;
+        else if (homeValue > 0 && homeValueRatio <= 3) pressureScore -= 4;
+
+        if (waterRisk >= 3) pressureScore -= 8;
+        else if (waterRisk === 2) pressureScore -= 4;
+        else pressureScore += 3;
+
+        if (monthlyRemaining < 0) pressureScore += 20;
+        else if (monthlyRemaining < income * 0.1) pressureScore += 10;
+        else if (monthlyRemaining > income * 0.35) pressureScore -= 8;
+
+        if (
+          savingsImpact < 1 &&
+          fixedObligationRatio < 40 &&
+          emergencyMonths >= 24 &&
+          financedShare === 0
+        ) {
+          pressureScore = 0;
+        } else if (
+          savingsImpact < 3 &&
+          fixedObligationRatio < 45 &&
+          emergencyMonths >= 12 &&
+          financedShare <= 25
+        ) {
+          pressureScore = Math.min(pressureScore, 5);
+        } else if (
+          incomeRecoveryPower < 1 &&
+          fixedObligationRatio < 30 &&
+          monthlyRemaining > cost * 0.5
+        ) {
+          pressureScore = Math.min(pressureScore, 12);
+        }
+
+        pressureScore = Math.round(clamp(pressureScore, 0, 100));
+      }
+
+      const level = getPressureLevel(pressureScore);
+
+      let guidance = "";
+
+      if (pressureScore <= 30) {
+        guidance = `This basement waterproofing project appears financially manageable based on the numbers provided. The project equals about ${incomeImpact.toFixed(
+          1
+        )}% of one month’s take-home income, and your estimated emergency cushion remains around ${Math.max(
+          emergencyMonths,
+          0
+        ).toFixed(1)} months after the out-of-pocket cost.`;
+      } else if (pressureScore <= 60) {
+        guidance = `This basement waterproofing project may work, but it creates noticeable financial pressure. The project equals about ${incomeImpact.toFixed(
+          1
+        )}% of one month’s take-home income, and the out-of-pocket portion uses about ${savingsImpact.toFixed(
+          1
+        )}% of available savings.`;
+      } else {
+        guidance = `This basement waterproofing project could create real financial strain. The project equals about ${incomeImpact.toFixed(
+          1
+        )}% of one month’s take-home income, and the combination of savings impact, financing, debt, and monthly cash flow suggests you should compare alternatives before committing.`;
+      }
+
+      scoreEl.textContent = `${level.label} — ${pressureScore}/100`;
+      scoreEl.style.color = level.color;
+      barFill.style.width = `${pressureScore}%`;
+      barFill.style.background = level.color;
+
+      stressEl.innerHTML = `<strong>Pressure level:</strong> ${level.stress}`;
+      cashFlowEl.innerHTML = `<strong>Monthly cash flow after bills and debt:</strong> $${monthlyRemaining.toLocaleString()}`;
+      savingsImpactEl.innerHTML = `<strong>Savings after out-of-pocket waterproofing cost:</strong> $${remainingSavings.toLocaleString()}`;
+      riskImpactEl.innerHTML = `<strong>Water problem severity:</strong> ${riskLabel}`;
+      homeValueImpactEl.innerHTML = `<strong>Project cost as share of home value:</strong> ${homeValueRatio.toFixed(1)}%`;
+      guidanceEl.textContent = `${guidance} Recommended next step: ${level.action}`;
+    }
+
+    document
+      .getElementById("waterproofingButton")
+      .addEventListener("click", calculateWaterproofing);
+  </script>
+</Layout>

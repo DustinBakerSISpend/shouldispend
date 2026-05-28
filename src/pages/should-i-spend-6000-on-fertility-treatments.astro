@@ -1,0 +1,488 @@
+---
+import Layout from "../layouts/Layout.astro";
+import CalculatorPageShell from "../components/CalculatorPageShell.astro";
+import FAQSection from "../components/FAQSection.astro";
+import RelatedCalculators from "../components/RelatedCalculators.astro";
+import RelatedGuides from "../components/RelatedGuides.astro";
+import MethodologySection from "../components/MethodologySection.astro";
+import FinancialRedFlags from "../components/FinancialRedFlags.astro";
+import CalculatorAssumptions from "../components/CalculatorAssumptions.astro";
+import KeyCostCategories from "../components/KeyCostCategories.astro";
+import ReduceCostTips from "../components/ReduceCostTips.astro";
+import WhenSpendingMakesSense from "../components/WhenSpendingMakesSense.astro";
+
+const pageTitle = "Should I Spend $6,000 on Fertility Treatments?";
+const pageDescription =
+  "Use this fertility treatment affordability calculator to decide whether a $6,000 treatment cycle fits your income, savings, insurance, financing, debt, and monthly cash flow.";
+---
+
+<Layout title={pageTitle} description={pageDescription}>
+  <style>
+    .container { max-width: 950px; margin: 0 auto; padding: 60px 20px; }
+    .content-section { max-width: 760px; margin: 72px auto 0; }
+    .card { background: var(--card); border: 1px solid var(--border); border-radius: 28px; padding: 34px; }
+    h2 { margin-top: 0; font-size: 2rem; }
+    .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 22px; margin-bottom: 28px; }
+    label { display: block; margin-bottom: 10px; font-weight: 700; }
+    input { width: 100%; padding: 18px; border-radius: 14px; border: 1px solid var(--border); font-size: 1.1rem; box-sizing: border-box; }
+    button { background: #0f172a; color: white; border: none; padding: 16px 28px; border-radius: 14px; font-size: 1rem; font-weight: 700; cursor: pointer; margin-top: 10px; width: 100%; display: block; }
+    button:hover { opacity: 0.92; }
+    .result { margin-top: 40px; border: 1px solid var(--border); border-radius: 24px; padding: 28px; display: none; background: #f8fafc; }
+    .score { font-size: 3rem; font-weight: 800; margin-bottom: 16px; }
+    .bar { width: 100%; height: 16px; background: #dbe3ee; border-radius: 999px; overflow: hidden; margin-bottom: 24px; }
+    .fill { height: 100%; width: 0%; background: #16a34a; border-radius: 999px; transition: width 0.4s ease; }
+    .metric { margin-bottom: 14px; font-size: 1.05rem; }
+    .guidance { margin-top: 26px; font-size: 1.15rem; line-height: 1.7; }
+    .disclaimer { margin-top: 30px; font-size: 0.9rem; color: var(--muted); }
+    .helper-link { margin-top: 10px; font-size: 0.9rem; }
+    .helper-link a { color: var(--primary); font-weight: 600; }
+    .content-section p, .content-section li { line-height: 1.8; }
+  </style>
+
+  <div class="container">
+    <CalculatorPageShell
+      eyebrow="Medical Calculator"
+      title="Should I Spend $6,000 on Fertility Treatments?"
+      description="Estimate whether fertility treatment fits your budget after insurance, savings, financing, monthly expenses, debt, and repeat-cycle risk."
+    >
+      <div class="card">
+        <h2>Fertility Treatment Pressure Verdict</h2>
+
+        <div class="grid">
+          <div>
+            <label for="cost">Total Fertility Treatment Cost</label>
+            <input id="cost" type="number" placeholder="6000" min="0" inputmode="decimal" />
+          </div>
+
+          <div>
+            <label for="insurance">Insurance or Employer Contribution</label>
+            <input id="insurance" type="number" placeholder="1000" min="0" inputmode="decimal" />
+          </div>
+
+          <div>
+            <label for="income">Monthly Take-Home Income</label>
+            <input id="income" type="number" placeholder="7500" min="0" inputmode="decimal" />
+          </div>
+
+          <div>
+            <label for="savings">Emergency Savings</label>
+            <input id="savings" type="number" placeholder="20000" min="0" inputmode="decimal" />
+          </div>
+
+          <div>
+            <label for="expenses">Monthly Expenses</label>
+            <input id="expenses" type="number" placeholder="4500" min="0" inputmode="decimal" />
+          </div>
+
+          <div>
+            <label for="debt">Monthly Debt Payments</label>
+            <input id="debt" type="number" placeholder="600" min="0" inputmode="decimal" />
+
+            <div class="helper-link">
+              <a href="/what-counts-as-debt">
+                Not sure what counts as debt? Read the debt guide
+              </a>
+            </div>
+          </div>
+
+          <div>
+            <label for="financed">Amount Financed</label>
+            <input id="financed" type="number" placeholder="3000" min="0" inputmode="decimal" />
+          </div>
+        </div>
+
+        <button id="fertilityButton" type="button">
+          Calculate Financial Pressure
+        </button>
+
+        <div class="result" id="result">
+          <div class="score" id="score"></div>
+
+          <div class="bar">
+            <div class="fill" id="barFill"></div>
+          </div>
+
+          <div class="metric" id="stress"></div>
+          <div class="metric" id="netCost"></div>
+          <div class="metric" id="cashFlow"></div>
+          <div class="metric" id="savingsImpact"></div>
+          <div class="metric" id="financingImpact"></div>
+
+          <div class="guidance" id="guidance"></div>
+
+          <div class="disclaimer">
+            This is a general educational estimate, not fertility, medical, insurance, legal, tax, or financial advice.
+          </div>
+        </div>
+      </div>
+
+      <div class="content-section">
+        <h2>What a $6,000 Fertility Treatment Decision Really Means</h2>
+
+        <p>
+          Fertility treatment is financially complicated because the first bill may not be the last bill. A $6,000 treatment plan might include testing, monitoring, medications, IUI, lab work, consultations, genetic screening, or early steps before more expensive treatment. It may also be one cycle in a process where repeat attempts are possible.
+        </p>
+
+        <p>
+          That makes this decision different from a one-time medical bill. The emotional stakes can be high, the timing can feel urgent, and insurance coverage can be uneven. A $6,000 treatment may be manageable when savings, income, and benefits are strong. It becomes more stressful when the plan depends on debt, unclear coverage, or money that may also be needed for a future cycle.
+        </p>
+      </div>
+
+      <WhenSpendingMakesSense
+        title="When Spending $6,000 on Fertility Treatments Makes Sense"
+        items={[
+          "You understand what the quoted treatment includes and what could cost extra.",
+          "Insurance, employer fertility benefits, HSA funds, or FSA funds reduce the real out-of-pocket cost.",
+          "The treatment does not drain the emergency fund needed for housing, food, insurance, and future care.",
+          "You have discussed likely next steps if the first cycle does not work.",
+          "Any financing is low-interest, manageable, and does not crowd out essential bills.",
+          "You have a realistic plan for medications, monitoring, labs, travel, time off work, and follow-up visits.",
+        ]}
+      />
+
+      <div class="content-section">
+        <h2>When Fertility Treatment Becomes a Financial Stretch</h2>
+
+        <p>
+          Fertility treatment becomes riskier when the quoted number is treated as the full journey instead of one possible step. Medications, monitoring, testing, storage, anesthesia, lab charges, and repeat cycles can change the real cost quickly.
+        </p>
+
+        <p>
+          Before committing, ask the clinic for a written estimate, clarify what insurance has approved, and decide how much you can safely spend without destabilizing the rest of your household finances.
+        </p>
+      </div>
+
+      <KeyCostCategories
+        items={[
+          {
+            title: "Treatment cycle and clinic fees",
+            description:
+              "Fertility costs may include consultations, ultrasounds, bloodwork, IUI, IVF preparation, lab fees, monitoring appointments, and provider charges.",
+          },
+          {
+            title: "Medications and testing",
+            description:
+              "Medication costs can vary widely. Genetic testing, hormone testing, semen analysis, imaging, and additional lab work may not be included in the headline quote.",
+          },
+          {
+            title: "Insurance and fertility benefits",
+            description:
+              "Some plans cover diagnostics but not treatment. Others have lifetime maximums, prior authorization rules, medication limits, or employer-specific fertility benefits.",
+          },
+          {
+            title: "Repeat-cycle risk",
+            description:
+              "A single treatment may not succeed. The financial plan should account for whether another attempt would be possible without relying on high-interest debt.",
+          },
+        ]}
+      />
+
+      <ReduceCostTips
+        items={[
+          "Request an itemized estimate that separates treatment, medications, labs, monitoring, and follow-up visits.",
+          "Ask the clinic what costs are most likely to appear outside the quoted $6,000.",
+          "Confirm insurance approval, fertility benefit limits, medication coverage, and prior authorization requirements.",
+          "Ask whether HSA or FSA funds can be used for eligible treatment costs.",
+          "Compare clinic pricing if timing allows and the treatment is not urgent.",
+          "Discuss lower-cost first steps before moving into more expensive treatment paths.",
+          "Avoid high-interest financing unless you have a clear repayment plan and stable monthly cash flow.",
+        ]}
+      />
+
+      <FinancialRedFlags
+        items={[
+          "The clinic cannot clearly explain what is included in the $6,000 quote.",
+          "You would need high-interest credit to begin treatment.",
+          "The treatment would drain most of your emergency savings.",
+          "You are relying on insurance coverage that has not been confirmed in writing.",
+          "You have no financial plan if another cycle is needed.",
+          "The monthly payment sounds manageable, but the total financed balance creates long-term debt pressure.",
+          "The treatment would make rent, utilities, groceries, insurance, or existing debt payments difficult to cover.",
+        ]}
+      />
+
+      <CalculatorAssumptions
+        items={[
+          "The calculator treats fertility treatment as a high-priority medical and family-planning expense that still needs affordability testing.",
+          "Monthly income means take-home pay after taxes and payroll deductions.",
+          "Monthly expenses should include housing, food, utilities, transportation, childcare, insurance, prescriptions, and other required living costs.",
+          "Monthly debt payments include credit cards, car loans, student loans, personal loans, medical debt, and other required debt payments.",
+          "Insurance or employer contribution means money that directly reduces your out-of-pocket fertility treatment cost.",
+          "The calculator assumes financed balances still create pressure even when payments are spread out.",
+          "The estimate does not evaluate medical likelihood of success, diagnosis, provider quality, insurance eligibility, or whether treatment is clinically appropriate.",
+        ]}
+      />
+
+      <FAQSection
+        title="Fertility Treatment Spending FAQ"
+        faqs={[
+          {
+            question: "Is $6,000 too much for fertility treatment?",
+            answer:
+              "It depends on what the treatment includes, how much insurance covers, whether medications are included, and whether repeat cycles may be needed. A $6,000 plan can be manageable for some households, but it should be evaluated as part of a broader fertility budget.",
+          },
+          {
+            question: "Should I finance fertility treatment?",
+            answer:
+              "Financing can make sense if the terms are low-interest and the payment fits comfortably inside your budget. Be cautious if financing the first cycle would leave no room for follow-up care, medications, or another attempt.",
+          },
+          {
+            question: "What fertility costs are easy to overlook?",
+            answer:
+              "Medication, monitoring appointments, lab work, genetic testing, storage fees, anesthesia, travel, time off work, and follow-up visits can all change the final cost.",
+          },
+          {
+            question: "Should I use emergency savings for fertility treatment?",
+            answer:
+              "Using savings may be better than high-interest debt if your emergency cushion remains strong afterward. It becomes riskier if the treatment leaves you exposed to job loss, medical emergencies, housing costs, or future treatment needs.",
+          },
+          {
+            question: "Does insurance usually cover fertility treatment?",
+            answer:
+              "Coverage varies widely. Some plans cover diagnosis but not treatment, some include fertility benefits, and others have lifetime maximums or medication restrictions. Verify the exact benefit before assuming coverage.",
+          },
+        ]}
+      />
+
+      <MethodologySection category="medical spending" updated="May 2026" />
+
+      <RelatedGuides
+        guides={[
+          {
+            title: "Medical Calculators",
+            href: "/medical-calculators",
+            description:
+              "Browse medical spending calculators for dental costs, healthcare bills, procedures, and treatment affordability decisions.",
+          },
+          {
+            title: "What Counts as Debt?",
+            href: "/what-counts-as-debt",
+            description:
+              "Understand which monthly obligations should be included when estimating financial pressure.",
+          },
+        ]}
+      />
+
+      <RelatedCalculators
+        calculators={[
+          {
+            category: "Medical",
+            title: "Should I Spend $7,000 on Hearing Aids?",
+            href: "/should-i-spend-7000-on-hearing-aids",
+          },
+          {
+            category: "Medical",
+            title: "Should I Spend $8,000 on Invisalign?",
+            href: "/should-i-spend-8000-on-invisalign",
+          },
+          {
+            category: "Medical",
+            title: "Should I Spend $5,000 on LASIK?",
+            href: "/should-i-spend-5000-on-lasik",
+          },
+          {
+            category: "Medical",
+            title: "Browse Medical Calculators",
+            href: "/medical-calculators",
+          },
+        ]}
+      />
+    </CalculatorPageShell>
+  </div>
+
+  <script is:inline>
+    const clamp = (value, min, max) => Math.min(Math.max(value, min), max);
+
+    const getNumber = (id) => {
+      const rawValue = document.getElementById(id)?.value;
+      const value = Number(rawValue);
+      return Number.isFinite(value) && value >= 0 ? value : 0;
+    };
+
+    function getPressureLevel(score) {
+      if (score <= 30) {
+        return {
+          label: "Low Pressure",
+          stress: "Low pressure",
+          color: "#16a34a",
+          action:
+            "Proceed only after confirming insurance approval, medication costs, clinic fees, and what happens if another cycle is needed.",
+        };
+      }
+
+      if (score <= 60) {
+        return {
+          label: "Moderate Pressure",
+          stress: "Moderate pressure",
+          color: "#ca8a04",
+          action:
+            "Get the full treatment estimate in writing, protect emergency savings, and avoid financing that leaves no room for follow-up care.",
+        };
+      }
+
+      return {
+        label: "High Pressure",
+        stress: "High pressure",
+        color: "#dc2626",
+          action:
+            "Slow down before committing, confirm coverage, compare options, and avoid high-interest financing while cash flow is tight.",
+        };
+      }
+
+    function calculateFertility() {
+      const cost = getNumber("cost");
+      const insurance = getNumber("insurance");
+      const income = getNumber("income");
+      const savings = getNumber("savings");
+      const expenses = getNumber("expenses");
+      const debt = getNumber("debt");
+      const financed = getNumber("financed");
+
+      const result = document.getElementById("result");
+      const scoreEl = document.getElementById("score");
+      const barFill = document.getElementById("barFill");
+      const stressEl = document.getElementById("stress");
+      const netCostEl = document.getElementById("netCost");
+      const cashFlowEl = document.getElementById("cashFlow");
+      const savingsImpactEl = document.getElementById("savingsImpact");
+      const financingImpactEl = document.getElementById("financingImpact");
+      const guidanceEl = document.getElementById("guidance");
+
+      result.style.display = "block";
+
+      if (cost <= 0 || income <= 0) {
+        scoreEl.textContent = "Add your numbers first";
+        scoreEl.style.color = "#16a34a";
+        barFill.style.width = "0%";
+        barFill.style.background = "#16a34a";
+        stressEl.innerHTML = "";
+        netCostEl.innerHTML = "";
+        cashFlowEl.innerHTML = "";
+        savingsImpactEl.innerHTML = "";
+        financingImpactEl.innerHTML = "";
+        guidanceEl.textContent =
+          "Enter a positive fertility treatment cost and monthly take-home income so the calculator can estimate financial pressure.";
+        return;
+      }
+
+      const coveredAmount = Math.min(insurance, cost);
+      const netTreatmentCost = Math.max(cost - coveredAmount, 0);
+      const financedAmount = Math.min(financed, netTreatmentCost);
+      const outOfPocket = Math.max(netTreatmentCost - financedAmount, 0);
+
+      const monthlyRemaining = income - expenses - debt;
+      const remainingSavings = savings - outOfPocket;
+
+      const savingsImpact = savings > 0 ? (outOfPocket / savings) * 100 : outOfPocket > 0 ? 100 : 0;
+      const incomeImpact = (netTreatmentCost / income) * 100;
+      const fixedObligationRatio = income > 0 ? ((expenses + debt) / income) * 100 : 100;
+      const debtRatio = income > 0 ? (debt / income) * 100 : 100;
+      const remainingSavingsMonths =
+        expenses > 0 ? remainingSavings / expenses : remainingSavings > 0 ? 36 : 0;
+      const financedShare = netTreatmentCost > 0 ? (financedAmount / netTreatmentCost) * 100 : 0;
+
+      let pressureScore = 0;
+
+      pressureScore += clamp(incomeImpact * 0.28, 0, 28);
+      pressureScore += clamp(savingsImpact * 0.27, 0, 30);
+      pressureScore += clamp(fixedObligationRatio * 0.22, 0, 24);
+      pressureScore += clamp(debtRatio * 0.28, 0, 14);
+
+      if (remainingSavings < 0) pressureScore += 28;
+      else if (remainingSavingsMonths < 1 && income < 15000) pressureScore += 20;
+      else if (remainingSavingsMonths < 3 && income < 18000) pressureScore += 12;
+      else if (remainingSavingsMonths >= 12) pressureScore -= 12;
+      else if (remainingSavingsMonths >= 6) pressureScore -= 8;
+
+      if (financedAmount > 0) {
+        pressureScore += clamp(financedShare * 0.13, 3, 14);
+      }
+
+      if (monthlyRemaining < 0) pressureScore += 24;
+      else if (monthlyRemaining < income * 0.08) pressureScore += 15;
+      else if (monthlyRemaining < income * 0.15) pressureScore += 8;
+      else if (monthlyRemaining > income * 0.5) pressureScore -= 11;
+      else if (monthlyRemaining > income * 0.35) pressureScore -= 7;
+
+      if (coveredAmount >= cost * 0.35) pressureScore -= 6;
+
+      if (income >= 12000 && remainingSavings > 0 && fixedObligationRatio < 65) {
+        pressureScore -= 10;
+      }
+
+      if (income >= 20000 && remainingSavings > 0 && fixedObligationRatio < 55) {
+        pressureScore -= 14;
+      }
+
+      if (income >= 30000 && remainingSavingsMonths >= 6 && fixedObligationRatio < 50) {
+        pressureScore -= 18;
+      }
+
+      if (
+        incomeImpact < 12 &&
+        savingsImpact < 15 &&
+        remainingSavingsMonths >= 6 &&
+        fixedObligationRatio < 55
+      ) {
+        pressureScore = Math.min(pressureScore, 25);
+      }
+
+      if (
+        incomeImpact < 6 &&
+        savingsImpact < 8 &&
+        remainingSavingsMonths >= 9 &&
+        fixedObligationRatio < 45
+      ) {
+        pressureScore = Math.min(pressureScore, 12);
+      }
+
+      if (
+        savingsImpact < 1 &&
+        debtRatio < 10 &&
+        remainingSavingsMonths >= 24
+      ) {
+        pressureScore = 0;
+      } else if (
+        savingsImpact < 3 &&
+        debtRatio < 15 &&
+        remainingSavingsMonths >= 12
+      ) {
+        pressureScore = Math.min(pressureScore, 5);
+      }
+
+      pressureScore = Math.round(clamp(pressureScore, 0, 100));
+
+      const level = getPressureLevel(pressureScore);
+
+      let guidance = "";
+
+      if (pressureScore <= 30) {
+        guidance =
+          `This fertility treatment expense appears financially manageable based on the numbers provided. Your estimated net cost is about ${incomeImpact.toFixed(1)}% of one month’s take-home income, and your emergency cushion remains around ${Math.max(remainingSavingsMonths, 0).toFixed(1)} months after the upfront out-of-pocket cost.`;
+      } else if (pressureScore <= 60) {
+        guidance =
+          `This fertility treatment expense may be workable, but it creates noticeable pressure. Your estimated net cost equals about ${incomeImpact.toFixed(1)}% of one month’s take-home income, while the upfront portion uses about ${savingsImpact.toFixed(1)}% of available savings.`;
+      } else {
+        guidance =
+          `This fertility treatment expense could create real financial strain. The combination of treatment cost, savings impact, repeat-cycle risk, monthly obligations, debt, or financing suggests this may be a decision to compare carefully before committing.`;
+      }
+
+      scoreEl.textContent = `${level.label} — ${pressureScore}/100`;
+      scoreEl.style.color = level.color;
+      barFill.style.width = `${pressureScore}%`;
+      barFill.style.background = level.color;
+
+      stressEl.innerHTML = `<strong>Pressure level:</strong> ${level.stress}`;
+      netCostEl.innerHTML = `<strong>Estimated net fertility treatment cost after insurance/benefits:</strong> $${Math.round(netTreatmentCost).toLocaleString()}`;
+      cashFlowEl.innerHTML = `<strong>Monthly cash flow after bills and debt:</strong> $${Math.round(monthlyRemaining).toLocaleString()}`;
+      savingsImpactEl.innerHTML = `<strong>Savings after upfront out-of-pocket cost:</strong> $${Math.round(remainingSavings).toLocaleString()}`;
+      financingImpactEl.innerHTML = `<strong>Financed portion of net cost:</strong> ${financedShare.toFixed(1)}%`;
+
+      guidanceEl.textContent = `${guidance} Recommended next step: ${level.action}`;
+    }
+
+    document
+      .getElementById("fertilityButton")
+      .addEventListener("click", calculateFertility);
+  </script>
+</Layout>

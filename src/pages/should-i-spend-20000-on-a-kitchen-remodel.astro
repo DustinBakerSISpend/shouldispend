@@ -390,165 +390,196 @@ import WhenSpendingMakesSense from "../components/WhenSpendingMakesSense.astro";
   </div>
 
   <script is:inline>
-    const clamp = (value, min, max) => Math.min(Math.max(value, min), max);
+  const clamp = (value, min, max) => Math.min(Math.max(value, min), max);
 
-    const getNumber = (id) => {
-      const rawValue = document.getElementById(id)?.value;
-      const value = Number(rawValue);
-      return Number.isFinite(value) && value >= 0 ? value : 0;
-    };
+  const getNumber = (id) => {
+    const rawValue = document.getElementById(id)?.value;
+    const value = Number(rawValue);
+    return Number.isFinite(value) && value >= 0 ? value : 0;
+  };
 
-    function getPressureLevel(score) {
-      if (score <= 30) {
-        return {
-          label: "Low Pressure",
-          stress: "Low pressure",
-          color: "#16a34a",
-          action: "Proceed only after confirming scope, comparing bids, and keeping a remodel contingency.",
-        };
-      }
-
-      if (score <= 60) {
-        return {
-          label: "Moderate Pressure",
-          stress: "Moderate pressure",
-          color: "#ca8a04",
-          action: "Trim upgrades, protect emergency savings, and avoid financing that strains monthly cash flow.",
-        };
-      }
-
+  function getPressureLevel(score) {
+    if (score <= 30) {
       return {
-        label: "High Pressure",
-        stress: "High pressure",
-        color: "#dc2626",
-        action: "Scale back the remodel, delay the project, or save more before committing.",
+        label: "Low Pressure",
+        stress: "Low pressure",
+        color: "#16a34a",
+        action:
+          "Proceed only after confirming scope, comparing bids, and keeping a remodel contingency.",
       };
     }
 
-    function calculateKitchen() {
-      const cost = getNumber("cost");
-      const income = getNumber("income");
-      const savings = getNumber("savings");
-      const expenses = getNumber("expenses");
-      const debt = getNumber("debt");
-      const homeValue = getNumber("homeValue");
-      const financed = getNumber("financed");
-
-      const result = document.getElementById("result");
-      const scoreEl = document.getElementById("score");
-      const barFill = document.getElementById("barFill");
-      const stressEl = document.getElementById("stress");
-      const cashFlowEl = document.getElementById("cashFlow");
-      const savingsImpactEl = document.getElementById("savingsImpact");
-      const homeValueImpactEl = document.getElementById("homeValueImpact");
-      const guidanceEl = document.getElementById("guidance");
-
-      result.style.display = "block";
-
-      if (cost <= 0 || income <= 0) {
-        scoreEl.textContent = "Add your numbers first";
-        barFill.style.width = "0%";
-        barFill.style.background = "#16a34a";
-        stressEl.innerHTML = "";
-        cashFlowEl.innerHTML = "";
-        savingsImpactEl.innerHTML = "";
-        homeValueImpactEl.innerHTML = "";
-        guidanceEl.textContent =
-          "Enter a positive kitchen remodel cost and monthly take-home income so the calculator can estimate financial pressure.";
-        return;
-      }
-
-      const outOfPocket = Math.max(cost - financed, 0);
-      const monthlyRemaining = income - expenses - debt;
-      const remainingSavings = savings - outOfPocket;
-      const savingsImpact = savings > 0 ? (outOfPocket / savings) * 100 : 100;
-      const incomeImpact = (cost / income) * 100;
-      const fixedObligationRatio = income > 0 ? ((expenses + debt) / income) * 100 : 100;
-      const emergencyMonths =
-        expenses > 0 ? remainingSavings / expenses : remainingSavings > 0 ? 12 : 0;
-      const financedShare = cost > 0 ? (financed / cost) * 100 : 0;
-      const homeValueRatio = homeValue > 0 ? (cost / homeValue) * 100 : 0;
-
-      let pressureScore = 0;
-
-      pressureScore += clamp(incomeImpact * 0.24, 0, 30);
-      pressureScore += clamp(savingsImpact * 0.26, 0, 34);
-      pressureScore += clamp(fixedObligationRatio * 0.22, 0, 24);
-
-      if (remainingSavings < 0) pressureScore += 30;
-      else if (emergencyMonths < 1 && income < 12000) pressureScore += 22;
-      else if (emergencyMonths < 3 && income < 15000) pressureScore += 14;
-      else if (emergencyMonths >= 6) pressureScore -= 8;
-
-      if (financed > 0) pressureScore += clamp(financedShare * 0.16, 4, 18);
-
-      if (homeValue > 0 && homeValueRatio > 12) pressureScore += 10;
-      else if (homeValue > 0 && homeValueRatio > 8) pressureScore += 6;
-      else if (homeValue > 0 && homeValueRatio <= 5) pressureScore -= 4;
-
-      if (monthlyRemaining < 0) pressureScore += 18;
-      else if (monthlyRemaining < income * 0.1) pressureScore += 10;
-      else if (monthlyRemaining > income * 0.35) pressureScore -= 6;
-
-      if (income >= 12000 && remainingSavings > 0 && fixedObligationRatio < 65) {
-        pressureScore -= 8;
-      }
-
-      if (income >= 20000 && remainingSavings > 0 && fixedObligationRatio < 55) {
-        pressureScore -= 12;
-      }
-
-      if (
-        incomeImpact < 20 &&
-        savingsImpact < 20 &&
-        emergencyMonths >= 6 &&
-        fixedObligationRatio < 55 &&
-        homeValueRatio <= 8
-      ) {
-        pressureScore = Math.min(pressureScore, 30);
-      }
-
-      if (
-        incomeImpact < 10 &&
-        savingsImpact < 10 &&
-        emergencyMonths >= 9 &&
-        fixedObligationRatio < 45 &&
-        homeValueRatio <= 5
-      ) {
-        pressureScore = Math.min(pressureScore, 16);
-      }
-
-      pressureScore = Math.round(clamp(pressureScore, 0, 100));
-
-      const level = getPressureLevel(pressureScore);
-
-      let guidance = "";
-
-      if (pressureScore <= 30) {
-        guidance =
-          `This kitchen remodel appears financially manageable based on the numbers provided. The project equals about ${incomeImpact.toFixed(1)}% of one month’s take-home income, and your estimated emergency cushion remains around ${Math.max(emergencyMonths, 0).toFixed(1)} months after the out-of-pocket cost.`;
-      } else if (pressureScore <= 60) {
-        guidance =
-          `This kitchen remodel may work, but it creates noticeable financial pressure. The project equals about ${incomeImpact.toFixed(1)}% of one month’s take-home income, and the out-of-pocket portion uses about ${savingsImpact.toFixed(1)}% of available savings.`;
-      } else {
-        guidance =
-          `This kitchen remodel could create real financial strain. The project equals about ${incomeImpact.toFixed(1)}% of one month’s take-home income, and the combination of savings impact, financing, debt, or home-value fit suggests you should scale back or wait.`;
-      }
-
-      scoreEl.textContent = `${level.label} — ${pressureScore}/100`;
-      scoreEl.style.color = level.color;
-      barFill.style.width = `${pressureScore}%`;
-      barFill.style.background = level.color;
-
-      stressEl.innerHTML = `<strong>Pressure level:</strong> ${level.stress}`;
-      cashFlowEl.innerHTML = `<strong>Monthly cash flow after bills and debt:</strong> $${monthlyRemaining.toLocaleString()}`;
-      savingsImpactEl.innerHTML = `<strong>Savings after out-of-pocket remodel cost:</strong> $${remainingSavings.toLocaleString()}`;
-      homeValueImpactEl.innerHTML = `<strong>Project cost as share of home value:</strong> ${homeValueRatio.toFixed(1)}%`;
-      guidanceEl.textContent = `${guidance} Recommended next step: ${level.action}`;
+    if (score <= 60) {
+      return {
+        label: "Moderate Pressure",
+        stress: "Moderate pressure",
+        color: "#ca8a04",
+        action:
+          "Trim upgrades, protect emergency savings, and avoid financing that strains monthly cash flow.",
+      };
     }
 
-    document
-      .getElementById("kitchenButton")
-      .addEventListener("click", calculateKitchen);
-  </script>
+    return {
+      label: "High Pressure",
+      stress: "High pressure",
+      color: "#dc2626",
+      action:
+        "Scale back the remodel, delay the project, or save more before committing.",
+    };
+  }
+
+  function calculateKitchen() {
+    const cost = getNumber("cost");
+    const income = getNumber("income");
+    const savings = getNumber("savings");
+    const expenses = getNumber("expenses");
+    const debt = getNumber("debt");
+    const homeValue = getNumber("homeValue");
+    const financed = getNumber("financed");
+
+    const result = document.getElementById("result");
+    const scoreEl = document.getElementById("score");
+    const barFill = document.getElementById("barFill");
+    const stressEl = document.getElementById("stress");
+    const cashFlowEl = document.getElementById("cashFlow");
+    const savingsImpactEl = document.getElementById("savingsImpact");
+    const homeValueImpactEl = document.getElementById("homeValueImpact");
+    const guidanceEl = document.getElementById("guidance");
+
+    result.style.display = "block";
+
+    if (cost <= 0 || income <= 0) {
+      scoreEl.textContent = "Add your numbers first";
+      barFill.style.width = "0%";
+      barFill.style.background = "#16a34a";
+      stressEl.innerHTML = "";
+      cashFlowEl.innerHTML = "";
+      savingsImpactEl.innerHTML = "";
+      homeValueImpactEl.innerHTML = "";
+      guidanceEl.textContent =
+        "Enter a positive kitchen remodel cost and monthly take-home income so the calculator can estimate financial pressure.";
+      return;
+    }
+
+    const outOfPocket = Math.max(cost - financed, 0);
+    const monthlyRemaining = income - expenses - debt;
+    const monthlyFixedCosts = expenses + debt;
+    const remainingSavings = savings - outOfPocket;
+
+    const savingsImpact = savings > 0 ? (outOfPocket / savings) * 100 : 100;
+    const incomeImpact = income > 0 ? (cost / income) * 100 : 100;
+    const incomeRecoveryPower = income > 0 ? cost / income : 999;
+    const fixedObligationRatio =
+      income > 0 ? (monthlyFixedCosts / income) * 100 : 100;
+
+    const emergencyMonths =
+      monthlyFixedCosts > 0
+        ? remainingSavings / monthlyFixedCosts
+        : remainingSavings > 0
+          ? 999
+          : 0;
+
+    const financedShare = cost > 0 ? (financed / cost) * 100 : 0;
+    const homeValueRatio = homeValue > 0 ? (cost / homeValue) * 100 : 0;
+
+    let pressureScore = 0;
+
+    pressureScore += clamp(incomeImpact * 0.18, 0, 24);
+    pressureScore += clamp(savingsImpact * 0.2, 0, 28);
+    pressureScore += clamp(fixedObligationRatio * 0.2, 0, 24);
+
+    if (remainingSavings < 0) pressureScore += 28;
+    else if (emergencyMonths < 1 && incomeRecoveryPower >= 1) pressureScore += 22;
+    else if (emergencyMonths < 3 && incomeRecoveryPower >= 0.75) pressureScore += 14;
+    else if (emergencyMonths >= 6) pressureScore -= 8;
+
+    if (financed > 0) pressureScore += clamp(financedShare * 0.14, 4, 18);
+
+    if (homeValue > 0 && homeValueRatio > 12) pressureScore += 10;
+    else if (homeValue > 0 && homeValueRatio > 8) pressureScore += 6;
+    else if (homeValue > 0 && homeValueRatio <= 5) pressureScore -= 4;
+
+    if (monthlyRemaining < 0) pressureScore += 20;
+    else if (monthlyRemaining < income * 0.1) pressureScore += 10;
+    else if (monthlyRemaining > income * 0.35) pressureScore -= 8;
+
+    if (income >= 12000 && monthlyRemaining > 0 && fixedObligationRatio < 65) {
+      pressureScore -= 8;
+    }
+
+    if (income >= 20000 && monthlyRemaining > 0 && fixedObligationRatio < 55) {
+      pressureScore -= 14;
+    }
+
+    if (incomeRecoveryPower < 1 && fixedObligationRatio < 30 && monthlyRemaining > cost * 0.5) {
+      pressureScore -= 18;
+    }
+
+    if (incomeRecoveryPower < 0.5 && fixedObligationRatio < 20 && monthlyRemaining > cost) {
+      pressureScore -= 24;
+    }
+
+    pressureScore = Math.round(clamp(pressureScore, 0, 100));
+
+    if (
+      incomeRecoveryPower < 0.5 &&
+      fixedObligationRatio < 10 &&
+      emergencyMonths >= 2 &&
+      financedShare === 0
+    ) {
+      pressureScore = 0;
+    } else if (
+      incomeRecoveryPower < 1 &&
+      fixedObligationRatio < 15 &&
+      emergencyMonths >= 1 &&
+      financedShare <= 25
+    ) {
+      pressureScore = Math.min(pressureScore, 5);
+    } else if (
+      incomeRecoveryPower < 1 &&
+      fixedObligationRatio < 25 &&
+      monthlyRemaining > cost * 0.75
+    ) {
+      pressureScore = Math.min(pressureScore, 12);
+    }
+
+    const level = getPressureLevel(pressureScore);
+
+    let guidance = "";
+
+    if (pressureScore <= 30) {
+      guidance = `This kitchen remodel appears financially manageable based on the numbers provided. The project equals about ${incomeImpact.toFixed(
+        1
+      )}% of one month’s take-home income, and your estimated emergency cushion remains around ${Math.max(
+        emergencyMonths,
+        0
+      ).toFixed(1)} months after the out-of-pocket cost.`;
+    } else if (pressureScore <= 60) {
+      guidance = `This kitchen remodel may work, but it creates noticeable financial pressure. The project equals about ${incomeImpact.toFixed(
+        1
+      )}% of one month’s take-home income, and the out-of-pocket portion uses about ${savingsImpact.toFixed(
+        1
+      )}% of available savings.`;
+    } else {
+      guidance = `This kitchen remodel could create real financial strain. The project equals about ${incomeImpact.toFixed(
+        1
+      )}% of one month’s take-home income, and the combination of savings impact, financing, debt, or home-value fit suggests you should scale back or wait.`;
+    }
+
+    scoreEl.textContent = `${level.label} — ${pressureScore}/100`;
+    scoreEl.style.color = level.color;
+    barFill.style.width = `${pressureScore}%`;
+    barFill.style.background = level.color;
+
+    stressEl.innerHTML = `<strong>Pressure level:</strong> ${level.stress}`;
+    cashFlowEl.innerHTML = `<strong>Monthly cash flow after bills and debt:</strong> $${monthlyRemaining.toLocaleString()}`;
+    savingsImpactEl.innerHTML = `<strong>Savings after out-of-pocket remodel cost:</strong> $${remainingSavings.toLocaleString()}`;
+    homeValueImpactEl.innerHTML = `<strong>Project cost as share of home value:</strong> ${homeValueRatio.toFixed(1)}%`;
+    guidanceEl.textContent = `${guidance} Recommended next step: ${level.action}`;
+  }
+
+  document
+    .getElementById("kitchenButton")
+    .addEventListener("click", calculateKitchen);
+</script>
 </Layout>

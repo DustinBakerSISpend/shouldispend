@@ -1,0 +1,595 @@
+---
+import Layout from "../layouts/Layout.astro";
+import CalculatorPageShell from "../components/CalculatorPageShell.astro";
+import FAQSection from "../components/FAQSection.astro";
+import RelatedCalculators from "../components/RelatedCalculators.astro";
+import RelatedGuides from "../components/RelatedGuides.astro";
+import MethodologySection from "../components/MethodologySection.astro";
+import FinancialRedFlags from "../components/FinancialRedFlags.astro";
+import CalculatorAssumptions from "../components/CalculatorAssumptions.astro";
+import KeyCostCategories from "../components/KeyCostCategories.astro";
+import ReduceCostTips from "../components/ReduceCostTips.astro";
+import WhenSpendingMakesSense from "../components/WhenSpendingMakesSense.astro";
+
+const pageTitle = "Should I Spend $8,000 on Invisalign?";
+const pageDescription =
+  "Use this Invisalign affordability calculator to decide whether an $8,000 clear aligner treatment fits your income, savings, debt, insurance, and monthly cash flow.";
+---
+
+<Layout title={pageTitle} description={pageDescription}>
+  <style>
+    .container {
+      max-width: 950px;
+      margin: 0 auto;
+      padding: 60px 20px;
+    }
+
+    .content-section {
+      max-width: 760px;
+      margin: 72px auto 0;
+    }
+
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 28px;
+      padding: 34px;
+    }
+
+    h2 {
+      margin-top: 0;
+      font-size: 2rem;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 22px;
+      margin-bottom: 28px;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 10px;
+      font-weight: 700;
+    }
+
+    input {
+      width: 100%;
+      padding: 18px;
+      border-radius: 14px;
+      border: 1px solid var(--border);
+      font-size: 1.1rem;
+      box-sizing: border-box;
+    }
+
+    button {
+      background: #0f172a;
+      color: white;
+      border: none;
+      padding: 16px 28px;
+      border-radius: 14px;
+      font-size: 1rem;
+      font-weight: 700;
+      cursor: pointer;
+      margin-top: 10px;
+      width: 100%;
+      display: block;
+    }
+
+    button:hover {
+      opacity: 0.92;
+    }
+
+    .result {
+      margin-top: 40px;
+      border: 1px solid var(--border);
+      border-radius: 24px;
+      padding: 28px;
+      display: none;
+      background: #f8fafc;
+    }
+
+    .score {
+      font-size: 3rem;
+      font-weight: 800;
+      margin-bottom: 16px;
+    }
+
+    .bar {
+      width: 100%;
+      height: 16px;
+      background: #dbe3ee;
+      border-radius: 999px;
+      overflow: hidden;
+      margin-bottom: 24px;
+    }
+
+    .fill {
+      height: 100%;
+      width: 0%;
+      background: #16a34a;
+      border-radius: 999px;
+      transition: width 0.4s ease;
+    }
+
+    .metric {
+      margin-bottom: 14px;
+      font-size: 1.05rem;
+    }
+
+    .guidance {
+      margin-top: 26px;
+      font-size: 1.15rem;
+      line-height: 1.7;
+    }
+
+    .disclaimer {
+      margin-top: 30px;
+      font-size: 0.9rem;
+      color: var(--muted);
+    }
+
+    .helper-link {
+      margin-top: 10px;
+      font-size: 0.9rem;
+    }
+
+    .helper-link a {
+      color: var(--primary);
+      font-weight: 600;
+    }
+
+    .content-section p,
+    .content-section li {
+      line-height: 1.8;
+    }
+  </style>
+
+  <div class="container">
+    <CalculatorPageShell
+      eyebrow="Medical Calculator"
+      title="Should I Spend $8,000 on Invisalign?"
+      description="Estimate whether Invisalign fits your budget after insurance, savings, financing, monthly expenses, debt, and emergency-cushion impact."
+    >
+      <div class="card">
+        <h2>Invisalign Pressure Verdict</h2>
+
+        <div class="grid">
+          <div>
+            <label for="cost">Total Invisalign Cost</label>
+            <input id="cost" type="number" placeholder="8000" min="0" inputmode="decimal" />
+          </div>
+
+          <div>
+            <label for="insurance">Insurance or Employer Contribution</label>
+            <input id="insurance" type="number" placeholder="1500" min="0" inputmode="decimal" />
+          </div>
+
+          <div>
+            <label for="income">Monthly Take-Home Income</label>
+            <input id="income" type="number" placeholder="7000" min="0" inputmode="decimal" />
+          </div>
+
+          <div>
+            <label for="savings">Emergency Savings</label>
+            <input id="savings" type="number" placeholder="18000" min="0" inputmode="decimal" />
+          </div>
+
+          <div>
+            <label for="expenses">Monthly Expenses</label>
+            <input id="expenses" type="number" placeholder="4200" min="0" inputmode="decimal" />
+          </div>
+
+          <div>
+            <label for="debt">Monthly Debt Payments</label>
+            <input id="debt" type="number" placeholder="600" min="0" inputmode="decimal" />
+
+            <div class="helper-link">
+              <a href="/what-counts-as-debt">
+                Not sure what counts as debt? Read the debt guide
+              </a>
+            </div>
+          </div>
+
+          <div>
+            <label for="financed">Amount Financed</label>
+            <input id="financed" type="number" placeholder="4000" min="0" inputmode="decimal" />
+          </div>
+        </div>
+
+        <button id="invisalignButton" type="button">
+          Calculate Financial Pressure
+        </button>
+
+        <div class="result" id="result">
+          <div class="score" id="score"></div>
+
+          <div class="bar">
+            <div class="fill" id="barFill"></div>
+          </div>
+
+          <div class="metric" id="stress"></div>
+          <div class="metric" id="netCost"></div>
+          <div class="metric" id="cashFlow"></div>
+          <div class="metric" id="savingsImpact"></div>
+          <div class="metric" id="financingImpact"></div>
+
+          <div class="guidance" id="guidance"></div>
+
+          <div class="disclaimer">
+            This is a general educational estimate, not dental, orthodontic, insurance, medical, or financial advice.
+          </div>
+        </div>
+      </div>
+
+      <div class="content-section">
+        <h2>What an $8,000 Invisalign Decision Really Means</h2>
+
+        <p>
+          Invisalign is rarely just a cosmetic purchase. For some people, clear aligners improve bite alignment, crowding, spacing, jaw comfort, cleaning access, and long-term dental maintenance. For others, the main benefit is confidence and appearance. The financial decision depends heavily on whether the treatment is optional, urgent, insurance-supported, or being financed over time.
+        </p>
+
+        <p>
+          An $8,000 Invisalign plan may be reasonable if your emergency savings stays intact, your monthly cash flow remains healthy, and the orthodontist has clearly explained retainers, refinements, scans, attachments, follow-up visits, and payment terms. It becomes riskier when the payment plan hides the true cost, competes with rent or debt, or drains savings for a treatment that could safely wait.
+        </p>
+      </div>
+
+      <WhenSpendingMakesSense
+        title="When Spending $8,000 on Invisalign Makes Sense"
+        items={[
+          "The treatment addresses bite, crowding, spacing, or cleaning issues instead of being purely cosmetic.",
+          "You can pay the out-of-pocket portion without wiping out your emergency fund.",
+          "Insurance, HSA, FSA, or employer benefits reduce the real cost meaningfully.",
+          "The payment plan is low-interest or interest-free and does not strain monthly cash flow.",
+          "You understand whether retainers, refinements, scans, and follow-up visits are included.",
+          "You are financially stable enough that the treatment does not delay essential bills, debt payoff, or emergency savings.",
+        ]}
+      />
+
+      <div class="content-section">
+        <h2>When Invisalign Becomes a Financial Stretch</h2>
+
+        <p>
+          Invisalign can become financially stressful when the decision is driven by pressure to start immediately, a monthly-payment pitch, or a vague treatment quote. A low monthly payment may feel manageable while still creating a large long-term obligation.
+        </p>
+
+        <p>
+          Before committing, ask whether braces would be cheaper, whether a shorter aligner plan is possible, whether retainers are included, and whether the quoted price covers refinements if your teeth do not move as planned.
+        </p>
+      </div>
+
+      <KeyCostCategories
+        items={[
+          {
+            title: "Orthodontic treatment plan",
+            description:
+              "The quoted Invisalign price may depend on treatment complexity, case length, provider experience, scans, attachments, refinements, and the number of aligners needed.",
+          },
+          {
+            title: "Insurance and benefit limits",
+            description:
+              "Dental or orthodontic insurance may cover part of treatment, but lifetime orthodontic maximums, age limits, waiting periods, and exclusions can reduce the actual benefit.",
+          },
+          {
+            title: "Retainers and follow-up care",
+            description:
+              "After Invisalign, retainers are usually needed to maintain results. Replacement retainers, refinements, and extra visits can change the real cost.",
+          },
+          {
+            title: "Financing terms",
+            description:
+              "Many orthodontic offices offer payment plans, but the financial pressure depends on interest, term length, fees, credit products, and how the payment fits your monthly budget.",
+          },
+        ]}
+      />
+
+      <ReduceCostTips
+        items={[
+          "Ask for a written estimate that separates treatment, retainers, refinements, scans, and follow-up visits.",
+          "Confirm whether your insurance has a lifetime orthodontic maximum.",
+          "Compare Invisalign with braces or other clear-aligner options if the case is not urgent.",
+          "Ask whether an interest-free in-house payment plan is available.",
+          "Use HSA or FSA funds if the treatment qualifies and it fits your tax situation.",
+          "Avoid committing during a consultation unless the total cost and financing terms are clear.",
+          "Ask how much the price changes if treatment takes longer than expected.",
+        ]}
+      />
+
+      <FinancialRedFlags
+        items={[
+          "The monthly payment sounds affordable, but the total financed balance is unclear.",
+          "The treatment would drain most of your emergency savings.",
+          "You would need high-interest credit to start treatment.",
+          "You are behind on rent, utilities, credit cards, taxes, or essential insurance.",
+          "The provider has not explained retainers, refinements, or what happens if results take longer than expected.",
+          "You are choosing Invisalign mainly because of social pressure while your cash flow is already tight.",
+        ]}
+      />
+
+      <CalculatorAssumptions
+        items={[
+          "The calculator treats Invisalign as a discretionary-to-semi-medical orthodontic expense, depending on your dental need.",
+          "Monthly income means take-home pay after taxes and payroll deductions.",
+          "Monthly expenses should include housing, food, utilities, transportation, childcare, insurance, and other required living costs.",
+          "Monthly debt payments include credit cards, car loans, student loans, personal loans, medical debt, and other required debt payments.",
+          "Insurance or employer contribution means money that directly reduces your out-of-pocket Invisalign cost.",
+          "The calculator assumes financed balances still create pressure even when payments are spread out.",
+          "The estimate does not judge orthodontic necessity, provider quality, dental outcome, or insurance eligibility.",
+        ]}
+      />
+
+      <FAQSection
+        title="Invisalign Spending FAQ"
+        faqs={[
+          {
+            question: "Is $8,000 too much for Invisalign?",
+            answer:
+              "It depends on treatment complexity, insurance coverage, refinements, retainers, and your financial situation. An $8,000 Invisalign plan can be reasonable for complex cases, but it should be compared with braces, alternate aligner options, and the full out-of-pocket cost.",
+          },
+          {
+            question: "Should I finance Invisalign?",
+            answer:
+              "Financing can make Invisalign easier to manage if the payment is low-interest, short-term, and comfortable inside your monthly budget. Be careful with high-interest credit or plans that make the treatment seem cheaper than it really is.",
+          },
+          {
+            question: "Is Invisalign worth it if it is mostly cosmetic?",
+            answer:
+              "It can be worth it if your finances are strong and the confidence benefit matters to you. If savings are thin, debt is high, or essential bills are tight, a mostly cosmetic treatment is usually easier to delay than a medically urgent expense.",
+          },
+          {
+            question: "Does dental insurance usually cover Invisalign?",
+            answer:
+              "Some dental plans include orthodontic benefits, but coverage often has lifetime maximums, age restrictions, waiting periods, or exclusions. Always verify the actual benefit before assuming insurance will reduce the bill.",
+          },
+          {
+            question: "What costs should I ask about before starting Invisalign?",
+            answer:
+              "Ask whether the quote includes scans, attachments, refinements, retainers, replacement retainers, follow-up visits, missed aligners, and any fees if treatment takes longer than expected.",
+          },
+        ]}
+      />
+
+      <MethodologySection category="medical spending" updated="May 2026" />
+
+      <RelatedGuides
+        guides={[
+          {
+            title: "Medical Calculators",
+            href: "/medical-calculators",
+            description:
+              "Browse medical spending calculators for dental costs, procedures, healthcare bills, and treatment affordability decisions.",
+          },
+          {
+            title: "What Counts as Debt?",
+            href: "/what-counts-as-debt",
+            description:
+              "Understand which monthly obligations should be included when estimating financial pressure.",
+          },
+        ]}
+      />
+
+      <RelatedCalculators
+        calculators={[
+          {
+            category: "Medical",
+            title: "Should I Spend $5,000 on LASIK?",
+            href: "/should-i-spend-5000-on-lasik",
+          },
+          {
+            category: "Medical",
+            title: "Should I Spend $4,000 on a Dental Implant?",
+            href: "/should-i-spend-4000-on-a-dental-implant",
+          },
+          {
+            category: "Medical",
+            title: "Should I Spend $2,500 on an ER Bill?",
+            href: "/should-i-spend-2500-on-an-er-bill",
+          },
+          {
+            category: "Medical",
+            title: "Browse Medical Calculators",
+            href: "/medical-calculators",
+          },
+        ]}
+      />
+    </CalculatorPageShell>
+  </div>
+
+  <script is:inline>
+    const clamp = (value, min, max) => Math.min(Math.max(value, min), max);
+
+    const getNumber = (id) => {
+      const rawValue = document.getElementById(id)?.value;
+      const value = Number(rawValue);
+      return Number.isFinite(value) && value >= 0 ? value : 0;
+    };
+
+    function getPressureLevel(score) {
+      if (score <= 30) {
+        return {
+          label: "Low Pressure",
+          stress: "Low pressure",
+          color: "#16a34a",
+          action:
+            "Proceed only after confirming insurance, retainers, refinements, and the full treatment price.",
+        };
+      }
+
+      if (score <= 60) {
+        return {
+          label: "Moderate Pressure",
+          stress: "Moderate pressure",
+          color: "#ca8a04",
+          action:
+            "Compare orthodontic options, protect emergency savings, and avoid financing that stretches too long.",
+        };
+      }
+
+      return {
+        label: "High Pressure",
+        stress: "High pressure",
+        color: "#dc2626",
+        action:
+          "Slow down before committing, get a second quote, and avoid taking on expensive financing while cash flow is tight.",
+      };
+    }
+
+    function calculateInvisalign() {
+      const cost = getNumber("cost");
+      const insurance = getNumber("insurance");
+      const income = getNumber("income");
+      const savings = getNumber("savings");
+      const expenses = getNumber("expenses");
+      const debt = getNumber("debt");
+      const financed = getNumber("financed");
+
+      const result = document.getElementById("result");
+      const scoreEl = document.getElementById("score");
+      const barFill = document.getElementById("barFill");
+      const stressEl = document.getElementById("stress");
+      const netCostEl = document.getElementById("netCost");
+      const cashFlowEl = document.getElementById("cashFlow");
+      const savingsImpactEl = document.getElementById("savingsImpact");
+      const financingImpactEl = document.getElementById("financingImpact");
+      const guidanceEl = document.getElementById("guidance");
+
+      result.style.display = "block";
+
+      if (cost <= 0 || income <= 0) {
+        scoreEl.textContent = "Add your numbers first";
+        scoreEl.style.color = "#16a34a";
+        barFill.style.width = "0%";
+        barFill.style.background = "#16a34a";
+        stressEl.innerHTML = "";
+        netCostEl.innerHTML = "";
+        cashFlowEl.innerHTML = "";
+        savingsImpactEl.innerHTML = "";
+        financingImpactEl.innerHTML = "";
+        guidanceEl.textContent =
+          "Enter a positive Invisalign cost and monthly take-home income so the calculator can estimate financial pressure.";
+        return;
+      }
+
+      const coveredAmount = Math.min(insurance, cost);
+      const netTreatmentCost = Math.max(cost - coveredAmount, 0);
+      const financedAmount = Math.min(financed, netTreatmentCost);
+      const outOfPocket = Math.max(netTreatmentCost - financedAmount, 0);
+
+      const monthlyRemaining = income - expenses - debt;
+      const remainingSavings = savings - outOfPocket;
+
+      const savingsImpact = savings > 0 ? (outOfPocket / savings) * 100 : outOfPocket > 0 ? 100 : 0;
+      const incomeImpact = (netTreatmentCost / income) * 100;
+      const outOfPocketIncomeImpact = (outOfPocket / income) * 100;
+      const fixedObligationRatio = income > 0 ? ((expenses + debt) / income) * 100 : 100;
+      const debtRatio = income > 0 ? (debt / income) * 100 : 100;
+      const remainingSavingsMonths =
+        expenses > 0 ? remainingSavings / expenses : remainingSavings > 0 ? 36 : 0;
+      const financedShare = netTreatmentCost > 0 ? (financedAmount / netTreatmentCost) * 100 : 0;
+
+      let pressureScore = 0;
+
+      pressureScore += clamp(incomeImpact * 0.28, 0, 28);
+      pressureScore += clamp(savingsImpact * 0.26, 0, 30);
+      pressureScore += clamp(fixedObligationRatio * 0.22, 0, 24);
+      pressureScore += clamp(debtRatio * 0.28, 0, 14);
+
+      if (remainingSavings < 0) pressureScore += 26;
+      else if (remainingSavingsMonths < 1 && income < 15000) pressureScore += 20;
+      else if (remainingSavingsMonths < 3 && income < 18000) pressureScore += 12;
+      else if (remainingSavingsMonths >= 6) pressureScore -= 8;
+      else if (remainingSavingsMonths >= 12) pressureScore -= 12;
+
+      if (financedAmount > 0) {
+        pressureScore += clamp(financedShare * 0.12, 3, 13);
+      }
+
+      if (monthlyRemaining < 0) pressureScore += 22;
+      else if (monthlyRemaining < income * 0.08) pressureScore += 14;
+      else if (monthlyRemaining < income * 0.15) pressureScore += 7;
+      else if (monthlyRemaining > income * 0.35) pressureScore -= 7;
+      else if (monthlyRemaining > income * 0.5) pressureScore -= 11;
+
+      if (coveredAmount >= cost * 0.35) pressureScore -= 5;
+
+      if (income >= 12000 && remainingSavings > 0 && fixedObligationRatio < 65) {
+        pressureScore -= 10;
+      }
+
+      if (income >= 20000 && remainingSavings > 0 && fixedObligationRatio < 55) {
+        pressureScore -= 14;
+      }
+
+      if (income >= 30000 && remainingSavingsMonths >= 6 && fixedObligationRatio < 50) {
+        pressureScore -= 18;
+      }
+
+      if (
+        incomeImpact < 12 &&
+        savingsImpact < 15 &&
+        remainingSavingsMonths >= 6 &&
+        fixedObligationRatio < 55
+      ) {
+        pressureScore = Math.min(pressureScore, 25);
+      }
+
+      if (
+        incomeImpact < 6 &&
+        savingsImpact < 8 &&
+        remainingSavingsMonths >= 9 &&
+        fixedObligationRatio < 45
+      ) {
+        pressureScore = Math.min(pressureScore, 12);
+      }
+
+      if (
+        savingsImpact < 1 &&
+        debtRatio < 10 &&
+        remainingSavingsMonths >= 24
+      ) {
+        pressureScore = 0;
+      } else if (
+        savingsImpact < 3 &&
+        debtRatio < 15 &&
+        remainingSavingsMonths >= 12
+      ) {
+        pressureScore = Math.min(pressureScore, 5);
+      }
+
+      pressureScore = Math.round(clamp(pressureScore, 0, 100));
+
+      const level = getPressureLevel(pressureScore);
+
+      let guidance = "";
+
+      if (pressureScore <= 30) {
+        guidance =
+          `This Invisalign expense appears financially manageable based on the numbers provided. Your estimated net treatment cost is about ${incomeImpact.toFixed(1)}% of one month’s take-home income, and your emergency cushion remains around ${Math.max(remainingSavingsMonths, 0).toFixed(1)} months after the upfront out-of-pocket cost.`;
+      } else if (pressureScore <= 60) {
+        guidance =
+          `This Invisalign expense may be workable, but it creates noticeable pressure. Your estimated net treatment cost equals about ${incomeImpact.toFixed(1)}% of one month’s take-home income, while the upfront portion uses about ${savingsImpact.toFixed(1)}% of available savings.`;
+      } else {
+        guidance =
+          `This Invisalign expense could create real financial strain. The combination of treatment cost, savings impact, monthly obligations, debt, or financing suggests this may be a decision to delay, resize, or compare carefully.`;
+      }
+
+      scoreEl.textContent = `${level.label} — ${pressureScore}/100`;
+      scoreEl.style.color = level.color;
+      barFill.style.width = `${pressureScore}%`;
+      barFill.style.background = level.color;
+
+      stressEl.innerHTML = `<strong>Pressure level:</strong> ${level.stress}`;
+      netCostEl.innerHTML = `<strong>Estimated net treatment cost after insurance/contribution:</strong> $${Math.round(netTreatmentCost).toLocaleString()}`;
+      cashFlowEl.innerHTML = `<strong>Monthly cash flow after bills and debt:</strong> $${Math.round(monthlyRemaining).toLocaleString()}`;
+      savingsImpactEl.innerHTML = `<strong>Savings after upfront out-of-pocket cost:</strong> $${Math.round(remainingSavings).toLocaleString()}`;
+      financingImpactEl.innerHTML = `<strong>Financed portion of net cost:</strong> ${financedShare.toFixed(1)}%`;
+
+      guidanceEl.textContent = `${guidance} Recommended next step: ${level.action}`;
+    }
+
+    document
+      .getElementById("invisalignButton")
+      .addEventListener("click", calculateInvisalign);
+  </script>
+</Layout>

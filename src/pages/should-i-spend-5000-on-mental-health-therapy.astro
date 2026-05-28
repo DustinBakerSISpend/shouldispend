@@ -1,0 +1,479 @@
+---
+import Layout from "../layouts/Layout.astro";
+import CalculatorPageShell from "../components/CalculatorPageShell.astro";
+import FAQSection from "../components/FAQSection.astro";
+import RelatedCalculators from "../components/RelatedCalculators.astro";
+import RelatedGuides from "../components/RelatedGuides.astro";
+import MethodologySection from "../components/MethodologySection.astro";
+import FinancialRedFlags from "../components/FinancialRedFlags.astro";
+import CalculatorAssumptions from "../components/CalculatorAssumptions.astro";
+import KeyCostCategories from "../components/KeyCostCategories.astro";
+import ReduceCostTips from "../components/ReduceCostTips.astro";
+import WhenSpendingMakesSense from "../components/WhenSpendingMakesSense.astro";
+
+const pageTitle = "Should I Spend $5,000 on Mental Health Therapy?";
+const pageDescription =
+  "Use this therapy affordability calculator to decide whether $5,000 in mental health treatment fits your income, savings, insurance, debt, and monthly cash flow.";
+---
+
+<Layout title={pageTitle} description={pageDescription}>
+  <style>
+    .container { max-width: 950px; margin: 0 auto; padding: 60px 20px; }
+    .content-section { max-width: 760px; margin: 72px auto 0; }
+    .card { background: var(--card); border: 1px solid var(--border); border-radius: 28px; padding: 34px; }
+    h2 { margin-top: 0; font-size: 2rem; }
+    .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 22px; margin-bottom: 28px; }
+    label { display: block; margin-bottom: 10px; font-weight: 700; }
+    input { width: 100%; padding: 18px; border-radius: 14px; border: 1px solid var(--border); font-size: 1.1rem; box-sizing: border-box; }
+    button { background: #0f172a; color: white; border: none; padding: 16px 28px; border-radius: 14px; font-size: 1rem; font-weight: 700; cursor: pointer; margin-top: 10px; width: 100%; display: block; }
+    button:hover { opacity: 0.92; }
+    .result { margin-top: 40px; border: 1px solid var(--border); border-radius: 24px; padding: 28px; display: none; background: #f8fafc; }
+    .score { font-size: 3rem; font-weight: 800; margin-bottom: 16px; }
+    .bar { width: 100%; height: 16px; background: #dbe3ee; border-radius: 999px; overflow: hidden; margin-bottom: 24px; }
+    .fill { height: 100%; width: 0%; background: #16a34a; border-radius: 999px; transition: width 0.4s ease; }
+    .metric { margin-bottom: 14px; font-size: 1.05rem; }
+    .guidance { margin-top: 26px; font-size: 1.15rem; line-height: 1.7; }
+    .disclaimer { margin-top: 30px; font-size: 0.9rem; color: var(--muted); }
+    .helper-link { margin-top: 10px; font-size: 0.9rem; }
+    .helper-link a { color: var(--primary); font-weight: 600; }
+    .content-section p, .content-section li { line-height: 1.8; }
+  </style>
+
+  <div class="container">
+    <CalculatorPageShell
+      eyebrow="Medical Calculator"
+      title="Should I Spend $5,000 on Mental Health Therapy?"
+      description="Estimate whether therapy fits your budget after insurance, savings, financing, monthly expenses, debt, and ongoing session costs."
+    >
+      <div class="card">
+        <h2>Mental Health Therapy Pressure Verdict</h2>
+
+        <div class="grid">
+          <div>
+            <label for="cost">Total Therapy Cost</label>
+            <input id="cost" type="number" placeholder="5000" min="0" inputmode="decimal" />
+          </div>
+
+          <div>
+            <label for="insurance">Insurance or Benefit Contribution</label>
+            <input id="insurance" type="number" placeholder="1000" min="0" inputmode="decimal" />
+          </div>
+
+          <div>
+            <label for="income">Monthly Take-Home Income</label>
+            <input id="income" type="number" placeholder="6500" min="0" inputmode="decimal" />
+          </div>
+
+          <div>
+            <label for="savings">Emergency Savings</label>
+            <input id="savings" type="number" placeholder="15000" min="0" inputmode="decimal" />
+          </div>
+
+          <div>
+            <label for="expenses">Monthly Expenses</label>
+            <input id="expenses" type="number" placeholder="4000" min="0" inputmode="decimal" />
+          </div>
+
+          <div>
+            <label for="debt">Monthly Debt Payments</label>
+            <input id="debt" type="number" placeholder="500" min="0" inputmode="decimal" />
+
+            <div class="helper-link">
+              <a href="/what-counts-as-debt">Not sure what counts as debt? Read the debt guide</a>
+            </div>
+          </div>
+
+          <div>
+            <label for="financed">Amount Financed or Put on Credit</label>
+            <input id="financed" type="number" placeholder="0" min="0" inputmode="decimal" />
+          </div>
+        </div>
+
+        <button id="therapyButton" type="button">Calculate Financial Pressure</button>
+
+        <div class="result" id="result">
+          <div class="score" id="score"></div>
+          <div class="bar"><div class="fill" id="barFill"></div></div>
+          <div class="metric" id="stress"></div>
+          <div class="metric" id="netCost"></div>
+          <div class="metric" id="cashFlow"></div>
+          <div class="metric" id="savingsImpact"></div>
+          <div class="metric" id="financingImpact"></div>
+          <div class="guidance" id="guidance"></div>
+
+          <div class="disclaimer">
+            This is a general educational estimate, not mental health, medical, crisis, insurance, legal, or financial advice. If you are in immediate danger or considering self-harm, contact emergency services or a crisis hotline right away.
+          </div>
+        </div>
+      </div>
+
+      <div class="content-section">
+        <h2>What a $5,000 Therapy Decision Really Means</h2>
+
+        <p>
+          Therapy is different from many medical expenses because the cost often builds over time. A $5,000 therapy plan might represent weekly sessions for several months, couples counseling, trauma therapy, intensive outpatient support, family therapy, out-of-network care, or a specialized provider who does not accept insurance.
+        </p>
+
+        <p>
+          The financial question is not only whether you can pay the first bill. It is whether you can keep showing up without destabilizing rent, food, medication, childcare, insurance, debt payments, or emergency savings. Therapy can be one of the most worthwhile expenses in a household budget, but the plan should be realistic enough to continue.
+        </p>
+      </div>
+
+      <WhenSpendingMakesSense
+        title="When Spending $5,000 on Therapy Makes Sense"
+        items={[
+          "The treatment addresses anxiety, depression, trauma, grief, addiction recovery, relationship strain, burnout, or another issue affecting daily life.",
+          "Insurance, employer mental health benefits, HSA funds, FSA funds, or sliding-scale pricing reduce the real out-of-pocket cost.",
+          "You can afford the session rhythm long enough for therapy to be useful.",
+          "The cost does not drain the emergency fund needed for housing, food, utilities, medication, and insurance.",
+          "You have checked lower-cost options without losing access to the right level of care.",
+          "Any credit card use or financing is temporary, manageable, and not hiding an unaffordable monthly commitment.",
+        ]}
+      />
+
+      <div class="content-section">
+        <h2>When Therapy Becomes a Financial Stretch</h2>
+
+        <p>
+          Therapy becomes financially risky when the session cost is manageable once or twice but difficult to sustain. A $175 session may sound possible until it becomes $700 per month. A $5,000 total plan may be worthwhile, but it should be weighed against cash flow, insurance limits, and how long treatment may continue.
+        </p>
+
+        <p>
+          Before committing to an expensive plan, ask about frequency, expected duration, cancellation fees, out-of-network reimbursement, sliding-scale options, and whether a lower-cost support layer can help without interrupting care.
+        </p>
+      </div>
+
+      <KeyCostCategories
+        items={[
+          {
+            title: "Session cost and frequency",
+            description:
+              "The total cost depends on the price per session, how often you meet, whether sessions are individual, couples, family, or specialized, and how long treatment continues.",
+          },
+          {
+            title: "Insurance and network status",
+            description:
+              "In-network therapy, out-of-network reimbursement, deductibles, copays, superbills, prior authorization, and visit limits can all change the real cost.",
+          },
+          {
+            title: "Specialized treatment needs",
+            description:
+              "Trauma therapy, EMDR, addiction support, psychiatry coordination, intensive programs, couples therapy, and specialized providers may cost more than standard weekly counseling.",
+          },
+          {
+            title: "Ongoing affordability",
+            description:
+              "Therapy works best when the plan is sustainable. A budget should account for multiple months of care, missed-work time, cancellation fees, and possible medication or psychiatric visits.",
+          },
+        ]}
+      />
+
+      <ReduceCostTips
+        items={[
+          "Ask whether the therapist accepts insurance or can provide superbills for out-of-network reimbursement.",
+          "Check employer assistance programs, mental health benefits, HSA eligibility, and FSA eligibility.",
+          "Ask about sliding-scale rates, lower-frequency sessions, group therapy, or shorter-term treatment goals.",
+          "Confirm cancellation fees, session length, expected frequency, and whether the first consultation is free.",
+          "Compare in-network providers before assuming a private-pay therapist is the only workable option.",
+          "Avoid using high-interest credit for ongoing therapy unless you have a clear short-term repayment plan.",
+          "If cost is a barrier, ask about community clinics, university clinics, nonprofit providers, or telehealth options.",
+        ]}
+      />
+
+      <FinancialRedFlags
+        items={[
+          "You can afford the first few sessions but not the likely monthly pattern.",
+          "You are putting recurring therapy costs on a high-interest credit card.",
+          "The therapy plan would drain most of your emergency savings.",
+          "Insurance coverage, reimbursement, or deductible impact has not been confirmed.",
+          "You are already behind on housing, utilities, food, insurance, taxes, or required debt payments.",
+          "The provider cannot explain session cost, cancellation fees, expected cadence, or billing structure clearly.",
+          "You are choosing a private-pay option without checking whether a lower-cost provider could meet the same need.",
+        ]}
+      />
+
+      <CalculatorAssumptions
+        items={[
+          "The calculator treats therapy as a potentially high-value mental health expense that still needs affordability testing.",
+          "Monthly income means take-home pay after taxes and payroll deductions.",
+          "Monthly expenses should include housing, food, utilities, transportation, childcare, insurance, prescriptions, and other required living costs.",
+          "Monthly debt payments include credit cards, car loans, student loans, personal loans, medical debt, and other required debt payments.",
+          "Insurance or benefit contribution means money that directly reduces your out-of-pocket therapy cost.",
+          "The calculator assumes financed balances or credit-card balances still create pressure even when payments are spread out.",
+          "The estimate does not evaluate diagnosis, therapist quality, clinical need, crisis risk, medication needs, or whether a treatment plan is appropriate.",
+        ]}
+      />
+
+      <FAQSection
+        title="Mental Health Therapy Spending FAQ"
+        faqs={[
+          {
+            question: "Is $5,000 too much to spend on therapy?",
+            answer:
+              "It depends on the reason for therapy, session cost, insurance coverage, treatment length, and your financial position. A $5,000 therapy plan can be worthwhile if it is sustainable and addresses a serious issue affecting daily life.",
+          },
+          {
+            question: "Should I use emergency savings for therapy?",
+            answer:
+              "Using savings may make sense if therapy is important and your emergency cushion remains strong afterward. It becomes riskier if paying for therapy leaves you exposed to job loss, medical bills, housing costs, or other urgent needs.",
+          },
+          {
+            question: "Should I finance therapy or put it on a credit card?",
+            answer:
+              "Be careful with financing recurring therapy costs. If credit is used only briefly and repayment is clear, it may be manageable. High-interest debt for ongoing sessions can turn care into long-term financial pressure.",
+          },
+          {
+            question: "How can I make therapy more affordable?",
+            answer:
+              "Check insurance, employee assistance programs, sliding-scale providers, community clinics, university clinics, group therapy, telehealth options, and out-of-network reimbursement before assuming private-pay therapy is the only path.",
+          },
+          {
+            question: "What therapy costs are easy to overlook?",
+            answer:
+              "Cancellation fees, out-of-network reimbursement delays, deductibles, psychiatry visits, medication, longer-than-expected treatment, missed work, and higher-frequency sessions can all increase the real cost.",
+          },
+        ]}
+      />
+
+      <MethodologySection category="medical spending" updated="May 2026" />
+
+      <RelatedGuides
+        guides={[
+          {
+            title: "Medical Calculators",
+            href: "/medical-calculators",
+            description:
+              "Browse medical spending calculators for healthcare bills, procedures, therapy, and treatment affordability decisions.",
+          },
+          {
+            title: "What Counts as Debt?",
+            href: "/what-counts-as-debt",
+            description:
+              "Understand which monthly obligations should be included when estimating financial pressure.",
+          },
+        ]}
+      />
+
+      <RelatedCalculators
+        calculators={[
+          {
+            category: "Medical",
+            title: "Should I Spend $6,000 on Fertility Treatments?",
+            href: "/should-i-spend-6000-on-fertility-treatments",
+          },
+          {
+            category: "Medical",
+            title: "Should I Spend $2,500 on Dermatology Treatment?",
+            href: "/should-i-spend-2500-on-dermatology-treatment",
+          },
+          {
+            category: "Medical",
+            title: "Should I Spend $7,000 on Hearing Aids?",
+            href: "/should-i-spend-7000-on-hearing-aids",
+          },
+          {
+            category: "Medical",
+            title: "Browse Medical Calculators",
+            href: "/medical-calculators",
+          },
+        ]}
+      />
+    </CalculatorPageShell>
+  </div>
+
+  <script is:inline>
+    const clamp = (value, min, max) => Math.min(Math.max(value, min), max);
+
+    const getNumber = (id) => {
+      const rawValue = document.getElementById(id)?.value;
+      const value = Number(rawValue);
+      return Number.isFinite(value) && value >= 0 ? value : 0;
+    };
+
+    function getPressureLevel(score) {
+      if (score <= 30) {
+        return {
+          label: "Low Pressure",
+          stress: "Low pressure",
+          color: "#16a34a",
+          action:
+            "Proceed only after confirming session frequency, insurance coverage, cancellation fees, and how many months of care you can realistically sustain.",
+        };
+      }
+
+      if (score <= 60) {
+        return {
+          label: "Moderate Pressure",
+          stress: "Moderate pressure",
+          color: "#ca8a04",
+          action:
+            "Review insurance, ask about lower-cost options, and make sure the monthly session rhythm fits without draining emergency savings.",
+        };
+      }
+
+      return {
+        label: "High Pressure",
+        stress: "High pressure",
+        color: "#dc2626",
+        action:
+          "Look for lower-cost care paths, confirm benefits, avoid high-interest debt, and protect essential bills while still seeking support.",
+      };
+    }
+
+    function calculateTherapy() {
+      const cost = getNumber("cost");
+      const insurance = getNumber("insurance");
+      const income = getNumber("income");
+      const savings = getNumber("savings");
+      const expenses = getNumber("expenses");
+      const debt = getNumber("debt");
+      const financed = getNumber("financed");
+
+      const result = document.getElementById("result");
+      const scoreEl = document.getElementById("score");
+      const barFill = document.getElementById("barFill");
+      const stressEl = document.getElementById("stress");
+      const netCostEl = document.getElementById("netCost");
+      const cashFlowEl = document.getElementById("cashFlow");
+      const savingsImpactEl = document.getElementById("savingsImpact");
+      const financingImpactEl = document.getElementById("financingImpact");
+      const guidanceEl = document.getElementById("guidance");
+
+      result.style.display = "block";
+
+      if (cost <= 0 || income <= 0) {
+        scoreEl.textContent = "Add your numbers first";
+        scoreEl.style.color = "#16a34a";
+        barFill.style.width = "0%";
+        barFill.style.background = "#16a34a";
+        stressEl.innerHTML = "";
+        netCostEl.innerHTML = "";
+        cashFlowEl.innerHTML = "";
+        savingsImpactEl.innerHTML = "";
+        financingImpactEl.innerHTML = "";
+        guidanceEl.textContent =
+          "Enter a positive therapy cost and monthly take-home income so the calculator can estimate financial pressure.";
+        return;
+      }
+
+      const coveredAmount = Math.min(insurance, cost);
+      const netTreatmentCost = Math.max(cost - coveredAmount, 0);
+      const financedAmount = Math.min(financed, netTreatmentCost);
+      const outOfPocket = Math.max(netTreatmentCost - financedAmount, 0);
+
+      const monthlyRemaining = income - expenses - debt;
+      const remainingSavings = savings - outOfPocket;
+
+      const savingsImpact = savings > 0 ? (outOfPocket / savings) * 100 : outOfPocket > 0 ? 100 : 0;
+      const incomeImpact = (netTreatmentCost / income) * 100;
+      const fixedObligationRatio = income > 0 ? ((expenses + debt) / income) * 100 : 100;
+      const debtRatio = income > 0 ? (debt / income) * 100 : 100;
+      const remainingSavingsMonths =
+        expenses > 0 ? remainingSavings / expenses : remainingSavings > 0 ? 36 : 0;
+      const financedShare = netTreatmentCost > 0 ? (financedAmount / netTreatmentCost) * 100 : 0;
+
+      let pressureScore = 0;
+
+      pressureScore += clamp(incomeImpact * 0.28, 0, 28);
+      pressureScore += clamp(savingsImpact * 0.27, 0, 30);
+      pressureScore += clamp(fixedObligationRatio * 0.22, 0, 24);
+      pressureScore += clamp(debtRatio * 0.28, 0, 14);
+
+      if (remainingSavings < 0) pressureScore += 26;
+      else if (remainingSavingsMonths < 1 && income < 15000) pressureScore += 20;
+      else if (remainingSavingsMonths < 3 && income < 18000) pressureScore += 12;
+      else if (remainingSavingsMonths >= 12) pressureScore -= 12;
+      else if (remainingSavingsMonths >= 6) pressureScore -= 8;
+
+      if (financedAmount > 0) {
+        pressureScore += clamp(financedShare * 0.14, 4, 15);
+      }
+
+      if (monthlyRemaining < 0) pressureScore += 24;
+      else if (monthlyRemaining < income * 0.08) pressureScore += 15;
+      else if (monthlyRemaining < income * 0.15) pressureScore += 8;
+      else if (monthlyRemaining > income * 0.5) pressureScore -= 11;
+      else if (monthlyRemaining > income * 0.35) pressureScore -= 7;
+
+      if (coveredAmount >= cost * 0.35) pressureScore -= 6;
+
+      if (income >= 12000 && remainingSavings > 0 && fixedObligationRatio < 65) {
+        pressureScore -= 10;
+      }
+
+      if (income >= 20000 && remainingSavings > 0 && fixedObligationRatio < 55) {
+        pressureScore -= 14;
+      }
+
+      if (income >= 30000 && remainingSavingsMonths >= 6 && fixedObligationRatio < 50) {
+        pressureScore -= 18;
+      }
+
+      if (
+        incomeImpact < 12 &&
+        savingsImpact < 15 &&
+        remainingSavingsMonths >= 6 &&
+        fixedObligationRatio < 55
+      ) {
+        pressureScore = Math.min(pressureScore, 25);
+      }
+
+      if (
+        incomeImpact < 6 &&
+        savingsImpact < 8 &&
+        remainingSavingsMonths >= 9 &&
+        fixedObligationRatio < 45
+      ) {
+        pressureScore = Math.min(pressureScore, 12);
+      }
+
+      if (
+        savingsImpact < 1 &&
+        debtRatio < 10 &&
+        remainingSavingsMonths >= 24
+      ) {
+        pressureScore = 0;
+      } else if (
+        savingsImpact < 3 &&
+        debtRatio < 15 &&
+        remainingSavingsMonths >= 12
+      ) {
+        pressureScore = Math.min(pressureScore, 5);
+      }
+
+      pressureScore = Math.round(clamp(pressureScore, 0, 100));
+
+      const level = getPressureLevel(pressureScore);
+
+      let guidance = "";
+
+      if (pressureScore <= 30) {
+        guidance =
+          `This therapy expense appears financially manageable based on the numbers provided. Your estimated net cost is about ${incomeImpact.toFixed(1)}% of one month’s take-home income, and your emergency cushion remains around ${Math.max(remainingSavingsMonths, 0).toFixed(1)} months after the upfront out-of-pocket cost.`;
+      } else if (pressureScore <= 60) {
+        guidance =
+          `This therapy expense may be workable, but it creates noticeable pressure. Your estimated net cost equals about ${incomeImpact.toFixed(1)}% of one month’s take-home income, while the upfront portion uses about ${savingsImpact.toFixed(1)}% of available savings.`;
+      } else {
+        guidance =
+          `This therapy expense could create real financial strain. The combination of session cost, savings impact, ongoing-care needs, monthly obligations, debt, or financing suggests the plan may need a lower-cost structure before it becomes sustainable.`;
+      }
+
+      scoreEl.textContent = `${level.label} — ${pressureScore}/100`;
+      scoreEl.style.color = level.color;
+      barFill.style.width = `${pressureScore}%`;
+      barFill.style.background = level.color;
+
+      stressEl.innerHTML = `<strong>Pressure level:</strong> ${level.stress}`;
+      netCostEl.innerHTML = `<strong>Estimated net therapy cost after insurance/benefits:</strong> $${Math.round(netTreatmentCost).toLocaleString()}`;
+      cashFlowEl.innerHTML = `<strong>Monthly cash flow after bills and debt:</strong> $${Math.round(monthlyRemaining).toLocaleString()}`;
+      savingsImpactEl.innerHTML = `<strong>Savings after upfront out-of-pocket cost:</strong> $${Math.round(remainingSavings).toLocaleString()}`;
+      financingImpactEl.innerHTML = `<strong>Financed or credit-backed portion of net cost:</strong> ${financedShare.toFixed(1)}%`;
+
+      guidanceEl.textContent = `${guidance} Recommended next step: ${level.action}`;
+    }
+
+    document
+      .getElementById("therapyButton")
+      .addEventListener("click", calculateTherapy);
+  </script>
+</Layout>

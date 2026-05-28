@@ -1,0 +1,619 @@
+---
+import Layout from "../layouts/Layout.astro";
+import CalculatorPageShell from "../components/CalculatorPageShell.astro";
+import FAQSection from "../components/FAQSection.astro";
+import RelatedCalculators from "../components/RelatedCalculators.astro";
+import RelatedGuides from "../components/RelatedGuides.astro";
+import MethodologySection from "../components/MethodologySection.astro";
+import FinancialRedFlags from "../components/FinancialRedFlags.astro";
+import CalculatorAssumptions from "../components/CalculatorAssumptions.astro";
+import KeyCostCategories from "../components/KeyCostCategories.astro";
+import ReduceCostTips from "../components/ReduceCostTips.astro";
+import WhenSpendingMakesSense from "../components/WhenSpendingMakesSense.astro";
+---
+
+<Layout
+  title="Should I Spend $25,000 on a Bathroom Remodel?"
+  description="Use this bathroom remodel calculator to decide whether a $25,000 renovation fits your income, savings, debt, home value, repair needs, and financing options."
+>
+  <style>
+    .container {
+      max-width: 950px;
+      margin: 0 auto;
+      padding: 60px 20px;
+    }
+
+    .content-section {
+      max-width: 760px;
+      margin: 72px auto 0;
+    }
+
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 28px;
+      padding: 34px;
+    }
+
+    h2 {
+      margin-top: 0;
+      font-size: 2rem;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 22px;
+      margin-bottom: 28px;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 10px;
+      font-weight: 700;
+    }
+
+    input,
+    select {
+      width: 100%;
+      padding: 18px;
+      border-radius: 14px;
+      border: 1px solid var(--border);
+      font-size: 1.1rem;
+      box-sizing: border-box;
+      background: white;
+    }
+
+    button {
+      background: #0f172a;
+      color: white;
+      border: none;
+      padding: 16px 28px;
+      border-radius: 14px;
+      font-size: 1rem;
+      font-weight: 700;
+      cursor: pointer;
+      margin-top: 10px;
+      width: 100%;
+      display: block;
+    }
+
+    button:hover {
+      opacity: 0.92;
+    }
+
+    .result {
+      margin-top: 40px;
+      border: 1px solid var(--border);
+      border-radius: 24px;
+      padding: 28px;
+      display: none;
+      background: #f8fafc;
+    }
+
+    .score {
+      font-size: 3rem;
+      font-weight: 800;
+      margin-bottom: 16px;
+    }
+
+    .bar {
+      width: 100%;
+      height: 16px;
+      background: #dbe3ee;
+      border-radius: 999px;
+      overflow: hidden;
+      margin-bottom: 24px;
+    }
+
+    .fill {
+      height: 100%;
+      width: 0%;
+      background: #16a34a;
+      border-radius: 999px;
+      transition: width 0.4s ease;
+    }
+
+    .metric {
+      margin-bottom: 14px;
+      font-size: 1.05rem;
+    }
+
+    .guidance {
+      margin-top: 26px;
+      font-size: 1.15rem;
+      line-height: 1.7;
+    }
+
+    .disclaimer {
+      margin-top: 30px;
+      font-size: 0.9rem;
+      color: var(--muted);
+    }
+
+    .helper-link {
+      margin-top: 10px;
+      font-size: 0.9rem;
+    }
+
+    .helper-link a {
+      color: var(--primary);
+      font-weight: 600;
+    }
+
+    .content-section p,
+    .content-section li {
+      line-height: 1.8;
+    }
+  </style>
+
+  <div class="container">
+    <CalculatorPageShell
+      eyebrow="Home Improvement Calculator"
+      title="Should I Spend $25,000 on a Bathroom Remodel?"
+      description="Estimate whether a $25,000 bathroom remodel fits your income, emergency savings, debt load, monthly expenses, home value, project need, and financing options."
+    >
+      <div class="card">
+        <h2>Bathroom Remodel Pressure Verdict</h2>
+
+        <div class="grid">
+          <div>
+            <label for="cost">Bathroom Remodel Cost</label>
+            <input id="cost" type="number" placeholder="25000" min="0" inputmode="decimal" />
+          </div>
+
+          <div>
+            <label for="income">Monthly Take-Home Income</label>
+            <input id="income" type="number" placeholder="9000" min="0" inputmode="decimal" />
+          </div>
+
+          <div>
+            <label for="savings">Emergency Savings</label>
+            <input id="savings" type="number" placeholder="35000" min="0" inputmode="decimal" />
+          </div>
+
+          <div>
+            <label for="expenses">Monthly Expenses</label>
+            <input id="expenses" type="number" placeholder="5500" min="0" inputmode="decimal" />
+          </div>
+
+          <div>
+            <label for="debt">Monthly Debt Payments</label>
+            <input id="debt" type="number" placeholder="900" min="0" inputmode="decimal" />
+
+            <div class="helper-link">
+              <a href="/what-counts-as-debt">
+                Not sure what counts as debt? Read the debt guide
+              </a>
+            </div>
+          </div>
+
+          <div>
+            <label for="homeValue">Estimated Home Value</label>
+            <input id="homeValue" type="number" placeholder="350000" min="0" inputmode="decimal" />
+          </div>
+
+          <div>
+            <label for="projectNeed">Bathroom Project Need</label>
+            <select id="projectNeed">
+              <option value="1">Mostly cosmetic upgrade</option>
+              <option value="2">Outdated bathroom with some functional issues</option>
+              <option value="3">Leaks, water damage, accessibility, or major repair need</option>
+            </select>
+          </div>
+
+          <div>
+            <label for="financed">Amount Financed</label>
+            <input id="financed" type="number" placeholder="0" min="0" inputmode="decimal" />
+          </div>
+        </div>
+
+        <button id="bathroomButton" type="button">
+          Calculate Financial Pressure
+        </button>
+
+        <div class="result" id="result">
+          <div class="score" id="score"></div>
+
+          <div class="bar">
+            <div class="fill" id="barFill"></div>
+          </div>
+
+          <div class="metric" id="stress"></div>
+          <div class="metric" id="cashFlow"></div>
+          <div class="metric" id="savingsImpact"></div>
+          <div class="metric" id="needImpact"></div>
+          <div class="metric" id="homeValueImpact"></div>
+
+          <div class="guidance" id="guidance"></div>
+
+          <div class="disclaimer">
+            This is a general educational estimate, not contractor, real estate, appraisal, lending, plumbing, code, or financial advice.
+          </div>
+        </div>
+      </div>
+
+      <div class="content-section">
+        <h2>What a $25,000 Bathroom Remodel Really Costs</h2>
+
+        <p>
+          A bathroom remodel can include demolition, plumbing, tile, waterproofing, flooring, vanity, countertop, toilet, tub or shower, glass doors, lighting, ventilation, drywall, paint, permits, disposal, and hidden repairs behind walls or under floors.
+        </p>
+
+        <p>
+          A $25,000 bathroom remodel can make sense when the room has water damage, poor function, accessibility needs, bad ventilation, aging plumbing, or a layout that no longer works. It becomes harder to justify when the project is mostly cosmetic, financed at a high rate, or competing with urgent repairs elsewhere in the home.
+        </p>
+      </div>
+
+      <WhenSpendingMakesSense
+        title="When Paying for a Bathroom Remodel Makes Sense"
+        items={[
+          "The bathroom has leaks, water damage, mold risk, poor ventilation, or aging plumbing.",
+          "The remodel improves daily function, accessibility, safety, or long-term home maintenance.",
+          "You can pay for the project without draining emergency savings.",
+          "The quote includes labor, materials, permits, waterproofing, fixtures, demolition, and contingency money.",
+          "The project fits the value of the home and avoids overbuilding for the neighborhood.",
+        ]}
+      />
+
+      <div class="content-section">
+        <h2>When You Should Slow Down Before Remodeling</h2>
+
+        <p>
+          Slow down if the remodel is mostly cosmetic and the quote relies on vague allowances, unclear financing, or missing contingency money. Bathrooms often uncover hidden plumbing, subfloor, ventilation, tile, or moisture problems once demolition begins.
+        </p>
+
+        <p>
+          Before committing, compare bids, separate repairs from upgrades, confirm waterproofing details, and decide which finishes truly matter. A bathroom remodel can improve comfort and resale presentation, but the budget should still leave room for surprises.
+        </p>
+      </div>
+
+      <KeyCostCategories
+        items={[
+          {
+            title: "Plumbing and waterproofing",
+            description:
+              "Leaks, drain moves, valve replacement, shower waterproofing, and subfloor repairs can change the final cost quickly.",
+          },
+          {
+            title: "Tile, fixtures, and finishes",
+            description:
+              "Tile size, shower glass, vanities, faucets, tubs, toilets, lighting, and countertops can push a bathroom from basic to expensive.",
+          },
+          {
+            title: "Labor, permits, and hidden damage",
+            description:
+              "Demolition, disposal, inspections, drywall, ventilation, electrical work, and damage behind walls can add meaningful cost.",
+          },
+          {
+            title: "Financing and home-value fit",
+            description:
+              "A bathroom remodel should fit both monthly cash flow and the value of the home, especially if the project is cosmetic.",
+          },
+        ]}
+      />
+
+      <ReduceCostTips
+        items={[
+          "Keep plumbing fixtures in the same locations when possible.",
+          "Choose one premium feature instead of upgrading every finish.",
+          "Compare replacing the vanity, fixtures, and lighting before doing a full gut remodel.",
+          "Ask for a written scope that separates labor, materials, permits, demolition, and disposal.",
+          "Keep a contingency fund for water damage, subfloor problems, or plumbing surprises.",
+          "Avoid high-interest financing for mostly cosmetic upgrades.",
+        ]}
+      />
+
+      <FinancialRedFlags
+        items={[
+          "The remodel would drain almost all emergency savings.",
+          "The project depends on high-interest credit cards or unclear contractor financing.",
+          "The quote does not include waterproofing, permits, demolition, disposal, or contingency money.",
+          "The bathroom is cosmetic while roof, foundation, plumbing, electrical, or mold issues remain unfunded.",
+          "The monthly payment would make mortgage, utilities, groceries, insurance, or debt payments difficult.",
+        ]}
+      />
+
+      <CalculatorAssumptions
+        items={[
+          "The calculator treats a bathroom remodel as a planned home improvement unless the user identifies leaks, water damage, accessibility, or major repair needs.",
+          "Monthly income means take-home pay after taxes and payroll deductions.",
+          "Project need is a rough input and does not replace a contractor inspection.",
+          "Estimated home value is used only as a rough check against overbuilding.",
+          "Monthly debt payments include credit cards, car loans, student loans, personal loans, and other required debt payments.",
+          "The estimate does not evaluate contractor quality, permits, plumbing code, resale value, appraisal impact, material quality, or exact repair scope.",
+        ]}
+      />
+
+      <FAQSection
+        title="Bathroom Remodel Spending FAQ"
+        faqs={[
+          {
+            question: "Is $25,000 too much for a bathroom remodel?",
+            answer:
+              "It depends on the size of the bathroom, local labor costs, plumbing changes, tile choices, fixtures, waterproofing, permits, and hidden damage. A $25,000 bathroom remodel can be reasonable, but the scope should be clear.",
+          },
+          {
+            question: "Should I finance a bathroom remodel?",
+            answer:
+              "Financing may make sense if the payment fits comfortably and the project solves real repair or function problems. Be careful with high interest, long repayment terms, or financing that makes the rest of your budget tight.",
+          },
+          {
+            question: "Does a bathroom remodel increase home value?",
+            answer:
+              "It can help resale appeal, but it usually does not return every dollar spent. Function, quality, market conditions, and whether the remodel fits the home all matter.",
+          },
+          {
+            question: "What makes a bathroom remodel expensive?",
+            answer:
+              "Moving plumbing, custom tile, shower glass, waterproofing, high-end fixtures, subfloor repairs, ventilation, permits, and labor can all increase the final cost.",
+          },
+          {
+            question: "Should I remodel a bathroom if I have other home repairs?",
+            answer:
+              "Urgent repairs usually come first. Roof leaks, electrical hazards, foundation issues, mold, plumbing failures, or water intrusion may be more important than a cosmetic bathroom upgrade.",
+          },
+        ]}
+      />
+
+      <MethodologySection category="home improvement spending" updated="May 2026" />
+
+      <RelatedGuides
+        guides={[
+          {
+            title: "Home Improvement Calculators",
+            href: "/home-improvement-calculators",
+            description:
+              "Browse home repair and renovation calculators for urgent repairs, upgrades, and major homeowner decisions.",
+          },
+          {
+            title: "What Counts as Debt?",
+            href: "/what-counts-as-debt",
+            description:
+              "Understand which monthly obligations should be included when estimating financial pressure.",
+          },
+        ]}
+      />
+
+      <RelatedCalculators
+        calculators={[
+          {
+            category: "Home Improvement",
+            title: "Should I Spend $20,000 on a Kitchen Remodel?",
+            href: "/should-i-spend-20000-on-a-kitchen-remodel",
+          },
+          {
+            category: "Home Improvement",
+            title: "Should I Spend $4,000 on Mold Remediation?",
+            href: "/should-i-spend-4000-on-mold-remediation",
+          },
+          {
+            category: "Home Improvement",
+            title: "Should I Spend $7,000 on Basement Waterproofing?",
+            href: "/should-i-spend-7000-on-basement-waterproofing",
+          },
+          {
+            category: "Home Improvement",
+            title: "Browse Home Improvement Calculators",
+            href: "/home-improvement-calculators",
+          },
+        ]}
+      />
+    </CalculatorPageShell>
+  </div>
+
+  <script is:inline>
+    const clamp = (value, min, max) => Math.min(Math.max(value, min), max);
+
+    const getNumber = (id) => {
+      const rawValue = document.getElementById(id)?.value;
+      const value = Number(rawValue);
+      return Number.isFinite(value) && value >= 0 ? value : 0;
+    };
+
+    function getPressureLevel(score) {
+      if (score <= 30) {
+        return {
+          label: "Low Pressure",
+          stress: "Low pressure",
+          color: "#16a34a",
+          action:
+            "Proceed after comparing bids, confirming scope, and keeping a remodel contingency.",
+        };
+      }
+
+      if (score <= 60) {
+        return {
+          label: "Moderate Pressure",
+          stress: "Moderate pressure",
+          color: "#ca8a04",
+          action:
+            "Trim upgrades, protect emergency savings, and avoid financing that strains monthly cash flow.",
+        };
+      }
+
+      return {
+        label: "High Pressure",
+        stress: "High pressure",
+        color: "#dc2626",
+        action:
+          "Scale back the remodel, delay the project, or save more before committing.",
+      };
+    }
+
+    function calculateBathroom() {
+      const cost = getNumber("cost");
+      const income = getNumber("income");
+      const savings = getNumber("savings");
+      const expenses = getNumber("expenses");
+      const debt = getNumber("debt");
+      const homeValue = getNumber("homeValue");
+      const projectNeed = getNumber("projectNeed");
+      const financed = getNumber("financed");
+
+      const result = document.getElementById("result");
+      const scoreEl = document.getElementById("score");
+      const barFill = document.getElementById("barFill");
+      const stressEl = document.getElementById("stress");
+      const cashFlowEl = document.getElementById("cashFlow");
+      const savingsImpactEl = document.getElementById("savingsImpact");
+      const needImpactEl = document.getElementById("needImpact");
+      const homeValueImpactEl = document.getElementById("homeValueImpact");
+      const guidanceEl = document.getElementById("guidance");
+
+      result.style.display = "block";
+
+      if (cost <= 0 || income <= 0) {
+        scoreEl.textContent = "Add your numbers first";
+        barFill.style.width = "0%";
+        barFill.style.background = "#16a34a";
+        stressEl.innerHTML = "";
+        cashFlowEl.innerHTML = "";
+        savingsImpactEl.innerHTML = "";
+        needImpactEl.innerHTML = "";
+        homeValueImpactEl.innerHTML = "";
+        guidanceEl.textContent =
+          "Enter a positive bathroom remodel cost and monthly take-home income so the calculator can estimate financial pressure.";
+        return;
+      }
+
+      const outOfPocket = Math.max(cost - financed, 0);
+      const monthlyRemaining = income - expenses - debt;
+      const monthlyFixedCosts = expenses + debt;
+      const remainingSavings = savings - outOfPocket;
+
+      const savingsImpact = savings > 0 ? (outOfPocket / savings) * 100 : 100;
+      const incomeImpact = (cost / income) * 100;
+      const incomeRecoveryPower = cost / income;
+      const fixedObligationRatio = (monthlyFixedCosts / income) * 100;
+      const financedShare = cost > 0 ? (financed / cost) * 100 : 0;
+      const homeValueRatio = homeValue > 0 ? (cost / homeValue) * 100 : 0;
+
+      const emergencyMonths =
+        monthlyFixedCosts > 0
+          ? remainingSavings / monthlyFixedCosts
+          : remainingSavings > 0
+            ? 999
+            : 0;
+
+      const needLabel =
+        projectNeed >= 3
+          ? "Leaks, water damage, accessibility, or major repair need"
+          : projectNeed === 2
+            ? "Outdated bathroom with some functional issues"
+            : "Mostly cosmetic upgrade";
+
+      let pressureScore = 0;
+
+      const enormousSavings =
+        savings >= cost * 100 &&
+        remainingSavings >= cost * 90 &&
+        savingsImpact <= 1 &&
+        monthlyRemaining > 0;
+
+      const ultraSafeSavings =
+        savings >= cost * 25 &&
+        remainingSavings >= cost * 20 &&
+        savingsImpact <= 5 &&
+        monthlyRemaining > 0;
+
+      const ultraSafeIncome =
+        incomeRecoveryPower <= 0.5 &&
+        monthlyRemaining > cost * 0.5 &&
+        fixedObligationRatio <= 35;
+
+      const extremeSavings =
+        savingsImpact <= 1 &&
+        emergencyMonths >= 12 &&
+        monthlyRemaining > 0;
+
+      if (enormousSavings || ultraSafeSavings || ultraSafeIncome || extremeSavings) {
+        pressureScore = 0;
+      } else {
+        pressureScore += clamp(incomeImpact * 0.15, 0, 24);
+        pressureScore += clamp(savingsImpact * 0.2, 0, 28);
+        pressureScore += clamp(fixedObligationRatio * 0.18, 0, 22);
+
+        if (remainingSavings < 0) pressureScore += 30;
+        else if (emergencyMonths < 1 && incomeRecoveryPower >= 1) pressureScore += 22;
+        else if (emergencyMonths < 3 && incomeRecoveryPower >= 0.75) pressureScore += 14;
+        else if (emergencyMonths >= 6) pressureScore -= 8;
+
+        if (financed > 0) pressureScore += clamp(financedShare * 0.14, 4, 18);
+
+        if (homeValue > 0 && homeValueRatio > 12) pressureScore += 8;
+        else if (homeValue > 0 && homeValueRatio > 8) pressureScore += 5;
+        else if (homeValue > 0 && homeValueRatio <= 5) pressureScore -= 4;
+
+        if (projectNeed >= 3) pressureScore -= 7;
+        else if (projectNeed === 2) pressureScore -= 2;
+        else pressureScore += 6;
+
+        if (monthlyRemaining < 0) pressureScore += 20;
+        else if (monthlyRemaining < income * 0.1) pressureScore += 10;
+        else if (monthlyRemaining > income * 0.35) pressureScore -= 8;
+
+        if (
+          savingsImpact <= 2 &&
+          fixedObligationRatio < 45 &&
+          emergencyMonths >= 12
+        ) {
+          pressureScore = 0;
+        } else if (
+          savingsImpact <= 5 &&
+          fixedObligationRatio < 50 &&
+          emergencyMonths >= 6
+        ) {
+          pressureScore = Math.min(pressureScore, 5);
+        } else if (
+          incomeRecoveryPower < 1 &&
+          fixedObligationRatio < 35 &&
+          monthlyRemaining > cost * 0.5
+        ) {
+          pressureScore = Math.min(pressureScore, 10);
+        }
+
+        pressureScore = Math.round(clamp(pressureScore, 0, 100));
+      }
+
+      const level = getPressureLevel(pressureScore);
+
+      let guidance = "";
+
+      if (pressureScore <= 30) {
+        guidance = `This bathroom remodel appears financially manageable based on the numbers provided. The project equals about ${incomeImpact.toFixed(
+          1
+        )}% of one month’s take-home income, and your estimated emergency cushion remains around ${Math.max(
+          emergencyMonths,
+          0
+        ).toFixed(1)} months after the out-of-pocket cost.`;
+      } else if (pressureScore <= 60) {
+        guidance = `This bathroom remodel may work, but it creates noticeable financial pressure. The project equals about ${incomeImpact.toFixed(
+          1
+        )}% of one month’s take-home income, and the out-of-pocket portion uses about ${savingsImpact.toFixed(
+          1
+        )}% of available savings.`;
+      } else {
+        guidance = `This bathroom remodel could create real financial strain. The project equals about ${incomeImpact.toFixed(
+          1
+        )}% of one month’s take-home income, and the combination of savings impact, financing, debt, and monthly cash flow suggests you should scale back or wait unless the repair need is urgent.`;
+      }
+
+      scoreEl.textContent = `${level.label} — ${pressureScore}/100`;
+      scoreEl.style.color = level.color;
+      barFill.style.width = `${pressureScore}%`;
+      barFill.style.background = level.color;
+
+      stressEl.innerHTML = `<strong>Pressure level:</strong> ${level.stress}`;
+      cashFlowEl.innerHTML = `<strong>Monthly cash flow after bills and debt:</strong> $${monthlyRemaining.toLocaleString()}`;
+      savingsImpactEl.innerHTML = `<strong>Savings after out-of-pocket bathroom remodel cost:</strong> $${remainingSavings.toLocaleString()}`;
+      needImpactEl.innerHTML = `<strong>Bathroom project need:</strong> ${needLabel}`;
+      homeValueImpactEl.innerHTML = `<strong>Project cost as share of home value:</strong> ${homeValueRatio.toFixed(1)}%`;
+      guidanceEl.textContent = `${guidance} Recommended next step: ${level.action}`;
+    }
+
+    document
+      .getElementById("bathroomButton")
+      .addEventListener("click", calculateBathroom);
+  </script>
+</Layout>

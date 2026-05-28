@@ -1,0 +1,479 @@
+---
+import Layout from "../layouts/Layout.astro";
+import CalculatorPageShell from "../components/CalculatorPageShell.astro";
+import FAQSection from "../components/FAQSection.astro";
+import RelatedCalculators from "../components/RelatedCalculators.astro";
+import RelatedGuides from "../components/RelatedGuides.astro";
+import MethodologySection from "../components/MethodologySection.astro";
+import FinancialRedFlags from "../components/FinancialRedFlags.astro";
+import CalculatorAssumptions from "../components/CalculatorAssumptions.astro";
+import KeyCostCategories from "../components/KeyCostCategories.astro";
+import ReduceCostTips from "../components/ReduceCostTips.astro";
+import WhenSpendingMakesSense from "../components/WhenSpendingMakesSense.astro";
+
+const pageTitle = "Should I Spend $2,500 on Dermatology Treatment?";
+const pageDescription =
+  "Use this dermatology treatment affordability calculator to decide whether a $2,500 skin treatment fits your income, savings, insurance, financing, debt, and monthly cash flow.";
+---
+
+<Layout title={pageTitle} description={pageDescription}>
+  <style>
+    .container { max-width: 950px; margin: 0 auto; padding: 60px 20px; }
+    .content-section { max-width: 760px; margin: 72px auto 0; }
+    .card { background: var(--card); border: 1px solid var(--border); border-radius: 28px; padding: 34px; }
+    h2 { margin-top: 0; font-size: 2rem; }
+    .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 22px; margin-bottom: 28px; }
+    label { display: block; margin-bottom: 10px; font-weight: 700; }
+    input { width: 100%; padding: 18px; border-radius: 14px; border: 1px solid var(--border); font-size: 1.1rem; box-sizing: border-box; }
+    button { background: #0f172a; color: white; border: none; padding: 16px 28px; border-radius: 14px; font-size: 1rem; font-weight: 700; cursor: pointer; margin-top: 10px; width: 100%; display: block; }
+    button:hover { opacity: 0.92; }
+    .result { margin-top: 40px; border: 1px solid var(--border); border-radius: 24px; padding: 28px; display: none; background: #f8fafc; }
+    .score { font-size: 3rem; font-weight: 800; margin-bottom: 16px; }
+    .bar { width: 100%; height: 16px; background: #dbe3ee; border-radius: 999px; overflow: hidden; margin-bottom: 24px; }
+    .fill { height: 100%; width: 0%; background: #16a34a; border-radius: 999px; transition: width 0.4s ease; }
+    .metric { margin-bottom: 14px; font-size: 1.05rem; }
+    .guidance { margin-top: 26px; font-size: 1.15rem; line-height: 1.7; }
+    .disclaimer { margin-top: 30px; font-size: 0.9rem; color: var(--muted); }
+    .helper-link { margin-top: 10px; font-size: 0.9rem; }
+    .helper-link a { color: var(--primary); font-weight: 600; }
+    .content-section p, .content-section li { line-height: 1.8; }
+  </style>
+
+  <div class="container">
+    <CalculatorPageShell
+      eyebrow="Medical Calculator"
+      title="Should I Spend $2,500 on Dermatology Treatment?"
+      description="Estimate whether dermatology treatment fits your budget after insurance, savings, financing, monthly expenses, debt, and follow-up care."
+    >
+      <div class="card">
+        <h2>Dermatology Treatment Pressure Verdict</h2>
+
+        <div class="grid">
+          <div>
+            <label for="cost">Total Dermatology Treatment Cost</label>
+            <input id="cost" type="number" placeholder="2500" min="0" inputmode="decimal" />
+          </div>
+
+          <div>
+            <label for="insurance">Insurance or Benefit Contribution</label>
+            <input id="insurance" type="number" placeholder="500" min="0" inputmode="decimal" />
+          </div>
+
+          <div>
+            <label for="income">Monthly Take-Home Income</label>
+            <input id="income" type="number" placeholder="6500" min="0" inputmode="decimal" />
+          </div>
+
+          <div>
+            <label for="savings">Emergency Savings</label>
+            <input id="savings" type="number" placeholder="15000" min="0" inputmode="decimal" />
+          </div>
+
+          <div>
+            <label for="expenses">Monthly Expenses</label>
+            <input id="expenses" type="number" placeholder="4000" min="0" inputmode="decimal" />
+          </div>
+
+          <div>
+            <label for="debt">Monthly Debt Payments</label>
+            <input id="debt" type="number" placeholder="500" min="0" inputmode="decimal" />
+
+            <div class="helper-link">
+              <a href="/what-counts-as-debt">Not sure what counts as debt? Read the debt guide</a>
+            </div>
+          </div>
+
+          <div>
+            <label for="financed">Amount Financed</label>
+            <input id="financed" type="number" placeholder="1000" min="0" inputmode="decimal" />
+          </div>
+        </div>
+
+        <button id="dermatologyButton" type="button">Calculate Financial Pressure</button>
+
+        <div class="result" id="result">
+          <div class="score" id="score"></div>
+          <div class="bar"><div class="fill" id="barFill"></div></div>
+          <div class="metric" id="stress"></div>
+          <div class="metric" id="netCost"></div>
+          <div class="metric" id="cashFlow"></div>
+          <div class="metric" id="savingsImpact"></div>
+          <div class="metric" id="financingImpact"></div>
+          <div class="guidance" id="guidance"></div>
+
+          <div class="disclaimer">
+            This is a general educational estimate, not dermatology, medical, insurance, cosmetic, or financial advice.
+          </div>
+        </div>
+      </div>
+
+      <div class="content-section">
+        <h2>What a $2,500 Dermatology Treatment Decision Really Means</h2>
+
+        <p>
+          Dermatology spending can sit in an awkward middle ground between medical care, quality-of-life care, and elective cosmetic improvement. A $2,500 treatment might involve acne scarring, mole removal, laser treatment, psoriasis care, eczema care, hair-loss treatment, biopsy-related follow-up, cosmetic resurfacing, or a procedure that insurance only partly covers.
+        </p>
+
+        <p>
+          The right financial answer depends on why you are getting treatment. A medically necessary skin issue, painful condition, suspicious lesion, or treatment that prevents worsening problems belongs in a different category than a purely cosmetic upgrade. The pressure rises when the quote is vague, insurance coverage is uncertain, multiple sessions are likely, or the treatment depends on high-interest financing.
+        </p>
+      </div>
+
+      <WhenSpendingMakesSense
+        title="When Spending $2,500 on Dermatology Treatment Makes Sense"
+        items={[
+          "The treatment addresses pain, infection risk, suspicious skin changes, scarring, severe acne, chronic irritation, or another meaningful health concern.",
+          "Insurance, HSA funds, FSA funds, or provider discounts reduce the real out-of-pocket cost.",
+          "You know whether the quote includes follow-up visits, lab work, biopsies, prescriptions, and additional treatment sessions.",
+          "The payment does not drain the emergency fund needed for rent, food, utilities, insurance, and other essentials.",
+          "Any financing is low-interest, short-term, and comfortable inside your monthly budget.",
+          "You have compared the cost of treatment now with the possibility of the condition worsening or requiring more expensive care later.",
+        ]}
+      />
+
+      <div class="content-section">
+        <h2>When Dermatology Treatment Becomes a Financial Stretch</h2>
+
+        <p>
+          Dermatology treatment becomes riskier when the price reflects only the first visit or first session. Lasers, injections, scar treatments, prescriptions, lab work, pathology, and follow-up appointments can turn a simple quote into a larger bill.
+        </p>
+
+        <p>
+          Before committing, ask the provider what is medically necessary, what is cosmetic, what insurance is likely to cover, and whether there are lower-cost alternatives that still address the main problem.
+        </p>
+      </div>
+
+      <KeyCostCategories
+        items={[
+          {
+            title: "Procedure or treatment fees",
+            description:
+              "Dermatology costs may include office visits, procedures, laser sessions, injections, removals, biopsies, wound care, or cosmetic treatments.",
+          },
+          {
+            title: "Prescriptions and aftercare",
+            description:
+              "Topical medications, oral prescriptions, dressings, follow-up visits, scar care, sunscreen, and maintenance treatments can add to the real cost.",
+          },
+          {
+            title: "Insurance and medical necessity",
+            description:
+              "Insurance may cover medically necessary care but deny or limit cosmetic treatment. Documentation, diagnosis codes, deductibles, and prior authorization can matter.",
+          },
+          {
+            title: "Multiple-session risk",
+            description:
+              "Some dermatology treatments require several visits before results appear. The full financial decision should include likely repeat sessions, not just the first appointment.",
+          },
+        ]}
+      />
+
+      <ReduceCostTips
+        items={[
+          "Ask for an itemized estimate that separates visits, procedures, prescriptions, lab work, and follow-up care.",
+          "Confirm whether the treatment is being billed as medically necessary or cosmetic.",
+          "Check insurance coverage, deductible status, prior authorization needs, and out-of-network costs.",
+          "Ask whether HSA or FSA funds can be used for eligible dermatology expenses.",
+          "Request a lower-cost treatment path if the first recommendation is expensive or cosmetic-heavy.",
+          "Ask how many sessions are usually needed and whether the $2,500 quote reflects the full expected plan.",
+          "Avoid financing cosmetic treatment if you are already under pressure from debt or essential bills.",
+        ]}
+      />
+
+      <FinancialRedFlags
+        items={[
+          "The provider cannot clearly explain what is included in the $2,500 quote.",
+          "You are unsure whether the treatment is medically necessary or cosmetic.",
+          "Insurance coverage has not been confirmed, but you are assuming it will reduce the bill.",
+          "The treatment would drain most of your emergency savings.",
+          "You would need high-interest credit to begin treatment.",
+          "The quote covers only the first session, but additional sessions are likely.",
+          "The treatment would make rent, utilities, groceries, insurance, or debt payments harder to cover.",
+        ]}
+      />
+
+      <CalculatorAssumptions
+        items={[
+          "The calculator treats dermatology treatment as a medical or quality-of-life expense that may be urgent, semi-elective, or cosmetic depending on the situation.",
+          "Monthly income means take-home pay after taxes and payroll deductions.",
+          "Monthly expenses should include housing, food, utilities, transportation, childcare, insurance, prescriptions, and other required living costs.",
+          "Monthly debt payments include credit cards, car loans, student loans, personal loans, medical debt, and other required debt payments.",
+          "Insurance or benefit contribution means money that directly reduces your out-of-pocket dermatology treatment cost.",
+          "The calculator assumes financed balances still create pressure even when payments are spread out.",
+          "The estimate does not evaluate medical urgency, skin cancer risk, diagnosis, provider quality, cosmetic results, or whether treatment is clinically appropriate.",
+        ]}
+      />
+
+      <FAQSection
+        title="Dermatology Treatment Spending FAQ"
+        faqs={[
+          {
+            question: "Is $2,500 too much for dermatology treatment?",
+            answer:
+              "It depends on the treatment type, whether it is medically necessary, how much insurance covers, and whether multiple sessions are needed. A $2,500 dermatology bill can be reasonable for some procedures, but the full expected treatment plan matters more than the first quoted price.",
+          },
+          {
+            question: "Should I finance dermatology treatment?",
+            answer:
+              "Financing may work if the treatment is important, the terms are low-interest, and the payment fits easily inside your budget. Be more cautious with cosmetic treatment, high-interest credit, or procedures that may require repeated sessions.",
+          },
+          {
+            question: "Does insurance usually cover dermatology treatment?",
+            answer:
+              "Insurance is more likely to cover medically necessary dermatology care than cosmetic treatment. Coverage can depend on the diagnosis, deductible, network status, prior authorization, and how the provider codes the visit.",
+          },
+          {
+            question: "What dermatology costs are easy to overlook?",
+            answer:
+              "Follow-up visits, pathology, biopsies, prescriptions, aftercare supplies, repeat laser sessions, scar treatments, and maintenance appointments can all raise the total cost.",
+          },
+          {
+            question: "Should I use emergency savings for dermatology care?",
+            answer:
+              "Using savings may make sense for medically important care if your emergency cushion remains strong afterward. It is riskier to drain savings for a cosmetic treatment that could be delayed without creating a health problem.",
+          },
+        ]}
+      />
+
+      <MethodologySection category="medical spending" updated="May 2026" />
+
+      <RelatedGuides
+        guides={[
+          {
+            title: "Medical Calculators",
+            href: "/medical-calculators",
+            description:
+              "Browse medical spending calculators for dental costs, healthcare bills, procedures, and treatment affordability decisions.",
+          },
+          {
+            title: "What Counts as Debt?",
+            href: "/what-counts-as-debt",
+            description:
+              "Understand which monthly obligations should be included when estimating financial pressure.",
+          },
+        ]}
+      />
+
+      <RelatedCalculators
+        calculators={[
+          {
+            category: "Medical",
+            title: "Should I Spend $6,000 on Fertility Treatments?",
+            href: "/should-i-spend-6000-on-fertility-treatments",
+          },
+          {
+            category: "Medical",
+            title: "Should I Spend $7,000 on Hearing Aids?",
+            href: "/should-i-spend-7000-on-hearing-aids",
+          },
+          {
+            category: "Medical",
+            title: "Should I Spend $8,000 on Invisalign?",
+            href: "/should-i-spend-8000-on-invisalign",
+          },
+          {
+            category: "Medical",
+            title: "Browse Medical Calculators",
+            href: "/medical-calculators",
+          },
+        ]}
+      />
+    </CalculatorPageShell>
+  </div>
+
+  <script is:inline>
+    const clamp = (value, min, max) => Math.min(Math.max(value, min), max);
+
+    const getNumber = (id) => {
+      const rawValue = document.getElementById(id)?.value;
+      const value = Number(rawValue);
+      return Number.isFinite(value) && value >= 0 ? value : 0;
+    };
+
+    function getPressureLevel(score) {
+      if (score <= 30) {
+        return {
+          label: "Low Pressure",
+          stress: "Low pressure",
+          color: "#16a34a",
+          action:
+            "Proceed only after confirming whether the treatment is medical or cosmetic, what insurance covers, and whether follow-up visits are included.",
+        };
+      }
+
+      if (score <= 60) {
+        return {
+          label: "Moderate Pressure",
+          stress: "Moderate pressure",
+          color: "#ca8a04",
+          action:
+            "Get the full treatment estimate in writing, verify coverage, and protect your emergency savings before committing.",
+        };
+      }
+
+      return {
+        label: "High Pressure",
+        stress: "High pressure",
+        color: "#dc2626",
+        action:
+          "Slow down before committing, confirm medical necessity, compare lower-cost options, and avoid high-interest financing while cash flow is tight.",
+      };
+    }
+
+    function calculateDermatology() {
+      const cost = getNumber("cost");
+      const insurance = getNumber("insurance");
+      const income = getNumber("income");
+      const savings = getNumber("savings");
+      const expenses = getNumber("expenses");
+      const debt = getNumber("debt");
+      const financed = getNumber("financed");
+
+      const result = document.getElementById("result");
+      const scoreEl = document.getElementById("score");
+      const barFill = document.getElementById("barFill");
+      const stressEl = document.getElementById("stress");
+      const netCostEl = document.getElementById("netCost");
+      const cashFlowEl = document.getElementById("cashFlow");
+      const savingsImpactEl = document.getElementById("savingsImpact");
+      const financingImpactEl = document.getElementById("financingImpact");
+      const guidanceEl = document.getElementById("guidance");
+
+      result.style.display = "block";
+
+      if (cost <= 0 || income <= 0) {
+        scoreEl.textContent = "Add your numbers first";
+        scoreEl.style.color = "#16a34a";
+        barFill.style.width = "0%";
+        barFill.style.background = "#16a34a";
+        stressEl.innerHTML = "";
+        netCostEl.innerHTML = "";
+        cashFlowEl.innerHTML = "";
+        savingsImpactEl.innerHTML = "";
+        financingImpactEl.innerHTML = "";
+        guidanceEl.textContent =
+          "Enter a positive dermatology treatment cost and monthly take-home income so the calculator can estimate financial pressure.";
+        return;
+      }
+
+      const coveredAmount = Math.min(insurance, cost);
+      const netTreatmentCost = Math.max(cost - coveredAmount, 0);
+      const financedAmount = Math.min(financed, netTreatmentCost);
+      const outOfPocket = Math.max(netTreatmentCost - financedAmount, 0);
+
+      const monthlyRemaining = income - expenses - debt;
+      const remainingSavings = savings - outOfPocket;
+
+      const savingsImpact = savings > 0 ? (outOfPocket / savings) * 100 : outOfPocket > 0 ? 100 : 0;
+      const incomeImpact = (netTreatmentCost / income) * 100;
+      const fixedObligationRatio = income > 0 ? ((expenses + debt) / income) * 100 : 100;
+      const debtRatio = income > 0 ? (debt / income) * 100 : 100;
+      const remainingSavingsMonths =
+        expenses > 0 ? remainingSavings / expenses : remainingSavings > 0 ? 36 : 0;
+      const financedShare = netTreatmentCost > 0 ? (financedAmount / netTreatmentCost) * 100 : 0;
+
+      let pressureScore = 0;
+
+      pressureScore += clamp(incomeImpact * 0.26, 0, 26);
+      pressureScore += clamp(savingsImpact * 0.27, 0, 30);
+      pressureScore += clamp(fixedObligationRatio * 0.22, 0, 24);
+      pressureScore += clamp(debtRatio * 0.28, 0, 14);
+
+      if (remainingSavings < 0) pressureScore += 26;
+      else if (remainingSavingsMonths < 1 && income < 12000) pressureScore += 18;
+      else if (remainingSavingsMonths < 3 && income < 15000) pressureScore += 10;
+      else if (remainingSavingsMonths >= 12) pressureScore -= 12;
+      else if (remainingSavingsMonths >= 6) pressureScore -= 8;
+
+      if (financedAmount > 0) {
+        pressureScore += clamp(financedShare * 0.12, 3, 13);
+      }
+
+      if (monthlyRemaining < 0) pressureScore += 22;
+      else if (monthlyRemaining < income * 0.08) pressureScore += 14;
+      else if (monthlyRemaining < income * 0.15) pressureScore += 7;
+      else if (monthlyRemaining > income * 0.5) pressureScore -= 11;
+      else if (monthlyRemaining > income * 0.35) pressureScore -= 7;
+
+      if (coveredAmount >= cost * 0.35) pressureScore -= 5;
+
+      if (income >= 12000 && remainingSavings > 0 && fixedObligationRatio < 65) {
+        pressureScore -= 10;
+      }
+
+      if (income >= 20000 && remainingSavings > 0 && fixedObligationRatio < 55) {
+        pressureScore -= 14;
+      }
+
+      if (income >= 30000 && remainingSavingsMonths >= 6 && fixedObligationRatio < 50) {
+        pressureScore -= 18;
+      }
+
+      if (
+        incomeImpact < 12 &&
+        savingsImpact < 15 &&
+        remainingSavingsMonths >= 6 &&
+        fixedObligationRatio < 55
+      ) {
+        pressureScore = Math.min(pressureScore, 24);
+      }
+
+      if (
+        incomeImpact < 6 &&
+        savingsImpact < 8 &&
+        remainingSavingsMonths >= 9 &&
+        fixedObligationRatio < 45
+      ) {
+        pressureScore = Math.min(pressureScore, 12);
+      }
+
+      if (
+        savingsImpact < 1 &&
+        debtRatio < 10 &&
+        remainingSavingsMonths >= 24
+      ) {
+        pressureScore = 0;
+      } else if (
+        savingsImpact < 3 &&
+        debtRatio < 15 &&
+        remainingSavingsMonths >= 12
+      ) {
+        pressureScore = Math.min(pressureScore, 5);
+      }
+
+      pressureScore = Math.round(clamp(pressureScore, 0, 100));
+
+      const level = getPressureLevel(pressureScore);
+
+      let guidance = "";
+
+      if (pressureScore <= 30) {
+        guidance =
+          `This dermatology treatment expense appears financially manageable based on the numbers provided. Your estimated net cost is about ${incomeImpact.toFixed(1)}% of one month’s take-home income, and your emergency cushion remains around ${Math.max(remainingSavingsMonths, 0).toFixed(1)} months after the upfront out-of-pocket cost.`;
+      } else if (pressureScore <= 60) {
+        guidance =
+          `This dermatology treatment expense may be workable, but it creates noticeable pressure. Your estimated net cost equals about ${incomeImpact.toFixed(1)}% of one month’s take-home income, while the upfront portion uses about ${savingsImpact.toFixed(1)}% of available savings.`;
+      } else {
+        guidance =
+          `This dermatology treatment expense could create real financial strain. The combination of treatment cost, savings impact, repeat-session risk, monthly obligations, debt, or financing suggests this may be a decision to compare carefully before committing.`;
+      }
+
+      scoreEl.textContent = `${level.label} — ${pressureScore}/100`;
+      scoreEl.style.color = level.color;
+      barFill.style.width = `${pressureScore}%`;
+      barFill.style.background = level.color;
+
+      stressEl.innerHTML = `<strong>Pressure level:</strong> ${level.stress}`;
+      netCostEl.innerHTML = `<strong>Estimated net dermatology treatment cost after insurance/benefits:</strong> $${Math.round(netTreatmentCost).toLocaleString()}`;
+      cashFlowEl.innerHTML = `<strong>Monthly cash flow after bills and debt:</strong> $${Math.round(monthlyRemaining).toLocaleString()}`;
+      savingsImpactEl.innerHTML = `<strong>Savings after upfront out-of-pocket cost:</strong> $${Math.round(remainingSavings).toLocaleString()}`;
+      financingImpactEl.innerHTML = `<strong>Financed portion of net cost:</strong> ${financedShare.toFixed(1)}%`;
+
+      guidanceEl.textContent = `${guidance} Recommended next step: ${level.action}`;
+    }
+
+    document
+      .getElementById("dermatologyButton")
+      .addEventListener("click", calculateDermatology);
+  </script>
+</Layout>

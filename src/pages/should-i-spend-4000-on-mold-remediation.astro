@@ -1,0 +1,621 @@
+---
+import Layout from "../layouts/Layout.astro";
+import CalculatorPageShell from "../components/CalculatorPageShell.astro";
+import FAQSection from "../components/FAQSection.astro";
+import RelatedCalculators from "../components/RelatedCalculators.astro";
+import RelatedGuides from "../components/RelatedGuides.astro";
+import MethodologySection from "../components/MethodologySection.astro";
+import FinancialRedFlags from "../components/FinancialRedFlags.astro";
+import CalculatorAssumptions from "../components/CalculatorAssumptions.astro";
+import KeyCostCategories from "../components/KeyCostCategories.astro";
+import ReduceCostTips from "../components/ReduceCostTips.astro";
+import WhenSpendingMakesSense from "../components/WhenSpendingMakesSense.astro";
+---
+
+<Layout
+  title="Should I Spend $4,000 on Mold Remediation?"
+  description="Use this mold remediation calculator to decide whether a $4,000 cleanup fits your income, savings, debt, health risk, home value, and financing options."
+>
+  <style>
+    .container {
+      max-width: 950px;
+      margin: 0 auto;
+      padding: 60px 20px;
+    }
+
+    .content-section {
+      max-width: 760px;
+      margin: 72px auto 0;
+    }
+
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 28px;
+      padding: 34px;
+    }
+
+    h2 {
+      margin-top: 0;
+      font-size: 2rem;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 22px;
+      margin-bottom: 28px;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 10px;
+      font-weight: 700;
+    }
+
+    input,
+    select {
+      width: 100%;
+      padding: 18px;
+      border-radius: 14px;
+      border: 1px solid var(--border);
+      font-size: 1.1rem;
+      box-sizing: border-box;
+      background: white;
+    }
+
+    button {
+      background: #0f172a;
+      color: white;
+      border: none;
+      padding: 16px 28px;
+      border-radius: 14px;
+      font-size: 1rem;
+      font-weight: 700;
+      cursor: pointer;
+      margin-top: 10px;
+      width: 100%;
+      display: block;
+    }
+
+    button:hover {
+      opacity: 0.92;
+    }
+
+    .result {
+      margin-top: 40px;
+      border: 1px solid var(--border);
+      border-radius: 24px;
+      padding: 28px;
+      display: none;
+      background: #f8fafc;
+    }
+
+    .score {
+      font-size: 3rem;
+      font-weight: 800;
+      margin-bottom: 16px;
+    }
+
+    .bar {
+      width: 100%;
+      height: 16px;
+      background: #dbe3ee;
+      border-radius: 999px;
+      overflow: hidden;
+      margin-bottom: 24px;
+    }
+
+    .fill {
+      height: 100%;
+      width: 0%;
+      background: #16a34a;
+      border-radius: 999px;
+      transition: width 0.4s ease;
+    }
+
+    .metric {
+      margin-bottom: 14px;
+      font-size: 1.05rem;
+    }
+
+    .guidance {
+      margin-top: 26px;
+      font-size: 1.15rem;
+      line-height: 1.7;
+    }
+
+    .disclaimer {
+      margin-top: 30px;
+      font-size: 0.9rem;
+      color: var(--muted);
+    }
+
+    .helper-link {
+      margin-top: 10px;
+      font-size: 0.9rem;
+    }
+
+    .helper-link a {
+      color: var(--primary);
+      font-weight: 600;
+    }
+
+    .content-section p,
+    .content-section li {
+      line-height: 1.8;
+    }
+  </style>
+
+  <div class="container">
+    <CalculatorPageShell
+      eyebrow="Home Improvement Calculator"
+      title="Should I Spend $4,000 on Mold Remediation?"
+      description="Estimate whether a $4,000 mold remediation project fits your income, emergency savings, debt load, monthly expenses, health risk, home value, and financing options."
+    >
+      <div class="card">
+        <h2>Mold Remediation Pressure Verdict</h2>
+
+        <div class="grid">
+          <div>
+            <label for="cost">Mold Remediation Cost</label>
+            <input id="cost" type="number" placeholder="4000" min="0" inputmode="decimal" />
+          </div>
+
+          <div>
+            <label for="income">Monthly Take-Home Income</label>
+            <input id="income" type="number" placeholder="8500" min="0" inputmode="decimal" />
+          </div>
+
+          <div>
+            <label for="savings">Emergency Savings</label>
+            <input id="savings" type="number" placeholder="25000" min="0" inputmode="decimal" />
+          </div>
+
+          <div>
+            <label for="expenses">Monthly Expenses</label>
+            <input id="expenses" type="number" placeholder="5200" min="0" inputmode="decimal" />
+          </div>
+
+          <div>
+            <label for="debt">Monthly Debt Payments</label>
+            <input id="debt" type="number" placeholder="800" min="0" inputmode="decimal" />
+
+            <div class="helper-link">
+              <a href="/what-counts-as-debt">
+                Not sure what counts as debt? Read the debt guide
+              </a>
+            </div>
+          </div>
+
+          <div>
+            <label for="homeValue">Estimated Home Value</label>
+            <input id="homeValue" type="number" placeholder="350000" min="0" inputmode="decimal" />
+          </div>
+
+          <div>
+            <label for="moldRisk">Mold Problem Severity</label>
+            <select id="moldRisk">
+              <option value="1">Small visible area or mild odor</option>
+              <option value="2">Recurring moisture, musty smell, or spreading area</option>
+              <option value="3">Large area, health symptoms, hidden moisture, or black mold concern</option>
+            </select>
+          </div>
+
+          <div>
+            <label for="financed">Amount Financed</label>
+            <input id="financed" type="number" placeholder="0" min="0" inputmode="decimal" />
+          </div>
+        </div>
+
+        <button id="moldButton" type="button">
+          Calculate Financial Pressure
+        </button>
+
+        <div class="result" id="result">
+          <div class="score" id="score"></div>
+
+          <div class="bar">
+            <div class="fill" id="barFill"></div>
+          </div>
+
+          <div class="metric" id="stress"></div>
+          <div class="metric" id="cashFlow"></div>
+          <div class="metric" id="savingsImpact"></div>
+          <div class="metric" id="riskImpact"></div>
+          <div class="metric" id="homeValueImpact"></div>
+
+          <div class="guidance" id="guidance"></div>
+
+          <div class="disclaimer">
+            This is a general educational estimate, not mold inspection, medical, insurance, contractor, environmental, lending, or financial advice. Serious mold or health concerns should be evaluated by qualified professionals.
+          </div>
+        </div>
+      </div>
+
+      <div class="content-section">
+        <h2>What a $4,000 Mold Remediation Project Really Costs</h2>
+
+        <p>
+          Mold remediation can include inspection, containment, air filtration, removal of contaminated materials, cleaning, antimicrobial treatment, disposal, moisture-source repair, drywall replacement, flooring work, ventilation improvements, and post-remediation verification.
+        </p>
+
+        <p>
+          A $4,000 mold remediation project may be worth doing when mold is spreading, moisture keeps returning, a basement or bathroom smells musty, or someone in the home is experiencing symptoms. It becomes more financially stressful when the quote treats the mold but ignores the leak, humidity, drainage, roof, plumbing, or ventilation problem that caused it.
+        </p>
+      </div>
+
+      <WhenSpendingMakesSense
+        title="When Paying for Mold Remediation Makes Sense"
+        items={[
+          "Mold is visible, spreading, recurring, or connected to an unresolved moisture source.",
+          "The project includes containment, safe removal, cleanup, and correction of the underlying water issue.",
+          "Someone in the household may be sensitive to mold, musty air, or poor indoor air quality.",
+          "You can pay for the work without draining emergency savings.",
+          "The remediation protects home value, habitability, and future repair costs.",
+        ]}
+      />
+
+      <div class="content-section">
+        <h2>When You Should Slow Down Before Paying</h2>
+
+        <p>
+          Slow down if the contractor only proposes spraying or cleaning visible mold without finding the moisture source. Mold usually returns if the leak, humidity, condensation, grading, roof, plumbing, ventilation, or basement water problem remains unresolved.
+        </p>
+
+        <p>
+          Before committing, ask whether testing is necessary, what materials must be removed, how the area will be contained, whether insurance might apply, and what proof you will receive that the problem was properly corrected.
+        </p>
+      </div>
+
+      <KeyCostCategories
+        items={[
+          {
+            title: "Inspection and moisture source",
+            description:
+              "The real cost depends on whether the mold comes from plumbing, roof leaks, humidity, basement water, condensation, or poor ventilation.",
+          },
+          {
+            title: "Containment and removal",
+            description:
+              "Professional remediation may involve sealing the area, filtering air, removing drywall or flooring, cleaning surfaces, and safely disposing of materials.",
+          },
+          {
+            title: "Rebuild and prevention",
+            description:
+              "Drywall, flooring, insulation, trim, paint, ventilation, drainage, or plumbing repairs may add cost after the mold is removed.",
+          },
+          {
+            title: "Insurance and financing",
+            description:
+              "Coverage may depend on the cause of the moisture, while financing should be judged by total repayment cost and monthly budget impact.",
+          },
+        ]}
+      />
+
+      <ReduceCostTips
+        items={[
+          "Find and fix the moisture source before spending heavily on cleanup.",
+          "Get more than one written estimate if the situation is not urgent.",
+          "Ask what is included: containment, removal, cleaning, disposal, drying, and verification.",
+          "Check whether homeowners insurance may cover part of the damage depending on the cause.",
+          "Avoid paying for cosmetic cleanup if hidden moisture is still active.",
+          "Use financing cautiously if the payment would strain your monthly budget.",
+        ]}
+      />
+
+      <FinancialRedFlags
+        items={[
+          "The mold is spreading, returning, or connected to active water intrusion.",
+          "Someone in the home has symptoms that may be aggravated by poor indoor air quality.",
+          "The quote does not explain the moisture source.",
+          "The project would wipe out nearly all emergency savings.",
+          "The contractor offers a quick spray treatment without containment, removal, or prevention details.",
+          "The monthly payment would make mortgage, utilities, groceries, insurance, or debt payments difficult.",
+        ]}
+      />
+
+      <CalculatorAssumptions
+        items={[
+          "The calculator treats mold remediation as a health, habitability, and home-protection repair.",
+          "Monthly income means take-home pay after taxes and payroll deductions.",
+          "Mold problem severity is a rough risk input and does not replace professional inspection or medical advice.",
+          "Estimated home value is used only as a rough project-size check.",
+          "Monthly debt payments include credit cards, car loans, student loans, personal loans, and other required debt payments.",
+          "The estimate does not evaluate mold type, air quality, medical risk, insurance coverage, contractor quality, testing needs, building materials, or the exact moisture source.",
+        ]}
+      />
+
+      <FAQSection
+        title="Mold Remediation Spending FAQ"
+        faqs={[
+          {
+            question: "Is $4,000 too much for mold remediation?",
+            answer:
+              "It depends on the size of the affected area, whether materials must be removed, the moisture source, containment needs, local labor costs, and whether rebuild work is included. A $4,000 quote can be reasonable, but it should clearly explain the scope.",
+          },
+          {
+            question: "Should I remove mold myself or hire a professional?",
+            answer:
+              "Small surface areas may sometimes be handled carefully by a homeowner, but larger areas, recurring mold, hidden moisture, HVAC contamination, or health concerns usually call for professional help.",
+          },
+          {
+            question: "Will mold come back after remediation?",
+            answer:
+              "It can if the moisture source is not fixed. Remediation should address both cleanup and prevention, including leaks, humidity, drainage, ventilation, condensation, or water intrusion.",
+          },
+          {
+            question: "Does homeowners insurance cover mold remediation?",
+            answer:
+              "Sometimes, but coverage depends on the cause. Sudden water damage may be treated differently from long-term leaks, humidity, neglect, or maintenance issues. Review your policy and ask your insurer before assuming coverage.",
+          },
+          {
+            question: "Should I finance mold remediation?",
+            answer:
+              "Financing may make sense if the mold problem is urgent and the payment fits comfortably. Be cautious with high interest, unclear fees, or a payment that creates stress after the cleanup.",
+          },
+        ]}
+      />
+
+      <MethodologySection category="home improvement spending" updated="May 2026" />
+
+      <RelatedGuides
+        guides={[
+          {
+            title: "Home Improvement Calculators",
+            href: "/home-improvement-calculators",
+            description:
+              "Browse home repair and renovation calculators for urgent repairs, upgrades, and major homeowner decisions.",
+          },
+          {
+            title: "What Counts as Debt?",
+            href: "/what-counts-as-debt",
+            description:
+              "Understand which monthly obligations should be included when estimating financial pressure.",
+          },
+        ]}
+      />
+
+      <RelatedCalculators
+        calculators={[
+          {
+            category: "Home Improvement",
+            title: "Should I Spend $7,000 on Basement Waterproofing?",
+            href: "/should-i-spend-7000-on-basement-waterproofing",
+          },
+          {
+            category: "Home Improvement",
+            title: "Should I Spend $6,000 on Electrical Panel Replacement?",
+            href: "/should-i-spend-6000-on-electrical-panel-replacement",
+          },
+          {
+            category: "Home Improvement",
+            title: "Should I Spend $5,000 on Plumbing Repairs?",
+            href: "/should-i-spend-5000-on-plumbing-repairs",
+          },
+          {
+            category: "Home Improvement",
+            title: "Browse Home Improvement Calculators",
+            href: "/home-improvement-calculators",
+          },
+        ]}
+      />
+    </CalculatorPageShell>
+  </div>
+
+  <script is:inline>
+    const clamp = (value, min, max) => Math.min(Math.max(value, min), max);
+
+    const getNumber = (id) => {
+      const rawValue = document.getElementById(id)?.value;
+      const value = Number(rawValue);
+      return Number.isFinite(value) && value >= 0 ? value : 0;
+    };
+
+    function getPressureLevel(score) {
+      if (score <= 30) {
+        return {
+          label: "Low Pressure",
+          stress: "Low pressure",
+          color: "#16a34a",
+          action:
+            "Proceed after confirming the moisture source, comparing the scope, and keeping a cash cushion for any rebuild work.",
+        };
+      }
+
+      if (score <= 60) {
+        return {
+          label: "Moderate Pressure",
+          stress: "Moderate pressure",
+          color: "#ca8a04",
+          action:
+            "Protect emergency savings, confirm insurance options, and make sure the estimate fixes the moisture source.",
+        };
+      }
+
+      return {
+        label: "High Pressure",
+        stress: "High pressure",
+        color: "#dc2626",
+        action:
+          "Get another estimate, confirm urgency, ask about insurance, and avoid high-interest financing if possible.",
+      };
+    }
+
+    function calculateMold() {
+      const cost = getNumber("cost");
+      const income = getNumber("income");
+      const savings = getNumber("savings");
+      const expenses = getNumber("expenses");
+      const debt = getNumber("debt");
+      const homeValue = getNumber("homeValue");
+      const moldRisk = getNumber("moldRisk");
+      const financed = getNumber("financed");
+
+      const result = document.getElementById("result");
+      const scoreEl = document.getElementById("score");
+      const barFill = document.getElementById("barFill");
+      const stressEl = document.getElementById("stress");
+      const cashFlowEl = document.getElementById("cashFlow");
+      const savingsImpactEl = document.getElementById("savingsImpact");
+      const riskImpactEl = document.getElementById("riskImpact");
+      const homeValueImpactEl = document.getElementById("homeValueImpact");
+      const guidanceEl = document.getElementById("guidance");
+
+      result.style.display = "block";
+
+      if (cost <= 0 || income <= 0) {
+        scoreEl.textContent = "Add your numbers first";
+        barFill.style.width = "0%";
+        barFill.style.background = "#16a34a";
+        stressEl.innerHTML = "";
+        cashFlowEl.innerHTML = "";
+        savingsImpactEl.innerHTML = "";
+        riskImpactEl.innerHTML = "";
+        homeValueImpactEl.innerHTML = "";
+        guidanceEl.textContent =
+          "Enter a positive mold remediation cost and monthly take-home income so the calculator can estimate financial pressure.";
+        return;
+      }
+
+      const outOfPocket = Math.max(cost - financed, 0);
+      const monthlyRemaining = income - expenses - debt;
+      const monthlyFixedCosts = expenses + debt;
+      const remainingSavings = savings - outOfPocket;
+
+      const savingsImpact = savings > 0 ? (outOfPocket / savings) * 100 : 100;
+      const incomeImpact = (cost / income) * 100;
+      const incomeRecoveryPower = cost / income;
+      const fixedObligationRatio = (monthlyFixedCosts / income) * 100;
+      const financedShare = cost > 0 ? (financed / cost) * 100 : 0;
+      const homeValueRatio = homeValue > 0 ? (cost / homeValue) * 100 : 0;
+
+      const emergencyMonths =
+        monthlyFixedCosts > 0
+          ? remainingSavings / monthlyFixedCosts
+          : remainingSavings > 0
+            ? 999
+            : 0;
+
+      const riskLabel =
+        moldRisk >= 3
+          ? "Large area, health symptoms, hidden moisture, or black mold concern"
+          : moldRisk === 2
+            ? "Recurring moisture, musty smell, or spreading area"
+            : "Small visible area or mild odor";
+
+      let pressureScore = 0;
+
+      const enormousSavings =
+  savings >= cost * 100 &&
+  remainingSavings >= cost * 90 &&
+  savingsImpact <= 1 &&
+  monthlyRemaining > 0;
+
+const ultraSafeSavings =
+  savings >= cost * 25 &&
+  remainingSavings >= cost * 20 &&
+  savingsImpact <= 5 &&
+  monthlyRemaining > 0;
+
+const ultraSafeIncome =
+  incomeRecoveryPower <= 0.5 &&
+  monthlyRemaining > cost * 0.5 &&
+  fixedObligationRatio <= 35;
+
+const extremeSavings =
+  savingsImpact <= 1 &&
+  emergencyMonths >= 12 &&
+  monthlyRemaining > 0;
+
+if (enormousSavings || ultraSafeSavings || ultraSafeIncome || extremeSavings) {
+  pressureScore = 0;
+} else {
+  pressureScore += clamp(incomeImpact * 0.14, 0, 22);
+  pressureScore += clamp(savingsImpact * 0.18, 0, 26);
+  pressureScore += clamp(fixedObligationRatio * 0.18, 0, 22);
+
+  if (remainingSavings < 0) pressureScore += 30;
+  else if (emergencyMonths < 1 && incomeRecoveryPower >= 1) pressureScore += 22;
+  else if (emergencyMonths < 3 && incomeRecoveryPower >= 0.75) pressureScore += 14;
+  else if (emergencyMonths >= 6) pressureScore -= 8;
+
+        if (financed > 0) pressureScore += clamp(financedShare * 0.14, 4, 18);
+
+        if (homeValue > 0 && homeValueRatio > 5) pressureScore += 4;
+        else if (homeValue > 0 && homeValueRatio <= 2) pressureScore -= 4;
+
+        if (moldRisk >= 3) pressureScore -= 8;
+        else if (moldRisk === 2) pressureScore -= 4;
+        else pressureScore += 2;
+
+        if (monthlyRemaining < 0) pressureScore += 20;
+        else if (monthlyRemaining < income * 0.1) pressureScore += 10;
+        else if (monthlyRemaining > income * 0.35) pressureScore -= 8;
+
+        if (
+          savingsImpact <= 2 &&
+          fixedObligationRatio < 45 &&
+          emergencyMonths >= 12 &&
+          financedShare === 0
+        ) {
+          pressureScore = 0;
+        } else if (
+          savingsImpact <= 5 &&
+          fixedObligationRatio < 50 &&
+          emergencyMonths >= 6 &&
+          financedShare <= 25
+        ) {
+          pressureScore = Math.min(pressureScore, 5);
+        } else if (
+          incomeRecoveryPower < 1 &&
+          fixedObligationRatio < 35 &&
+          monthlyRemaining > cost * 0.5
+        ) {
+          pressureScore = Math.min(pressureScore, 10);
+        }
+
+        pressureScore = Math.round(clamp(pressureScore, 0, 100));
+      }
+
+      const level = getPressureLevel(pressureScore);
+
+      let guidance = "";
+
+      if (pressureScore <= 30) {
+        guidance = `This mold remediation project appears financially manageable based on the numbers provided. The project equals about ${incomeImpact.toFixed(
+          1
+        )}% of one month’s take-home income, and your estimated emergency cushion remains around ${Math.max(
+          emergencyMonths,
+          0
+        ).toFixed(1)} months after the out-of-pocket cost.`;
+      } else if (pressureScore <= 60) {
+        guidance = `This mold remediation project may work, but it creates noticeable financial pressure. The project equals about ${incomeImpact.toFixed(
+          1
+        )}% of one month’s take-home income, and the out-of-pocket portion uses about ${savingsImpact.toFixed(
+          1
+        )}% of available savings.`;
+      } else {
+        guidance = `This mold remediation project could create real financial strain. The project equals about ${incomeImpact.toFixed(
+          1
+        )}% of one month’s take-home income, and the combination of savings impact, financing, debt, and monthly cash flow suggests you should compare options before committing unless the problem is urgent.`;
+      }
+
+      scoreEl.textContent = `${level.label} — ${pressureScore}/100`;
+      scoreEl.style.color = level.color;
+      barFill.style.width = `${pressureScore}%`;
+      barFill.style.background = level.color;
+
+      stressEl.innerHTML = `<strong>Pressure level:</strong> ${level.stress}`;
+      cashFlowEl.innerHTML = `<strong>Monthly cash flow after bills and debt:</strong> $${monthlyRemaining.toLocaleString()}`;
+      savingsImpactEl.innerHTML = `<strong>Savings after out-of-pocket mold remediation cost:</strong> $${remainingSavings.toLocaleString()}`;
+      riskImpactEl.innerHTML = `<strong>Mold problem severity:</strong> ${riskLabel}`;
+      homeValueImpactEl.innerHTML = `<strong>Project cost as share of home value:</strong> ${homeValueRatio.toFixed(1)}%`;
+      guidanceEl.textContent = `${guidance} Recommended next step: ${level.action}`;
+    }
+
+    document
+      .getElementById("moldButton")
+      .addEventListener("click", calculateMold);
+  </script>
+</Layout>
