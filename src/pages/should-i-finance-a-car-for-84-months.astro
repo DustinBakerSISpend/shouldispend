@@ -1,0 +1,743 @@
+---
+import Layout from "../layouts/Layout.astro";
+import CalculatorPageShell from "../components/CalculatorPageShell.astro";
+import FAQSection from "../components/FAQSection.astro";
+import RelatedCalculators from "../components/RelatedCalculators.astro";
+import MethodologySection from "../components/MethodologySection.astro";
+import WhenSpendingMakesSense from "../components/WhenSpendingMakesSense.astro";
+import { calculators } from "../data/calculators.js";
+
+const carFaqs = [
+  {
+    question: "Is an 84-month car loan a bad idea?",
+    answer:
+      "An 84-month car loan can lower the monthly payment, but it often increases total interest, slows equity building, and raises the risk of owing more than the vehicle is worth.",
+  },
+  {
+    question: "When can an 84-month car loan make sense?",
+    answer:
+      "An 84-month loan may be reasonable when the interest rate is low, the vehicle is reliable, the buyer has strong savings, and the payment does not crowd out other financial priorities.",
+  },
+  {
+    question: "What is the biggest risk of financing a car for 84 months?",
+    answer:
+      "The biggest risk is long-term payment pressure. A seven-year loan can leave you making payments after the vehicle has lost significant value or started needing more repairs.",
+  },
+];
+
+const relatedCalculators = calculators
+  .filter(
+    (calculator) =>
+      calculator.category === "Cars" &&
+      calculator.href !== "/should-i-finance-a-car-for-84-months"
+  )
+  .slice(0, 4);
+---
+
+<Layout
+  title="Should I Finance a Car for 84 Months?"
+  description="Evaluate whether an 84-month auto loan makes sense based on vehicle price, down payment, APR, income, savings, debt, and long-term payment pressure."
+>
+  <style>
+    .container {
+      max-width: 900px;
+      margin: auto;
+    }
+
+    .calculator {
+      background: white;
+      padding: 40px;
+      border-radius: 24px;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.06);
+    }
+
+    .calculator h2 {
+      margin-top: 0;
+      font-size: 2rem;
+      margin-bottom: 18px;
+      color: #0f172a;
+    }
+
+    .calculator-intro {
+      color: #334155;
+      line-height: 1.8;
+      margin-bottom: 30px;
+      font-size: 1.05rem;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+    }
+
+    .field label {
+      display: block;
+      font-weight: 800;
+      margin-bottom: 10px;
+      color: #0f172a;
+    }
+
+    .field input {
+      width: 100%;
+      padding: 16px;
+      border-radius: 12px;
+      border: 1px solid #cbd5e1;
+      font-size: 1rem;
+      box-sizing: border-box;
+    }
+
+    .helper-link {
+      margin-top: 10px;
+      font-size: 0.92rem;
+      line-height: 1.5;
+      color: #475569;
+    }
+
+    .helper-link a,
+    .content-link {
+      color: #0f766e;
+      font-weight: 700;
+      text-decoration: none;
+    }
+
+    .helper-link a:hover,
+    .content-link:hover {
+      text-decoration: underline;
+    }
+
+    button {
+      margin-top: 30px;
+      background: #0f766e;
+      color: white;
+      border: none;
+      padding: 18px 32px;
+      border-radius: 999px;
+      font-size: 1.05rem;
+      font-weight: 800;
+      cursor: pointer;
+      transition: opacity 0.2s ease;
+    }
+
+    button:hover {
+      opacity: 0.92;
+    }
+
+    .results {
+      margin-top: 36px;
+      background: #f8fafc;
+      padding: 32px;
+      border-radius: 24px;
+      border: 1px solid var(--border);
+      box-shadow: 0 10px 24px rgba(15, 23, 42, 0.04);
+      display: none;
+    }
+
+    .results.visible {
+      display: block;
+    }
+
+    .score {
+      font-size: clamp(2rem, 4vw, 2.7rem);
+      font-weight: 900;
+      color: #0f172a;
+      margin-bottom: 22px;
+      line-height: 1.15;
+    }
+
+    .bar {
+      width: 100%;
+      height: 16px;
+      background: #dbe4ee;
+      border-radius: 999px;
+      overflow: hidden;
+      margin-bottom: 24px;
+    }
+
+    .fill {
+      height: 100%;
+      width: 0%;
+      border-radius: 999px;
+      transition: width 0.45s ease;
+    }
+
+    .fill.safe {
+      background: linear-gradient(90deg, #0f766e 0%, #14b8a6 100%);
+    }
+
+    .fill.caution {
+      background: linear-gradient(90deg, #ca8a04 0%, #facc15 100%);
+    }
+
+    .fill.danger {
+      background: linear-gradient(90deg, #dc2626 0%, #f97316 100%);
+    }
+
+    .result-details {
+      color: #334155;
+      line-height: 1.9;
+      font-size: 1.02rem;
+    }
+
+    .result-details p {
+      margin: 0 0 12px;
+    }
+
+    .guidance {
+      margin-top: 22px;
+      padding-top: 20px;
+      border-top: 1px solid #dbe4ee;
+      font-size: 1.12rem;
+      line-height: 1.85;
+      color: #1e293b;
+    }
+
+    .disclaimer {
+      margin-top: 24px;
+      font-size: 0.9rem;
+      color: #64748b;
+    }
+
+    .content-section {
+      margin-top: 60px;
+    }
+
+    .content-section h2 {
+      font-size: 2rem;
+      margin-bottom: 20px;
+      color: #0f172a;
+    }
+
+    .content-section p {
+      font-size: 1.1rem;
+      line-height: 1.9;
+      color: #334155;
+    }
+
+    .pillar-card {
+      display: block;
+      background: #f8fafc;
+      border: 1px solid #dbe4ee;
+      border-radius: 20px;
+      padding: 24px;
+      margin-top: 28px;
+      text-decoration: none;
+      transition: transform 0.15s ease;
+    }
+
+    .pillar-card:hover {
+      transform: translateY(-2px);
+    }
+
+    .pillar-card strong {
+      display: block;
+      margin-bottom: 10px;
+      color: #0f172a;
+      font-size: 1.08rem;
+    }
+
+    .pillar-card span {
+      color: #334155;
+      line-height: 1.7;
+      font-size: 0.98rem;
+    }
+
+    @media (max-width: 768px) {
+      .calculator {
+        padding: 24px;
+      }
+
+      .grid {
+        grid-template-columns: 1fr;
+      }
+
+      .calculator h2,
+      .content-section h2 {
+        font-size: 1.7rem;
+      }
+
+      .results {
+        padding: 24px;
+      }
+    }
+  </style>
+
+  <div class="container">
+    <CalculatorPageShell
+      eyebrow="Auto Loan Term Calculator"
+      title="Should I Finance a Car for 84 Months?"
+      description="Estimate whether a seven-year car loan lowers the payment enough to justify the added interest, depreciation risk, and long-term obligation."
+    >
+      <div class="calculator">
+        <h2>84-Month Auto Loan Verdict</h2>
+
+        <p class="calculator-intro">
+          Enter the vehicle price, down payment, APR, income, savings, and
+          current debt payments. This calculator estimates the 84-month payment
+          and shows whether the loan term creates low, moderate, or high
+          financial pressure.
+        </p>
+
+        <div class="grid">
+          <div class="field">
+            <label for="income">Monthly Take-Home Income</label>
+            <input id="income" type="number" placeholder="Example: 7500" />
+          </div>
+
+          <div class="field">
+            <label for="savings">Current Savings</label>
+            <input id="savings" type="number" placeholder="Example: 25000" />
+          </div>
+
+          <div class="field">
+            <label for="price">Vehicle Price</label>
+            <input id="price" type="number" placeholder="Example: 48000" />
+          </div>
+
+          <div class="field">
+            <label for="downPayment">Down Payment</label>
+            <input id="downPayment" type="number" placeholder="Example: 8000" />
+          </div>
+
+          <div class="field">
+            <label for="apr">Estimated APR</label>
+            <input id="apr" type="number" step="0.01" placeholder="Example: 7.5" />
+          </div>
+
+          <div class="field">
+            <label for="debt">Current Monthly Debt Payments</label>
+            <input id="debt" type="number" placeholder="Example: 900" />
+
+            <div class="helper-link">
+              Not sure what counts as debt?
+              <a href="/what-counts-as-debt">Read the debt guide</a>
+            </div>
+          </div>
+        </div>
+
+        <button id="carButton" type="button">Get 84-Month Loan Verdict</button>
+
+        <div class="results" id="results">
+          <div class="score" id="scoreText"></div>
+
+          <div class="bar">
+            <div class="fill" id="fillBar"></div>
+          </div>
+
+          <div class="result-details" id="resultDetails"></div>
+
+          <div class="guidance" id="guidance"></div>
+
+          <div class="disclaimer">
+            This is a general educational estimate, not financial advice.
+          </div>
+        </div>
+      </div>
+
+      <section class="content-section">
+        <h2>Start With the Full Car Affordability Guide</h2>
+
+        <p>
+          An 84-month loan can make a vehicle look more affordable because the
+          payment is spread across seven years. The better question is whether
+          the payment, interest cost, vehicle depreciation, and long-term debt
+          still fit your financial life.
+        </p>
+
+        <a class="pillar-card" href="/how-much-car-can-i-afford">
+          <strong>How Much Car Can I Afford?</strong>
+          <span>
+            Learn how to calculate a realistic vehicle budget using take-home
+            income, savings, insurance costs, debt pressure, loan length, and
+            total ownership cost.
+          </span>
+        </a>
+
+        <a class="pillar-card" href="/how-much-emergency-savings-should-i-have">
+          <strong>Emergency Savings Guide</strong>
+
+          <span>
+            Learn how much savings cushion to keep before taking on large
+            recurring monthly obligations like vehicle payments.
+          </span>
+        </a>
+
+        <a class="pillar-card" href="/how-much-debt-is-too-much">
+          <strong>Debt Pressure Calculator</strong>
+
+          <span>
+            Evaluate whether existing debt payments, monthly obligations,
+            and financial pressure leave room for a long auto loan.
+          </span>
+        </a>
+      </section>
+
+      <section class="content-section">
+        <h2>What an 84-Month Car Loan Really Means</h2>
+
+        <p>
+          An 84-month auto loan means seven years of payments. That can reduce
+          the monthly bill, but it can also keep you in debt long after the
+          vehicle has lost a large share of its value.
+        </p>
+
+        <p>
+          The longer term can also make it easier to buy more vehicle than your
+          budget would normally support. A lower payment may feel manageable at
+          first, while insurance, maintenance, repairs, interest, and
+          depreciation create pressure later.
+        </p>
+      </section>
+
+      <WhenSpendingMakesSense
+        title="When an 84-Month Car Loan Can Make Sense"
+        items={[
+          "You qualify for a low interest rate.",
+          "You plan to keep the vehicle well beyond the loan term.",
+          "The vehicle is reliable enough for long-term ownership.",
+          "You have strong emergency savings after the purchase.",
+          "The estimated payment remains comfortable with insurance and repairs included.",
+        ]}
+      />
+
+      <section class="content-section">
+        <h2>When You Should Avoid an 84-Month Loan</h2>
+
+        <p>
+          An 84-month loan may be too aggressive if you need the longer term
+          only to make the monthly payment feel affordable. That can be a sign
+          the vehicle price is stretching the budget.
+        </p>
+
+        <p>
+          Long loans can also create negative equity risk. If the vehicle loses
+          value faster than the loan balance falls, selling or trading the car
+          can become expensive.
+        </p>
+
+        <p>
+          If the loan would leave little flexibility after
+          <a class="content-link" href="/how-much-rent-can-i-afford">
+            housing
+          </a>,
+          <a class="content-link" href="/should-i-spend-this-much-on-groceries-per-month">
+            groceries
+          </a>,
+          insurance, debt, and savings, a cheaper vehicle or shorter loan may
+          create less long-term pressure.
+        </p>
+      </section>
+
+      <section class="content-section">
+        <h2>Key Costs to Consider</h2>
+
+        <p>
+          Before choosing an 84-month loan, estimate the full ownership cost.
+          The payment is only one part of the decision. Insurance, fuel,
+          maintenance, repairs, registration, tires, and depreciation all matter.
+        </p>
+
+        <p>
+          A seven-year loan can also increase the chance that repairs and loan
+          payments overlap. That combination can feel especially frustrating if
+          the vehicle is no longer under warranty.
+        </p>
+
+        <p>
+          You can also compare the result against specific payment calculators
+          like the
+          <a class="content-link" href="/should-i-spend-700-on-a-car-payment">
+            $700 car payment calculator
+          </a>,
+          <a class="content-link" href="/should-i-spend-900-on-a-car-payment">
+            $900 car payment calculator
+          </a>,
+          or
+          <a class="content-link" href="/should-i-spend-1000-on-a-car-payment">
+            $1,000 car payment calculator
+          </a>.
+        </p>
+      </section>
+
+      <section class="content-section">
+        <h2>Signs the Loan Term Is Creating Financial Pressure</h2>
+
+        <p>
+          Be careful if the 84-month term is the only reason the vehicle fits
+          the budget. That often means the price, interest rate, or total debt
+          load deserves another look.
+        </p>
+
+        <p>
+          Pressure can also appear if the loan slows emergency savings, delays
+          debt payoff, pushes insurance costs higher, or leaves little room for
+          normal surprise expenses.
+        </p>
+      </section>
+
+      <section class="content-section">
+        <h2>What Your 84-Month Loan Verdict Actually Means</h2>
+
+        <p>
+          The verdict estimates whether the long loan term creates financial
+          pressure based on the estimated payment, income, savings, debt, APR,
+          down payment, and loan balance.
+        </p>
+
+        <p>
+          A stronger verdict means the 84-month loan appears less likely to
+          create ongoing pressure. A weaker verdict means the vehicle may still
+          be possible, but the long repayment period could reduce flexibility
+          for years.
+        </p>
+      </section>
+
+      <div class="content-section">
+        <FAQSection faqs={carFaqs} />
+      </div>
+
+      <div class="content-section">
+        <RelatedCalculators calculators={relatedCalculators} />
+      </div>
+    </CalculatorPageShell>
+
+    <MethodologySection category="auto loan affordability" />
+  </div>
+
+  <script is:inline>
+    const clamp = (value, min, max) => Math.min(Math.max(value, min), max);
+
+    const getNumber = (id) => {
+      const rawValue = document.getElementById(id)?.value;
+      const value = Number(rawValue);
+      return Number.isFinite(value) && value >= 0 ? value : 0;
+    };
+
+    function getPressureLevel(score) {
+      if (score <= 30) {
+        return {
+          label: "Low Pressure",
+          stress: "Low pressure",
+          colorClass: "safe",
+          action:
+            "Use the long term carefully and keep total vehicle costs reasonable.",
+        };
+      }
+
+      if (score <= 60) {
+        return {
+          label: "Moderate Pressure",
+          stress: "Moderate pressure",
+          colorClass: "caution",
+          action:
+            "Compare a cheaper vehicle, larger down payment, or shorter loan before committing.",
+        };
+      }
+
+      return {
+        label: "High Pressure",
+        stress: "High pressure",
+        colorClass: "danger",
+        action:
+          "Reduce the vehicle budget or improve savings and monthly flexibility first.",
+      };
+    }
+
+    function calculateMonthlyPayment(principal, annualApr, months) {
+      if (principal <= 0) return 0;
+
+      const monthlyRate = annualApr / 100 / 12;
+
+      if (monthlyRate <= 0) {
+        return principal / months;
+      }
+
+      return (
+        principal *
+        (monthlyRate * Math.pow(1 + monthlyRate, months)) /
+        (Math.pow(1 + monthlyRate, months) - 1)
+      );
+    }
+
+    function calculateCarLoan() {
+      const income = getNumber("income");
+      const savings = getNumber("savings");
+      const price = getNumber("price");
+      const downPayment = getNumber("downPayment");
+      const apr = getNumber("apr");
+      const debt = getNumber("debt");
+
+      const results = document.getElementById("results");
+      const scoreText = document.getElementById("scoreText");
+      const fillBar = document.getElementById("fillBar");
+      const resultDetails = document.getElementById("resultDetails");
+      const guidance = document.getElementById("guidance");
+
+      results.classList.add("visible");
+
+      if (income <= 0 || price <= 0) {
+        scoreText.textContent = "Add your numbers first";
+        fillBar.style.width = "0%";
+        fillBar.className = "fill safe";
+
+        resultDetails.innerHTML =
+          "<p>Enter monthly take-home income, current savings, vehicle price, down payment, APR, and debt so the calculator can estimate 84-month auto loan pressure.</p>";
+
+        guidance.textContent = "";
+        return;
+      }
+
+      const months = 84;
+      const principal = Math.max(price - downPayment, 0);
+      const estimatedPayment = calculateMonthlyPayment(principal, apr, months);
+      const totalPaid = estimatedPayment * months;
+      const totalInterest = Math.max(totalPaid - principal, 0);
+
+      const paymentRatio = (estimatedPayment / income) * 100;
+      const totalDebtRatio = ((estimatedPayment + debt) / income) * 100;
+      const savingsMonths = savings / Math.max(income * 0.7, 1);
+      const sixMonthPaymentImpact =
+        ((estimatedPayment * 6) / Math.max(savings, 1)) * 100;
+
+      const downPaymentPercent = price > 0 ? (downPayment / price) * 100 : 0;
+      const financedShare = price > 0 ? (principal / price) * 100 : 0;
+      const incomeRecoveryPower = estimatedPayment / Math.max(income, 1);
+      const savingsPower = savings / Math.max(estimatedPayment, 1);
+
+      const absurdIncome =
+        income >= estimatedPayment * 200 &&
+        paymentRatio <= 0.5 &&
+        totalDebtRatio <= 5;
+
+      const absurdSavings =
+        savings >= estimatedPayment * 120 && sixMonthPaymentImpact <= 5;
+
+      const ultraSafeIncome =
+        incomeRecoveryPower <= 0.01 &&
+        paymentRatio <= 1 &&
+        totalDebtRatio <= 8;
+
+      const ultraSafeSavings =
+        savingsPower >= 60 &&
+        sixMonthPaymentImpact <= 10 &&
+        savingsMonths >= 12;
+
+      let pressureScore = 0;
+
+      pressureScore += clamp(paymentRatio * 2.2, 0, 42);
+      pressureScore += clamp(totalDebtRatio * 0.7, 0, 30);
+
+      if (paymentRatio >= 25) {
+        pressureScore += 24;
+      } else if (paymentRatio >= 18) {
+        pressureScore += 16;
+      } else if (paymentRatio >= 12) {
+        pressureScore += 8;
+      }
+
+      if (savingsMonths < 1) {
+        pressureScore += 18;
+      } else if (savingsMonths < 3) {
+        pressureScore += 10;
+      } else if (savingsMonths >= 6) {
+        pressureScore -= 8;
+      }
+
+      if (sixMonthPaymentImpact > 100) {
+        pressureScore += 18;
+      } else if (sixMonthPaymentImpact > 60) {
+        pressureScore += 10;
+      } else if (sixMonthPaymentImpact > 35) {
+        pressureScore += 5;
+      }
+
+      if (apr >= 12) {
+        pressureScore += 12;
+      } else if (apr >= 9) {
+        pressureScore += 8;
+      } else if (apr >= 6) {
+        pressureScore += 4;
+      }
+
+      if (financedShare >= 95) {
+        pressureScore += 10;
+      } else if (financedShare >= 85) {
+        pressureScore += 6;
+      }
+
+      if (downPaymentPercent >= 20) {
+        pressureScore -= 6;
+      } else if (downPaymentPercent >= 10) {
+        pressureScore -= 3;
+      }
+
+      if (paymentRatio < 8 && totalDebtRatio < 20 && savingsMonths >= 6) {
+        pressureScore = Math.min(pressureScore, 24);
+      }
+
+      if (paymentRatio < 5 && totalDebtRatio < 10 && savingsMonths >= 12) {
+        pressureScore = Math.min(pressureScore, 12);
+      }
+
+      if (ultraSafeIncome && ultraSafeSavings) {
+        pressureScore = 0;
+      }
+
+      if (absurdIncome || absurdSavings) {
+        pressureScore = 0;
+      }
+
+      pressureScore = clamp(Math.round(pressureScore), 0, 100);
+
+      const level = getPressureLevel(pressureScore);
+
+      scoreText.textContent = `${level.label} — ${pressureScore}/100`;
+      fillBar.style.width = `${pressureScore}%`;
+      fillBar.className = `fill ${level.colorClass}`;
+
+      let explanation = "";
+
+      if (pressureScore === 0) {
+        explanation =
+          "This 84-month loan creates virtually no measurable pressure based on the income, savings, debt, vehicle price, down payment, and APR provided.";
+      } else if (pressureScore <= 30) {
+        explanation =
+          "This 84-month loan appears manageable based on the numbers provided. The main priority is avoiding long-term overbuying and keeping total vehicle costs under control.";
+      } else if (pressureScore <= 60) {
+        explanation =
+          "This 84-month loan may work, but it deserves caution. The longer term can hide the true cost of the vehicle and increase total interest exposure.";
+      } else {
+        explanation =
+          "This 84-month loan could create ongoing financial pressure. A cheaper vehicle, larger down payment, shorter term, or stronger savings cushion would likely create more flexibility.";
+      }
+
+      resultDetails.innerHTML = `
+        <p><strong>Estimated 84-month payment:</strong> $${estimatedPayment.toFixed(0)} per month.</p>
+
+        <p><strong>Estimated amount financed:</strong> $${principal.toFixed(0)}.</p>
+
+        <p><strong>Estimated total interest:</strong> $${totalInterest.toFixed(0)} over 84 months.</p>
+
+        <p><strong>Payment impact:</strong> ${paymentRatio.toFixed(1)}% of monthly take-home income.</p>
+
+        <p><strong>Total debt impact:</strong> ${totalDebtRatio.toFixed(1)}% of monthly take-home income, including this estimated car payment.</p>
+
+        <p><strong>Emergency savings cushion:</strong> About ${savingsMonths.toFixed(1)} months of estimated flexibility.</p>
+
+        <p><strong>Six-month payment impact:</strong> ${sixMonthPaymentImpact.toFixed(1)}% of current savings.</p>
+
+        <p><strong>Down payment:</strong> ${downPaymentPercent.toFixed(1)}% of the vehicle price.</p>
+
+        <p><strong>Pressure level:</strong> ${level.stress}.</p>
+
+        <p>${explanation} Recommended next step: ${level.action}</p>
+      `;
+
+      guidance.textContent = "";
+    }
+
+    document
+      .getElementById("carButton")
+      .addEventListener("click", calculateCarLoan);
+  </script>
+</Layout>

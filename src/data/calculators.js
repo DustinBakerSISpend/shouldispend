@@ -96,6 +96,22 @@ export const calculators = [
   href: "/should-i-spend-700-on-a-car-payment",
 },
 {
+  id: "car-payment-800",
+  category: "Cars",
+  title: "Should I Spend $800 on a Car Payment?",
+  description:
+    "Estimate whether an $800 monthly car payment fits your income, insurance costs, debt load, savings, and monthly flexibility.",
+  href: "/should-i-spend-800-on-a-car-payment",
+},
+{
+  id: "car-payment-900",
+  category: "Cars",
+  title: "Should I Spend $900 on a Car Payment?",
+  description:
+    "Evaluate whether a $900 monthly car payment creates pressure after insurance, debt, housing, savings, and everyday expenses.",
+  href: "/should-i-spend-900-on-a-car-payment",
+},
+{
   id: "car-payment-1000",
   category: "Cars",
   title: "Should I Spend $1,000 on a Car Payment?",
@@ -110,6 +126,14 @@ export const calculators = [
   description:
     "Estimate whether a luxury SUV or truck payment creates financial pressure after insurance, debt, housing, and savings.",
   href: "/should-i-spend-1500-on-a-car-payment",
+},
+{
+  id: "car-loan-84-months",
+  category: "Cars",
+  title: "Should I Finance a Car for 84 Months?",
+  description:
+    "Evaluate whether an 84-month auto loan lowers the payment enough to justify the interest cost, depreciation risk, and long-term debt.",
+  href: "/should-i-finance-a-car-for-84-months",
 },
 {
   id: "lease-vs-buy-car",
@@ -374,6 +398,15 @@ export const calculators = [
 },
 
 {
+  id: "groceries-800",
+  category: "Groceries",
+  title: "Should I Spend $800 on Groceries Per Month?",
+  description:
+    "Evaluate whether an $800 monthly grocery budget fits your income, household size, savings, debt, eating-out habits, and flexibility.",
+  href: "/should-i-spend-800-on-groceries-per-month",
+},
+
+{
   id: "groceries-1000",
   category: "Groceries",
   title: "Should I Spend $1,000 on Groceries Per Month?",
@@ -401,12 +434,30 @@ export const calculators = [
 },
 
 {
+  id: "groceries-2500",
+  category: "Groceries",
+  title: "Should I Spend $2,500 on Groceries Per Month?",
+  description:
+    "Evaluate whether a $2,500 monthly grocery budget fits your household size, income, savings, debt, food inflation, and overall flexibility.",
+  href: "/should-i-spend-2500-on-groceries-per-month",
+},
+
+{
   id: "dining-out-monthly",
   category: "Groceries",
   title: "Should I Spend This Much Eating Out Per Month?",
   description:
     "Evaluate whether your monthly restaurant, takeout, coffee, and delivery spending fits your income, groceries, debt, savings, and flexibility.",
   href: "/should-i-spend-this-much-eating-out-per-month",
+},
+
+{
+  id: "dining-out-300",
+  category: "Groceries",
+  title: "Should I Spend $300 Eating Out Per Month?",
+  description:
+    "Estimate whether spending $300 per month on restaurants, takeout, coffee, and delivery fits your income, groceries, debt, savings, and flexibility.",
+  href: "/should-i-spend-300-eating-out-per-month",
 },
 
 {

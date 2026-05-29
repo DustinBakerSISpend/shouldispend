@@ -391,164 +391,210 @@ import WhenSpendingMakesSense from "../components/WhenSpendingMakesSense.astro";
   </div>
 
   <script is:inline>
-    const clamp = (value, min, max) => Math.min(Math.max(value, min), max);
+  const clamp = (value, min, max) => Math.min(Math.max(value, min), max);
 
-    const getNumber = (id) => {
-      const rawValue = document.getElementById(id)?.value;
-      const value = Number(rawValue);
-      return Number.isFinite(value) && value >= 0 ? value : 0;
-    };
+  const getNumber = (id) => {
+    const rawValue = document.getElementById(id)?.value;
+    const value = Number(rawValue);
+    return Number.isFinite(value) && value >= 0 ? value : 0;
+  };
 
-    function getPressureLevel(score) {
-      if (score <= 30) {
-        return {
-          label: "Low Pressure",
-          stress: "Low pressure",
-          color: "#16a34a",
-          action: "Keep the restaurant budget intentional, separate groceries from takeout, and protect monthly savings.",
-        };
-      }
-
-      if (score <= 60) {
-        return {
-          label: "Moderate Pressure",
-          stress: "Moderate pressure",
-          color: "#ca8a04",
-          action: "Watch delivery fees, coffee runs, unused groceries, and whether restaurants are crowding out savings.",
-        };
-      }
-
+  function getPressureLevel(score) {
+    if (score <= 30) {
       return {
-        label: "High Pressure",
-        stress: "High pressure",
-        color: "#dc2626",
-        action: "Slow down, separate food categories, cut low-value convenience spending, and protect essential bills.",
+        label: "Low Pressure",
+        stress: "Low pressure",
+        color: "#16a34a",
+        action:
+          "Keep the restaurant budget intentional, separate groceries from takeout, and protect monthly savings.",
       };
     }
 
-    function calculateEatingOut() {
-      const eatingOut = getNumber("eatingOut");
-      const income = getNumber("income");
-      const groceryCost = getNumber("groceryCost");
-      const household = getNumber("household");
-      const savings = getNumber("savings");
-      const housing = getNumber("housing");
-      const debt = getNumber("debt");
-
-      const result = document.getElementById("result");
-      const scoreEl = document.getElementById("score");
-      const barFill = document.getElementById("barFill");
-      const foodShareEl = document.getElementById("foodShare");
-      const eatingOutShareEl = document.getElementById("eatingOutShare");
-      const cashFlowEl = document.getElementById("cashFlow");
-      const savingsCushionEl = document.getElementById("savingsCushion");
-      const guidanceEl = document.getElementById("guidance");
-
-      result.style.display = "block";
-
-      if (eatingOut <= 0 || income <= 0) {
-        scoreEl.textContent = "Add your numbers first";
-        barFill.style.width = "0%";
-        barFill.style.background = "#16a34a";
-        foodShareEl.innerHTML = "";
-        eatingOutShareEl.innerHTML = "";
-        cashFlowEl.innerHTML = "";
-        savingsCushionEl.innerHTML = "";
-        guidanceEl.textContent =
-          "Enter a positive monthly eating-out amount and monthly take-home income so the calculator can estimate financial pressure.";
-        return;
-      }
-
-      const householdSize = household > 0 ? household : 1;
-      const totalFood = groceryCost + eatingOut;
-      const eatingOutIncomeShare = (eatingOut / income) * 100;
-      const totalFoodShare = (totalFood / income) * 100;
-      const eatingOutPerPerson = eatingOut / householdSize;
-      const fixedObligationRatio = ((housing + debt) / income) * 100;
-      const monthlyRemaining = income - housing - debt - totalFood;
-      const monthlyCoreOutflow = housing + debt + totalFood;
-      const emergencyMonths =
-        monthlyCoreOutflow > 0 ? savings / monthlyCoreOutflow : savings > 0 ? 12 : 0;
-
-      let pressureScore = 0;
-
-      pressureScore += clamp(eatingOutIncomeShare * 2.4, 0, 36);
-      pressureScore += clamp(totalFoodShare * 1.05, 0, 30);
-      pressureScore += clamp(fixedObligationRatio * 0.22, 0, 24);
-
-      if (monthlyRemaining < 0) pressureScore += 26;
-      else if (monthlyRemaining < income * 0.08) pressureScore += 15;
-      else if (monthlyRemaining > income * 0.3) pressureScore -= 7;
-
-      if (emergencyMonths < 1 && income < 12000) pressureScore += 20;
-      else if (emergencyMonths < 3 && income < 15000) pressureScore += 10;
-      else if (emergencyMonths >= 6) pressureScore -= 8;
-
-      if (groceryCost > 0 && eatingOut > groceryCost) pressureScore += 12;
-      else if (groceryCost > 0 && eatingOut > groceryCost * 0.6) pressureScore += 7;
-
-      if (householdSize === 1 && eatingOutPerPerson > 500) pressureScore += 8;
-      else if (householdSize >= 2 && eatingOutPerPerson > 350) pressureScore += 6;
-
-      if (income >= 9000 && monthlyRemaining > income * 0.25 && emergencyMonths >= 3) {
-        pressureScore -= 9;
-      }
-
-      if (income >= 15000 && monthlyRemaining > income * 0.3 && emergencyMonths >= 3) {
-        pressureScore -= 12;
-      }
-
-      if (
-        eatingOutIncomeShare < 8 &&
-        totalFoodShare < 18 &&
-        emergencyMonths >= 6 &&
-        fixedObligationRatio < 50 &&
-        monthlyRemaining > income * 0.25
-      ) {
-        pressureScore = Math.min(pressureScore, 28);
-      }
-
-      if (
-        eatingOutIncomeShare < 5 &&
-        totalFoodShare < 12 &&
-        emergencyMonths >= 9 &&
-        fixedObligationRatio < 40 &&
-        monthlyRemaining > income * 0.35
-      ) {
-        pressureScore = Math.min(pressureScore, 14);
-      }
-
-      pressureScore = Math.round(clamp(pressureScore, 0, 100));
-
-      const level = getPressureLevel(pressureScore);
-
-      let guidance = "";
-
-      if (pressureScore <= 30) {
-        guidance =
-          `This $500 eating-out budget appears financially manageable based on the numbers provided. Total food spending equals about ${totalFoodShare.toFixed(1)}% of monthly take-home income, and eating out alone equals about ${eatingOutIncomeShare.toFixed(1)}%.`;
-      } else if (pressureScore <= 60) {
-        guidance =
-          `This $500 eating-out budget may work, but it creates noticeable pressure. Eating out equals about ${eatingOutIncomeShare.toFixed(1)}% of take-home income, and total food spending equals about ${totalFoodShare.toFixed(1)}%.`;
-      } else {
-        guidance =
-          `This $500 eating-out budget could create real strain. Eating out equals about ${eatingOutIncomeShare.toFixed(1)}% of take-home income, and the combination of groceries, restaurants, fixed bills, debt, or savings suggests you should review the full food budget.`;
-      }
-
-      scoreEl.textContent = `${level.label} — ${pressureScore}/100`;
-      scoreEl.style.color = level.color;
-      barFill.style.width = `${pressureScore}%`;
-      barFill.style.background = level.color;
-
-      foodShareEl.innerHTML = `<strong>Total food spending share:</strong> ${totalFoodShare.toFixed(1)}% of take-home income`;
-      eatingOutShareEl.innerHTML = `<strong>Eating out share:</strong> ${eatingOutIncomeShare.toFixed(1)}% of take-home income`;
-      cashFlowEl.innerHTML = `<strong>Monthly cash flow after housing, debt, and food:</strong> $${Math.round(monthlyRemaining).toLocaleString()}`;
-      savingsCushionEl.innerHTML = `<strong>Estimated emergency cushion:</strong> ${Math.max(emergencyMonths, 0).toFixed(1)} months`;
-      guidanceEl.textContent = `${guidance} Recommended next step: ${level.action}`;
+    if (score <= 60) {
+      return {
+        label: "Moderate Pressure",
+        stress: "Moderate pressure",
+        color: "#ca8a04",
+        action:
+          "Watch delivery fees, coffee runs, unused groceries, and whether restaurants are crowding out savings.",
+      };
     }
 
-    document
-      .getElementById("eatingOutButton")
-      .addEventListener("click", calculateEatingOut);
-  </script>
+    return {
+      label: "High Pressure",
+      stress: "High pressure",
+      color: "#dc2626",
+      action:
+        "Slow down, separate food categories, cut low-value convenience spending, and protect essential bills.",
+    };
+  }
+
+  function calculateEatingOut() {
+    const eatingOut = getNumber("eatingOut");
+    const income = getNumber("income");
+    const groceryCost = getNumber("groceryCost");
+    const household = getNumber("household");
+    const savings = getNumber("savings");
+    const housing = getNumber("housing");
+    const debt = getNumber("debt");
+
+    const result = document.getElementById("result");
+    const scoreEl = document.getElementById("score");
+    const barFill = document.getElementById("barFill");
+    const foodShareEl = document.getElementById("foodShare");
+    const eatingOutShareEl = document.getElementById("eatingOutShare");
+    const cashFlowEl = document.getElementById("cashFlow");
+    const savingsCushionEl = document.getElementById("savingsCushion");
+    const guidanceEl = document.getElementById("guidance");
+
+    result.style.display = "block";
+
+    if (eatingOut <= 0 || income <= 0) {
+      scoreEl.textContent = "Add your numbers first";
+      barFill.style.width = "0%";
+      barFill.style.background = "#16a34a";
+      foodShareEl.innerHTML = "";
+      eatingOutShareEl.innerHTML = "";
+      cashFlowEl.innerHTML = "";
+      savingsCushionEl.innerHTML = "";
+      guidanceEl.textContent =
+        "Enter a positive monthly eating-out amount and monthly take-home income so the calculator can estimate financial pressure.";
+      return;
+    }
+
+    const householdSize = household > 0 ? household : 1;
+    const totalFood = groceryCost + eatingOut;
+    const eatingOutIncomeShare = (eatingOut / income) * 100;
+    const totalFoodShare = (totalFood / income) * 100;
+    const eatingOutPerPerson = eatingOut / householdSize;
+    const fixedObligationRatio = ((housing + debt) / income) * 100;
+    const monthlyRemaining = income - housing - debt - totalFood;
+    const monthlyCoreOutflow = housing + debt + totalFood;
+
+    const emergencyMonths =
+      monthlyCoreOutflow > 0
+        ? savings / monthlyCoreOutflow
+        : savings > 0
+          ? 999
+          : 0;
+
+    const savingsPower = savings / Math.max(eatingOut, 1);
+    const incomeRecoveryPower = eatingOut / Math.max(income, 1);
+    const savingsImpact = (eatingOut / Math.max(savings, 1)) * 100;
+
+    const absurdSavings =
+      savings >= eatingOut * 200 &&
+      emergencyMonths >= 24 &&
+      savingsImpact <= 0.5;
+
+    const absurdIncome =
+      income >= eatingOut * 200 &&
+      eatingOutIncomeShare <= 0.5 &&
+      totalFoodShare <= 3 &&
+      fixedObligationRatio <= 25;
+
+    const ultraSafeSavings =
+      savingsPower >= 100 &&
+      emergencyMonths >= 12 &&
+      savingsImpact <= 1;
+
+    const ultraSafeIncome =
+      incomeRecoveryPower <= 0.01 &&
+      eatingOutIncomeShare <= 1 &&
+      totalFoodShare <= 6 &&
+      fixedObligationRatio <= 35 &&
+      monthlyRemaining > income * 0.4;
+
+    let pressureScore = 0;
+
+    pressureScore += clamp(eatingOutIncomeShare * 2.4, 0, 36);
+    pressureScore += clamp(totalFoodShare * 1.05, 0, 30);
+    pressureScore += clamp(fixedObligationRatio * 0.22, 0, 24);
+
+    if (monthlyRemaining < 0) pressureScore += 26;
+    else if (monthlyRemaining < income * 0.08) pressureScore += 15;
+    else if (monthlyRemaining > income * 0.3) pressureScore -= 7;
+
+    if (emergencyMonths < 1 && income < 12000) pressureScore += 20;
+    else if (emergencyMonths < 3 && income < 15000) pressureScore += 10;
+    else if (emergencyMonths >= 6) pressureScore -= 8;
+
+    if (groceryCost > 0 && eatingOut > groceryCost) pressureScore += 12;
+    else if (groceryCost > 0 && eatingOut > groceryCost * 0.6) pressureScore += 7;
+
+    if (householdSize === 1 && eatingOutPerPerson > 500) pressureScore += 8;
+    else if (householdSize >= 2 && eatingOutPerPerson > 350) pressureScore += 6;
+
+    if (income >= 9000 && monthlyRemaining > income * 0.25 && emergencyMonths >= 3) {
+      pressureScore -= 9;
+    }
+
+    if (income >= 15000 && monthlyRemaining > income * 0.3 && emergencyMonths >= 3) {
+      pressureScore -= 12;
+    }
+
+    if (
+      eatingOutIncomeShare < 8 &&
+      totalFoodShare < 18 &&
+      emergencyMonths >= 6 &&
+      fixedObligationRatio < 50 &&
+      monthlyRemaining > income * 0.25
+    ) {
+      pressureScore = Math.min(pressureScore, 28);
+    }
+
+    if (
+      eatingOutIncomeShare < 5 &&
+      totalFoodShare < 12 &&
+      emergencyMonths >= 9 &&
+      fixedObligationRatio < 40 &&
+      monthlyRemaining > income * 0.35
+    ) {
+      pressureScore = Math.min(pressureScore, 14);
+    }
+
+    if (ultraSafeIncome && ultraSafeSavings) {
+      pressureScore = 0;
+    }
+
+    if (absurdSavings || absurdIncome) {
+      pressureScore = 0;
+    }
+
+    pressureScore = Math.round(clamp(pressureScore, 0, 100));
+
+    const level = getPressureLevel(pressureScore);
+
+    let guidance = "";
+
+    if (pressureScore === 0) {
+      guidance =
+        `This $500 eating-out budget creates virtually no measurable financial pressure based on the income, savings, food spending, debt, and housing numbers provided.`;
+    } else if (pressureScore <= 30) {
+      guidance =
+        `This $500 eating-out budget appears financially manageable based on the numbers provided. Total food spending equals about ${totalFoodShare.toFixed(1)}% of monthly take-home income, and eating out alone equals about ${eatingOutIncomeShare.toFixed(1)}%.`;
+    } else if (pressureScore <= 60) {
+      guidance =
+        `This $500 eating-out budget may work, but it creates noticeable pressure. Eating out equals about ${eatingOutIncomeShare.toFixed(1)}% of take-home income, and total food spending equals about ${totalFoodShare.toFixed(1)}%.`;
+    } else {
+      guidance =
+        `This $500 eating-out budget could create real strain. Eating out equals about ${eatingOutIncomeShare.toFixed(1)}% of take-home income, and the combination of groceries, restaurants, fixed bills, debt, or savings suggests you should review the full food budget.`;
+    }
+
+    scoreEl.textContent = `${level.label} — ${pressureScore}/100`;
+    scoreEl.style.color = level.color;
+    barFill.style.width = `${pressureScore}%`;
+    barFill.style.background = level.color;
+
+    foodShareEl.innerHTML = `<strong>Total food spending share:</strong> ${totalFoodShare.toFixed(1)}% of take-home income`;
+    eatingOutShareEl.innerHTML = `<strong>Eating out share:</strong> ${eatingOutIncomeShare.toFixed(1)}% of take-home income`;
+    cashFlowEl.innerHTML = `<strong>Monthly cash flow after housing, debt, and food:</strong> $${Math.round(monthlyRemaining).toLocaleString()}`;
+    savingsCushionEl.innerHTML = `<strong>Estimated emergency cushion:</strong> ${Math.max(emergencyMonths, 0).toFixed(1)} months`;
+    guidanceEl.textContent = `${guidance} Recommended next step: ${level.action}`;
+  }
+
+  document
+    .getElementById("eatingOutButton")
+    .addEventListener("click", calculateEatingOut);
+</script>
 </Layout>
