@@ -1,0 +1,575 @@
+---
+import MethodologySection from "../components/MethodologySection.astro";
+import Layout from "../layouts/Layout.astro";
+import CalculatorPageShell from "../components/CalculatorPageShell.astro";
+import FAQSection from "../components/FAQSection.astro";
+import RelatedCalculators from "../components/RelatedCalculators.astro";
+import FinancialRedFlags from "../components/FinancialRedFlags.astro";
+import CalculatorAssumptions from "../components/CalculatorAssumptions.astro";
+import KeyCostCategories from "../components/KeyCostCategories.astro";
+import ReduceCostTips from "../components/ReduceCostTips.astro";
+import WhenSpendingMakesSense from "../components/WhenSpendingMakesSense.astro";
+import RelatedGuides from "../components/RelatedGuides.astro";
+---
+
+<Layout
+  title="Should I Spend $4,000 on a Cruise?"
+  description="Use this cruise affordability calculator to decide whether a $4,000 cruise fits your income, savings, debt, emergency fund, and travel budget."
+>
+  <style>
+    .container {
+      max-width: 950px;
+      margin: 0 auto;
+      padding: 60px 20px;
+    }
+
+    .content-section {
+      max-width: 760px;
+      margin: 72px auto 0;
+    }
+
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 28px;
+      padding: 34px;
+    }
+
+    h2 {
+      margin-top: 0;
+      font-size: 2rem;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 22px;
+      margin-bottom: 28px;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 10px;
+      font-weight: 700;
+    }
+
+    input {
+      width: 100%;
+      padding: 18px;
+      border-radius: 14px;
+      border: 1px solid var(--border);
+      font-size: 1.1rem;
+      box-sizing: border-box;
+    }
+
+    button {
+      background: #0f766e;
+      color: white;
+      border: none;
+      padding: 16px 28px;
+      border-radius: 14px;
+      font-size: 1rem;
+      font-weight: 700;
+      cursor: pointer;
+      margin-top: 10px;
+      display: inline-block;
+    }
+
+    button:hover {
+      opacity: 0.92;
+    }
+
+    .result {
+      margin-top: 40px;
+      border: 1px solid var(--border);
+      border-radius: 24px;
+      padding: 28px;
+      display: none;
+      background: #f8fafc;
+    }
+
+    .score {
+      font-size: 2.35rem;
+      font-weight: 800;
+      margin-bottom: 16px;
+      line-height: 1.15;
+    }
+
+    .bar {
+      width: 100%;
+      height: 16px;
+      background: #dbe3ee;
+      border-radius: 999px;
+      overflow: hidden;
+      margin-bottom: 24px;
+    }
+
+    .fill {
+      height: 100%;
+      width: 0%;
+      background: #16a34a;
+      border-radius: 999px;
+      transition: width 0.4s ease;
+    }
+
+    .metric {
+      margin-bottom: 14px;
+      font-size: 1.05rem;
+    }
+
+    .guidance {
+      margin-top: 26px;
+      font-size: 1.15rem;
+      line-height: 1.7;
+    }
+
+    .disclaimer {
+      margin-top: 30px;
+      font-size: 0.9rem;
+      color: var(--muted);
+    }
+
+    .helper-link {
+      margin-top: 10px;
+      font-size: 0.9rem;
+    }
+
+    .helper-link a {
+      color: var(--primary);
+      font-weight: 600;
+    }
+
+    .content-section p,
+    .content-section li {
+      line-height: 1.8;
+    }
+  </style>
+
+  <div class="container">
+    <CalculatorPageShell
+      eyebrow="Travel Calculator"
+      title="Should I Spend $4,000 on a Cruise?"
+      description="Estimate whether a $4,000 cruise fits your income, savings, debt load, emergency cushion, and travel priorities."
+    >
+      <div class="card">
+        <h2>Cruise Pressure Verdict</h2>
+
+        <div class="grid">
+          <div>
+            <label for="income">Annual Household Income</label>
+            <input id="income" type="number" min="0" inputmode="decimal" placeholder="85000" />
+          </div>
+
+          <div>
+            <label for="savings">Current Savings</label>
+            <input id="savings" type="number" min="0" inputmode="decimal" placeholder="18000" />
+          </div>
+
+          <div>
+            <label for="vacation">Cruise Cost</label>
+            <input id="vacation" type="number" min="0" inputmode="decimal" value="4000" />
+          </div>
+
+          <div>
+            <label for="debt">Total Debt</label>
+            <input id="debt" type="number" min="0" inputmode="decimal" placeholder="5000" />
+
+            <div class="helper-link">
+              <a href="/what-counts-as-debt">
+                Not sure what counts as debt? Read the debt guide
+              </a>
+            </div>
+          </div>
+        </div>
+
+        <button id="calculateBtn" type="button">
+          Get Cruise Verdict
+        </button>
+
+        <div class="result" id="result">
+          <div class="score" id="score"></div>
+
+          <div class="bar">
+            <div class="fill" id="barFill"></div>
+          </div>
+
+          <div class="metric" id="stress"></div>
+          <div class="metric" id="savingsImpact"></div>
+          <div class="metric" id="incomeImpact"></div>
+          <div class="metric" id="monthlyIncomeImpact"></div>
+          <div class="metric" id="debtRatio"></div>
+
+          <div class="guidance" id="guidance"></div>
+
+          <div class="disclaimer">
+            This is a general educational estimate, not financial advice.
+          </div>
+        </div>
+      </div>
+
+      <div class="content-section">
+        <h2>What a $4,000 Cruise Really Costs</h2>
+
+        <p>
+          A $4,000 cruise can feel like a clean vacation budget because the fare often includes lodging, basic meals, entertainment, pools, kids clubs, and transportation between ports. But the final cruise cost can be much higher than the advertised fare.
+        </p>
+
+        <p>
+          A complete cruise budget should include the cruise fare, taxes, port fees, gratuities, drink packages, specialty dining, Wi-Fi, shore excursions, travel insurance, flights, hotels before or after sailing, airport transfers, parking, passports, luggage, and onboard spending.
+        </p>
+
+        <p>
+          The biggest swing factors are cruise line, ship age, cabin type, destination, sailing date, number of travelers, departure port, drink habits, excursion plans, and whether you need flights or a hotel before embarkation.
+        </p>
+      </div>
+
+      <div class="content-section">
+        <h2>When a $4,000 Cruise Makes Sense</h2>
+
+        <p>
+          Spending $4,000 on a cruise can make sense when the trip is already saved for, your emergency fund remains intact, and the vacation will not create pressure around housing, car payments, medical bills, debt payoff, or routine monthly expenses.
+        </p>
+
+        <p>
+          A cruise can also be easier to justify for a family vacation, anniversary, graduation trip, milestone birthday, honeymoon, spring break, or rare chance to visit several destinations without booking multiple hotels.
+        </p>
+      </div>
+
+      <div class="content-section">
+        <h2>When You Should Wait</h2>
+
+        <p>
+          Waiting may be smarter if the cruise would require credit card debt, drain your emergency savings, or depend on future income you have not received yet.
+        </p>
+
+        <p>
+          Waiting can also lead to a better trip. More savings may let you choose a better cabin, avoid stressful flights, add travel insurance, book excursions in advance, handle gratuities comfortably, and return home without months of payments.
+        </p>
+      </div>
+
+      <WhenSpendingMakesSense
+        items={[
+          "You can pay for the cruise without carrying high-interest credit card debt.",
+          "Your emergency fund will still cover several months of normal expenses after booking.",
+          "The cruise fits a family trip, honeymoon, anniversary, birthday, graduation, or rare travel opportunity.",
+          "You have included cruise fare, taxes, port fees, gratuities, drink packages, excursions, Wi-Fi, insurance, and transportation.",
+          "The vacation will not delay debt payoff, housing stability, car repairs, medical needs, retirement savings, or other major goals.",
+        ]}
+      />
+
+      <KeyCostCategories
+        items={[
+          {
+            title: "Cruise fare, taxes, and port fees",
+            description:
+              "The base fare is only part of the cost. Taxes, port fees, cabin upgrades, and room location can change the final price before you even board.",
+          },
+          {
+            title: "Gratuities and onboard spending",
+            description:
+              "Automatic gratuities, specialty dining, drink packages, Wi-Fi, photos, casino spending, spa services, and onboard shopping can add hundreds or thousands of dollars.",
+          },
+          {
+            title: "Flights, hotels, and transfers",
+            description:
+              "If you cannot drive to the port, include airfare, baggage, airport transfers, rideshares, parking, and a hotel the night before sailing.",
+          },
+          {
+            title: "Shore excursions and port days",
+            description:
+              "Excursions, beach clubs, taxis, meals in port, snorkeling, tours, and private transportation can make the trip feel much more expensive than the cruise fare.",
+          },
+        ]}
+      />
+
+      <ReduceCostTips
+        items={[
+          "Compare total cruise cost after taxes, fees, gratuities, and required add-ons.",
+          "Drive to the port if possible to avoid airfare, baggage, hotel, and transfer costs.",
+          "Book an interior or oceanview cabin if the balcony price creates pressure.",
+          "Choose one or two paid excursions instead of booking something expensive at every port.",
+          "Skip or limit drink packages if your drinking habits do not justify the cost.",
+          "Price Wi-Fi, specialty dining, gratuities, and shore spending before the final payment date.",
+        ]}
+      />
+
+      <FinancialRedFlags
+        items={[
+          "You would need to carry the cruise on a credit card after returning home.",
+          "The trip would wipe out most or all of your emergency savings.",
+          "You are already behind on bills or relying on future income to catch up.",
+          "The cruise would delay debt payoff or make normal monthly payments feel tight.",
+          "You have only priced the cruise fare, not taxes, port fees, gratuities, excursions, drinks, Wi-Fi, flights, hotels, and transfers.",
+          "You are upgrading cabins, drink packages, or excursions mainly because the vacation feels like a rare splurge.",
+        ]}
+      />
+
+      <CalculatorAssumptions
+        items={[
+          "The calculator assumes the cruise is paid mostly in cash rather than financed with long-term debt.",
+          "The estimate assumes your emergency fund matters more than the vacation itself.",
+          "The budget should include cruise fare, taxes, port fees, gratuities, drink packages, excursions, Wi-Fi, insurance, transportation, and unexpected costs.",
+          "The calculator assumes your income and debt obligations are relatively stable.",
+          "Very high income or very high savings can produce a true 0/100 pressure score when the cruise is clearly affordable.",
+        ]}
+      />
+
+      <FAQSection
+        faqs={[
+          {
+            question: "Is $4,000 a lot for a cruise?",
+            answer:
+              "$4,000 can be a reasonable cruise budget for multiple travelers, a longer sailing, a better cabin, flights, excursions, drink packages, gratuities, and travel insurance. It becomes too much if it creates debt or drains emergency savings.",
+          },
+          {
+            question: "What should I include in a cruise budget?",
+            answer:
+              "Include the cruise fare, taxes, port fees, gratuities, drink packages, specialty dining, Wi-Fi, shore excursions, flights, baggage, hotels, transfers, parking, passports, travel insurance, and onboard spending.",
+          },
+          {
+            question: "Are cruises cheaper than all-inclusive resorts?",
+            answer:
+              "Cruises can be cheaper than all-inclusive resorts, especially if you drive to the port and limit extras. But cruises can also become expensive once gratuities, drinks, excursions, specialty dining, Wi-Fi, flights, hotels, and transfers are included.",
+          },
+          {
+            question: "Should I use savings for a cruise?",
+            answer:
+              "Using savings can make sense if the cruise does not drain your emergency fund or delay higher-priority goals. Financing a cruise with high-interest debt can make the trip much more expensive after you return.",
+          },
+          {
+            question: "When should I wait before booking a cruise?",
+            answer:
+              "Consider waiting if you would need to carry credit card debt, if the cruise would leave you with little emergency savings, or if upcoming bills, medical costs, housing costs, car repairs, or debt payments are already creating pressure.",
+          },
+        ]}
+      />
+
+      <MethodologySection category="Cruise spending" updated="May 2026" />
+
+      <RelatedGuides
+        guides={[
+          {
+            title: "How to Avoid Vacation Debt",
+            href: "/how-to-avoid-vacation-debt",
+            description:
+              "Learn how to plan a major trip without turning the vacation into months of high-interest payments.",
+          },
+          {
+            title: "How to Budget for a Disney Vacation",
+            href: "/how-to-budget-for-a-disney-vacation",
+            description:
+              "See how theme-park travel budgets expand through lodging, transportation, food, tickets, and add-on costs.",
+          },
+        ]}
+      />
+
+      <RelatedCalculators
+        calculators={[
+          {
+            category: "Travel",
+            title: "Should I Spend $7,500 on an All-Inclusive Vacation?",
+            href: "/should-i-spend-7500-on-an-all-inclusive-vacation",
+          },
+          {
+            category: "Travel",
+            title: "Should I Spend $4,000 on a Mexico Vacation?",
+            href: "/should-i-spend-4000-on-a-mexico-vacation",
+          },
+          {
+            category: "Travel",
+            title: "Should I Spend $10,000 on a Europe Trip?",
+            href: "/should-i-spend-10000-on-a-europe-trip",
+          },
+          {
+            category: "Travel",
+            title: "Should I Spend $15,000 on a Japan Trip?",
+            href: "/should-i-spend-15000-on-a-japan-trip",
+          },
+          {
+            category: "Travel",
+            title: "Should I Spend $20,000 on a Family Vacation?",
+            href: "/should-i-spend-20000-on-a-family-vacation",
+          },
+          {
+            category: "Travel",
+            title: "Browse Travel Calculators",
+            href: "/travel-calculators",
+          },
+        ]}
+      />
+    </CalculatorPageShell>
+  </div>
+
+  <script is:inline>
+    const clamp = (value, min, max) => Math.min(Math.max(value, min), max);
+
+    const getNumber = (id) => {
+      const rawValue = document.getElementById(id)?.value;
+      const value = Number(rawValue);
+      return Number.isFinite(value) && value >= 0 ? value : 0;
+    };
+
+    function getPressureLevel(score) {
+      if (score <= 30) {
+        return {
+          label: "Low Pressure",
+          stress: "Low pressure",
+          color: "#16a34a",
+          action: "Book only after confirming the full cruise budget.",
+        };
+      }
+
+      if (score <= 60) {
+        return {
+          label: "Moderate Pressure",
+          stress: "Moderate pressure",
+          color: "#f59e0b",
+          action: "Trim the cabin type, sailing date, excursions, drink package, or transportation cost before booking.",
+        };
+      }
+
+      return {
+        label: "High Pressure",
+        stress: "High pressure",
+        color: "#dc2626",
+        action: "Delay, lower the cruise cost, or save more first.",
+      };
+    }
+
+    function calculateVacation() {
+      const income = getNumber("income");
+      const savings = getNumber("savings");
+      const vacation = getNumber("vacation");
+      const debt = getNumber("debt");
+
+      const result = document.getElementById("result");
+      const scoreEl = document.getElementById("score");
+      const barFill = document.getElementById("barFill");
+      const stressEl = document.getElementById("stress");
+      const savingsImpactEl = document.getElementById("savingsImpact");
+      const incomeImpactEl = document.getElementById("incomeImpact");
+      const monthlyIncomeImpactEl = document.getElementById("monthlyIncomeImpact");
+      const debtRatioEl = document.getElementById("debtRatio");
+      const guidanceEl = document.getElementById("guidance");
+
+      result.style.display = "block";
+
+      if (income <= 0 || savings <= 0 || vacation <= 0) {
+        scoreEl.textContent = "Add your numbers first";
+        barFill.style.width = "0%";
+        barFill.style.background = "#16a34a";
+        stressEl.innerHTML = "";
+        savingsImpactEl.innerHTML = "";
+        incomeImpactEl.innerHTML = "";
+        monthlyIncomeImpactEl.innerHTML = "";
+        debtRatioEl.innerHTML = "";
+        guidanceEl.textContent =
+          "Enter a positive income, savings amount, and cruise cost so the calculator can estimate financial pressure.";
+        return;
+      }
+
+      const monthlyIncome = income / 12;
+
+      const savingsImpactPercent = (vacation / savings) * 100;
+      const annualIncomeImpactPercent = (vacation / income) * 100;
+      const monthlyIncomeImpactPercent = (vacation / monthlyIncome) * 100;
+      const debtRatioPercent = (debt / income) * 100;
+
+      const savingsImpactRatio = vacation / savings;
+      const annualIncomeImpactRatio = vacation / income;
+      const monthlyIncomeImpactRatio = vacation / monthlyIncome;
+      const debtRatio = debt / income;
+
+      const remainingSavings = savings - vacation;
+      const incomeRecoveryMonths = vacation / monthlyIncome;
+
+      let pressureScore = 0;
+
+      const ultraSafe =
+        income >= 1000000 &&
+        debtRatio <= 0.05 &&
+        annualIncomeImpactRatio <= 0.02;
+
+      const veryHighIncomeSafe =
+        income >= 250000 &&
+        debtRatio <= 0.1 &&
+        annualIncomeImpactRatio <= 0.03 &&
+        monthlyIncomeImpactRatio <= 0.5;
+
+      const highSavingsSafe =
+        savings >= vacation * 50 &&
+        debtRatio <= 0.1;
+
+      if (ultraSafe || veryHighIncomeSafe || highSavingsSafe) {
+        pressureScore = 0;
+      } else {
+        pressureScore += clamp(monthlyIncomeImpactRatio * 8, 0, 35);
+        pressureScore += clamp(debtRatio * 20, 0, 25);
+
+        if (savingsImpactRatio >= 1) {
+          pressureScore += 20;
+        } else if (savingsImpactRatio >= 0.75) {
+          pressureScore += 14;
+        } else if (savingsImpactRatio >= 0.5) {
+          pressureScore += 8;
+        } else if (savingsImpactRatio >= 0.25) {
+          pressureScore += 4;
+        }
+
+        if (incomeRecoveryMonths <= 0.5) {
+          pressureScore -= 20;
+        } else if (incomeRecoveryMonths <= 1) {
+          pressureScore -= 15;
+        } else if (incomeRecoveryMonths <= 2) {
+          pressureScore -= 10;
+        } else if (incomeRecoveryMonths <= 3) {
+          pressureScore -= 5;
+        }
+
+        if (remainingSavings < 0) {
+          pressureScore += 30;
+        } else if (remainingSavings < monthlyIncome) {
+          pressureScore += 15;
+        } else if (remainingSavings < monthlyIncome * 2) {
+          pressureScore += 8;
+        }
+
+        pressureScore = clamp(Math.round(pressureScore), 0, 100);
+      }
+
+      const level = getPressureLevel(pressureScore);
+
+      let guidance = "";
+
+      if (pressureScore <= 30) {
+        guidance =
+          `This cruise appears manageable based on the numbers provided. The cost equals about ${monthlyIncomeImpactPercent.toFixed(1)}% of one month’s income and ${savingsImpactPercent.toFixed(1)}% of savings, so the main priority is confirming taxes, port fees, gratuities, drinks, excursions, Wi-Fi, insurance, and transportation before booking.`;
+      } else if (pressureScore <= 60) {
+        guidance =
+          `This cruise may work, but it deserves caution. The cost equals about ${monthlyIncomeImpactPercent.toFixed(1)}% of one month’s income and ${savingsImpactPercent.toFixed(1)}% of savings, which means cabin type, excursions, drink packages, flights, hotels, and onboard spending should be planned carefully before booking.`;
+      } else {
+        guidance =
+          `This cruise could create real financial strain. The cost equals about ${monthlyIncomeImpactPercent.toFixed(1)}% of one month’s income and ${savingsImpactPercent.toFixed(1)}% of savings, so delaying, choosing a cheaper sailing, driving to a closer port, or saving more would be safer.`;
+      }
+
+      scoreEl.textContent = `${level.label} — ${pressureScore}/100`;
+      barFill.style.width = `${pressureScore}%`;
+      barFill.style.background = level.color;
+
+      stressEl.innerHTML = `<strong>Pressure level:</strong> ${level.stress}`;
+      savingsImpactEl.innerHTML = `<strong>Savings impact:</strong> ${savingsImpactPercent.toFixed(1)}% of savings`;
+      incomeImpactEl.innerHTML = `<strong>Annual income impact:</strong> ${annualIncomeImpactPercent.toFixed(1)}% of annual income`;
+      monthlyIncomeImpactEl.innerHTML = `<strong>Monthly income impact:</strong> ${monthlyIncomeImpactPercent.toFixed(1)}% of one month’s income`;
+      debtRatioEl.innerHTML = `<strong>Debt ratio:</strong> ${debtRatioPercent.toFixed(1)}% of annual income`;
+      guidanceEl.textContent = `${guidance} Recommended next step: ${level.action}`;
+    }
+
+    document.addEventListener("DOMContentLoaded", () => {
+      const calculateBtn = document.getElementById("calculateBtn");
+
+      if (calculateBtn) {
+        calculateBtn.addEventListener("click", calculateVacation);
+      }
+    });
+  </script>
+</Layout>

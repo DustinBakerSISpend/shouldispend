@@ -1,0 +1,576 @@
+---
+import MethodologySection from "../components/MethodologySection.astro";
+import Layout from "../layouts/Layout.astro";
+import CalculatorPageShell from "../components/CalculatorPageShell.astro";
+import FAQSection from "../components/FAQSection.astro";
+import RelatedCalculators from "../components/RelatedCalculators.astro";
+import FinancialRedFlags from "../components/FinancialRedFlags.astro";
+import CalculatorAssumptions from "../components/CalculatorAssumptions.astro";
+import KeyCostCategories from "../components/KeyCostCategories.astro";
+import ReduceCostTips from "../components/ReduceCostTips.astro";
+import WhenSpendingMakesSense from "../components/WhenSpendingMakesSense.astro";
+import RelatedGuides from "../components/RelatedGuides.astro";
+---
+
+<Layout
+  title="Should I Spend $4,000 on a Mexico Vacation?"
+  description="Use this Mexico vacation calculator to decide whether a $4,000 Mexico trip fits your income, savings, debt, emergency fund, and travel budget."
+>
+  <style>
+    .container {
+      max-width: 950px;
+      margin: 0 auto;
+      padding: 60px 20px;
+    }
+
+    .content-section {
+      max-width: 760px;
+      margin: 72px auto 0;
+    }
+
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 28px;
+      padding: 34px;
+    }
+
+    h2 {
+      margin-top: 0;
+      font-size: 2rem;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 22px;
+      margin-bottom: 28px;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 10px;
+      font-weight: 700;
+    }
+
+    input {
+      width: 100%;
+      padding: 18px;
+      border-radius: 14px;
+      border: 1px solid var(--border);
+      font-size: 1.1rem;
+      box-sizing: border-box;
+    }
+
+    button {
+      background: #0f766e;
+      color: white;
+      border: none;
+      padding: 16px 28px;
+      border-radius: 14px;
+      font-size: 1rem;
+      font-weight: 700;
+      cursor: pointer;
+      margin-top: 10px;
+      display: inline-block;
+    }
+
+    button:hover {
+      opacity: 0.92;
+    }
+
+    .result {
+      margin-top: 40px;
+      border: 1px solid var(--border);
+      border-radius: 24px;
+      padding: 28px;
+      display: none;
+      background: #f8fafc;
+    }
+
+    .score {
+      font-size: 2.35rem;
+      font-weight: 800;
+      margin-bottom: 16px;
+      line-height: 1.15;
+    }
+
+    .bar {
+      width: 100%;
+      height: 16px;
+      background: #dbe3ee;
+      border-radius: 999px;
+      overflow: hidden;
+      margin-bottom: 24px;
+    }
+
+    .fill {
+      height: 100%;
+      width: 0%;
+      background: #16a34a;
+      border-radius: 999px;
+      transition: width 0.4s ease;
+    }
+
+    .metric {
+      margin-bottom: 14px;
+      font-size: 1.05rem;
+    }
+
+    .guidance {
+      margin-top: 26px;
+      font-size: 1.15rem;
+      line-height: 1.7;
+    }
+
+    .disclaimer {
+      margin-top: 30px;
+      font-size: 0.9rem;
+      color: var(--muted);
+    }
+
+    .helper-link {
+      margin-top: 10px;
+      font-size: 0.9rem;
+    }
+
+    .helper-link a {
+      color: var(--primary);
+      font-weight: 600;
+    }
+
+    .content-section p,
+    .content-section li {
+      line-height: 1.8;
+    }
+  </style>
+
+  <div class="container">
+    <CalculatorPageShell
+      eyebrow="Travel Calculator"
+      title="Should I Spend $4,000 on a Mexico Vacation?"
+      description="Estimate whether a $4,000 Mexico vacation fits your income, savings, debt load, emergency cushion, and travel priorities."
+    >
+      <div class="card">
+        <h2>Mexico Vacation Pressure Verdict</h2>
+
+        <div class="grid">
+          <div>
+            <label for="income">Annual Household Income</label>
+            <input id="income" type="number" min="0" inputmode="decimal" placeholder="90000" />
+          </div>
+
+          <div>
+            <label for="savings">Current Savings</label>
+            <input id="savings" type="number" min="0" inputmode="decimal" placeholder="15000" />
+          </div>
+
+          <div>
+            <label for="vacation">Mexico Vacation Cost</label>
+            <input id="vacation" type="number" min="0" inputmode="decimal" value="4000" />
+          </div>
+
+          <div>
+            <label for="debt">Total Debt</label>
+            <input id="debt" type="number" min="0" inputmode="decimal" placeholder="5000" />
+
+            <div class="helper-link">
+              <a href="/what-counts-as-debt">
+                Not sure what counts as debt? Read the debt guide
+              </a>
+            </div>
+          </div>
+        </div>
+
+        <button id="calculateBtn" type="button">
+          Get Mexico Vacation Verdict
+        </button>
+
+        <div class="result" id="result">
+          <div class="score" id="score"></div>
+
+          <div class="bar">
+            <div class="fill" id="barFill"></div>
+          </div>
+
+          <div class="metric" id="stress"></div>
+          <div class="metric" id="savingsImpact"></div>
+          <div class="metric" id="incomeImpact"></div>
+          <div class="metric" id="monthlyIncomeImpact"></div>
+          <div class="metric" id="debtRatio"></div>
+
+          <div class="guidance" id="guidance"></div>
+
+          <div class="disclaimer">
+            This is a general educational estimate, not financial advice.
+          </div>
+        </div>
+      </div>
+
+      <div class="content-section">
+        <h2>What a $4,000 Mexico Vacation Really Costs</h2>
+
+        <p>
+          A $4,000 Mexico vacation can be reasonable, especially for a couple or a small family using a carefully chosen resort, flight deal, or shorter itinerary. But the real cost is usually more than the hotel price. A complete Mexico vacation budget should include airfare, resort fees, airport transfers, meals, drinks, tips, excursions, baggage fees, travel insurance, souvenirs, and cash for unexpected costs.
+        </p>
+
+        <p>
+          Mexico trips can look cheaper than they are because package prices often highlight the resort stay while leaving out add-ons. All-inclusive vacations may cover food and drinks, but flights, checked bags, private transfers, snorkeling tours, ruins excursions, spa visits, tips, and upgraded rooms can push the final cost higher.
+        </p>
+
+        <p>
+          The affordability question depends on whether the $4,000 trip comes from planned savings or creates pressure after you get home. A vacation that is paid in cash and leaves your emergency fund intact is very different from one that turns into credit card debt.
+        </p>
+      </div>
+
+      <div class="content-section">
+        <h2>When a $4,000 Mexico Trip Makes Sense</h2>
+
+        <p>
+          Spending $4,000 on a Mexico vacation can make sense when the trip is already saved for, your debt payments are manageable, and your emergency fund will still cover normal surprises after the booking clears.
+        </p>
+
+        <p>
+          It may also be easier to justify for a honeymoon, anniversary, family celebration, milestone birthday, winter escape, or rare chance to travel with people you care about. The trip does not need to be cheap to be responsible. It needs to fit your cash flow.
+        </p>
+      </div>
+
+      <div class="content-section">
+        <h2>When You Should Wait</h2>
+
+        <p>
+          Waiting may be smarter if the Mexico trip would drain your savings, require high-interest credit card debt, or make rent, groceries, car payments, medical bills, or debt payoff harder after you return.
+        </p>
+
+        <p>
+          Waiting can also improve the vacation itself. More savings may let you pick better flight times, avoid sketchy layovers, book safer transfers, choose a better resort location, add one or two meaningful excursions, and build a small buffer for unexpected costs.
+        </p>
+      </div>
+
+      <WhenSpendingMakesSense
+        items={[
+          "You can pay for the trip without carrying high-interest credit card debt.",
+          "Your emergency fund will still cover several months of normal expenses after booking.",
+          "The trip fits a honeymoon, anniversary, family milestone, or rare travel opportunity.",
+          "You have included airfare, resort costs, transfers, food, tips, excursions, and surprise costs.",
+          "The trip will not delay debt payoff, housing stability, medical needs, retirement savings, or other major goals.",
+        ]}
+      />
+
+      <KeyCostCategories
+        items={[
+          {
+            title: "Flights and baggage",
+            description:
+              "Airfare, seat selection, checked bags, carry-ons, airport parking, and flight timing can change the true cost of a Mexico vacation.",
+          },
+          {
+            title: "Resort or hotel costs",
+            description:
+              "The nightly price may not include resort fees, upgraded rooms, taxes, service charges, or higher rates during peak travel weeks.",
+          },
+          {
+            title: "Transfers and local transportation",
+            description:
+              "Airport transfers, taxis, rideshares, rental cars, ferries, and private shuttles should be priced before booking.",
+          },
+          {
+            title: "Food, tips, and excursions",
+            description:
+              "All-inclusive resorts may reduce food uncertainty, but tips, tours, snorkeling, ruins visits, boat days, spa services, and souvenirs can add up quickly.",
+          },
+        ]}
+      />
+
+      <ReduceCostTips
+        items={[
+          "Compare all-inclusive packages against hotel-only pricing before assuming one is cheaper.",
+          "Travel outside spring break, Christmas, New Year’s, and peak winter weeks.",
+          "Price nearby airports and flexible dates before booking flights.",
+          "Limit paid excursions to the experiences that matter most.",
+          "Set a daily cash or card spending cap for tips, souvenirs, snacks, and add-ons.",
+          "Book airport transfers in advance instead of improvising after arrival.",
+        ]}
+      />
+
+      <FinancialRedFlags
+        items={[
+          "You would need to carry the trip on a credit card after returning home.",
+          "The vacation would wipe out most or all of your emergency savings.",
+          "You are already behind on bills or relying on future income to catch up.",
+          "The trip would delay debt payoff or make normal monthly payments feel tight.",
+          "You have not priced flights, transfers, tips, excursions, insurance, and baggage fees.",
+          "You are choosing a more expensive resort mainly because the monthly payment looks manageable.",
+        ]}
+      />
+
+      <CalculatorAssumptions
+        items={[
+          "The calculator assumes the Mexico vacation is paid mostly in cash rather than financed with long-term debt.",
+          "The estimate assumes your emergency fund matters more than the trip itself.",
+          "The budget should include airfare, lodging, resort fees, transfers, meals, tips, excursions, and unexpected costs.",
+          "The calculator assumes your income and debt obligations are relatively stable.",
+          "Very high income or very high savings can produce a true 0/100 pressure score when the trip is clearly affordable.",
+        ]}
+      />
+
+      <FAQSection
+        faqs={[
+          {
+            question: "Is $4,000 a lot for a Mexico vacation?",
+            answer:
+              "$4,000 can be a lot for a Mexico vacation if it drains your savings or creates credit card debt. It can be reasonable if it covers flights, lodging, transfers, food, tips, and excursions while still leaving your emergency fund intact.",
+          },
+          {
+            question: "Is $4,000 enough for an all-inclusive Mexico vacation?",
+            answer:
+              "$4,000 may be enough for an all-inclusive Mexico vacation depending on airfare, resort quality, destination, season, trip length, and number of travelers. Cancun, Riviera Maya, Playa del Carmen, Cabo, Puerto Vallarta, and Tulum can vary widely in total cost.",
+          },
+          {
+            question: "Should I use savings for a Mexico vacation?",
+            answer:
+              "Using savings can make sense if the trip does not drain your emergency fund or delay more important goals. Financing a vacation with high-interest debt usually makes the trip more expensive and stressful after you return.",
+          },
+          {
+            question: "What should I include in a Mexico vacation budget?",
+            answer:
+              "A Mexico vacation budget should include flights, hotel or resort costs, airport transfers, meals, drinks, tips, excursions, travel insurance, baggage fees, passports if needed, phone data, souvenirs, and emergency money.",
+          },
+          {
+            question: "When should I wait before booking a Mexico trip?",
+            answer:
+              "Consider waiting if you would need to carry credit card debt, if the trip would leave you with little emergency savings, or if upcoming bills, medical costs, car repairs, housing costs, or debt payments are already creating pressure.",
+          },
+        ]}
+      />
+
+      <MethodologySection category="Mexico travel spending" updated="May 2026" />
+
+      <RelatedGuides
+        guides={[
+          {
+            title: "How to Avoid Vacation Debt",
+            href: "/how-to-avoid-vacation-debt",
+            description:
+              "Learn how to plan a vacation without turning the trip into months of high-interest payments.",
+          },
+          {
+            title: "How to Budget for a Disney Vacation",
+            href: "/how-to-budget-for-a-disney-vacation",
+            description:
+              "See how major travel budgets expand through lodging, transportation, food, and add-on costs.",
+          },
+        ]}
+      />
+
+      <RelatedCalculators
+        calculators={[
+          {
+            category: "Travel",
+            title: "Should I Spend $5,000 on a Vacation?",
+            href: "/should-i-spend-5000-on-a-vacation",
+          },
+          {
+            category: "Travel",
+            title: "Should I Spend $10,000 on a Europe Trip?",
+            href: "/should-i-spend-10000-on-a-europe-trip",
+          },
+          {
+            category: "Travel",
+            title: "Should I Spend $7,500 on an All-Inclusive Vacation?",
+            href: "/should-i-spend-7500-on-an-all-inclusive-vacation",
+          },
+          {
+            category: "Travel",
+            title: "Should I Spend $4,000 on a Cruise?",
+            href: "/should-i-spend-4000-on-a-cruise",
+          },
+          {
+            category: "Travel",
+            title: "Should I Spend $20,000 on a Family Vacation?",
+            href: "/should-i-spend-20000-on-a-family-vacation",
+          },
+          {
+            category: "Travel",
+            title: "Browse Travel Calculators",
+            href: "/travel-calculators",
+          },
+        ]}
+      />
+    </CalculatorPageShell>
+  </div>
+
+  <script is:inline>
+    const clamp = (value, min, max) => Math.min(Math.max(value, min), max);
+
+    const getNumber = (id) => {
+      const rawValue = document.getElementById(id)?.value;
+      const value = Number(rawValue);
+      return Number.isFinite(value) && value >= 0 ? value : 0;
+    };
+
+    function getPressureLevel(score) {
+      if (score <= 30) {
+        return {
+          label: "Low Pressure",
+          stress: "Low pressure",
+          color: "#16a34a",
+          action: "Book only after confirming the full Mexico trip budget.",
+        };
+      }
+
+      if (score <= 60) {
+        return {
+          label: "Moderate Pressure",
+          stress: "Moderate pressure",
+          color: "#f59e0b",
+          action: "Trim the resort, dates, flights, or excursions before booking.",
+        };
+      }
+
+      return {
+        label: "High Pressure",
+        stress: "High pressure",
+        color: "#dc2626",
+        action: "Delay, lower the trip cost, or save more first.",
+      };
+    }
+
+    function calculateVacation() {
+      const income = getNumber("income");
+      const savings = getNumber("savings");
+      const vacation = getNumber("vacation");
+      const debt = getNumber("debt");
+
+      const result = document.getElementById("result");
+      const scoreEl = document.getElementById("score");
+      const barFill = document.getElementById("barFill");
+      const stressEl = document.getElementById("stress");
+      const savingsImpactEl = document.getElementById("savingsImpact");
+      const incomeImpactEl = document.getElementById("incomeImpact");
+      const monthlyIncomeImpactEl = document.getElementById("monthlyIncomeImpact");
+      const debtRatioEl = document.getElementById("debtRatio");
+      const guidanceEl = document.getElementById("guidance");
+
+      result.style.display = "block";
+
+      if (income <= 0 || savings <= 0 || vacation <= 0) {
+        scoreEl.textContent = "Add your numbers first";
+        barFill.style.width = "0%";
+        barFill.style.background = "#16a34a";
+        stressEl.innerHTML = "";
+        savingsImpactEl.innerHTML = "";
+        incomeImpactEl.innerHTML = "";
+        monthlyIncomeImpactEl.innerHTML = "";
+        debtRatioEl.innerHTML = "";
+        guidanceEl.textContent =
+          "Enter a positive income, savings amount, and Mexico vacation cost so the calculator can estimate financial pressure.";
+        return;
+      }
+
+      const monthlyIncome = income / 12;
+
+      const savingsImpactPercent = (vacation / savings) * 100;
+      const annualIncomeImpactPercent = (vacation / income) * 100;
+      const monthlyIncomeImpactPercent = (vacation / monthlyIncome) * 100;
+      const debtRatioPercent = (debt / income) * 100;
+
+      const savingsImpactRatio = vacation / savings;
+      const annualIncomeImpactRatio = vacation / income;
+      const monthlyIncomeImpactRatio = vacation / monthlyIncome;
+      const debtRatio = debt / income;
+
+      const remainingSavings = savings - vacation;
+      const remainingSavingsMonths = remainingSavings / monthlyIncome;
+      const incomeRecoveryMonths = vacation / monthlyIncome;
+
+      let pressureScore = 0;
+
+      const ultraSafe =
+        income >= 1000000 &&
+        debtRatio <= 0.05 &&
+        annualIncomeImpactRatio <= 0.02;
+
+      const absurdIncomeSafe =
+        income >= 250000 &&
+        debtRatio <= 0.1 &&
+        annualIncomeImpactRatio <= 0.03 &&
+        monthlyIncomeImpactRatio <= 0.5;
+
+      const absurdSavingsSafe =
+        savings >= vacation * 50 &&
+        debtRatio <= 0.1;
+
+      if (ultraSafe || absurdIncomeSafe || absurdSavingsSafe) {
+        pressureScore = 0;
+      } else {
+        pressureScore += clamp(monthlyIncomeImpactRatio * 8, 0, 35);
+        pressureScore += clamp(debtRatio * 20, 0, 25);
+
+        if (savingsImpactRatio >= 1) {
+          pressureScore += 20;
+        } else if (savingsImpactRatio >= 0.75) {
+          pressureScore += 14;
+        } else if (savingsImpactRatio >= 0.5) {
+          pressureScore += 8;
+        } else if (savingsImpactRatio >= 0.25) {
+          pressureScore += 4;
+        }
+
+        if (incomeRecoveryMonths <= 0.5) {
+          pressureScore -= 20;
+        } else if (incomeRecoveryMonths <= 1) {
+          pressureScore -= 15;
+        } else if (incomeRecoveryMonths <= 2) {
+          pressureScore -= 10;
+        } else if (incomeRecoveryMonths <= 3) {
+          pressureScore -= 5;
+        }
+
+        if (remainingSavings < 0) {
+          pressureScore += 30;
+        } else if (remainingSavings < monthlyIncome) {
+          pressureScore += 15;
+        } else if (remainingSavings < monthlyIncome * 2) {
+          pressureScore += 8;
+        }
+
+        pressureScore = clamp(Math.round(pressureScore), 0, 100);
+      }
+
+      const level = getPressureLevel(pressureScore);
+
+      let guidance = "";
+
+      if (pressureScore <= 30) {
+        guidance =
+          `This Mexico vacation appears manageable based on the numbers provided. The cost equals about ${monthlyIncomeImpactPercent.toFixed(1)}% of one month’s income and ${savingsImpactPercent.toFixed(1)}% of savings, so the main priority is keeping flights, resort costs, transfers, tips, excursions, meals, and surprise costs inside a clear budget.`;
+      } else if (pressureScore <= 60) {
+        guidance =
+          `This Mexico vacation may work, but it deserves caution. The cost equals about ${monthlyIncomeImpactPercent.toFixed(1)}% of one month’s income and ${savingsImpactPercent.toFixed(1)}% of savings, which means resort choice, flights, transfers, tips, excursions, and food costs should be planned before booking.`;
+      } else {
+        guidance =
+          `This Mexico vacation could create real financial strain. The cost equals about ${monthlyIncomeImpactPercent.toFixed(1)}% of one month’s income and ${savingsImpactPercent.toFixed(1)}% of savings, so delaying, choosing a cheaper resort, shortening the trip, or saving more would be safer.`;
+      }
+
+      scoreEl.textContent = `${level.label} — ${pressureScore}/100`;
+      barFill.style.width = `${pressureScore}%`;
+      barFill.style.background = level.color;
+
+      stressEl.innerHTML = `<strong>Pressure level:</strong> ${level.stress}`;
+      savingsImpactEl.innerHTML = `<strong>Savings impact:</strong> ${savingsImpactPercent.toFixed(1)}% of savings`;
+      incomeImpactEl.innerHTML = `<strong>Annual income impact:</strong> ${annualIncomeImpactPercent.toFixed(1)}% of annual income`;
+      monthlyIncomeImpactEl.innerHTML = `<strong>Monthly income impact:</strong> ${monthlyIncomeImpactPercent.toFixed(1)}% of one month’s income`;
+      debtRatioEl.innerHTML = `<strong>Debt ratio:</strong> ${debtRatioPercent.toFixed(1)}% of annual income`;
+      guidanceEl.textContent = `${guidance} Recommended next step: ${level.action}`;
+    }
+
+    document.addEventListener("DOMContentLoaded", () => {
+      const calculateBtn = document.getElementById("calculateBtn");
+
+      if (calculateBtn) {
+        calculateBtn.addEventListener("click", calculateVacation);
+      }
+    });
+  </script>
+</Layout>

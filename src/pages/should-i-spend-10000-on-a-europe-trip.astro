@@ -412,146 +412,176 @@ import RelatedGuides from "../components/RelatedGuides.astro";
   </div>
 
   <script is:inline>
-    const clamp = (value, min, max) => Math.min(Math.max(value, min), max);
+  const clamp = (value, min, max) => Math.min(Math.max(value, min), max);
 
-    const getNumber = (id) => {
-      const rawValue = document.getElementById(id)?.value;
-      const value = Number(rawValue);
-      return Number.isFinite(value) && value >= 0 ? value : 0;
-    };
+  const getNumber = (id) => {
+    const rawValue = document.getElementById(id)?.value;
+    const value = Number(rawValue);
+    return Number.isFinite(value) && value >= 0 ? value : 0;
+  };
 
-    function getPressureLevel(score) {
-      if (score <= 30) {
-        return {
-          label: "Low Pressure",
-          stress: "Low pressure",
-          color: "#16a34a",
-          action: "Proceed with a clear Europe trip budget.",
-        };
-      }
-
-      if (score <= 60) {
-        return {
-          label: "Moderate Pressure",
-          stress: "Moderate pressure",
-          color: "#ca8a04",
-          action: "Trim the itinerary or build more cushion before booking.",
-        };
-      }
-
+  function getPressureLevel(score) {
+    if (score <= 30) {
       return {
-        label: "High Pressure",
-        stress: "High pressure",
-        color: "#dc2626",
-        action: "Delay, lower the trip cost, or save more first.",
+        label: "Low Pressure",
+        stress: "Low pressure",
+        color: "#16a34a",
+        action: "Proceed with a clear Europe trip budget.",
       };
     }
 
-    function calculateVacation() {
-      const income = getNumber("income");
-      const savings = getNumber("savings");
-      const vacation = getNumber("vacation");
-      const debt = getNumber("debt");
-
-      const result = document.getElementById("result");
-      const scoreEl = document.getElementById("score");
-      const barFill = document.getElementById("barFill");
-      const stressEl = document.getElementById("stress");
-      const savingsImpactEl = document.getElementById("savingsImpact");
-      const incomeImpactEl = document.getElementById("incomeImpact");
-      const monthlyIncomeImpactEl = document.getElementById("monthlyIncomeImpact");
-      const debtRatioEl = document.getElementById("debtRatio");
-      const guidanceEl = document.getElementById("guidance");
-
-      result.style.display = "block";
-
-      if (income <= 0 || savings <= 0 || vacation <= 0) {
-        scoreEl.textContent = "Add your numbers first";
-        barFill.style.width = "0%";
-        barFill.style.background = "#16a34a";
-        stressEl.innerHTML = "";
-        savingsImpactEl.innerHTML = "";
-        incomeImpactEl.innerHTML = "";
-        monthlyIncomeImpactEl.innerHTML = "";
-        debtRatioEl.innerHTML = "";
-        guidanceEl.textContent =
-          "Enter a positive income, savings amount, and Europe trip cost so the calculator can estimate financial pressure.";
-        return;
-      }
-
-      const monthlyIncome = income / 12;
-      const savingsImpact = (vacation / savings) * 100;
-      const annualIncomeImpact = (vacation / income) * 100;
-      const monthlyIncomeImpact = (vacation / monthlyIncome) * 100;
-      const debtRatio = (debt / income) * 100;
-      const remainingSavings = savings - vacation;
-      const remainingSavingsMonths = remainingSavings / monthlyIncome;
-
-      let pressureScore = 0;
-
-      pressureScore += clamp(savingsImpact * 0.55, 0, 55);
-      pressureScore += clamp(monthlyIncomeImpact * 0.22, 0, 25);
-      pressureScore += clamp(debtRatio * 0.2, 0, 15);
-
-      if (vacation > savings) pressureScore += 25;
-      if (remainingSavingsMonths < 1) pressureScore += 18;
-      else if (remainingSavingsMonths < 3) pressureScore += 10;
-      else if (remainingSavingsMonths >= 6) pressureScore -= 8;
-
-      if (debtRatio >= 75) pressureScore += 10;
-      else if (debtRatio >= 40) pressureScore += 6;
-
-      if (annualIncomeImpact < 2 && savingsImpact < 10 && remainingSavingsMonths >= 6) {
-        pressureScore -= 12;
-      }
-
-      if (
-  annualIncomeImpact < 0.25 &&
-  monthlyIncomeImpact < 5 &&
-  debtRatio < 10
-) {
-  pressureScore = Math.min(pressureScore, 20);
-}
-
-if (
-  annualIncomeImpact < 0.05 &&
-  monthlyIncomeImpact < 1 &&
-  debtRatio < 5
-) {
-  pressureScore = Math.min(pressureScore, 10);
-}
-
-      pressureScore = clamp(Math.round(pressureScore), 0, 100);
-
-      const level = getPressureLevel(pressureScore);
-
-      let guidance = "";
-
-      if (pressureScore <= 30) {
-        guidance =
-          `This Europe trip appears manageable based on the numbers provided. The cost equals about ${monthlyIncomeImpact.toFixed(1)}% of one month’s income and ${savingsImpact.toFixed(1)}% of savings, so the main priority is keeping flights, hotels, trains, meals, tours, and surprise costs inside a clear budget.`;
-      } else if (pressureScore <= 60) {
-        guidance =
-          `This Europe trip may work, but it deserves caution. The cost equals about ${monthlyIncomeImpact.toFixed(1)}% of one month’s income and ${savingsImpact.toFixed(1)}% of savings, which means city count, hotel choices, train costs, meals, tours, and exchange-rate buffer should be planned before booking.`;
-      } else {
-        guidance =
-          `This Europe trip could create real financial strain. The cost equals about ${monthlyIncomeImpact.toFixed(1)}% of one month’s income and ${savingsImpact.toFixed(1)}% of savings, so delaying, shortening the trip, choosing fewer cities, or saving more would be safer.`;
-      }
-
-      scoreEl.textContent = `${level.label} — ${pressureScore}/100`;
-      barFill.style.width = `${pressureScore}%`;
-      barFill.style.background = level.color;
-
-      stressEl.innerHTML = `<strong>Pressure level:</strong> ${level.stress}`;
-      savingsImpactEl.innerHTML = `<strong>Savings impact:</strong> ${savingsImpact.toFixed(1)}% of savings`;
-      incomeImpactEl.innerHTML = `<strong>Annual income impact:</strong> ${annualIncomeImpact.toFixed(1)}% of annual income`;
-      monthlyIncomeImpactEl.innerHTML = `<strong>Monthly income impact:</strong> ${monthlyIncomeImpact.toFixed(1)}% of one month’s income`;
-      debtRatioEl.innerHTML = `<strong>Debt ratio:</strong> ${debtRatio.toFixed(1)}% of annual income`;
-      guidanceEl.textContent = `${guidance} Recommended next step: ${level.action}`;
+    if (score <= 60) {
+      return {
+        label: "Moderate Pressure",
+        stress: "Moderate pressure",
+        color: "#f59e0b",
+        action: "Trim the itinerary or build more cushion before booking.",
+      };
     }
 
-    document
-      .getElementById("calculateBtn")
-      .addEventListener("click", calculateVacation);
-  </script>
+    return {
+      label: "High Pressure",
+      stress: "High pressure",
+      color: "#dc2626",
+      action: "Delay, lower the trip cost, or save more first.",
+    };
+  }
+
+  function calculateVacation() {
+    const income = getNumber("income");
+    const savings = getNumber("savings");
+    const vacation = getNumber("vacation");
+    const debt = getNumber("debt");
+
+    const result = document.getElementById("result");
+    const scoreEl = document.getElementById("score");
+    const barFill = document.getElementById("barFill");
+    const stressEl = document.getElementById("stress");
+    const savingsImpactEl = document.getElementById("savingsImpact");
+    const incomeImpactEl = document.getElementById("incomeImpact");
+    const monthlyIncomeImpactEl = document.getElementById("monthlyIncomeImpact");
+    const debtRatioEl = document.getElementById("debtRatio");
+    const guidanceEl = document.getElementById("guidance");
+
+    result.style.display = "block";
+
+    if (income <= 0 || savings <= 0 || vacation <= 0) {
+      scoreEl.textContent = "Add your numbers first";
+      barFill.style.width = "0%";
+      barFill.style.background = "#16a34a";
+      stressEl.innerHTML = "";
+      savingsImpactEl.innerHTML = "";
+      incomeImpactEl.innerHTML = "";
+      monthlyIncomeImpactEl.innerHTML = "";
+      debtRatioEl.innerHTML = "";
+      guidanceEl.textContent =
+        "Enter a positive income, savings amount, and Europe trip cost so the calculator can estimate financial pressure.";
+      return;
+    }
+
+    const monthlyIncome = income / 12;
+
+    const savingsImpactPercent = (vacation / savings) * 100;
+    const annualIncomeImpactPercent = (vacation / income) * 100;
+    const monthlyIncomeImpactPercent = (vacation / monthlyIncome) * 100;
+    const debtRatioPercent = (debt / income) * 100;
+
+    const savingsImpactRatio = vacation / savings;
+    const annualIncomeImpactRatio = vacation / income;
+    const monthlyIncomeImpactRatio = vacation / monthlyIncome;
+    const debtRatio = debt / income;
+
+    const remainingSavings = savings - vacation;
+    const remainingSavingsMonths = remainingSavings / monthlyIncome;
+    const incomeRecoveryMonths = vacation / monthlyIncome;
+
+    let pressureScore = 0;
+
+    const ultraSafe =
+  income >= 1000000 &&
+  debtRatio <= 0.05 &&
+  annualIncomeImpactRatio <= 0.02;
+
+const absurdIncomeSafe =
+  income >= 250000 &&
+  debtRatio <= 0.1 &&
+  annualIncomeImpactRatio <= 0.03 &&
+  monthlyIncomeImpactRatio <= 0.5;
+
+const absurdSavingsSafe =
+  savings >= vacation * 50 &&
+  debtRatio <= 0.1;
+
+if (ultraSafe || absurdIncomeSafe || absurdSavingsSafe) {
+  pressureScore = 0;
+} else {
+      pressureScore += clamp(monthlyIncomeImpactRatio * 8, 0, 35);
+      pressureScore += clamp(debtRatio * 20, 0, 25);
+
+      if (savingsImpactRatio >= 1) {
+        pressureScore += 20;
+      } else if (savingsImpactRatio >= 0.75) {
+        pressureScore += 14;
+      } else if (savingsImpactRatio >= 0.5) {
+        pressureScore += 8;
+      } else if (savingsImpactRatio >= 0.25) {
+        pressureScore += 4;
+      }
+
+      if (incomeRecoveryMonths <= 0.5) {
+        pressureScore -= 20;
+      } else if (incomeRecoveryMonths <= 1) {
+        pressureScore -= 15;
+      } else if (incomeRecoveryMonths <= 2) {
+        pressureScore -= 10;
+      } else if (incomeRecoveryMonths <= 3) {
+        pressureScore -= 5;
+      }
+
+      if (remainingSavings < 0) {
+        pressureScore += 30;
+      } else if (remainingSavings < monthlyIncome) {
+        pressureScore += 15;
+      } else if (remainingSavings < monthlyIncome * 2) {
+        pressureScore += 8;
+      }
+
+      pressureScore = clamp(Math.round(pressureScore), 0, 100);
+    }
+
+    const level = getPressureLevel(pressureScore);
+
+    let guidance = "";
+
+    if (pressureScore <= 30) {
+      guidance =
+        `This Europe trip appears manageable based on the numbers provided. The cost equals about ${monthlyIncomeImpactPercent.toFixed(1)}% of one month’s income and ${savingsImpactPercent.toFixed(1)}% of savings, so the main priority is keeping flights, hotels, trains, meals, tours, and surprise costs inside a clear budget.`;
+    } else if (pressureScore <= 60) {
+      guidance =
+        `This Europe trip may work, but it deserves caution. The cost equals about ${monthlyIncomeImpactPercent.toFixed(1)}% of one month’s income and ${savingsImpactPercent.toFixed(1)}% of savings, which means city count, hotel choices, train costs, meals, tours, and exchange-rate buffer should be planned before booking.`;
+    } else {
+      guidance =
+        `This Europe trip could create real financial strain. The cost equals about ${monthlyIncomeImpactPercent.toFixed(1)}% of one month’s income and ${savingsImpactPercent.toFixed(1)}% of savings, so delaying, shortening the trip, choosing fewer cities, or saving more would be safer.`;
+    }
+
+    scoreEl.textContent = `${level.label} — ${pressureScore}/100`;
+    barFill.style.width = `${pressureScore}%`;
+    barFill.style.background = level.color;
+
+    stressEl.innerHTML = `<strong>Pressure level:</strong> ${level.stress}`;
+    savingsImpactEl.innerHTML = `<strong>Savings impact:</strong> ${savingsImpactPercent.toFixed(1)}% of savings`;
+    incomeImpactEl.innerHTML = `<strong>Annual income impact:</strong> ${annualIncomeImpactPercent.toFixed(1)}% of annual income`;
+    monthlyIncomeImpactEl.innerHTML = `<strong>Monthly income impact:</strong> ${monthlyIncomeImpactPercent.toFixed(1)}% of one month’s income`;
+    debtRatioEl.innerHTML = `<strong>Debt ratio:</strong> ${debtRatioPercent.toFixed(1)}% of annual income`;
+    guidanceEl.textContent = `${guidance} Recommended next step: ${level.action}`;
+  }
+
+  document.addEventListener("DOMContentLoaded", () => {
+    const calculateBtn = document.getElementById("calculateBtn");
+
+    if (calculateBtn) {
+      calculateBtn.addEventListener("click", calculateVacation);
+    }
+  });
+</script>
 </Layout>

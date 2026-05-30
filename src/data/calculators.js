@@ -160,14 +160,8 @@ export const calculators = [
     "Learn how savings, debt, emergency funds, hidden travel costs, and post-trip flexibility affect vacation affordability.",
   href: "/how-much-vacation-can-i-afford",
 },
-{
-  id: "vacation-5000",
-  category: "Travel",
-  title: "Should I Spend $5,000 on a Vacation?",
-  description:
-    "Evaluate whether a moderate vacation expense fits your income, savings, debt load, and long-term flexibility.",
-  href: "/should-i-spend-5000-on-a-vacation",
-},
+
+// General vacation calculators
 {
   id: "weekend-getaway-3000",
   category: "Travel",
@@ -177,20 +171,30 @@ export const calculators = [
   href: "/should-i-spend-3000-on-a-weekend-getaway",
 },
 {
-  id: "disney-vacation-affordability",
+  id: "vacation-5000",
   category: "Travel",
-  title: "How Much Disney Vacation Can I Afford?",
+  title: "Should I Spend $5,000 on a Vacation?",
   description:
-    "Estimate a realistic Disney vacation budget using tickets, hotels, meals, flights, add-ons, savings, debt, and family cash flow.",
-  href: "/how-much-disney-vacation-can-i-afford",
+    "Evaluate whether a moderate vacation expense fits your income, savings, debt load, and long-term flexibility.",
+  href: "/should-i-spend-5000-on-a-vacation",
 },
 {
-  id: "disney-vacation-8000",
+  id: "all-inclusive-vacation-7500",
   category: "Travel",
-  title: "Should I Spend $8,000 on a Disney Vacation?",
+  title: "Should I Spend $7,500 on an All-Inclusive Vacation?",
   description:
-    "Analyze Disney trip affordability across tickets, lodging, meals, add-ons, savings, debt, and family budget pressure.",
-  href: "/should-i-spend-8000-on-a-disney-vacation",
+    "Evaluate all-inclusive vacation affordability across resort price, flights, upgrades, excursions, savings, debt, and post-trip flexibility.",
+  href: "/should-i-spend-7500-on-an-all-inclusive-vacation",
+},
+
+// Destination-specific trip calculators
+{
+  id: "mexico-vacation-4000",
+  category: "Travel",
+  title: "Should I Spend $4,000 on a Mexico Vacation?",
+  description:
+    "Evaluate Mexico vacation affordability across flights, resort costs, food, excursions, savings, debt, and post-trip flexibility.",
+  href: "/should-i-spend-4000-on-a-mexico-vacation",
 },
 {
   id: "europe-trip-10000",
@@ -209,12 +213,30 @@ export const calculators = [
   href: "/should-i-spend-15000-on-an-italy-trip",
 },
 {
+  id: "japan-trip-15000",
+  category: "Travel",
+  title: "Should I Spend $15,000 on a Japan Trip?",
+  description:
+    "Evaluate Japan trip affordability across airfare, hotels, trains, food, tours, family size, savings, debt, and post-trip flexibility.",
+  href: "/should-i-spend-15000-on-a-japan-trip",
+},
+{
   id: "hawaii-vacation-12000",
   category: "Travel",
   title: "Should I Spend $12,000 on a Hawaii Vacation?",
   description:
     "Evaluate Hawaii vacation affordability across flights, lodging, rental cars, resort fees, food, excursions, savings, and debt.",
   href: "/should-i-spend-12000-on-a-hawaii-vacation",
+},
+
+// Cruise calculators
+{
+  id: "cruise-4000",
+  category: "Travel",
+  title: "Should I Spend $4,000 on a Cruise?",
+  description:
+    "Evaluate cruise affordability across fare, gratuities, excursions, flights, onboard spending, savings, debt, and post-trip flexibility.",
+  href: "/should-i-spend-4000-on-a-cruise",
 },
 {
   id: "cruise-12000",
@@ -223,6 +245,24 @@ export const calculators = [
   description:
     "Evaluate cruise affordability across fare, gratuities, excursions, flights, onboard spending, savings, and debt.",
   href: "/should-i-spend-12000-on-a-cruise",
+},
+
+// Family, honeymoon, and premium travel calculators
+{
+  id: "disney-vacation-affordability",
+  category: "Travel",
+  title: "How Much Disney Vacation Can I Afford?",
+  description:
+    "Estimate a realistic Disney vacation budget using tickets, hotels, meals, flights, add-ons, savings, debt, and family cash flow.",
+  href: "/how-much-disney-vacation-can-i-afford",
+},
+{
+  id: "disney-vacation-8000",
+  category: "Travel",
+  title: "Should I Spend $8,000 on a Disney Vacation?",
+  description:
+    "Analyze Disney trip affordability across tickets, lodging, meals, add-ons, savings, debt, and family budget pressure.",
+  href: "/should-i-spend-8000-on-a-disney-vacation",
 },
 {
   id: "honeymoon-15000",
@@ -239,6 +279,14 @@ export const calculators = [
   description:
     "Evaluate whether a major family vacation fits your income, savings, debt, airfare, lodging, meals, and activities.",
   href: "/should-i-spend-20000-on-a-family-vacation",
+},
+{
+  id: "african-safari-20000",
+  category: "Travel",
+  title: "Should I Spend $20,000 on an African Safari?",
+  description:
+    "Evaluate African safari affordability across flights, lodges, guides, park fees, insurance, savings, debt, and post-trip flexibility.",
+  href: "/should-i-spend-20000-on-an-african-safari",
 },
 {
   id: "luxury-vacation-25000",
@@ -263,6 +311,16 @@ export const calculators = [
   description:
     "Estimate how much house fits your income, down payment, debt, savings, monthly payment, taxes, insurance, and long-term flexibility.",
   href: "/how-much-house-can-i-afford",
+},
+
+// Rent by monthly dollar amount
+{
+  id: "rent-1000",
+  category: "Rent",
+  title: "Should I Spend $1,000 on Rent?",
+  description:
+    "Evaluate whether a $1,000 monthly rent payment fits your income, savings, debt, utilities, bills, and monthly breathing room.",
+  href: "/should-i-spend-1000-on-rent",
 },
 {
   id: "rent-1500",
@@ -305,12 +363,38 @@ export const calculators = [
   href: "/should-i-spend-4000-on-rent",
 },
 {
+  id: "rent-5000",
+  category: "Rent",
+  title: "Should I Spend $5,000 on Rent?",
+  description:
+    "Analyze whether a $5,000 monthly rent payment is affordable based on income, savings, debt, utilities, location costs, and long-term flexibility.",
+  href: "/should-i-spend-5000-on-rent",
+},
+
+// Rent by income percentage
+{
+  id: "rent-25-percent",
+  category: "Rent",
+  title: "Should I Spend 25% of My Income on Rent?",
+  description:
+    "Check whether spending 25% of income on rent creates healthy flexibility for savings, utilities, debt payments, and normal monthly expenses.",
+  href: "/should-i-spend-25-percent-income-on-rent",
+},
+{
   id: "rent-30-percent",
   category: "Rent",
   title: "Should I Spend 30% of My Income on Rent?",
   description:
     "Check whether the classic 30% rent rule works for your income, take-home pay, debt, utilities, emergency savings, and monthly obligations.",
   href: "/should-i-spend-30-percent-income-on-rent",
+},
+{
+  id: "rent-35-percent",
+  category: "Rent",
+  title: "Should I Spend 35% of My Income on Rent?",
+  description:
+    "Evaluate whether spending 35% of income on rent is still manageable or starting to pressure savings, debt payoff, utilities, and flexibility.",
+  href: "/should-i-spend-35-percent-income-on-rent",
 },
 {
   id: "rent-40-percent",
@@ -335,6 +419,14 @@ export const calculators = [
   description:
     "Estimate whether spending 60% of income on rent creates dangerous housing pressure, savings risk, debt strain, or a survivable high-income exception.",
   href: "/should-i-spend-60-percent-income-on-rent",
+},
+{
+  id: "rent-70-percent",
+  category: "Rent",
+  title: "Should I Spend 70% of My Income on Rent?",
+  description:
+    "Estimate whether spending 70% of income on rent creates extreme housing pressure, debt risk, savings depletion, or a rare high-income exception.",
+  href: "/should-i-spend-70-percent-income-on-rent",
 },
   {
     id: "house-affordability-guide",

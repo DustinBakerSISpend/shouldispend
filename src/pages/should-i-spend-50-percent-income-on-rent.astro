@@ -460,14 +460,8 @@ import WhenSpendingMakesSense from "../components/WhenSpendingMakesSense.astro";
   };
 
   function getPressureLevel(score) {
-    if (score <= 30) {
-      return { label: "Low Pressure", color: "#16a34a" };
-    }
-
-    if (score <= 60) {
-      return { label: "Moderate Pressure", color: "#eab308" };
-    }
-
+    if (score <= 30) return { label: "Low Pressure", color: "#16a34a" };
+    if (score <= 60) return { label: "Moderate Pressure", color: "#eab308" };
     return { label: "High Pressure", color: "#dc2626" };
   }
 
@@ -488,23 +482,23 @@ import WhenSpendingMakesSense from "../components/WhenSpendingMakesSense.astro";
       scoreText.textContent = "Add your numbers first";
       scoreFill.style.width = "0%";
       scoreFill.style.background = "#16a34a";
-
       resultDetails.innerHTML =
         "<p>Enter your take-home income and monthly rent so the calculator can estimate housing pressure.</p>";
-
       return;
     }
 
     const rentRatio = (rent / income) * 100;
     const debtRatio = (debt / income) * 100;
-    const savingsMonths = savings > 0 ? savings / rent : 0;
+    const savingsMonths = savings / rent;
 
     let pressureScore = 0;
 
     pressureScore += clamp(rentRatio * 1.6, 0, 62);
     pressureScore += clamp(debtRatio * 0.6, 0, 26);
 
-    if (rentRatio >= 60) {
+    if (rentRatio >= 70) {
+      pressureScore += 30;
+    } else if (rentRatio >= 60) {
       pressureScore += 24;
     } else if (rentRatio >= 50) {
       pressureScore += 18;
@@ -520,52 +514,70 @@ import WhenSpendingMakesSense from "../components/WhenSpendingMakesSense.astro";
       pressureScore -= 8;
     }
 
-    if (
-      rentRatio < 25 &&
-      debtRatio < 10 &&
-      savingsMonths >= 6
-    ) {
+    if (rentRatio < 25 && debtRatio < 10 && savingsMonths >= 6) {
       pressureScore = Math.min(pressureScore, 20);
     }
 
-    if (
-      rentRatio < 15 &&
-      debtRatio < 5 &&
-      savingsMonths >= 12
-    ) {
+    if (rentRatio < 15 && debtRatio < 5 && savingsMonths >= 12) {
       pressureScore = Math.min(pressureScore, 10);
+    }
+
+    if (rentRatio < 8 && debtRatio < 3 && savingsMonths >= 24) {
+      pressureScore = Math.min(pressureScore, 3);
+    }
+
+    if (rentRatio < 5 && debtRatio === 0 && savingsMonths >= 36) {
+      pressureScore = 0;
+    }
+
+    if (income >= 50000 && rentRatio < 10 && debtRatio < 5) {
+      pressureScore = Math.min(pressureScore, 5);
+    }
+
+    if (income >= 100000 && rentRatio < 15 && debtRatio < 5 && savingsMonths >= 12) {
+      pressureScore = Math.min(pressureScore, 5);
+    }
+
+    if (savings >= 1000000 && rentRatio >= 45 && rentRatio < 60) {
+  pressureScore = Math.min(pressureScore, 58);
+}
+
+    if (savings >= 1000000 && rentRatio < 50) {
+      pressureScore = Math.min(pressureScore, 5);
+    }
+
+    if (savings >= 5000000) {
+      pressureScore = 0;
     }
 
     pressureScore = clamp(Math.round(pressureScore), 0, 100);
 
     const level = getPressureLevel(pressureScore);
 
-    scoreText.textContent =
-      `${level.label} — ${pressureScore}/100`;
-
+    scoreText.textContent = `${level.label} — ${pressureScore}/100`;
     scoreFill.style.width = `${pressureScore}%`;
     scoreFill.style.background = level.color;
 
     let guidance = "";
 
-    if (pressureScore <= 30) {
+    if (pressureScore === 0) {
       guidance =
-        "This rent ratio appears manageable based on the numbers provided, though 50% housing costs still require strong budgeting discipline and stable income.";
+        "With this level of income or savings, this rent ratio creates essentially no financial pressure based on the numbers provided.";
+    } else if (pressureScore <= 30) {
+      guidance =
+        "This rent ratio appears manageable based on the numbers provided. The main priority is keeping utilities, transportation, debt payments, and savings inside the broader housing budget.";
     } else if (pressureScore <= 60) {
       guidance =
-        "A 50% rent ratio creates meaningful financial pressure for many households. Utilities, transportation, debt payments, and normal emergencies could tighten the budget quickly.";
+        "This rent ratio creates meaningful financial pressure for many households. Utilities, transportation, debt payments, and normal emergencies could tighten the budget quickly.";
     } else {
       guidance =
-        "A 50% rent ratio could create severe ongoing financial pressure. A cheaper apartment, roommate, lower debt load, stronger savings cushion, or higher income would likely make the housing situation safer.";
+        "This rent ratio could create severe ongoing financial pressure. A cheaper apartment, roommate, lower debt load, stronger savings cushion, or higher income would likely make the housing situation safer.";
     }
 
     resultDetails.innerHTML = `
-      <p><strong>Rent impact:</strong> ${rentRatio.toFixed(1)}% of monthly take-home income.</p>
-
+      <p><strong>Rent-to-income ratio:</strong> ${rentRatio.toFixed(1)}% of monthly take-home income.</p>
       <p><strong>Debt impact:</strong> ${debtRatio.toFixed(1)}% of monthly take-home income.</p>
-
       <p><strong>Savings cushion:</strong> ${savingsMonths.toFixed(1)} months of rent covered.</p>
-
       <p>${guidance}</p>
     `;
   }

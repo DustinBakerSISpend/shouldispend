@@ -1,0 +1,584 @@
+---
+import Layout from "../layouts/Layout.astro";
+import FAQSection from "../components/FAQSection.astro";
+import RelatedCalculators from "../components/RelatedCalculators.astro";
+import RelatedGuides from "../components/RelatedGuides.astro";
+import MethodologySection from "../components/MethodologySection.astro";
+import FinancialRedFlags from "../components/FinancialRedFlags.astro";
+import CalculatorAssumptions from "../components/CalculatorAssumptions.astro";
+import KeyCostCategories from "../components/KeyCostCategories.astro";
+import ReduceCostTips from "../components/ReduceCostTips.astro";
+import WhenSpendingMakesSense from "../components/WhenSpendingMakesSense.astro";
+---
+
+<Layout
+  title="Should I Spend $5,000 on Rent?"
+  description="Use this rent calculator to decide whether a $5,000 monthly rent payment fits your income, savings, debt, utilities, and monthly flexibility."
+>
+  <style>
+    .container {
+      max-width: 920px;
+      margin: 0 auto;
+      padding: 72px 24px;
+    }
+
+    .eyebrow {
+      color: #0f766e;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      font-size: 0.75rem;
+      font-weight: 800;
+      margin-bottom: 18px;
+      text-align: center;
+    }
+
+    h1 {
+      font-size: clamp(3rem, 7vw, 5rem);
+      line-height: 0.95;
+      margin-bottom: 24px;
+      text-align: center;
+      color: #0f172a;
+    }
+
+    .subtitle {
+      text-align: center;
+      font-size: 1.08rem;
+      line-height: 1.8;
+      color: #334155;
+      max-width: 720px;
+      margin: 0 auto 60px auto;
+    }
+
+    .content-section {
+      max-width: 760px;
+      margin: 72px auto 0;
+    }
+
+    .content-section h2 {
+      font-size: 2rem;
+      line-height: 1.2;
+      margin-bottom: 24px;
+      color: #0f172a;
+    }
+
+    .content-section p,
+    .content-section li {
+      font-size: 1.08rem;
+      line-height: 1.9;
+      color: #334155;
+      margin-bottom: 24px;
+    }
+
+    .calculator {
+      background: white;
+      border: 1px solid #dbe4ee;
+      border-radius: 24px;
+      padding: 36px;
+      margin: 56px auto;
+      box-shadow: 0 10px 30px rgba(15, 23, 42, 0.05);
+    }
+
+    .calculator h2 {
+      margin-bottom: 28px;
+      font-size: 1.7rem;
+      color: #0f172a;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 22px;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 10px;
+      font-weight: 700;
+      color: #0f172a;
+      font-size: 0.95rem;
+    }
+
+    input {
+      width: 100%;
+      padding: 16px;
+      border-radius: 14px;
+      border: 1px solid #cbd5e1;
+      font-size: 1rem;
+      box-sizing: border-box;
+    }
+
+    .helper-link {
+      margin-top: 10px;
+      font-size: 0.92rem;
+      line-height: 1.5;
+      color: #475569;
+    }
+
+    .helper-link a {
+      color: #0f766e;
+      font-weight: 700;
+      text-decoration: none;
+    }
+
+    button {
+      margin-top: 28px;
+      background: #0f766e;
+      color: white;
+      border: none;
+      padding: 18px 28px;
+      border-radius: 14px;
+      font-size: 19px;
+      font-weight: 900;
+      cursor: pointer;
+      display: inline-block;
+    }
+
+    button:hover {
+      opacity: 0.92;
+    }
+
+    .result {
+      margin-top: 28px;
+      background: #f8fafc;
+      border: 1px solid #cbd5e1;
+      border-radius: 18px;
+      padding: 28px;
+      display: none;
+    }
+
+    .score {
+      font-size: 2.5rem;
+      font-weight: 900;
+      color: #0f172a;
+      margin-bottom: 18px;
+    }
+
+    .bar {
+      height: 14px;
+      background: #dbe4ee;
+      border-radius: 999px;
+      overflow: hidden;
+      margin-bottom: 18px;
+    }
+
+    .fill {
+      height: 100%;
+      width: 0%;
+      background: #0f766e;
+      transition: width 0.4s ease;
+    }
+
+    .result-details {
+      color: #334155;
+      line-height: 1.8;
+      margin-bottom: 18px;
+    }
+
+    .fine-print {
+      font-size: 0.9rem;
+      color: #64748b;
+    }
+
+    @media (max-width: 720px) {
+      .container {
+        padding: 54px 20px;
+      }
+
+      h1 {
+        font-size: 2.8rem;
+      }
+
+      .grid {
+        grid-template-columns: 1fr;
+      }
+
+      .calculator {
+        padding: 24px;
+      }
+
+      .score {
+        font-size: 2rem;
+      }
+    }
+  </style>
+
+  <main class="container">
+    <div class="eyebrow">Rent Affordability Calculator</div>
+
+    <h1>Should I Spend $5,000 on Rent?</h1>
+
+    <p class="subtitle">
+      Evaluate whether a $5,000 monthly rent payment fits your take-home income,
+      debt load, savings cushion, utilities, location costs, and overall
+      financial flexibility.
+    </p>
+
+    <section class="content-section">
+      <h2>Is $5,000 Rent Affordable?</h2>
+
+      <p>
+        A $5,000 rent payment can make sense for very high-income households,
+        expensive metro areas, executive relocations, or short-term housing
+        situations where location, safety, commute, and convenience carry real
+        financial value.
+      </p>
+
+      <p>
+        But this rent level can also create major pressure fast. If $5,000 rent
+        combines with debt payments, high utilities, parking fees, childcare,
+        private school, car payments, or thin savings, the apartment may feel
+        much more expensive than the base rent suggests.
+      </p>
+    </section>
+
+    <div class="calculator">
+      <h2>Rent Pressure Verdict</h2>
+
+      <div class="grid">
+        <div>
+          <label for="income">Monthly Take-Home Income</label>
+          <input id="income" type="number" placeholder="Example: 18000" />
+        </div>
+
+        <div>
+          <label for="savings">Total Savings</label>
+          <input id="savings" type="number" placeholder="Example: 100000" />
+        </div>
+
+        <div>
+          <label for="rent">Monthly Rent</label>
+          <input id="rent" type="number" value="5000" />
+        </div>
+
+        <div>
+          <label for="debt">Monthly Debt Payments</label>
+          <input id="debt" type="number" placeholder="Example: 1500" />
+
+          <div class="helper-link">
+            Not sure what counts as debt?
+            <a href="/what-counts-as-debt">Read the debt guide</a>
+          </div>
+        </div>
+      </div>
+
+      <button id="rentButton" type="button">Get Rent Verdict</button>
+
+      <div class="result" id="result">
+        <div class="score" id="scoreText"></div>
+
+        <div class="bar">
+          <div class="fill" id="scoreFill"></div>
+        </div>
+
+        <div class="result-details" id="resultDetails"></div>
+
+        <div class="fine-print">
+          This is a general educational estimate, not financial advice.
+        </div>
+      </div>
+    </div>
+
+    <section class="content-section">
+      <h2>What a $5,000 Rent Payment Means</h2>
+
+      <p>
+        A $5,000 rent payment should be judged by cash-flow pressure, not status
+        or income alone. The key question is whether the payment still leaves
+        enough room for savings, taxes, insurance, transportation, food,
+        childcare, travel, debt payoff, and unexpected expenses.
+      </p>
+
+      <p>
+        This rent level is usually safest when income is high, savings are deep,
+        debt is low, and the apartment reduces other costs or risks. It becomes
+        more dangerous when it depends on perfect income, bonuses, commissions,
+        or credit cards to keep the rest of the budget moving.
+      </p>
+    </section>
+
+    <WhenSpendingMakesSense
+      title="When $5,000 Rent Can Make Sense"
+      items={[
+        "The payment is a modest share of monthly take-home income.",
+        "You have a strong emergency fund after deposits and move-in costs.",
+        "Debt payments are low enough that housing does not crowd out other priorities.",
+        "The location improves safety, commute, work access, school access, or family logistics.",
+        "The full housing cost includes utilities, parking, fees, insurance, and transportation.",
+      ]}
+    />
+
+    <section class="content-section">
+      <h2>When You Should Look for Cheaper Rent</h2>
+
+      <p>
+        Cheaper rent may be smarter if $5,000 would make normal spending feel
+        tight, slow down debt payoff, reduce monthly savings, or force you to
+        rely on bonuses, commissions, or credit cards to cover routine expenses.
+      </p>
+
+      <p>
+        A lower payment can also preserve optionality. If your job situation,
+        family needs, or income changes, a smaller lease gives you more room to
+        adjust without turning housing into the center of every financial
+        decision.
+      </p>
+    </section>
+
+    <KeyCostCategories
+      items={[
+        {
+          title: "Utilities and luxury-building fees",
+          description:
+            "Electric, gas, water, trash, internet, parking, amenities, storage, pet rent, renter’s insurance, and building fees can push the real cost above $5,000.",
+        },
+        {
+          title: "Debt payments",
+          description:
+            "Credit cards, student loans, car payments, personal loans, and other recurring obligations reduce how much flexibility remains after rent.",
+        },
+        {
+          title: "Move-in costs",
+          description:
+            "Security deposits, first month’s rent, broker fees, movers, furniture, utility setup, and building fees can create a large upfront cash requirement.",
+        },
+        {
+          title: "Location tradeoffs",
+          description:
+            "A $5,000 apartment may be easier to justify if it lowers commuting costs, reduces vehicle needs, improves safety, or supports work stability.",
+        },
+      ]}
+    />
+
+    <ReduceCostTips
+      items={[
+        "Compare total housing cost, not just advertised rent.",
+        "Ask about parking, amenities, utilities, pet fees, storage, and building charges.",
+        "Avoid using most of your emergency fund for deposits or furniture.",
+        "Check whether the location meaningfully reduces transportation or childcare friction.",
+        "Consider a cheaper unit if $5,000 rent weakens savings or increases debt reliance.",
+      ]}
+    />
+
+    <FinancialRedFlags
+      items={[
+        "Rent would leave little or no room for monthly savings.",
+        "You would need bonuses, commissions, or credit cards to stay comfortable.",
+        "Move-in costs would wipe out most of your emergency fund.",
+        "Debt payments already consume a meaningful share of take-home income.",
+        "You are ignoring utilities, parking, insurance, pet fees, storage, or commuting costs.",
+      ]}
+    />
+
+    <CalculatorAssumptions
+      items={[
+        "The calculator uses monthly take-home income rather than gross income.",
+        "The estimate treats rent as the base monthly payment and does not include every utility, fee, or location-specific cost.",
+        "Debt payments should include recurring monthly obligations such as credit cards, student loans, car payments, and personal loans.",
+        "Savings are used as a cushion signal, especially when deposits, broker fees, furniture, or high rent reduce flexibility.",
+        "Local housing costs, job stability, bonus income, family obligations, and transportation needs can change the final decision.",
+      ]}
+    />
+
+    <FAQSection
+      title="$5,000 Rent FAQ"
+      faqs={[
+        {
+          question: "Is $5,000 a month too much for rent?",
+          answer:
+            "$5,000 rent may be reasonable for a high-income household with strong savings and low debt, but it can be risky if it crowds out savings, debt payoff, or normal monthly flexibility.",
+        },
+        {
+          question: "What income do I need for $5,000 rent?",
+          answer:
+            "Many renters would want enough take-home income that $5,000 rent still leaves room for utilities, savings, debt payments, transportation, food, insurance, and emergencies.",
+        },
+        {
+          question: "Should I count bonuses or commissions for $5,000 rent?",
+          answer:
+            "Be careful. If the rent only works when bonuses or commissions arrive, the lease may be riskier than it looks. Base affordability on reliable take-home income whenever possible.",
+        },
+        {
+          question: "Can $5,000 rent be worth it in a high-cost city?",
+          answer:
+            "Sometimes. A higher rent payment can make sense if it improves safety, lowers commute costs, supports work access, or replaces other expensive transportation needs.",
+        },
+        {
+          question: "What if $5,000 rent leaves no room for savings?",
+          answer:
+            "That is a major warning sign. High rent that prevents saving can make emergencies harder to absorb and may turn the lease into long-term financial pressure.",
+        },
+      ]}
+    />
+
+    <MethodologySection category="rent affordability" updated="May 2026" />
+
+    <RelatedGuides
+      guides={[
+        {
+          title: "How Much Rent Can I Afford?",
+          href: "/how-much-rent-can-i-afford",
+          description:
+            "Learn how rent-to-income rules, take-home pay, debt, utilities, and savings affect affordability.",
+        },
+        {
+          title: "What Counts as Debt?",
+          href: "/what-counts-as-debt",
+          description:
+            "See which monthly obligations should be included when evaluating rent affordability.",
+        },
+      ]}
+    />
+
+    <RelatedCalculators
+      calculators={[
+        {
+          category: "Rent",
+          title: "Should I Spend $4,000 on Rent?",
+          href: "/should-i-spend-4000-on-rent",
+        },
+        {
+          category: "Rent",
+          title: "Should I Spend 40% of My Income on Rent?",
+          href: "/should-i-spend-40-percent-income-on-rent",
+        },
+        {
+          category: "Rent",
+          title: "Should I Spend 50% of My Income on Rent?",
+          href: "/should-i-spend-50-percent-income-on-rent",
+        },
+        {
+          category: "Rent",
+          title: "Should I Spend 60% of My Income on Rent?",
+          href: "/should-i-spend-60-percent-income-on-rent",
+        },
+      ]}
+    />
+  </main>
+
+  <script is:inline>
+    const clamp = (value, min, max) => Math.min(Math.max(value, min), max);
+
+    const getNumber = (id) => {
+      const rawValue = document.getElementById(id)?.value;
+      const value = Number(rawValue);
+      return Number.isFinite(value) && value >= 0 ? value : 0;
+    };
+
+    function getPressureLevel(score) {
+      if (score <= 30) return { label: "Low Pressure", color: "#16a34a" };
+      if (score <= 60) return { label: "Moderate Pressure", color: "#eab308" };
+      return { label: "High Pressure", color: "#dc2626" };
+    }
+
+    function calculateRent() {
+      const income = getNumber("income");
+      const savings = getNumber("savings");
+      const rent = getNumber("rent");
+      const debt = getNumber("debt");
+
+      const result = document.getElementById("result");
+      const scoreText = document.getElementById("scoreText");
+      const scoreFill = document.getElementById("scoreFill");
+      const resultDetails = document.getElementById("resultDetails");
+
+      result.style.display = "block";
+
+      if (income <= 0 || rent <= 0) {
+        scoreText.textContent = "Add your numbers first";
+        scoreFill.style.width = "0%";
+        scoreFill.style.background = "#16a34a";
+        resultDetails.innerHTML =
+          "<p>Enter your take-home income and monthly rent so the calculator can estimate housing pressure.</p>";
+        return;
+      }
+
+      const rentRatio = (rent / income) * 100;
+      const debtRatio = (debt / income) * 100;
+      const savingsMonths = savings / rent;
+
+      let pressureScore = 0;
+
+      pressureScore += clamp(rentRatio * 1.35, 0, 55);
+      pressureScore += clamp(debtRatio * 0.55, 0, 25);
+
+      if (rentRatio >= 50) {
+        pressureScore += 18;
+      } else if (rentRatio >= 40) {
+        pressureScore += 12;
+      } else if (rentRatio >= 30) {
+        pressureScore += 6;
+      }
+
+      if (savingsMonths < 1) {
+        pressureScore += 14;
+      } else if (savingsMonths < 3) {
+        pressureScore += 8;
+      } else if (savingsMonths >= 6) {
+        pressureScore -= 8;
+      }
+
+      if (rentRatio < 25 && debtRatio < 10 && savingsMonths >= 6) {
+        pressureScore = Math.min(pressureScore, 20);
+      }
+
+      if (rentRatio < 15 && debtRatio < 5 && savingsMonths >= 12) {
+        pressureScore = Math.min(pressureScore, 10);
+      }
+
+      if (rentRatio < 8 && debtRatio < 3 && savingsMonths >= 24) {
+        pressureScore = Math.min(pressureScore, 3);
+      }
+
+      if (rentRatio < 5 && debtRatio === 0 && savingsMonths >= 36) {
+        pressureScore = 0;
+      }
+
+      if (income >= 50000 && rentRatio < 10 && debtRatio < 5) {
+        pressureScore = Math.min(pressureScore, 5);
+      }
+
+      if (savings >= 1000000 && rentRatio < 50) {
+        pressureScore = Math.min(pressureScore, 5);
+      }
+
+      if (savings >= 5000000) {
+        pressureScore = 0;
+      }
+
+      pressureScore = clamp(Math.round(pressureScore), 0, 100);
+
+      const level = getPressureLevel(pressureScore);
+
+      scoreText.textContent = `${level.label} — ${pressureScore}/100`;
+      scoreFill.style.width = `${pressureScore}%`;
+      scoreFill.style.background = level.color;
+
+      let guidance = "";
+
+      if (pressureScore === 0) {
+        guidance =
+          "With this level of income or savings, this rent creates essentially no financial pressure based on the numbers provided.";
+      } else if (pressureScore <= 30) {
+        guidance =
+          "This rent appears manageable based on the numbers provided. The main priority is keeping utilities, transportation, and monthly savings inside the broader housing budget.";
+      } else if (pressureScore <= 60) {
+        guidance =
+          "This rent may work, but it deserves caution. The payment could reduce monthly flexibility if utilities, debt, parking, transportation, or move-in costs are higher than expected.";
+      } else {
+        guidance =
+          "This rent could create real monthly financial pressure. A cheaper apartment, lower debt load, stronger savings cushion, or higher income would likely make the lease safer.";
+      }
+
+      resultDetails.innerHTML = `
+        <p><strong>Rent impact:</strong> ${rentRatio.toFixed(1)}% of monthly take-home income.</p>
+        <p><strong>Debt impact:</strong> ${debtRatio.toFixed(1)}% of monthly take-home income.</p>
+        <p><strong>Savings cushion:</strong> ${savingsMonths.toFixed(1)} months of rent covered.</p>
+        <p>${guidance}</p>
+      `;
+    }
+
+    document
+      .getElementById("rentButton")
+      .addEventListener("click", calculateRent);
+  </script>
+</Layout>
