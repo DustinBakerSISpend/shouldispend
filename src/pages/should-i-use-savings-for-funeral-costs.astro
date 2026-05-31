@@ -1,0 +1,703 @@
+---
+import Layout from "../layouts/Layout.astro";
+import FAQSection from "../components/FAQSection.astro";
+
+const funeralFaqs = [
+  {
+    question: "Should I use savings to pay for funeral costs?",
+    answer:
+      "Using savings can make sense if the funeral can be paid without draining emergency reserves, missing bills, or creating new debt. It becomes risky when the household loses its financial cushion afterward.",
+  },
+  {
+    question: "How much savings should I keep after a funeral?",
+    answer:
+      "A safer target is enough savings to cover essential bills, housing, food, transportation, medical needs, and another emergency. The exact amount depends on income stability, dependents, debt, and monthly expenses.",
+  },
+  {
+    question: "Is it better to use savings or borrow for a funeral?",
+    answer:
+      "Savings are usually safer than high-interest debt if enough emergency cushion remains afterward. Borrowing may create longer-term pressure, especially through credit cards, personal loans, or funeral financing.",
+  },
+  {
+    question: "What if family members expect me to use my savings?",
+    answer:
+      "Family pressure can make funeral decisions harder. If one person is expected to pay, it is reasonable to ask for clear contributions, compare lower-cost options, and protect basic household stability.",
+  },
+];
+---
+
+<Layout
+  title="Should I Use Savings for Funeral Costs?"
+  description="Use this funeral savings calculator to decide whether paying funeral costs from savings protects your family or drains emergency reserves too far."
+>
+  <style>
+    .container {
+      max-width: 980px;
+      margin: 0 auto;
+      padding: 80px 24px;
+    }
+
+    .eyebrow {
+      color: #0f766e;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      font-size: 0.8rem;
+      font-weight: 800;
+      margin-bottom: 18px;
+    }
+
+    h1 {
+      font-size: clamp(2.7rem, 7vw, 4.8rem);
+      line-height: 0.95;
+      margin-bottom: 24px;
+      color: #0f172a;
+      max-width: 900px;
+    }
+
+    .intro {
+      max-width: 820px;
+      color: #334155;
+      font-size: 1.12rem;
+      line-height: 1.85;
+      margin-bottom: 48px;
+    }
+
+    .calculator-box,
+    .info-card,
+    .link-card,
+    .callout {
+      border: 1px solid #dbe4ee;
+      background: white;
+      border-radius: 22px;
+      padding: 26px;
+    }
+
+    .calculator-box {
+      margin-bottom: 56px;
+      box-shadow: 0 12px 28px rgba(15, 23, 42, 0.05);
+    }
+
+    .calculator-box h2,
+    .content-section h2 {
+      font-size: 2rem;
+      line-height: 1.2;
+      margin-bottom: 18px;
+      color: #0f172a;
+    }
+
+    .calculator-box p,
+    .content-section p,
+    .content-section li {
+      color: #334155;
+      line-height: 1.9;
+      font-size: 1.06rem;
+    }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 18px;
+      margin-top: 22px;
+    }
+
+    label {
+      display: block;
+      font-weight: 800;
+      color: #0f172a;
+      margin-bottom: 8px;
+      font-size: 0.95rem;
+    }
+
+    input {
+      width: 100%;
+      border: 1px solid #cbd5e1;
+      border-radius: 12px;
+      padding: 13px;
+      font-size: 1rem;
+      box-sizing: border-box;
+    }
+
+    button {
+      margin-top: 24px;
+      border: none;
+      border-radius: 999px;
+      padding: 15px 24px;
+      background: #0f766e;
+      color: white;
+      font-weight: 900;
+      font-size: 1rem;
+      cursor: pointer;
+    }
+
+    button:hover {
+      opacity: 0.92;
+    }
+
+    .result {
+      margin-top: 32px;
+      background: #f8fafc;
+      border: 1px solid #dbe4ee;
+      border-radius: 24px;
+      padding: 32px;
+      display: none;
+    }
+
+    .result.visible {
+      display: block;
+    }
+
+    .score {
+      font-size: clamp(2rem, 4vw, 2.7rem);
+      font-weight: 900;
+      color: #0f172a;
+      margin-bottom: 22px;
+      line-height: 1.15;
+    }
+
+    .bar {
+      height: 16px;
+      background: #dbe4ee;
+      border-radius: 999px;
+      overflow: hidden;
+      margin-bottom: 24px;
+    }
+
+    .fill {
+      height: 100%;
+      width: 0%;
+      border-radius: 999px;
+      transition: width 0.45s ease;
+    }
+
+    .fill.safe {
+      background: linear-gradient(90deg, #0f766e 0%, #14b8a6 100%);
+    }
+
+    .fill.caution {
+      background: linear-gradient(90deg, #ca8a04 0%, #facc15 100%);
+    }
+
+    .fill.danger {
+      background: linear-gradient(90deg, #dc2626 0%, #f97316 100%);
+    }
+
+    .result-details {
+      color: #334155;
+      line-height: 1.9;
+      font-size: 1.02rem;
+    }
+
+    .result-details p {
+      margin-bottom: 12px;
+    }
+
+    .guidance {
+      margin-top: 20px;
+      padding-top: 18px;
+      border-top: 1px solid #dbe4ee;
+      color: #0f172a;
+      font-size: 1.08rem;
+      line-height: 1.8;
+    }
+
+    .fine-print {
+      color: #64748b;
+      font-size: 0.9rem;
+      margin-top: 20px;
+    }
+
+    .content-section {
+      margin-top: 72px;
+    }
+
+    .content-section h3 {
+      font-size: 1.3rem;
+      color: #0f172a;
+      margin: 28px 0 12px;
+    }
+
+    .info-grid,
+    .link-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 20px;
+      margin-top: 28px;
+    }
+
+    .info-card h3 {
+      margin-top: 0;
+    }
+
+    .info-card p,
+    .link-card span {
+      margin: 0;
+      color: #334155;
+      line-height: 1.7;
+      font-size: 0.96rem;
+    }
+
+    .link-card {
+      display: block;
+      text-decoration: none;
+      color: inherit;
+      transition: transform 0.15s ease;
+    }
+
+    .link-card:hover {
+      transform: translateY(-2px);
+    }
+
+    .link-card strong {
+      display: block;
+      color: #0f172a;
+      margin-bottom: 8px;
+      line-height: 1.3;
+    }
+
+    .callout {
+      background: #f8fafc;
+      margin-top: 28px;
+    }
+  </style>
+
+  <main class="container">
+    <div class="eyebrow">Funeral Savings Calculator</div>
+
+    <h1>Should I Use Savings for Funeral Costs?</h1>
+
+    <p class="intro">
+      Paying funeral expenses from savings can be safer than borrowing, but only
+      if the household still has enough money left afterward. This calculator
+      estimates whether using savings for funeral costs protects your family or
+      creates pressure by draining emergency reserves, monthly flexibility, or
+      basic financial security.
+    </p>
+
+    <section class="calculator-box">
+      <h2>Funeral Savings Pressure Calculator</h2>
+
+      <p>
+        Enter the funeral cost, available savings, insurance or family help,
+        monthly income, debt payments, and the savings cushion you want left
+        afterward. The calculator estimates whether using savings looks
+        manageable, stressful, or financially dangerous.
+      </p>
+
+      <div class="form-grid">
+        <div>
+          <label for="cost">Estimated funeral cost</label>
+          <input id="cost" type="number" placeholder="Example: 10000" />
+        </div>
+
+        <div>
+          <label for="savings">Current liquid savings</label>
+          <input id="savings" type="number" placeholder="Example: 20000" />
+        </div>
+
+        <div>
+          <label for="help">Insurance or family help</label>
+          <input id="help" type="number" placeholder="Example: 3000" />
+        </div>
+
+        <div>
+          <label for="income">Monthly take-home income</label>
+          <input id="income" type="number" placeholder="Example: 6500" />
+        </div>
+
+        <div>
+          <label for="debt">Monthly debt payments</label>
+          <input id="debt" type="number" placeholder="Example: 900" />
+        </div>
+
+        <div>
+          <label for="emergencyTarget">Minimum savings you want left afterward</label>
+          <input id="emergencyTarget" type="number" placeholder="Example: 12000" />
+        </div>
+      </div>
+
+      <button id="calculateButton" type="button">Check Savings Pressure</button>
+
+      <div class="result" id="result">
+        <div class="score" id="scoreText"></div>
+
+        <div class="bar">
+          <div class="fill" id="scoreFill"></div>
+        </div>
+
+        <div class="result-details" id="resultDetails"></div>
+
+        <div class="guidance" id="guidance"></div>
+
+        <div class="fine-print">
+          This is a general educational estimate, not financial advice.
+        </div>
+      </div>
+    </section>
+
+    <section class="content-section">
+      <h2>When Using Savings for Funeral Costs Makes Sense</h2>
+
+      <p>
+        Using savings can be reasonable when the funeral cost can be paid without
+        high-interest debt, missed bills, or a dangerously low emergency cushion.
+        It is often safer to use planned savings than to put funeral expenses on
+        a credit card or accept a financing plan with unclear terms.
+      </p>
+
+      <p>
+        The decision becomes riskier when the funeral drains most available cash,
+        leaves the household unable to handle rent, groceries, utilities,
+        transportation, medical needs, or forces someone to rebuild savings from
+        zero while also grieving.
+      </p>
+
+      <div class="callout">
+        <p>
+          Funeral savings decisions should protect two things at once: a
+          respectful goodbye and the financial stability of the people left
+          behind.
+        </p>
+      </div>
+    </section>
+
+    <section class="content-section">
+      <h2>What This Funeral Savings Calculator Considers</h2>
+
+      <div class="info-grid">
+        <div class="info-card">
+          <h3>Cash Left After the Funeral</h3>
+          <p>
+            The calculator focuses on what savings remain after insurance,
+            prepaid funds, family help, or other contributions reduce the
+            out-of-pocket cost.
+          </p>
+        </div>
+
+        <div class="info-card">
+          <h3>Emergency Fund Protection</h3>
+          <p>
+            A funeral paid from savings is safer when enough cash remains for
+            housing, food, transportation, medical costs, repairs, and another
+            unexpected event.
+          </p>
+        </div>
+
+        <div class="info-card">
+          <h3>Income Recovery Time</h3>
+          <p>
+            Monthly income matters because a household with strong cash flow can
+            rebuild savings faster than one already stretched by bills and debt.
+          </p>
+        </div>
+
+        <div class="info-card">
+          <h3>Existing Debt Pressure</h3>
+          <p>
+            Debt payments reduce flexibility. Even if savings cover the funeral,
+            a household with heavy monthly debt may need a larger cash cushion
+            afterward.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <section class="content-section">
+      <h2>When Savings Use Becomes a Red Flag</h2>
+
+      <p>
+        The danger is not simply using savings. The danger is using savings in a
+        way that leaves the family financially exposed after the funeral. A
+        respectful service should not create a second crisis through empty bank
+        accounts, missed payments, or panic borrowing.
+      </p>
+
+      <ul>
+        <li>The funeral would use nearly all available liquid savings</li>
+        <li>Rent, groceries, transportation, or utilities would be at risk</li>
+        <li>The family has no plan if insurance money is delayed</li>
+        <li>One person is expected to pay while others only apply pressure</li>
+        <li>The funeral home quote is not itemized or clearly explained</li>
+        <li>Credit cards would still be needed after savings are used</li>
+      </ul>
+    </section>
+
+    <section class="content-section">
+      <h2>Better Ways to Protect Savings Before Paying</h2>
+
+      <p>
+        Before using a large share of savings, ask for an itemized price list,
+        compare burial and cremation options, separate required costs from
+        optional upgrades, confirm insurance timing, and ask family members for
+        specific contributions rather than vague promises.
+      </p>
+
+      <p>
+        It may also help to compare a smaller service, direct cremation, a
+        memorial-only gathering, a church or community space, a family-hosted
+        reception, or a delayed celebration of life. These choices can reduce
+        financial pressure without making the goodbye less meaningful.
+      </p>
+    </section>
+
+    <section class="content-section">
+      <h2>Savings vs. Debt for Funeral Expenses</h2>
+
+      <p>
+        Savings and debt are not equal tradeoffs. Using some savings may be
+        responsible if the household remains stable afterward. Borrowing can be
+        more dangerous when interest charges, monthly payments, and existing
+        debts turn a funeral decision into long-term financial stress.
+      </p>
+
+      <p>
+        A good rule of thumb: if using savings avoids high-interest debt and
+        still leaves a real emergency cushion, savings may be the safer option.
+        If using savings leaves the household exposed, the better answer may be
+        reducing the funeral cost instead of borrowing the difference.
+      </p>
+    </section>
+
+    <section class="content-section">
+      <h2>Related Funeral and Financial Calculators</h2>
+
+      <div class="link-grid">
+        <a class="link-card" href="/funeral-calculators">
+          <strong>Funeral Cost Calculators</strong>
+          <span>
+            Compare funeral, cremation, burial, insurance, savings, and debt
+            decisions in one cluster.
+          </span>
+        </a>
+
+        <a class="link-card" href="/should-i-spend-5000-on-a-funeral">
+          <strong>$5,000 Funeral Calculator</strong>
+          <span>
+            See whether a smaller cremation or memorial budget protects savings
+            better.
+          </span>
+        </a>
+
+        <a class="link-card" href="/should-i-spend-10000-on-a-funeral">
+          <strong>$10,000 Funeral Calculator</strong>
+          <span>
+            Test a common funeral budget against savings, income, help, and debt
+            pressure.
+          </span>
+        </a>
+
+        <a class="link-card" href="/should-i-spend-20000-on-a-funeral">
+          <strong>$20,000 Funeral Calculator</strong>
+          <span>
+            Compare savings pressure from a high-cost funeral or full burial
+            plan.
+          </span>
+        </a>
+
+        <a class="link-card" href="/how-much-emergency-savings-should-i-have">
+          <strong>Emergency Savings Guide</strong>
+          <span>
+            Understand how much cushion to preserve before using savings for a
+            major unexpected expense.
+          </span>
+        </a>
+
+        <a class="link-card" href="/how-much-debt-is-too-much">
+          <strong>Debt Pressure Calculator</strong>
+          <span>
+            Check whether avoiding funeral debt is more important than
+            preserving every dollar of savings.
+          </span>
+        </a>
+
+        <a class="link-card" href="/calculators">
+          <strong>All Financial Calculators</strong>
+          <span>
+            Browse all ShouldISpend calculators for groceries, weddings, cars,
+            travel, rent, medical costs, and major expenses.
+          </span>
+        </a>
+      </div>
+    </section>
+
+    <FAQSection title="Using Savings for Funeral Costs FAQ" faqs={funeralFaqs} />
+  </main>
+
+  <script>
+    const clamp = (value, min, max) => Math.min(Math.max(value, min), max);
+
+    const getNumber = (id) => {
+      const rawValue = document.getElementById(id)?.value;
+      const value = Number(rawValue);
+      return Number.isFinite(value) && value >= 0 ? value : 0;
+    };
+
+    function getPressureLevel(score) {
+      if (score <= 30) {
+        return {
+          label: "Low Pressure",
+          stress: "Low pressure",
+          colorClass: "safe",
+          action: "Use savings only after confirming the funeral is itemized and the emergency cushion remains protected.",
+        };
+      }
+
+      if (score <= 60) {
+        return {
+          label: "Moderate Pressure",
+          stress: "Moderate pressure",
+          colorClass: "caution",
+          action: "Reduce costs, confirm family help, and protect emergency savings before paying.",
+        };
+      }
+
+      return {
+        label: "High Pressure",
+        stress: "High pressure",
+        colorClass: "danger",
+        action: "Avoid draining savings; reduce the funeral cost, seek help, or avoid high-interest debt.",
+      };
+    }
+
+    const button = document.getElementById("calculateButton");
+    const result = document.getElementById("result");
+    const scoreText = document.getElementById("scoreText");
+    const scoreFill = document.getElementById("scoreFill");
+    const resultDetails = document.getElementById("resultDetails");
+    const guidance = document.getElementById("guidance");
+
+    button?.addEventListener("click", () => {
+      const cost = getNumber("cost");
+      const savings = getNumber("savings");
+      const help = getNumber("help");
+      const income = getNumber("income");
+      const debt = getNumber("debt");
+      const emergencyTarget = getNumber("emergencyTarget");
+
+      result?.classList.add("visible");
+
+      if (cost <= 0 || income <= 0) {
+        scoreText.textContent = "Add your numbers first";
+        scoreFill.style.width = "0%";
+        scoreFill.className = "fill safe";
+        resultDetails.innerHTML =
+          "<p>Enter a positive funeral cost and monthly take-home income so the calculator can estimate savings pressure.</p>";
+        guidance.textContent = "";
+        return;
+      }
+
+      const outOfPocket = Math.max(cost - help, 0);
+      const savingsAfter = savings - outOfPocket;
+      const savingsImpact = savings > 0 ? (outOfPocket / savings) * 100 : 150;
+      const monthlyIncomeImpact = (outOfPocket / income) * 100;
+      const debtPaymentRatio = income > 0 ? (debt / income) * 100 : 100;
+      const emergencyTargetRemaining =
+        emergencyTarget > 0 ? (savingsAfter / emergencyTarget) * 100 : null;
+
+      let pressureScore = 0;
+
+      const hasAbsurdSavings =
+        savings >= outOfPocket * 100 &&
+        savingsAfter >= Math.max(emergencyTarget, income * 6);
+
+      const hasAbsurdIncome =
+        outOfPocket > 0 &&
+        monthlyIncomeImpact <= 2 &&
+        debtPaymentRatio <= 5 &&
+        savingsAfter >= 0;
+
+      const fullyCovered = outOfPocket <= 0;
+
+      if (fullyCovered || hasAbsurdSavings || hasAbsurdIncome) {
+        pressureScore = 0;
+      } else {
+        pressureScore += clamp(savingsImpact * 0.5, 0, 42);
+        pressureScore += clamp(monthlyIncomeImpact * 0.28, 0, 24);
+        pressureScore += clamp(debtPaymentRatio * 0.28, 0, 18);
+
+        if (outOfPocket > savings) pressureScore += 30;
+
+        if (savingsAfter < 0) {
+          pressureScore += 28;
+        } else if (emergencyTarget > 0 && savingsAfter < emergencyTarget * 0.5) {
+          pressureScore += 18;
+        } else if (emergencyTarget > 0 && savingsAfter < emergencyTarget) {
+          pressureScore += 10;
+        } else if (emergencyTarget > 0 && savingsAfter >= emergencyTarget * 3) {
+          pressureScore -= 12;
+        } else if (savingsAfter >= income * 6) {
+          pressureScore -= 10;
+        }
+
+        if (monthlyIncomeImpact > 300) pressureScore += 18;
+        else if (monthlyIncomeImpact > 200) pressureScore += 12;
+        else if (monthlyIncomeImpact > 100) pressureScore += 6;
+
+        if (debtPaymentRatio >= 45) pressureScore += 14;
+        else if (debtPaymentRatio >= 30) pressureScore += 9;
+        else if (debtPaymentRatio >= 20) pressureScore += 4;
+
+        if (
+          monthlyIncomeImpact <= 2 &&
+          debtPaymentRatio <= 5 &&
+          savingsAfter >= 0
+        ) {
+          pressureScore = 0;
+        } else if (
+          savingsImpact <= 0.5 &&
+          monthlyIncomeImpact <= 5 &&
+          savingsAfter >= emergencyTarget
+        ) {
+          pressureScore = Math.min(pressureScore, 3);
+        } else if (
+          savingsImpact <= 1 &&
+          monthlyIncomeImpact <= 10 &&
+          savingsAfter >= Math.max(emergencyTarget, income * 3)
+        ) {
+          pressureScore = Math.min(pressureScore, 8);
+        } else if (
+          savingsImpact <= 3 &&
+          monthlyIncomeImpact <= 20 &&
+          savingsAfter >= emergencyTarget
+        ) {
+          pressureScore = Math.min(pressureScore, 15);
+        }
+      }
+
+      pressureScore = clamp(Math.round(pressureScore), 0, 100);
+
+      const level = getPressureLevel(pressureScore);
+
+      scoreText.textContent = `${level.label} — ${pressureScore}/100`;
+      scoreFill.style.width = `${pressureScore}%`;
+      scoreFill.className = `fill ${level.colorClass}`;
+
+      resultDetails.innerHTML = `
+        <p><strong>Pressure level:</strong> ${level.stress}.</p>
+        <p><strong>Estimated savings used:</strong> $${outOfPocket.toLocaleString()} after insurance or family help.</p>
+        <p><strong>Savings impact:</strong> ${savings > 0 ? `${savingsImpact.toFixed(1)}% of available savings.` : "No available savings entered."}</p>
+        <p><strong>Estimated savings after funeral:</strong> $${savingsAfter.toLocaleString()}.</p>
+        <p><strong>Monthly income impact:</strong> ${monthlyIncomeImpact.toFixed(1)}% of one month’s take-home income.</p>
+        <p><strong>Debt payment pressure:</strong> ${debtPaymentRatio.toFixed(1)}% of monthly take-home income.</p>
+        ${
+          emergencyTargetRemaining !== null
+            ? `<p><strong>Emergency target after funeral:</strong> ${emergencyTargetRemaining.toFixed(1)}% of target remaining.</p>`
+            : ""
+        }
+      `;
+
+      if (pressureScore === 0) {
+        guidance.textContent =
+          `Using savings for this funeral creates essentially no measurable financial pressure based on the numbers provided. The out-of-pocket cost is extremely small relative to available savings or income, and emergency reserves remain protected. Recommended next step: ${level.action}`;
+      } else if (pressureScore <= 30) {
+        guidance.textContent =
+          `Using savings for this funeral appears manageable based on the numbers provided. The out-of-pocket cost equals about ${monthlyIncomeImpact.toFixed(1)}% of one month’s take-home income and ${savingsImpact.toFixed(1)}% of available savings. Recommended next step: ${level.action}`;
+      } else if (pressureScore <= 60) {
+        guidance.textContent =
+          `Using savings for this funeral may be workable, but it deserves caution. The out-of-pocket cost equals about ${monthlyIncomeImpact.toFixed(1)}% of one month’s take-home income and ${savingsImpact.toFixed(1)}% of available savings, so emergency reserves and lower-cost options matter. Recommended next step: ${level.action}`;
+      } else {
+        guidance.textContent =
+          `Using savings for this funeral could create real financial strain. The out-of-pocket cost equals about ${monthlyIncomeImpact.toFixed(1)}% of one month’s take-home income and ${savingsImpact.toFixed(1)}% of available savings, so reducing costs, seeking help, or avoiding high-interest debt would be safer. Recommended next step: ${level.action}`;
+      }
+    });
+  </script>
+</Layout>

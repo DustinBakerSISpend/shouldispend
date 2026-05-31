@@ -454,12 +454,66 @@ export const calculators = [
   },
   
 {
+  id: "funeral-5000",
+  category: "Funeral Costs",
+  title: "Should I Spend $5,000 on a Funeral?",
+  description:
+    "Evaluate whether a $5,000 funeral or memorial fits your savings, insurance help, family contributions, debt risk, and emergency cushion.",
+  href: "/should-i-spend-5000-on-a-funeral",
+},
+
+{
   id: "funeral-10000",
-  category: "Budget Rules",
+  category: "Funeral Costs",
   title: "Should I Spend $10,000 on a Funeral?",
   description:
-    "Evaluate funeral affordability using savings, insurance help, debt pressure, income, and emergency flexibility.",
+    "Evaluate funeral affordability using savings, insurance help, family contributions, debt pressure, income, and emergency flexibility.",
   href: "/should-i-spend-10000-on-a-funeral",
+},
+
+{
+  id: "funeral-15000",
+  category: "Funeral Costs",
+  title: "Should I Spend $15,000 on a Funeral?",
+  description:
+    "Evaluate whether a $15,000 funeral creates manageable family support or risky pressure from savings loss, debt, insurance gaps, and burial costs.",
+  href: "/should-i-spend-15000-on-a-funeral",
+},
+
+{
+  id: "funeral-20000",
+  category: "Funeral Costs",
+  title: "Should I Spend $20,000 on a Funeral?",
+  description:
+    "Analyze whether a $20,000 funeral is financially safe based on insurance proceeds, family help, burial costs, savings, debt, and long-term pressure.",
+  href: "/should-i-spend-20000-on-a-funeral",
+},
+
+{
+  id: "funeral-savings",
+  category: "Funeral Costs",
+  title: "Should I Use Savings for Funeral Costs?",
+  description:
+    "Decide whether using savings for funeral expenses protects the family or creates risk by draining emergency reserves, rent money, or monthly flexibility.",
+  href: "/should-i-use-savings-for-funeral-costs",
+},
+
+{
+  id: "funeral-vs-cremation",
+  category: "Funeral Costs",
+  title: "Funeral vs. Cremation Cost Calculator",
+  description:
+    "Compare burial, cremation, direct cremation, memorial services, cemetery costs, family preferences, and total funeral spending pressure.",
+  href: "/funeral-vs-cremation-cost-calculator",
+},
+
+{
+  id: "funeral-expenses-without-debt",
+  category: "Funeral Costs",
+  title: "How to Pay for Funeral Expenses Without Debt",
+  description:
+    "Compare savings, life insurance, family contributions, cremation options, itemized pricing, and lower-cost memorial choices before borrowing.",
+  href: "/how-to-pay-for-funeral-expenses-without-debt",
 },
 
 {

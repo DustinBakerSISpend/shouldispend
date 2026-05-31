@@ -1,0 +1,722 @@
+---
+import Layout from "../layouts/Layout.astro";
+import CalculatorCard from "../components/CalculatorCard.astro";
+import FAQSection from "../components/FAQSection.astro";
+
+const liveFuneralCalculators = [
+  {
+    category: "Funeral Costs",
+    title: "$10,000 Funeral Calculator",
+    description:
+      "Pressure-test a $10,000 funeral against savings, insurance help, family contributions, debt risk, and emergency reserves.",
+    href: "/should-i-spend-10000-on-a-funeral/",
+  },
+];
+
+const upcomingFuneralCalculators = [
+  {
+    href: "/should-i-spend-5000-on-a-funeral/",
+    title: "$5,000 Funeral Calculator",
+    text:
+      "Evaluate whether a smaller funeral or memorial budget fits available savings, family support, and immediate household needs.",
+  },
+  {
+    href: "/should-i-spend-15000-on-a-funeral/",
+    title: "$15,000 Funeral Calculator",
+    text:
+      "Test a higher-cost funeral plan against insurance proceeds, burial costs, credit risk, and emergency savings protection.",
+  },
+  {
+    href: "/should-i-spend-20000-on-a-funeral/",
+    title: "$20,000 Funeral Calculator",
+    text:
+      "Treat a large funeral bill like a major financial event and see whether the plan creates long-term pressure.",
+  },
+  {
+    href: "/should-i-use-savings-for-funeral-costs/",
+    title: "Use Savings for Funeral Costs?",
+    text:
+      "Decide how much savings can be used respectfully without leaving the household exposed after the service.",
+  },
+  {
+    href: "/should-i-buy-funeral-insurance/",
+    title: "Funeral Insurance Calculator",
+    text:
+      "Compare premiums, expected benefits, age, health, and whether insurance is truly better than saving directly.",
+  },
+  {
+    href: "/funeral-vs-cremation-cost-calculator/",
+    title: "Funeral vs. Cremation Cost Calculator",
+    text:
+      "Compare burial, cremation, direct cremation, memorial services, cemetery costs, and family preferences.",
+  },
+];
+
+const planningLinks = [
+  {
+    href: "/how-to-pay-for-funeral-expenses-without-debt/",
+    title: "How to Pay for Funeral Expenses Without Debt",
+    text:
+      "Review practical ways to lower costs, divide expenses, use insurance, avoid high-interest borrowing, and still plan a respectful service.",
+  },
+  {
+    href: "/how-much-emergency-savings-should-i-have/",
+    title: "Emergency Savings Guide",
+    text:
+      "See how much cash cushion to preserve before using savings for a funeral, burial, cremation, or memorial.",
+  },
+  {
+    href: "/how-much-debt-is-too-much/",
+    title: "Debt Pressure Calculator",
+    text:
+      "Measure whether funeral borrowing would create too much monthly pressure or push the household into risky territory.",
+  },
+  {
+    href: "/what-counts-as-debt/",
+    title: "What Counts as Debt?",
+    text:
+      "Understand which obligations matter when deciding whether a funeral loan, credit card balance, or payment plan is affordable.",
+  },
+];
+
+const funeralCostFactors = [
+  {
+    title: "Basic Funeral Home Fees",
+    text:
+      "Most funeral homes charge a basic services fee that may cover planning, coordination, paperwork, permits, staff time, and overhead.",
+  },
+  {
+    title: "Casket or Urn",
+    text:
+      "Caskets can add thousands of dollars to the final bill, while urn costs vary widely depending on material, customization, and family preference.",
+  },
+  {
+    title: "Burial Plot and Cemetery Costs",
+    text:
+      "A burial may involve a plot, grave opening and closing, vault, marker, headstone, perpetual care fees, and cemetery administration charges.",
+  },
+  {
+    title: "Cremation and Memorial Services",
+    text:
+      "Direct cremation is often lower cost, but cremation with a viewing, formal service, obituary, flowers, reception, and urn can still become expensive.",
+  },
+  {
+    title: "Transportation and Preparation",
+    text:
+      "Transportation, embalming, body preparation, dressing, cosmetics, refrigeration, and service vehicle fees can quietly raise the total.",
+  },
+  {
+    title: "Flowers, Obituary, Reception, and Extras",
+    text:
+      "Families often underestimate flowers, printed programs, obituary placement, livestreaming, food, venue rental, clergy honorariums, and travel costs.",
+  },
+];
+
+const paymentOptions = [
+  {
+    title: "Life Insurance",
+    text:
+      "Insurance proceeds can make a funeral easier to manage, but timing matters. Some families may need a short-term plan before benefits arrive.",
+  },
+  {
+    title: "Available Savings",
+    text:
+      "Savings can be appropriate when the expense does not wipe out rent money, grocery money, medical reserves, or the household emergency fund.",
+  },
+  {
+    title: "Family Contributions",
+    text:
+      "A shared cost can reduce pressure on one person, especially when siblings or close relatives agree on a clear and realistic contribution amount.",
+  },
+  {
+    title: "Prepaid Arrangements",
+    text:
+      "A prepaid plan may reduce uncertainty, but families should understand what is covered, what is excluded, and whether the provider is reputable.",
+  },
+  {
+    title: "Payment Plans",
+    text:
+      "A payment plan may help with timing, but it should be reviewed like any other debt: monthly payment, term length, fees, and consequences of missing payments.",
+  },
+  {
+    title: "Credit Cards or Loans",
+    text:
+      "High-interest borrowing is one of the biggest funeral red flags, especially when the family has cheaper or simpler memorial options available.",
+  },
+];
+
+const redFlags = [
+  "The full funeral cost would go on a high-interest credit card.",
+  "One person is expected to pay while others pressure them emotionally.",
+  "The plan would drain emergency savings below a safe level.",
+  "The funeral home quote is not itemized or feels unclear.",
+  "The family is choosing upgrades mainly out of guilt.",
+  "The monthly payment plan would crowd out rent, food, medical bills, or debt payoff.",
+  "No one has compared burial, cremation, direct cremation, or memorial-only options.",
+  "The cost depends on money that has not arrived yet, such as delayed insurance proceeds.",
+];
+
+const funeralFaqs = [
+  {
+    question: "How much should you spend on a funeral?",
+    answer:
+      "The right funeral budget depends on available savings, insurance proceeds, family contributions, burial or cremation preferences, emergency reserves, and whether the cost creates debt. A respectful service should not require long-term financial damage.",
+  },
+  {
+    question: "Is $10,000 too much for a funeral?",
+    answer:
+      "A $10,000 funeral may be manageable if insurance, savings, or family support cover most of the cost. It becomes risky when the bill requires high-interest debt, drains emergency savings, or leaves one household carrying the burden alone.",
+  },
+  {
+    question: "Is cremation cheaper than burial?",
+    answer:
+      "Direct cremation is often cheaper than burial, but cremation with a formal service, reception, obituary, flowers, urn, and other memorial expenses can still become costly. The real comparison depends on the full plan, not just the disposition method.",
+  },
+  {
+    question: "Should I use savings to pay for a funeral?",
+    answer:
+      "Using savings may be reasonable if it does not endanger rent, groceries, transportation, medical costs, debt payments, or emergency reserves. It is riskier when funeral spending leaves the household financially exposed afterward.",
+  },
+  {
+    question: "Should I borrow money for funeral expenses?",
+    answer:
+      "Borrowing should be a last resort, especially through credit cards or high-interest loans. Before taking on debt, compare lower-cost funeral options, family contributions, insurance timing, itemized pricing, and direct cremation or memorial alternatives.",
+  },
+];
+---
+
+<Layout
+  title="Funeral Cost Calculators | ShouldISpend"
+  description="Browse funeral cost calculators for burial, cremation, savings, insurance, debt risk, and funeral affordability decisions."
+>
+  <style>
+    .container {
+      max-width: 1120px;
+      margin: 0 auto;
+      padding: 76px 24px 90px;
+    }
+
+    .hero {
+      max-width: 920px;
+      margin-bottom: 42px;
+    }
+
+    .eyebrow {
+      color: var(--accent);
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      font-size: 0.78rem;
+      font-weight: 800;
+      margin-bottom: 16px;
+    }
+
+    h1 {
+      font-size: clamp(2.8rem, 7vw, 5rem);
+      line-height: 0.98;
+      margin: 0 0 24px;
+      color: var(--text);
+      letter-spacing: -0.05em;
+      max-width: 980px;
+    }
+
+    .intro {
+      max-width: 860px;
+      color: var(--muted);
+      font-size: 1.12rem;
+      line-height: 1.85;
+      margin: 0;
+    }
+
+    .trust-strip {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+      margin: 36px 0 64px;
+    }
+
+    .trust-item {
+      background: #f8fafc;
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      padding: 18px 20px;
+    }
+
+    .trust-item strong {
+      display: block;
+      color: var(--text);
+      margin-bottom: 6px;
+      font-size: 0.98rem;
+    }
+
+    .trust-item span {
+      color: var(--muted);
+      line-height: 1.55;
+      font-size: 0.92rem;
+    }
+
+    .grid,
+    .link-grid,
+    .info-grid,
+    .two-col-grid {
+      display: grid;
+      gap: 24px;
+    }
+
+    .grid {
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      margin-top: 28px;
+    }
+
+    .link-grid,
+    .info-grid {
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      margin-top: 28px;
+    }
+
+    .two-col-grid {
+      grid-template-columns: 1.05fr 0.95fr;
+      align-items: start;
+      margin-top: 28px;
+    }
+
+    .content-section {
+      margin-top: 76px;
+    }
+
+    .content-section.narrow {
+      max-width: 880px;
+    }
+
+    .section-kicker {
+      color: var(--accent);
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      font-size: 0.76rem;
+      margin-bottom: 12px;
+    }
+
+    .content-section h2 {
+      font-size: clamp(1.85rem, 4vw, 2.35rem);
+      margin: 0 0 18px;
+      line-height: 1.15;
+      color: var(--text);
+      letter-spacing: -0.035em;
+    }
+
+    .content-section p,
+    .content-section li {
+      color: var(--muted);
+      line-height: 1.82;
+      margin-bottom: 18px;
+      font-size: 1.04rem;
+    }
+
+    .link-card,
+    .info-card,
+    .panel {
+      display: block;
+      background: white;
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 24px;
+      text-decoration: none;
+      color: inherit;
+    }
+
+    .link-card {
+      transition:
+        transform 0.15s ease,
+        box-shadow 0.15s ease,
+        border-color 0.15s ease;
+    }
+
+    .link-card:hover {
+      transform: translateY(-3px);
+      border-color: rgba(15, 118, 110, 0.35);
+      box-shadow: 0 16px 35px rgba(15, 23, 42, 0.08);
+    }
+
+    .link-card strong,
+    .info-card h3,
+    .panel h3 {
+      display: block;
+      color: var(--text);
+      margin-bottom: 10px;
+      font-size: 1.05rem;
+    }
+
+    .link-card span,
+    .info-card p,
+    .panel p {
+      color: var(--muted);
+      line-height: 1.7;
+      font-size: 0.96rem;
+      margin: 0;
+    }
+
+    .coming-soon {
+      opacity: 0.78;
+    }
+
+    .coming-soon small {
+      display: inline-block;
+      margin-top: 14px;
+      color: var(--accent);
+      font-size: 0.78rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+
+    .red-flag-list {
+      margin: 22px 0 0;
+      padding: 0;
+      list-style: none;
+      display: grid;
+      gap: 12px;
+    }
+
+    .red-flag-list li {
+      margin: 0;
+      padding: 15px 16px;
+      border: 1px solid #fecaca;
+      background: #fff7f7;
+      border-radius: 16px;
+      color: #7f1d1d;
+      line-height: 1.55;
+      font-size: 0.96rem;
+    }
+
+    .callout {
+      margin-top: 72px;
+      padding: 30px;
+      border-radius: 24px;
+      border: 1px solid rgba(15, 118, 110, 0.22);
+      background: #f0fdfa;
+      max-width: 920px;
+    }
+
+    .callout h2 {
+      margin: 0 0 14px;
+      color: var(--text);
+      font-size: 1.55rem;
+      letter-spacing: -0.02em;
+    }
+
+    .callout p {
+      color: var(--muted);
+      line-height: 1.78;
+      margin: 0;
+    }
+
+    .soft-box {
+      background: #f8fafc;
+      border: 1px solid var(--border);
+      border-radius: 24px;
+      padding: 28px;
+    }
+
+    .soft-box h3 {
+      margin: 0 0 12px;
+      color: var(--text);
+      font-size: 1.25rem;
+      letter-spacing: -0.02em;
+    }
+
+    .soft-box p {
+      margin-bottom: 0;
+    }
+
+    @media (max-width: 768px) {
+      .container {
+        padding: 54px 18px 76px;
+      }
+
+      h1 {
+        font-size: 2.75rem;
+      }
+
+      .intro {
+        font-size: 1.04rem;
+      }
+
+      .trust-strip,
+      .two-col-grid {
+        grid-template-columns: 1fr;
+        margin-bottom: 50px;
+      }
+
+      .grid,
+      .link-grid,
+      .info-grid {
+        grid-template-columns: 1fr;
+        gap: 18px;
+      }
+
+      .content-section {
+        margin-top: 58px;
+      }
+    }
+  </style>
+
+  <main class="container">
+    <section class="hero">
+      <div class="eyebrow">Funeral Cost Calculators</div>
+
+      <h1>Funeral Cost Calculators for Difficult Money Decisions</h1>
+
+      <p class="intro">
+        Funeral spending often happens fast, under grief, family pressure, and
+        unclear pricing. These calculators help compare funeral costs, cremation
+        options, burial expenses, insurance help, savings use, debt risk, and
+        lower-cost memorial choices without treating the decision like an
+        ordinary purchase.
+      </p>
+    </section>
+
+    <div class="trust-strip">
+      <div class="trust-item">
+        <strong>Respectful, not salesy</strong>
+        <span>
+          The goal is to honor someone without letting guilt turn into long-term financial harm.
+        </span>
+      </div>
+
+      <div class="trust-item">
+        <strong>Debt-aware decisions</strong>
+        <span>
+          Tools flag credit card risk, payment-plan pressure, and emergency savings damage.
+        </span>
+      </div>
+
+      <div class="trust-item">
+        <strong>Burial and cremation context</strong>
+        <span>
+          Compare the full cost picture instead of focusing only on the funeral home quote.
+        </span>
+      </div>
+    </div>
+
+    <section class="content-section">
+      <div class="section-kicker">Start Here</div>
+
+      <h2>Funeral Affordability Calculators</h2>
+
+      <p>
+        Start with the live $10,000 funeral calculator, then use this hub as the
+        foundation for upcoming funeral cost tools covering lower-cost services,
+        higher-cost burials, insurance, savings, cremation, and funeral debt.
+      </p>
+
+      <div class="grid">
+        {liveFuneralCalculators.map((calculator) => (
+          <CalculatorCard
+            category={calculator.category}
+            title={calculator.title}
+            description={calculator.description}
+            href={calculator.href}
+          />
+        ))}
+      </div>
+    </section>
+
+    <section class="content-section">
+      <div class="section-kicker">Coming Next</div>
+
+      <h2>Compare Funeral Budgets, Insurance, Savings, and Cremation</h2>
+
+      <p>
+        Funeral costs can range from a simple cremation or small memorial to a
+        full burial with viewing, casket, cemetery expenses, headstone, flowers,
+        obituary, and reception. These upcoming tools will let families compare
+        specific choices instead of guessing under pressure.
+      </p>
+
+      <div class="link-grid">
+        {upcomingFuneralCalculators.map((link) => (
+          <a class="link-card coming-soon" href={link.href}>
+            <strong>{link.title}</strong>
+            <span>{link.text}</span>
+            <small>Planned Funeral Tool</small>
+          </a>
+        ))}
+      </div>
+    </section>
+
+    <section class="content-section narrow">
+      <div class="section-kicker">Budget Philosophy</div>
+
+      <h2>How Much Should You Spend on a Funeral?</h2>
+
+      <p>
+        There is no single correct funeral budget. A reasonable amount depends
+        on the person’s wishes, available insurance, family contributions,
+        savings, local prices, burial or cremation preferences, and whether the
+        plan creates debt for the people left behind.
+      </p>
+
+      <p>
+        A funeral that is financially manageable for one household may be
+        damaging for another. The safest funeral budget usually avoids
+        high-interest debt, preserves an emergency cushion, uses itemized
+        pricing, and gives family members a clear way to share costs when
+        appropriate.
+      </p>
+
+      <p>
+        The healthiest question is not “What is the most we can do?” It is “How
+        can we honor this person without creating a second crisis for the
+        family?”
+      </p>
+    </section>
+
+    <section class="content-section">
+      <div class="section-kicker">Cost Breakdown</div>
+
+      <h2>Funeral Expenses That Can Change the Final Bill</h2>
+
+      <p>
+        Funeral quotes can be difficult to compare because some costs are
+        required, some are optional, and some appear later in the process.
+        Families should ask for itemized pricing before committing to a plan.
+      </p>
+
+      <div class="info-grid">
+        {funeralCostFactors.map((item) => (
+          <div class="info-card">
+            <h3>{item.title}</h3>
+            <p>{item.text}</p>
+          </div>
+        ))}
+      </div>
+    </section>
+
+    <section class="content-section">
+      <div class="section-kicker">Burial vs. Cremation</div>
+
+      <h2>Burial and Cremation Can Create Very Different Pressure</h2>
+
+      <div class="two-col-grid">
+        <div class="soft-box">
+          <h3>Burial Costs</h3>
+          <p>
+            Burial often includes more separate cost categories: funeral home
+            services, casket, embalming or preparation, viewing, cemetery plot,
+            grave opening and closing, vault, marker, headstone, transportation,
+            and reception. That does not make burial wrong, but it does mean the
+            budget should be checked carefully.
+          </p>
+        </div>
+
+        <div class="soft-box">
+          <h3>Cremation Costs</h3>
+          <p>
+            Direct cremation is usually simpler and less expensive, but costs can
+            rise when families add a formal service, urn, obituary, flowers,
+            catering, keepsakes, travel, or a separate burial of ashes. Cremation
+            should still be budgeted as a full plan, not assumed to be cheap.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <section class="content-section">
+      <div class="section-kicker">Payment Options</div>
+
+      <h2>How Families Commonly Pay for Funeral Expenses</h2>
+
+      <p>
+        The same funeral price can produce a different verdict depending on who
+        is paying, when money is available, and whether the plan creates debt.
+        A $10,000 funeral covered by insurance is very different from a $10,000
+        funeral placed on one person’s credit card.
+      </p>
+
+      <div class="info-grid">
+        {paymentOptions.map((item) => (
+          <div class="info-card">
+            <h3>{item.title}</h3>
+            <p>{item.text}</p>
+          </div>
+        ))}
+      </div>
+    </section>
+
+    <section class="content-section">
+      <div class="section-kicker">Red Flags</div>
+
+      <h2>When Funeral Spending Starts to Become Financially Risky</h2>
+
+      <p>
+        A meaningful funeral does not have to be the most expensive version of a
+        funeral. These are warning signs that the plan may be driven more by
+        urgency, guilt, confusion, or family pressure than by a sustainable
+        budget.
+      </p>
+
+      <ul class="red-flag-list">
+        {redFlags.map((flag) => (
+          <li>{flag}</li>
+        ))}
+      </ul>
+    </section>
+
+    <section class="content-section">
+      <div class="section-kicker">Planning Guides</div>
+
+      <h2>Funeral Planning and Financial Pressure Guides</h2>
+
+      <p>
+        Funeral spending connects directly to emergency savings, debt pressure,
+        insurance timing, and family communication. These related SIS pages help
+        put the decision into a broader household context.
+      </p>
+
+      <div class="link-grid">
+        {planningLinks.map((link) => (
+          <a class="link-card" href={link.href}>
+            <strong>{link.title}</strong>
+            <span>{link.text}</span>
+          </a>
+        ))}
+      </div>
+    </section>
+
+    <section class="callout">
+      <h2>Use Funeral Calculators as a Pressure Test</h2>
+
+      <p>
+        These tools are educational estimates, not personalized financial,
+        legal, insurance, or funeral-planning advice. Use them to compare
+        tradeoffs, identify risk, ask better questions, and make calmer spending
+        decisions during a difficult moment.
+      </p>
+    </section>
+
+    <section class="content-section narrow">
+      <div class="section-kicker">Methodology</div>
+
+      <h2>How ShouldISpend Evaluates Funeral Affordability</h2>
+
+      <p>
+        SIS funeral calculators focus on financial pressure rather than judging
+        the emotional value of a service. The framework considers funeral cost,
+        available savings, expected insurance or prepaid help, family
+        contributions, emergency reserves, monthly income, existing debt,
+        credit-card risk, and whether lower-cost options could still meet the
+        family’s needs.
+      </p>
+
+      <p>
+        A lower-pressure funeral plan usually has clear pricing, realistic
+        funding, limited borrowing, preserved emergency savings, and shared
+        family expectations. A higher-pressure plan often depends on
+        high-interest debt, unclear quotes, rushed upgrades, or one household
+        absorbing a cost it cannot carry.
+      </p>
+    </section>
+
+    <FAQSection title="Funeral Cost FAQ" faqs={funeralFaqs} />
+  </main>
+</Layout>

@@ -481,153 +481,181 @@ const funeralFaqs = [
   </main>
 
     <script>
-    const clamp = (value, min, max) => Math.min(Math.max(value, min), max);
+  const clamp = (value, min, max) => Math.min(Math.max(value, min), max);
 
-    const getNumber = (id) => {
-      const rawValue = document.getElementById(id)?.value;
-      const value = Number(rawValue);
-      return Number.isFinite(value) && value >= 0 ? value : 0;
-    };
+  const getNumber = (id) => {
+    const rawValue = document.getElementById(id)?.value;
+    const value = Number(rawValue);
+    return Number.isFinite(value) && value >= 0 ? value : 0;
+  };
 
-    function getPressureLevel(score) {
-      if (score <= 30) {
-        return {
-          label: "Low Pressure",
-          stress: "Low pressure",
-          colorClass: "safe",
-          action: "Proceed while keeping the service itemized and controlled.",
-        };
-      }
-
-      if (score <= 60) {
-        return {
-          label: "Moderate Pressure",
-          stress: "Moderate pressure",
-          colorClass: "caution",
-          action: "Compare lower-cost options and protect emergency savings.",
-        };
-      }
-
+  function getPressureLevel(score) {
+    if (score <= 30) {
       return {
-        label: "High Pressure",
-        stress: "High pressure",
-        colorClass: "danger",
-        action: "Reduce the funeral cost, seek help, or avoid high-interest debt.",
+        label: "Low Pressure",
+        stress: "Low pressure",
+        colorClass: "safe",
+        action: "Proceed while keeping the service itemized and controlled.",
       };
     }
 
-    const button = document.getElementById("calculateButton");
-    const result = document.getElementById("result");
-    const scoreText = document.getElementById("scoreText");
-    const scoreFill = document.getElementById("scoreFill");
-    const resultDetails = document.getElementById("resultDetails");
-    const guidance = document.getElementById("guidance");
+    if (score <= 60) {
+      return {
+        label: "Moderate Pressure",
+        stress: "Moderate pressure",
+        colorClass: "caution",
+        action: "Compare lower-cost options and protect emergency savings.",
+      };
+    }
 
-    button?.addEventListener("click", () => {
-      const cost = getNumber("cost");
-      const savings = getNumber("savings");
-      const help = getNumber("help");
-      const income = getNumber("income");
-      const debt = getNumber("debt");
-      const emergencyTarget = getNumber("emergencyTarget");
+    return {
+      label: "High Pressure",
+      stress: "High pressure",
+      colorClass: "danger",
+      action: "Reduce the funeral cost, seek help, or avoid high-interest debt.",
+    };
+  }
 
-      result?.classList.add("visible");
+  const button = document.getElementById("calculateButton");
+  const result = document.getElementById("result");
+  const scoreText = document.getElementById("scoreText");
+  const scoreFill = document.getElementById("scoreFill");
+  const resultDetails = document.getElementById("resultDetails");
+  const guidance = document.getElementById("guidance");
 
-      if (cost <= 0 || income <= 0) {
-        scoreText.textContent = "Add your numbers first";
-        scoreFill.style.width = "0%";
-        scoreFill.className = "fill safe";
-        resultDetails.innerHTML =
-          "<p>Enter a positive funeral cost and monthly take-home income so the calculator can estimate financial pressure.</p>";
-        guidance.textContent = "";
-        return;
-      }
+  button?.addEventListener("click", () => {
+    const cost = getNumber("cost");
+    const savings = getNumber("savings");
+    const help = getNumber("help");
+    const income = getNumber("income");
+    const debt = getNumber("debt");
+    const emergencyTarget = getNumber("emergencyTarget");
 
-      const outOfPocket = Math.max(cost - help, 0);
-      const savingsAfter = savings - outOfPocket;
-      const savingsImpact = savings > 0 ? (outOfPocket / savings) * 100 : 150;
-      const monthlyIncomeImpact = (outOfPocket / income) * 100;
-      const debtPaymentRatio = (debt / income) * 100;
-      const emergencyTargetRemaining =
-        emergencyTarget > 0 ? (savingsAfter / emergencyTarget) * 100 : null;
+    result?.classList.add("visible");
 
-      let pressureScore = 0;
+    if (cost <= 0 || income <= 0) {
+      scoreText.textContent = "Add your numbers first";
+      scoreFill.style.width = "0%";
+      scoreFill.className = "fill safe";
+      resultDetails.innerHTML =
+        "<p>Enter a positive funeral cost and monthly take-home income so the calculator can estimate financial pressure.</p>";
+      guidance.textContent = "";
+      return;
+    }
 
-      pressureScore += clamp(savingsImpact * 0.38, 0, 40);
-      pressureScore += clamp(monthlyIncomeImpact * 0.26, 0, 30);
-      pressureScore += clamp(debtPaymentRatio * 0.35, 0, 20);
+    const outOfPocket = Math.max(cost - help, 0);
+    const savingsAfter = savings - outOfPocket;
+    const savingsImpact = savings > 0 ? (outOfPocket / savings) * 100 : 150;
+    const monthlyIncomeImpact = (outOfPocket / income) * 100;
+    const debtPaymentRatio = income > 0 ? (debt / income) * 100 : 100;
+    const emergencyTargetRemaining =
+      emergencyTarget > 0 ? (savingsAfter / emergencyTarget) * 100 : null;
 
-      if (outOfPocket <= 0) pressureScore = 0;
+    let pressureScore = 0;
 
-      if (outOfPocket > savings) pressureScore += 25;
+    const hasAbsurdSavings =
+      savings >= outOfPocket * 100 &&
+      savingsAfter >= Math.max(emergencyTarget, income * 6);
+
+    const hasAbsurdIncome =
+  outOfPocket > 0 &&
+  monthlyIncomeImpact <= 2 &&
+  debtPaymentRatio <= 5 &&
+  savingsAfter >= 0;
+
+    const fullyCovered = outOfPocket <= 0;
+
+    if (fullyCovered || hasAbsurdSavings || hasAbsurdIncome) {
+      pressureScore = 0;
+    } else {
+      pressureScore += clamp(savingsImpact * 0.45, 0, 38);
+      pressureScore += clamp(monthlyIncomeImpact * 0.32, 0, 28);
+      pressureScore += clamp(debtPaymentRatio * 0.3, 0, 18);
+
+      if (outOfPocket > savings) pressureScore += 26;
 
       if (savingsAfter < 0) {
-        pressureScore += 22;
+        pressureScore += 24;
       } else if (emergencyTarget > 0 && savingsAfter < emergencyTarget * 0.5) {
-        pressureScore += 12;
-      } else if (emergencyTarget > 0 && savingsAfter >= emergencyTarget) {
-        pressureScore -= 8;
-      } else if (savingsAfter >= income * 3) {
-        pressureScore -= 8;
+        pressureScore += 14;
+      } else if (emergencyTarget > 0 && savingsAfter < emergencyTarget) {
+        pressureScore += 7;
+      } else if (emergencyTarget > 0 && savingsAfter >= emergencyTarget * 3) {
+        pressureScore -= 12;
+      } else if (savingsAfter >= income * 6) {
+        pressureScore -= 10;
       }
 
-      if (monthlyIncomeImpact > 300) pressureScore += 16;
-      else if (monthlyIncomeImpact > 200) pressureScore += 10;
+      if (monthlyIncomeImpact > 300) pressureScore += 18;
+      else if (monthlyIncomeImpact > 200) pressureScore += 12;
+      else if (monthlyIncomeImpact > 100) pressureScore += 6;
 
-      if (debtPaymentRatio >= 45) pressureScore += 12;
-      else if (debtPaymentRatio >= 30) pressureScore += 8;
+      if (debtPaymentRatio >= 45) pressureScore += 14;
+      else if (debtPaymentRatio >= 30) pressureScore += 9;
+      else if (debtPaymentRatio >= 20) pressureScore += 4;
 
       if (
-        outOfPocket > 0 &&
-        monthlyIncomeImpact < 25 &&
-        savingsImpact < 20 &&
-        debtPaymentRatio < 10
+  monthlyIncomeImpact <= 2 &&
+  debtPaymentRatio <= 5 &&
+  savingsAfter >= 0
+) {
+  pressureScore = 0;
+} else if (
+  savingsImpact <= 0.5 &&
+  monthlyIncomeImpact <= 5 &&
+  savingsAfter >= emergencyTarget
+) {
+        pressureScore = Math.min(pressureScore, 3);
+      } else if (
+        savingsImpact <= 1 &&
+        monthlyIncomeImpact <= 10 &&
+        savingsAfter >= Math.max(emergencyTarget, income * 3)
       ) {
-        pressureScore = Math.min(pressureScore, 20);
-      }
-
-      if (
-        outOfPocket > 0 &&
-        monthlyIncomeImpact < 10 &&
-        savingsImpact < 10 &&
-        debtPaymentRatio < 5
+        pressureScore = Math.min(pressureScore, 8);
+      } else if (
+        savingsImpact <= 3 &&
+        monthlyIncomeImpact <= 20 &&
+        savingsAfter >= emergencyTarget
       ) {
-        pressureScore = Math.min(pressureScore, 10);
+        pressureScore = Math.min(pressureScore, 15);
       }
+    }
 
-      pressureScore = clamp(Math.round(pressureScore), 0, 100);
+    pressureScore = clamp(Math.round(pressureScore), 0, 100);
 
-      const level = getPressureLevel(pressureScore);
+    const level = getPressureLevel(pressureScore);
 
-      scoreText.textContent = `${level.label} — ${pressureScore}/100`;
+    scoreText.textContent = `${level.label} — ${pressureScore}/100`;
+    scoreFill.style.width = `${pressureScore}%`;
+    scoreFill.className = `fill ${level.colorClass}`;
 
-      scoreFill.style.width = `${pressureScore}%`;
-      scoreFill.className = `fill ${level.colorClass}`;
-
-      resultDetails.innerHTML = `
-        <p><strong>Pressure level:</strong> ${level.stress}.</p>
-        <p><strong>Estimated out-of-pocket cost:</strong> $${outOfPocket.toLocaleString()} after insurance or family help.</p>
-        <p><strong>Savings impact:</strong> ${savings > 0 ? `${savingsImpact.toFixed(1)}% of available savings.` : "No available savings entered."}</p>
-        <p><strong>Estimated savings after funeral:</strong> $${savingsAfter.toLocaleString()}.</p>
-        <p><strong>Monthly income impact:</strong> ${monthlyIncomeImpact.toFixed(1)}% of one month’s take-home income.</p>
-        <p><strong>Debt payment pressure:</strong> ${debtPaymentRatio.toFixed(1)}% of monthly take-home income.</p>
-        ${
-          emergencyTargetRemaining !== null
-            ? `<p><strong>Emergency target after funeral:</strong> ${emergencyTargetRemaining.toFixed(1)}% of target remaining.</p>`
-            : ""
-        }
-      `;
-
-      if (pressureScore <= 30) {
-        guidance.textContent =
-          `This funeral cost appears manageable based on the numbers provided. The out-of-pocket cost equals about ${monthlyIncomeImpact.toFixed(1)}% of one month’s take-home income and ${savingsImpact.toFixed(1)}% of available savings. Recommended next step: ${level.action}`;
-      } else if (pressureScore <= 60) {
-        guidance.textContent =
-          `This funeral cost may be workable, but it deserves caution. The out-of-pocket cost equals about ${monthlyIncomeImpact.toFixed(1)}% of one month’s take-home income and ${savingsImpact.toFixed(1)}% of available savings, so itemized pricing and lower-cost options matter. Recommended next step: ${level.action}`;
-      } else {
-        guidance.textContent =
-          `This funeral cost could create real financial strain. The out-of-pocket cost equals about ${monthlyIncomeImpact.toFixed(1)}% of one month’s take-home income and ${savingsImpact.toFixed(1)}% of available savings, so reducing costs, seeking help, or avoiding high-interest debt would be safer. Recommended next step: ${level.action}`;
+    resultDetails.innerHTML = `
+      <p><strong>Pressure level:</strong> ${level.stress}.</p>
+      <p><strong>Estimated out-of-pocket cost:</strong> $${outOfPocket.toLocaleString()} after insurance or family help.</p>
+      <p><strong>Savings impact:</strong> ${savings > 0 ? `${savingsImpact.toFixed(1)}% of available savings.` : "No available savings entered."}</p>
+      <p><strong>Estimated savings after funeral:</strong> $${savingsAfter.toLocaleString()}.</p>
+      <p><strong>Monthly income impact:</strong> ${monthlyIncomeImpact.toFixed(1)}% of one month’s take-home income.</p>
+      <p><strong>Debt payment pressure:</strong> ${debtPaymentRatio.toFixed(1)}% of monthly take-home income.</p>
+      ${
+        emergencyTargetRemaining !== null
+          ? `<p><strong>Emergency target after funeral:</strong> ${emergencyTargetRemaining.toFixed(1)}% of target remaining.</p>`
+          : ""
       }
-    });
-  </script>
+    `;
+
+    if (pressureScore === 0) {
+      guidance.textContent =
+        `This funeral cost creates essentially no measurable financial pressure based on the numbers provided. The out-of-pocket cost is extremely small relative to available savings or income, and emergency reserves remain protected. Recommended next step: ${level.action}`;
+    } else if (pressureScore <= 30) {
+      guidance.textContent =
+        `This funeral cost appears manageable based on the numbers provided. The out-of-pocket cost equals about ${monthlyIncomeImpact.toFixed(1)}% of one month’s take-home income and ${savingsImpact.toFixed(1)}% of available savings. Recommended next step: ${level.action}`;
+    } else if (pressureScore <= 60) {
+      guidance.textContent =
+        `This funeral cost may be workable, but it deserves caution. The out-of-pocket cost equals about ${monthlyIncomeImpact.toFixed(1)}% of one month’s take-home income and ${savingsImpact.toFixed(1)}% of available savings, so itemized pricing and lower-cost options matter. Recommended next step: ${level.action}`;
+    } else {
+      guidance.textContent =
+        `This funeral cost could create real financial strain. The out-of-pocket cost equals about ${monthlyIncomeImpact.toFixed(1)}% of one month’s take-home income and ${savingsImpact.toFixed(1)}% of available savings, so reducing costs, seeking help, or avoiding high-interest debt would be safer. Recommended next step: ${level.action}`;
+    }
+  });
+</script>
 </Layout>
