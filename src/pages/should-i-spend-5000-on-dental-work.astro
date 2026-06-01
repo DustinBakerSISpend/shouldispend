@@ -1,0 +1,479 @@
+---
+import Layout from "../layouts/Layout.astro";
+import CalculatorPageShell from "../components/CalculatorPageShell.astro";
+import FAQSection from "../components/FAQSection.astro";
+import RelatedCalculators from "../components/RelatedCalculators.astro";
+import RelatedGuides from "../components/RelatedGuides.astro";
+import MethodologySection from "../components/MethodologySection.astro";
+import FinancialRedFlags from "../components/FinancialRedFlags.astro";
+import CalculatorAssumptions from "../components/CalculatorAssumptions.astro";
+import KeyCostCategories from "../components/KeyCostCategories.astro";
+import ReduceCostTips from "../components/ReduceCostTips.astro";
+import WhenSpendingMakesSense from "../components/WhenSpendingMakesSense.astro";
+---
+
+<Layout
+  title="Should I Spend $5,000 on Dental Work?"
+  description="Use this dental work calculator to decide whether $5,000 in dental treatment fits your income, savings, insurance coverage, financing, and monthly cash flow."
+>
+  <style>
+    .container { max-width: 950px; margin: 0 auto; padding: 60px 20px; }
+    .content-section { max-width: 760px; margin: 72px auto 0; }
+    .card { background: var(--card); border: 1px solid var(--border); border-radius: 28px; padding: 34px; }
+    h2 { margin-top: 0; font-size: 2rem; }
+    .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 22px; margin-bottom: 28px; }
+    label { display: block; margin-bottom: 10px; font-weight: 700; }
+    input, select { width: 100%; padding: 18px; border-radius: 14px; border: 1px solid var(--border); font-size: 1.1rem; box-sizing: border-box; background: white; }
+    button { background: #0f172a; color: white; border: none; padding: 16px 28px; border-radius: 14px; font-size: 1rem; font-weight: 700; cursor: pointer; margin-top: 10px; width: 100%; display: block; }
+    button:hover { opacity: 0.92; }
+    .result { margin-top: 40px; border: 1px solid var(--border); border-radius: 24px; padding: 28px; display: none; background: #f8fafc; }
+    .score { font-size: 3rem; font-weight: 800; margin-bottom: 16px; }
+    .bar { width: 100%; height: 16px; background: #dbe3ee; border-radius: 999px; overflow: hidden; margin-bottom: 24px; }
+    .fill { height: 100%; width: 0%; background: #16a34a; border-radius: 999px; transition: width 0.4s ease; }
+    .metric { margin-bottom: 14px; font-size: 1.05rem; }
+    .guidance { margin-top: 26px; font-size: 1.15rem; line-height: 1.7; }
+    .disclaimer { margin-top: 30px; font-size: 0.9rem; color: var(--muted); }
+    .helper-link { margin-top: 10px; font-size: 0.9rem; }
+    .helper-link a { color: var(--primary); font-weight: 600; }
+    .content-section p, .content-section li { line-height: 1.8; }
+  </style>
+
+  <div class="container">
+    <CalculatorPageShell
+      eyebrow="Medical Calculator"
+      title="Should I Spend $5,000 on Dental Work?"
+      description="Estimate whether $5,000 in dental treatment fits your income, emergency savings, insurance coverage, monthly expenses, debt load, and financing options."
+    >
+      <div class="card">
+        <h2>Dental Work Pressure Verdict</h2>
+
+        <div class="grid">
+          <div>
+            <label for="cost">Dental Work Cost</label>
+            <input id="cost" type="number" placeholder="5000" min="0" inputmode="decimal" />
+          </div>
+
+          <div>
+            <label for="income">Monthly Take-Home Income</label>
+            <input id="income" type="number" placeholder="7000" min="0" inputmode="decimal" />
+          </div>
+
+          <div>
+            <label for="savings">Emergency Savings</label>
+            <input id="savings" type="number" placeholder="12000" min="0" inputmode="decimal" />
+          </div>
+
+          <div>
+            <label for="expenses">Monthly Expenses</label>
+            <input id="expenses" type="number" placeholder="3800" min="0" inputmode="decimal" />
+          </div>
+
+          <div>
+            <label for="debt">Monthly Debt Payments</label>
+            <input id="debt" type="number" placeholder="600" min="0" inputmode="decimal" />
+            <div class="helper-link">
+              <a href="/what-counts-as-debt">Not sure what counts as debt? Read the debt guide</a>
+            </div>
+          </div>
+
+          <div>
+            <label for="financed">Amount Financed</label>
+            <input id="financed" type="number" placeholder="0" min="0" inputmode="decimal" />
+          </div>
+
+          <div>
+            <label for="insurance">Insurance Coverage</label>
+            <select id="insurance">
+              <option value="strong">Strong Coverage</option>
+              <option value="partial">Partial Coverage</option>
+              <option value="weak">Weak or No Coverage</option>
+            </select>
+          </div>
+
+          <div>
+            <label for="urgency">Treatment Urgency</label>
+            <select id="urgency">
+              <option value="necessary">Necessary / Time-Sensitive</option>
+              <option value="mixed">Partly Necessary</option>
+              <option value="elective">Mostly Elective</option>
+            </select>
+          </div>
+        </div>
+
+        <button id="dentalWorkButton" type="button">Calculate Financial Pressure</button>
+
+        <div class="result" id="result">
+          <div class="score" id="score"></div>
+          <div class="bar"><div class="fill" id="barFill"></div></div>
+          <div class="metric" id="stress"></div>
+          <div class="metric" id="cashFlow"></div>
+          <div class="metric" id="savingsImpact"></div>
+          <div class="metric" id="financingImpact"></div>
+          <div class="guidance" id="guidance"></div>
+          <div class="disclaimer">
+            This is a general educational estimate, not dental, medical, insurance, or financial advice.
+          </div>
+        </div>
+      </div>
+
+      <div class="content-section">
+        <h2>What $5,000 in Dental Work Really Means</h2>
+        <p>
+          A $5,000 dental bill can include crowns, implants, root canals, periodontal treatment, extractions, bridges, dentures, sedation, imaging, specialist fees, or several smaller procedures grouped into one treatment plan.
+        </p>
+        <p>
+          The cost is not automatically reckless. Dental work can protect health, prevent worsening pain, and avoid more expensive treatment later. The financial question is whether the bill weakens your emergency cushion, forces high-interest financing, or makes monthly obligations harder to cover.
+        </p>
+      </div>
+
+      <WhenSpendingMakesSense
+        title="When Spending $5,000 on Dental Work Makes Sense"
+        items={[
+          "The treatment prevents a worsening dental or medical issue.",
+          "You have confirmed what insurance will and will not cover.",
+          "The payment does not wipe out your emergency savings.",
+          "You can use a low-cost payment plan without straining monthly cash flow.",
+          "You have a written treatment estimate with crown, implant, sedation, and follow-up costs included.",
+        ]}
+      />
+
+      <div class="content-section">
+        <h2>When to Slow Down Before Paying</h2>
+        <p>
+          You may want to slow down if the estimate is vague, the treatment plan bundles urgent and cosmetic work together, or the financing offer feels rushed. Dental offices can vary widely in pricing, treatment philosophy, and payment terms.
+        </p>
+        <p>
+          If the work is not immediately urgent, compare quotes, ask which procedures are medically necessary first, and separate treatment into phases when possible.
+        </p>
+      </div>
+
+      <KeyCostCategories
+        items={[
+          {
+            title: "Procedure mix",
+            description:
+              "A $5,000 dental plan may include several procedures, and each one may have a different level of urgency.",
+          },
+          {
+            title: "Insurance limits",
+            description:
+              "Dental insurance often has annual caps, waiting periods, exclusions, and partial coverage rules.",
+          },
+          {
+            title: "Financing terms",
+            description:
+              "A payment plan can help, but deferred interest or high rates can turn dental work into expensive debt.",
+          },
+          {
+            title: "Follow-up costs",
+            description:
+              "Crowns, imaging, adjustments, cleanings, replacement work, or specialist visits can raise the final total.",
+          },
+        ]}
+      />
+
+      <ReduceCostTips
+        items={[
+          "Ask for a written treatment plan with each procedure listed separately.",
+          "Separate urgent dental work from cosmetic or optional treatment.",
+          "Confirm whether crowns, imaging, sedation, and follow-ups are included.",
+          "Check your dental insurance annual maximum before scheduling.",
+          "Compare another provider if the work is not urgent.",
+          "Use HSA or FSA funds when available.",
+          "Avoid deferred-interest financing unless you are certain you can pay it off on time.",
+        ]}
+      />
+
+      <FinancialRedFlags
+        items={[
+          "The dental office pressures you to finance the entire amount immediately.",
+          "The treatment plan does not separate urgent work from optional work.",
+          "The bill would drain most or all emergency savings.",
+          "You would need high-interest financing to proceed.",
+          "Monthly payments would make rent, food, utilities, insurance, or existing debt harder to cover.",
+        ]}
+      />
+
+      <CalculatorAssumptions
+        items={[
+          "The calculator treats dental work as a healthcare expense, not a luxury purchase.",
+          "Monthly income means take-home pay after taxes and payroll deductions.",
+          "Monthly debt payments include credit cards, car loans, student loans, personal loans, and required debt obligations.",
+          "The calculator assumes financed dental balances still create financial pressure.",
+          "Very high income or very large savings can produce a true 0/100 pressure score when the dental bill is tiny relative to available resources.",
+        ]}
+      />
+
+      <FAQSection
+        title="$5,000 Dental Work FAQ"
+        faqs={[
+          {
+            question: "Is $5,000 a lot for dental work?",
+            answer:
+              "It can be, but it is not unusual for larger dental treatment plans involving crowns, implants, root canals, periodontal care, or multiple procedures.",
+          },
+          {
+            question: "Should I finance $5,000 in dental work?",
+            answer:
+              "Financing may make sense if the treatment is important and the payment fits your monthly budget. Avoid high-interest or deferred-interest plans you cannot confidently repay.",
+          },
+          {
+            question: "Should I use emergency savings for dental work?",
+            answer:
+              "Using savings can be smarter than high-interest debt if enough emergency cushion remains afterward. It becomes risky if the dental bill leaves you exposed to the next emergency.",
+          },
+          {
+            question: "Can I split dental work into phases?",
+            answer:
+              "Often, yes. Ask your dentist which procedures are urgent, which can wait, and whether the treatment plan can be phased over time.",
+          },
+          {
+            question: "Should I get a second opinion for expensive dental work?",
+            answer:
+              "For non-emergency dental work, a second opinion can help confirm the diagnosis, compare costs, and avoid unnecessary or poorly explained treatment.",
+          },
+        ]}
+      />
+
+      <MethodologySection category="medical spending" updated="May 2026" />
+
+      <RelatedGuides
+        guides={[
+          {
+            title: "Medical Calculators",
+            href: "/medical-calculators",
+            description:
+              "Browse healthcare spending calculators for dental care, medical bills, fertility treatment, therapy, and other major health costs.",
+          },
+          {
+            title: "What Counts as Debt?",
+            href: "/what-counts-as-debt",
+            description:
+              "Understand which obligations should be included when estimating financial pressure.",
+          },
+        ]}
+      />
+
+      <RelatedCalculators
+        calculators={[
+          {
+            category: "Medical",
+            title: "Should I Spend $3,000 on a Root Canal?",
+            href: "/should-i-spend-3000-on-a-root-canal",
+          },
+          {
+            category: "Medical",
+            title: "Should I Spend $4,000 on a Dental Implant?",
+            href: "/should-i-spend-4000-on-a-dental-implant",
+          },
+          {
+            category: "Medical",
+            title: "Should I Use Emergency Savings for Dental Work?",
+            href: "/should-i-use-emergency-savings-for-dental-work",
+          },
+          {
+            category: "Medical",
+            title: "Browse Medical Calculators",
+            href: "/medical-calculators",
+          },
+        ]}
+      />
+    </CalculatorPageShell>
+  </div>
+
+  <script is:inline>
+    const clamp = (value, min, max) => Math.min(Math.max(value, min), max);
+
+    const getNumber = (id) => {
+      const rawValue = document.getElementById(id)?.value;
+      const value = Number(rawValue);
+      return Number.isFinite(value) && value >= 0 ? value : 0;
+    };
+
+    function getPressureLevel(score) {
+      if (score <= 30) {
+        return {
+          label: "Low Pressure",
+          stress: "Low pressure",
+          color: "#16a34a",
+          action:
+            "Proceed after confirming the full treatment plan, insurance coverage, and whether any work can be phased.",
+        };
+      }
+
+      if (score <= 60) {
+        return {
+          label: "Moderate Pressure",
+          stress: "Moderate pressure",
+          color: "#ca8a04",
+          action:
+            "Compare quotes, separate urgent work from optional work, and protect emergency savings where possible.",
+        };
+      }
+
+      return {
+        label: "High Pressure",
+        stress: "High pressure",
+        color: "#dc2626",
+        action:
+          "Slow down before committing, ask about phasing treatment, avoid aggressive financing, and confirm what is medically necessary first.",
+      };
+    }
+
+    function calculateDentalWork() {
+      const cost = getNumber("cost");
+      const income = getNumber("income");
+      const savings = getNumber("savings");
+      const expenses = getNumber("expenses");
+      const debt = getNumber("debt");
+      const financed = getNumber("financed");
+      const insurance = document.getElementById("insurance").value;
+      const urgency = document.getElementById("urgency").value;
+
+      const result = document.getElementById("result");
+      const scoreEl = document.getElementById("score");
+      const barFill = document.getElementById("barFill");
+      const stressEl = document.getElementById("stress");
+      const cashFlowEl = document.getElementById("cashFlow");
+      const savingsImpactEl = document.getElementById("savingsImpact");
+      const financingImpactEl = document.getElementById("financingImpact");
+      const guidanceEl = document.getElementById("guidance");
+
+      result.style.display = "block";
+
+      if (cost <= 0 || income <= 0) {
+        scoreEl.textContent = "Add your numbers first";
+        barFill.style.width = "0%";
+        barFill.style.background = "#16a34a";
+        stressEl.innerHTML = "";
+        cashFlowEl.innerHTML = "";
+        savingsImpactEl.innerHTML = "";
+        financingImpactEl.innerHTML = "";
+        guidanceEl.textContent =
+          "Enter a positive dental work cost and monthly take-home income so the calculator can estimate financial pressure.";
+        return;
+      }
+
+      const outOfPocket = Math.max(cost - financed, 0);
+      const monthlyRemaining = income - expenses - debt;
+      const remainingSavings = savings - outOfPocket;
+
+      const savingsImpact =
+        savings > 0 ? (outOfPocket / savings) * 100 : outOfPocket > 0 ? 100 : 0;
+
+      const incomeImpact = income > 0 ? (cost / income) * 100 : 100;
+
+      const fixedObligationRatio =
+        income > 0 ? ((expenses + debt) / income) * 100 : 100;
+
+      const emergencyMonths =
+        expenses > 0 ? remainingSavings / expenses : remainingSavings > 0 ? 999 : 0;
+
+      const financedShare = cost > 0 ? (financed / cost) * 100 : 0;
+
+      const hasHugeIncomeBuffer =
+        income > 0 && cost <= income * 0.02 && monthlyRemaining > income * 0.5;
+
+      const hasHugeSavingsBuffer =
+        savings > 0 && outOfPocket <= savings * 0.01 && remainingSavings > 0;
+
+      const hasStrongIncomeBuffer =
+        income > 0 && cost <= income * 0.05 && monthlyRemaining > income * 0.35;
+
+      const hasStrongSavingsBuffer =
+        savings > 0 && outOfPocket <= savings * 0.05 && remainingSavings > 0;
+
+      let pressureScore = 0;
+
+      if (hasHugeIncomeBuffer || hasHugeSavingsBuffer) {
+        pressureScore = 0;
+      } else {
+        pressureScore += clamp(incomeImpact * 0.32, 0, 30);
+        pressureScore += clamp(savingsImpact * 0.25, 0, 32);
+        pressureScore += clamp(fixedObligationRatio * 0.22, 0, 24);
+
+        if (remainingSavings < 0) pressureScore += 24;
+        else if (emergencyMonths < 1 && income < 12000) pressureScore += 18;
+        else if (emergencyMonths < 3 && income < 15000) pressureScore += 10;
+        else if (emergencyMonths >= 6) pressureScore -= 8;
+
+        if (financed > 0) pressureScore += clamp(financedShare * 0.14, 4, 15);
+
+        if (monthlyRemaining < 0) pressureScore += 20;
+        else if (monthlyRemaining < income * 0.1) pressureScore += 11;
+        else if (monthlyRemaining > income * 0.35) pressureScore -= 6;
+
+        if (insurance === "partial") pressureScore += 5;
+        if (insurance === "weak") pressureScore += 12;
+
+        if (urgency === "mixed") pressureScore += 4;
+        if (urgency === "elective") pressureScore += 10;
+        if (urgency === "necessary") pressureScore -= 4;
+
+        if (hasStrongIncomeBuffer) pressureScore -= 14;
+        if (hasStrongSavingsBuffer) pressureScore -= 14;
+
+        if (
+          incomeImpact < 12 &&
+          savingsImpact < 15 &&
+          emergencyMonths >= 6 &&
+          fixedObligationRatio < 55
+        ) {
+          pressureScore = Math.min(pressureScore, 28);
+        }
+
+        if (
+          incomeImpact < 6 &&
+          savingsImpact < 8 &&
+          emergencyMonths >= 9 &&
+          fixedObligationRatio < 45
+        ) {
+          pressureScore = Math.min(pressureScore, 15);
+        }
+
+        if (
+          incomeImpact < 2 &&
+          savingsImpact < 1 &&
+          fixedObligationRatio < 25 &&
+          monthlyRemaining > income * 0.6
+        ) {
+          pressureScore = 0;
+        }
+      }
+
+      pressureScore = Math.round(clamp(pressureScore, 0, 100));
+      const level = getPressureLevel(pressureScore);
+
+      let guidance = "";
+
+      if (pressureScore === 0) {
+        guidance =
+          `This dental work appears to create essentially no financial pressure based on the numbers provided. The treatment equals about ${incomeImpact.toFixed(1)}% of one month’s take-home income, and the out-of-pocket cost is tiny relative to available savings.`;
+      } else if (pressureScore <= 30) {
+        guidance =
+          `This dental work appears financially manageable based on the numbers provided. The treatment equals about ${incomeImpact.toFixed(1)}% of one month’s take-home income, and your estimated emergency cushion remains around ${Math.max(emergencyMonths, 0).toFixed(1)} months after the out-of-pocket cost.`;
+      } else if (pressureScore <= 60) {
+        guidance =
+          `This dental work may be workable, but it creates noticeable financial pressure. The treatment equals about ${incomeImpact.toFixed(1)}% of one month’s take-home income, and the out-of-pocket portion uses about ${savingsImpact.toFixed(1)}% of available savings.`;
+      } else {
+        guidance =
+          `This dental work could create real financial strain. The treatment equals about ${incomeImpact.toFixed(1)}% of one month’s take-home income, and the combination of savings impact, financing, debt, or monthly obligations suggests you should slow down before committing aggressively.`;
+      }
+
+      scoreEl.textContent = `${level.label} — ${pressureScore}/100`;
+      scoreEl.style.color = level.color;
+      barFill.style.width = `${pressureScore}%`;
+      barFill.style.background = level.color;
+
+      stressEl.innerHTML = `<strong>Pressure level:</strong> ${level.stress}`;
+      cashFlowEl.innerHTML = `<strong>Monthly cash flow after bills and debt:</strong> $${monthlyRemaining.toLocaleString()}`;
+      savingsImpactEl.innerHTML = `<strong>Savings after out-of-pocket dental cost:</strong> $${remainingSavings.toLocaleString()}`;
+      financingImpactEl.innerHTML = `<strong>Financed portion:</strong> ${financedShare.toFixed(1)}% of treatment cost`;
+      guidanceEl.textContent = `${guidance} Recommended next step: ${level.action}`;
+    }
+
+    document
+      .getElementById("dentalWorkButton")
+      .addEventListener("click", calculateDentalWork);
+  </script>
+</Layout>

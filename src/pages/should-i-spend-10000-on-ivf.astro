@@ -1,0 +1,511 @@
+---
+import Layout from "../layouts/Layout.astro";
+import CalculatorPageShell from "../components/CalculatorPageShell.astro";
+import FAQSection from "../components/FAQSection.astro";
+import RelatedCalculators from "../components/RelatedCalculators.astro";
+import RelatedGuides from "../components/RelatedGuides.astro";
+import MethodologySection from "../components/MethodologySection.astro";
+import FinancialRedFlags from "../components/FinancialRedFlags.astro";
+import CalculatorAssumptions from "../components/CalculatorAssumptions.astro";
+import KeyCostCategories from "../components/KeyCostCategories.astro";
+import ReduceCostTips from "../components/ReduceCostTips.astro";
+import WhenSpendingMakesSense from "../components/WhenSpendingMakesSense.astro";
+
+const pageTitle = "Should I Spend $10,000 on IVF?";
+const pageDescription =
+  "Use this IVF affordability calculator to decide whether a $10,000 IVF cycle fits your income, savings, insurance, financing, debt, and monthly cash flow.";
+---
+
+<Layout title={pageTitle} description={pageDescription}>
+  <style>
+    .container { max-width: 950px; margin: 0 auto; padding: 60px 20px; }
+    .content-section { max-width: 760px; margin: 72px auto 0; }
+    .card { background: var(--card); border: 1px solid var(--border); border-radius: 28px; padding: 34px; }
+    h2 { margin-top: 0; font-size: 2rem; }
+    .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 22px; margin-bottom: 28px; }
+    label { display: block; margin-bottom: 10px; font-weight: 700; }
+    input { width: 100%; padding: 18px; border-radius: 14px; border: 1px solid var(--border); font-size: 1.1rem; box-sizing: border-box; }
+    button { background: #0f172a; color: white; border: none; padding: 16px 28px; border-radius: 14px; font-size: 1rem; font-weight: 700; cursor: pointer; margin-top: 10px; width: 100%; display: block; }
+    button:hover { opacity: 0.92; }
+    .result { margin-top: 40px; border: 1px solid var(--border); border-radius: 24px; padding: 28px; display: none; background: #f8fafc; }
+    .score { font-size: 3rem; font-weight: 800; margin-bottom: 16px; }
+    .bar { width: 100%; height: 16px; background: #dbe3ee; border-radius: 999px; overflow: hidden; margin-bottom: 24px; }
+    .fill { height: 100%; width: 0%; background: #16a34a; border-radius: 999px; transition: width 0.4s ease; }
+    .metric { margin-bottom: 14px; font-size: 1.05rem; }
+    .guidance { margin-top: 26px; font-size: 1.15rem; line-height: 1.7; }
+    .disclaimer { margin-top: 30px; font-size: 0.9rem; color: var(--muted); }
+    .helper-link { margin-top: 10px; font-size: 0.9rem; }
+    .helper-link a { color: var(--primary); font-weight: 600; }
+    .content-section p, .content-section li { line-height: 1.8; }
+  </style>
+
+  <div class="container">
+    <CalculatorPageShell
+      eyebrow="Medical Calculator"
+      title="Should I Spend $10,000 on IVF?"
+      description="Estimate whether a $10,000 IVF cycle fits your budget after insurance, savings, financing, monthly expenses, debt, medications, and repeat-cycle risk."
+    >
+      <div class="card">
+        <h2>IVF Pressure Verdict</h2>
+
+        <div class="grid">
+          <div>
+            <label for="cost">Total IVF Cycle Cost</label>
+            <input id="cost" type="number" placeholder="10000" min="0" inputmode="decimal" />
+          </div>
+
+          <div>
+            <label for="insurance">Insurance or Employer Contribution</label>
+            <input id="insurance" type="number" placeholder="1500" min="0" inputmode="decimal" />
+          </div>
+
+          <div>
+            <label for="income">Monthly Take-Home Income</label>
+            <input id="income" type="number" placeholder="8500" min="0" inputmode="decimal" />
+          </div>
+
+          <div>
+            <label for="savings">Emergency Savings</label>
+            <input id="savings" type="number" placeholder="25000" min="0" inputmode="decimal" />
+          </div>
+
+          <div>
+            <label for="expenses">Monthly Expenses</label>
+            <input id="expenses" type="number" placeholder="5000" min="0" inputmode="decimal" />
+          </div>
+
+          <div>
+            <label for="debt">Monthly Debt Payments</label>
+            <input id="debt" type="number" placeholder="700" min="0" inputmode="decimal" />
+
+            <div class="helper-link">
+              <a href="/what-counts-as-debt">
+                Not sure what counts as debt? Read the debt guide
+              </a>
+            </div>
+          </div>
+
+          <div>
+            <label for="financed">Amount Financed</label>
+            <input id="financed" type="number" placeholder="5000" min="0" inputmode="decimal" />
+          </div>
+        </div>
+
+        <button id="ivfButton" type="button">
+          Calculate Financial Pressure
+        </button>
+
+        <div class="result" id="result">
+          <div class="score" id="score"></div>
+
+          <div class="bar">
+            <div class="fill" id="barFill"></div>
+          </div>
+
+          <div class="metric" id="stress"></div>
+          <div class="metric" id="netCost"></div>
+          <div class="metric" id="cashFlow"></div>
+          <div class="metric" id="savingsImpact"></div>
+          <div class="metric" id="financingImpact"></div>
+
+          <div class="guidance" id="guidance"></div>
+
+          <div class="disclaimer">
+            This is a general educational estimate, not fertility, medical, insurance, legal, tax, or financial advice.
+          </div>
+        </div>
+      </div>
+
+      <div class="content-section">
+        <h2>What a $10,000 IVF Decision Really Means</h2>
+
+        <p>
+          A $10,000 IVF bill may represent one cycle, a partial package, a clinic quote before medications, or a discounted cost after insurance or employer benefits. IVF is financially different from a normal one-time expense because the first payment may not be the last payment.
+        </p>
+
+        <p>
+          Medications, monitoring, lab work, embryo testing, storage, anesthesia, transfers, consultations, travel, time off work, and repeat attempts can change the true cost quickly. The goal is not to treat IVF like ordinary discretionary spending. The goal is to make sure the plan does not destabilize the household before, during, or after treatment.
+        </p>
+      </div>
+
+      <WhenSpendingMakesSense
+        title="When Spending $10,000 on IVF Makes Sense"
+        items={[
+          "You understand what the IVF quote includes and what could cost extra.",
+          "Insurance, employer fertility benefits, HSA funds, or FSA funds reduce the real out-of-pocket cost.",
+          "The treatment does not drain the emergency fund needed for housing, food, insurance, and future care.",
+          "You have discussed what happens financially if another cycle is needed.",
+          "Any financing is low-interest, manageable, and does not crowd out essential bills.",
+          "You have planned for medications, monitoring, labs, travel, time off work, storage, and follow-up visits.",
+        ]}
+      />
+
+      <div class="content-section">
+        <h2>Why IVF Deserves a Bigger Financial Cushion</h2>
+
+        <p>
+          IVF can be emotionally urgent and financially uncertain at the same time. A quoted price may not include every medication, test, transfer, storage fee, or follow-up cost. Even a good clinic estimate can change once treatment begins.
+        </p>
+
+        <p>
+          Before committing, ask for a written estimate that separates clinic fees, medications, lab work, monitoring, embryo services, storage, transfer costs, and possible add-ons. Then decide how much can safely come from savings and how much, if any, should be financed.
+        </p>
+      </div>
+
+      <KeyCostCategories
+        items={[
+          {
+            title: "Clinic and cycle fees",
+            description:
+              "IVF costs may include retrieval, monitoring, ultrasounds, bloodwork, transfer, provider fees, and clinic package charges.",
+          },
+          {
+            title: "Medications and lab work",
+            description:
+              "Medication costs can vary widely, and lab work, genetic testing, anesthesia, and embryo-related services may not be included in the headline quote.",
+          },
+          {
+            title: "Insurance and fertility benefits",
+            description:
+              "Some plans cover diagnosis but not IVF. Others have lifetime maximums, medication limits, prior authorization rules, or employer-specific fertility benefits.",
+          },
+          {
+            title: "Repeat-cycle risk",
+            description:
+              "One IVF cycle may not succeed. The financial plan should account for whether another attempt would be possible without relying on high-interest debt.",
+          },
+        ]}
+      />
+
+      <ReduceCostTips
+        items={[
+          "Request an itemized estimate that separates IVF cycle fees, medications, labs, monitoring, storage, and transfer costs.",
+          "Ask the clinic which costs are most likely to appear outside the quoted $10,000.",
+          "Confirm insurance approval, fertility benefit limits, medication coverage, and prior authorization requirements.",
+          "Ask whether HSA or FSA funds can be used for eligible IVF costs.",
+          "Compare clinic pricing if timing allows and the treatment is not urgent.",
+          "Ask about refund programs, package pricing, grants, employer fertility benefits, or medication discount programs.",
+          "Avoid high-interest financing unless you have a clear repayment plan and stable monthly cash flow.",
+        ]}
+      />
+
+      <FinancialRedFlags
+        items={[
+          "The clinic cannot clearly explain what is included in the $10,000 quote.",
+          "You would need high-interest credit to begin IVF.",
+          "The treatment would drain most of your emergency savings.",
+          "You are relying on insurance coverage that has not been confirmed in writing.",
+          "You have no financial plan if another cycle, transfer, or medication round is needed.",
+          "The monthly payment sounds manageable, but the total financed balance creates long-term debt pressure.",
+          "The treatment would make rent, utilities, groceries, insurance, or existing debt payments difficult to cover.",
+        ]}
+      />
+
+      <CalculatorAssumptions
+        items={[
+          "The calculator treats IVF as a high-priority medical and family-planning expense that still needs affordability testing.",
+          "Monthly income means take-home pay after taxes and payroll deductions.",
+          "Monthly expenses should include housing, food, utilities, transportation, childcare, insurance, prescriptions, and other required living costs.",
+          "Monthly debt payments include credit cards, car loans, student loans, personal loans, medical debt, and other required debt payments.",
+          "Insurance or employer contribution means money that directly reduces your out-of-pocket IVF cost.",
+          "The calculator assumes financed balances still create pressure even when payments are spread out.",
+          "Very high income or very large savings can produce a true 0/100 pressure score when the IVF cost is tiny relative to available resources.",
+          "The estimate does not evaluate medical likelihood of success, diagnosis, provider quality, insurance eligibility, or whether treatment is clinically appropriate.",
+        ]}
+      />
+
+      <FAQSection
+        title="IVF Spending FAQ"
+        faqs={[
+          {
+            question: "Is $10,000 a lot for IVF?",
+            answer:
+              "It is a major expense, but IVF pricing varies widely by clinic, medications, testing, insurance, and whether the quote includes retrieval, transfer, lab work, storage, and follow-up care.",
+          },
+          {
+            question: "Should I finance IVF?",
+            answer:
+              "Financing can make sense if the terms are low-interest and the payment fits comfortably inside your budget. Be cautious if financing the first cycle would leave no room for medications, transfers, storage, or another attempt.",
+          },
+          {
+            question: "What IVF costs are easy to overlook?",
+            answer:
+              "Medications, monitoring appointments, lab work, genetic testing, embryo storage, anesthesia, transfer fees, travel, time off work, and follow-up visits can all change the final cost.",
+          },
+          {
+            question: "Should I use emergency savings for IVF?",
+            answer:
+              "Using savings may be better than high-interest debt if your emergency cushion remains strong afterward. It becomes riskier if treatment leaves you exposed to job loss, medical emergencies, housing costs, or future treatment needs.",
+          },
+          {
+            question: "Does insurance usually cover IVF?",
+            answer:
+              "Coverage varies widely. Some plans cover diagnosis but not IVF, some include fertility benefits, and others have lifetime maximums or medication restrictions. Verify the exact benefit before assuming coverage.",
+          },
+        ]}
+      />
+
+      <MethodologySection category="medical spending" updated="May 2026" />
+
+      <RelatedGuides
+        guides={[
+          {
+            title: "Medical Calculators",
+            href: "/medical-calculators",
+            description:
+              "Browse medical spending calculators for dental costs, healthcare bills, procedures, and treatment affordability decisions.",
+          },
+          {
+            title: "What Counts as Debt?",
+            href: "/what-counts-as-debt",
+            description:
+              "Understand which monthly obligations should be included when estimating financial pressure.",
+          },
+        ]}
+      />
+
+      <RelatedCalculators
+        calculators={[
+          {
+            category: "Medical",
+            title: "Should I Spend $6,000 on Fertility Treatments?",
+            href: "/should-i-spend-6000-on-fertility-treatments",
+          },
+          {
+            category: "Medical",
+            title: "Should I Use Emergency Savings for Medical Bills?",
+            href: "/should-i-use-emergency-savings-for-medical-bills",
+          },
+          {
+            category: "Medical",
+            title: "Medical Bill Payment Plan Calculator",
+            href: "/medical-bill-payment-plan-calculator",
+          },
+          {
+            category: "Medical",
+            title: "Browse Medical Calculators",
+            href: "/medical-calculators",
+          },
+        ]}
+      />
+    </CalculatorPageShell>
+  </div>
+
+  <script is:inline>
+    const clamp = (value, min, max) => Math.min(Math.max(value, min), max);
+
+    const getNumber = (id) => {
+      const rawValue = document.getElementById(id)?.value;
+      const value = Number(rawValue);
+      return Number.isFinite(value) && value >= 0 ? value : 0;
+    };
+
+    function getPressureLevel(score) {
+      if (score <= 30) {
+        return {
+          label: "Low Pressure",
+          stress: "Low pressure",
+          color: "#16a34a",
+          action:
+            "Proceed only after confirming insurance approval, medication costs, clinic fees, storage, transfer costs, and what happens if another cycle is needed.",
+        };
+      }
+
+      if (score <= 60) {
+        return {
+          label: "Moderate Pressure",
+          stress: "Moderate pressure",
+          color: "#ca8a04",
+          action:
+            "Get the full IVF estimate in writing, protect emergency savings, and avoid financing that leaves no room for medications or follow-up care.",
+        };
+      }
+
+      return {
+        label: "High Pressure",
+        stress: "High pressure",
+        color: "#dc2626",
+        action:
+          "Slow down before committing, confirm coverage, compare clinic options, and avoid high-interest financing while cash flow is tight.",
+      };
+    }
+
+    function calculateIVF() {
+      const cost = getNumber("cost");
+      const insurance = getNumber("insurance");
+      const income = getNumber("income");
+      const savings = getNumber("savings");
+      const expenses = getNumber("expenses");
+      const debt = getNumber("debt");
+      const financed = getNumber("financed");
+
+      const result = document.getElementById("result");
+      const scoreEl = document.getElementById("score");
+      const barFill = document.getElementById("barFill");
+      const stressEl = document.getElementById("stress");
+      const netCostEl = document.getElementById("netCost");
+      const cashFlowEl = document.getElementById("cashFlow");
+      const savingsImpactEl = document.getElementById("savingsImpact");
+      const financingImpactEl = document.getElementById("financingImpact");
+      const guidanceEl = document.getElementById("guidance");
+
+      result.style.display = "block";
+
+      if (cost <= 0 || income <= 0) {
+        scoreEl.textContent = "Add your numbers first";
+        scoreEl.style.color = "#16a34a";
+        barFill.style.width = "0%";
+        barFill.style.background = "#16a34a";
+        stressEl.innerHTML = "";
+        netCostEl.innerHTML = "";
+        cashFlowEl.innerHTML = "";
+        savingsImpactEl.innerHTML = "";
+        financingImpactEl.innerHTML = "";
+        guidanceEl.textContent =
+          "Enter a positive IVF cost and monthly take-home income so the calculator can estimate financial pressure.";
+        return;
+      }
+
+      const coveredAmount = Math.min(insurance, cost);
+      const netTreatmentCost = Math.max(cost - coveredAmount, 0);
+      const financedAmount = Math.min(financed, netTreatmentCost);
+      const outOfPocket = Math.max(netTreatmentCost - financedAmount, 0);
+
+      const monthlyRemaining = income - expenses - debt;
+      const remainingSavings = savings - outOfPocket;
+
+      const savingsImpact =
+        savings > 0 ? (outOfPocket / savings) * 100 : outOfPocket > 0 ? 100 : 0;
+
+      const incomeImpact =
+        income > 0 ? (netTreatmentCost / income) * 100 : 100;
+
+      const fixedObligationRatio =
+        income > 0 ? ((expenses + debt) / income) * 100 : 100;
+
+      const debtRatio = income > 0 ? (debt / income) * 100 : 100;
+
+      const remainingSavingsMonths =
+        expenses > 0 ? remainingSavings / expenses : remainingSavings > 0 ? 999 : 0;
+
+      const financedShare =
+        netTreatmentCost > 0 ? (financedAmount / netTreatmentCost) * 100 : 0;
+
+      const hasHugeIncomeBuffer =
+        income > 0 &&
+        netTreatmentCost <= income * 0.02 &&
+        monthlyRemaining > income * 0.5;
+
+      const hasHugeSavingsBuffer =
+        savings > 0 &&
+        outOfPocket <= savings * 0.01 &&
+        remainingSavings > 0;
+
+      const hasStrongIncomeBuffer =
+        income > 0 &&
+        netTreatmentCost <= income * 0.05 &&
+        monthlyRemaining > income * 0.35;
+
+      const hasStrongSavingsBuffer =
+        savings > 0 &&
+        outOfPocket <= savings * 0.05 &&
+        remainingSavings > 0;
+
+      let pressureScore = 0;
+
+      if (netTreatmentCost <= 0 || hasHugeIncomeBuffer || hasHugeSavingsBuffer) {
+        pressureScore = 0;
+      } else {
+        pressureScore += clamp(incomeImpact * 0.32, 0, 32);
+        pressureScore += clamp(savingsImpact * 0.3, 0, 34);
+        pressureScore += clamp(fixedObligationRatio * 0.23, 0, 25);
+        pressureScore += clamp(debtRatio * 0.3, 0, 15);
+
+        if (remainingSavings < 0) pressureScore += 30;
+        else if (remainingSavingsMonths < 1 && income < 16000) pressureScore += 22;
+        else if (remainingSavingsMonths < 3 && income < 20000) pressureScore += 14;
+        else if (remainingSavingsMonths >= 12) pressureScore -= 12;
+        else if (remainingSavingsMonths >= 6) pressureScore -= 8;
+
+        if (financedAmount > 0) {
+          pressureScore += clamp(financedShare * 0.15, 4, 16);
+        }
+
+        if (monthlyRemaining < 0) pressureScore += 26;
+        else if (monthlyRemaining < income * 0.08) pressureScore += 16;
+        else if (monthlyRemaining < income * 0.15) pressureScore += 9;
+        else if (monthlyRemaining > income * 0.5) pressureScore -= 11;
+        else if (monthlyRemaining > income * 0.35) pressureScore -= 7;
+
+        if (coveredAmount >= cost * 0.35) pressureScore -= 6;
+
+        if (hasStrongIncomeBuffer) pressureScore -= 16;
+        if (hasStrongSavingsBuffer) pressureScore -= 16;
+
+        if (
+          incomeImpact < 12 &&
+          savingsImpact < 15 &&
+          remainingSavingsMonths >= 6 &&
+          fixedObligationRatio < 55
+        ) {
+          pressureScore = Math.min(pressureScore, 25);
+        }
+
+        if (
+          incomeImpact < 6 &&
+          savingsImpact < 8 &&
+          remainingSavingsMonths >= 9 &&
+          fixedObligationRatio < 45
+        ) {
+          pressureScore = Math.min(pressureScore, 12);
+        }
+
+        if (
+          incomeImpact < 2 &&
+          savingsImpact < 1 &&
+          fixedObligationRatio < 25 &&
+          monthlyRemaining > income * 0.6
+        ) {
+          pressureScore = 0;
+        }
+      }
+
+      pressureScore = Math.round(clamp(pressureScore, 0, 100));
+
+      const level = getPressureLevel(pressureScore);
+
+      let guidance = "";
+
+      if (pressureScore === 0) {
+        guidance =
+          `This IVF expense appears to create essentially no financial pressure based on the numbers provided. Your estimated net cost is about ${incomeImpact.toFixed(1)}% of one month’s take-home income, and the upfront out-of-pocket cost is tiny relative to available savings.`;
+      } else if (pressureScore <= 30) {
+        guidance =
+          `This IVF expense appears financially manageable based on the numbers provided. Your estimated net cost is about ${incomeImpact.toFixed(1)}% of one month’s take-home income, and your emergency cushion remains around ${Math.max(remainingSavingsMonths, 0).toFixed(1)} months after the upfront out-of-pocket cost.`;
+      } else if (pressureScore <= 60) {
+        guidance =
+          `This IVF expense may be workable, but it creates noticeable pressure. Your estimated net cost equals about ${incomeImpact.toFixed(1)}% of one month’s take-home income, while the upfront portion uses about ${savingsImpact.toFixed(1)}% of available savings.`;
+      } else {
+        guidance =
+          `This IVF expense could create real financial strain. The combination of treatment cost, savings impact, repeat-cycle risk, monthly obligations, debt, or financing suggests this may be a decision to compare carefully before committing.`;
+      }
+
+      scoreEl.textContent = `${level.label} — ${pressureScore}/100`;
+      scoreEl.style.color = level.color;
+      barFill.style.width = `${pressureScore}%`;
+      barFill.style.background = level.color;
+
+      stressEl.innerHTML = `<strong>Pressure level:</strong> ${level.stress}`;
+      netCostEl.innerHTML = `<strong>Estimated net IVF cost after insurance/benefits:</strong> $${Math.round(netTreatmentCost).toLocaleString()}`;
+      cashFlowEl.innerHTML = `<strong>Monthly cash flow after bills and debt:</strong> $${Math.round(monthlyRemaining).toLocaleString()}`;
+      savingsImpactEl.innerHTML = `<strong>Savings after upfront out-of-pocket cost:</strong> $${Math.round(remainingSavings).toLocaleString()}`;
+      financingImpactEl.innerHTML = `<strong>Financed portion of net cost:</strong> ${financedShare.toFixed(1)}%`;
+
+      guidanceEl.textContent = `${guidance} Recommended next step: ${level.action}`;
+    }
+
+    document
+      .getElementById("ivfButton")
+      .addEventListener("click", calculateIVF);
+  </script>
+</Layout>

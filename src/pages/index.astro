@@ -2,12 +2,55 @@
 import CategoryCard from "../components/CategoryCard.astro";
 import Layout from "../layouts/Layout.astro";
 import HowItWorks from "../components/HowItWorks.astro";
+
+const homepageFaqs = [
+  {
+    question: "What is ShouldISpend?",
+    answer:
+      "ShouldISpend is a financial decision-support website that helps users evaluate major purchases, recurring bills, lifestyle expenses, debt pressure, and savings tradeoffs through calculators and educational guides.",
+  },
+  {
+    question: "Are the calculators financial advice?",
+    answer:
+      "No. ShouldISpend calculators are educational tools designed to help users think through spending decisions. Results are generalized estimates and should not replace professional financial advice.",
+  },
+  {
+    question: "How do the calculators work?",
+    answer:
+      "Most calculators evaluate spending pressure using factors like income, debt, emergency savings, recurring bills, savings impact, and financial flexibility after a purchase or payment.",
+  },
+  {
+    question: "What kinds of spending decisions does ShouldISpend cover?",
+    answer:
+      "ShouldISpend covers groceries, weddings, rent, vacations, car payments, medical bills, debt levels, home repairs, emergency savings, funerals, and other major expenses.",
+  },
+  {
+    question: "Why do some calculators give conservative verdicts?",
+    answer:
+      "ShouldISpend prioritizes financial flexibility and long-term stability. Many calculators flag situations where a purchase may leave little emergency cushion or create ongoing financial pressure.",
+  },
+];
+
+const faqSchema = {
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  mainEntity: homepageFaqs.map((faq) => ({
+    "@type": "Question",
+    name: faq.question,
+    acceptedAnswer: {
+      "@type": "Answer",
+      text: faq.answer,
+    },
+  })),
+};
 ---
 
 <Layout
   title="Should I Spend This Much?"
   description="Use verdict-driven financial calculators to evaluate groceries, rent, weddings, debt, car payments, vacations, emergency savings, and major spending decisions."
 >
+  <script type="application/ld+json" set:html={JSON.stringify(faqSchema)} />
+
   <style>
     .container {
       width: 92%;
@@ -45,12 +88,12 @@ import HowItWorks from "../components/HowItWorks.astro";
     }
 
     .hero-subtext {
-  max-width: 760px;
-  margin: 22px auto 0;
-  font-size: 1.02rem;
-  line-height: 1.8;
-  color: var(--muted);
-}
+      max-width: 760px;
+      margin: 22px auto 0;
+      font-size: 1.02rem;
+      line-height: 1.8;
+      color: var(--muted);
+    }
 
     .trust-strip {
       margin-top: 30px;
@@ -78,47 +121,33 @@ import HowItWorks from "../components/HowItWorks.astro";
       font-size: 1.05rem;
     }
 
+    .grid,
+    .popular-row,
+    .trust-grid,
+    .faq-list {
+      display: grid;
+      gap: 24px;
+    }
+
     .grid {
-      display: grid;
       grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-      gap: 24px;
     }
 
-    .info-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-      gap: 24px;
-    }
-
-    .info-card {
-      background: white;
-      border: 1px solid var(--border);
-      border-radius: 22px;
-      padding: 28px;
-    }
-
-    .info-card h3 {
-      margin-top: 0;
-      font-size: 1.35rem;
-      color: var(--primary);
-    }
-
-    .info-card p {
-      color: var(--muted);
-      line-height: 1.8;
-    }
-
-    .popular-row {
-      display: grid;
+    .popular-row,
+    .trust-grid {
       grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-      gap: 20px;
     }
 
-    .popular-card {
+    .popular-card,
+    .trust-card,
+    .faq-item {
       background: white;
       border: 1px solid var(--border);
       border-radius: 18px;
       padding: 24px;
+    }
+
+    .popular-card {
       transition: 0.2s ease;
     }
 
@@ -135,18 +164,27 @@ import HowItWorks from "../components/HowItWorks.astro";
       margin-bottom: 10px;
     }
 
-    .popular-card h3 {
+    .popular-card h3,
+    .trust-card h3,
+    .faq-item h3 {
       margin: 0 0 14px;
-      font-size: 1.22rem;
+      font-size: 1.18rem;
       line-height: 1.35;
       color: var(--primary);
     }
 
-    .popular-card p {
+    .popular-card p,
+    .trust-card p,
+    .faq-item p {
       color: var(--muted);
-      line-height: 1.7;
+      line-height: 1.75;
       font-size: 0.97rem;
       margin-bottom: 18px;
+    }
+
+    .trust-card p,
+    .faq-item p {
+      margin-bottom: 0;
     }
 
     .popular-link {
@@ -159,31 +197,17 @@ import HowItWorks from "../components/HowItWorks.astro";
       text-decoration: underline;
     }
 
-    .trust-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-      gap: 20px;
-      margin-top: 26px;
+    .faq-section {
+      margin-top: 72px;
     }
 
-    .trust-card {
-      background: white;
-      border: 1px solid var(--border);
-      border-radius: 18px;
-      padding: 24px;
+    .faq-list {
+      grid-template-columns: 1fr;
+      max-width: 900px;
     }
 
-    .trust-card h3 {
-      margin-top: 0;
-      margin-bottom: 14px;
-      color: var(--primary);
-      font-size: 1.18rem;
-    }
-
-    .trust-card p {
-      color: var(--muted);
-      line-height: 1.75;
-      margin: 0;
+    .faq-item {
+      border-radius: 20px;
     }
 
     @media (max-width: 700px) {
@@ -202,41 +226,34 @@ import HowItWorks from "../components/HowItWorks.astro";
   </style>
 
   <div class="container">
-
     <section class="hero">
+      <div class="eyebrow">Financial Decision Engine</div>
 
-      <div class="eyebrow">
-        Financial Decision Engine
-      </div>
-
-      <h1>
-        Should I Spend This Much?
-      </h1>
+      <h1>Should I Spend This Much?</h1>
 
       <p>
-        ShouldISpend helps you evaluate whether major purchases, recurring bills, and lifestyle spending decisions actually fit your broader financial picture. Compare decisions
-        across groceries, weddings, rent, travel, cars, debt, housing, and
-        lifestyle spending using income, savings, monthly obligations,
-        emergency cushion, and long-term financial flexibility.
+        ShouldISpend helps you evaluate whether major purchases, recurring bills,
+        and lifestyle spending decisions actually fit your broader financial
+        picture. Compare decisions across groceries, weddings, rent, travel,
+        cars, debt, housing, and lifestyle spending using income, savings,
+        monthly obligations, emergency cushion, and long-term financial flexibility.
       </p>
 
       <p class="hero-subtext">
-  Instead of generic budgeting formulas, ShouldISpend focuses on financial pressure, affordability tradeoffs, savings impact, debt burden, and real-world monthly flexibility.
-</p>
+        Instead of generic budgeting formulas, ShouldISpend focuses on financial
+        pressure, affordability tradeoffs, savings impact, debt burden, and
+        real-world monthly flexibility.
+      </p>
 
       <div class="trust-strip">
         Groceries • Rent • Weddings • Funerals • Travel • Cars • Debt
       </div>
-
     </section>
 
     <HowItWorks />
 
     <section class="section">
-
-      <h2 class="section-title">
-        Most Popular Calculators
-      </h2>
+      <h2 class="section-title">Most Popular Calculators</h2>
 
       <p class="section-intro">
         These are some of the most useful calculators on ShouldISpend.
@@ -246,147 +263,91 @@ import HowItWorks from "../components/HowItWorks.astro";
       </p>
 
       <div class="popular-row">
-
         <div class="popular-card">
           <div class="popular-label">Groceries</div>
-
-          <h3>
-            Should I Spend This Much on Groceries Per Month?
-          </h3>
-
+          <h3>Should I Spend This Much on Groceries Per Month?</h3>
           <p>
-            Evaluate whether your grocery budget fits your income,
-            household size, debt load, emergency savings,
-            and overall monthly flexibility.
+            Evaluate whether your grocery budget fits your income, household
+            size, debt load, emergency savings, and overall monthly flexibility.
           </p>
-
-          <a
-            class="popular-link"
-            href="/should-i-spend-this-much-on-groceries-per-month"
-          >
+          <a class="popular-link" href="/should-i-spend-this-much-on-groceries-per-month">
             Open Calculator →
           </a>
         </div>
 
         <div class="popular-card">
           <div class="popular-label">Cars</div>
-
-          <h3>
-            Should I Spend $700 on a Car Payment?
-          </h3>
-
+          <h3>Should I Spend $700 on a Car Payment?</h3>
           <p>
             Evaluate whether your monthly vehicle payment is realistic after
             insurance, debt payments, savings goals, and normal monthly bills.
           </p>
-
-          <a
-            class="popular-link"
-            href="/should-i-spend-700-on-a-car-payment"
-          >
+          <a class="popular-link" href="/should-i-spend-700-on-a-car-payment">
             Open Calculator →
           </a>
         </div>
 
         <div class="popular-card">
-  <div class="popular-label">Funerals</div>
-
-  <h3>
-    Should I Spend $10,000 on a Funeral?
-  </h3>
-
-  <p>
-    Evaluate whether funeral costs fit your savings, insurance help,
-    debt pressure, emergency cushion, and monthly flexibility.
-  </p>
-
-  <a
-    class="popular-link"
-    href="/should-i-spend-10000-on-a-funeral"
-  >
-    Open Calculator →
-  </a>
-</div>
+          <div class="popular-label">Funerals</div>
+          <h3>Should I Spend $10,000 on a Funeral?</h3>
+          <p>
+            Evaluate whether funeral costs fit your savings, insurance help,
+            debt pressure, emergency cushion, and monthly flexibility.
+          </p>
+          <a class="popular-link" href="/should-i-spend-10000-on-a-funeral">
+            Open Calculator →
+          </a>
+        </div>
 
         <div class="popular-card">
           <div class="popular-label">Weddings</div>
-
-          <h3>
-            Should I Spend $30,000 on a Wedding?
-          </h3>
-
+          <h3>Should I Spend $30,000 on a Wedding?</h3>
           <p>
-            Analyze wedding affordability using income, savings,
-            debt pressure, emergency cushion, and long-term flexibility.
+            Analyze wedding affordability using income, savings, debt pressure,
+            emergency cushion, and long-term flexibility.
           </p>
-
-          <a
-            class="popular-link"
-            href="/should-i-spend-30000-on-a-wedding"
-          >
+          <a class="popular-link" href="/should-i-spend-30000-on-a-wedding">
             Open Calculator →
           </a>
         </div>
 
         <div class="popular-card">
           <div class="popular-label">Travel</div>
-
-          <h3>
-            Should I Spend $10,000 on a Europe Trip?
-          </h3>
-
+          <h3>Should I Spend $10,000 on a Europe Trip?</h3>
           <p>
-            Evaluate whether a major Europe vacation fits your savings,
-            debt load, travel budget, and broader financial goals.
+            Evaluate whether a major Europe vacation fits your savings, debt
+            load, travel budget, and broader financial goals.
           </p>
-
-          <a
-            class="popular-link"
-            href="/should-i-spend-10000-on-a-europe-trip"
-          >
+          <a class="popular-link" href="/should-i-spend-10000-on-a-europe-trip">
             Open Calculator →
           </a>
         </div>
 
         <div class="popular-card">
           <div class="popular-label">Rent</div>
-
-          <h3>
-            Should I Spend 50% of My Income on Rent?
-          </h3>
-
+          <h3>Should I Spend 50% of My Income on Rent?</h3>
           <p>
-            Understand the savings pressure, flexibility risk,
-            and long-term tradeoffs tied to aggressive rent spending.
+            Understand the savings pressure, flexibility risk, and long-term
+            tradeoffs tied to aggressive rent spending.
           </p>
-
-          <a
-            class="popular-link"
-            href="/should-i-spend-50-percent-income-on-rent"
-          >
+          <a class="popular-link" href="/should-i-spend-50-percent-income-on-rent">
             Open Calculator →
           </a>
         </div>
-
       </div>
-
     </section>
 
     <section class="section">
-
-      <h2 class="section-title">
-        Browse Calculator Categories
-      </h2>
+      <h2 class="section-title">Browse Calculator Categories</h2>
 
       <p class="section-intro">
         Explore calculators and financial guides built around real-world
-        affordability decisions — not just formulas. Each category focuses
-        on spending pressure, debt load, emergency savings, monthly
-        flexibility, and long-term financial tradeoffs.
+        affordability decisions — not just formulas. Each category focuses on
+        spending pressure, debt load, emergency savings, monthly flexibility,
+        and long-term financial tradeoffs.
       </p>
 
       <div class="grid">
-
         <CategoryCard
           category="Groceries"
           title="Grocery Budget Calculators"
@@ -423,15 +384,11 @@ import HowItWorks from "../components/HowItWorks.astro";
         />
 
         <CategoryCard
-  category="Medical"
-  title="Medical Cost Calculators"
-
-        <CategoryCard
-  category="Medical"
-  title="Medical Cost Calculators"
-  description="Evaluate healthcare costs, medical bills, payment plans, emergency savings, and financial pressure."
-  href="/medical-calculators"
-/>
+          category="Medical"
+          title="Medical Cost Calculators"
+          description="Evaluate healthcare costs, medical bills, payment plans, emergency savings, and financial pressure."
+          href="/medical-calculators"
+        />
 
         <CategoryCard
           category="Budget Rules"
@@ -441,268 +398,179 @@ import HowItWorks from "../components/HowItWorks.astro";
         />
 
         <CategoryCard
-  category="Home Improvement"
-  title="Home Improvement Calculators"
-  description="Evaluate home repairs, renovation costs, emergency savings, debt pressure, and household financial flexibility."
-  href="/home-improvement-calculators"
-/>
-
+          category="Home Improvement"
+          title="Home Improvement Calculators"
+          description="Evaluate home repairs, renovation costs, emergency savings, debt pressure, and household financial flexibility."
+          href="/home-improvement-calculators"
+        />
       </div>
-
     </section>
 
     <section class="section">
-
-      <h2 class="section-title">
-        Financial Planning Guides
-      </h2>
+      <h2 class="section-title">Financial Planning Guides</h2>
 
       <p class="section-intro">
         These guides explain the financial logic behind the calculators,
-        including housing affordability, emergency savings,
-        transportation costs, vacation budgets, rent pressure,
-        debt management, and long-term financial flexibility.
+        including housing affordability, emergency savings, transportation costs,
+        vacation budgets, rent pressure, debt management, and long-term financial flexibility.
       </p>
 
       <div class="popular-row">
-
         <div class="popular-card">
           <div class="popular-label">Housing</div>
-
-          <h3>
-            How Much House Can I Afford?
-          </h3>
-
+          <h3>How Much House Can I Afford?</h3>
           <p>
-            Learn how income, debt, taxes, insurance,
-            maintenance, emergency savings, and monthly flexibility
-            affect realistic home affordability.
+            Learn how income, debt, taxes, insurance, maintenance, emergency
+            savings, and monthly flexibility affect realistic home affordability.
           </p>
-
-          <a
-            class="popular-link"
-            href="/how-much-house-can-i-afford"
-          >
+          <a class="popular-link" href="/how-much-house-can-i-afford">
             Read Guide →
           </a>
         </div>
 
         <div class="popular-card">
           <div class="popular-label">Cars</div>
-
-          <h3>
-            How Much Car Can I Afford?
-          </h3>
-
+          <h3>How Much Car Can I Afford?</h3>
           <p>
             Learn how to calculate a realistic vehicle budget using income,
-            savings, debt load, insurance costs, loan length,
-            depreciation, and total ownership cost.
+            savings, debt load, insurance costs, loan length, depreciation,
+            and total ownership cost.
           </p>
-
-          <a
-            class="popular-link"
-            href="/how-much-car-can-i-afford"
-          >
+          <a class="popular-link" href="/how-much-car-can-i-afford">
             Read Guide →
           </a>
         </div>
 
         <div class="popular-card">
           <div class="popular-label">Travel</div>
-
-          <h3>
-            How Much Vacation Can I Afford?
-          </h3>
-
+          <h3>How Much Vacation Can I Afford?</h3>
           <p>
             Learn how to calculate a realistic vacation budget using savings,
-            debt load, emergency funds, hidden travel costs,
-            and post-trip flexibility.
+            debt load, emergency funds, hidden travel costs, and post-trip flexibility.
           </p>
-
-          <a
-            class="popular-link"
-            href="/how-much-vacation-can-i-afford"
-          >
+          <a class="popular-link" href="/how-much-vacation-can-i-afford">
             Read Guide →
           </a>
         </div>
 
         <div class="popular-card">
           <div class="popular-label">Savings</div>
-
-          <h3>
-            How Much Emergency Savings Should I Have?
-          </h3>
-
+          <h3>How Much Emergency Savings Should I Have?</h3>
           <p>
-            Learn how much emergency cushion may make major purchases,
-            vacations, weddings, and lifestyle spending safer.
+            Learn how much emergency cushion may make major purchases, vacations,
+            weddings, and lifestyle spending safer.
           </p>
-
-          <a
-            class="popular-link"
-            href="/how-much-emergency-savings-should-i-have"
-          >
+          <a class="popular-link" href="/how-much-emergency-savings-should-i-have">
             Read Guide →
           </a>
         </div>
 
         <div class="popular-card">
           <div class="popular-label">Travel</div>
-
-          <h3>
-            How to Avoid Vacation Debt
-          </h3>
-
+          <h3>How to Avoid Vacation Debt</h3>
           <p>
-            Learn how to budget trips realistically and avoid turning
-            travel memories into long-term financial stress.
+            Learn how to budget trips realistically and avoid turning travel
+            memories into long-term financial stress.
           </p>
-
-          <a
-            class="popular-link"
-            href="/how-to-avoid-vacation-debt"
-          >
+          <a class="popular-link" href="/how-to-avoid-vacation-debt">
             Read Guide →
           </a>
         </div>
 
         <div class="popular-card">
           <div class="popular-label">Disney</div>
-
-          <h3>
-            How to Budget for a Disney Vacation
-          </h3>
-
+          <h3>How to Budget for a Disney Vacation</h3>
           <p>
-            Understand Disney ticket costs, hotels, meals,
-            add-ons, souvenirs, and realistic family budgeting.
+            Understand Disney ticket costs, hotels, meals, add-ons, souvenirs,
+            and realistic family budgeting.
           </p>
-
-          <a
-            class="popular-link"
-            href="/how-to-budget-for-a-disney-vacation"
-          >
+          <a class="popular-link" href="/how-to-budget-for-a-disney-vacation">
             Read Guide →
           </a>
         </div>
 
         <div class="popular-card">
           <div class="popular-label">Housing</div>
-
-          <h3>
-            How Much Rent Can I Afford?
-          </h3>
-
+          <h3>How Much Rent Can I Afford?</h3>
           <p>
-            Learn how income, debt, utilities, transportation,
-            and emergency savings affect safe rent levels.
+            Learn how income, debt, utilities, transportation, and emergency
+            savings affect safe rent levels.
           </p>
-
-          <a
-            class="popular-link"
-            href="/how-much-rent-can-i-afford"
-          >
+          <a class="popular-link" href="/how-much-rent-can-i-afford">
             Read Guide →
           </a>
         </div>
 
         <div class="popular-card">
           <div class="popular-label">Weddings</div>
-
-          <h3>
-            How to Budget for a Wedding Without Going Into Debt
-          </h3>
-
+          <h3>How to Budget for a Wedding Without Going Into Debt</h3>
           <p>
-            Learn how to build a realistic wedding budget,
-            avoid debt pressure, and protect emergency savings.
+            Learn how to build a realistic wedding budget, avoid debt pressure,
+            and protect emergency savings.
           </p>
-
-          <a
-            class="popular-link"
-            href="/how-to-budget-for-a-wedding-without-going-into-debt"
-          >
+          <a class="popular-link" href="/how-to-budget-for-a-wedding-without-going-into-debt">
             Read Guide →
           </a>
         </div>
 
         <div class="popular-card">
           <div class="popular-label">Debt</div>
-
-          <h3>
-            How Much Debt Is Too Much?
-          </h3>
-
+          <h3>How Much Debt Is Too Much?</h3>
           <p>
-            Learn how debt-to-income ratio, monthly obligations,
-            emergency savings, and financial flexibility affect
-            long-term financial stability.
+            Learn how debt-to-income ratio, monthly obligations, emergency
+            savings, and financial flexibility affect long-term financial stability.
           </p>
-
-          <a
-            class="popular-link"
-            href="/how-much-debt-is-too-much"
-          >
+          <a class="popular-link" href="/how-much-debt-is-too-much">
             Read Guide →
           </a>
         </div>
-
       </div>
-
     </section>
-
 
     <section class="section">
-
-      <h2 class="section-title">
-        Why ShouldISpend Exists
-      </h2>
+      <h2 class="section-title">Why ShouldISpend Exists</h2>
 
       <div class="trust-grid">
-
         <div class="trust-card">
-          <h3>
-            Real-World Financial Context
-          </h3>
-
+          <h3>Real-World Financial Context</h3>
           <p>
-            Most calculators only show formulas. ShouldISpend focuses on
-            real affordability, including savings pressure,
-            debt obligations, emergency cushions, and flexibility.
+            Most calculators only show formulas. ShouldISpend focuses on real
+            affordability, including savings pressure, debt obligations,
+            emergency cushions, and flexibility.
           </p>
         </div>
 
         <div class="trust-card">
-          <h3>
-            Conservative by Design
-          </h3>
-
+          <h3>Conservative by Design</h3>
           <p>
-            The calculators are intentionally cautious.
-            The goal is not encouraging spending.
-            The goal is helping people avoid unnecessary financial stress.
+            The calculators are intentionally cautious. The goal is not
+            encouraging spending. The goal is helping people avoid unnecessary
+            financial stress.
           </p>
         </div>
 
         <div class="trust-card">
-          <h3>
-            Educational, Not Financial Advice
-          </h3>
-
+          <h3>Educational, Not Financial Advice</h3>
           <p>
             ShouldISpend provides educational estimates and decision support.
-            It is designed to help users think through tradeoffs before
-            making large financial commitments. The calculators are designed to encourage thoughtful financial decisions, not impulsive spending.
+            It is designed to help users think through tradeoffs before making
+            large financial commitments.
           </p>
         </div>
-
       </div>
-
     </section>
 
-  </div>
+    <section class="section faq-section">
+      <h2 class="section-title">Frequently Asked Questions</h2>
 
+      <div class="faq-list">
+        {homepageFaqs.map((faq) => (
+          <div class="faq-item">
+            <h3>{faq.question}</h3>
+            <p>{faq.answer}</p>
+          </div>
+        ))}
+      </div>
+    </section>
+  </div>
 </Layout>

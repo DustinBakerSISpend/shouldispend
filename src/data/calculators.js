@@ -625,6 +625,14 @@ export const calculators = [
 },
 
 {
+  id: "medical-bill-payment-plan",
+  category: "Medical",
+  title: "Medical Bill Payment Plan Calculator",
+  description:
+    "Estimate whether a medical bill payment plan fits your monthly budget, emergency savings, debt load, and payoff timeline.",
+  href: "/medical-bill-payment-plan-calculator",
+},
+{
   id: "medical-bills-monthly",
   category: "Medical",
   title: "Should I Spend This Much on Medical Bills?",
@@ -641,6 +649,14 @@ export const calculators = [
   href: "/should-i-use-emergency-savings-for-medical-bills",
 },
 {
+  id: "emergency-savings-dental-work",
+  category: "Medical",
+  title: "Should I Use Emergency Savings for Dental Work?",
+  description:
+    "Evaluate whether paying for dental work from emergency savings protects your finances or leaves you exposed afterward.",
+  href: "/should-i-use-emergency-savings-for-dental-work",
+},
+{
   id: "er-bill-2500",
   category: "Medical",
   title: "Should I Spend $2,500 on an ER Bill?",
@@ -649,20 +665,20 @@ export const calculators = [
   href: "/should-i-spend-2500-on-an-er-bill",
 },
 {
-  id: "lasik-5000",
+  id: "dental-work-5000",
   category: "Medical",
-  title: "Should I Spend $5,000 on LASIK?",
+  title: "Should I Spend $5,000 on Dental Work?",
   description:
-    "Evaluate LASIK affordability using income, emergency savings, debt, financing, monthly expenses, and financial flexibility.",
-  href: "/should-i-spend-5000-on-lasik",
+    "Evaluate $5,000 in dental work using urgency, insurance coverage, savings, financing, monthly cash flow, and debt pressure.",
+  href: "/should-i-spend-5000-on-dental-work",
 },
 {
-  id: "invisalign-8000",
+  id: "dental-work-10000",
   category: "Medical",
-  title: "Should I Spend $8,000 on Invisalign?",
+  title: "Should I Spend $10,000 on Dental Work?",
   description:
-    "Evaluate Invisalign affordability using insurance coverage, savings, financing, monthly cash flow, and debt pressure.",
-  href: "/should-i-spend-8000-on-invisalign",
+    "Evaluate major dental work using insurance gaps, financing risk, treatment urgency, emergency savings, and monthly flexibility.",
+  href: "/should-i-spend-10000-on-dental-work",
 },
 {
   id: "dental-implant-4000",
@@ -681,6 +697,30 @@ export const calculators = [
   href: "/should-i-spend-3000-on-a-root-canal",
 },
 {
+  id: "braces-5000",
+  category: "Medical",
+  title: "Should I Spend $5,000 on Braces?",
+  description:
+    "Evaluate braces affordability using insurance coverage, payment plans, household cash flow, savings, and competing priorities.",
+  href: "/should-i-spend-5000-on-braces",
+},
+{
+  id: "invisalign-8000",
+  category: "Medical",
+  title: "Should I Spend $8,000 on Invisalign?",
+  description:
+    "Evaluate Invisalign affordability using insurance coverage, savings, financing, monthly cash flow, and debt pressure.",
+  href: "/should-i-spend-8000-on-invisalign",
+},
+{
+  id: "lasik-5000",
+  category: "Medical",
+  title: "Should I Spend $5,000 on LASIK?",
+  description:
+    "Evaluate LASIK affordability using income, emergency savings, debt, financing, monthly expenses, and financial flexibility.",
+  href: "/should-i-spend-5000-on-lasik",
+},
+{
   id: "hearing-aids-7000",
   category: "Medical",
   title: "Should I Spend $7,000 on Hearing Aids?",
@@ -695,6 +735,14 @@ export const calculators = [
   description:
     "Evaluate fertility treatment costs using savings, insurance gaps, repeat-cycle risk, financing, and monthly cash flow.",
   href: "/should-i-spend-6000-on-fertility-treatments",
+},
+{
+  id: "ivf-10000",
+  category: "Medical",
+  title: "Should I Spend $10,000 on IVF?",
+  description:
+    "Evaluate IVF affordability using insurance coverage, savings, repeat-cycle risk, financing, and household financial pressure.",
+  href: "/should-i-spend-10000-on-ivf",
 },
 {
   id: "dermatology-treatment-2500",
@@ -774,15 +822,6 @@ export const calculators = [
   description:
     "Evaluate plumbing repair affordability using repair urgency, insurance help, emergency savings, debt pressure, and monthly flexibility.",
   href: "/should-i-spend-5000-on-plumbing-repairs",
-},
-
-{
-  id: "mental-health-therapy-5000",
-  category: "Medical",
-  title: "Should I Spend $5,000 on Mental Health Therapy?",
-  description:
-    "Evaluate therapy affordability using savings, insurance coverage, debt pressure, income stability, and long-term personal wellbeing.",
-  href: "/should-i-spend-5000-on-mental-health-therapy",
 },
 
 {

@@ -384,88 +384,127 @@ const medicalFaqs = [
   </main>
 
   <script is:inline>
-    document.addEventListener("DOMContentLoaded", function () {
-      const button = document.getElementById("calculateMedicalBills");
+  document.addEventListener("DOMContentLoaded", function () {
+    const button = document.getElementById("calculateMedicalBills");
 
-      if (!button) return;
+    if (!button) return;
 
-      button.addEventListener("click", function () {
-        const billAmount =
-          Number(document.getElementById("billAmount").value) || 0;
+    button.addEventListener("click", function () {
+      const billAmount =
+        Number(document.getElementById("billAmount").value) || 0;
 
-        const savingsAmount =
-          Number(document.getElementById("savingsAmount").value) || 0;
+      const savingsAmount =
+        Number(document.getElementById("savingsAmount").value) || 0;
 
-        const incomeAmount =
-          Number(document.getElementById("incomeAmount").value) || 0;
+      const incomeAmount =
+        Number(document.getElementById("incomeAmount").value) || 0;
 
-        const debtPressure =
-          document.getElementById("debtPressure").value;
+      const debtPressure = document.getElementById("debtPressure").value;
+      const insuranceLevel = document.getElementById("insuranceLevel").value;
+      const paymentPlan = document.getElementById("paymentPlan").value;
 
-        const insuranceLevel =
-          document.getElementById("insuranceLevel").value;
+      let pressureScore = 0;
 
-        const paymentPlan =
-          document.getElementById("paymentPlan").value;
+      const billToSavingsRatio =
+        savingsAmount > 0 ? billAmount / savingsAmount : billAmount > 0 ? 999 : 0;
 
-        let riskScore = 0;
+      const billToMonthlyIncomeRatio =
+        incomeAmount > 0 ? billAmount / incomeAmount : billAmount > 0 ? 999 : 0;
 
-        if (billAmount > savingsAmount) riskScore += 35;
-        else if (billAmount > savingsAmount * 0.5) riskScore += 20;
+      const savingsAfterBill = savingsAmount - billAmount;
 
-        if (billAmount > incomeAmount) riskScore += 20;
+      const monthsOfIncomeLeftAfterBill =
+        incomeAmount > 0 ? savingsAfterBill / incomeAmount : 0;
 
-        if (debtPressure === "moderate") riskScore += 15;
-        if (debtPressure === "high") riskScore += 30;
+      const hasHugeIncomeBuffer =
+        incomeAmount > 0 && billAmount <= incomeAmount * 0.02;
 
-        if (insuranceLevel === "average") riskScore += 10;
-        if (insuranceLevel === "weak") riskScore += 20;
+      const hasHugeSavingsBuffer =
+        savingsAmount > 0 && billAmount <= savingsAmount * 0.01;
 
-        if (paymentPlan === "no") riskScore += 15;
+      const hasStrongSavingsBuffer =
+        savingsAmount > 0 && billAmount <= savingsAmount * 0.05;
 
-        if (riskScore > 100) riskScore = 100;
+      const hasStrongIncomeBuffer =
+        incomeAmount > 0 && billAmount <= incomeAmount * 0.05;
 
-        let verdict = "";
-        let analysis = "";
+      if (billAmount <= 0) {
+        pressureScore = 0;
+      } else if (hasHugeIncomeBuffer || hasHugeSavingsBuffer) {
+        pressureScore = 0;
+      } else {
+        if (billToSavingsRatio >= 1.5) pressureScore += 35;
+        else if (billToSavingsRatio >= 1) pressureScore += 28;
+        else if (billToSavingsRatio >= 0.75) pressureScore += 22;
+        else if (billToSavingsRatio >= 0.5) pressureScore += 16;
+        else if (billToSavingsRatio >= 0.25) pressureScore += 8;
+        else pressureScore += 2;
 
-        if (riskScore <= 30) {
-          verdict = "Manageable Medical Pressure";
+        if (billToMonthlyIncomeRatio >= 1) pressureScore += 22;
+        else if (billToMonthlyIncomeRatio >= 0.5) pressureScore += 16;
+        else if (billToMonthlyIncomeRatio >= 0.25) pressureScore += 10;
+        else if (billToMonthlyIncomeRatio >= 0.1) pressureScore += 5;
 
-          analysis =
-            "This medical expense appears manageable relative to your savings, income stability, and overall financial flexibility.";
-        } else if (riskScore <= 60) {
-          verdict = "Moderate Financial Pressure";
+        if (savingsAfterBill < 0) pressureScore += 18;
+        else if (monthsOfIncomeLeftAfterBill < 1) pressureScore += 14;
+        else if (monthsOfIncomeLeftAfterBill < 2) pressureScore += 8;
+        else if (monthsOfIncomeLeftAfterBill >= 6) pressureScore -= 12;
+        else if (monthsOfIncomeLeftAfterBill >= 3) pressureScore -= 6;
 
-          analysis =
-            "This medical bill may create meaningful financial pressure and could reduce flexibility for savings, emergencies, or debt payoff.";
-        } else {
-          verdict = "High Medical Financial Pressure";
+        if (debtPressure === "moderate") pressureScore += 10;
+        if (debtPressure === "high") pressureScore += 22;
 
-          analysis =
-            "This expense may create serious financial strain relative to your current savings, debt pressure, and monthly flexibility.";
-        }
+        if (insuranceLevel === "average") pressureScore += 6;
+        if (insuranceLevel === "weak") pressureScore += 14;
 
-        document.getElementById("calcResults").classList.add("active");
+        if (paymentPlan === "yes") pressureScore -= 8;
+        if (paymentPlan === "no") pressureScore += 10;
 
-        document.getElementById("calcVerdict").innerText = verdict;
+        if (hasStrongSavingsBuffer) pressureScore -= 12;
+        if (hasStrongIncomeBuffer) pressureScore -= 10;
+      }
 
-        document.getElementById("calcStat").innerText =
-          `Estimated Financial Pressure Score: ${riskScore}/100`;
+      pressureScore = Math.max(0, Math.min(100, Math.round(pressureScore)));
 
-        document.getElementById("calcAnalysis").innerText = analysis;
+      let verdict = "";
+      let analysis = "";
 
-        const riskFill = document.getElementById("riskFill");
+      if (pressureScore <= 30) {
+        verdict = "Manageable Medical Pressure";
+        analysis =
+          pressureScore === 0
+            ? "This medical bill appears very manageable relative to your income, savings, or both. It should not create meaningful financial pressure based on the numbers entered."
+            : "This medical expense appears manageable relative to your savings, income stability, and overall financial flexibility.";
+      } else if (pressureScore <= 60) {
+        verdict = "Moderate Financial Pressure";
+        analysis =
+          "This medical bill may create meaningful financial pressure and could reduce flexibility for savings, emergencies, or debt payoff.";
+      } else {
+        verdict = "High Medical Financial Pressure";
+        analysis =
+          "This expense may create serious financial strain relative to your current savings, debt pressure, and monthly flexibility.";
+      }
 
-riskFill.style.width = `${riskScore}%`;
+      document.getElementById("calcResults").classList.add("active");
+      document.getElementById("calcVerdict").innerText = verdict;
 
-if (riskScore <= 30) {
-  riskFill.style.background = "#0f766e";
-} else if (riskScore <= 60) {
-  riskFill.style.background = "#ca8a04";
-} else {
-  riskFill.style.background = "#dc2626";
-}
-      });
+      document.getElementById("calcStat").innerText =
+        `Estimated Financial Pressure Score: ${pressureScore}/100`;
+
+      document.getElementById("calcAnalysis").innerText = analysis;
+
+      const riskFill = document.getElementById("riskFill");
+
+      riskFill.style.width = `${pressureScore}%`;
+
+      if (pressureScore <= 30) {
+        riskFill.style.background = "#0f766e";
+      } else if (pressureScore <= 60) {
+        riskFill.style.background = "#ca8a04";
+      } else {
+        riskFill.style.background = "#dc2626";
+      }
     });
-  </script>
+  });
+</script>
 </Layout>

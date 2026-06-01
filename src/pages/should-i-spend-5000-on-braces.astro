@@ -1,0 +1,480 @@
+---
+import Layout from "../layouts/Layout.astro";
+import CalculatorPageShell from "../components/CalculatorPageShell.astro";
+import FAQSection from "../components/FAQSection.astro";
+import RelatedCalculators from "../components/RelatedCalculators.astro";
+import RelatedGuides from "../components/RelatedGuides.astro";
+import MethodologySection from "../components/MethodologySection.astro";
+import FinancialRedFlags from "../components/FinancialRedFlags.astro";
+import CalculatorAssumptions from "../components/CalculatorAssumptions.astro";
+import KeyCostCategories from "../components/KeyCostCategories.astro";
+import ReduceCostTips from "../components/ReduceCostTips.astro";
+import WhenSpendingMakesSense from "../components/WhenSpendingMakesSense.astro";
+---
+
+<Layout
+  title="Should I Spend $5,000 on Braces?"
+  description="Use this braces affordability calculator to decide whether $5,000 in orthodontic treatment fits your income, savings, insurance, payment plan, and monthly cash flow."
+>
+  <style>
+    .container { max-width: 950px; margin: 0 auto; padding: 60px 20px; }
+    .content-section { max-width: 760px; margin: 72px auto 0; }
+    .card { background: var(--card); border: 1px solid var(--border); border-radius: 28px; padding: 34px; }
+    h2 { margin-top: 0; font-size: 2rem; }
+    .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 22px; margin-bottom: 28px; }
+    label { display: block; margin-bottom: 10px; font-weight: 700; }
+    input, select { width: 100%; padding: 18px; border-radius: 14px; border: 1px solid var(--border); font-size: 1.1rem; box-sizing: border-box; background: white; }
+    button { background: #0f172a; color: white; border: none; padding: 16px 28px; border-radius: 14px; font-size: 1rem; font-weight: 700; cursor: pointer; margin-top: 10px; width: 100%; display: block; }
+    button:hover { opacity: 0.92; }
+    .result { margin-top: 40px; border: 1px solid var(--border); border-radius: 24px; padding: 28px; display: none; background: #f8fafc; }
+    .score { font-size: 3rem; font-weight: 800; margin-bottom: 16px; }
+    .bar { width: 100%; height: 16px; background: #dbe3ee; border-radius: 999px; overflow: hidden; margin-bottom: 24px; }
+    .fill { height: 100%; width: 0%; background: #16a34a; border-radius: 999px; transition: width 0.4s ease; }
+    .metric { margin-bottom: 14px; font-size: 1.05rem; }
+    .guidance { margin-top: 26px; font-size: 1.15rem; line-height: 1.7; }
+    .disclaimer { margin-top: 30px; font-size: 0.9rem; color: var(--muted); }
+    .helper-link { margin-top: 10px; font-size: 0.9rem; }
+    .helper-link a { color: var(--primary); font-weight: 600; }
+    .content-section p, .content-section li { line-height: 1.8; }
+  </style>
+
+  <div class="container">
+    <CalculatorPageShell
+      eyebrow="Medical Calculator"
+      title="Should I Spend $5,000 on Braces?"
+      description="Estimate whether $5,000 in braces fits your income, emergency savings, orthodontic insurance, monthly expenses, debt load, and payment plan options."
+    >
+      <div class="card">
+        <h2>Braces Pressure Verdict</h2>
+
+        <div class="grid">
+          <div>
+            <label for="cost">Braces Cost</label>
+            <input id="cost" type="number" placeholder="5000" min="0" inputmode="decimal" />
+          </div>
+
+          <div>
+            <label for="income">Monthly Take-Home Income</label>
+            <input id="income" type="number" placeholder="7000" min="0" inputmode="decimal" />
+          </div>
+
+          <div>
+            <label for="savings">Emergency Savings</label>
+            <input id="savings" type="number" placeholder="12000" min="0" inputmode="decimal" />
+          </div>
+
+          <div>
+            <label for="expenses">Monthly Expenses</label>
+            <input id="expenses" type="number" placeholder="3800" min="0" inputmode="decimal" />
+          </div>
+
+          <div>
+            <label for="debt">Monthly Debt Payments</label>
+            <input id="debt" type="number" placeholder="600" min="0" inputmode="decimal" />
+            <div class="helper-link">
+              <a href="/what-counts-as-debt">Not sure what counts as debt? Read the debt guide</a>
+            </div>
+          </div>
+
+          <div>
+            <label for="financed">Amount Financed or Put on Payment Plan</label>
+            <input id="financed" type="number" placeholder="3000" min="0" inputmode="decimal" />
+          </div>
+
+          <div>
+            <label for="insurance">Orthodontic Insurance Coverage</label>
+            <select id="insurance">
+              <option value="strong">Strong Coverage</option>
+              <option value="partial">Partial Coverage</option>
+              <option value="weak">Weak or No Coverage</option>
+            </select>
+          </div>
+
+          <div>
+            <label for="urgency">Treatment Need</label>
+            <select id="urgency">
+              <option value="necessary">Functional / Dentist Recommended</option>
+              <option value="mixed">Health and Appearance Mix</option>
+              <option value="elective">Mostly Cosmetic</option>
+            </select>
+          </div>
+        </div>
+
+        <button id="bracesButton" type="button">Calculate Financial Pressure</button>
+
+        <div class="result" id="result">
+          <div class="score" id="score"></div>
+          <div class="bar"><div class="fill" id="barFill"></div></div>
+          <div class="metric" id="stress"></div>
+          <div class="metric" id="cashFlow"></div>
+          <div class="metric" id="savingsImpact"></div>
+          <div class="metric" id="financingImpact"></div>
+          <div class="guidance" id="guidance"></div>
+          <div class="disclaimer">
+            This is a general educational estimate, not dental, orthodontic, medical, insurance, or financial advice.
+          </div>
+        </div>
+      </div>
+
+      <div class="content-section">
+        <h2>What $5,000 Braces Really Cost</h2>
+        <p>
+          A $5,000 braces bill may include the orthodontic appliance, consultation, imaging, adjustments, retainers, follow-up visits, replacement brackets, records, and office payment-plan fees. The headline price can look simple, but the real affordability depends on what is included and how the payment schedule fits your household.
+        </p>
+        <p>
+          Braces are not always purely cosmetic. They can affect bite alignment, chewing, jaw strain, tooth wear, and long-term dental health. Still, the financial decision should account for emergency savings, monthly cash flow, insurance limits, and whether treatment can wait or be phased.
+        </p>
+      </div>
+
+      <WhenSpendingMakesSense
+        title="When Spending $5,000 on Braces Makes Sense"
+        items={[
+          "The treatment is recommended for bite, spacing, crowding, jaw, or long-term dental health reasons.",
+          "You understand what the orthodontic quote includes and what could cost extra.",
+          "Insurance, HSA funds, FSA funds, or a no-interest payment plan reduce the cash strain.",
+          "The payment does not wipe out emergency savings.",
+          "The monthly payment fits without crowding out rent, groceries, childcare, insurance, or existing debt.",
+        ]}
+      />
+
+      <div class="content-section">
+        <h2>When to Slow Down Before Starting Braces</h2>
+        <p>
+          You may want to slow down if the quote is unclear, the treatment is mostly cosmetic, insurance has not been confirmed, or the office payment plan stretches your monthly budget too tightly.
+        </p>
+        <p>
+          Braces can be worth it, but they usually are not a same-day emergency. Ask what happens if treatment waits a few months, whether there are lower-cost options, and whether the quote includes retainers, follow-ups, and replacement visits.
+        </p>
+      </div>
+
+      <KeyCostCategories
+        items={[
+          {
+            title: "Orthodontic treatment fee",
+            description:
+              "The main braces price may include records, appliances, appointments, adjustments, retainers, and office overhead.",
+          },
+          {
+            title: "Insurance and lifetime limits",
+            description:
+              "Orthodontic coverage often has separate lifetime maximums, age limits, waiting periods, and partial coverage rules.",
+          },
+          {
+            title: "Payment plan terms",
+            description:
+              "Many orthodontists offer monthly plans, but down payments, fees, and total financed balances still matter.",
+          },
+          {
+            title: "Retainers and follow-up care",
+            description:
+              "Retainers, replacements, broken brackets, missed appointments, or extended treatment can increase the final cost.",
+          },
+        ]}
+      />
+
+      <ReduceCostTips
+        items={[
+          "Ask whether the quote includes retainers, imaging, adjustments, and follow-up visits.",
+          "Confirm orthodontic insurance coverage and lifetime maximums before starting.",
+          "Compare a second orthodontist if treatment is not urgent.",
+          "Ask whether a no-interest in-house payment plan is available.",
+          "Use HSA or FSA funds when eligible.",
+          "Ask if a larger down payment reduces fees or monthly pressure.",
+          "Avoid high-interest financing if the office offers safer payment options.",
+        ]}
+      />
+
+      <FinancialRedFlags
+        items={[
+          "The monthly payment would make essentials harder to cover.",
+          "You are unsure whether retainers or follow-up visits are included.",
+          "The treatment is mostly cosmetic while emergency savings are thin.",
+          "The plan requires high-interest financing or deferred-interest terms.",
+          "The cost would drain most of your emergency savings.",
+          "Insurance coverage or lifetime orthodontic maximums have not been confirmed.",
+        ]}
+      />
+
+      <CalculatorAssumptions
+        items={[
+          "The calculator treats braces as a dental and orthodontic expense that can be functional, cosmetic, or both.",
+          "Monthly income means take-home pay after taxes and payroll deductions.",
+          "Monthly debt payments include credit cards, car loans, student loans, personal loans, and required debt obligations.",
+          "The calculator assumes financed braces balances still create financial pressure.",
+          "Very high income or very large savings can produce a true 0/100 pressure score when the braces cost is tiny relative to available resources.",
+        ]}
+      />
+
+      <FAQSection
+        title="$5,000 Braces FAQ"
+        faqs={[
+          {
+            question: "Is $5,000 a lot for braces?",
+            answer:
+              "It is a major household expense, but it can be a realistic braces cost depending on the provider, treatment length, insurance, retainers, and follow-up care.",
+          },
+          {
+            question: "Should I finance braces?",
+            answer:
+              "Financing can make sense if the payment is low-interest or interest-free and fits comfortably inside your monthly budget. Be careful with high-interest or deferred-interest plans.",
+          },
+          {
+            question: "Should I use emergency savings for braces?",
+            answer:
+              "Using savings may be reasonable if braces are important and enough emergency cushion remains afterward. It is riskier if the treatment is mostly cosmetic and the payment leaves you exposed.",
+          },
+          {
+            question: "Does dental insurance cover braces?",
+            answer:
+              "Some plans include orthodontic benefits, but coverage often has lifetime maximums, age limits, waiting periods, or partial reimbursement rules. Confirm the details before starting.",
+          },
+          {
+            question: "Can I wait to start braces?",
+            answer:
+              "Sometimes, yes. Ask the orthodontist whether treatment is time-sensitive or whether waiting a few months would create dental risk.",
+          },
+        ]}
+      />
+
+      <MethodologySection category="medical spending" updated="May 2026" />
+
+      <RelatedGuides
+        guides={[
+          {
+            title: "Medical Calculators",
+            href: "/medical-calculators",
+            description:
+              "Browse healthcare spending calculators for dental care, medical bills, fertility treatment, therapy, and other major health costs.",
+          },
+          {
+            title: "What Counts as Debt?",
+            href: "/what-counts-as-debt",
+            description:
+              "Understand which obligations should be included when estimating financial pressure.",
+          },
+        ]}
+      />
+
+      <RelatedCalculators
+        calculators={[
+          {
+            category: "Medical",
+            title: "Should I Spend $5,000 on Dental Work?",
+            href: "/should-i-spend-5000-on-dental-work",
+          },
+          {
+            category: "Medical",
+            title: "Should I Spend $8,000 on Invisalign?",
+            href: "/should-i-spend-8000-on-invisalign",
+          },
+          {
+            category: "Medical",
+            title: "Should I Use Emergency Savings for Dental Work?",
+            href: "/should-i-use-emergency-savings-for-dental-work",
+          },
+          {
+            category: "Medical",
+            title: "Browse Medical Calculators",
+            href: "/medical-calculators",
+          },
+        ]}
+      />
+    </CalculatorPageShell>
+  </div>
+
+  <script is:inline>
+    const clamp = (value, min, max) => Math.min(Math.max(value, min), max);
+
+    const getNumber = (id) => {
+      const rawValue = document.getElementById(id)?.value;
+      const value = Number(rawValue);
+      return Number.isFinite(value) && value >= 0 ? value : 0;
+    };
+
+    function getPressureLevel(score) {
+      if (score <= 30) {
+        return {
+          label: "Low Pressure",
+          stress: "Low pressure",
+          color: "#16a34a",
+          action:
+            "Proceed after confirming the orthodontic quote, insurance coverage, retainer costs, and payment plan terms.",
+        };
+      }
+
+      if (score <= 60) {
+        return {
+          label: "Moderate Pressure",
+          stress: "Moderate pressure",
+          color: "#ca8a04",
+          action:
+            "Compare payment plans, confirm what is included, and protect emergency savings where possible.",
+        };
+      }
+
+      return {
+        label: "High Pressure",
+        stress: "High pressure",
+        color: "#dc2626",
+        action:
+          "Slow down before committing, ask about lower monthly payments, confirm treatment urgency, and avoid aggressive financing.",
+      };
+    }
+
+    function calculateBraces() {
+      const cost = getNumber("cost");
+      const income = getNumber("income");
+      const savings = getNumber("savings");
+      const expenses = getNumber("expenses");
+      const debt = getNumber("debt");
+      const financed = getNumber("financed");
+      const insurance = document.getElementById("insurance").value;
+      const urgency = document.getElementById("urgency").value;
+
+      const result = document.getElementById("result");
+      const scoreEl = document.getElementById("score");
+      const barFill = document.getElementById("barFill");
+      const stressEl = document.getElementById("stress");
+      const cashFlowEl = document.getElementById("cashFlow");
+      const savingsImpactEl = document.getElementById("savingsImpact");
+      const financingImpactEl = document.getElementById("financingImpact");
+      const guidanceEl = document.getElementById("guidance");
+
+      result.style.display = "block";
+
+      if (cost <= 0 || income <= 0) {
+        scoreEl.textContent = "Add your numbers first";
+        barFill.style.width = "0%";
+        barFill.style.background = "#16a34a";
+        stressEl.innerHTML = "";
+        cashFlowEl.innerHTML = "";
+        savingsImpactEl.innerHTML = "";
+        financingImpactEl.innerHTML = "";
+        guidanceEl.textContent =
+          "Enter a positive braces cost and monthly take-home income so the calculator can estimate financial pressure.";
+        return;
+      }
+
+      const outOfPocket = Math.max(cost - financed, 0);
+      const monthlyRemaining = income - expenses - debt;
+      const remainingSavings = savings - outOfPocket;
+
+      const savingsImpact =
+        savings > 0 ? (outOfPocket / savings) * 100 : outOfPocket > 0 ? 100 : 0;
+
+      const incomeImpact = income > 0 ? (cost / income) * 100 : 100;
+
+      const fixedObligationRatio =
+        income > 0 ? ((expenses + debt) / income) * 100 : 100;
+
+      const emergencyMonths =
+        expenses > 0 ? remainingSavings / expenses : remainingSavings > 0 ? 999 : 0;
+
+      const financedShare = cost > 0 ? (financed / cost) * 100 : 0;
+
+      const hasHugeIncomeBuffer =
+        income > 0 && cost <= income * 0.02 && monthlyRemaining > income * 0.5;
+
+      const hasHugeSavingsBuffer =
+        savings > 0 && outOfPocket <= savings * 0.01 && remainingSavings > 0;
+
+      const hasStrongIncomeBuffer =
+        income > 0 && cost <= income * 0.05 && monthlyRemaining > income * 0.35;
+
+      const hasStrongSavingsBuffer =
+        savings > 0 && outOfPocket <= savings * 0.05 && remainingSavings > 0;
+
+      let pressureScore = 0;
+
+      if (hasHugeIncomeBuffer || hasHugeSavingsBuffer) {
+        pressureScore = 0;
+      } else {
+        pressureScore += clamp(incomeImpact * 0.3, 0, 28);
+        pressureScore += clamp(savingsImpact * 0.24, 0, 30);
+        pressureScore += clamp(fixedObligationRatio * 0.22, 0, 24);
+
+        if (remainingSavings < 0) pressureScore += 22;
+        else if (emergencyMonths < 1 && income < 12000) pressureScore += 17;
+        else if (emergencyMonths < 3 && income < 15000) pressureScore += 10;
+        else if (emergencyMonths >= 6) pressureScore -= 8;
+
+        if (financed > 0) pressureScore += clamp(financedShare * 0.12, 3, 13);
+
+        if (monthlyRemaining < 0) pressureScore += 20;
+        else if (monthlyRemaining < income * 0.1) pressureScore += 11;
+        else if (monthlyRemaining > income * 0.35) pressureScore -= 6;
+
+        if (insurance === "partial") pressureScore += 5;
+        if (insurance === "weak") pressureScore += 12;
+
+        if (urgency === "mixed") pressureScore += 4;
+        if (urgency === "elective") pressureScore += 12;
+        if (urgency === "necessary") pressureScore -= 5;
+
+        if (hasStrongIncomeBuffer) pressureScore -= 14;
+        if (hasStrongSavingsBuffer) pressureScore -= 14;
+
+        if (
+          incomeImpact < 12 &&
+          savingsImpact < 15 &&
+          emergencyMonths >= 6 &&
+          fixedObligationRatio < 55
+        ) {
+          pressureScore = Math.min(pressureScore, 28);
+        }
+
+        if (
+          incomeImpact < 6 &&
+          savingsImpact < 8 &&
+          emergencyMonths >= 9 &&
+          fixedObligationRatio < 45
+        ) {
+          pressureScore = Math.min(pressureScore, 15);
+        }
+
+        if (
+          incomeImpact < 2 &&
+          savingsImpact < 1 &&
+          fixedObligationRatio < 25 &&
+          monthlyRemaining > income * 0.6
+        ) {
+          pressureScore = 0;
+        }
+      }
+
+      pressureScore = Math.round(clamp(pressureScore, 0, 100));
+      const level = getPressureLevel(pressureScore);
+
+      let guidance = "";
+
+      if (pressureScore === 0) {
+        guidance =
+          `This braces expense appears to create essentially no financial pressure based on the numbers provided. The treatment equals about ${incomeImpact.toFixed(1)}% of one month’s take-home income, and the out-of-pocket cost is tiny relative to available savings.`;
+      } else if (pressureScore <= 30) {
+        guidance =
+          `This braces expense appears financially manageable based on the numbers provided. The treatment equals about ${incomeImpact.toFixed(1)}% of one month’s take-home income, and your estimated emergency cushion remains around ${Math.max(emergencyMonths, 0).toFixed(1)} months after the out-of-pocket cost.`;
+      } else if (pressureScore <= 60) {
+        guidance =
+          `This braces expense may be workable, but it creates noticeable financial pressure. The treatment equals about ${incomeImpact.toFixed(1)}% of one month’s take-home income, and the out-of-pocket portion uses about ${savingsImpact.toFixed(1)}% of available savings.`;
+      } else {
+        guidance =
+          `This braces expense could create real financial strain. The treatment equals about ${incomeImpact.toFixed(1)}% of one month’s take-home income, and the combination of savings impact, financing, debt, or monthly obligations suggests you should slow down before committing aggressively.`;
+      }
+
+      scoreEl.textContent = `${level.label} — ${pressureScore}/100`;
+      scoreEl.style.color = level.color;
+      barFill.style.width = `${pressureScore}%`;
+      barFill.style.background = level.color;
+
+      stressEl.innerHTML = `<strong>Pressure level:</strong> ${level.stress}`;
+      cashFlowEl.innerHTML = `<strong>Monthly cash flow after bills and debt:</strong> $${monthlyRemaining.toLocaleString()}`;
+      savingsImpactEl.innerHTML = `<strong>Savings after out-of-pocket braces cost:</strong> $${remainingSavings.toLocaleString()}`;
+      financingImpactEl.innerHTML = `<strong>Financed or payment-plan portion:</strong> ${financedShare.toFixed(1)}% of treatment cost`;
+      guidanceEl.textContent = `${guidance} Recommended next step: ${level.action}`;
+    }
+
+    document
+      .getElementById("bracesButton")
+      .addEventListener("click", calculateBraces);
+  </script>
+</Layout>

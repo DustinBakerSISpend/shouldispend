@@ -385,85 +385,110 @@ import WhenSpendingMakesSense from "../components/WhenSpendingMakesSense.astro";
   </div>
 
   <script is:inline>
-    const clamp = (value, min, max) => Math.min(Math.max(value, min), max);
+  const clamp = (value, min, max) => Math.min(Math.max(value, min), max);
 
-    const getNumber = (id) => {
-      const rawValue = document.getElementById(id)?.value;
-      const value = Number(rawValue);
-      return Number.isFinite(value) && value >= 0 ? value : 0;
-    };
+  const getNumber = (id) => {
+    const rawValue = document.getElementById(id)?.value;
+    const value = Number(rawValue);
+    return Number.isFinite(value) && value >= 0 ? value : 0;
+  };
 
-    function getPressureLevel(score) {
-      if (score <= 30) {
-        return {
-          label: "Low Pressure",
-          stress: "Low pressure",
-          color: "#16a34a",
-          action: "Proceed only after confirming total treatment costs, insurance coverage, and crown pricing.",
-        };
-      }
-
-      if (score <= 60) {
-        return {
-          label: "Moderate Pressure",
-          stress: "Moderate pressure",
-          color: "#ca8a04",
-          action: "Compare quotes, review financing carefully, and protect your emergency savings where possible.",
-        };
-      }
-
+  function getPressureLevel(score) {
+    if (score <= 30) {
       return {
-        label: "High Pressure",
-        stress: "High pressure",
-        color: "#dc2626",
-        action: "Avoid aggressive financing, confirm all treatment costs first, and stabilize cash flow before committing.",
+        label: "Low Pressure",
+        stress: "Low pressure",
+        color: "#16a34a",
+        action:
+          "Proceed only after confirming total treatment costs, insurance coverage, and crown pricing.",
       };
     }
 
-    function calculateRootCanal() {
-      const cost = getNumber("cost");
-      const income = getNumber("income");
-      const savings = getNumber("savings");
-      const expenses = getNumber("expenses");
-      const debt = getNumber("debt");
-      const financed = getNumber("financed");
+    if (score <= 60) {
+      return {
+        label: "Moderate Pressure",
+        stress: "Moderate pressure",
+        color: "#ca8a04",
+        action:
+          "Compare quotes, review financing carefully, and protect your emergency savings where possible.",
+      };
+    }
 
-      const result = document.getElementById("result");
-      const scoreEl = document.getElementById("score");
-      const barFill = document.getElementById("barFill");
-      const stressEl = document.getElementById("stress");
-      const cashFlowEl = document.getElementById("cashFlow");
-      const savingsImpactEl = document.getElementById("savingsImpact");
-      const financingImpactEl = document.getElementById("financingImpact");
-      const guidanceEl = document.getElementById("guidance");
+    return {
+      label: "High Pressure",
+      stress: "High pressure",
+      color: "#dc2626",
+      action:
+        "Avoid aggressive financing, confirm all treatment costs first, and stabilize cash flow before committing.",
+    };
+  }
 
-      result.style.display = "block";
+  function calculateRootCanal() {
+    const cost = getNumber("cost");
+    const income = getNumber("income");
+    const savings = getNumber("savings");
+    const expenses = getNumber("expenses");
+    const debt = getNumber("debt");
+    const financed = getNumber("financed");
 
-      if (cost <= 0 || income <= 0) {
-        scoreEl.textContent = "Add your numbers first";
-        barFill.style.width = "0%";
-        barFill.style.background = "#16a34a";
-        stressEl.innerHTML = "";
-        cashFlowEl.innerHTML = "";
-        savingsImpactEl.innerHTML = "";
-        financingImpactEl.innerHTML = "";
-        guidanceEl.textContent =
-          "Enter a positive root canal cost and monthly take-home income so the calculator can estimate financial pressure.";
-        return;
-      }
+    const result = document.getElementById("result");
+    const scoreEl = document.getElementById("score");
+    const barFill = document.getElementById("barFill");
+    const stressEl = document.getElementById("stress");
+    const cashFlowEl = document.getElementById("cashFlow");
+    const savingsImpactEl = document.getElementById("savingsImpact");
+    const financingImpactEl = document.getElementById("financingImpact");
+    const guidanceEl = document.getElementById("guidance");
 
-      const outOfPocket = Math.max(cost - financed, 0);
-      const monthlyRemaining = income - expenses - debt;
-      const remainingSavings = savings - outOfPocket;
-      const savingsImpact = savings > 0 ? (outOfPocket / savings) * 100 : 100;
-      const incomeImpact = (cost / income) * 100;
-      const fixedObligationRatio = income > 0 ? ((expenses + debt) / income) * 100 : 100;
-      const emergencyMonths =
-        expenses > 0 ? remainingSavings / expenses : remainingSavings > 0 ? 12 : 0;
-      const financedShare = cost > 0 ? (financed / cost) * 100 : 0;
+    result.style.display = "block";
 
-      let pressureScore = 0;
+    if (cost <= 0 || income <= 0) {
+      scoreEl.textContent = "Add your numbers first";
+      barFill.style.width = "0%";
+      barFill.style.background = "#16a34a";
+      stressEl.innerHTML = "";
+      cashFlowEl.innerHTML = "";
+      savingsImpactEl.innerHTML = "";
+      financingImpactEl.innerHTML = "";
+      guidanceEl.textContent =
+        "Enter a positive root canal cost and monthly take-home income so the calculator can estimate financial pressure.";
+      return;
+    }
 
+    const outOfPocket = Math.max(cost - financed, 0);
+    const monthlyRemaining = income - expenses - debt;
+    const remainingSavings = savings - outOfPocket;
+
+    const savingsImpact =
+      savings > 0 ? (outOfPocket / savings) * 100 : outOfPocket > 0 ? 100 : 0;
+
+    const incomeImpact = income > 0 ? (cost / income) * 100 : 100;
+
+    const fixedObligationRatio =
+      income > 0 ? ((expenses + debt) / income) * 100 : 100;
+
+    const emergencyMonths =
+      expenses > 0 ? remainingSavings / expenses : remainingSavings > 0 ? 999 : 0;
+
+    const financedShare = cost > 0 ? (financed / cost) * 100 : 0;
+
+    const hasHugeIncomeBuffer =
+      income > 0 && cost <= income * 0.02 && monthlyRemaining > income * 0.5;
+
+    const hasHugeSavingsBuffer =
+      savings > 0 && outOfPocket <= savings * 0.01 && remainingSavings > 0;
+
+    const hasStrongIncomeBuffer =
+      income > 0 && cost <= income * 0.05 && monthlyRemaining > income * 0.35;
+
+    const hasStrongSavingsBuffer =
+      savings > 0 && outOfPocket <= savings * 0.05 && remainingSavings > 0;
+
+    let pressureScore = 0;
+
+    if (hasHugeIncomeBuffer || hasHugeSavingsBuffer) {
+      pressureScore = 0;
+    } else {
       pressureScore += clamp(incomeImpact * 0.3, 0, 28);
       pressureScore += clamp(savingsImpact * 0.24, 0, 30);
       pressureScore += clamp(fixedObligationRatio * 0.24, 0, 24);
@@ -479,13 +504,8 @@ import WhenSpendingMakesSense from "../components/WhenSpendingMakesSense.astro";
       else if (monthlyRemaining < income * 0.1) pressureScore += 10;
       else if (monthlyRemaining > income * 0.35) pressureScore -= 6;
 
-      if (income >= 12000 && remainingSavings > 0 && fixedObligationRatio < 65) {
-        pressureScore -= 10;
-      }
-
-      if (income >= 20000 && remainingSavings > 0 && fixedObligationRatio < 55) {
-        pressureScore -= 12;
-      }
+      if (hasStrongIncomeBuffer) pressureScore -= 14;
+      if (hasStrongSavingsBuffer) pressureScore -= 14;
 
       if (
         incomeImpact < 12 &&
@@ -505,37 +525,50 @@ import WhenSpendingMakesSense from "../components/WhenSpendingMakesSense.astro";
         pressureScore = Math.min(pressureScore, 15);
       }
 
-      pressureScore = Math.round(clamp(pressureScore, 0, 100));
-
-      const level = getPressureLevel(pressureScore);
-
-      let guidance = "";
-
-      if (pressureScore <= 30) {
-        guidance =
-          `This root canal expense appears financially manageable based on the numbers provided. The procedure equals about ${incomeImpact.toFixed(1)}% of one month’s take-home income, and your estimated emergency cushion remains around ${Math.max(emergencyMonths, 0).toFixed(1)} months after the out-of-pocket cost.`;
-      } else if (pressureScore <= 60) {
-        guidance =
-          `This root canal expense may work, but it creates noticeable financial pressure. The procedure equals about ${incomeImpact.toFixed(1)}% of one month’s take-home income, and the out-of-pocket portion uses about ${savingsImpact.toFixed(1)}% of available savings.`;
-      } else {
-        guidance =
-          `This root canal expense could create real financial strain. The procedure equals about ${incomeImpact.toFixed(1)}% of one month’s take-home income, and the combination of savings impact, financing, debt, or monthly obligations suggests you should slow down before committing aggressively.`;
+      if (
+        incomeImpact < 2 &&
+        savingsImpact < 1 &&
+        fixedObligationRatio < 25 &&
+        monthlyRemaining > income * 0.6
+      ) {
+        pressureScore = 0;
       }
-
-      scoreEl.textContent = `${level.label} — ${pressureScore}/100`;
-      scoreEl.style.color = level.color;
-      barFill.style.width = `${pressureScore}%`;
-      barFill.style.background = level.color;
-
-      stressEl.innerHTML = `<strong>Pressure level:</strong> ${level.stress}`;
-      cashFlowEl.innerHTML = `<strong>Monthly cash flow after bills and debt:</strong> $${monthlyRemaining.toLocaleString()}`;
-      savingsImpactEl.innerHTML = `<strong>Savings after out-of-pocket treatment cost:</strong> $${remainingSavings.toLocaleString()}`;
-      financingImpactEl.innerHTML = `<strong>Financed portion:</strong> ${financedShare.toFixed(1)}% of treatment cost`;
-      guidanceEl.textContent = `${guidance} Recommended next step: ${level.action}`;
     }
 
-    document
-      .getElementById("rootCanalButton")
-      .addEventListener("click", calculateRootCanal);
-  </script>
+    pressureScore = Math.round(clamp(pressureScore, 0, 100));
+
+    const level = getPressureLevel(pressureScore);
+
+    let guidance = "";
+
+    if (pressureScore === 0) {
+      guidance =
+        `This root canal expense appears to create essentially no financial pressure based on the numbers provided. The procedure equals about ${incomeImpact.toFixed(1)}% of one month’s take-home income, and the out-of-pocket cost is tiny relative to available savings.`;
+    } else if (pressureScore <= 30) {
+      guidance =
+        `This root canal expense appears financially manageable based on the numbers provided. The procedure equals about ${incomeImpact.toFixed(1)}% of one month’s take-home income, and your estimated emergency cushion remains around ${Math.max(emergencyMonths, 0).toFixed(1)} months after the out-of-pocket cost.`;
+    } else if (pressureScore <= 60) {
+      guidance =
+        `This root canal expense may work, but it creates noticeable financial pressure. The procedure equals about ${incomeImpact.toFixed(1)}% of one month’s take-home income, and the out-of-pocket portion uses about ${savingsImpact.toFixed(1)}% of available savings.`;
+    } else {
+      guidance =
+        `This root canal expense could create real financial strain. The procedure equals about ${incomeImpact.toFixed(1)}% of one month’s take-home income, and the combination of savings impact, financing, debt, or monthly obligations suggests you should slow down before committing aggressively.`;
+    }
+
+    scoreEl.textContent = `${level.label} — ${pressureScore}/100`;
+    scoreEl.style.color = level.color;
+    barFill.style.width = `${pressureScore}%`;
+    barFill.style.background = level.color;
+
+    stressEl.innerHTML = `<strong>Pressure level:</strong> ${level.stress}`;
+    cashFlowEl.innerHTML = `<strong>Monthly cash flow after bills and debt:</strong> $${monthlyRemaining.toLocaleString()}`;
+    savingsImpactEl.innerHTML = `<strong>Savings after out-of-pocket treatment cost:</strong> $${remainingSavings.toLocaleString()}`;
+    financingImpactEl.innerHTML = `<strong>Financed portion:</strong> ${financedShare.toFixed(1)}% of treatment cost`;
+    guidanceEl.textContent = `${guidance} Recommended next step: ${level.action}`;
+  }
+
+  document
+    .getElementById("rootCanalButton")
+    .addEventListener("click", calculateRootCanal);
+</script>
 </Layout>

@@ -1,0 +1,828 @@
+---
+import Layout from "../layouts/Layout.astro";
+import FAQSection from "../components/FAQSection.astro";
+
+const paymentPlanFaqs = [
+  {
+    question: "Is a medical bill payment plan better than using a credit card?",
+    answer:
+      "Often, yes. A medical bill payment plan may have no interest or lower fees than a credit card. The safest option depends on the monthly payment, fees, payoff timeline, and whether the plan keeps your emergency savings intact.",
+  },
+  {
+    question: "How much should I pay per month on a medical bill?",
+    answer:
+      "A safer medical bill payment should usually fit inside your monthly cash flow without forcing new credit card debt, missed essentials, or a drained emergency fund.",
+  },
+  {
+    question: "Should I ask the hospital for a lower medical bill first?",
+    answer:
+      "Yes. Before accepting a payment plan, ask for an itemized bill, verify insurance adjustments, check financial assistance eligibility, and ask whether a lower settlement or interest-free plan is available.",
+  },
+  {
+    question: "Can a medical bill payment plan hurt my finances?",
+    answer:
+      "Yes. Even if the bill is necessary, the payment plan can become risky if the monthly payment is too high, the payoff timeline is long, fees are added, or the payment prevents you from rebuilding emergency savings.",
+  },
+  {
+    question: "Should I use emergency savings instead of a payment plan?",
+    answer:
+      "That depends on how much savings would remain afterward. Paying cash can be smart if you still keep a strong emergency cushion. A payment plan may be safer if paying the bill all at once would leave you exposed.",
+  },
+];
+---
+
+<Layout
+  title="Medical Bill Payment Plan Calculator | ShouldISpend"
+  description="Estimate whether a medical bill payment plan fits your income, emergency savings, debt pressure, payoff timeline, fees, and monthly cash flow."
+>
+  <style>
+    .container {
+      width: 92%;
+      max-width: 1120px;
+      margin: 0 auto;
+      padding: 72px 0;
+    }
+
+    .hero {
+      max-width: 880px;
+      margin-bottom: 44px;
+    }
+
+    .eyebrow {
+      color: var(--primary);
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      font-size: 0.8rem;
+      font-weight: 800;
+      margin-bottom: 16px;
+    }
+
+    h1 {
+      font-size: clamp(2.7rem, 6vw, 5rem);
+      line-height: 1;
+      margin-bottom: 24px;
+      color: var(--primary);
+    }
+
+    .hero p {
+      font-size: 1.08rem;
+      line-height: 1.85;
+      color: var(--muted);
+      max-width: 820px;
+    }
+
+    .open-calc-wrap {
+      margin: 34px 0 0;
+    }
+
+    .open-calc-button,
+    .calc-button {
+      background: var(--primary);
+      color: white;
+      border: none;
+      border-radius: 14px;
+      padding: 15px 22px;
+      font-size: 1rem;
+      font-weight: 800;
+      cursor: pointer;
+    }
+
+    .open-calc-button:hover,
+    .calc-button:hover {
+      opacity: 0.92;
+    }
+
+    .calculator {
+      border: 1px solid var(--border);
+      background: var(--card);
+      border-radius: 24px;
+      padding: 32px;
+      margin-bottom: 72px;
+      display: none;
+    }
+
+    .calculator.active {
+      display: block;
+    }
+
+    .calc-intro {
+      max-width: 760px;
+      margin-bottom: 26px;
+      color: var(--muted);
+      line-height: 1.8;
+    }
+
+    .calc-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 20px;
+    }
+
+    .calc-field {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .calc-field label {
+      font-weight: 800;
+      margin-bottom: 10px;
+      color: var(--text);
+      font-size: 0.95rem;
+    }
+
+    .calc-field input,
+    .calc-field select {
+      padding: 14px;
+      border-radius: 12px;
+      border: 1px solid var(--border);
+      font-size: 1rem;
+      background: white;
+    }
+
+    .calc-button {
+      margin-top: 26px;
+    }
+
+    .calc-results {
+      margin-top: 30px;
+      border: 1px solid #dbe4ee;
+      background: #f8fafc;
+      border-radius: 20px;
+      padding: 26px;
+      display: none;
+    }
+
+    .calc-results.active {
+      display: block;
+    }
+
+    .calc-verdict {
+      font-size: 2rem;
+      font-weight: 900;
+      color: var(--primary);
+      margin-bottom: 16px;
+      line-height: 1.15;
+    }
+
+    .calc-stat {
+      font-size: 1.05rem;
+      margin-bottom: 12px;
+      color: var(--text);
+      font-weight: 700;
+    }
+
+    .risk-bar {
+      width: 100%;
+      height: 16px;
+      background: #dbe4ee;
+      border-radius: 999px;
+      overflow: hidden;
+      margin: 24px 0;
+    }
+
+    .risk-fill {
+      height: 100%;
+      width: 0%;
+      border-radius: 999px;
+      transition: width 0.35s ease;
+      background: var(--primary);
+    }
+
+    .calc-analysis {
+      color: var(--muted);
+      line-height: 1.8;
+      margin-top: 18px;
+    }
+
+    .result-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+      gap: 14px;
+      margin-top: 22px;
+    }
+
+    .result-card {
+      background: white;
+      border: 1px solid #dbe4ee;
+      border-radius: 16px;
+      padding: 16px;
+    }
+
+    .result-card strong {
+      display: block;
+      color: var(--text);
+      margin-bottom: 6px;
+    }
+
+    .result-card span {
+      color: var(--muted);
+      line-height: 1.6;
+      font-size: 0.95rem;
+    }
+
+    .section {
+      max-width: 900px;
+      margin-top: 72px;
+    }
+
+    .section h2 {
+      font-size: 2rem;
+      margin-bottom: 22px;
+      line-height: 1.2;
+      color: var(--text);
+    }
+
+    .section p {
+      line-height: 1.9;
+      color: var(--muted);
+      margin-bottom: 24px;
+      font-size: 1.05rem;
+    }
+
+    .info-grid,
+    .link-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(245px, 1fr));
+      gap: 22px;
+      margin-top: 28px;
+    }
+
+    .info-card,
+    .link-card {
+      border: 1px solid var(--border);
+      background: white;
+      border-radius: 18px;
+      padding: 22px;
+      color: inherit;
+    }
+
+    .link-card {
+      display: block;
+      text-decoration: none;
+      transition: transform 0.15s ease;
+    }
+
+    .link-card:hover {
+      transform: translateY(-2px);
+    }
+
+    .info-card strong,
+    .link-card strong {
+      display: block;
+      margin-bottom: 10px;
+      color: var(--text);
+      font-size: 1.05rem;
+    }
+
+    .info-card span,
+    .link-card span {
+      color: var(--muted);
+      line-height: 1.7;
+      font-size: 0.96rem;
+    }
+
+    .callout {
+      border: 1px solid var(--border);
+      background: #f8fafc;
+      border-radius: 22px;
+      padding: 28px;
+      margin-top: 56px;
+    }
+
+    .callout h2 {
+      margin-top: 0;
+    }
+
+    @media (max-width: 720px) {
+      .container {
+        padding: 56px 0;
+      }
+
+      h1 {
+        font-size: 2.85rem;
+      }
+
+      .hero p,
+      .section p {
+        font-size: 1rem;
+      }
+
+      .calculator {
+        padding: 22px;
+      }
+
+      .section h2 {
+        font-size: 1.65rem;
+      }
+
+      .calc-verdict {
+        font-size: 1.55rem;
+      }
+    }
+  </style>
+
+  <main class="container">
+    <section class="hero">
+      <div class="eyebrow">Medical Payment Plan Calculator</div>
+
+      <h1>Medical Bill Payment Plan Calculator</h1>
+
+      <p>
+        A payment plan can make a medical bill easier to handle, but only if the
+        monthly payment fits your budget without draining emergency savings or
+        creating new debt. This calculator evaluates the bill amount, payment
+        size, payoff timeline, savings cushion, income, fees, and debt pressure.
+      </p>
+
+      <div class="open-calc-wrap">
+        <button class="open-calc-button" id="openCalculator">
+          Open Calculator
+        </button>
+      </div>
+    </section>
+
+    <section class="calculator" id="calculatorPanel">
+      <p class="calc-intro">
+        Enter the unpaid medical bill, your proposed monthly payment, and your
+        current financial cushion. The result estimates whether the plan looks
+        manageable, needs guardrails, or may create high monthly pressure.
+      </p>
+
+      <div class="calc-grid">
+        <div class="calc-field">
+          <label>Unpaid Medical Bill Balance ($)</label>
+          <input type="number" id="billAmount" placeholder="5000" />
+        </div>
+
+        <div class="calc-field">
+          <label>Proposed Monthly Payment ($)</label>
+          <input type="number" id="monthlyPayment" placeholder="250" />
+        </div>
+
+        <div class="calc-field">
+          <label>Monthly Take-Home Income ($)</label>
+          <input type="number" id="incomeAmount" placeholder="6500" />
+        </div>
+
+        <div class="calc-field">
+          <label>Current Emergency Savings ($)</label>
+          <input type="number" id="savingsAmount" placeholder="12000" />
+        </div>
+
+        <div class="calc-field">
+          <label>Existing Debt Pressure</label>
+          <select id="debtPressure">
+            <option value="low">Low</option>
+            <option value="moderate">Moderate</option>
+            <option value="high">High</option>
+          </select>
+        </div>
+
+        <div class="calc-field">
+          <label>Payment Plan Fees or Interest</label>
+          <select id="planFees">
+            <option value="none">None / Interest-Free</option>
+            <option value="small">Small Fees</option>
+            <option value="high">High Fees or Interest</option>
+          </select>
+        </div>
+
+        <div class="calc-field">
+          <label>Can You Still Cover Essentials?</label>
+          <select id="essentials">
+            <option value="yes">Yes</option>
+            <option value="tight">Barely</option>
+            <option value="no">No</option>
+          </select>
+        </div>
+
+        <div class="calc-field">
+          <label>Did You Ask About Financial Assistance?</label>
+          <select id="assistance">
+            <option value="yes">Yes</option>
+            <option value="not-yet">Not Yet</option>
+            <option value="not-eligible">Not Eligible</option>
+          </select>
+        </div>
+      </div>
+
+      <button class="calc-button" id="calculatePaymentPlan">
+        Evaluate Payment Plan Pressure
+      </button>
+
+      <div class="calc-results" id="calcResults">
+        <div class="calc-verdict" id="calcVerdict"></div>
+
+        <div class="calc-stat" id="calcStat"></div>
+
+        <div class="risk-bar">
+          <div class="risk-fill" id="riskFill"></div>
+        </div>
+
+        <div class="calc-analysis" id="calcAnalysis"></div>
+
+        <div class="result-grid">
+          <div class="result-card">
+            <strong>Estimated Payoff Time</strong>
+            <span id="payoffTime"></span>
+          </div>
+
+          <div class="result-card">
+            <strong>Payment-to-Income Share</strong>
+            <span id="paymentShare"></span>
+          </div>
+
+          <div class="result-card">
+            <strong>Bill vs. Savings</strong>
+            <span id="savingsShare"></span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <h2>When a Medical Bill Payment Plan Makes Sense</h2>
+
+      <p>
+        A payment plan can be a good choice when it prevents panic borrowing,
+        protects your emergency fund, and keeps the bill inside your normal
+        monthly cash flow. The best medical payment plans are usually clear,
+        interest-free or low-fee, affordable month to month, and flexible enough
+        that one rough month does not wreck the household budget.
+      </p>
+
+      <p>
+        The biggest advantage is control. Instead of emptying savings all at
+        once or placing the bill on a high-interest credit card, a payment plan
+        may let you spread the cost while continuing to cover rent, groceries,
+        transportation, insurance, childcare, and future emergencies.
+      </p>
+    </section>
+
+    <section class="section">
+      <h2>Medical Payment Plan Red Flags</h2>
+
+      <div class="info-grid">
+        <div class="info-card">
+          <strong>The payment crowds out essentials</strong>
+          <span>
+            If the monthly amount makes rent, groceries, utilities, gas, or
+            childcare unstable, the plan may need to be renegotiated.
+          </span>
+        </div>
+
+        <div class="info-card">
+          <strong>The plan adds expensive fees</strong>
+          <span>
+            Interest, service fees, or outside financing can make a medical bill
+            behave more like consumer debt.
+          </span>
+        </div>
+
+        <div class="info-card">
+          <strong>You skipped financial assistance</strong>
+          <span>
+            Many hospitals and providers have charity care, hardship programs,
+            discounts, or itemized-bill review processes.
+          </span>
+        </div>
+
+        <div class="info-card">
+          <strong>The payoff timeline feels endless</strong>
+          <span>
+            A long payment plan is not automatically bad, but it can reduce
+            flexibility if it overlaps with other major expenses.
+          </span>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <h2>Cost Categories to Check Before Agreeing</h2>
+
+      <div class="info-grid">
+        <div class="info-card">
+          <strong>Final adjusted balance</strong>
+          <span>
+            Confirm the bill reflects insurance adjustments, provider discounts,
+            and any corrected coding before accepting the payment terms.
+          </span>
+        </div>
+
+        <div class="info-card">
+          <strong>Monthly payment size</strong>
+          <span>
+            The payment should fit into your budget without forcing new credit
+            card debt or missed savings contributions every month.
+          </span>
+        </div>
+
+        <div class="info-card">
+          <strong>Interest or administrative fees</strong>
+          <span>
+            Interest-free medical payment plans are very different from outside
+            financing with high rates or penalties.
+          </span>
+        </div>
+
+        <div class="info-card">
+          <strong>Emergency fund impact</strong>
+          <span>
+            A plan that protects cash reserves may be safer than paying the full
+            balance if cash payment would leave you exposed.
+          </span>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <h2>Ways to Reduce a Medical Bill Before Paying</h2>
+
+      <p>
+        Before locking into a payment plan, ask for an itemized bill and compare
+        it against your insurance explanation of benefits. Billing errors,
+        duplicate charges, incorrect codes, and missing insurance adjustments can
+        change the true balance.
+      </p>
+
+      <p>
+        You can also ask about hardship assistance, charity care, prompt-pay
+        discounts, income-based payment plans, and whether the provider can
+        reduce the balance before creating a monthly schedule. The right order is
+        usually verify the bill, negotiate the balance, then choose the safest
+        payment plan.
+      </p>
+    </section>
+
+    <section class="callout">
+      <h2>Calculator Assumptions</h2>
+
+      <p>
+        This calculator estimates financial pressure, not medical necessity. It
+        assumes the bill is legitimate and focuses on whether the proposed
+        payment plan is manageable relative to monthly income, savings, debt
+        pressure, fees, and essential expenses. It allows very high income or
+        very large savings cushions to produce a true 0/100 pressure score when
+        the bill is small relative to available resources.
+      </p>
+    </section>
+
+    <section class="section">
+      <h2>Related Medical Calculators</h2>
+
+      <div class="link-grid">
+        <a class="link-card" href="/should-i-spend-this-much-on-medical-bills">
+          <strong>Medical Bill Affordability Calculator</strong>
+          <span>
+            Evaluate a medical bill using savings, insurance coverage, payment
+            plans, debt pressure, and long-term flexibility.
+          </span>
+        </a>
+
+        <a class="link-card" href="/should-i-use-emergency-savings-for-medical-bills">
+          <strong>Use Emergency Savings for Medical Bills?</strong>
+          <span>
+            Compare paying from savings against preserving your emergency fund
+            and using a payment plan.
+          </span>
+        </a>
+
+        <a class="link-card" href="/should-i-spend-2500-on-an-er-bill">
+          <strong>$2,500 ER Bill Calculator</strong>
+          <span>
+            Estimate whether a large emergency room bill creates manageable,
+            moderate, or high pressure.
+          </span>
+        </a>
+
+        <a class="link-card" href="/medical-calculators">
+          <strong>All Medical Calculators</strong>
+          <span>
+            Browse healthcare, dental, fertility, therapy, hearing aid, and
+            medical bill decision tools.
+          </span>
+        </a>
+      </div>
+    </section>
+
+    <section class="section">
+      <h2>Related Financial Guides</h2>
+
+      <div class="link-grid">
+        <a class="link-card" href="/how-much-emergency-savings-should-i-have">
+          <strong>Emergency Savings Calculator</strong>
+          <span>
+            See how much emergency savings may be enough for medical bills,
+            repairs, income disruption, and surprise costs.
+          </span>
+        </a>
+
+        <a class="link-card" href="/how-much-debt-is-too-much">
+          <strong>How Much Debt Is Too Much?</strong>
+          <span>
+            Evaluate whether existing debt makes a new payment plan harder to
+            absorb.
+          </span>
+        </a>
+
+        <a class="link-card" href="/calculators">
+          <strong>All ShouldISpend Calculators</strong>
+          <span>
+            Compare major spending decisions across healthcare, housing, cars,
+            groceries, travel, weddings, and debt.
+          </span>
+        </a>
+      </div>
+    </section>
+
+    <FAQSection title="Medical Bill Payment Plan FAQ" faqs={paymentPlanFaqs} />
+  </main>
+
+  <script is:inline>
+    document.addEventListener("DOMContentLoaded", function () {
+      const openButton = document.getElementById("openCalculator");
+      const calculatorPanel = document.getElementById("calculatorPanel");
+      const button = document.getElementById("calculatePaymentPlan");
+
+      if (openButton && calculatorPanel) {
+        openButton.addEventListener("click", function () {
+          calculatorPanel.classList.add("active");
+          calculatorPanel.scrollIntoView({ behavior: "smooth", block: "start" });
+        });
+      }
+
+      if (!button) return;
+
+      button.addEventListener("click", function () {
+        const billAmount =
+          Number(document.getElementById("billAmount").value) || 0;
+
+        const monthlyPayment =
+          Number(document.getElementById("monthlyPayment").value) || 0;
+
+        const incomeAmount =
+          Number(document.getElementById("incomeAmount").value) || 0;
+
+        const savingsAmount =
+          Number(document.getElementById("savingsAmount").value) || 0;
+
+        const debtPressure = document.getElementById("debtPressure").value;
+        const planFees = document.getElementById("planFees").value;
+        const essentials = document.getElementById("essentials").value;
+        const assistance = document.getElementById("assistance").value;
+
+        let pressureScore = 0;
+
+        const paymentToIncomeRatio =
+          incomeAmount > 0
+            ? monthlyPayment / incomeAmount
+            : monthlyPayment > 0
+              ? 999
+              : 0;
+
+        const billToSavingsRatio =
+          savingsAmount > 0
+            ? billAmount / savingsAmount
+            : billAmount > 0
+              ? 999
+              : 0;
+
+        const billToMonthlyIncomeRatio =
+          incomeAmount > 0
+            ? billAmount / incomeAmount
+            : billAmount > 0
+              ? 999
+              : 0;
+
+        const payoffMonths =
+          monthlyPayment > 0 && billAmount > 0
+            ? Math.ceil(billAmount / monthlyPayment)
+            : 0;
+
+        const savingsAfterFullPayoff = savingsAmount - billAmount;
+
+        const monthsOfIncomeLeftAfterFullPayoff =
+          incomeAmount > 0 ? savingsAfterFullPayoff / incomeAmount : 0;
+
+        const hasHugeIncomeBuffer =
+          incomeAmount > 0 &&
+          billAmount <= incomeAmount * 0.02 &&
+          monthlyPayment <= incomeAmount * 0.005;
+
+        const hasHugeSavingsBuffer =
+          savingsAmount > 0 &&
+          billAmount <= savingsAmount * 0.01 &&
+          monthlyPayment <= savingsAmount * 0.0025;
+
+        const hasStrongIncomeBuffer =
+          incomeAmount > 0 &&
+          billAmount <= incomeAmount * 0.05 &&
+          monthlyPayment <= incomeAmount * 0.01;
+
+        const hasStrongSavingsBuffer =
+          savingsAmount > 0 && billAmount <= savingsAmount * 0.05;
+
+        if (billAmount <= 0 || monthlyPayment <= 0) {
+          pressureScore = 0;
+        } else if (hasHugeIncomeBuffer || hasHugeSavingsBuffer) {
+          pressureScore = 0;
+        } else {
+          if (paymentToIncomeRatio >= 0.2) pressureScore += 30;
+          else if (paymentToIncomeRatio >= 0.12) pressureScore += 22;
+          else if (paymentToIncomeRatio >= 0.08) pressureScore += 15;
+          else if (paymentToIncomeRatio >= 0.04) pressureScore += 8;
+          else if (paymentToIncomeRatio >= 0.02) pressureScore += 3;
+
+          if (billToSavingsRatio >= 1.5) pressureScore += 24;
+          else if (billToSavingsRatio >= 1) pressureScore += 18;
+          else if (billToSavingsRatio >= 0.75) pressureScore += 14;
+          else if (billToSavingsRatio >= 0.5) pressureScore += 10;
+          else if (billToSavingsRatio >= 0.25) pressureScore += 5;
+
+          if (billToMonthlyIncomeRatio >= 1) pressureScore += 14;
+          else if (billToMonthlyIncomeRatio >= 0.5) pressureScore += 9;
+          else if (billToMonthlyIncomeRatio >= 0.25) pressureScore += 5;
+
+          if (payoffMonths >= 36) pressureScore += 12;
+          else if (payoffMonths >= 24) pressureScore += 8;
+          else if (payoffMonths >= 12) pressureScore += 4;
+
+          if (monthsOfIncomeLeftAfterFullPayoff >= 6) pressureScore -= 12;
+          else if (monthsOfIncomeLeftAfterFullPayoff >= 3) pressureScore -= 7;
+          else if (savingsAfterFullPayoff < 0) pressureScore += 8;
+
+          if (debtPressure === "moderate") pressureScore += 8;
+          if (debtPressure === "high") pressureScore += 18;
+
+          if (planFees === "small") pressureScore += 6;
+          if (planFees === "high") pressureScore += 16;
+
+          if (essentials === "tight") pressureScore += 14;
+          if (essentials === "no") pressureScore += 28;
+
+          if (assistance === "not-yet") pressureScore += 8;
+          if (assistance === "yes") pressureScore -= 5;
+
+          if (hasStrongIncomeBuffer) pressureScore -= 12;
+          if (hasStrongSavingsBuffer) pressureScore -= 10;
+        }
+
+        pressureScore = Math.max(0, Math.min(100, Math.round(pressureScore)));
+
+        let verdict = "";
+        let analysis = "";
+
+        if (pressureScore <= 30) {
+          verdict = "Manageable Payment Plan Pressure";
+          analysis =
+            pressureScore === 0
+              ? "This payment plan appears very manageable based on the income, savings, bill size, and monthly payment entered. It should not create meaningful financial pressure."
+              : "This payment plan appears manageable if the bill is accurate, the terms are clear, and the monthly payment does not disrupt essentials.";
+        } else if (pressureScore <= 60) {
+          verdict = "Use Guardrails Before Agreeing";
+          analysis =
+            "This payment plan may be workable, but it deserves guardrails. Confirm the final balance, ask about assistance or discounts, and make sure the payment does not weaken your emergency fund or monthly essentials.";
+        } else {
+          verdict = "High Payment Plan Pressure";
+          analysis =
+            "This payment plan may create serious strain. Consider asking for a lower monthly payment, financial assistance, balance review, hardship terms, or a longer interest-free schedule before agreeing.";
+        }
+
+        document.getElementById("calcResults").classList.add("active");
+        document.getElementById("calcVerdict").innerText = verdict;
+
+        document.getElementById("calcStat").innerText =
+          `Estimated Payment Plan Pressure Score: ${pressureScore}/100`;
+
+        document.getElementById("calcAnalysis").innerText = analysis;
+
+        document.getElementById("payoffTime").innerText =
+          payoffMonths > 0
+            ? `${payoffMonths} month${payoffMonths === 1 ? "" : "s"} at the entered payment amount.`
+            : "Enter a bill balance and monthly payment to estimate payoff time.";
+
+        document.getElementById("paymentShare").innerText =
+          incomeAmount > 0
+            ? `${(paymentToIncomeRatio * 100).toFixed(1)}% of monthly take-home income.`
+            : "Enter monthly take-home income to estimate payment pressure.";
+
+        document.getElementById("savingsShare").innerText =
+          savingsAmount > 0
+            ? `${(billToSavingsRatio * 100).toFixed(1)}% of current emergency savings.`
+            : "No emergency savings entered, so the bill may rely more heavily on cash flow or financing.";
+
+        const riskFill = document.getElementById("riskFill");
+
+        riskFill.style.width = `${pressureScore}%`;
+
+        if (pressureScore <= 30) {
+          riskFill.style.background = "#0f766e";
+        } else if (pressureScore <= 60) {
+          riskFill.style.background = "#ca8a04";
+        } else {
+          riskFill.style.background = "#dc2626";
+        }
+      });
+    });
+  </script>
+</Layout>

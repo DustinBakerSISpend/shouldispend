@@ -1,6 +1,28 @@
 ---
 const { title = "Frequently Asked Questions", faqs = [] } = Astro.props;
+
+const faqSchema = {
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  mainEntity: faqs.map((faq) => ({
+    "@type": "Question",
+    name: faq.question,
+    acceptedAnswer: {
+      "@type": "Answer",
+      text: faq.answer,
+    },
+  })),
+};
 ---
+
+{
+  faqs.length > 0 && (
+    <script
+      type="application/ld+json"
+      set:html={JSON.stringify(faqSchema)}
+    />
+  )
+}
 
 <section class="faq-section">
   <h2>{title}</h2>
@@ -24,6 +46,7 @@ const { title = "Frequently Asked Questions", faqs = [] } = Astro.props;
     font-size: 2rem;
     margin-bottom: 32px;
     color: #0f172a;
+    line-height: 1.2;
   }
 
   .faq-list {
@@ -43,11 +66,22 @@ const { title = "Frequently Asked Questions", faqs = [] } = Astro.props;
     font-size: 1.15rem;
     margin-bottom: 14px;
     color: #0f172a;
+    line-height: 1.45;
   }
 
   .faq-item p {
     line-height: 1.8;
     color: #334155;
     margin: 0;
+  }
+
+  @media (max-width: 640px) {
+    .faq-item {
+      padding: 22px;
+    }
+
+    .faq-section h2 {
+      font-size: 1.7rem;
+    }
   }
 </style>
