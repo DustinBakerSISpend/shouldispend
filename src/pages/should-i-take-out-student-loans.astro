@@ -1,0 +1,750 @@
+---
+import Layout from "../layouts/Layout.astro";
+import CalculatorPageShell from "../components/CalculatorPageShell.astro";
+import FAQSection from "../components/FAQSection.astro";
+import RelatedCalculators from "../components/RelatedCalculators.astro";
+import MethodologySection from "../components/MethodologySection.astro";
+import WhenSpendingMakesSense from "../components/WhenSpendingMakesSense.astro";
+import { calculators } from "../data/calculators.js";
+
+const studentLoanFaqs = [
+  {
+    question: "Should I take out student loans?",
+    answer:
+      "Student loans may make sense when the program has a clear career payoff, the loan payment fits future income, and borrowing does not stack on top of already stressful debt.",
+  },
+  {
+    question: "How much student loan debt is too much?",
+    answer:
+      "Student loan debt becomes riskier when expected monthly payments crowd out rent, groceries, emergency savings, transportation, childcare, or other essential bills after graduation.",
+  },
+  {
+    question: "Is it better to use savings or student loans?",
+    answer:
+      "Using savings can reduce debt, but draining your emergency fund can also create risk. A balanced approach may preserve emergency savings while limiting unnecessary borrowing.",
+  },
+];
+
+const relatedCalculators = calculators
+  .filter(
+    (calculator) =>
+      calculator.category === "College" &&
+      calculator.href !== "/should-i-take-out-student-loans"
+  )
+  .slice(0, 4);
+---
+
+<Layout
+  title="Should I Take Out Student Loans?"
+  description="Evaluate whether student loans fit your future income, expected payment, current debt, savings cushion, career payoff, and long-term financial pressure."
+>
+  <style>
+    .container {
+      max-width: 900px;
+      margin: auto;
+    }
+
+    .calculator {
+      background: white;
+      padding: 40px;
+      border-radius: 24px;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.06);
+    }
+
+    .calculator h2 {
+      margin-top: 0;
+      font-size: 2rem;
+      margin-bottom: 18px;
+      color: #0f172a;
+    }
+
+    .calculator-intro {
+      color: #334155;
+      line-height: 1.8;
+      margin-bottom: 30px;
+      font-size: 1.05rem;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+    }
+
+    .field label {
+      display: block;
+      font-weight: 800;
+      margin-bottom: 10px;
+      color: #0f172a;
+    }
+
+    .field input,
+    .field select {
+      width: 100%;
+      padding: 16px;
+      border-radius: 12px;
+      border: 1px solid #cbd5e1;
+      font-size: 1rem;
+      box-sizing: border-box;
+      background: white;
+    }
+
+    .helper-link {
+      margin-top: 10px;
+      font-size: 0.92rem;
+      line-height: 1.5;
+      color: #475569;
+    }
+
+    .helper-link a,
+    .content-link {
+      color: #0f766e;
+      font-weight: 700;
+      text-decoration: none;
+    }
+
+    .helper-link a:hover,
+    .content-link:hover {
+      text-decoration: underline;
+    }
+
+    button {
+      margin-top: 30px;
+      background: #0f766e;
+      color: white;
+      border: none;
+      padding: 18px 32px;
+      border-radius: 999px;
+      font-size: 1.05rem;
+      font-weight: 800;
+      cursor: pointer;
+      transition: opacity 0.2s ease;
+    }
+
+    button:hover {
+      opacity: 0.92;
+    }
+
+    .results {
+      margin-top: 36px;
+      background: #f8fafc;
+      padding: 32px;
+      border-radius: 24px;
+      border: 1px solid var(--border);
+      box-shadow: 0 10px 24px rgba(15, 23, 42, 0.04);
+      display: none;
+    }
+
+    .results.visible {
+      display: block;
+    }
+
+    .score {
+      font-size: clamp(2rem, 4vw, 2.7rem);
+      font-weight: 900;
+      color: #0f172a;
+      margin-bottom: 22px;
+      line-height: 1.15;
+    }
+
+    .bar {
+      width: 100%;
+      height: 16px;
+      background: #dbe4ee;
+      border-radius: 999px;
+      overflow: hidden;
+      margin-bottom: 24px;
+    }
+
+    .fill {
+      height: 100%;
+      width: 0%;
+      border-radius: 999px;
+      transition: width 0.45s ease;
+    }
+
+    .fill.safe {
+      background: linear-gradient(90deg, #0f766e 0%, #14b8a6 100%);
+    }
+
+    .fill.caution {
+      background: linear-gradient(90deg, #ca8a04 0%, #facc15 100%);
+    }
+
+    .fill.danger {
+      background: linear-gradient(90deg, #dc2626 0%, #f97316 100%);
+    }
+
+    .result-details {
+      color: #334155;
+      line-height: 1.9;
+      font-size: 1.02rem;
+    }
+
+    .result-details p {
+      margin: 0 0 12px;
+    }
+
+    .guidance {
+      margin-top: 22px;
+      padding-top: 20px;
+      border-top: 1px solid #dbe4ee;
+      font-size: 1.12rem;
+      line-height: 1.85;
+      color: #1e293b;
+    }
+
+    .disclaimer {
+      margin-top: 24px;
+      font-size: 0.9rem;
+      color: #64748b;
+    }
+
+    .content-section {
+      margin-top: 60px;
+    }
+
+    .content-section h2 {
+      font-size: 2rem;
+      margin-bottom: 20px;
+      color: #0f172a;
+    }
+
+    .content-section p,
+    .content-section li {
+      font-size: 1.1rem;
+      line-height: 1.9;
+      color: #334155;
+    }
+
+    .pillar-card {
+      display: block;
+      background: #f8fafc;
+      border: 1px solid #dbe4ee;
+      border-radius: 20px;
+      padding: 24px;
+      margin-top: 28px;
+      text-decoration: none;
+      transition: transform 0.15s ease;
+    }
+
+    .pillar-card:hover {
+      transform: translateY(-2px);
+    }
+
+    .pillar-card strong {
+      display: block;
+      margin-bottom: 10px;
+      color: #0f172a;
+      font-size: 1.08rem;
+    }
+
+    .pillar-card span {
+      color: #334155;
+      line-height: 1.7;
+      font-size: 0.98rem;
+    }
+
+    @media (max-width: 768px) {
+      .calculator {
+        padding: 24px;
+      }
+
+      .grid {
+        grid-template-columns: 1fr;
+      }
+
+      .calculator h2,
+      .content-section h2 {
+        font-size: 1.7rem;
+      }
+
+      .results {
+        padding: 24px;
+      }
+    }
+  </style>
+
+  <div class="container">
+    <CalculatorPageShell
+      eyebrow="Student Loan Calculator"
+      title="Should I Take Out Student Loans?"
+      description="Pressure-test student loan borrowing against future income, monthly payment, existing debt, emergency savings, and career payoff."
+    >
+      <div class="calculator">
+        <h2>Student Loan Pressure Verdict</h2>
+
+        <p class="calculator-intro">
+          Enter your expected loan amount, monthly take-home income after school,
+          savings, current debt payments, and expected income gain. This calculator
+          estimates whether student loans look manageable, worth caution, or too
+          stressful for your future budget.
+        </p>
+
+        <div class="grid">
+          <div class="field">
+            <label for="futureIncome">Expected Monthly Take-Home Income After School</label>
+            <input id="futureIncome" type="number" placeholder="Example: 5200" />
+          </div>
+
+          <div class="field">
+            <label for="savings">Current Savings</label>
+            <input id="savings" type="number" placeholder="Example: 12000" />
+          </div>
+
+          <div class="field">
+            <label for="loanAmount">Total Student Loans You Expect to Borrow</label>
+            <input id="loanAmount" type="number" placeholder="Example: 25000" />
+          </div>
+
+          <div class="field">
+            <label for="loanPayment">Expected Monthly Student Loan Payment</label>
+            <input id="loanPayment" type="number" placeholder="Example: 300" />
+
+            <div class="helper-link">
+              Don’t know the payment? Leave blank and this calculator will estimate one.
+            </div>
+          </div>
+
+          <div class="field">
+            <label for="currentDebt">Other Monthly Debt Payments After School</label>
+            <input id="currentDebt" type="number" placeholder="Example: 600" />
+
+            <div class="helper-link">
+              Not sure what counts as debt?
+              <a href="/what-counts-as-debt">Read the debt guide</a>
+            </div>
+          </div>
+
+          <div class="field">
+            <label for="incomeGain">Expected Monthly Income Gain From the Program</label>
+            <input id="incomeGain" type="number" placeholder="Example: 900" />
+          </div>
+
+          <div class="field">
+            <label for="programStrength">Program Confidence</label>
+            <select id="programStrength">
+              <option value="strong">Strong job or income path</option>
+              <option value="medium" selected>Some career upside</option>
+              <option value="weak">Unclear payoff</option>
+            </select>
+          </div>
+
+          <div class="field">
+            <label for="years">Years Until Program Is Finished</label>
+            <input id="years" type="number" placeholder="Example: 2" />
+          </div>
+        </div>
+
+        <button id="loanButton" type="button">Get Student Loan Verdict</button>
+
+        <div class="results" id="results">
+          <div class="score" id="scoreText"></div>
+
+          <div class="bar">
+            <div class="fill" id="fillBar"></div>
+          </div>
+
+          <div class="result-details" id="resultDetails"></div>
+
+          <div class="guidance" id="guidance"></div>
+
+          <div class="disclaimer">
+            This is a general educational estimate, not financial advice.
+          </div>
+        </div>
+      </div>
+
+      <section class="content-section">
+        <h2>Start With the Full College Cost Calculator</h2>
+
+        <p>
+          Student loans should be judged against the full education decision,
+          not just the borrowed amount. Tuition, fees, housing, books, time away
+          from work, repayment timing, and income upside all affect whether
+          borrowing is financially durable.
+        </p>
+
+        <a class="pillar-card" href="/college-cost-calculator">
+          <strong>College Cost Calculator</strong>
+          <span>
+            Estimate total education pressure using tuition, fees, housing,
+            books, savings, loans, expected payoff, and household flexibility.
+          </span>
+        </a>
+
+        <a class="pillar-card" href="/should-i-spend-20000-on-college">
+          <strong>Should I Spend $20,000 on College?</strong>
+          <span>
+            Pressure-test a smaller college cost against savings, borrowing,
+            existing debt, expected income gain, and emergency flexibility.
+          </span>
+        </a>
+
+        <a class="pillar-card" href="/how-much-debt-is-too-much">
+          <strong>Debt Pressure Calculator</strong>
+          <span>
+            See how existing monthly debt affects your ability to add a student
+            loan payment without squeezing the rest of your budget.
+          </span>
+        </a>
+      </section>
+
+      <section class="content-section">
+        <h2>What Student Loan Borrowing Really Includes</h2>
+
+        <p>
+          A student loan is not only a way to cover tuition. It is a future
+          monthly obligation that may follow you into rent decisions, car choices,
+          emergency savings, family planning, career changes, and debt payoff.
+        </p>
+
+        <p>
+          Borrowing can still be reasonable when the degree or credential has a
+          clear payoff. The risk grows when the program outcome is uncertain,
+          the borrowed amount is high, or the expected payment leaves little
+          room for normal monthly life after school.
+        </p>
+      </section>
+
+      <WhenSpendingMakesSense
+        title="When Student Loans Can Make Sense"
+        items={[
+          "The program has a clear job, license, promotion, or income path.",
+          "The expected monthly payment fits your future take-home income.",
+          "You have compared grants, scholarships, employer help, and lower-cost schools.",
+          "You are not using loans to cover avoidable lifestyle inflation.",
+          "The borrowing creates a realistic path to stronger long-term stability.",
+        ]}
+      />
+
+      <section class="content-section">
+        <h2>When You Should Wait</h2>
+
+        <p>
+          Student loans deserve caution if the program payoff is unclear, you
+          already have stressful debt, or the future payment would make rent,
+          groceries, transportation, medical bills, childcare, or emergency
+          savings difficult to maintain.
+        </p>
+
+        <p>
+          Waiting may mean applying for more aid, choosing a lower-cost school,
+          starting part-time, transferring credits, working while enrolled, or
+          building a stronger cash cushion before borrowing.
+        </p>
+
+        <p>
+          If the payment would strain
+          <a class="content-link" href="/how-much-rent-can-i-afford">
+            housing
+          </a>,
+          <a class="content-link" href="/should-i-spend-this-much-on-groceries-per-month">
+            groceries
+          </a>,
+          transportation, or existing debt, the loan amount may need to come
+          down before enrollment.
+        </p>
+      </section>
+
+      <section class="content-section">
+        <h2>Key Costs to Consider Before Borrowing</h2>
+
+        <p>
+          Before taking out student loans, estimate the payment, repayment term,
+          total borrowed amount, other monthly debt, income after school, and
+          the cost of finishing the program. A loan that looks small today can
+          feel larger once rent, insurance, groceries, and transportation return
+          to the monthly budget.
+        </p>
+
+        <p>
+          Also consider whether the loan pays for a credential with strong labor
+          market value or merely keeps you enrolled without a clear finish line.
+          Borrowing is safer when the program is specific, practical, and likely
+          to improve your options.
+        </p>
+
+        <p>
+          You can compare this decision with the broader
+          <a class="content-link" href="/college-calculators">
+            college calculator hub
+          </a>
+          before choosing a loan amount or school.
+        </p>
+      </section>
+
+      <section class="content-section">
+        <h2>Signs Student Loans Are Creating Financial Pressure</h2>
+
+        <p>
+          Be careful if the loan payment would push total debt too high, delay
+          emergency savings, require credit cards for normal expenses, or depend
+          on an income increase that is not likely.
+        </p>
+
+        <p>
+          A weaker verdict does not mean school is off the table. It means the
+          borrowing plan may need more aid, lower tuition, a smaller loan, a
+          clearer payoff, or a different timeline.
+        </p>
+      </section>
+
+      <section class="content-section">
+        <h2>What Your Student Loan Verdict Actually Means</h2>
+
+        <p>
+          A student loan verdict is not a judgment on whether education is worth
+          it. It estimates whether the borrowing plan creates manageable or
+          stressful pressure based on future income, debt load, savings, and
+          expected career payoff.
+        </p>
+
+        <p>
+          A stronger verdict means the loan is less likely to crowd out basic
+          financial flexibility after school. A weaker verdict means the degree
+          may still be worthwhile, but the repayment plan deserves more caution.
+        </p>
+      </section>
+
+      <div class="content-section">
+        <FAQSection faqs={studentLoanFaqs} />
+      </div>
+
+      <div class="content-section">
+        <RelatedCalculators calculators={relatedCalculators} />
+      </div>
+    </CalculatorPageShell>
+
+    <MethodologySection category="student loan affordability" />
+  </div>
+
+  <script is:inline>
+    const clamp = (value, min, max) => Math.min(Math.max(value, min), max);
+
+    const getNumber = (id) => {
+      const rawValue = document.getElementById(id)?.value;
+      const value = Number(rawValue);
+      return Number.isFinite(value) && value >= 0 ? value : 0;
+    };
+
+    function getPressureLevel(score) {
+      if (score <= 30) {
+        return {
+          label: "Low Pressure",
+          stress: "Low pressure",
+          colorClass: "safe",
+          action:
+            "Keep the borrowing plan only if the program payoff remains clear and future monthly payments stay manageable.",
+        };
+      }
+
+      if (score <= 60) {
+        return {
+          label: "Moderate Pressure",
+          stress: "Moderate pressure",
+          colorClass: "caution",
+          action:
+            "Compare lower-cost schools, grants, employer help, part-time options, and smaller loan amounts before committing.",
+        };
+      }
+
+      return {
+        label: "High Pressure",
+        stress: "High pressure",
+        colorClass: "danger",
+        action:
+          "Reduce the loan amount, delay enrollment, increase aid, or choose a lower-cost path before borrowing.",
+      };
+    }
+
+    function calculateStudentLoans() {
+      const futureIncome = getNumber("futureIncome");
+      const savings = getNumber("savings");
+      const loanAmount = getNumber("loanAmount");
+      const enteredLoanPayment = getNumber("loanPayment");
+      const currentDebt = getNumber("currentDebt");
+      const incomeGain = getNumber("incomeGain");
+      const years = getNumber("years");
+      const programStrength =
+        document.getElementById("programStrength")?.value || "medium";
+
+      const results = document.getElementById("results");
+      const scoreText = document.getElementById("scoreText");
+      const fillBar = document.getElementById("fillBar");
+      const resultDetails = document.getElementById("resultDetails");
+      const guidance = document.getElementById("guidance");
+
+      results.classList.add("visible");
+
+      if (futureIncome <= 0 || loanAmount <= 0) {
+        scoreText.textContent = "Add your numbers first";
+        fillBar.style.width = "0%";
+        fillBar.className = "fill safe";
+
+        resultDetails.innerHTML =
+          "<p>Enter expected monthly take-home income after school, loan amount, savings, other debt payments, and expected income gain so the calculator can estimate student loan pressure.</p>";
+
+        guidance.textContent = "";
+        return;
+      }
+
+      const estimatedLoanPayment =
+        enteredLoanPayment > 0 ? enteredLoanPayment : loanAmount * 0.012;
+
+      const loanToAnnualIncomeRatio =
+        (loanAmount / Math.max(futureIncome * 12, 1)) * 100;
+
+      const loanPaymentRatio =
+        (estimatedLoanPayment / Math.max(futureIncome, 1)) * 100;
+
+      const totalDebtRatio =
+        ((estimatedLoanPayment + currentDebt) / Math.max(futureIncome, 1)) * 100;
+
+      const savingsMonths =
+        savings / Math.max(futureIncome * 0.7, 1);
+
+      const payoffRatio =
+        estimatedLoanPayment / Math.max(incomeGain, 1);
+
+      const payoffStrength =
+        incomeGain >= estimatedLoanPayment * 4
+          ? "strong"
+          : incomeGain >= estimatedLoanPayment * 2
+            ? "moderate"
+            : "weak";
+
+      const timeRisk =
+        years >= 4 ? 12 : years >= 2 ? 6 : years > 0 ? 2 : 0;
+
+      const incomeRecoveryPower =
+        loanAmount / Math.max(futureIncome * 12, 1);
+
+      const savingsPower =
+        savings / Math.max(estimatedLoanPayment, 1);
+
+      const absurdIncome =
+        futureIncome >= loanAmount * 4 &&
+        loanPaymentRatio <= 0.5 &&
+        totalDebtRatio <= 5;
+
+      const absurdSavings =
+        savings >= loanAmount * 25 &&
+        savingsMonths >= 60;
+
+      const ultraSafeIncome =
+        incomeRecoveryPower <= 0.03 &&
+        loanPaymentRatio <= 1 &&
+        totalDebtRatio <= 8;
+
+      const ultraSafeSavings =
+        savingsPower >= 120 &&
+        savingsMonths >= 24;
+
+      let pressureScore = 0;
+
+      pressureScore += clamp(loanToAnnualIncomeRatio * 0.75, 0, 32);
+      pressureScore += clamp(loanPaymentRatio * 3.2, 0, 36);
+      pressureScore += clamp(totalDebtRatio * 0.75, 0, 30);
+      pressureScore += timeRisk;
+
+      if (savingsMonths < 1) {
+  pressureScore += futureIncome >= estimatedLoanPayment * 75 ? 3 : 18;
+} else if (savingsMonths < 3) {
+  pressureScore += futureIncome >= estimatedLoanPayment * 50 ? 2 : 10;
+} else if (savingsMonths >= 6) {
+  pressureScore -= 8;
+}
+
+      if (estimatedLoanPayment > 0 && incomeGain <= 0) {
+        pressureScore += 18;
+      } else if (payoffRatio > 0.5) {
+        pressureScore += 14;
+      } else if (payoffRatio > 0.3) {
+        pressureScore += 8;
+      } else if (payoffRatio <= 0.15 && incomeGain > 0) {
+        pressureScore -= 8;
+      }
+
+      if (programStrength === "strong") {
+        pressureScore -= 8;
+      } else if (programStrength === "weak") {
+        pressureScore += 16;
+      }
+
+      if (
+        loanPaymentRatio < 5 &&
+        totalDebtRatio < 18 &&
+        savingsMonths >= 6 &&
+        payoffStrength !== "weak"
+      ) {
+        pressureScore = Math.min(pressureScore, 24);
+      }
+
+      if (
+        loanPaymentRatio < 3 &&
+        totalDebtRatio < 10 &&
+        savingsMonths >= 12 &&
+        payoffStrength === "strong"
+      ) {
+        pressureScore = Math.min(pressureScore, 10);
+      }
+
+      if (ultraSafeIncome && ultraSafeSavings) {
+        pressureScore = 0;
+      }
+
+      if (absurdIncome || absurdSavings) {
+        pressureScore = 0;
+      }
+
+      pressureScore = clamp(Math.round(pressureScore), 0, 100);
+
+      const level = getPressureLevel(pressureScore);
+
+      scoreText.textContent = `${level.label} — ${pressureScore}/100`;
+      fillBar.style.width = `${pressureScore}%`;
+      fillBar.className = `fill ${level.colorClass}`;
+
+      let explanation = "";
+
+      if (pressureScore === 0) {
+        explanation =
+          "This student loan plan creates virtually no measurable pressure based on the future income, savings, debt, payment, and payoff numbers provided.";
+      } else if (pressureScore <= 30) {
+        explanation =
+          "This student loan plan appears manageable based on the numbers provided. The main priority is confirming the program payoff and avoiding unnecessary extra borrowing.";
+      } else if (pressureScore <= 60) {
+        explanation =
+          "This student loan plan may work, but it deserves caution. The payment, existing debt, timeline, and uncertain income improvement could reduce future flexibility.";
+      } else {
+        explanation =
+          "This student loan plan could create significant financial pressure. A lower-cost school, more aid, smaller loan, part-time option, or clearer payoff would likely create more flexibility.";
+      }
+
+      resultDetails.innerHTML = `
+        <p><strong>Estimated student loan payment:</strong> About $${estimatedLoanPayment.toFixed(0)} per month.</p>
+
+        <p><strong>Loan balance compared with income:</strong> ${loanToAnnualIncomeRatio.toFixed(1)}% of expected annual take-home income.</p>
+
+        <p><strong>Student loan payment impact:</strong> ${loanPaymentRatio.toFixed(1)}% of expected monthly take-home income.</p>
+
+        <p><strong>Total debt impact:</strong> ${totalDebtRatio.toFixed(1)}% of expected monthly take-home income, including other debt payments.</p>
+
+        <p><strong>Emergency savings cushion:</strong> About ${savingsMonths.toFixed(1)} months of estimated flexibility.</p>
+
+        <p><strong>Expected payoff strength:</strong> ${payoffStrength} based on estimated loan payment versus expected monthly income gain.</p>
+
+        <p><strong>Pressure level:</strong> ${level.stress}.</p>
+
+        <p>${explanation} Recommended next step: ${level.action}</p>
+      `;
+
+      guidance.textContent = "";
+    }
+
+    document
+      .getElementById("loanButton")
+      .addEventListener("click", calculateStudentLoans);
+  </script>
+</Layout>

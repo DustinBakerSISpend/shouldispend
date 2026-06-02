@@ -1,0 +1,776 @@
+---
+import Layout from "../layouts/Layout.astro";
+import CalculatorPageShell from "../components/CalculatorPageShell.astro";
+import FAQSection from "../components/FAQSection.astro";
+import RelatedCalculators from "../components/RelatedCalculators.astro";
+import MethodologySection from "../components/MethodologySection.astro";
+import WhenSpendingMakesSense from "../components/WhenSpendingMakesSense.astro";
+import { calculators } from "../data/calculators.js";
+
+const backToSchoolFaqs = [
+  {
+    question: "Should I go back to school?",
+    answer:
+      "Going back to school may make sense when the program has a clear career payoff, the cost fits your income and savings, and the decision does not create dangerous debt or cash-flow pressure.",
+  },
+  {
+    question: "How do I know if school is worth the cost?",
+    answer:
+      "Compare the total cost, lost income, expected income gain, credential value, time to finish, and monthly pressure after graduation. A lower-cost program with a clear payoff is usually safer than an expensive program with uncertain upside.",
+  },
+  {
+    question: "Is it bad to use savings to go back to school?",
+    answer:
+      "Using savings can reduce debt, but draining your emergency fund can create risk. A strong plan usually preserves some cash cushion while limiting unnecessary borrowing.",
+  },
+];
+
+const relatedCalculators = calculators
+  .filter(
+    (calculator) =>
+      calculator.category === "College" &&
+      calculator.href !== "/should-i-go-back-to-school"
+  )
+  .slice(0, 4);
+---
+
+<Layout
+  title="Should I Go Back to School?"
+  description="Decide whether going back to school fits your income, savings, tuition cost, debt, career payoff, and future financial pressure."
+>
+  <style>
+    .container {
+      max-width: 900px;
+      margin: auto;
+    }
+
+    .calculator {
+      background: white;
+      padding: 40px;
+      border-radius: 24px;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.06);
+    }
+
+    .calculator h2 {
+      margin-top: 0;
+      font-size: 2rem;
+      margin-bottom: 18px;
+      color: #0f172a;
+    }
+
+    .calculator-intro {
+      color: #334155;
+      line-height: 1.8;
+      margin-bottom: 30px;
+      font-size: 1.05rem;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+    }
+
+    .field label {
+      display: block;
+      font-weight: 800;
+      margin-bottom: 10px;
+      color: #0f172a;
+    }
+
+    .field input,
+    .field select {
+      width: 100%;
+      padding: 16px;
+      border-radius: 12px;
+      border: 1px solid #cbd5e1;
+      font-size: 1rem;
+      box-sizing: border-box;
+      background: white;
+    }
+
+    .helper-link {
+      margin-top: 10px;
+      font-size: 0.92rem;
+      line-height: 1.5;
+      color: #475569;
+    }
+
+    .helper-link a,
+    .content-link {
+      color: #0f766e;
+      font-weight: 700;
+      text-decoration: none;
+    }
+
+    .helper-link a:hover,
+    .content-link:hover {
+      text-decoration: underline;
+    }
+
+    button {
+      margin-top: 30px;
+      background: #0f766e;
+      color: white;
+      border: none;
+      padding: 18px 32px;
+      border-radius: 999px;
+      font-size: 1.05rem;
+      font-weight: 800;
+      cursor: pointer;
+      transition: opacity 0.2s ease;
+    }
+
+    button:hover {
+      opacity: 0.92;
+    }
+
+    .results {
+      margin-top: 36px;
+      background: #f8fafc;
+      padding: 32px;
+      border-radius: 24px;
+      border: 1px solid var(--border);
+      box-shadow: 0 10px 24px rgba(15, 23, 42, 0.04);
+      display: none;
+    }
+
+    .results.visible {
+      display: block;
+    }
+
+    .score {
+      font-size: clamp(2rem, 4vw, 2.7rem);
+      font-weight: 900;
+      color: #0f172a;
+      margin-bottom: 22px;
+      line-height: 1.15;
+    }
+
+    .bar {
+      width: 100%;
+      height: 16px;
+      background: #dbe4ee;
+      border-radius: 999px;
+      overflow: hidden;
+      margin-bottom: 24px;
+    }
+
+    .fill {
+      height: 100%;
+      width: 0%;
+      border-radius: 999px;
+      transition: width 0.45s ease;
+    }
+
+    .fill.safe {
+      background: linear-gradient(90deg, #0f766e 0%, #14b8a6 100%);
+    }
+
+    .fill.caution {
+      background: linear-gradient(90deg, #ca8a04 0%, #facc15 100%);
+    }
+
+    .fill.danger {
+      background: linear-gradient(90deg, #dc2626 0%, #f97316 100%);
+    }
+
+    .result-details {
+      color: #334155;
+      line-height: 1.9;
+      font-size: 1.02rem;
+    }
+
+    .result-details p {
+      margin: 0 0 12px;
+    }
+
+    .guidance {
+      margin-top: 22px;
+      padding-top: 20px;
+      border-top: 1px solid #dbe4ee;
+      font-size: 1.12rem;
+      line-height: 1.85;
+      color: #1e293b;
+    }
+
+    .disclaimer {
+      margin-top: 24px;
+      font-size: 0.9rem;
+      color: #64748b;
+    }
+
+    .content-section {
+      margin-top: 60px;
+    }
+
+    .content-section h2 {
+      font-size: 2rem;
+      margin-bottom: 20px;
+      color: #0f172a;
+    }
+
+    .content-section p,
+    .content-section li {
+      font-size: 1.1rem;
+      line-height: 1.9;
+      color: #334155;
+    }
+
+    .pillar-card {
+      display: block;
+      background: #f8fafc;
+      border: 1px solid #dbe4ee;
+      border-radius: 20px;
+      padding: 24px;
+      margin-top: 28px;
+      text-decoration: none;
+      transition: transform 0.15s ease;
+    }
+
+    .pillar-card:hover {
+      transform: translateY(-2px);
+    }
+
+    .pillar-card strong {
+      display: block;
+      margin-bottom: 10px;
+      color: #0f172a;
+      font-size: 1.08rem;
+    }
+
+    .pillar-card span {
+      color: #334155;
+      line-height: 1.7;
+      font-size: 0.98rem;
+    }
+
+    @media (max-width: 768px) {
+      .calculator {
+        padding: 24px;
+      }
+
+      .grid {
+        grid-template-columns: 1fr;
+      }
+
+      .calculator h2,
+      .content-section h2 {
+        font-size: 1.7rem;
+      }
+
+      .results {
+        padding: 24px;
+      }
+    }
+  </style>
+
+  <div class="container">
+    <CalculatorPageShell
+      eyebrow="Back to School Calculator"
+      title="Should I Go Back to School?"
+      description="Pressure-test going back to school against tuition, savings, debt, lost income, program length, and expected career payoff."
+    >
+      <div class="calculator">
+        <h2>Back to School Pressure Verdict</h2>
+
+        <p class="calculator-intro">
+          Enter the total school cost, monthly take-home income, savings, debt
+          payments, expected income gain, and program confidence. This calculator
+          estimates whether going back to school looks financially manageable,
+          worth caution, or too stressful right now.
+        </p>
+
+        <div class="grid">
+          <div class="field">
+            <label for="monthlyIncome">Current Monthly Take-Home Income</label>
+            <input id="monthlyIncome" type="number" placeholder="Example: 5200" />
+          </div>
+
+          <div class="field">
+            <label for="savings">Current Savings</label>
+            <input id="savings" type="number" placeholder="Example: 18000" />
+          </div>
+
+          <div class="field">
+            <label for="schoolCost">Total Cost to Finish School</label>
+            <input id="schoolCost" type="number" placeholder="Example: 35000" />
+          </div>
+
+          <div class="field">
+            <label for="borrowedAmount">Amount You Expect to Borrow</label>
+            <input id="borrowedAmount" type="number" placeholder="Example: 20000" />
+          </div>
+
+          <div class="field">
+            <label for="monthlyDebt">Current Monthly Debt Payments</label>
+            <input id="monthlyDebt" type="number" placeholder="Example: 650" />
+
+            <div class="helper-link">
+              Not sure what counts as debt?
+              <a href="/what-counts-as-debt">Read the debt guide</a>
+            </div>
+          </div>
+
+          <div class="field">
+            <label for="lostIncome">Monthly Income You May Lose While Enrolled</label>
+            <input id="lostIncome" type="number" placeholder="Example: 1000" />
+          </div>
+
+          <div class="field">
+            <label for="incomeGain">Expected Monthly Income Gain After School</label>
+            <input id="incomeGain" type="number" placeholder="Example: 1200" />
+          </div>
+
+          <div class="field">
+            <label for="years">Years Until Finished</label>
+            <input id="years" type="number" placeholder="Example: 2" />
+          </div>
+
+          <div class="field">
+            <label for="programStrength">Program Confidence</label>
+            <select id="programStrength">
+              <option value="strong">Strong job, license, or promotion path</option>
+              <option value="medium" selected>Some career upside</option>
+              <option value="weak">Unclear payoff</option>
+            </select>
+          </div>
+
+          <div class="field">
+            <label for="workStatus">Work Plan During School</label>
+            <select id="workStatus">
+              <option value="full" selected>Keep working full-time</option>
+              <option value="part">Work part-time</option>
+              <option value="pause">Pause or sharply reduce work</option>
+            </select>
+          </div>
+        </div>
+
+        <button id="schoolButton" type="button">Get Back to School Verdict</button>
+
+        <div class="results" id="results">
+          <div class="score" id="scoreText"></div>
+
+          <div class="bar">
+            <div class="fill" id="fillBar"></div>
+          </div>
+
+          <div class="result-details" id="resultDetails"></div>
+
+          <div class="guidance" id="guidance"></div>
+
+          <div class="disclaimer">
+            This is a general educational estimate, not financial advice.
+          </div>
+        </div>
+      </div>
+
+      <section class="content-section">
+        <h2>Start With the Full College Cost Picture</h2>
+
+        <p>
+          Going back to school is not only a tuition decision. The real cost can
+          include fees, books, transportation, childcare, reduced work hours,
+          borrowed money, interest, and the time it takes for the credential to
+          pay off.
+        </p>
+
+        <a class="pillar-card" href="/college-cost-calculator">
+          <strong>College Cost Calculator</strong>
+          <span>
+            Estimate total education pressure using tuition, fees, housing,
+            books, savings, loans, expected payoff, and household flexibility.
+          </span>
+        </a>
+
+        <a class="pillar-card" href="/should-i-take-out-student-loans">
+          <strong>Should I Take Out Student Loans?</strong>
+          <span>
+            Pressure-test borrowing against expected income, repayment pressure,
+            current debt, savings, and career payoff.
+          </span>
+        </a>
+
+        <a class="pillar-card" href="/how-much-debt-is-too-much">
+          <strong>Debt Pressure Calculator</strong>
+          <span>
+            See how existing debt affects your ability to add school costs,
+            student loans, or reduced income without squeezing your budget.
+          </span>
+        </a>
+      </section>
+
+      <section class="content-section">
+        <h2>What Going Back to School Really Costs</h2>
+
+        <p>
+          The sticker price is only part of the decision. A program can look
+          affordable until you account for lost income, extra debt, commuting,
+          books, technology, certification fees, childcare, and the possibility
+          that the income gain takes longer than expected.
+        </p>
+
+        <p>
+          School is usually safer when the finish line is clear. A license,
+          credential, promotion path, career switch, or required degree can make
+          the cost more defensible. The risk rises when the program is vague,
+          expensive, unfinished, or disconnected from a realistic income path.
+        </p>
+      </section>
+
+      <WhenSpendingMakesSense
+        title="When Going Back to School Can Make Sense"
+        items={[
+          "The program leads to a clear job, license, promotion, or income path.",
+          "The total cost is reasonable compared with your current and future income.",
+          "You can preserve emergency savings while enrolled.",
+          "You have compared grants, scholarships, employer reimbursement, and lower-cost options.",
+          "The time commitment does not create dangerous household cash-flow pressure.",
+          "The expected income gain is large enough to justify the cost and disruption.",
+        ]}
+      />
+
+      <section class="content-section">
+        <h2>When You Should Wait</h2>
+
+        <p>
+          Waiting may be smarter if the program payoff is unclear, the cost
+          requires heavy borrowing, your emergency savings would disappear, or
+          reduced work hours would make normal bills harder to cover.
+        </p>
+
+        <p>
+          Waiting does not mean giving up. It can mean applying for more aid,
+          choosing a cheaper school, starting with one class, using employer
+          reimbursement, transferring credits, or building a stronger cash
+          cushion before enrolling.
+        </p>
+
+        <p>
+          If the school plan would strain
+          <a class="content-link" href="/how-much-rent-can-i-afford">
+            housing
+          </a>,
+          <a class="content-link" href="/should-i-spend-this-much-on-groceries-per-month">
+            groceries
+          </a>,
+          childcare, transportation, or debt payoff, the plan may need a cheaper
+          path before you commit.
+        </p>
+      </section>
+
+      <section class="content-section">
+        <h2>Key Costs to Consider Before Enrolling</h2>
+
+        <p>
+          Before going back to school, estimate the full cost to finish, the
+          amount you may borrow, the income you may lose while enrolled, and the
+          time it will take before the program improves your monthly finances.
+        </p>
+
+        <p>
+          Also consider whether the school has strong completion rates, useful
+          credentials, practical career support, and a realistic path from
+          enrollment to higher income. The best school decision is not always the
+          cheapest one, but the numbers should still be durable.
+        </p>
+
+        <p>
+          You can compare this decision with the broader
+          <a class="content-link" href="/college-calculators">
+            college calculator hub
+          </a>
+          before choosing a program, loan amount, or timeline.
+        </p>
+      </section>
+
+      <section class="content-section">
+        <h2>Signs School Could Create Financial Pressure</h2>
+
+        <p>
+          Be careful if the plan depends on optimistic income assumptions, uses
+          most of your savings, requires large loans, delays emergency savings,
+          or forces you to rely on credit cards for normal expenses.
+        </p>
+
+        <p>
+          A weaker verdict does not mean school is a bad idea. It means the
+          current version of the plan may need a lower cost, clearer payoff,
+          smaller loan, slower timeline, or stronger savings cushion.
+        </p>
+      </section>
+
+      <section class="content-section">
+        <h2>What Your Back to School Verdict Means</h2>
+
+        <p>
+          This verdict is not a judgment on the value of education. It estimates
+          whether the school plan creates manageable or stressful financial
+          pressure based on income, savings, debt, cost, timeline, and expected
+          payoff.
+        </p>
+
+        <p>
+          A stronger verdict means the numbers leave more room for normal life.
+          A weaker verdict means the program may still be worthwhile, but the
+          cost structure deserves more scrutiny before enrollment.
+        </p>
+      </section>
+
+      <div class="content-section">
+        <FAQSection faqs={backToSchoolFaqs} />
+      </div>
+
+      <div class="content-section">
+        <RelatedCalculators calculators={relatedCalculators} />
+      </div>
+    </CalculatorPageShell>
+
+    <MethodologySection category="back to school affordability" />
+  </div>
+
+  <script is:inline>
+    const clamp = (value, min, max) => Math.min(Math.max(value, min), max);
+
+    const getNumber = (id) => {
+      const rawValue = document.getElementById(id)?.value;
+      const value = Number(rawValue);
+      return Number.isFinite(value) && value >= 0 ? value : 0;
+    };
+
+    function getPressureLevel(score) {
+      if (score <= 30) {
+        return {
+          label: "Low Pressure",
+          stress: "Low pressure",
+          colorClass: "safe",
+          action:
+            "The plan looks financially manageable if the program payoff is real and you avoid unnecessary extra borrowing.",
+        };
+      }
+
+      if (score <= 60) {
+        return {
+          label: "Moderate Pressure",
+          stress: "Moderate pressure",
+          colorClass: "caution",
+          action:
+            "Compare cheaper programs, grants, employer help, part-time enrollment, and a smaller borrowing plan before committing.",
+        };
+      }
+
+      return {
+        label: "High Pressure",
+        stress: "High pressure",
+        colorClass: "danger",
+        action:
+          "Reduce the cost, delay enrollment, increase savings, improve aid, or choose a clearer payoff path before going back to school.",
+      };
+    }
+
+    function calculateBackToSchool() {
+      const monthlyIncome = getNumber("monthlyIncome");
+      const savings = getNumber("savings");
+      const schoolCost = getNumber("schoolCost");
+      const borrowedAmount = getNumber("borrowedAmount");
+      const monthlyDebt = getNumber("monthlyDebt");
+      const lostIncome = getNumber("lostIncome");
+      const incomeGain = getNumber("incomeGain");
+      const years = getNumber("years");
+      const programStrength =
+        document.getElementById("programStrength")?.value || "medium";
+      const workStatus =
+        document.getElementById("workStatus")?.value || "full";
+
+      const results = document.getElementById("results");
+      const scoreText = document.getElementById("scoreText");
+      const fillBar = document.getElementById("fillBar");
+      const resultDetails = document.getElementById("resultDetails");
+      const guidance = document.getElementById("guidance");
+
+      results.classList.add("visible");
+
+      if (monthlyIncome <= 0 || schoolCost <= 0) {
+        scoreText.textContent = "Add your numbers first";
+        fillBar.style.width = "0%";
+        fillBar.className = "fill safe";
+
+        resultDetails.innerHTML =
+          "<p>Enter monthly take-home income, total school cost, savings, debt, expected income gain, and program details so the calculator can estimate back-to-school pressure.</p>";
+
+        guidance.textContent = "";
+        return;
+      }
+
+      const estimatedMonthlyLoanPayment = borrowedAmount > 0 ? borrowedAmount * 0.012 : 0;
+
+      const annualIncome = monthlyIncome * 12;
+      const totalCostRatio = (schoolCost / Math.max(annualIncome, 1)) * 100;
+      const borrowedRatio = (borrowedAmount / Math.max(annualIncome, 1)) * 100;
+      const monthlyPressureRatio =
+        ((estimatedMonthlyLoanPayment + monthlyDebt + lostIncome) /
+          Math.max(monthlyIncome, 1)) *
+        100;
+
+      const debtOnlyRatio =
+        ((estimatedMonthlyLoanPayment + monthlyDebt) / Math.max(monthlyIncome, 1)) *
+        100;
+
+      const savingsMonths = savings / Math.max(monthlyIncome * 0.7, 1);
+      const costCoveredBySavings = savings / Math.max(schoolCost, 1);
+      const incomeRecoveryPower = schoolCost / Math.max(annualIncome, 1);
+      const loanRecoveryPower = borrowedAmount / Math.max(annualIncome, 1);
+      const payoffRatio =
+        incomeGain > 0 ? estimatedMonthlyLoanPayment / Math.max(incomeGain, 1) : 999;
+
+      const payoffStrength =
+        incomeGain >= estimatedMonthlyLoanPayment * 5 && incomeGain >= lostIncome * 0.5
+          ? "strong"
+          : incomeGain >= estimatedMonthlyLoanPayment * 2
+            ? "moderate"
+            : "weak";
+
+      let pressureScore = 0;
+
+      pressureScore += clamp(totalCostRatio * 0.55, 0, 30);
+      pressureScore += clamp(borrowedRatio * 0.7, 0, 26);
+      pressureScore += clamp(monthlyPressureRatio * 0.9, 0, 36);
+      pressureScore += clamp(debtOnlyRatio * 0.45, 0, 18);
+
+      if (years >= 4) {
+        pressureScore += 14;
+      } else if (years >= 2) {
+        pressureScore += 8;
+      } else if (years > 0) {
+        pressureScore += 3;
+      }
+
+      if (workStatus === "part") {
+        pressureScore += 6;
+      } else if (workStatus === "pause") {
+        pressureScore += 14;
+      }
+
+      if (savingsMonths < 1) {
+        pressureScore += monthlyIncome >= schoolCost * 3 ? 2 : 18;
+      } else if (savingsMonths < 3) {
+        pressureScore += monthlyIncome >= schoolCost * 2 ? 2 : 10;
+      } else if (savingsMonths >= 6) {
+        pressureScore -= 8;
+      }
+
+      if (costCoveredBySavings >= 1 && savingsMonths >= 6) {
+        pressureScore -= 10;
+      }
+
+      if (incomeGain <= 0) {
+        pressureScore += 18;
+      } else if (payoffRatio > 0.5) {
+        pressureScore += 12;
+      } else if (payoffRatio > 0.3) {
+        pressureScore += 7;
+      } else if (payoffRatio <= 0.15) {
+        pressureScore -= 8;
+      }
+
+      if (programStrength === "strong") {
+        pressureScore -= 10;
+      } else if (programStrength === "weak") {
+        pressureScore += 18;
+      }
+
+      if (
+        monthlyPressureRatio < 10 &&
+        debtOnlyRatio < 12 &&
+        savingsMonths >= 6 &&
+        payoffStrength !== "weak"
+      ) {
+        pressureScore = Math.min(pressureScore, 24);
+      }
+
+      if (
+        monthlyPressureRatio < 5 &&
+        debtOnlyRatio < 8 &&
+        savingsMonths >= 12 &&
+        payoffStrength === "strong"
+      ) {
+        pressureScore = Math.min(pressureScore, 10);
+      }
+
+      const ultraSafeIncome =
+        incomeRecoveryPower <= 0.03 &&
+        loanRecoveryPower <= 0.02 &&
+        monthlyPressureRatio <= 4 &&
+        debtOnlyRatio <= 6;
+
+      const ultraSafeSavings =
+        savings >= schoolCost * 20 &&
+        savingsMonths >= 36;
+
+      const absurdIncome =
+        monthlyIncome >= schoolCost * 4 &&
+        monthlyPressureRatio <= 2 &&
+        debtOnlyRatio <= 5;
+
+      const absurdSavings =
+        savings >= schoolCost * 25 &&
+        savingsMonths >= 60;
+
+      if (ultraSafeIncome || ultraSafeSavings || absurdIncome || absurdSavings) {
+        pressureScore = 0;
+      }
+
+      pressureScore = clamp(Math.round(pressureScore), 0, 100);
+
+      const level = getPressureLevel(pressureScore);
+
+      scoreText.textContent = `${level.label} — ${pressureScore}/100`;
+      fillBar.style.width = `${pressureScore}%`;
+      fillBar.className = `fill ${level.colorClass}`;
+
+      let explanation = "";
+
+      if (pressureScore === 0) {
+        explanation =
+          "This back-to-school plan creates virtually no measurable financial pressure based on the income, savings, cost, debt, timeline, and payoff numbers provided.";
+      } else if (pressureScore <= 30) {
+        explanation =
+          "This back-to-school plan appears manageable. The main priority is confirming the program payoff and avoiding unnecessary extra borrowing.";
+      } else if (pressureScore <= 60) {
+        explanation =
+          "This back-to-school plan may work, but it deserves caution. Cost, borrowing, lost income, existing debt, or an uncertain payoff could reduce flexibility.";
+      } else {
+        explanation =
+          "This back-to-school plan could create significant financial pressure. A cheaper program, more aid, smaller loan, slower timeline, or clearer payoff would likely create more flexibility.";
+      }
+
+      resultDetails.innerHTML = `
+        <p><strong>Total school cost:</strong> About $${schoolCost.toFixed(0)}.</p>
+
+        <p><strong>Estimated monthly loan payment:</strong> About $${estimatedMonthlyLoanPayment.toFixed(0)} per month.</p>
+
+        <p><strong>School cost compared with income:</strong> ${totalCostRatio.toFixed(1)}% of annual take-home income.</p>
+
+        <p><strong>Borrowed amount compared with income:</strong> ${borrowedRatio.toFixed(1)}% of annual take-home income.</p>
+
+        <p><strong>Monthly pressure while enrolled:</strong> ${monthlyPressureRatio.toFixed(1)}% of monthly take-home income, including debt, estimated loan payment, and lost income.</p>
+
+        <p><strong>Debt payment pressure:</strong> ${debtOnlyRatio.toFixed(1)}% of monthly take-home income, including current debt and estimated school borrowing.</p>
+
+        <p><strong>Emergency savings cushion:</strong> About ${savingsMonths.toFixed(1)} months of estimated flexibility.</p>
+
+        <p><strong>Expected payoff strength:</strong> ${payoffStrength} based on expected income gain, school borrowing, and income disruption.</p>
+
+        <p><strong>Pressure level:</strong> ${level.stress}.</p>
+
+        <p>${explanation} Recommended next step: ${level.action}</p>
+      `;
+
+      guidance.textContent = "";
+    }
+
+    document
+      .getElementById("schoolButton")
+      .addEventListener("click", calculateBackToSchool);
+  </script>
+</Layout>

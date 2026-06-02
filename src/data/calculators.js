@@ -869,4 +869,58 @@ export const calculators = [
   href: "/should-i-spend-25000-on-a-bathroom-remodel",
 },
 
+{
+  id: "college-20000",
+  category: "College",
+  title: "Should I Spend $20,000 on College?",
+  description:
+    "Evaluate college affordability using tuition, savings, student loan risk, expected career payoff, debt pressure, and monthly flexibility.",
+  href: "/should-i-spend-20000-on-college",
+},
+
+{
+  id: "student-loans",
+  category: "College",
+  title: "Should I Take Out Student Loans?",
+  description:
+    "Evaluate student loan affordability using expected payments, future income, existing debt, savings cushion, repayment risk, and career upside.",
+  href: "/should-i-take-out-student-loans",
+},
+
+{
+  id: "use-savings-for-college",
+  category: "College",
+  title: "Should I Use Savings for College?",
+  description:
+    "Evaluate whether using savings for college makes sense based on emergency reserves, tuition pressure, debt avoidance, cash flow, and household risk.",
+  href: "/should-i-use-savings-for-college",
+},
+
+{
+  id: "college-50000",
+  category: "College",
+  title: "Should I Spend $50,000 on College?",
+  description:
+    "Evaluate a major college expense using savings, student loan exposure, expected income gains, debt pressure, repayment risk, and long-term flexibility.",
+  href: "/should-i-spend-50000-on-college",
+},
+
+{
+  id: "go-back-to-school",
+  category: "College",
+  title: "Should I Go Back to School?",
+  description:
+    "Evaluate going back to school using tuition, lost income, savings, student loan risk, career upside, family obligations, and monthly cash flow.",
+  href: "/should-i-go-back-to-school",
+},
+
+{
+  id: "college-cost",
+  category: "College",
+  title: "College Cost Calculator",
+  description:
+    "Estimate college affordability using tuition, fees, housing, books, savings, student loans, expected payoff, and overall financial pressure.",
+  href: "/college-cost-calculator",
+},
+
 ];

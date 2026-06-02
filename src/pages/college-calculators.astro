@@ -1,0 +1,488 @@
+---
+import Layout from "../layouts/Layout.astro";
+import CalculatorCard from "../components/CalculatorCard.astro";
+import FAQSection from "../components/FAQSection.astro";
+import { calculators } from "../data/calculators.js";
+
+const collegeCalculators = calculators.filter(
+  (calculator) => calculator.category === "College"
+);
+
+const featuredCollegeLinks = [
+  {
+    href: "/college-cost-calculator",
+    title: "College Cost Calculator",
+    text:
+      "Estimate the real pressure of tuition, fees, housing, books, savings, loans, and monthly cash flow before committing.",
+  },
+  {
+    href: "/should-i-spend-20000-on-college",
+    title: "$20,000 College Calculator",
+    text:
+      "Pressure-test a lower-cost degree, certificate, semester, or program against income, savings, debt, and expected payoff.",
+  },
+  {
+    href: "/should-i-spend-50000-on-college",
+    title: "$50,000 College Calculator",
+    text:
+      "Evaluate whether a larger college expense creates manageable long-term pressure or too much financial strain.",
+  },
+  {
+    href: "/should-i-take-out-student-loans",
+    title: "Student Loan Calculator",
+    text:
+      "Compare borrowing against future payments, income expectations, repayment risk, and household flexibility.",
+  },
+];
+
+const planningLinks = [
+  {
+    href: "/should-i-use-savings-for-college",
+    title: "Should I Use Savings for College?",
+    text:
+      "Decide whether using cash for school protects your future or drains too much emergency and household cushion.",
+  },
+  {
+    href: "/should-i-go-back-to-school",
+    title: "Should I Go Back to School?",
+    text:
+      "Weigh tuition, time away from work, career upside, debt risk, age, savings, and family obligations.",
+  },
+  {
+    href: "/how-much-emergency-savings-should-i-have",
+    title: "Emergency Savings Guide",
+    text:
+      "See how much cushion to preserve before redirecting savings toward tuition, fees, books, or housing.",
+  },
+  {
+    href: "/what-counts-as-debt",
+    title: "What Counts as Debt?",
+    text:
+      "Understand which existing obligations matter before adding student loans or education-related payments.",
+  },
+];
+
+const collegeCostFactors = [
+  {
+    title: "Tuition and Fees",
+    text:
+      "The published price may not include program fees, technology fees, lab costs, graduation fees, or course-specific charges.",
+  },
+  {
+    title: "Housing and Transportation",
+    text:
+      "Rent, dorms, commuting, parking, gas, flights, and moving costs can change the real college budget quickly.",
+  },
+  {
+    title: "Books, Supplies, and Equipment",
+    text:
+      "Laptops, software, uniforms, tools, textbooks, exam fees, and professional materials can add pressure beyond tuition.",
+  },
+  {
+    title: "Lost Income and Time",
+    text:
+      "Going back to school can reduce work hours, delay earnings, or create childcare and schedule costs that matter as much as tuition.",
+  },
+];
+
+const collegeFaqs = [
+  {
+    question: "How much should you spend on college?",
+    answer:
+      "The right amount depends on income, savings, scholarships, grants, existing debt, expected earnings after graduation, program quality, and whether the cost creates manageable monthly pressure.",
+  },
+  {
+    question: "Is $20,000 for college too much?",
+    answer:
+      "$20,000 may be reasonable for a strong program with clear career value, but it can still be risky if it drains emergency savings, requires high-interest debt, or does not improve earning power.",
+  },
+  {
+    question: "Is $50,000 for college too much?",
+    answer:
+      "$50,000 is a major financial decision. It may make sense for some degrees or career pivots, but the repayment path, job outlook, income upside, and savings impact should be tested carefully.",
+  },
+  {
+    question: "Should I take out student loans?",
+    answer:
+      "Student loans may be reasonable when the degree has a clear payoff and payments fit future income. They become riskier when the program outcome is uncertain, borrowing is high, or existing debt is already stressful.",
+  },
+  {
+    question: "Should I use savings to pay for college?",
+    answer:
+      "Using savings can reduce borrowing, but it should not wipe out emergency reserves or leave the household unable to handle rent, repairs, medical bills, childcare, or job disruption.",
+  },
+];
+---
+
+<Layout
+  title="College Cost Calculators | ShouldISpend"
+  description="Browse college cost calculators for tuition, student loans, savings, going back to school, and major education spending decisions."
+>
+  <style>
+    .container {
+      max-width: 1120px;
+      margin: 0 auto;
+      padding: 76px 24px 90px;
+    }
+
+    .hero {
+      max-width: 920px;
+      margin-bottom: 42px;
+    }
+
+    .eyebrow {
+      color: var(--accent);
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      font-size: 0.78rem;
+      font-weight: 800;
+      margin-bottom: 16px;
+    }
+
+    h1 {
+      font-size: clamp(2.8rem, 7vw, 5rem);
+      line-height: 0.98;
+      margin: 0 0 24px;
+      color: var(--text);
+      letter-spacing: -0.05em;
+      max-width: 950px;
+    }
+
+    .intro {
+      max-width: 850px;
+      color: var(--muted);
+      font-size: 1.12rem;
+      line-height: 1.85;
+      margin: 0;
+    }
+
+    .trust-strip {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+      margin: 36px 0 64px;
+    }
+
+    .trust-item {
+      background: #f8fafc;
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      padding: 18px 20px;
+    }
+
+    .trust-item strong {
+      display: block;
+      color: var(--text);
+      margin-bottom: 6px;
+      font-size: 0.98rem;
+    }
+
+    .trust-item span {
+      color: var(--muted);
+      line-height: 1.55;
+      font-size: 0.92rem;
+    }
+
+    .grid,
+    .link-grid,
+    .info-grid {
+      display: grid;
+      gap: 24px;
+    }
+
+    .grid {
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      margin-top: 28px;
+    }
+
+    .link-grid,
+    .info-grid {
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      margin-top: 28px;
+    }
+
+    .content-section {
+      margin-top: 76px;
+    }
+
+    .content-section.narrow {
+      max-width: 860px;
+    }
+
+    .section-kicker {
+      color: var(--accent);
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      font-size: 0.76rem;
+      margin-bottom: 12px;
+    }
+
+    .content-section h2 {
+      font-size: clamp(1.85rem, 4vw, 2.35rem);
+      margin: 0 0 18px;
+      line-height: 1.15;
+      color: var(--text);
+      letter-spacing: -0.035em;
+    }
+
+    .content-section p,
+    .content-section li {
+      color: var(--muted);
+      line-height: 1.82;
+      margin-bottom: 18px;
+      font-size: 1.04rem;
+    }
+
+    .link-card,
+    .info-card {
+      display: block;
+      background: white;
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 24px;
+      text-decoration: none;
+      color: inherit;
+    }
+
+    .link-card {
+      transition:
+        transform 0.15s ease,
+        box-shadow 0.15s ease,
+        border-color 0.15s ease;
+    }
+
+    .link-card:hover {
+      transform: translateY(-3px);
+      border-color: rgba(15, 118, 110, 0.35);
+      box-shadow: 0 16px 35px rgba(15, 23, 42, 0.08);
+    }
+
+    .link-card strong,
+    .info-card h3 {
+      display: block;
+      color: var(--text);
+      margin-bottom: 10px;
+      font-size: 1.05rem;
+    }
+
+    .link-card span,
+    .info-card p {
+      color: var(--muted);
+      line-height: 1.7;
+      font-size: 0.96rem;
+      margin: 0;
+    }
+
+    .callout {
+      margin-top: 72px;
+      padding: 30px;
+      border-radius: 24px;
+      border: 1px solid var(--border);
+      background: #f8fafc;
+      max-width: 900px;
+    }
+
+    .callout h2 {
+      margin: 0 0 14px;
+      color: var(--text);
+      font-size: 1.55rem;
+      letter-spacing: -0.02em;
+    }
+
+    .callout p {
+      color: var(--muted);
+      line-height: 1.78;
+      margin: 0;
+    }
+
+    @media (max-width: 768px) {
+      .container {
+        padding: 54px 18px 76px;
+      }
+
+      h1 {
+        font-size: 2.75rem;
+      }
+
+      .intro {
+        font-size: 1.04rem;
+      }
+
+      .trust-strip {
+        grid-template-columns: 1fr;
+        margin-bottom: 50px;
+      }
+
+      .grid,
+      .link-grid,
+      .info-grid {
+        grid-template-columns: 1fr;
+        gap: 18px;
+      }
+
+      .content-section {
+        margin-top: 58px;
+      }
+    }
+  </style>
+
+  <main class="container">
+    <section class="hero">
+      <div class="eyebrow">College Calculators</div>
+
+      <h1>College Cost Calculators for Real-Life Education Decisions</h1>
+
+      <p class="intro">
+        College can be a smart investment, a manageable stretch, or a financial
+        strain depending on tuition, housing, books, loans, savings, income,
+        career upside, and family obligations. These calculators help pressure-test
+        education spending before you commit cash, borrow money, or rearrange your
+        life around school.
+      </p>
+    </section>
+
+    <div class="trust-strip">
+      <div class="trust-item">
+        <strong>Beyond tuition</strong>
+        <span>
+          College affordability includes housing, fees, books, supplies, lost income, and repayment pressure.
+        </span>
+      </div>
+
+      <div class="trust-item">
+        <strong>Loan-aware planning</strong>
+        <span>
+          Tools flag when borrowing may create more stress than the degree can reasonably justify.
+        </span>
+      </div>
+
+      <div class="trust-item">
+        <strong>Payoff-first framing</strong>
+        <span>
+          The goal is education that improves your future without cornering your present finances.
+        </span>
+      </div>
+    </div>
+
+    <section class="content-section">
+      <div class="section-kicker">Start Here</div>
+
+      <h2>College Affordability Calculators</h2>
+
+      <p>
+        Use these tools to compare tuition decisions, student loans, savings
+        tradeoffs, and back-to-school plans against your income, emergency fund,
+        existing debt, monthly flexibility, and expected career payoff.
+      </p>
+
+      <div class="grid">
+        {collegeCalculators.map((calculator) => (
+          <CalculatorCard
+            category={calculator.category}
+            title={calculator.title}
+            description={calculator.description}
+            href={calculator.href}
+          />
+        ))}
+      </div>
+    </section>
+
+    <section class="content-section">
+      <div class="section-kicker">Popular Tools</div>
+
+      <h2>Compare Common College Spending Decisions</h2>
+
+      <p>
+        A $20,000 program, a $50,000 degree path, and a student loan decision
+        can create very different levels of pressure. The safest choice is not
+        always the cheapest one, but the numbers should make sense before the
+        commitment becomes difficult to unwind.
+      </p>
+
+      <div class="link-grid">
+        {featuredCollegeLinks.map((link) => (
+          <a class="link-card" href={link.href}>
+            <strong>{link.title}</strong>
+            <span>{link.text}</span>
+          </a>
+        ))}
+      </div>
+    </section>
+
+    <section class="content-section narrow">
+      <div class="section-kicker">Decision Philosophy</div>
+
+      <h2>How Much Should You Spend on College?</h2>
+
+      <p>
+        There is no universal correct college budget. The right amount depends
+        on grants, scholarships, household income, existing debt, emergency
+        savings, the strength of the program, career goals, and the income you
+        can reasonably expect after finishing.
+      </p>
+
+      <p>
+        A college expense that is manageable for one person may be risky for
+        another. A safer education budget usually avoids high-interest debt,
+        preserves some emergency cushion, and has a realistic path to improved
+        earning power or career stability.
+      </p>
+
+      <p>
+        The healthiest question is not “Can I technically enroll?” It is “Will
+        this education decision still feel financially defensible after the bill,
+        the loans, and the life changes show up?”
+      </p>
+    </section>
+
+    <section class="content-section">
+      <div class="section-kicker">Hidden Costs</div>
+
+      <h2>College Expenses That Quietly Change the Real Price</h2>
+
+      <div class="info-grid">
+        {collegeCostFactors.map((item) => (
+          <div class="info-card">
+            <h3>{item.title}</h3>
+            <p>{item.text}</p>
+          </div>
+        ))}
+      </div>
+    </section>
+
+    <section class="content-section">
+      <div class="section-kicker">Planning Guides</div>
+
+      <h2>College Planning and Financial Pressure Guides</h2>
+
+      <p>
+        These guides help connect education spending with the bigger household
+        picture: savings, debt, emergency funds, monthly obligations, and the
+        tradeoff between future opportunity and present financial pressure.
+      </p>
+
+      <div class="link-grid">
+        {planningLinks.map((link) => (
+          <a class="link-card" href={link.href}>
+            <strong>{link.title}</strong>
+            <span>{link.text}</span>
+          </a>
+        ))}
+      </div>
+    </section>
+
+    <section class="callout">
+      <h2>Use College Calculators as a Pressure Test</h2>
+
+      <p>
+        These tools are educational estimates, not personalized financial advice.
+        Use them to compare tradeoffs, spot repayment risk, protect emergency
+        savings, and make clearer decisions before committing to tuition, loans,
+        or a major career pivot.
+      </p>
+    </section>
+
+    <FAQSection title="College Cost FAQ" faqs={collegeFaqs} />
+  </main>
+</Layout>

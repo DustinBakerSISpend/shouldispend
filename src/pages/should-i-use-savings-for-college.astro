@@ -1,0 +1,744 @@
+---
+import Layout from "../layouts/Layout.astro";
+import CalculatorPageShell from "../components/CalculatorPageShell.astro";
+import FAQSection from "../components/FAQSection.astro";
+import RelatedCalculators from "../components/RelatedCalculators.astro";
+import MethodologySection from "../components/MethodologySection.astro";
+import WhenSpendingMakesSense from "../components/WhenSpendingMakesSense.astro";
+import { calculators } from "../data/calculators.js";
+
+const savingsFaqs = [
+  {
+    question: "Should I use savings to pay for college?",
+    answer:
+      "Using savings for college can make sense when it reduces borrowing, preserves an emergency cushion, and supports a program with clear career value. It becomes riskier when it drains cash needed for rent, food, medical bills, transportation, or job disruption.",
+  },
+  {
+    question: "Is it better to use savings or take out student loans?",
+    answer:
+      "The better choice depends on emergency savings, loan terms, expected income after school, current debt, and program payoff. A balanced approach may use some savings while avoiding both excessive borrowing and a depleted emergency fund.",
+  },
+  {
+    question: "How much savings should I keep before paying for college?",
+    answer:
+      "A safer plan usually preserves enough cash for several months of essential expenses, especially if income is unstable, dependents rely on you, or school may reduce work hours.",
+  },
+];
+
+const relatedCalculators = calculators
+  .filter(
+    (calculator) =>
+      calculator.category === "College" &&
+      calculator.href !== "/should-i-use-savings-for-college"
+  )
+  .slice(0, 4);
+---
+
+<Layout
+  title="Should I Use Savings for College?"
+  description="Evaluate whether using savings for college protects your future or creates financial pressure by draining emergency reserves, cash flow, and flexibility."
+>
+  <style>
+    .container {
+      max-width: 900px;
+      margin: auto;
+    }
+
+    .calculator {
+      background: white;
+      padding: 40px;
+      border-radius: 24px;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.06);
+    }
+
+    .calculator h2 {
+      margin-top: 0;
+      font-size: 2rem;
+      margin-bottom: 18px;
+      color: #0f172a;
+    }
+
+    .calculator-intro {
+      color: #334155;
+      line-height: 1.8;
+      margin-bottom: 30px;
+      font-size: 1.05rem;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+    }
+
+    .field label {
+      display: block;
+      font-weight: 800;
+      margin-bottom: 10px;
+      color: #0f172a;
+    }
+
+    .field input,
+    .field select {
+      width: 100%;
+      padding: 16px;
+      border-radius: 12px;
+      border: 1px solid #cbd5e1;
+      font-size: 1rem;
+      box-sizing: border-box;
+      background: white;
+    }
+
+    .helper-link {
+      margin-top: 10px;
+      font-size: 0.92rem;
+      line-height: 1.5;
+      color: #475569;
+    }
+
+    .helper-link a,
+    .content-link {
+      color: #0f766e;
+      font-weight: 700;
+      text-decoration: none;
+    }
+
+    .helper-link a:hover,
+    .content-link:hover {
+      text-decoration: underline;
+    }
+
+    button {
+      margin-top: 30px;
+      background: #0f766e;
+      color: white;
+      border: none;
+      padding: 18px 32px;
+      border-radius: 999px;
+      font-size: 1.05rem;
+      font-weight: 800;
+      cursor: pointer;
+      transition: opacity 0.2s ease;
+    }
+
+    button:hover {
+      opacity: 0.92;
+    }
+
+    .results {
+      margin-top: 36px;
+      background: #f8fafc;
+      padding: 32px;
+      border-radius: 24px;
+      border: 1px solid var(--border);
+      box-shadow: 0 10px 24px rgba(15, 23, 42, 0.04);
+      display: none;
+    }
+
+    .results.visible {
+      display: block;
+    }
+
+    .score {
+      font-size: clamp(2rem, 4vw, 2.7rem);
+      font-weight: 900;
+      color: #0f172a;
+      margin-bottom: 22px;
+      line-height: 1.15;
+    }
+
+    .bar {
+      width: 100%;
+      height: 16px;
+      background: #dbe4ee;
+      border-radius: 999px;
+      overflow: hidden;
+      margin-bottom: 24px;
+    }
+
+    .fill {
+      height: 100%;
+      width: 0%;
+      border-radius: 999px;
+      transition: width 0.45s ease;
+    }
+
+    .fill.safe {
+      background: linear-gradient(90deg, #0f766e 0%, #14b8a6 100%);
+    }
+
+    .fill.caution {
+      background: linear-gradient(90deg, #ca8a04 0%, #facc15 100%);
+    }
+
+    .fill.danger {
+      background: linear-gradient(90deg, #dc2626 0%, #f97316 100%);
+    }
+
+    .result-details {
+      color: #334155;
+      line-height: 1.9;
+      font-size: 1.02rem;
+    }
+
+    .result-details p {
+      margin: 0 0 12px;
+    }
+
+    .guidance {
+      margin-top: 22px;
+      padding-top: 20px;
+      border-top: 1px solid #dbe4ee;
+      font-size: 1.12rem;
+      line-height: 1.85;
+      color: #1e293b;
+    }
+
+    .disclaimer {
+      margin-top: 24px;
+      font-size: 0.9rem;
+      color: #64748b;
+    }
+
+    .content-section {
+      margin-top: 60px;
+    }
+
+    .content-section h2 {
+      font-size: 2rem;
+      margin-bottom: 20px;
+      color: #0f172a;
+    }
+
+    .content-section p,
+    .content-section li {
+      font-size: 1.1rem;
+      line-height: 1.9;
+      color: #334155;
+    }
+
+    .pillar-card {
+      display: block;
+      background: #f8fafc;
+      border: 1px solid #dbe4ee;
+      border-radius: 20px;
+      padding: 24px;
+      margin-top: 28px;
+      text-decoration: none;
+      transition: transform 0.15s ease;
+    }
+
+    .pillar-card:hover {
+      transform: translateY(-2px);
+    }
+
+    .pillar-card strong {
+      display: block;
+      margin-bottom: 10px;
+      color: #0f172a;
+      font-size: 1.08rem;
+    }
+
+    .pillar-card span {
+      color: #334155;
+      line-height: 1.7;
+      font-size: 0.98rem;
+    }
+
+    @media (max-width: 768px) {
+      .calculator {
+        padding: 24px;
+      }
+
+      .grid {
+        grid-template-columns: 1fr;
+      }
+
+      .calculator h2,
+      .content-section h2 {
+        font-size: 1.7rem;
+      }
+
+      .results {
+        padding: 24px;
+      }
+    }
+  </style>
+
+  <div class="container">
+    <CalculatorPageShell
+      eyebrow="College Savings Calculator"
+      title="Should I Use Savings for College?"
+      description="Pressure-test whether paying for college from savings protects your future or leaves too little emergency cushion."
+    >
+      <div class="calculator">
+        <h2>College Savings Pressure Verdict</h2>
+
+        <p class="calculator-intro">
+          Enter your current savings, how much you plan to use for college,
+          monthly take-home income, existing debt payments, and expected income
+          gain from the program. This calculator estimates whether using savings
+          looks manageable, worth caution, or financially stressful.
+        </p>
+
+        <div class="grid">
+          <div class="field">
+            <label for="income">Monthly Take-Home Income</label>
+            <input id="income" type="number" placeholder="Example: 5200" />
+          </div>
+
+          <div class="field">
+            <label for="savings">Current Savings</label>
+            <input id="savings" type="number" placeholder="Example: 25000" />
+          </div>
+
+          <div class="field">
+            <label for="cashUsed">Savings You Plan to Use for College</label>
+            <input id="cashUsed" type="number" placeholder="Example: 12000" />
+          </div>
+
+          <div class="field">
+            <label for="collegeCost">Total College Cost</label>
+            <input id="collegeCost" type="number" placeholder="Example: 20000" />
+          </div>
+
+          <div class="field">
+            <label for="debt">Current Monthly Debt Payments</label>
+            <input id="debt" type="number" placeholder="Example: 600" />
+
+            <div class="helper-link">
+              Not sure what counts as debt?
+              <a href="/what-counts-as-debt">Read the debt guide</a>
+            </div>
+          </div>
+
+          <div class="field">
+            <label for="incomeGain">Expected Monthly Income Gain From the Program</label>
+            <input id="incomeGain" type="number" placeholder="Example: 800" />
+          </div>
+
+          <div class="field">
+            <label for="dependents">Household Dependents</label>
+            <input id="dependents" type="number" placeholder="Example: 2" />
+          </div>
+
+          <div class="field">
+            <label for="programStrength">Program Confidence</label>
+            <select id="programStrength">
+              <option value="strong">Strong job or income path</option>
+              <option value="medium" selected>Some career upside</option>
+              <option value="weak">Unclear payoff</option>
+            </select>
+          </div>
+        </div>
+
+        <button id="savingsButton" type="button">Get Savings Verdict</button>
+
+        <div class="results" id="results">
+          <div class="score" id="scoreText"></div>
+
+          <div class="bar">
+            <div class="fill" id="fillBar"></div>
+          </div>
+
+          <div class="result-details" id="resultDetails"></div>
+
+          <div class="guidance" id="guidance"></div>
+
+          <div class="disclaimer">
+            This is a general educational estimate, not financial advice.
+          </div>
+        </div>
+      </div>
+
+      <section class="content-section">
+        <h2>Start With the Full College Cost Calculator</h2>
+
+        <p>
+          Using savings for college should be judged against the full education
+          decision, not just the amount of cash available today. Tuition, fees,
+          books, housing, transportation, reduced work hours, remaining emergency
+          reserves, and expected payoff all matter.
+        </p>
+
+        <a class="pillar-card" href="/college-cost-calculator">
+          <strong>College Cost Calculator</strong>
+          <span>
+            Estimate total education pressure using tuition, fees, housing,
+            books, savings, loans, expected payoff, and household flexibility.
+          </span>
+        </a>
+
+        <a class="pillar-card" href="/should-i-take-out-student-loans">
+          <strong>Should I Take Out Student Loans?</strong>
+          <span>
+            Compare savings use with borrowing pressure, future payments,
+            existing debt, and expected income after school.
+          </span>
+        </a>
+
+        <a class="pillar-card" href="/how-much-emergency-savings-should-i-have">
+          <strong>Emergency Savings Guide</strong>
+          <span>
+            See how much cushion to preserve before redirecting savings toward
+            tuition, fees, books, or housing.
+          </span>
+        </a>
+      </section>
+
+      <section class="content-section">
+        <h2>What Using Savings for College Really Means</h2>
+
+        <p>
+          Paying cash for college can reduce student loan pressure, interest
+          costs, and future monthly obligations. But using savings also removes
+          the cushion that protects you from job loss, repairs, medical bills,
+          rent pressure, family emergencies, and other costs that do not wait for
+          graduation.
+        </p>
+
+        <p>
+          The healthiest plan is not always “use all cash” or “borrow everything.”
+          Often, the safer decision is a balanced plan that limits debt while
+          keeping enough emergency savings to avoid credit cards or panic
+          borrowing later.
+        </p>
+      </section>
+
+      <WhenSpendingMakesSense
+        title="When Using Savings for College Can Make Sense"
+        items={[
+          "You will still have a meaningful emergency cushion after paying.",
+          "The program has a clear job, license, promotion, or income path.",
+          "Using savings meaningfully reduces student loan borrowing.",
+          "Your monthly bills and debt payments remain manageable.",
+          "You have compared grants, scholarships, employer reimbursement, and lower-cost schools.",
+        ]}
+      />
+
+      <section class="content-section">
+        <h2>When You Should Wait</h2>
+
+        <p>
+          Using savings for college deserves caution if it would leave you with
+          less than one to three months of basic flexibility, especially when
+          income is unstable, dependents rely on you, or school may reduce your
+          ability to work.
+        </p>
+
+        <p>
+          Waiting may mean applying for more aid, choosing a lower-cost school,
+          attending part-time, using employer reimbursement, transferring credits,
+          or building a stronger emergency fund before paying cash.
+        </p>
+
+        <p>
+          If the decision would strain
+          <a class="content-link" href="/how-much-rent-can-i-afford">
+            housing
+          </a>,
+          <a class="content-link" href="/should-i-spend-this-much-on-groceries-per-month">
+            groceries
+          </a>,
+          medical bills, transportation, childcare, or existing debt, the cash
+          plan may need to be redesigned before enrollment.
+        </p>
+      </section>
+
+      <section class="content-section">
+        <h2>Key Costs to Consider Before Using Savings</h2>
+
+        <p>
+          Before paying for college from savings, estimate tuition, fees, books,
+          software, transportation, parking, housing, childcare, lost work hours,
+          and the possibility that the program takes longer than expected.
+        </p>
+
+        <p>
+          Also think about what savings is currently protecting. Emergency cash
+          is not idle money when it prevents high-interest debt during a crisis.
+          Using savings is safer when the remaining cushion still protects normal
+          life.
+        </p>
+
+        <p>
+          You can compare this decision with the broader
+          <a class="content-link" href="/college-calculators">
+            college calculator hub
+          </a>
+          before choosing a funding plan.
+        </p>
+      </section>
+
+      <section class="content-section">
+        <h2>Signs Using Savings Is Creating Financial Pressure</h2>
+
+        <p>
+          Be careful if the payment would wipe out emergency reserves, force you
+          to rely on credit cards, delay essential bills, or leave no room for
+          job disruption, medical bills, car repairs, rent increases, or family
+          responsibilities.
+        </p>
+
+        <p>
+          A weaker verdict does not mean paying cash is always wrong. It means
+          this version of the plan may need more aid, a lower cost, a smaller
+          cash contribution, or a stronger savings cushion.
+        </p>
+      </section>
+
+      <section class="content-section">
+        <h2>What Your Savings Verdict Actually Means</h2>
+
+        <p>
+          A savings verdict is not a judgment on whether college is worthwhile.
+          It estimates whether using cash for school leaves enough emergency
+          cushion, monthly flexibility, and payoff potential to make the decision
+          financially durable.
+        </p>
+
+        <p>
+          A stronger verdict means the savings drawdown is less likely to create
+          pressure after enrollment. A weaker verdict means the education goal
+          may still make sense, but the funding plan deserves more caution.
+        </p>
+      </section>
+
+      <div class="content-section">
+        <FAQSection faqs={savingsFaqs} />
+      </div>
+
+      <div class="content-section">
+        <RelatedCalculators calculators={relatedCalculators} />
+      </div>
+    </CalculatorPageShell>
+
+    <MethodologySection category="college savings planning" />
+  </div>
+
+  <script is:inline>
+    const clamp = (value, min, max) => Math.min(Math.max(value, min), max);
+
+    const getNumber = (id) => {
+      const rawValue = document.getElementById(id)?.value;
+      const value = Number(rawValue);
+      return Number.isFinite(value) && value >= 0 ? value : 0;
+    };
+
+    function getPressureLevel(score) {
+      if (score <= 30) {
+        return {
+          label: "Low Pressure",
+          stress: "Low pressure",
+          colorClass: "safe",
+          action:
+            "Keep the plan only if the remaining emergency cushion stays protected and the program payoff remains clear.",
+        };
+      }
+
+      if (score <= 60) {
+        return {
+          label: "Moderate Pressure",
+          stress: "Moderate pressure",
+          colorClass: "caution",
+          action:
+            "Compare grants, employer help, smaller cash use, lower-cost schools, and limited borrowing before committing.",
+        };
+      }
+
+      return {
+        label: "High Pressure",
+        stress: "High pressure",
+        colorClass: "danger",
+        action:
+          "Use less savings, reduce the college cost, delay enrollment, or build a stronger emergency fund first.",
+      };
+    }
+
+    function calculateCollegeSavings() {
+      const income = getNumber("income");
+      const savings = getNumber("savings");
+      const cashUsed = getNumber("cashUsed");
+      const collegeCost = getNumber("collegeCost");
+      const debt = getNumber("debt");
+      const incomeGain = getNumber("incomeGain");
+      const dependents = getNumber("dependents");
+      const programStrength =
+        document.getElementById("programStrength")?.value || "medium";
+
+      const results = document.getElementById("results");
+      const scoreText = document.getElementById("scoreText");
+      const fillBar = document.getElementById("fillBar");
+      const resultDetails = document.getElementById("resultDetails");
+      const guidance = document.getElementById("guidance");
+
+      results.classList.add("visible");
+
+      if (income <= 0 || savings <= 0 || cashUsed <= 0) {
+        scoreText.textContent = "Add your numbers first";
+        fillBar.style.width = "0%";
+        fillBar.className = "fill safe";
+
+        resultDetails.innerHTML =
+          "<p>Enter monthly take-home income, current savings, planned savings use, total college cost, debt payments, and expected income gain so the calculator can estimate pressure.</p>";
+
+        guidance.textContent = "";
+        return;
+      }
+
+      const effectiveCollegeCost = collegeCost > 0 ? collegeCost : cashUsed;
+      const remainingSavings = Math.max(savings - cashUsed, 0);
+      const cashUseRatio = (cashUsed / Math.max(savings, 1)) * 100;
+      const costToAnnualIncomeRatio =
+        (effectiveCollegeCost / Math.max(income * 12, 1)) * 100;
+      const remainingSavingsMonths =
+        remainingSavings / Math.max(income * 0.7, 1);
+      const startingSavingsMonths =
+        savings / Math.max(income * 0.7, 1);
+      const debtRatio = (debt / Math.max(income, 1)) * 100;
+      const incomeRecoveryPower =
+        cashUsed / Math.max(income, 1);
+      const savingsPower =
+        savings / Math.max(cashUsed, 1);
+      const payoffStrength =
+        incomeGain >= cashUsed * 0.08
+          ? "strong"
+          : incomeGain >= cashUsed * 0.035
+            ? "moderate"
+            : "weak";
+
+      const dependentRisk = dependents >= 3 ? 8 : dependents >= 1 ? 4 : 0;
+
+      const absurdIncome =
+        income >= cashUsed * 20 &&
+        costToAnnualIncomeRatio <= 2 &&
+        debtRatio <= 5;
+
+      const absurdSavings =
+        savings >= cashUsed * 25 &&
+        cashUseRatio <= 5 &&
+        remainingSavingsMonths >= 60;
+
+      const ultraSafeIncome =
+        incomeRecoveryPower <= 0.05 &&
+        costToAnnualIncomeRatio <= 3 &&
+        debtRatio <= 8;
+
+      const ultraSafeSavings =
+        savingsPower >= 10 &&
+        cashUseRatio <= 10 &&
+        remainingSavingsMonths >= 24;
+
+      let pressureScore = 0;
+
+      pressureScore += clamp(cashUseRatio * 0.55, 0, 38);
+      pressureScore += clamp(costToAnnualIncomeRatio * 0.75, 0, 28);
+      pressureScore += clamp(debtRatio * 0.8, 0, 26);
+      pressureScore += dependentRisk;
+
+      if (remainingSavingsMonths < 1) {
+        pressureScore += income >= cashUsed * 6 ? 4 : 22;
+      } else if (remainingSavingsMonths < 3) {
+        pressureScore += income >= cashUsed * 4 ? 3 : 12;
+      } else if (remainingSavingsMonths >= 6) {
+        pressureScore -= 8;
+      }
+
+      if (cashUseRatio >= 90) {
+        pressureScore += income >= cashUsed * 6 ? 4 : 18;
+      } else if (cashUseRatio >= 70) {
+        pressureScore += income >= cashUsed * 5 ? 3 : 10;
+      } else if (cashUseRatio <= 25) {
+        pressureScore -= 6;
+      }
+
+      if (incomeGain <= 0) {
+        pressureScore += 10;
+      } else if (payoffStrength === "weak") {
+        pressureScore += 8;
+      } else if (payoffStrength === "strong") {
+        pressureScore -= 8;
+      }
+
+      if (programStrength === "strong") {
+        pressureScore -= 8;
+      } else if (programStrength === "weak") {
+        pressureScore += 14;
+      }
+
+      if (
+        cashUseRatio < 35 &&
+        debtRatio < 18 &&
+        remainingSavingsMonths >= 6 &&
+        payoffStrength !== "weak"
+      ) {
+        pressureScore = Math.min(pressureScore, 24);
+      }
+
+      if (
+        cashUseRatio < 15 &&
+        debtRatio < 10 &&
+        remainingSavingsMonths >= 12 &&
+        payoffStrength === "strong"
+      ) {
+        pressureScore = Math.min(pressureScore, 10);
+      }
+
+      if (ultraSafeIncome && ultraSafeSavings) {
+        pressureScore = 0;
+      }
+
+      if (absurdIncome || absurdSavings) {
+        pressureScore = 0;
+      }
+
+      pressureScore = clamp(Math.round(pressureScore), 0, 100);
+
+      const level = getPressureLevel(pressureScore);
+
+      scoreText.textContent = `${level.label} — ${pressureScore}/100`;
+      fillBar.style.width = `${pressureScore}%`;
+      fillBar.className = `fill ${level.colorClass}`;
+
+      let explanation = "";
+
+      if (pressureScore === 0) {
+        explanation =
+          "Using savings for college creates virtually no measurable pressure based on the income, savings, debt, cash use, and payoff numbers provided.";
+      } else if (pressureScore <= 30) {
+        explanation =
+          "Using savings for college appears manageable based on the numbers provided. The main priority is preserving enough emergency cushion after the payment.";
+      } else if (pressureScore <= 60) {
+        explanation =
+          "Using savings for college may work, but it deserves caution. The cash drawdown, remaining emergency cushion, dependents, and payoff assumptions should be reviewed carefully.";
+      } else {
+        explanation =
+          "Using savings for college could create significant financial pressure. A smaller cash contribution, more aid, lower-cost program, or stronger emergency fund would likely create more flexibility.";
+      }
+
+      resultDetails.innerHTML = `
+        <p><strong>Savings used:</strong> ${cashUseRatio.toFixed(1)}% of current savings.</p>
+
+        <p><strong>College cost impact:</strong> ${costToAnnualIncomeRatio.toFixed(1)}% of annual take-home income.</p>
+
+        <p><strong>Emergency savings before payment:</strong> About ${startingSavingsMonths.toFixed(1)} months of estimated flexibility.</p>
+
+        <p><strong>Emergency savings after payment:</strong> About ${remainingSavingsMonths.toFixed(1)} months of estimated flexibility.</p>
+
+        <p><strong>Current debt impact:</strong> ${debtRatio.toFixed(1)}% of monthly take-home income.</p>
+
+        <p><strong>Expected payoff strength:</strong> ${payoffStrength} based on planned cash use versus expected monthly income gain.</p>
+
+        <p><strong>Pressure level:</strong> ${level.stress}.</p>
+
+        <p>${explanation} Recommended next step: ${level.action}</p>
+      `;
+
+      guidance.textContent = "";
+    }
+
+    document
+      .getElementById("savingsButton")
+      .addEventListener("click", calculateCollegeSavings);
+  </script>
+</Layout>

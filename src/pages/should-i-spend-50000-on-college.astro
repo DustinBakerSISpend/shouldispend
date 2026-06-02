@@ -1,0 +1,790 @@
+---
+import Layout from "../layouts/Layout.astro";
+import CalculatorPageShell from "../components/CalculatorPageShell.astro";
+import FAQSection from "../components/FAQSection.astro";
+import RelatedCalculators from "../components/RelatedCalculators.astro";
+import MethodologySection from "../components/MethodologySection.astro";
+import WhenSpendingMakesSense from "../components/WhenSpendingMakesSense.astro";
+import { calculators } from "../data/calculators.js";
+
+const collegeFaqs = [
+  {
+    question: "Is $50,000 too much to spend on college?",
+    answer:
+      "$50,000 can make sense for a degree or credential with strong career value, but it deserves careful testing. The risk rises when the cost requires heavy borrowing, drains savings, or does not clearly improve earning power.",
+  },
+  {
+    question: "Should I borrow $50,000 for college?",
+    answer:
+      "Borrowing $50,000 may be reasonable for some high-value programs, but the expected payment should fit future income without crowding out rent, food, transportation, emergency savings, or existing debt.",
+  },
+  {
+    question: "Is a $50,000 college degree worth it?",
+    answer:
+      "A $50,000 college decision is more defensible when the program has a strong completion path, clear job prospects, realistic income upside, and limited downside if plans change.",
+  },
+];
+
+const relatedCalculators = calculators
+  .filter(
+    (calculator) =>
+      calculator.category === "College" &&
+      calculator.href !== "/should-i-spend-50000-on-college"
+  )
+  .slice(0, 4);
+---
+
+<Layout
+  title="Should I Spend $50,000 on College?"
+  description="Evaluate whether spending $50,000 on college fits your savings, student loan exposure, expected income gains, debt pressure, and long-term flexibility."
+>
+  <style>
+    .container {
+      max-width: 900px;
+      margin: auto;
+    }
+
+    .calculator {
+      background: white;
+      padding: 40px;
+      border-radius: 24px;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.06);
+    }
+
+    .calculator h2 {
+      margin-top: 0;
+      font-size: 2rem;
+      margin-bottom: 18px;
+      color: #0f172a;
+    }
+
+    .calculator-intro {
+      color: #334155;
+      line-height: 1.8;
+      margin-bottom: 30px;
+      font-size: 1.05rem;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+    }
+
+    .field label {
+      display: block;
+      font-weight: 800;
+      margin-bottom: 10px;
+      color: #0f172a;
+    }
+
+    .field input,
+    .field select {
+      width: 100%;
+      padding: 16px;
+      border-radius: 12px;
+      border: 1px solid #cbd5e1;
+      font-size: 1rem;
+      box-sizing: border-box;
+      background: white;
+    }
+
+    .helper-link {
+      margin-top: 10px;
+      font-size: 0.92rem;
+      line-height: 1.5;
+      color: #475569;
+    }
+
+    .helper-link a,
+    .content-link {
+      color: #0f766e;
+      font-weight: 700;
+      text-decoration: none;
+    }
+
+    .helper-link a:hover,
+    .content-link:hover {
+      text-decoration: underline;
+    }
+
+    button {
+      margin-top: 30px;
+      background: #0f766e;
+      color: white;
+      border: none;
+      padding: 18px 32px;
+      border-radius: 999px;
+      font-size: 1.05rem;
+      font-weight: 800;
+      cursor: pointer;
+      transition: opacity 0.2s ease;
+    }
+
+    button:hover {
+      opacity: 0.92;
+    }
+
+    .results {
+      margin-top: 36px;
+      background: #f8fafc;
+      padding: 32px;
+      border-radius: 24px;
+      border: 1px solid var(--border);
+      box-shadow: 0 10px 24px rgba(15, 23, 42, 0.04);
+      display: none;
+    }
+
+    .results.visible {
+      display: block;
+    }
+
+    .score {
+      font-size: clamp(2rem, 4vw, 2.7rem);
+      font-weight: 900;
+      color: #0f172a;
+      margin-bottom: 22px;
+      line-height: 1.15;
+    }
+
+    .bar {
+      width: 100%;
+      height: 16px;
+      background: #dbe4ee;
+      border-radius: 999px;
+      overflow: hidden;
+      margin-bottom: 24px;
+    }
+
+    .fill {
+      height: 100%;
+      width: 0%;
+      border-radius: 999px;
+      transition: width 0.45s ease;
+    }
+
+    .fill.safe {
+      background: linear-gradient(90deg, #0f766e 0%, #14b8a6 100%);
+    }
+
+    .fill.caution {
+      background: linear-gradient(90deg, #ca8a04 0%, #facc15 100%);
+    }
+
+    .fill.danger {
+      background: linear-gradient(90deg, #dc2626 0%, #f97316 100%);
+    }
+
+    .result-details {
+      color: #334155;
+      line-height: 1.9;
+      font-size: 1.02rem;
+    }
+
+    .result-details p {
+      margin: 0 0 12px;
+    }
+
+    .guidance {
+      margin-top: 22px;
+      padding-top: 20px;
+      border-top: 1px solid #dbe4ee;
+      font-size: 1.12rem;
+      line-height: 1.85;
+      color: #1e293b;
+    }
+
+    .disclaimer {
+      margin-top: 24px;
+      font-size: 0.9rem;
+      color: #64748b;
+    }
+
+    .content-section {
+      margin-top: 60px;
+    }
+
+    .content-section h2 {
+      font-size: 2rem;
+      margin-bottom: 20px;
+      color: #0f172a;
+    }
+
+    .content-section p,
+    .content-section li {
+      font-size: 1.1rem;
+      line-height: 1.9;
+      color: #334155;
+    }
+
+    .pillar-card {
+      display: block;
+      background: #f8fafc;
+      border: 1px solid #dbe4ee;
+      border-radius: 20px;
+      padding: 24px;
+      margin-top: 28px;
+      text-decoration: none;
+      transition: transform 0.15s ease;
+    }
+
+    .pillar-card:hover {
+      transform: translateY(-2px);
+    }
+
+    .pillar-card strong {
+      display: block;
+      margin-bottom: 10px;
+      color: #0f172a;
+      font-size: 1.08rem;
+    }
+
+    .pillar-card span {
+      color: #334155;
+      line-height: 1.7;
+      font-size: 0.98rem;
+    }
+
+    @media (max-width: 768px) {
+      .calculator {
+        padding: 24px;
+      }
+
+      .grid {
+        grid-template-columns: 1fr;
+      }
+
+      .calculator h2,
+      .content-section h2 {
+        font-size: 1.7rem;
+      }
+
+      .results {
+        padding: 24px;
+      }
+    }
+  </style>
+
+  <div class="container">
+    <CalculatorPageShell
+      eyebrow="College Cost Calculator"
+      title="Should I Spend $50,000 on College?"
+      description="Pressure-test a $50,000 college expense against savings, student loan exposure, income, career payoff, and monthly financial flexibility."
+    >
+      <div class="calculator">
+        <h2>$50,000 College Pressure Verdict</h2>
+
+        <p class="calculator-intro">
+          Enter your income, savings, expected borrowing, existing monthly debt,
+          and expected income gain. This calculator estimates whether spending
+          $50,000 on college looks manageable, worth caution, or financially
+          stressful.
+        </p>
+
+        <div class="grid">
+          <div class="field">
+            <label for="income">Monthly Take-Home Income</label>
+            <input id="income" type="number" placeholder="Example: 6500" />
+          </div>
+
+          <div class="field">
+            <label for="savings">Current Savings</label>
+            <input id="savings" type="number" placeholder="Example: 30000" />
+          </div>
+
+          <div class="field">
+            <label for="collegeCost">Total College Cost</label>
+            <input id="collegeCost" type="number" placeholder="Example: 50000" />
+          </div>
+
+          <div class="field">
+            <label for="borrowed">Amount You Expect to Borrow</label>
+            <input id="borrowed" type="number" placeholder="Example: 35000" />
+
+            <div class="helper-link">
+              Comparing loan pressure?
+              <a href="/should-i-take-out-student-loans">Use the student loan calculator</a>
+            </div>
+          </div>
+
+          <div class="field">
+            <label for="debt">Current Monthly Debt Payments</label>
+            <input id="debt" type="number" placeholder="Example: 850" />
+
+            <div class="helper-link">
+              Not sure what counts as debt?
+              <a href="/what-counts-as-debt">Read the debt guide</a>
+            </div>
+          </div>
+
+          <div class="field">
+            <label for="incomeGain">Expected Monthly Income Gain After School</label>
+            <input id="incomeGain" type="number" placeholder="Example: 1400" />
+          </div>
+
+          <div class="field">
+            <label for="programStrength">Program Confidence</label>
+            <select id="programStrength">
+              <option value="strong">Strong job or income path</option>
+              <option value="medium" selected>Some career upside</option>
+              <option value="weak">Unclear payoff</option>
+            </select>
+          </div>
+
+          <div class="field">
+            <label for="cashUsed">Savings You Plan to Use</label>
+            <input id="cashUsed" type="number" placeholder="Example: 15000" />
+          </div>
+        </div>
+
+        <button id="collegeButton" type="button">Get College Verdict</button>
+
+        <div class="results" id="results">
+          <div class="score" id="scoreText"></div>
+
+          <div class="bar">
+            <div class="fill" id="fillBar"></div>
+          </div>
+
+          <div class="result-details" id="resultDetails"></div>
+
+          <div class="guidance" id="guidance"></div>
+
+          <div class="disclaimer">
+            This is a general educational estimate, not financial advice.
+          </div>
+        </div>
+      </div>
+
+      <section class="content-section">
+        <h2>Start With the Full College Cost Calculator</h2>
+
+        <p>
+          A $50,000 college decision may involve tuition, fees, books, housing,
+          transportation, reduced work hours, student loans, and a long repayment
+          timeline. The cost should be judged against the full financial picture,
+          not only the school’s published price.
+        </p>
+
+        <a class="pillar-card" href="/college-cost-calculator">
+          <strong>College Cost Calculator</strong>
+          <span>
+            Estimate total education pressure using tuition, fees, housing,
+            books, loans, savings, expected payoff, and household flexibility.
+          </span>
+        </a>
+
+        <a class="pillar-card" href="/should-i-take-out-student-loans">
+          <strong>Should I Take Out Student Loans?</strong>
+          <span>
+            Compare future student loan payments with expected income, existing
+            debt, savings cushion, repayment risk, and program payoff.
+          </span>
+        </a>
+
+        <a class="pillar-card" href="/should-i-use-savings-for-college">
+          <strong>Should I Use Savings for College?</strong>
+          <span>
+            Decide whether paying part of school from savings reduces risk or
+            leaves too little emergency cushion after tuition and fees.
+          </span>
+        </a>
+      </section>
+
+      <section class="content-section">
+        <h2>What a $50,000 College Decision Really Includes</h2>
+
+        <p>
+          A $50,000 college cost might represent several semesters, a private
+          school gap after aid, graduate school, professional training, or a
+          larger career pivot. At this level, the funding plan matters as much
+          as the academic plan.
+        </p>
+
+        <p>
+          Paying $50,000 from savings is different from borrowing $50,000.
+          Borrowing part of it is different from combining scholarships, cash,
+          work income, employer help, and a smaller loan. The healthiest plan
+          limits long-term repayment pressure while preserving enough emergency
+          cash for normal life.
+        </p>
+      </section>
+
+      <WhenSpendingMakesSense
+        title="When Spending $50,000 on College Can Make Sense"
+        items={[
+          "The program has a strong job, license, degree, certification, or promotion path.",
+          "You have compared cheaper schools, transfer credits, grants, scholarships, and employer help.",
+          "Any student loan payment would fit your expected post-school income.",
+          "You can preserve a meaningful emergency cushion after any cash contribution.",
+          "The degree or credential improves long-term stability enough to justify the risk.",
+        ]}
+      />
+
+      <section class="content-section">
+        <h2>When You Should Wait</h2>
+
+        <p>
+          A $50,000 college expense may be too aggressive if the program payoff
+          is unclear, the cost requires large borrowing, or the decision leaves
+          you without enough savings for rent, food, transportation, medical
+          costs, childcare, repairs, or job disruption.
+        </p>
+
+        <p>
+          Waiting does not always mean abandoning school. It may mean applying
+          for more aid, starting at a lower-cost institution, attending part-time,
+          transferring credits, asking about employer reimbursement, or building
+          a stronger cash cushion first.
+        </p>
+
+        <p>
+          If the decision would strain
+          <a class="content-link" href="/how-much-rent-can-i-afford">
+            housing
+          </a>,
+          <a class="content-link" href="/should-i-spend-this-much-on-groceries-per-month">
+            groceries
+          </a>,
+          healthcare, transportation, or existing debt, the education plan
+          should be redesigned before you commit.
+        </p>
+      </section>
+
+      <section class="content-section">
+        <h2>Key Costs to Consider</h2>
+
+        <p>
+          Tuition is only one part of college affordability. Fees, books,
+          software, lab supplies, technology, transportation, housing, parking,
+          childcare, graduation costs, and lost work hours can change the true
+          cost quickly.
+        </p>
+
+        <p>
+          A $50,000 program with a clear payoff and controlled borrowing may be
+          safer than a cheaper program that does not improve your career. The
+          goal is not simply to spend less. The goal is to avoid financial
+          pressure that outweighs the benefit.
+        </p>
+
+        <p>
+          You can compare this decision with the broader
+          <a class="content-link" href="/college-calculators">
+            college calculator hub
+          </a>
+          before choosing a school, loan amount, or payment plan.
+        </p>
+      </section>
+
+      <section class="content-section">
+        <h2>Signs the College Cost Is Creating Financial Pressure</h2>
+
+        <p>
+          Be careful if the expense wipes out your emergency fund, requires
+          credit cards, adds student loans without a clear income path, or forces
+          you to pause essential bills, debt payments, retirement savings, or
+          household stability.
+        </p>
+
+        <p>
+          A weaker verdict does not mean college is a bad idea. It means this
+          version of the plan may need more aid, lower costs, stronger savings,
+          lower borrowing, or a clearer payoff before it becomes financially
+          durable.
+        </p>
+      </section>
+
+      <section class="content-section">
+        <h2>What Your College Verdict Actually Means</h2>
+
+        <p>
+          A college verdict is not a judgment on whether education matters. It
+          estimates whether the current cost, savings drawdown, borrowing plan,
+          and expected payoff create manageable or stressful financial pressure.
+        </p>
+
+        <p>
+          A stronger verdict means the $50,000 decision is less likely to damage
+          long-term flexibility. A weaker verdict means the education goal may
+          still be worthwhile, but the funding plan deserves more caution before
+          the commitment becomes difficult to reverse.
+        </p>
+      </section>
+
+      <div class="content-section">
+        <FAQSection faqs={collegeFaqs} />
+      </div>
+
+      <div class="content-section">
+        <RelatedCalculators calculators={relatedCalculators} />
+      </div>
+    </CalculatorPageShell>
+
+    <MethodologySection category="college affordability" />
+  </div>
+
+  <script is:inline>
+  const clamp = (value, min, max) => Math.min(Math.max(value, min), max);
+
+  const getNumber = (id) => {
+    const rawValue = document.getElementById(id)?.value;
+    const value = Number(rawValue);
+    return Number.isFinite(value) && value >= 0 ? value : 0;
+  };
+
+  function getPressureLevel(score) {
+    if (score <= 30) {
+      return {
+        label: "Low Pressure",
+        stress: "Low pressure",
+        colorClass: "safe",
+        action:
+          "Keep the plan only if the program payoff remains clear and emergency savings stay protected.",
+      };
+    }
+
+    if (score <= 60) {
+      return {
+        label: "Moderate Pressure",
+        stress: "Moderate pressure",
+        colorClass: "caution",
+        action:
+          "Compare grants, lower-cost schools, employer help, transfer credits, and smaller loan options before committing.",
+      };
+    }
+
+    return {
+      label: "High Pressure",
+      stress: "High pressure",
+      colorClass: "danger",
+      action:
+        "Reduce the cost, delay enrollment, increase aid, or strengthen savings before taking on this expense.",
+    };
+  }
+
+  function calculateCollegePressure() {
+    const income = getNumber("income");
+    const savings = getNumber("savings");
+    const collegeCost = getNumber("collegeCost") || 50000;
+    const borrowed = getNumber("borrowed");
+    const debt = getNumber("debt");
+    const incomeGain = getNumber("incomeGain");
+    const cashUsed = getNumber("cashUsed");
+    const programStrength =
+      document.getElementById("programStrength")?.value || "medium";
+
+    const results = document.getElementById("results");
+    const scoreText = document.getElementById("scoreText");
+    const fillBar = document.getElementById("fillBar");
+    const resultDetails = document.getElementById("resultDetails");
+    const guidance = document.getElementById("guidance");
+
+    results.classList.add("visible");
+
+    if (income <= 0 || collegeCost <= 0) {
+      scoreText.textContent = "Add your numbers first";
+      fillBar.style.width = "0%";
+      fillBar.className = "fill safe";
+
+      resultDetails.innerHTML =
+        "<p>Enter monthly take-home income, savings, college cost, expected borrowing, current debt payments, and expected income gain so the calculator can estimate financial pressure.</p>";
+
+      guidance.textContent = "";
+      return;
+    }
+
+    const estimatedLoanPayment = borrowed > 0 ? borrowed * 0.012 : 0;
+    const costToIncomeRatio = (collegeCost / Math.max(income * 12, 1)) * 100;
+    const cashUseRatio = cashUsed > 0 ? (cashUsed / Math.max(savings, 1)) * 100 : 0;
+    const remainingSavings = Math.max(savings - cashUsed, 0);
+    const savingsMonthsAfter = remainingSavings / Math.max(income * 0.7, 1);
+    const debtRatioAfter = ((debt + estimatedLoanPayment) / income) * 100;
+    const loanToIncomeGainRatio =
+      estimatedLoanPayment / Math.max(incomeGain, 1);
+
+    const payoffStrength =
+      incomeGain >= estimatedLoanPayment * 4
+        ? "strong"
+        : incomeGain >= estimatedLoanPayment * 2
+          ? "moderate"
+          : "weak";
+
+    let pressureScore = 0;
+
+    pressureScore += clamp(costToIncomeRatio * 1.0, 0, 38);
+    pressureScore += clamp(cashUseRatio * 0.38, 0, 28);
+    pressureScore += clamp(debtRatioAfter * 0.8, 0, 30);
+
+    if (borrowed > 0) {
+      pressureScore += clamp((borrowed / Math.max(collegeCost, 1)) * 22, 0, 22);
+    }
+
+    if (savingsMonthsAfter < 1) {
+      pressureScore += income >= collegeCost ? 2 : income >= collegeCost * 0.5 ? 6 : 22;
+    } else if (savingsMonthsAfter < 3) {
+      pressureScore += income >= collegeCost * 0.5 ? 2 : 12;
+    } else if (savingsMonthsAfter >= 6) {
+      pressureScore -= 8;
+    }
+
+    if (estimatedLoanPayment > 0 && incomeGain <= 0) {
+      pressureScore += estimatedLoanPayment <= income * 0.01 ? 4 : 18;
+    } else if (loanToIncomeGainRatio > 0.5) {
+      pressureScore += 16;
+    } else if (loanToIncomeGainRatio > 0.3) {
+      pressureScore += 9;
+    } else if (loanToIncomeGainRatio <= 0.15 && incomeGain > 0) {
+      pressureScore -= 8;
+    }
+
+    if (programStrength === "strong") {
+      pressureScore -= 8;
+    } else if (programStrength === "weak") {
+      pressureScore += 16;
+    }
+
+    /*
+      SIS recovery-power overrides:
+      These run BEFORE level/explanation are calculated.
+      They prevent absurd high-income or huge-savings scenarios from showing red.
+    */
+
+    const monthlyCostRecovery = collegeCost / Math.max(income, 1);
+    const loanPaymentRatio = estimatedLoanPayment / Math.max(income, 1);
+    const cashRecoveryMonths = cashUsed / Math.max(income, 1);
+    const annualCostRatio = collegeCost / Math.max(income * 12, 1);
+
+    if (
+      income >= 25000 &&
+      annualCostRatio <= 0.15 &&
+      debtRatioAfter <= 8 &&
+      loanPaymentRatio <= 0.02
+    ) {
+      pressureScore = Math.min(pressureScore, 18);
+    }
+
+    if (
+      income >= 50000 &&
+      annualCostRatio <= 0.10 &&
+      debtRatioAfter <= 5 &&
+      loanPaymentRatio <= 0.01
+    ) {
+      pressureScore = Math.min(pressureScore, 8);
+    }
+
+    if (
+      income >= collegeCost &&
+      monthlyCostRecovery <= 1 &&
+      debtRatioAfter <= 5 &&
+      loanPaymentRatio <= 0.01
+    ) {
+      pressureScore = Math.min(pressureScore, 5);
+    }
+
+    if (
+      income >= collegeCost * 1.25 &&
+      debtRatioAfter <= 5 &&
+      loanPaymentRatio <= 0.008
+    ) {
+      pressureScore = 0;
+    }
+
+    if (
+      savings >= collegeCost * 5 &&
+      remainingSavings >= collegeCost * 4 &&
+      debtRatioAfter <= 12
+    ) {
+      pressureScore = Math.min(pressureScore, 18);
+    }
+
+    if (
+      savings >= collegeCost * 10 &&
+      remainingSavings >= collegeCost * 8 &&
+      debtRatioAfter <= 8
+    ) {
+      pressureScore = Math.min(pressureScore, 8);
+    }
+
+    if (
+      savings >= collegeCost * 20 &&
+      remainingSavings >= collegeCost * 15
+    ) {
+      pressureScore = 0;
+    }
+
+    if (
+      cashUsed > 0 &&
+      cashRecoveryMonths <= 0.25 &&
+      debtRatioAfter <= 8 &&
+      loanPaymentRatio <= 0.02
+    ) {
+      pressureScore = Math.min(pressureScore, 12);
+    }
+
+    if (
+      costToIncomeRatio < 8 &&
+      debtRatioAfter < 15 &&
+      savingsMonthsAfter >= 6 &&
+      payoffStrength !== "weak"
+    ) {
+      pressureScore = Math.min(pressureScore, 24);
+    }
+
+    if (
+      costToIncomeRatio < 4 &&
+      debtRatioAfter < 10 &&
+      savingsMonthsAfter >= 12 &&
+      payoffStrength === "strong"
+    ) {
+      pressureScore = Math.min(pressureScore, 10);
+    }
+
+    pressureScore = clamp(Math.round(pressureScore), 0, 100);
+
+    const level = getPressureLevel(pressureScore);
+
+    scoreText.textContent = `${level.label} — ${pressureScore}/100`;
+    fillBar.style.width = `${pressureScore}%`;
+    fillBar.className = `fill ${level.colorClass}`;
+
+    let explanation = "";
+
+    if (pressureScore === 0) {
+      explanation =
+        "This college cost creates virtually no measurable pressure based on the income, savings, borrowing, debt, and payoff numbers provided.";
+    } else if (pressureScore <= 30) {
+      explanation =
+        "This college decision appears manageable based on the numbers provided. The main priority is preserving savings and confirming that the program has a practical payoff.";
+    } else if (pressureScore <= 60) {
+      explanation =
+        "This college decision may work, but it deserves caution. Borrowing, savings drawdown, repayment timing, and uncertain income improvement could reduce flexibility faster than expected.";
+    } else {
+      explanation =
+        "This college decision could create significant financial pressure. A lower-cost program, more aid, delayed enrollment, smaller loan, or stronger savings cushion would likely create more flexibility.";
+    }
+
+    resultDetails.innerHTML = `
+      <p><strong>College cost impact:</strong> ${costToIncomeRatio.toFixed(1)}% of annual take-home income.</p>
+
+      <p><strong>Estimated loan payment:</strong> About $${estimatedLoanPayment.toFixed(0)} per month based on the borrowing amount entered.</p>
+
+      <p><strong>Debt impact after school borrowing:</strong> ${debtRatioAfter.toFixed(1)}% of monthly take-home income, including estimated student loan payment.</p>
+
+      <p><strong>Savings after planned cash use:</strong> About ${savingsMonthsAfter.toFixed(1)} months of estimated flexibility.</p>
+
+      <p><strong>Expected payoff strength:</strong> ${payoffStrength} based on estimated loan payment versus expected monthly income gain.</p>
+
+      <p><strong>Pressure level:</strong> ${level.stress}.</p>
+
+      <p>${explanation} Recommended next step: ${level.action}</p>
+    `;
+
+    guidance.textContent = "";
+  }
+
+  document
+    .getElementById("collegeButton")
+    .addEventListener("click", calculateCollegePressure);
+</script>
+</Layout>
