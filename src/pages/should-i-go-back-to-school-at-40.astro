@@ -1,0 +1,949 @@
+---
+import Layout from "../layouts/Layout.astro";
+import CalculatorPageShell from "../components/CalculatorPageShell.astro";
+import FAQSection from "../components/FAQSection.astro";
+import RelatedCalculators from "../components/RelatedCalculators.astro";
+import MethodologySection from "../components/MethodologySection.astro";
+import WhenSpendingMakesSense from "../components/WhenSpendingMakesSense.astro";
+import { calculators } from "../data/calculators.js";
+
+const schoolAt40Faqs = [
+  {
+    question: "Should I go back to school at 40?",
+    answer:
+      "Going back to school at 40 can make sense when the program has a clear career payoff, the cost is controlled, the timeline fits your life, and the expected income gain has enough years to matter.",
+  },
+  {
+    question: "Is 40 too old to go back to college?",
+    answer:
+      "Forty is not too old to go back to school, but the financial math should include remaining working years, family obligations, retirement savings, lost income, student loan risk, and whether the degree leads to a realistic career improvement.",
+  },
+  {
+    question: "How much should I borrow to go back to school at 40?",
+    answer:
+      "Borrowing should be judged against expected post-school income, existing debt, retirement timeline, emergency savings, and the number of years available to recover the cost. Smaller loans are safer when the career payoff is uncertain.",
+  },
+];
+
+const relatedCalculators = calculators
+  .filter(
+    (calculator) =>
+      calculator.category === "College" &&
+      calculator.href !== "/should-i-go-back-to-school-at-40"
+  )
+  .slice(0, 4);
+---
+
+<Layout
+  title="Should I Go Back to School at 40?"
+  description="Evaluate whether going back to school at 40 fits your income, savings, tuition cost, student loan risk, family obligations, career payoff, and retirement timeline."
+>
+  <style>
+    .container {
+      max-width: 900px;
+      margin: auto;
+    }
+
+    .calculator {
+      background: white;
+      padding: 40px;
+      border-radius: 24px;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.06);
+    }
+
+    .calculator h2 {
+      margin-top: 0;
+      font-size: 2rem;
+      margin-bottom: 18px;
+      color: #0f172a;
+    }
+
+    .calculator-intro {
+      color: #334155;
+      line-height: 1.8;
+      margin-bottom: 30px;
+      font-size: 1.05rem;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+    }
+
+    .field label {
+      display: block;
+      font-weight: 800;
+      margin-bottom: 10px;
+      color: #0f172a;
+    }
+
+    .field input,
+    .field select {
+      width: 100%;
+      padding: 16px;
+      border-radius: 12px;
+      border: 1px solid #cbd5e1;
+      font-size: 1rem;
+      box-sizing: border-box;
+      background: white;
+    }
+
+    .helper-link {
+      margin-top: 10px;
+      font-size: 0.92rem;
+      line-height: 1.5;
+      color: #475569;
+    }
+
+    .helper-link a,
+    .content-link {
+      color: #0f766e;
+      font-weight: 700;
+      text-decoration: none;
+    }
+
+    .helper-link a:hover,
+    .content-link:hover {
+      text-decoration: underline;
+    }
+
+    button {
+      margin-top: 30px;
+      background: #0f766e;
+      color: white;
+      border: none;
+      padding: 18px 32px;
+      border-radius: 999px;
+      font-size: 1.05rem;
+      font-weight: 800;
+      cursor: pointer;
+      transition: opacity 0.2s ease;
+    }
+
+    button:hover {
+      opacity: 0.92;
+    }
+
+    .results {
+      margin-top: 36px;
+      background: #f8fafc;
+      padding: 32px;
+      border-radius: 24px;
+      border: 1px solid var(--border);
+      box-shadow: 0 10px 24px rgba(15, 23, 42, 0.04);
+      display: none;
+    }
+
+    .results.visible {
+      display: block;
+    }
+
+    .score {
+      font-size: clamp(2rem, 4vw, 2.7rem);
+      font-weight: 900;
+      color: #0f172a;
+      margin-bottom: 22px;
+      line-height: 1.15;
+    }
+
+    .bar {
+      width: 100%;
+      height: 16px;
+      background: #dbe4ee;
+      border-radius: 999px;
+      overflow: hidden;
+      margin-bottom: 24px;
+    }
+
+    .fill {
+      height: 100%;
+      width: 0%;
+      border-radius: 999px;
+      transition: width 0.45s ease;
+    }
+
+    .fill.safe {
+      background: linear-gradient(90deg, #0f766e 0%, #14b8a6 100%);
+    }
+
+    .fill.caution {
+      background: linear-gradient(90deg, #ca8a04 0%, #facc15 100%);
+    }
+
+    .fill.danger {
+      background: linear-gradient(90deg, #dc2626 0%, #f97316 100%);
+    }
+
+    .result-details {
+      color: #334155;
+      line-height: 1.9;
+      font-size: 1.02rem;
+    }
+
+    .result-details p {
+      margin: 0 0 12px;
+    }
+
+    .guidance {
+      margin-top: 22px;
+      padding-top: 20px;
+      border-top: 1px solid #dbe4ee;
+      font-size: 1.12rem;
+      line-height: 1.85;
+      color: #1e293b;
+    }
+
+    .disclaimer {
+      margin-top: 24px;
+      font-size: 0.9rem;
+      color: #64748b;
+    }
+
+    .content-section {
+      margin-top: 60px;
+    }
+
+    .content-section h2 {
+      font-size: 2rem;
+      margin-bottom: 20px;
+      color: #0f172a;
+    }
+
+    .content-section p,
+    .content-section li {
+      font-size: 1.1rem;
+      line-height: 1.9;
+      color: #334155;
+    }
+
+    .pillar-card {
+      display: block;
+      background: #f8fafc;
+      border: 1px solid #dbe4ee;
+      border-radius: 20px;
+      padding: 24px;
+      margin-top: 28px;
+      text-decoration: none;
+      transition: transform 0.15s ease;
+    }
+
+    .pillar-card:hover {
+      transform: translateY(-2px);
+    }
+
+    .pillar-card strong {
+      display: block;
+      margin-bottom: 10px;
+      color: #0f172a;
+      font-size: 1.08rem;
+    }
+
+    .pillar-card span {
+      color: #334155;
+      line-height: 1.7;
+      font-size: 0.98rem;
+    }
+
+    @media (max-width: 768px) {
+      .calculator {
+        padding: 24px;
+      }
+
+      .grid {
+        grid-template-columns: 1fr;
+      }
+
+      .calculator h2,
+      .content-section h2 {
+        font-size: 1.7rem;
+      }
+
+      .results {
+        padding: 24px;
+      }
+    }
+  </style>
+
+  <div class="container">
+    <CalculatorPageShell
+      eyebrow="Back to School at 40 Calculator"
+      title="Should I Go Back to School at 40?"
+      description="Pressure-test going back to school at 40 against tuition, lost income, family obligations, student loans, career payoff, and remaining earning years."
+    >
+      <div class="calculator">
+        <h2>School at 40 Pressure Verdict</h2>
+
+        <p class="calculator-intro">
+          Going back to school at 40 can be a smart reset, but the math is
+          different than it is at 22. Enter your income, savings, school cost,
+          expected borrowing, lost income, family obligations, retirement age,
+          and expected salary gain to estimate the financial pressure.
+        </p>
+
+        <div class="grid">
+          <div class="field">
+            <label for="monthlyIncome">Current Monthly Take-Home Income</label>
+            <input id="monthlyIncome" type="number" placeholder="Example: 6500" />
+          </div>
+
+          <div class="field">
+            <label for="savings">Current Savings</label>
+            <input id="savings" type="number" placeholder="Example: 30000" />
+          </div>
+
+          <div class="field">
+            <label for="schoolCost">Total Cost to Finish School</label>
+            <input id="schoolCost" type="number" placeholder="Example: 45000" />
+          </div>
+
+          <div class="field">
+            <label for="borrowedAmount">Amount You Expect to Borrow</label>
+            <input id="borrowedAmount" type="number" placeholder="Example: 25000" />
+
+            <div class="helper-link">
+              Testing the loan side?
+              <a href="/should-i-take-out-student-loans">Use the student loan calculator</a>
+            </div>
+          </div>
+
+          <div class="field">
+            <label for="monthlyDebt">Current Monthly Debt Payments</label>
+            <input id="monthlyDebt" type="number" placeholder="Example: 850" />
+
+            <div class="helper-link">
+              Not sure what counts as debt?
+              <a href="/what-counts-as-debt">Read the debt guide</a>
+            </div>
+          </div>
+
+          <div class="field">
+            <label for="familyObligations">Monthly Family or Household Obligations</label>
+            <input id="familyObligations" type="number" placeholder="Example: 1200" />
+          </div>
+
+          <div class="field">
+            <label for="lostIncome">Monthly Income You May Lose While Enrolled</label>
+            <input id="lostIncome" type="number" placeholder="Example: 1000" />
+          </div>
+
+          <div class="field">
+            <label for="incomeGain">Expected Monthly Income Gain After School</label>
+            <input id="incomeGain" type="number" placeholder="Example: 1600" />
+          </div>
+
+          <div class="field">
+            <label for="years">Years Until Finished</label>
+            <input id="years" type="number" placeholder="Example: 2" />
+          </div>
+
+          <div class="field">
+            <label for="retirementAge">Expected Retirement Age</label>
+            <input id="retirementAge" type="number" placeholder="Example: 67" />
+          </div>
+
+          <div class="field">
+            <label for="careerValue">Career Path Value</label>
+            <select id="careerValue">
+              <option value="required">Required for target career or license</option>
+              <option value="strong">Strong promotion, switch, or salary path</option>
+              <option value="medium" selected>Helpful but not required</option>
+              <option value="weak">Unclear career value</option>
+            </select>
+          </div>
+
+          <div class="field">
+            <label for="workStatus">Work Plan During School</label>
+            <select id="workStatus">
+              <option value="full" selected>Keep working full-time</option>
+              <option value="part">Work part-time</option>
+              <option value="pause">Pause or sharply reduce work</option>
+            </select>
+          </div>
+
+          <div class="field">
+            <label for="cashUsed">Savings You Plan to Use</label>
+            <input id="cashUsed" type="number" placeholder="Example: 15000" />
+          </div>
+
+          <div class="field">
+            <label for="careerSwitchRisk">Career Switch Risk</label>
+            <select id="careerSwitchRisk">
+              <option value="low">Low risk / same field advancement</option>
+              <option value="medium" selected>Moderate risk / adjacent field</option>
+              <option value="high">High risk / major career reset</option>
+            </select>
+          </div>
+        </div>
+
+        <button id="schoolAt40Button" type="button">Get School at 40 Verdict</button>
+
+        <div class="results" id="results">
+          <div class="score" id="scoreText"></div>
+
+          <div class="bar">
+            <div class="fill" id="fillBar"></div>
+          </div>
+
+          <div class="result-details" id="resultDetails"></div>
+
+          <div class="guidance" id="guidance"></div>
+
+          <div class="disclaimer">
+            This is a general educational estimate, not personalized financial advice.
+          </div>
+        </div>
+      </div>
+
+      <section class="content-section">
+        <h2>Start With the Age-40 Tradeoff</h2>
+
+        <p>
+          Going back to school at 40 has a different financial shape than going
+          back earlier in life. The upside can still be real, but the decision
+          usually has to fit existing bills, family obligations, retirement
+          savings, career momentum, and a shorter recovery timeline.
+        </p>
+
+        <a class="pillar-card" href="/should-i-go-back-to-school">
+          <strong>Should I Go Back to School?</strong>
+          <span>
+            Compare the broader back-to-school decision using tuition, lost
+            income, savings, student loan risk, career upside, and cash flow.
+          </span>
+        </a>
+
+        <a class="pillar-card" href="/degree-roi-calculator">
+          <strong>Degree ROI Calculator</strong>
+          <span>
+            Estimate whether a degree may pay off using total cost, expected
+            income gains, payback period, opportunity cost, and debt pressure.
+          </span>
+        </a>
+
+        <a class="pillar-card" href="/college-cost-calculator">
+          <strong>College Cost Calculator</strong>
+          <span>
+            Estimate total education pressure using tuition, fees, books,
+            housing, loans, savings, expected payoff, and household flexibility.
+          </span>
+        </a>
+      </section>
+
+      <section class="content-section">
+        <h2>What Going Back to School at 40 Really Costs</h2>
+
+        <p>
+          The cost is not only tuition. At 40, the real calculation often
+          includes existing debt, childcare, housing, health costs, reduced work
+          hours, transportation, books, technology, student loan interest, and
+          the retirement savings you may delay while enrolled.
+        </p>
+
+        <p>
+          The timing also matters. A degree finished at 42 or 43 can still have
+          decades of value, but the program needs enough earning years to recover
+          the cost. The shorter the timeline before retirement, the stronger the
+          payoff should be.
+        </p>
+
+        <p>
+          The safest versions of this decision usually involve a clear credential
+          path, employer support, a manageable schedule, limited borrowing, and a
+          realistic plan for how the degree changes your income or job stability.
+        </p>
+      </section>
+
+      <WhenSpendingMakesSense
+        title="When Going Back to School at 40 Can Make Sense"
+        items={[
+          "The program leads to a clear job, license, promotion, career switch, or income path.",
+          "You have enough remaining earning years for the degree to recover its cost.",
+          "The decision does not wipe out emergency savings or create dangerous student loan pressure.",
+          "You can keep working, attend part-time, use employer help, or limit lost income while enrolled.",
+          "The expected income gain improves household stability, not only credentials.",
+          "You have compared lower-cost schools, transfer credits, scholarships, grants, and non-degree alternatives.",
+        ]}
+      />
+
+      <section class="content-section">
+        <h2>When Going Back at 40 Deserves Caution</h2>
+
+        <p>
+          This decision deserves caution when the program is expensive, the job
+          payoff is vague, or the plan requires heavy borrowing while normal
+          household obligations are already tight. At 40, flexibility matters
+          because the decision sits next to retirement planning, family costs,
+          housing, healthcare, and existing debt.
+        </p>
+
+        <p>
+          Be careful if the plan depends on quitting work, draining savings, or
+          making a major career reset without a clear bridge into the new field.
+          A career change can be worthwhile, but the funding plan should not
+          assume everything goes perfectly.
+        </p>
+
+        <p>
+          A safer version may include starting with one class, choosing a
+          lower-cost program, attending part-time, using employer reimbursement,
+          transferring old credits, or delaying enrollment until savings are
+          stronger.
+        </p>
+      </section>
+
+      <section class="content-section">
+        <h2>Key Age-40 Costs and Tradeoffs</h2>
+
+        <p>
+          Before enrolling, estimate the full program cost, student loan payment,
+          lost income, remaining savings, household obligations, years to finish,
+          expected retirement age, and expected income gain after school.
+        </p>
+
+        <p>
+          The biggest tradeoff is recovery time. A program with a quick payoff
+          can be reasonable even at 40. A program with a vague payoff, large
+          borrowing, and many years to finish can create pressure because the
+          financial benefit may arrive too slowly.
+        </p>
+
+        <p>
+          If the decision involves significant borrowing, compare it with the
+          <a class="content-link" href="/should-i-take-out-student-loans">
+            student loan calculator
+          </a>
+          and the broader
+          <a class="content-link" href="/college-calculators">
+            college calculator hub
+          </a>
+          before choosing a program.
+        </p>
+      </section>
+
+      <section class="content-section">
+        <h2>Signs School at 40 Could Create Financial Pressure</h2>
+
+        <p>
+          Warning signs include heavy borrowing, weak salary upside, little
+          emergency savings, high existing debt, limited remaining earning years,
+          major family obligations, or a plan that requires a large income pause.
+        </p>
+
+        <p>
+          A high-pressure result does not mean you are too old for school. It
+          means the current version of the plan may need a lower cost, clearer
+          payoff, smaller loan, stronger savings, or better timing before the
+          risk becomes manageable.
+        </p>
+
+        <p>
+          If the school plan would strain
+          <a class="content-link" href="/how-much-rent-can-i-afford">
+            housing
+          </a>,
+          <a class="content-link" href="/should-i-spend-this-much-on-groceries-per-month">
+            groceries
+          </a>,
+          emergency savings, transportation, childcare, medical costs, or
+          existing debt, the funding plan deserves another pass before enrolling.
+        </p>
+      </section>
+
+      <section class="content-section">
+        <h2>What Your School at 40 Verdict Means</h2>
+
+        <p>
+          This verdict estimates financial pressure, not personal ability,
+          ambition, or whether education matters. A low score means the numbers
+          look relatively manageable. A moderate score means the plan may work
+          but deserves comparison shopping. A high score means the cost, debt,
+          lost income, family obligations, or uncertain payoff could limit future
+          flexibility.
+        </p>
+
+        <p>
+          The calculator gives credit for income recovery power, large savings,
+          strong career value, and a long enough working runway. A high-income
+          household or low-cost program may create little measurable pressure
+          even if the decision feels emotionally significant.
+        </p>
+      </section>
+
+      <div class="content-section">
+        <FAQSection faqs={schoolAt40Faqs} />
+      </div>
+
+      <div class="content-section">
+        <RelatedCalculators calculators={relatedCalculators} />
+      </div>
+    </CalculatorPageShell>
+
+    <MethodologySection category="back to school at 40 affordability" />
+  </div>
+
+  <script is:inline>
+    const clamp = (value, min, max) => Math.min(Math.max(value, min), max);
+
+    const getNumber = (id) => {
+      const rawValue = document.getElementById(id)?.value;
+      const value = Number(rawValue);
+      return Number.isFinite(value) && value >= 0 ? value : 0;
+    };
+
+    function getPressureLevel(score) {
+      if (score <= 30) {
+        return {
+          label: "Low Pressure",
+          stress: "Low pressure",
+          colorClass: "safe",
+          action:
+            "Keep comparing programs, but this school-at-40 plan appears financially manageable based on the numbers entered.",
+        };
+      }
+
+      if (score <= 60) {
+        return {
+          label: "Moderate Pressure",
+          stress: "Moderate pressure",
+          colorClass: "caution",
+          action:
+            "Compare lower-cost programs, part-time enrollment, employer help, transfer credits, and smaller loan options before committing.",
+        };
+      }
+
+      return {
+        label: "High Pressure",
+        stress: "High pressure",
+        colorClass: "danger",
+        action:
+          "Reduce the cost, improve aid, delay enrollment, keep working longer, or choose a clearer payoff path before going back to school.",
+      };
+    }
+
+    function calculateSchoolAt40() {
+      const monthlyIncome = getNumber("monthlyIncome");
+      const savings = getNumber("savings");
+      const schoolCost = getNumber("schoolCost");
+      const borrowedAmount = getNumber("borrowedAmount");
+      const monthlyDebt = getNumber("monthlyDebt");
+      const familyObligations = getNumber("familyObligations");
+      const lostIncome = getNumber("lostIncome");
+      const incomeGain = getNumber("incomeGain");
+      const years = getNumber("years");
+      const retirementAge = getNumber("retirementAge") || 67;
+      const cashUsed = getNumber("cashUsed");
+      const careerValue = document.getElementById("careerValue")?.value || "medium";
+      const workStatus = document.getElementById("workStatus")?.value || "full";
+      const careerSwitchRisk =
+        document.getElementById("careerSwitchRisk")?.value || "medium";
+
+      const results = document.getElementById("results");
+      const scoreText = document.getElementById("scoreText");
+      const fillBar = document.getElementById("fillBar");
+      const resultDetails = document.getElementById("resultDetails");
+      const guidance = document.getElementById("guidance");
+
+      results.classList.add("visible");
+
+      if (monthlyIncome <= 0 || schoolCost <= 0) {
+        scoreText.textContent = "Add your numbers first";
+        fillBar.style.width = "0%";
+        fillBar.className = "fill safe";
+
+        resultDetails.innerHTML =
+          "<p>Enter monthly take-home income, school cost, savings, borrowing, household obligations, lost income, retirement age, and expected income gain so the calculator can estimate financial pressure.</p>";
+
+        guidance.textContent = "";
+        return;
+      }
+
+      const estimatedMonthlyLoanPayment = borrowedAmount > 0 ? borrowedAmount * 0.012 : 0;
+      const annualIncome = monthlyIncome * 12;
+      const totalLostIncome = lostIncome * Math.max(years, 0) * 12;
+      const opportunityCost = schoolCost + totalLostIncome;
+      const workingYearsAfterFinish = Math.max(retirementAge - 40 - Math.max(years, 0), 0);
+
+      const totalCostRatio = (schoolCost / Math.max(annualIncome, 1)) * 100;
+      const opportunityCostRatio = (opportunityCost / Math.max(annualIncome, 1)) * 100;
+      const borrowedRatio = (borrowedAmount / Math.max(annualIncome, 1)) * 100;
+
+      const debtOnlyRatio =
+        ((estimatedMonthlyLoanPayment + monthlyDebt) / Math.max(monthlyIncome, 1)) *
+        100;
+
+      const householdPressureRatio =
+        ((estimatedMonthlyLoanPayment + monthlyDebt + familyObligations) /
+          Math.max(monthlyIncome, 1)) *
+        100;
+
+      const monthlyPressureRatio =
+        ((estimatedMonthlyLoanPayment + monthlyDebt + familyObligations + lostIncome) /
+          Math.max(monthlyIncome, 1)) *
+        100;
+
+      const remainingSavings = Math.max(savings - cashUsed, 0);
+      const savingsMonthsAfter = remainingSavings / Math.max(monthlyIncome * 0.7, 1);
+      const cashUseRatio = cashUsed > 0 ? (cashUsed / Math.max(savings, 1)) * 100 : 0;
+      const loanPaymentRatio = estimatedMonthlyLoanPayment / Math.max(monthlyIncome, 1);
+      const incomeGainRatio = incomeGain / Math.max(monthlyIncome, 1);
+      const payoffRatio =
+        incomeGain > 0 ? estimatedMonthlyLoanPayment / Math.max(incomeGain, 1) : 999;
+
+      const payoffStrength =
+        incomeGain >= estimatedMonthlyLoanPayment * 5 && incomeGain > 0
+          ? "strong"
+          : incomeGain >= estimatedMonthlyLoanPayment * 2 && incomeGain > 0
+            ? "moderate"
+            : "weak";
+
+      let pressureScore = 0;
+
+      pressureScore += clamp(totalCostRatio * 0.6, 0, 30);
+      pressureScore += clamp(opportunityCostRatio * 0.3, 0, 26);
+      pressureScore += clamp(borrowedRatio * 0.72, 0, 28);
+      pressureScore += clamp(monthlyPressureRatio * 0.72, 0, 34);
+      pressureScore += clamp(householdPressureRatio * 0.36, 0, 18);
+      pressureScore += clamp(cashUseRatio * 0.24, 0, 18);
+
+      if (workingYearsAfterFinish < 10) {
+        pressureScore += 14;
+      } else if (workingYearsAfterFinish < 15) {
+        pressureScore += 8;
+      } else if (workingYearsAfterFinish >= 20) {
+        pressureScore -= 5;
+      }
+
+      if (years >= 4) {
+        pressureScore += 12;
+      } else if (years >= 2) {
+        pressureScore += 7;
+      } else if (years > 0) {
+        pressureScore += 3;
+      }
+
+      if (workStatus === "part") {
+        pressureScore += 6;
+      } else if (workStatus === "pause") {
+        pressureScore += 15;
+      }
+
+      if (careerSwitchRisk === "high") {
+        pressureScore += 10;
+      } else if (careerSwitchRisk === "low") {
+        pressureScore -= 4;
+      }
+
+      if (savingsMonthsAfter < 1) {
+        pressureScore += monthlyIncome >= schoolCost ? 3 : 22;
+      } else if (savingsMonthsAfter < 3) {
+        pressureScore += monthlyIncome >= schoolCost * 0.5 ? 4 : 12;
+      } else if (savingsMonthsAfter >= 6) {
+        pressureScore -= 8;
+      }
+
+      if (incomeGain <= 0) {
+        pressureScore += 20;
+      } else if (payoffRatio > 0.55) {
+        pressureScore += 14;
+      } else if (payoffRatio > 0.35) {
+        pressureScore += 8;
+      } else if (payoffRatio <= 0.15) {
+        pressureScore -= 9;
+      }
+
+      if (incomeGainRatio >= 0.4) {
+        pressureScore -= 10;
+      } else if (incomeGainRatio >= 0.25) {
+        pressureScore -= 7;
+      } else if (incomeGainRatio <= 0.08 && schoolCost >= 40000) {
+        pressureScore += 8;
+      }
+
+      if (careerValue === "required") {
+        pressureScore -= 10;
+      } else if (careerValue === "strong") {
+        pressureScore -= 9;
+      } else if (careerValue === "weak") {
+        pressureScore += 18;
+      }
+
+      /*
+        SIS recovery-power overrides:
+        These prevent high-income, high-savings, or low-cost school-at-40
+        scenarios from showing pressure that is not financially meaningful.
+      */
+
+      const costRecoveryMonths = schoolCost / Math.max(monthlyIncome, 1);
+      const annualCostRatio = schoolCost / Math.max(annualIncome, 1);
+      const cashRecoveryMonths = cashUsed / Math.max(monthlyIncome, 1);
+
+      if (
+        monthlyIncome >= 30000 &&
+        annualCostRatio <= 0.18 &&
+        debtOnlyRatio <= 8 &&
+        loanPaymentRatio <= 0.02
+      ) {
+        pressureScore = Math.min(pressureScore, 18);
+      }
+
+      if (
+        monthlyIncome >= 50000 &&
+        annualCostRatio <= 0.12 &&
+        debtOnlyRatio <= 6 &&
+        loanPaymentRatio <= 0.012
+      ) {
+        pressureScore = Math.min(pressureScore, 8);
+      }
+
+      if (
+        monthlyIncome >= schoolCost &&
+        costRecoveryMonths <= 1 &&
+        debtOnlyRatio <= 5 &&
+        loanPaymentRatio <= 0.01
+      ) {
+        pressureScore = Math.min(pressureScore, 3);
+      }
+
+      if (
+        monthlyIncome >= schoolCost * 1.25 &&
+        debtOnlyRatio <= 5 &&
+        loanPaymentRatio <= 0.008 &&
+        cashRecoveryMonths <= 1
+      ) {
+        pressureScore = 0;
+      }
+
+      if (
+        monthlyIncome >= schoolCost * 2 &&
+        debtOnlyRatio <= 8 &&
+        loanPaymentRatio <= 0.015
+      ) {
+        pressureScore = 0;
+      }
+
+      if (
+        savings >= schoolCost * 4 &&
+        remainingSavings >= schoolCost * 3
+      ) {
+        pressureScore = Math.min(pressureScore, 20);
+      }
+
+      if (
+        savings >= schoolCost * 7 &&
+        remainingSavings >= schoolCost * 5
+      ) {
+        pressureScore = Math.min(pressureScore, 8);
+      }
+
+      if (
+        savings >= schoolCost * 12 &&
+        remainingSavings >= schoolCost * 8
+      ) {
+        pressureScore = Math.min(pressureScore, 3);
+      }
+
+      if (
+        savings >= schoolCost * 20 &&
+        remainingSavings >= schoolCost * 12
+      ) {
+        pressureScore = 0;
+      }
+
+      if (
+        cashUsed > 0 &&
+        cashRecoveryMonths <= 0.25 &&
+        debtOnlyRatio <= 8 &&
+        loanPaymentRatio <= 0.02
+      ) {
+        pressureScore = Math.min(pressureScore, 12);
+      }
+
+      if (
+        monthlyPressureRatio < 10 &&
+        householdPressureRatio < 35 &&
+        debtOnlyRatio < 10 &&
+        savingsMonthsAfter >= 6 &&
+        payoffStrength !== "weak" &&
+        careerValue !== "weak"
+      ) {
+        pressureScore = Math.min(pressureScore, 24);
+      }
+
+      if (
+        monthlyPressureRatio < 5 &&
+        householdPressureRatio < 25 &&
+        debtOnlyRatio < 7 &&
+        savingsMonthsAfter >= 12 &&
+        payoffStrength === "strong" &&
+        (careerValue === "required" || careerValue === "strong") &&
+        careerSwitchRisk !== "high"
+      ) {
+        pressureScore = Math.min(pressureScore, 8);
+      }
+
+      if (
+        workingYearsAfterFinish >= 20 &&
+        payoffStrength === "strong" &&
+        careerValue !== "weak" &&
+        monthlyPressureRatio < 8
+      ) {
+        pressureScore = Math.min(pressureScore, 18);
+      }
+
+      pressureScore = clamp(Math.round(pressureScore), 0, 100);
+
+      const level = getPressureLevel(pressureScore);
+
+      scoreText.textContent = `${level.label} — ${pressureScore}/100`;
+      fillBar.style.width = `${pressureScore}%`;
+      fillBar.className = `fill ${level.colorClass}`;
+
+      let explanation = "";
+
+      if (pressureScore === 0) {
+        explanation =
+          "This school-at-40 plan creates virtually no measurable financial pressure based on the income, savings, borrowing, debt, household obligations, timeline, and payoff numbers provided.";
+      } else if (pressureScore <= 30) {
+        explanation =
+          "This school-at-40 plan appears manageable. The main priority is confirming the career payoff and protecting emergency savings while enrolled.";
+      } else if (pressureScore <= 60) {
+        explanation =
+          "This school-at-40 plan may work, but it deserves caution. Tuition, borrowing, lost income, family obligations, retirement timeline, or uncertain salary upside could reduce flexibility.";
+      } else {
+        explanation =
+          "This school-at-40 plan could create significant financial pressure. A cheaper program, smaller loan, slower timeline, stronger savings, or clearer payoff path would likely create more flexibility.";
+      }
+
+      resultDetails.innerHTML = `
+        <p><strong>Total school cost:</strong> About $${schoolCost.toFixed(0)}.</p>
+
+        <p><strong>Estimated monthly loan payment:</strong> About $${estimatedMonthlyLoanPayment.toFixed(0)} per month.</p>
+
+        <p><strong>Opportunity cost:</strong> About $${opportunityCost.toFixed(0)}, including school cost and estimated lost income while enrolled.</p>
+
+        <p><strong>School cost compared with income:</strong> ${totalCostRatio.toFixed(1)}% of annual take-home income.</p>
+
+        <p><strong>Opportunity cost compared with income:</strong> ${opportunityCostRatio.toFixed(1)}% of annual take-home income.</p>
+
+        <p><strong>Monthly pressure while enrolled:</strong> ${monthlyPressureRatio.toFixed(1)}% of monthly take-home income, including debt, family obligations, estimated loan payment, and lost income.</p>
+
+        <p><strong>Emergency savings after planned cash use:</strong> About ${savingsMonthsAfter.toFixed(1)} months of estimated flexibility.</p>
+
+        <p><strong>Estimated working years after finishing:</strong> About ${workingYearsAfterFinish.toFixed(1)} years before the retirement age entered.</p>
+
+        <p><strong>Expected payoff strength:</strong> ${payoffStrength} based on estimated loan payment versus expected monthly income gain.</p>
+
+        <p><strong>Pressure level:</strong> ${level.stress}.</p>
+
+        <p>${explanation} Recommended next step: ${level.action}</p>
+      `;
+
+      guidance.textContent = "";
+    }
+
+    document
+      .getElementById("schoolAt40Button")
+      .addEventListener("click", calculateSchoolAt40);
+  </script>
+</Layout>

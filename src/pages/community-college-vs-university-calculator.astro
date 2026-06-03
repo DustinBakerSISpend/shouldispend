@@ -1,0 +1,1005 @@
+---
+import Layout from "../layouts/Layout.astro";
+import CalculatorPageShell from "../components/CalculatorPageShell.astro";
+import FAQSection from "../components/FAQSection.astro";
+import RelatedCalculators from "../components/RelatedCalculators.astro";
+import MethodologySection from "../components/MethodologySection.astro";
+import WhenSpendingMakesSense from "../components/WhenSpendingMakesSense.astro";
+import { calculators } from "../data/calculators.js";
+
+const collegeFaqs = [
+  {
+    question: "Is community college better than university?",
+    answer:
+      "Community college can be better financially when it lowers tuition, reduces borrowing, preserves savings, and still keeps the student on track for the same degree or career goal. University may be worth the higher cost when the program, network, completion path, or career payoff is meaningfully stronger.",
+  },
+  {
+    question: "How much money can community college save?",
+    answer:
+      "The savings depend on tuition, fees, housing, transportation, years attended, transfer credits, and borrowing. The biggest savings often come from completing general education credits at a lower cost before transferring.",
+  },
+  {
+    question: "Should I start at community college and transfer?",
+    answer:
+      "Starting at community college can make sense when credits transfer cleanly, the student has a clear degree plan, the lower cost reduces debt, and the transfer path does not delay graduation.",
+  },
+];
+
+const relatedCalculators = calculators
+  .filter(
+    (calculator) =>
+      calculator.category === "College" &&
+      calculator.href !== "/community-college-vs-university-calculator"
+  )
+  .slice(0, 4);
+---
+
+<Layout
+  title="Community College vs University Calculator"
+  description="Compare community college and university costs using tuition, housing, savings, student loan risk, transfer value, expected payoff, and financial pressure."
+>
+  <style>
+    .container {
+      max-width: 900px;
+      margin: auto;
+    }
+
+    .calculator {
+      background: white;
+      padding: 40px;
+      border-radius: 24px;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.06);
+    }
+
+    .calculator h2 {
+      margin-top: 0;
+      font-size: 2rem;
+      margin-bottom: 18px;
+      color: #0f172a;
+    }
+
+    .calculator-intro {
+      color: #334155;
+      line-height: 1.8;
+      margin-bottom: 30px;
+      font-size: 1.05rem;
+    }
+
+    .path-heading {
+      margin: 34px 0 18px;
+      padding-top: 26px;
+      border-top: 1px solid #dbe4ee;
+      color: #0f172a;
+      font-size: 1.35rem;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+    }
+
+    .field label {
+      display: block;
+      font-weight: 800;
+      margin-bottom: 10px;
+      color: #0f172a;
+    }
+
+    .field input,
+    .field select {
+      width: 100%;
+      padding: 16px;
+      border-radius: 12px;
+      border: 1px solid #cbd5e1;
+      font-size: 1rem;
+      box-sizing: border-box;
+      background: white;
+    }
+
+    .helper-link {
+      margin-top: 10px;
+      font-size: 0.92rem;
+      line-height: 1.5;
+      color: #475569;
+    }
+
+    .helper-link a,
+    .content-link {
+      color: #0f766e;
+      font-weight: 700;
+      text-decoration: none;
+    }
+
+    .helper-link a:hover,
+    .content-link:hover {
+      text-decoration: underline;
+    }
+
+    button {
+      margin-top: 30px;
+      background: #0f766e;
+      color: white;
+      border: none;
+      padding: 18px 32px;
+      border-radius: 999px;
+      font-size: 1.05rem;
+      font-weight: 800;
+      cursor: pointer;
+      transition: opacity 0.2s ease;
+    }
+
+    button:hover {
+      opacity: 0.92;
+    }
+
+    .results {
+      margin-top: 36px;
+      background: #f8fafc;
+      padding: 32px;
+      border-radius: 24px;
+      border: 1px solid var(--border);
+      box-shadow: 0 10px 24px rgba(15, 23, 42, 0.04);
+      display: none;
+    }
+
+    .results.visible {
+      display: block;
+    }
+
+    .score {
+      font-size: clamp(1.8rem, 4vw, 2.4rem);
+      font-weight: 900;
+      color: #0f172a;
+      margin-bottom: 22px;
+      line-height: 1.15;
+    }
+
+    .comparison-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 22px;
+      margin: 24px 0;
+    }
+
+    .comparison-card {
+      background: white;
+      border: 1px solid #dbe4ee;
+      border-radius: 20px;
+      padding: 22px;
+    }
+
+    .comparison-card h3 {
+      margin: 0 0 12px;
+      color: #0f172a;
+      font-size: 1.15rem;
+    }
+
+    .bar {
+      width: 100%;
+      height: 16px;
+      background: #dbe4ee;
+      border-radius: 999px;
+      overflow: hidden;
+      margin: 14px 0 18px;
+    }
+
+    .fill {
+      height: 100%;
+      width: 0%;
+      border-radius: 999px;
+      transition: width 0.45s ease;
+    }
+
+    .fill.safe {
+      background: linear-gradient(90deg, #0f766e 0%, #14b8a6 100%);
+    }
+
+    .fill.caution {
+      background: linear-gradient(90deg, #ca8a04 0%, #facc15 100%);
+    }
+
+    .fill.danger {
+      background: linear-gradient(90deg, #dc2626 0%, #f97316 100%);
+    }
+
+    .result-details {
+      color: #334155;
+      line-height: 1.9;
+      font-size: 1.02rem;
+    }
+
+    .result-details p {
+      margin: 0 0 12px;
+    }
+
+    .guidance {
+      margin-top: 22px;
+      padding-top: 20px;
+      border-top: 1px solid #dbe4ee;
+      font-size: 1.12rem;
+      line-height: 1.85;
+      color: #1e293b;
+    }
+
+    .disclaimer {
+      margin-top: 24px;
+      font-size: 0.9rem;
+      color: #64748b;
+    }
+
+    .content-section {
+      margin-top: 60px;
+    }
+
+    .content-section h2 {
+      font-size: 2rem;
+      margin-bottom: 20px;
+      color: #0f172a;
+    }
+
+    .content-section p,
+    .content-section li {
+      font-size: 1.1rem;
+      line-height: 1.9;
+      color: #334155;
+    }
+
+    .pillar-card {
+      display: block;
+      background: #f8fafc;
+      border: 1px solid #dbe4ee;
+      border-radius: 20px;
+      padding: 24px;
+      margin-top: 28px;
+      text-decoration: none;
+      transition: transform 0.15s ease;
+    }
+
+    .pillar-card:hover {
+      transform: translateY(-2px);
+    }
+
+    .pillar-card strong {
+      display: block;
+      margin-bottom: 10px;
+      color: #0f172a;
+      font-size: 1.08rem;
+    }
+
+    .pillar-card span {
+      color: #334155;
+      line-height: 1.7;
+      font-size: 0.98rem;
+    }
+
+    @media (max-width: 768px) {
+      .calculator {
+        padding: 24px;
+      }
+
+      .grid,
+      .comparison-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .calculator h2,
+      .content-section h2 {
+        font-size: 1.7rem;
+      }
+
+      .results {
+        padding: 24px;
+      }
+    }
+  </style>
+
+  <div class="container">
+    <CalculatorPageShell
+      eyebrow="College Comparison Calculator"
+      title="Community College vs University Calculator"
+      description="Compare community college and university paths using tuition, housing, borrowing, savings, transfer risk, expected payoff, and financial pressure."
+    >
+      <div class="calculator">
+        <h2>Community College vs University Pressure Verdict</h2>
+
+        <p class="calculator-intro">
+          Community college can lower the cost of a degree, but university may
+          offer stronger programs, recruiting, campus resources, or a clearer
+          path in some fields. Enter both paths to compare total cost, debt,
+          savings pressure, and expected payoff side by side.
+        </p>
+
+        <div class="grid">
+          <div class="field">
+            <label for="monthlyIncome">Monthly Take-Home Income</label>
+            <input id="monthlyIncome" type="number" placeholder="Example: 5500" />
+          </div>
+
+          <div class="field">
+            <label for="savings">Current Savings</label>
+            <input id="savings" type="number" placeholder="Example: 18000" />
+          </div>
+
+          <div class="field">
+            <label for="monthlyDebt">Current Monthly Debt Payments</label>
+            <input id="monthlyDebt" type="number" placeholder="Example: 650" />
+
+            <div class="helper-link">
+              Not sure what counts as debt?
+              <a href="/what-counts-as-debt">Read the debt guide</a>
+            </div>
+          </div>
+
+          <div class="field">
+            <label for="incomeGain">Expected Monthly Income Gain After Degree</label>
+            <input id="incomeGain" type="number" placeholder="Example: 1400" />
+          </div>
+        </div>
+
+        <h3 class="path-heading">Community College Path</h3>
+
+        <div class="grid">
+          <div class="field">
+            <label for="ccTuition">Community College Tuition and Fees</label>
+            <input id="ccTuition" type="number" placeholder="Example: 12000" />
+          </div>
+
+          <div class="field">
+            <label for="ccLiving">Community College Housing and Living Costs</label>
+            <input id="ccLiving" type="number" placeholder="Example: 8000" />
+          </div>
+
+          <div class="field">
+            <label for="ccBorrowed">Community College Amount Borrowed</label>
+            <input id="ccBorrowed" type="number" placeholder="Example: 5000" />
+          </div>
+
+          <div class="field">
+            <label for="ccCashUsed">Savings Used for Community College</label>
+            <input id="ccCashUsed" type="number" placeholder="Example: 7000" />
+          </div>
+
+          <div class="field">
+            <label for="ccYears">Years on Community College Path</label>
+            <input id="ccYears" type="number" placeholder="Example: 2" />
+          </div>
+
+          <div class="field">
+            <label for="transferStrength">Transfer Confidence</label>
+            <select id="transferStrength">
+              <option value="strong">Credits transfer cleanly</option>
+              <option value="medium" selected>Some transfer uncertainty</option>
+              <option value="weak">Unclear transfer path</option>
+            </select>
+          </div>
+        </div>
+
+        <h3 class="path-heading">University Path</h3>
+
+        <div class="grid">
+          <div class="field">
+            <label for="uniTuition">University Tuition and Fees</label>
+            <input id="uniTuition" type="number" placeholder="Example: 52000" />
+          </div>
+
+          <div class="field">
+            <label for="uniLiving">University Housing and Living Costs</label>
+            <input id="uniLiving" type="number" placeholder="Example: 30000" />
+          </div>
+
+          <div class="field">
+            <label for="uniBorrowed">University Amount Borrowed</label>
+            <input id="uniBorrowed" type="number" placeholder="Example: 45000" />
+
+            <div class="helper-link">
+              Testing borrowing?
+              <a href="/should-i-take-out-student-loans">Use the student loan calculator</a>
+            </div>
+          </div>
+
+          <div class="field">
+            <label for="uniCashUsed">Savings Used for University</label>
+            <input id="uniCashUsed" type="number" placeholder="Example: 12000" />
+          </div>
+
+          <div class="field">
+            <label for="uniYears">Years on University Path</label>
+            <input id="uniYears" type="number" placeholder="Example: 4" />
+          </div>
+
+          <div class="field">
+            <label for="universityValue">University Program Value</label>
+            <select id="universityValue">
+              <option value="strong">Strong program, recruiting, or career path</option>
+              <option value="medium" selected>Some added value</option>
+              <option value="weak">Limited added value for the cost</option>
+            </select>
+          </div>
+        </div>
+
+        <button id="compareButton" type="button">Compare College Paths</button>
+
+        <div class="results" id="results">
+          <div class="score" id="scoreText"></div>
+
+          <div class="comparison-grid">
+            <div class="comparison-card">
+              <h3 id="ccTitle">Community College</h3>
+              <div class="bar">
+                <div class="fill" id="ccFillBar"></div>
+              </div>
+              <div class="result-details" id="ccDetails"></div>
+            </div>
+
+            <div class="comparison-card">
+              <h3 id="uniTitle">University</h3>
+              <div class="bar">
+                <div class="fill" id="uniFillBar"></div>
+              </div>
+              <div class="result-details" id="uniDetails"></div>
+            </div>
+          </div>
+
+          <div class="result-details" id="resultDetails"></div>
+
+          <div class="guidance" id="guidance"></div>
+
+          <div class="disclaimer">
+            This is a general educational estimate, not personalized financial advice.
+          </div>
+        </div>
+      </div>
+
+      <section class="content-section">
+        <h2>Start With the Real Comparison</h2>
+
+        <p>
+          Community college versus university is not only a tuition comparison.
+          The real decision includes transfer credits, housing, transportation,
+          borrowing, completion risk, campus resources, program strength, and
+          whether either path gets you to the same career outcome.
+        </p>
+
+        <a class="pillar-card" href="/college-cost-calculator">
+          <strong>College Cost Calculator</strong>
+          <span>
+            Estimate total education pressure using tuition, fees, housing,
+            books, loans, savings, expected payoff, and household flexibility.
+          </span>
+        </a>
+
+        <a class="pillar-card" href="/degree-roi-calculator">
+          <strong>Degree ROI Calculator</strong>
+          <span>
+            Compare total degree cost with expected income gains, payback period,
+            opportunity cost, and long-term value.
+          </span>
+        </a>
+
+        <a class="pillar-card" href="/should-i-spend-100000-on-college">
+          <strong>Should I Spend $100,000 on College?</strong>
+          <span>
+            Pressure-test a six-figure education cost against savings, debt,
+            income, career payoff, and long-term flexibility.
+          </span>
+        </a>
+      </section>
+
+      <section class="content-section">
+        <h2>What Community College Can Change</h2>
+
+        <p>
+          Community college can reduce financial pressure by lowering tuition,
+          shrinking student loan needs, allowing a student to live at home, and
+          making the first two years of a degree less expensive. That can protect
+          savings and reduce the risk of starting adult life with a heavy
+          payment.
+        </p>
+
+        <p>
+          The main risk is transfer friction. If credits do not apply, the
+          student changes direction, or the path takes longer than expected, some
+          of the savings can disappear. A community college path is strongest
+          when the transfer plan is written down, credits are confirmed, and the
+          student knows the target university or degree program early.
+        </p>
+      </section>
+
+      <WhenSpendingMakesSense
+        title="When Community College Can Make Sense"
+        items={[
+          "The credits transfer cleanly into the intended university or degree program.",
+          "The lower cost meaningfully reduces student loans or protects emergency savings.",
+          "The student can live at home, commute affordably, or avoid expensive housing.",
+          "The career outcome is similar after transfer or completion.",
+          "The student wants a lower-risk start before committing to a larger university bill.",
+          "The community college has strong advising, transfer agreements, or program-specific pathways.",
+        ]}
+      />
+
+      <section class="content-section">
+        <h2>When University May Be Worth the Higher Cost</h2>
+
+        <p>
+          University may justify the higher cost when the program has stronger
+          recruiting, better facilities, required clinical or lab access, a
+          direct professional pipeline, stronger completion support, or a major
+          that is difficult to start elsewhere.
+        </p>
+
+        <p>
+          The higher price is easier to defend when it leads to a clearer degree
+          path or stronger earning power. It becomes harder to defend when the
+          extra cost mostly buys convenience, prestige, or housing without a
+          meaningful difference in graduation odds or career payoff.
+        </p>
+
+        <p>
+          If the university option requires major borrowing, compare it with the
+          <a class="content-link" href="/should-i-take-out-student-loans">
+            student loan calculator
+          </a>
+          before committing.
+        </p>
+      </section>
+
+      <section class="content-section">
+        <h2>Key Costs and Tradeoffs to Compare</h2>
+
+        <p>
+          Compare tuition, fees, books, housing, transportation, parking,
+          technology, meal plans, lost work hours, transfer risk, and the number
+          of years until graduation. A cheaper path that delays graduation may
+          cost more than expected. A more expensive path with strong completion
+          support may be safer than it looks.
+        </p>
+
+        <p>
+          The right path depends on the student, the degree, the transfer plan,
+          and the household budget. The goal is not automatically choosing the
+          cheapest school. The goal is choosing the path that creates the least
+          harmful financial pressure while still getting the student to a useful
+          credential.
+        </p>
+      </section>
+
+      <section class="content-section">
+        <h2>Signs a Path Is Creating Too Much Pressure</h2>
+
+        <p>
+          Warning signs include large borrowing, weak transfer planning, unclear
+          degree requirements, little savings left after paying, high existing
+          debt, or a school choice that strains rent, groceries, transportation,
+          medical costs, childcare, or emergency savings.
+        </p>
+
+        <p>
+          A high-pressure result does not mean the school is bad. It means that
+          version of the path may need more aid, a lower-cost start, a clearer
+          transfer plan, smaller borrowing, or stronger savings before the
+          commitment becomes durable.
+        </p>
+
+        <p>
+          You can compare the decision with the broader
+          <a class="content-link" href="/college-calculators">
+            college calculator hub
+          </a>
+          before choosing a school, loan amount, or transfer route.
+        </p>
+      </section>
+
+      <section class="content-section">
+        <h2>What Your Comparison Verdict Means</h2>
+
+        <p>
+          The comparison verdict estimates financial pressure for each path. It
+          does not decide which school is academically better or which experience
+          matters more. A lower score means the path appears easier to absorb
+          financially based on the inputs provided.
+        </p>
+
+        <p>
+          The calculator also gives credit for income recovery power. If income
+          or savings are very high, a more expensive school may create little
+          measurable pressure. If income is tight, even the cheaper path may
+          deserve careful planning.
+        </p>
+      </section>
+
+      <div class="content-section">
+        <FAQSection faqs={collegeFaqs} />
+      </div>
+
+      <div class="content-section">
+        <RelatedCalculators calculators={relatedCalculators} />
+      </div>
+    </CalculatorPageShell>
+
+    <MethodologySection category="college comparison affordability" />
+  </div>
+
+  <script is:inline>
+    const clamp = (value, min, max) => Math.min(Math.max(value, min), max);
+
+    const getNumber = (id) => {
+      const rawValue = document.getElementById(id)?.value;
+      const value = Number(rawValue);
+      return Number.isFinite(value) && value >= 0 ? value : 0;
+    };
+
+    function getPressureLevel(score) {
+      if (score <= 30) {
+        return {
+          label: "Low Pressure",
+          colorClass: "safe",
+        };
+      }
+
+      if (score <= 60) {
+        return {
+          label: "Moderate Pressure",
+          colorClass: "caution",
+        };
+      }
+
+      return {
+        label: "High Pressure",
+        colorClass: "danger",
+      };
+    }
+
+    function calculatePathScore({
+      totalCost,
+      borrowed,
+      cashUsed,
+      years,
+      pathValue,
+      transferStrength,
+      monthlyIncome,
+      savings,
+      monthlyDebt,
+      incomeGain,
+    }) {
+      const estimatedLoanPayment = borrowed > 0 ? borrowed * 0.012 : 0;
+      const annualIncome = monthlyIncome * 12;
+      const costToIncomeRatio = (totalCost / Math.max(annualIncome, 1)) * 100;
+      const borrowedRatio = (borrowed / Math.max(annualIncome, 1)) * 100;
+      const debtRatioAfter =
+        ((monthlyDebt + estimatedLoanPayment) / Math.max(monthlyIncome, 1)) * 100;
+      const cashUseRatio = cashUsed > 0 ? (cashUsed / Math.max(savings, 1)) * 100 : 0;
+      const remainingSavings = Math.max(savings - cashUsed, 0);
+      const savingsMonthsAfter = remainingSavings / Math.max(monthlyIncome * 0.7, 1);
+      const loanPaymentRatio = estimatedLoanPayment / Math.max(monthlyIncome, 1);
+      const payoffRatio =
+        incomeGain > 0 ? estimatedLoanPayment / Math.max(incomeGain, 1) : 999;
+      const incomeGainRatio = incomeGain / Math.max(monthlyIncome, 1);
+      const costRecoveryMonths = totalCost / Math.max(monthlyIncome, 1);
+      const annualCostRatio = totalCost / Math.max(annualIncome, 1);
+      const cashRecoveryMonths = cashUsed / Math.max(monthlyIncome, 1);
+
+      const payoffStrength =
+        incomeGain >= estimatedLoanPayment * 5 && incomeGain > 0
+          ? "strong"
+          : incomeGain >= estimatedLoanPayment * 2 && incomeGain > 0
+            ? "moderate"
+            : "weak";
+
+      let pressureScore = 0;
+
+      pressureScore += clamp(costToIncomeRatio * 0.72, 0, 34);
+      pressureScore += clamp(borrowedRatio * 0.78, 0, 30);
+      pressureScore += clamp(debtRatioAfter * 0.82, 0, 34);
+      pressureScore += clamp(cashUseRatio * 0.28, 0, 20);
+
+      if (years >= 4) {
+        pressureScore += 8;
+      } else if (years >= 2) {
+        pressureScore += 4;
+      } else if (years > 0) {
+        pressureScore += 2;
+      }
+
+      if (savingsMonthsAfter < 1) {
+        pressureScore += monthlyIncome >= totalCost ? 3 : 20;
+      } else if (savingsMonthsAfter < 3) {
+        pressureScore += monthlyIncome >= totalCost * 0.5 ? 4 : 12;
+      } else if (savingsMonthsAfter >= 6) {
+        pressureScore -= 8;
+      }
+
+      if (incomeGain <= 0) {
+        pressureScore += 16;
+      } else if (payoffRatio > 0.55) {
+        pressureScore += 12;
+      } else if (payoffRatio > 0.35) {
+        pressureScore += 7;
+      } else if (payoffRatio <= 0.15) {
+        pressureScore -= 8;
+      }
+
+      if (incomeGainRatio >= 0.35) {
+        pressureScore -= 8;
+      } else if (incomeGainRatio >= 0.2) {
+        pressureScore -= 5;
+      }
+
+      if (pathValue === "strong") {
+        pressureScore -= 8;
+      } else if (pathValue === "weak") {
+        pressureScore += 12;
+      }
+
+      if (transferStrength === "strong") {
+        pressureScore -= 7;
+      } else if (transferStrength === "weak") {
+        pressureScore += 12;
+      }
+
+      /*
+        SIS recovery-power overrides:
+        These prevent high-income or huge-savings scenarios from showing
+        financial pressure that is not meaningful.
+      */
+
+      if (
+        monthlyIncome >= 30000 &&
+        annualCostRatio <= 0.18 &&
+        debtRatioAfter <= 8 &&
+        loanPaymentRatio <= 0.02
+      ) {
+        pressureScore = Math.min(pressureScore, 18);
+      }
+
+      if (
+        monthlyIncome >= 50000 &&
+        annualCostRatio <= 0.12 &&
+        debtRatioAfter <= 6 &&
+        loanPaymentRatio <= 0.012
+      ) {
+        pressureScore = Math.min(pressureScore, 8);
+      }
+
+      if (
+        monthlyIncome >= totalCost &&
+        costRecoveryMonths <= 1 &&
+        debtRatioAfter <= 5 &&
+        loanPaymentRatio <= 0.01
+      ) {
+        pressureScore = Math.min(pressureScore, 3);
+      }
+
+      if (
+        monthlyIncome >= totalCost * 1.25 &&
+        debtRatioAfter <= 5 &&
+        loanPaymentRatio <= 0.008 &&
+        cashRecoveryMonths <= 1
+      ) {
+        pressureScore = 0;
+      }
+
+      if (
+        monthlyIncome >= totalCost * 2 &&
+        debtRatioAfter <= 8 &&
+        loanPaymentRatio <= 0.015
+      ) {
+        pressureScore = 0;
+      }
+
+      if (
+        savings >= totalCost * 4 &&
+        remainingSavings >= totalCost * 3
+      ) {
+        pressureScore = Math.min(pressureScore, 20);
+      }
+
+      if (
+        savings >= totalCost * 7 &&
+        remainingSavings >= totalCost * 5
+      ) {
+        pressureScore = Math.min(pressureScore, 8);
+      }
+
+      if (
+        savings >= totalCost * 12 &&
+        remainingSavings >= totalCost * 8
+      ) {
+        pressureScore = Math.min(pressureScore, 3);
+      }
+
+      if (
+        savings >= totalCost * 20 &&
+        remainingSavings >= totalCost * 12
+      ) {
+        pressureScore = 0;
+      }
+
+      if (
+        cashUsed > 0 &&
+        cashRecoveryMonths <= 0.25 &&
+        debtRatioAfter <= 8 &&
+        loanPaymentRatio <= 0.02
+      ) {
+        pressureScore = Math.min(pressureScore, 12);
+      }
+
+      if (
+        costToIncomeRatio < 8 &&
+        debtRatioAfter < 10 &&
+        savingsMonthsAfter >= 6 &&
+        payoffStrength !== "weak"
+      ) {
+        pressureScore = Math.min(pressureScore, 24);
+      }
+
+      if (
+        costToIncomeRatio < 4 &&
+        debtRatioAfter < 7 &&
+        savingsMonthsAfter >= 12 &&
+        payoffStrength === "strong"
+      ) {
+        pressureScore = Math.min(pressureScore, 8);
+      }
+
+      return {
+        score: clamp(Math.round(pressureScore), 0, 100),
+        totalCost,
+        estimatedLoanPayment,
+        debtRatioAfter,
+        savingsMonthsAfter,
+        payoffStrength,
+      };
+    }
+
+    function calculateComparison() {
+      const monthlyIncome = getNumber("monthlyIncome");
+      const savings = getNumber("savings");
+      const monthlyDebt = getNumber("monthlyDebt");
+      const incomeGain = getNumber("incomeGain");
+
+      const ccTuition = getNumber("ccTuition");
+      const ccLiving = getNumber("ccLiving");
+      const ccBorrowed = getNumber("ccBorrowed");
+      const ccCashUsed = getNumber("ccCashUsed");
+      const ccYears = getNumber("ccYears");
+      const transferStrength =
+        document.getElementById("transferStrength")?.value || "medium";
+
+      const uniTuition = getNumber("uniTuition");
+      const uniLiving = getNumber("uniLiving");
+      const uniBorrowed = getNumber("uniBorrowed");
+      const uniCashUsed = getNumber("uniCashUsed");
+      const uniYears = getNumber("uniYears");
+      const universityValue =
+        document.getElementById("universityValue")?.value || "medium";
+
+      const results = document.getElementById("results");
+      const scoreText = document.getElementById("scoreText");
+      const ccFillBar = document.getElementById("ccFillBar");
+      const uniFillBar = document.getElementById("uniFillBar");
+      const ccTitle = document.getElementById("ccTitle");
+      const uniTitle = document.getElementById("uniTitle");
+      const ccDetails = document.getElementById("ccDetails");
+      const uniDetails = document.getElementById("uniDetails");
+      const resultDetails = document.getElementById("resultDetails");
+      const guidance = document.getElementById("guidance");
+
+      results.classList.add("visible");
+
+      if (monthlyIncome <= 0 || (ccTuition + ccLiving <= 0) || (uniTuition + uniLiving <= 0)) {
+        scoreText.textContent = "Add your numbers first";
+        ccFillBar.style.width = "0%";
+        uniFillBar.style.width = "0%";
+        ccFillBar.className = "fill safe";
+        uniFillBar.className = "fill safe";
+        ccDetails.innerHTML = "";
+        uniDetails.innerHTML = "";
+        resultDetails.innerHTML =
+          "<p>Enter monthly take-home income, savings, and both college paths so the calculator can compare community college and university pressure.</p>";
+        guidance.textContent = "";
+        return;
+      }
+
+      const communityCollege = calculatePathScore({
+        totalCost: ccTuition + ccLiving,
+        borrowed: ccBorrowed,
+        cashUsed: ccCashUsed,
+        years: ccYears,
+        pathValue: "medium",
+        transferStrength,
+        monthlyIncome,
+        savings,
+        monthlyDebt,
+        incomeGain,
+      });
+
+      const university = calculatePathScore({
+        totalCost: uniTuition + uniLiving,
+        borrowed: uniBorrowed,
+        cashUsed: uniCashUsed,
+        years: uniYears,
+        pathValue: universityValue,
+        transferStrength: "medium",
+        monthlyIncome,
+        savings,
+        monthlyDebt,
+        incomeGain,
+      });
+
+      const ccLevel = getPressureLevel(communityCollege.score);
+      const uniLevel = getPressureLevel(university.score);
+
+      ccTitle.textContent = `Community College — ${ccLevel.label} (${communityCollege.score}/100)`;
+      uniTitle.textContent = `University — ${uniLevel.label} (${university.score}/100)`;
+
+      ccFillBar.style.width = `${communityCollege.score}%`;
+      uniFillBar.style.width = `${university.score}%`;
+      ccFillBar.className = `fill ${ccLevel.colorClass}`;
+      uniFillBar.className = `fill ${uniLevel.colorClass}`;
+
+      const totalSavings = university.totalCost - communityCollege.totalCost;
+      const debtDifference = uniBorrowed - ccBorrowed;
+      const scoreGap = university.score - communityCollege.score;
+
+      let verdict = "";
+
+      if (communityCollege.score === university.score) {
+        verdict =
+          "Both paths show similar financial pressure based on the numbers entered.";
+      } else if (communityCollege.score < university.score) {
+        verdict =
+          "Community college appears to create less financial pressure based on the cost, borrowing, savings, and payoff numbers entered.";
+      } else {
+        verdict =
+          "University appears to create less financial pressure based on the cost, borrowing, savings, and payoff numbers entered.";
+      }
+
+      scoreText.textContent = verdict;
+
+      ccDetails.innerHTML = `
+        <p><strong>Total path cost:</strong> About $${communityCollege.totalCost.toFixed(0)}.</p>
+        <p><strong>Estimated loan payment:</strong> About $${communityCollege.estimatedLoanPayment.toFixed(0)} per month.</p>
+        <p><strong>Debt pressure:</strong> ${communityCollege.debtRatioAfter.toFixed(1)}% of monthly take-home income.</p>
+        <p><strong>Savings after cash use:</strong> About ${communityCollege.savingsMonthsAfter.toFixed(1)} months of flexibility.</p>
+        <p><strong>Payoff strength:</strong> ${communityCollege.payoffStrength}.</p>
+      `;
+
+      uniDetails.innerHTML = `
+        <p><strong>Total path cost:</strong> About $${university.totalCost.toFixed(0)}.</p>
+        <p><strong>Estimated loan payment:</strong> About $${university.estimatedLoanPayment.toFixed(0)} per month.</p>
+        <p><strong>Debt pressure:</strong> ${university.debtRatioAfter.toFixed(1)}% of monthly take-home income.</p>
+        <p><strong>Savings after cash use:</strong> About ${university.savingsMonthsAfter.toFixed(1)} months of flexibility.</p>
+        <p><strong>Payoff strength:</strong> ${university.payoffStrength}.</p>
+      `;
+
+      resultDetails.innerHTML = `
+        <p><strong>Cost difference:</strong> ${totalSavings >= 0 ? "Community college costs about $" + totalSavings.toFixed(0) + " less." : "University costs about $" + Math.abs(totalSavings).toFixed(0) + " less."}</p>
+
+        <p><strong>Borrowing difference:</strong> ${debtDifference >= 0 ? "University requires about $" + debtDifference.toFixed(0) + " more borrowing." : "Community college requires about $" + Math.abs(debtDifference).toFixed(0) + " more borrowing."}</p>
+
+        <p><strong>Pressure score gap:</strong> ${Math.abs(scoreGap)} points.</p>
+
+        <p><strong>Interpretation:</strong> A lower score means lower estimated financial pressure. The best path should also preserve transfer progress, completion odds, and career payoff.</p>
+      `;
+
+      if (communityCollege.score === 0 && university.score === 0) {
+        guidance.textContent =
+          "Both paths create virtually no measurable financial pressure based on the inputs provided. Compare academic fit, transfer certainty, program quality, and career outcomes.";
+      } else if (Math.abs(scoreGap) <= 8) {
+        guidance.textContent =
+          "The financial gap is fairly small. Focus on transfer certainty, graduation timeline, program quality, and which path is more likely to lead to the degree or job outcome.";
+      } else if (communityCollege.score < university.score) {
+        guidance.textContent =
+          "Community college looks financially safer. Make sure credits transfer cleanly and the lower-cost path does not delay graduation or weaken the final career outcome.";
+      } else {
+        guidance.textContent =
+          "University looks financially stronger in this comparison. That usually means the added program value, shorter timeline, lower borrowing, or payoff assumptions are carrying the decision.";
+      }
+    }
+
+    document
+      .getElementById("compareButton")
+      .addEventListener("click", calculateComparison);
+  </script>
+</Layout>

@@ -1,0 +1,950 @@
+---
+import Layout from "../layouts/Layout.astro";
+import CalculatorPageShell from "../components/CalculatorPageShell.astro";
+import FAQSection from "../components/FAQSection.astro";
+import RelatedCalculators from "../components/RelatedCalculators.astro";
+import MethodologySection from "../components/MethodologySection.astro";
+import WhenSpendingMakesSense from "../components/WhenSpendingMakesSense.astro";
+import { calculators } from "../data/calculators.js";
+
+const mbaFaqs = [
+  {
+    question: "Should I get an MBA?",
+    answer:
+      "An MBA can make sense when it has a clear path to higher income, promotion, career switching, leadership roles, employer support, or a stronger professional network. The risk rises when the cost is high and the salary payoff is vague.",
+  },
+  {
+    question: "How do I know if an MBA is worth it?",
+    answer:
+      "Compare total program cost, lost income, employer reimbursement, expected salary gain, student loan payments, career-switching value, and the time it may take for the MBA to pay for itself.",
+  },
+  {
+    question: "Is it risky to borrow money for an MBA?",
+    answer:
+      "MBA borrowing can be risky when the expected loan payment is large compared with future income, when the program does not clearly improve job options, or when existing debt already limits monthly flexibility.",
+  },
+];
+
+const relatedCalculators = calculators
+  .filter(
+    (calculator) =>
+      calculator.category === "College" &&
+      calculator.href !== "/should-i-get-an-mba"
+  )
+  .slice(0, 4);
+---
+
+<Layout
+  title="Should I Get an MBA?"
+  description="Evaluate whether an MBA fits your income, tuition cost, employer reimbursement, student loan risk, lost income, salary upside, and career payoff."
+>
+  <style>
+    .container {
+      max-width: 900px;
+      margin: auto;
+    }
+
+    .calculator {
+      background: white;
+      padding: 40px;
+      border-radius: 24px;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.06);
+    }
+
+    .calculator h2 {
+      margin-top: 0;
+      font-size: 2rem;
+      margin-bottom: 18px;
+      color: #0f172a;
+    }
+
+    .calculator-intro {
+      color: #334155;
+      line-height: 1.8;
+      margin-bottom: 30px;
+      font-size: 1.05rem;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+    }
+
+    .field label {
+      display: block;
+      font-weight: 800;
+      margin-bottom: 10px;
+      color: #0f172a;
+    }
+
+    .field input,
+    .field select {
+      width: 100%;
+      padding: 16px;
+      border-radius: 12px;
+      border: 1px solid #cbd5e1;
+      font-size: 1rem;
+      box-sizing: border-box;
+      background: white;
+    }
+
+    .helper-link {
+      margin-top: 10px;
+      font-size: 0.92rem;
+      line-height: 1.5;
+      color: #475569;
+    }
+
+    .helper-link a,
+    .content-link {
+      color: #0f766e;
+      font-weight: 700;
+      text-decoration: none;
+    }
+
+    .helper-link a:hover,
+    .content-link:hover {
+      text-decoration: underline;
+    }
+
+    button {
+      margin-top: 30px;
+      background: #0f766e;
+      color: white;
+      border: none;
+      padding: 18px 32px;
+      border-radius: 999px;
+      font-size: 1.05rem;
+      font-weight: 800;
+      cursor: pointer;
+      transition: opacity 0.2s ease;
+    }
+
+    button:hover {
+      opacity: 0.92;
+    }
+
+    .results {
+      margin-top: 36px;
+      background: #f8fafc;
+      padding: 32px;
+      border-radius: 24px;
+      border: 1px solid var(--border);
+      box-shadow: 0 10px 24px rgba(15, 23, 42, 0.04);
+      display: none;
+    }
+
+    .results.visible {
+      display: block;
+    }
+
+    .score {
+      font-size: clamp(2rem, 4vw, 2.7rem);
+      font-weight: 900;
+      color: #0f172a;
+      margin-bottom: 22px;
+      line-height: 1.15;
+    }
+
+    .bar {
+      width: 100%;
+      height: 16px;
+      background: #dbe4ee;
+      border-radius: 999px;
+      overflow: hidden;
+      margin-bottom: 24px;
+    }
+
+    .fill {
+      height: 100%;
+      width: 0%;
+      border-radius: 999px;
+      transition: width 0.45s ease;
+    }
+
+    .fill.safe {
+      background: linear-gradient(90deg, #0f766e 0%, #14b8a6 100%);
+    }
+
+    .fill.caution {
+      background: linear-gradient(90deg, #ca8a04 0%, #facc15 100%);
+    }
+
+    .fill.danger {
+      background: linear-gradient(90deg, #dc2626 0%, #f97316 100%);
+    }
+
+    .result-details {
+      color: #334155;
+      line-height: 1.9;
+      font-size: 1.02rem;
+    }
+
+    .result-details p {
+      margin: 0 0 12px;
+    }
+
+    .guidance {
+      margin-top: 22px;
+      padding-top: 20px;
+      border-top: 1px solid #dbe4ee;
+      font-size: 1.12rem;
+      line-height: 1.85;
+      color: #1e293b;
+    }
+
+    .disclaimer {
+      margin-top: 24px;
+      font-size: 0.9rem;
+      color: #64748b;
+    }
+
+    .content-section {
+      margin-top: 60px;
+    }
+
+    .content-section h2 {
+      font-size: 2rem;
+      margin-bottom: 20px;
+      color: #0f172a;
+    }
+
+    .content-section p,
+    .content-section li {
+      font-size: 1.1rem;
+      line-height: 1.9;
+      color: #334155;
+    }
+
+    .pillar-card {
+      display: block;
+      background: #f8fafc;
+      border: 1px solid #dbe4ee;
+      border-radius: 20px;
+      padding: 24px;
+      margin-top: 28px;
+      text-decoration: none;
+      transition: transform 0.15s ease;
+    }
+
+    .pillar-card:hover {
+      transform: translateY(-2px);
+    }
+
+    .pillar-card strong {
+      display: block;
+      margin-bottom: 10px;
+      color: #0f172a;
+      font-size: 1.08rem;
+    }
+
+    .pillar-card span {
+      color: #334155;
+      line-height: 1.7;
+      font-size: 0.98rem;
+    }
+
+    @media (max-width: 768px) {
+      .calculator {
+        padding: 24px;
+      }
+
+      .grid {
+        grid-template-columns: 1fr;
+      }
+
+      .calculator h2,
+      .content-section h2 {
+        font-size: 1.7rem;
+      }
+
+      .results {
+        padding: 24px;
+      }
+    }
+  </style>
+
+  <div class="container">
+    <CalculatorPageShell
+      eyebrow="MBA Calculator"
+      title="Should I Get an MBA?"
+      description="Pressure-test an MBA against tuition, lost income, employer reimbursement, salary upside, networking value, student loans, and career payoff."
+    >
+      <div class="calculator">
+        <h2>MBA Pressure Verdict</h2>
+
+        <p class="calculator-intro">
+          An MBA can unlock management roles, career switching, higher pay, or a
+          stronger network. It can also become an expensive credential if the
+          payoff is unclear. Enter your income, MBA cost, expected borrowing,
+          employer help, lost income, and salary upside to estimate the pressure.
+        </p>
+
+        <div class="grid">
+          <div class="field">
+            <label for="monthlyIncome">Current Monthly Take-Home Income</label>
+            <input id="monthlyIncome" type="number" placeholder="Example: 7500" />
+          </div>
+
+          <div class="field">
+            <label for="savings">Current Savings</label>
+            <input id="savings" type="number" placeholder="Example: 35000" />
+          </div>
+
+          <div class="field">
+            <label for="mbaCost">Total MBA Program Cost</label>
+            <input id="mbaCost" type="number" placeholder="Example: 85000" />
+          </div>
+
+          <div class="field">
+            <label for="borrowedAmount">Amount You Expect to Borrow</label>
+            <input id="borrowedAmount" type="number" placeholder="Example: 50000" />
+
+            <div class="helper-link">
+              Testing the loan side?
+              <a href="/should-i-take-out-student-loans">Use the student loan calculator</a>
+            </div>
+          </div>
+
+          <div class="field">
+            <label for="employerHelp">Employer Reimbursement or Scholarships</label>
+            <input id="employerHelp" type="number" placeholder="Example: 15000" />
+          </div>
+
+          <div class="field">
+            <label for="monthlyDebt">Current Monthly Debt Payments</label>
+            <input id="monthlyDebt" type="number" placeholder="Example: 900" />
+
+            <div class="helper-link">
+              Not sure what counts as debt?
+              <a href="/what-counts-as-debt">Read the debt guide</a>
+            </div>
+          </div>
+
+          <div class="field">
+            <label for="lostIncome">Monthly Income You May Lose During the MBA</label>
+            <input id="lostIncome" type="number" placeholder="Example: 1200" />
+          </div>
+
+          <div class="field">
+            <label for="incomeGain">Expected Monthly Income Gain After the MBA</label>
+            <input id="incomeGain" type="number" placeholder="Example: 2500" />
+          </div>
+
+          <div class="field">
+            <label for="years">Years Until Finished</label>
+            <input id="years" type="number" placeholder="Example: 2" />
+          </div>
+
+          <div class="field">
+            <label for="mbaValue">MBA Career Value</label>
+            <select id="mbaValue">
+              <option value="required">Required or strongly expected for target role</option>
+              <option value="strong">Strong promotion, switch, or salary path</option>
+              <option value="medium" selected>Helpful but not required</option>
+              <option value="weak">Unclear career value</option>
+            </select>
+          </div>
+
+          <div class="field">
+            <label for="workStatus">Work Plan During the MBA</label>
+            <select id="workStatus">
+              <option value="full" selected>Keep working full-time</option>
+              <option value="part">Work part-time</option>
+              <option value="pause">Full-time MBA / pause work</option>
+            </select>
+          </div>
+
+          <div class="field">
+            <label for="networkValue">Networking and Recruiting Value</label>
+            <select id="networkValue">
+              <option value="strong">Strong recruiting/network value</option>
+              <option value="medium" selected>Some networking value</option>
+              <option value="weak">Limited or unclear networking value</option>
+            </select>
+          </div>
+
+          <div class="field">
+            <label for="cashUsed">Savings You Plan to Use</label>
+            <input id="cashUsed" type="number" placeholder="Example: 20000" />
+          </div>
+        </div>
+
+        <button id="mbaButton" type="button">Get MBA Verdict</button>
+
+        <div class="results" id="results">
+          <div class="score" id="scoreText"></div>
+
+          <div class="bar">
+            <div class="fill" id="fillBar"></div>
+          </div>
+
+          <div class="result-details" id="resultDetails"></div>
+
+          <div class="guidance" id="guidance"></div>
+
+          <div class="disclaimer">
+            This is a general educational estimate, not personalized financial advice.
+          </div>
+        </div>
+      </div>
+
+      <section class="content-section">
+        <h2>Start With the MBA Payoff Question</h2>
+
+        <p>
+          An MBA is not just another graduate degree. The decision usually turns
+          on career acceleration, management access, recruiting, network value,
+          salary upside, employer support, and the cost of stepping away from
+          work or adding debt.
+        </p>
+
+        <a class="pillar-card" href="/degree-roi-calculator">
+          <strong>Degree ROI Calculator</strong>
+          <span>
+            Estimate whether a degree may pay off using total cost, expected
+            income gains, payback period, opportunity cost, and debt pressure.
+          </span>
+        </a>
+
+        <a class="pillar-card" href="/should-i-go-to-graduate-school">
+          <strong>Should I Go to Graduate School?</strong>
+          <span>
+            Compare broader graduate school pressure using tuition, lost income,
+            current salary, expected salary gains, and credential value.
+          </span>
+        </a>
+
+        <a class="pillar-card" href="/should-i-spend-100000-on-college">
+          <strong>Should I Spend $100,000 on College?</strong>
+          <span>
+            Pressure-test a six-figure education cost against income, savings,
+            student loan exposure, career payoff, and long-term flexibility.
+          </span>
+        </a>
+      </section>
+
+      <section class="content-section">
+        <h2>What an MBA Really Costs</h2>
+
+        <p>
+          The true MBA cost can include tuition, fees, books, software, travel,
+          residencies, recruiting costs, test prep, application fees, student
+          loan interest, and the income you may lose while enrolled.
+        </p>
+
+        <p>
+          Full-time MBA programs often carry more opportunity cost because you
+          may pause or reduce work. Part-time, online, executive, and
+          employer-funded programs may reduce pressure, but they still need a
+          realistic link to better income or better career options.
+        </p>
+
+        <p>
+          The strongest MBA cases usually have a specific goal: promotion into
+          management, a career switch, access to recruiting pipelines, a stronger
+          network, entrepreneurship support, or movement into a higher-paying
+          field.
+        </p>
+      </section>
+
+      <WhenSpendingMakesSense
+        title="When Getting an MBA Can Make Sense"
+        items={[
+          "The MBA is tied to a realistic promotion, management track, career switch, or salary increase.",
+          "Employer reimbursement, scholarships, grants, or sponsorship reduce the out-of-pocket cost.",
+          "The expected post-MBA income gain is large enough to justify tuition, debt, lost income, and time in school.",
+          "The program has meaningful recruiting, alumni, or networking value for your target career.",
+          "Any student loan payment would fit future income without crowding out housing, food, transportation, healthcare, or savings.",
+          "You have compared lower-cost MBA options, part-time formats, employer-funded programs, and non-degree alternatives.",
+        ]}
+      />
+
+      <section class="content-section">
+        <h2>When an MBA Deserves Caution</h2>
+
+        <p>
+          An MBA deserves caution when the program is expensive, the salary gain
+          is speculative, or the main benefit is general prestige rather than a
+          concrete job outcome. The degree may still be useful, but the cost
+          needs a clear recovery path.
+        </p>
+
+        <p>
+          Be especially careful if the plan requires large borrowing, a full
+          income pause, or draining most of your savings. MBA debt can feel much
+          heavier if the new job takes longer than expected or the salary bump
+          is smaller than planned.
+        </p>
+
+        <p>
+          A safer path may include employer reimbursement, a part-time MBA,
+          regional program, lower-cost online option, certificate, internal
+          promotion path, or waiting until your employer will help pay.
+        </p>
+      </section>
+
+      <section class="content-section">
+        <h2>Key MBA Costs and Tradeoffs</h2>
+
+        <p>
+          Before enrolling, estimate the total program cost, the amount you may
+          borrow, the monthly student loan payment, lost income while enrolled,
+          remaining savings, and expected salary gain after graduation.
+        </p>
+
+        <p>
+          The biggest MBA tradeoff is flexibility. A large payment can affect
+          rent, groceries, transportation, emergency savings, childcare, medical
+          costs, home buying, retirement contributions, and your ability to take
+          a lower-paying but better-fitting job later.
+        </p>
+
+        <p>
+          If the MBA plan also requires significant borrowing, compare it with
+          the
+          <a class="content-link" href="/should-i-take-out-student-loans">
+            student loan calculator
+          </a>
+          and the broader
+          <a class="content-link" href="/college-calculators">
+            college calculator hub
+          </a>
+          before choosing a program.
+        </p>
+      </section>
+
+      <section class="content-section">
+        <h2>Signs the MBA Could Create Financial Pressure</h2>
+
+        <p>
+          Warning signs include heavy borrowing, weak salary upside, no employer
+          support, limited recruiting value, little savings left after enrolling,
+          high existing debt, or a plan that depends on a promotion that is not
+          clearly connected to the degree.
+        </p>
+
+        <p>
+          A high-pressure result does not mean an MBA is automatically a bad
+          idea. It means the current plan may need a lower price, better aid,
+          employer support, smaller loan, stronger savings, or a clearer career
+          target before the risk becomes manageable.
+        </p>
+
+        <p>
+          If the MBA would strain
+          <a class="content-link" href="/how-much-rent-can-i-afford">
+            housing
+          </a>,
+          <a class="content-link" href="/should-i-spend-this-much-on-groceries-per-month">
+            groceries
+          </a>,
+          emergency savings, transportation, childcare, or existing debt, the
+          funding plan deserves another pass before you enroll.
+        </p>
+      </section>
+
+      <section class="content-section">
+        <h2>What Your MBA Verdict Means</h2>
+
+        <p>
+          This verdict estimates financial pressure, not ambition, intelligence,
+          or the personal value of business school. A low score means the
+          numbers look relatively manageable. A moderate score means the plan may
+          work but deserves comparison shopping. A high score means the cost,
+          debt, lost income, or uncertain payoff could limit future flexibility.
+        </p>
+
+        <p>
+          The calculator gives credit for income recovery power, large savings,
+          employer help, and strong career value. A high-income household or
+          employer-funded MBA may create little measurable pressure even when the
+          sticker price is large.
+        </p>
+      </section>
+
+      <div class="content-section">
+        <FAQSection faqs={mbaFaqs} />
+      </div>
+
+      <div class="content-section">
+        <RelatedCalculators calculators={relatedCalculators} />
+      </div>
+    </CalculatorPageShell>
+
+    <MethodologySection category="MBA affordability" />
+  </div>
+
+  <script is:inline>
+    const clamp = (value, min, max) => Math.min(Math.max(value, min), max);
+
+    const getNumber = (id) => {
+      const rawValue = document.getElementById(id)?.value;
+      const value = Number(rawValue);
+      return Number.isFinite(value) && value >= 0 ? value : 0;
+    };
+
+    function getPressureLevel(score) {
+      if (score <= 30) {
+        return {
+          label: "Low Pressure",
+          stress: "Low pressure",
+          colorClass: "safe",
+          action:
+            "Keep comparing programs, but the MBA plan appears financially manageable based on the numbers entered.",
+        };
+      }
+
+      if (score <= 60) {
+        return {
+          label: "Moderate Pressure",
+          stress: "Moderate pressure",
+          colorClass: "caution",
+          action:
+            "Compare employer help, scholarships, part-time formats, lower-cost programs, and smaller loan options before committing.",
+        };
+      }
+
+      return {
+        label: "High Pressure",
+        stress: "High pressure",
+        colorClass: "danger",
+        action:
+          "Reduce the cost, improve employer help, delay enrollment, keep working longer, or choose a clearer payoff path before taking on an MBA.",
+      };
+    }
+
+    function calculateMbaPressure() {
+      const monthlyIncome = getNumber("monthlyIncome");
+      const savings = getNumber("savings");
+      const mbaCost = getNumber("mbaCost");
+      const borrowedAmount = getNumber("borrowedAmount");
+      const employerHelp = getNumber("employerHelp");
+      const monthlyDebt = getNumber("monthlyDebt");
+      const lostIncome = getNumber("lostIncome");
+      const incomeGain = getNumber("incomeGain");
+      const years = getNumber("years");
+      const cashUsed = getNumber("cashUsed");
+      const mbaValue = document.getElementById("mbaValue")?.value || "medium";
+      const workStatus = document.getElementById("workStatus")?.value || "full";
+      const networkValue =
+        document.getElementById("networkValue")?.value || "medium";
+
+      const results = document.getElementById("results");
+      const scoreText = document.getElementById("scoreText");
+      const fillBar = document.getElementById("fillBar");
+      const resultDetails = document.getElementById("resultDetails");
+      const guidance = document.getElementById("guidance");
+
+      results.classList.add("visible");
+
+      if (monthlyIncome <= 0 || mbaCost <= 0) {
+        scoreText.textContent = "Add your numbers first";
+        fillBar.style.width = "0%";
+        fillBar.className = "fill safe";
+
+        resultDetails.innerHTML =
+          "<p>Enter monthly take-home income, MBA program cost, savings, expected borrowing, employer help, lost income, and expected salary gain so the calculator can estimate MBA pressure.</p>";
+
+        guidance.textContent = "";
+        return;
+      }
+
+      const netMbaCost = Math.max(mbaCost - employerHelp, 0);
+      const estimatedMonthlyLoanPayment = borrowedAmount > 0 ? borrowedAmount * 0.012 : 0;
+      const annualIncome = monthlyIncome * 12;
+      const totalLostIncome = lostIncome * Math.max(years, 0) * 12;
+      const opportunityCost = netMbaCost + totalLostIncome;
+
+      const totalCostRatio = (netMbaCost / Math.max(annualIncome, 1)) * 100;
+      const opportunityCostRatio = (opportunityCost / Math.max(annualIncome, 1)) * 100;
+      const borrowedRatio = (borrowedAmount / Math.max(annualIncome, 1)) * 100;
+      const debtOnlyRatio =
+        ((estimatedMonthlyLoanPayment + monthlyDebt) / Math.max(monthlyIncome, 1)) *
+        100;
+      const monthlyPressureRatio =
+        ((estimatedMonthlyLoanPayment + monthlyDebt + lostIncome) /
+          Math.max(monthlyIncome, 1)) *
+        100;
+
+      const remainingSavings = Math.max(savings - cashUsed, 0);
+      const savingsMonthsAfter = remainingSavings / Math.max(monthlyIncome * 0.7, 1);
+      const cashUseRatio = cashUsed > 0 ? (cashUsed / Math.max(savings, 1)) * 100 : 0;
+      const employerHelpRatio = employerHelp / Math.max(mbaCost, 1);
+      const loanPaymentRatio = estimatedMonthlyLoanPayment / Math.max(monthlyIncome, 1);
+      const incomeGainRatio = incomeGain / Math.max(monthlyIncome, 1);
+      const payoffRatio =
+        incomeGain > 0 ? estimatedMonthlyLoanPayment / Math.max(incomeGain, 1) : 999;
+
+      const payoffStrength =
+        incomeGain >= estimatedMonthlyLoanPayment * 5 && incomeGain > 0
+          ? "strong"
+          : incomeGain >= estimatedMonthlyLoanPayment * 2 && incomeGain > 0
+            ? "moderate"
+            : "weak";
+
+      let pressureScore = 0;
+
+      pressureScore += clamp(totalCostRatio * 0.62, 0, 32);
+      pressureScore += clamp(opportunityCostRatio * 0.3, 0, 26);
+      pressureScore += clamp(borrowedRatio * 0.75, 0, 30);
+      pressureScore += clamp(monthlyPressureRatio * 0.78, 0, 36);
+      pressureScore += clamp(debtOnlyRatio * 0.4, 0, 18);
+      pressureScore += clamp(cashUseRatio * 0.24, 0, 18);
+
+      if (years >= 3) {
+        pressureScore += 10;
+      } else if (years >= 2) {
+        pressureScore += 7;
+      } else if (years > 0) {
+        pressureScore += 3;
+      }
+
+      if (workStatus === "part") {
+        pressureScore += 6;
+      } else if (workStatus === "pause") {
+        pressureScore += 16;
+      }
+
+      if (savingsMonthsAfter < 1) {
+        pressureScore += monthlyIncome >= netMbaCost ? 3 : 22;
+      } else if (savingsMonthsAfter < 3) {
+        pressureScore += monthlyIncome >= netMbaCost * 0.5 ? 4 : 12;
+      } else if (savingsMonthsAfter >= 6) {
+        pressureScore -= 8;
+      }
+
+      if (employerHelpRatio >= 0.75) {
+        pressureScore -= 16;
+      } else if (employerHelpRatio >= 0.5) {
+        pressureScore -= 11;
+      } else if (employerHelpRatio >= 0.25) {
+        pressureScore -= 6;
+      }
+
+      if (incomeGain <= 0) {
+        pressureScore += 20;
+      } else if (payoffRatio > 0.55) {
+        pressureScore += 14;
+      } else if (payoffRatio > 0.35) {
+        pressureScore += 8;
+      } else if (payoffRatio <= 0.15) {
+        pressureScore -= 9;
+      }
+
+      if (incomeGainRatio >= 0.45) {
+        pressureScore -= 12;
+      } else if (incomeGainRatio >= 0.25) {
+        pressureScore -= 7;
+      } else if (incomeGainRatio <= 0.08 && netMbaCost >= 50000) {
+        pressureScore += 9;
+      }
+
+      if (mbaValue === "required") {
+        pressureScore -= 10;
+      } else if (mbaValue === "strong") {
+        pressureScore -= 9;
+      } else if (mbaValue === "weak") {
+        pressureScore += 18;
+      }
+
+      if (networkValue === "strong") {
+        pressureScore -= 6;
+      } else if (networkValue === "weak") {
+        pressureScore += 8;
+      }
+
+      /*
+        SIS recovery-power overrides:
+        These prevent high-income, high-savings, or employer-funded MBA
+        scenarios from showing pressure that is not financially meaningful.
+      */
+
+      const netCostRecoveryMonths = netMbaCost / Math.max(monthlyIncome, 1);
+      const annualNetCostRatio = netMbaCost / Math.max(annualIncome, 1);
+      const cashRecoveryMonths = cashUsed / Math.max(monthlyIncome, 1);
+
+      if (
+        monthlyIncome >= 30000 &&
+        annualNetCostRatio <= 0.2 &&
+        debtOnlyRatio <= 8 &&
+        loanPaymentRatio <= 0.02
+      ) {
+        pressureScore = Math.min(pressureScore, 18);
+      }
+
+      if (
+        monthlyIncome >= 50000 &&
+        annualNetCostRatio <= 0.14 &&
+        debtOnlyRatio <= 6 &&
+        loanPaymentRatio <= 0.012
+      ) {
+        pressureScore = Math.min(pressureScore, 8);
+      }
+
+      if (
+        monthlyIncome >= netMbaCost &&
+        netCostRecoveryMonths <= 1 &&
+        debtOnlyRatio <= 5 &&
+        loanPaymentRatio <= 0.01
+      ) {
+        pressureScore = Math.min(pressureScore, 3);
+      }
+
+      if (
+        monthlyIncome >= netMbaCost * 1.25 &&
+        debtOnlyRatio <= 5 &&
+        loanPaymentRatio <= 0.008 &&
+        cashRecoveryMonths <= 1
+      ) {
+        pressureScore = 0;
+      }
+
+      if (
+        monthlyIncome >= netMbaCost * 2 &&
+        debtOnlyRatio <= 8 &&
+        loanPaymentRatio <= 0.015
+      ) {
+        pressureScore = 0;
+      }
+
+      if (
+        savings >= netMbaCost * 4 &&
+        remainingSavings >= netMbaCost * 3
+      ) {
+        pressureScore = Math.min(pressureScore, 20);
+      }
+
+      if (
+        savings >= netMbaCost * 7 &&
+        remainingSavings >= netMbaCost * 5
+      ) {
+        pressureScore = Math.min(pressureScore, 8);
+      }
+
+      if (
+        savings >= netMbaCost * 12 &&
+        remainingSavings >= netMbaCost * 8
+      ) {
+        pressureScore = Math.min(pressureScore, 3);
+      }
+
+      if (
+        savings >= netMbaCost * 20 &&
+        remainingSavings >= netMbaCost * 12
+      ) {
+        pressureScore = 0;
+      }
+
+      if (
+        cashUsed > 0 &&
+        cashRecoveryMonths <= 0.25 &&
+        debtOnlyRatio <= 8 &&
+        loanPaymentRatio <= 0.02
+      ) {
+        pressureScore = Math.min(pressureScore, 12);
+      }
+
+      if (
+        employerHelpRatio >= 0.9 &&
+        debtOnlyRatio <= 10 &&
+        monthlyPressureRatio <= 15
+      ) {
+        pressureScore = Math.min(pressureScore, 12);
+      }
+
+      if (
+        employerHelpRatio >= 0.95 &&
+        borrowedAmount <= 0 &&
+        savingsMonthsAfter >= 6
+      ) {
+        pressureScore = Math.min(pressureScore, 6);
+      }
+
+      if (
+        employerHelpRatio >= 1 &&
+        borrowedAmount <= 0 &&
+        savingsMonthsAfter >= 12 &&
+        lostIncome <= monthlyIncome * 0.05
+      ) {
+        pressureScore = 0;
+      }
+
+      if (
+        monthlyPressureRatio < 8 &&
+        debtOnlyRatio < 10 &&
+        savingsMonthsAfter >= 6 &&
+        payoffStrength !== "weak" &&
+        mbaValue !== "weak"
+      ) {
+        pressureScore = Math.min(pressureScore, 24);
+      }
+
+      if (
+        monthlyPressureRatio < 4 &&
+        debtOnlyRatio < 7 &&
+        savingsMonthsAfter >= 12 &&
+        payoffStrength === "strong" &&
+        (mbaValue === "required" || mbaValue === "strong") &&
+        networkValue !== "weak"
+      ) {
+        pressureScore = Math.min(pressureScore, 8);
+      }
+
+      pressureScore = clamp(Math.round(pressureScore), 0, 100);
+
+      const level = getPressureLevel(pressureScore);
+
+      scoreText.textContent = `${level.label} — ${pressureScore}/100`;
+      fillBar.style.width = `${pressureScore}%`;
+      fillBar.className = `fill ${level.colorClass}`;
+
+      let explanation = "";
+
+      if (pressureScore === 0) {
+        explanation =
+          "This MBA plan creates virtually no measurable financial pressure based on the income, savings, employer help, borrowing, debt, lost income, and payoff numbers provided.";
+      } else if (pressureScore <= 30) {
+        explanation =
+          "This MBA plan appears manageable. The main priority is confirming that the program has real career value and avoiding unnecessary extra borrowing.";
+      } else if (pressureScore <= 60) {
+        explanation =
+          "This MBA plan may work, but it deserves caution. Tuition, loans, lost income, existing debt, or uncertain salary upside could reduce flexibility.";
+      } else {
+        explanation =
+          "This MBA plan could create significant financial pressure. A cheaper program, more employer help, a smaller loan, or a clearer payoff path would likely create more flexibility.";
+      }
+
+      resultDetails.innerHTML = `
+        <p><strong>Net MBA cost:</strong> About $${netMbaCost.toFixed(0)} after employer help or scholarships entered.</p>
+
+        <p><strong>Estimated monthly loan payment:</strong> About $${estimatedMonthlyLoanPayment.toFixed(0)} per month.</p>
+
+        <p><strong>Opportunity cost:</strong> About $${opportunityCost.toFixed(0)}, including net MBA cost and estimated lost income while enrolled.</p>
+
+        <p><strong>Net MBA cost compared with income:</strong> ${totalCostRatio.toFixed(1)}% of annual take-home income.</p>
+
+        <p><strong>Opportunity cost compared with income:</strong> ${opportunityCostRatio.toFixed(1)}% of annual take-home income.</p>
+
+        <p><strong>Debt payment pressure:</strong> ${debtOnlyRatio.toFixed(1)}% of monthly take-home income, including current debt and estimated MBA borrowing.</p>
+
+        <p><strong>Monthly pressure while enrolled:</strong> ${monthlyPressureRatio.toFixed(1)}% of monthly take-home income, including debt, estimated loan payment, and lost income.</p>
+
+        <p><strong>Emergency savings after planned cash use:</strong> About ${savingsMonthsAfter.toFixed(1)} months of estimated flexibility.</p>
+
+        <p><strong>Expected payoff strength:</strong> ${payoffStrength} based on estimated loan payment versus expected monthly income gain.</p>
+
+        <p><strong>Pressure level:</strong> ${level.stress}.</p>
+
+        <p>${explanation} Recommended next step: ${level.action}</p>
+      `;
+
+      guidance.textContent = "";
+    }
+
+    document
+      .getElementById("mbaButton")
+      .addEventListener("click", calculateMbaPressure);
+  </script>
+</Layout>

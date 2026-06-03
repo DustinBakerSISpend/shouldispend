@@ -1,0 +1,937 @@
+---
+import Layout from "../layouts/Layout.astro";
+import CalculatorPageShell from "../components/CalculatorPageShell.astro";
+import FAQSection from "../components/FAQSection.astro";
+import RelatedCalculators from "../components/RelatedCalculators.astro";
+import MethodologySection from "../components/MethodologySection.astro";
+import WhenSpendingMakesSense from "../components/WhenSpendingMakesSense.astro";
+import { calculators } from "../data/calculators.js";
+
+const graduateSchoolFaqs = [
+  {
+    question: "Should I go to graduate school?",
+    answer:
+      "Graduate school can make sense when the program has a clear career payoff, the total cost fits your income and savings, and the credential improves earning power, job access, promotion potential, or professional stability.",
+  },
+  {
+    question: "How do I know if graduate school is worth it?",
+    answer:
+      "Compare tuition, fees, student loans, lost income, program length, expected salary gain, employer reimbursement, and the career ceiling without the degree. A graduate program is stronger when the payoff is specific and realistic.",
+  },
+  {
+    question: "Is it risky to borrow money for graduate school?",
+    answer:
+      "Graduate school borrowing can be risky when the expected payment is large compared with future income, the career payoff is uncertain, or existing debt already limits monthly flexibility.",
+  },
+];
+
+const relatedCalculators = calculators
+  .filter(
+    (calculator) =>
+      calculator.category === "College" &&
+      calculator.href !== "/should-i-go-to-graduate-school"
+  )
+  .slice(0, 4);
+---
+
+<Layout
+  title="Should I Go to Graduate School?"
+  description="Evaluate whether graduate school fits your income, tuition cost, student loan risk, lost income, career payoff, savings, and long-term financial pressure."
+>
+  <style>
+    .container {
+      max-width: 900px;
+      margin: auto;
+    }
+
+    .calculator {
+      background: white;
+      padding: 40px;
+      border-radius: 24px;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.06);
+    }
+
+    .calculator h2 {
+      margin-top: 0;
+      font-size: 2rem;
+      margin-bottom: 18px;
+      color: #0f172a;
+    }
+
+    .calculator-intro {
+      color: #334155;
+      line-height: 1.8;
+      margin-bottom: 30px;
+      font-size: 1.05rem;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+    }
+
+    .field label {
+      display: block;
+      font-weight: 800;
+      margin-bottom: 10px;
+      color: #0f172a;
+    }
+
+    .field input,
+    .field select {
+      width: 100%;
+      padding: 16px;
+      border-radius: 12px;
+      border: 1px solid #cbd5e1;
+      font-size: 1rem;
+      box-sizing: border-box;
+      background: white;
+    }
+
+    .helper-link {
+      margin-top: 10px;
+      font-size: 0.92rem;
+      line-height: 1.5;
+      color: #475569;
+    }
+
+    .helper-link a,
+    .content-link {
+      color: #0f766e;
+      font-weight: 700;
+      text-decoration: none;
+    }
+
+    .helper-link a:hover,
+    .content-link:hover {
+      text-decoration: underline;
+    }
+
+    button {
+      margin-top: 30px;
+      background: #0f766e;
+      color: white;
+      border: none;
+      padding: 18px 32px;
+      border-radius: 999px;
+      font-size: 1.05rem;
+      font-weight: 800;
+      cursor: pointer;
+      transition: opacity 0.2s ease;
+    }
+
+    button:hover {
+      opacity: 0.92;
+    }
+
+    .results {
+      margin-top: 36px;
+      background: #f8fafc;
+      padding: 32px;
+      border-radius: 24px;
+      border: 1px solid var(--border);
+      box-shadow: 0 10px 24px rgba(15, 23, 42, 0.04);
+      display: none;
+    }
+
+    .results.visible {
+      display: block;
+    }
+
+    .score {
+      font-size: clamp(2rem, 4vw, 2.7rem);
+      font-weight: 900;
+      color: #0f172a;
+      margin-bottom: 22px;
+      line-height: 1.15;
+    }
+
+    .bar {
+      width: 100%;
+      height: 16px;
+      background: #dbe4ee;
+      border-radius: 999px;
+      overflow: hidden;
+      margin-bottom: 24px;
+    }
+
+    .fill {
+      height: 100%;
+      width: 0%;
+      border-radius: 999px;
+      transition: width 0.45s ease;
+    }
+
+    .fill.safe {
+      background: linear-gradient(90deg, #0f766e 0%, #14b8a6 100%);
+    }
+
+    .fill.caution {
+      background: linear-gradient(90deg, #ca8a04 0%, #facc15 100%);
+    }
+
+    .fill.danger {
+      background: linear-gradient(90deg, #dc2626 0%, #f97316 100%);
+    }
+
+    .result-details {
+      color: #334155;
+      line-height: 1.9;
+      font-size: 1.02rem;
+    }
+
+    .result-details p {
+      margin: 0 0 12px;
+    }
+
+    .guidance {
+      margin-top: 22px;
+      padding-top: 20px;
+      border-top: 1px solid #dbe4ee;
+      font-size: 1.12rem;
+      line-height: 1.85;
+      color: #1e293b;
+    }
+
+    .disclaimer {
+      margin-top: 24px;
+      font-size: 0.9rem;
+      color: #64748b;
+    }
+
+    .content-section {
+      margin-top: 60px;
+    }
+
+    .content-section h2 {
+      font-size: 2rem;
+      margin-bottom: 20px;
+      color: #0f172a;
+    }
+
+    .content-section p,
+    .content-section li {
+      font-size: 1.1rem;
+      line-height: 1.9;
+      color: #334155;
+    }
+
+    .pillar-card {
+      display: block;
+      background: #f8fafc;
+      border: 1px solid #dbe4ee;
+      border-radius: 20px;
+      padding: 24px;
+      margin-top: 28px;
+      text-decoration: none;
+      transition: transform 0.15s ease;
+    }
+
+    .pillar-card:hover {
+      transform: translateY(-2px);
+    }
+
+    .pillar-card strong {
+      display: block;
+      margin-bottom: 10px;
+      color: #0f172a;
+      font-size: 1.08rem;
+    }
+
+    .pillar-card span {
+      color: #334155;
+      line-height: 1.7;
+      font-size: 0.98rem;
+    }
+
+    @media (max-width: 768px) {
+      .calculator {
+        padding: 24px;
+      }
+
+      .grid {
+        grid-template-columns: 1fr;
+      }
+
+      .calculator h2,
+      .content-section h2 {
+        font-size: 1.7rem;
+      }
+
+      .results {
+        padding: 24px;
+      }
+    }
+  </style>
+
+  <div class="container">
+    <CalculatorPageShell
+      eyebrow="Graduate School Calculator"
+      title="Should I Go to Graduate School?"
+      description="Pressure-test graduate school against tuition, lost income, student loans, employer help, career ceiling, and expected salary upside."
+    >
+      <div class="calculator">
+        <h2>Graduate School Pressure Verdict</h2>
+
+        <p class="calculator-intro">
+          Graduate school can be a smart career move, an expensive delay, or
+          something in between. Enter your income, program cost, expected
+          borrowing, lost income, employer help, and salary upside to estimate
+          whether grad school looks manageable, cautious, or high pressure.
+        </p>
+
+        <div class="grid">
+          <div class="field">
+            <label for="monthlyIncome">Current Monthly Take-Home Income</label>
+            <input id="monthlyIncome" type="number" placeholder="Example: 6200" />
+          </div>
+
+          <div class="field">
+            <label for="savings">Current Savings</label>
+            <input id="savings" type="number" placeholder="Example: 25000" />
+          </div>
+
+          <div class="field">
+            <label for="programCost">Total Graduate Program Cost</label>
+            <input id="programCost" type="number" placeholder="Example: 60000" />
+          </div>
+
+          <div class="field">
+            <label for="borrowedAmount">Amount You Expect to Borrow</label>
+            <input id="borrowedAmount" type="number" placeholder="Example: 35000" />
+
+            <div class="helper-link">
+              Testing the loan side?
+              <a href="/should-i-take-out-student-loans">Use the student loan calculator</a>
+            </div>
+          </div>
+
+          <div class="field">
+            <label for="employerHelp">Employer Reimbursement or Grants</label>
+            <input id="employerHelp" type="number" placeholder="Example: 10000" />
+          </div>
+
+          <div class="field">
+            <label for="monthlyDebt">Current Monthly Debt Payments</label>
+            <input id="monthlyDebt" type="number" placeholder="Example: 750" />
+
+            <div class="helper-link">
+              Not sure what counts as debt?
+              <a href="/what-counts-as-debt">Read the debt guide</a>
+            </div>
+          </div>
+
+          <div class="field">
+            <label for="lostIncome">Monthly Income You May Lose While Enrolled</label>
+            <input id="lostIncome" type="number" placeholder="Example: 800" />
+          </div>
+
+          <div class="field">
+            <label for="incomeGain">Expected Monthly Income Gain After Graduation</label>
+            <input id="incomeGain" type="number" placeholder="Example: 1800" />
+          </div>
+
+          <div class="field">
+            <label for="years">Years Until Finished</label>
+            <input id="years" type="number" placeholder="Example: 2" />
+          </div>
+
+          <div class="field">
+            <label for="credentialValue">Graduate Degree Value</label>
+            <select id="credentialValue">
+              <option value="required">Required for the career or license</option>
+              <option value="strong">Strong promotion or salary path</option>
+              <option value="medium" selected>Helpful but not required</option>
+              <option value="weak">Unclear career value</option>
+            </select>
+          </div>
+
+          <div class="field">
+            <label for="workStatus">Work Plan During Graduate School</label>
+            <select id="workStatus">
+              <option value="full" selected>Keep working full-time</option>
+              <option value="part">Work part-time</option>
+              <option value="pause">Pause or sharply reduce work</option>
+            </select>
+          </div>
+
+          <div class="field">
+            <label for="cashUsed">Savings You Plan to Use</label>
+            <input id="cashUsed" type="number" placeholder="Example: 12000" />
+          </div>
+        </div>
+
+        <button id="gradButton" type="button">Get Graduate School Verdict</button>
+
+        <div class="results" id="results">
+          <div class="score" id="scoreText"></div>
+
+          <div class="bar">
+            <div class="fill" id="fillBar"></div>
+          </div>
+
+          <div class="result-details" id="resultDetails"></div>
+
+          <div class="guidance" id="guidance"></div>
+
+          <div class="disclaimer">
+            This is a general educational estimate, not personalized financial advice.
+          </div>
+        </div>
+      </div>
+
+      <section class="content-section">
+        <h2>Start With the Graduate School Tradeoff</h2>
+
+        <p>
+          Graduate school is different from a general back-to-school decision
+          because the tradeoff often involves career ceiling, professional
+          licensing, employer expectations, and opportunity cost. The degree may
+          help you earn more, but the timing and funding plan can shape whether
+          the payoff feels worth it.
+        </p>
+
+        <a class="pillar-card" href="/degree-roi-calculator">
+          <strong>Degree ROI Calculator</strong>
+          <span>
+            Estimate whether a degree may pay off using total cost, expected
+            income gains, payback period, opportunity cost, and debt pressure.
+          </span>
+        </a>
+
+        <a class="pillar-card" href="/college-cost-calculator">
+          <strong>College Cost Calculator</strong>
+          <span>
+            Estimate total education pressure using tuition, fees, books,
+            housing, loans, savings, expected payoff, and household flexibility.
+          </span>
+        </a>
+
+        <a class="pillar-card" href="/should-i-spend-100000-on-college">
+          <strong>Should I Spend $100,000 on College?</strong>
+          <span>
+            Pressure-test a six-figure education cost against income, savings,
+            student loan exposure, career payoff, and long-term flexibility.
+          </span>
+        </a>
+      </section>
+
+      <section class="content-section">
+        <h2>What Graduate School Really Costs</h2>
+
+        <p>
+          The true cost of graduate school is not only tuition. Fees, books,
+          software, licensing exams, clinical requirements, travel, reduced work
+          hours, student loan interest, and delayed career progress can all
+          affect the financial result.
+        </p>
+
+        <p>
+          The biggest hidden cost is often opportunity cost. If you reduce work,
+          delay a promotion, or pause full-time income, the degree has to earn
+          back more than the published program price. That does not make graduate
+          school wrong. It means the payoff should be specific enough to defend.
+        </p>
+
+        <p>
+          A program required for a license or career path usually deserves a
+          different analysis than a general master’s degree taken for optional
+          advancement. The stronger the career connection, the easier it is for
+          the math to work.
+        </p>
+      </section>
+
+      <WhenSpendingMakesSense
+        title="When Graduate School Can Make Sense"
+        items={[
+          "The degree is required for the job, license, credential, or professional track you want.",
+          "The expected salary gain is large enough to offset tuition, debt, lost income, and time in school.",
+          "Employer reimbursement, grants, scholarships, assistantships, or stipends reduce the out-of-pocket cost.",
+          "You can keep working or limit lost income while enrolled.",
+          "Any student loan payment would fit future income without crowding out housing, food, transportation, healthcare, or savings.",
+          "The program has strong completion rates, career placement, and a clear path from enrollment to better earnings.",
+        ]}
+      />
+
+      <section class="content-section">
+        <h2>When Graduate School Deserves Caution</h2>
+
+        <p>
+          Graduate school deserves caution when the program is expensive, the
+          salary gain is vague, or the degree is only loosely connected to a
+          better job. A graduate credential can be impressive and still create
+          pressure if the debt payment arrives before the income gain does.
+        </p>
+
+        <p>
+          Be especially careful if the plan depends on quitting work, borrowing
+          heavily, draining savings, or assuming a promotion that is not clearly
+          tied to the degree. The more speculative the outcome, the more
+          important it is to control cost.
+        </p>
+
+        <p>
+          Caution can mean delaying, not abandoning. You may be able to ask for
+          employer reimbursement, choose a part-time format, apply for an
+          assistantship, complete prerequisites first, or compare a lower-cost
+          program with similar career value.
+        </p>
+      </section>
+
+      <section class="content-section">
+        <h2>Key Graduate School Costs and Tradeoffs</h2>
+
+        <p>
+          Before enrolling, estimate the total program cost, expected loan
+          balance, monthly payment, lost income, remaining savings, and time to
+          recover the expense. A strong graduate school plan should make room
+          for both the degree and ordinary life.
+        </p>
+
+        <p>
+          The major tradeoff is flexibility. A large graduate school payment can
+          affect rent, groceries, transportation, emergency savings, childcare,
+          medical costs, home buying, retirement contributions, and the freedom
+          to change jobs later.
+        </p>
+
+        <p>
+          If the decision also involves major borrowing, use the
+          <a class="content-link" href="/should-i-take-out-student-loans">
+            student loan calculator
+          </a>
+          and the
+          <a class="content-link" href="/college-calculators">
+            college calculator hub
+          </a>
+          before choosing a program or loan amount.
+        </p>
+      </section>
+
+      <section class="content-section">
+        <h2>Signs Graduate School Could Create Financial Pressure</h2>
+
+        <p>
+          Warning signs include large borrowing, weak salary upside, no employer
+          help, little savings left after enrollment, high existing debt, or a
+          plan that requires you to stop working without a strong payoff.
+        </p>
+
+        <p>
+          A high-pressure result does not mean graduate school is a bad idea. It
+          means the current version of the plan may need a lower price, more aid,
+          smaller loan, clearer career path, or better timing before the risk
+          becomes manageable.
+        </p>
+
+        <p>
+          If the program would strain
+          <a class="content-link" href="/how-much-rent-can-i-afford">
+            housing
+          </a>,
+          <a class="content-link" href="/should-i-spend-this-much-on-groceries-per-month">
+            groceries
+          </a>,
+          emergency savings, transportation, childcare, or existing debt, the
+          funding plan deserves another pass before you enroll.
+        </p>
+      </section>
+
+      <section class="content-section">
+        <h2>What Your Graduate School Verdict Means</h2>
+
+        <p>
+          This verdict estimates financial pressure, not the personal value of
+          education. A low score means the numbers look relatively manageable. A
+          moderate score means the plan may work but deserves comparison
+          shopping. A high score means the cost, debt, lost income, or uncertain
+          payoff could limit future flexibility.
+        </p>
+
+        <p>
+          The calculator also gives credit for income recovery power. If someone
+          has very high income, very large savings, strong employer help, or a
+          clearly valuable credential, graduate school may create little
+          measurable pressure even when the sticker price is large.
+        </p>
+      </section>
+
+      <div class="content-section">
+        <FAQSection faqs={graduateSchoolFaqs} />
+      </div>
+
+      <div class="content-section">
+        <RelatedCalculators calculators={relatedCalculators} />
+      </div>
+    </CalculatorPageShell>
+
+    <MethodologySection category="graduate school affordability" />
+  </div>
+
+  <script is:inline>
+    const clamp = (value, min, max) => Math.min(Math.max(value, min), max);
+
+    const getNumber = (id) => {
+      const rawValue = document.getElementById(id)?.value;
+      const value = Number(rawValue);
+      return Number.isFinite(value) && value >= 0 ? value : 0;
+    };
+
+    function getPressureLevel(score) {
+      if (score <= 30) {
+        return {
+          label: "Low Pressure",
+          stress: "Low pressure",
+          colorClass: "safe",
+          action:
+            "Keep comparing programs, but the graduate school plan appears financially manageable based on the numbers entered.",
+        };
+      }
+
+      if (score <= 60) {
+        return {
+          label: "Moderate Pressure",
+          stress: "Moderate pressure",
+          colorClass: "caution",
+          action:
+            "Compare employer help, assistantships, part-time formats, lower-cost programs, and smaller loan options before committing.",
+        };
+      }
+
+      return {
+        label: "High Pressure",
+        stress: "High pressure",
+        colorClass: "danger",
+        action:
+          "Reduce the cost, improve aid, delay enrollment, keep working longer, or choose a clearer payoff path before taking on graduate school.",
+      };
+    }
+
+    function calculateGraduateSchool() {
+      const monthlyIncome = getNumber("monthlyIncome");
+      const savings = getNumber("savings");
+      const programCost = getNumber("programCost");
+      const borrowedAmount = getNumber("borrowedAmount");
+      const employerHelp = getNumber("employerHelp");
+      const monthlyDebt = getNumber("monthlyDebt");
+      const lostIncome = getNumber("lostIncome");
+      const incomeGain = getNumber("incomeGain");
+      const years = getNumber("years");
+      const cashUsed = getNumber("cashUsed");
+      const credentialValue =
+        document.getElementById("credentialValue")?.value || "medium";
+      const workStatus =
+        document.getElementById("workStatus")?.value || "full";
+
+      const results = document.getElementById("results");
+      const scoreText = document.getElementById("scoreText");
+      const fillBar = document.getElementById("fillBar");
+      const resultDetails = document.getElementById("resultDetails");
+      const guidance = document.getElementById("guidance");
+
+      results.classList.add("visible");
+
+      if (monthlyIncome <= 0 || programCost <= 0) {
+        scoreText.textContent = "Add your numbers first";
+        fillBar.style.width = "0%";
+        fillBar.className = "fill safe";
+
+        resultDetails.innerHTML =
+          "<p>Enter monthly take-home income, graduate program cost, savings, expected borrowing, employer help, lost income, and expected salary gain so the calculator can estimate financial pressure.</p>";
+
+        guidance.textContent = "";
+        return;
+      }
+
+      const netProgramCost = Math.max(programCost - employerHelp, 0);
+      const estimatedMonthlyLoanPayment = borrowedAmount > 0 ? borrowedAmount * 0.012 : 0;
+      const annualIncome = monthlyIncome * 12;
+      const totalLostIncome = lostIncome * Math.max(years, 0) * 12;
+      const opportunityCost = netProgramCost + totalLostIncome;
+
+      const totalCostRatio = (netProgramCost / Math.max(annualIncome, 1)) * 100;
+      const opportunityCostRatio = (opportunityCost / Math.max(annualIncome, 1)) * 100;
+      const borrowedRatio = (borrowedAmount / Math.max(annualIncome, 1)) * 100;
+      const debtOnlyRatio =
+        ((estimatedMonthlyLoanPayment + monthlyDebt) / Math.max(monthlyIncome, 1)) *
+        100;
+      const monthlyPressureRatio =
+        ((estimatedMonthlyLoanPayment + monthlyDebt + lostIncome) /
+          Math.max(monthlyIncome, 1)) *
+        100;
+
+      const remainingSavings = Math.max(savings - cashUsed, 0);
+      const savingsMonthsAfter = remainingSavings / Math.max(monthlyIncome * 0.7, 1);
+      const cashUseRatio = cashUsed > 0 ? (cashUsed / Math.max(savings, 1)) * 100 : 0;
+      const employerHelpRatio = employerHelp / Math.max(programCost, 1);
+      const loanPaymentRatio = estimatedMonthlyLoanPayment / Math.max(monthlyIncome, 1);
+      const incomeGainRatio = incomeGain / Math.max(monthlyIncome, 1);
+      const payoffRatio =
+        incomeGain > 0 ? estimatedMonthlyLoanPayment / Math.max(incomeGain, 1) : 999;
+
+      const payoffStrength =
+        incomeGain >= estimatedMonthlyLoanPayment * 5 && incomeGain > 0
+          ? "strong"
+          : incomeGain >= estimatedMonthlyLoanPayment * 2 && incomeGain > 0
+            ? "moderate"
+            : "weak";
+
+      let pressureScore = 0;
+
+      pressureScore += clamp(totalCostRatio * 0.6, 0, 30);
+      pressureScore += clamp(opportunityCostRatio * 0.28, 0, 24);
+      pressureScore += clamp(borrowedRatio * 0.72, 0, 28);
+      pressureScore += clamp(monthlyPressureRatio * 0.75, 0, 34);
+      pressureScore += clamp(debtOnlyRatio * 0.38, 0, 16);
+      pressureScore += clamp(cashUseRatio * 0.24, 0, 18);
+
+      if (years >= 4) {
+        pressureScore += 12;
+      } else if (years >= 2) {
+        pressureScore += 7;
+      } else if (years > 0) {
+        pressureScore += 3;
+      }
+
+      if (workStatus === "part") {
+        pressureScore += 6;
+      } else if (workStatus === "pause") {
+        pressureScore += 14;
+      }
+
+      if (savingsMonthsAfter < 1) {
+        pressureScore += monthlyIncome >= netProgramCost ? 3 : 20;
+      } else if (savingsMonthsAfter < 3) {
+        pressureScore += monthlyIncome >= netProgramCost * 0.5 ? 4 : 12;
+      } else if (savingsMonthsAfter >= 6) {
+        pressureScore -= 8;
+      }
+
+      if (employerHelpRatio >= 0.75) {
+        pressureScore -= 16;
+      } else if (employerHelpRatio >= 0.5) {
+        pressureScore -= 11;
+      } else if (employerHelpRatio >= 0.25) {
+        pressureScore -= 6;
+      }
+
+      if (incomeGain <= 0) {
+        pressureScore += 18;
+      } else if (payoffRatio > 0.55) {
+        pressureScore += 14;
+      } else if (payoffRatio > 0.35) {
+        pressureScore += 8;
+      } else if (payoffRatio <= 0.15) {
+        pressureScore -= 9;
+      }
+
+      if (incomeGainRatio >= 0.4) {
+        pressureScore -= 10;
+      } else if (incomeGainRatio >= 0.25) {
+        pressureScore -= 6;
+      } else if (incomeGainRatio <= 0.08 && netProgramCost >= 40000) {
+        pressureScore += 8;
+      }
+
+      if (credentialValue === "required") {
+        pressureScore -= 12;
+      } else if (credentialValue === "strong") {
+        pressureScore -= 9;
+      } else if (credentialValue === "weak") {
+        pressureScore += 18;
+      }
+
+      /*
+        SIS recovery-power overrides:
+        These prevent high-income, high-savings, or employer-funded scenarios
+        from showing pressure that is not financially meaningful.
+      */
+
+      const netCostRecoveryMonths = netProgramCost / Math.max(monthlyIncome, 1);
+      const opportunityRecoveryMonths = opportunityCost / Math.max(monthlyIncome, 1);
+      const annualNetCostRatio = netProgramCost / Math.max(annualIncome, 1);
+      const cashRecoveryMonths = cashUsed / Math.max(monthlyIncome, 1);
+
+      if (
+        monthlyIncome >= 30000 &&
+        annualNetCostRatio <= 0.18 &&
+        debtOnlyRatio <= 8 &&
+        loanPaymentRatio <= 0.02
+      ) {
+        pressureScore = Math.min(pressureScore, 18);
+      }
+
+      if (
+        monthlyIncome >= 50000 &&
+        annualNetCostRatio <= 0.12 &&
+        debtOnlyRatio <= 6 &&
+        loanPaymentRatio <= 0.012
+      ) {
+        pressureScore = Math.min(pressureScore, 8);
+      }
+
+      if (
+        monthlyIncome >= netProgramCost &&
+        netCostRecoveryMonths <= 1 &&
+        debtOnlyRatio <= 5 &&
+        loanPaymentRatio <= 0.01
+      ) {
+        pressureScore = Math.min(pressureScore, 3);
+      }
+
+      if (
+        monthlyIncome >= netProgramCost * 1.25 &&
+        debtOnlyRatio <= 5 &&
+        loanPaymentRatio <= 0.008 &&
+        cashRecoveryMonths <= 1
+      ) {
+        pressureScore = 0;
+      }
+
+      if (
+        monthlyIncome >= netProgramCost * 2 &&
+        debtOnlyRatio <= 8 &&
+        loanPaymentRatio <= 0.015
+      ) {
+        pressureScore = 0;
+      }
+
+      if (
+        savings >= netProgramCost * 4 &&
+        remainingSavings >= netProgramCost * 3
+      ) {
+        pressureScore = Math.min(pressureScore, 20);
+      }
+
+      if (
+        savings >= netProgramCost * 7 &&
+        remainingSavings >= netProgramCost * 5
+      ) {
+        pressureScore = Math.min(pressureScore, 8);
+      }
+
+      if (
+        savings >= netProgramCost * 12 &&
+        remainingSavings >= netProgramCost * 8
+      ) {
+        pressureScore = Math.min(pressureScore, 3);
+      }
+
+      if (
+        savings >= netProgramCost * 20 &&
+        remainingSavings >= netProgramCost * 12
+      ) {
+        pressureScore = 0;
+      }
+
+      if (
+        cashUsed > 0 &&
+        cashRecoveryMonths <= 0.25 &&
+        debtOnlyRatio <= 8 &&
+        loanPaymentRatio <= 0.02
+      ) {
+        pressureScore = Math.min(pressureScore, 12);
+      }
+
+      if (
+        employerHelpRatio >= 0.9 &&
+        debtOnlyRatio <= 10 &&
+        monthlyPressureRatio <= 15
+      ) {
+        pressureScore = Math.min(pressureScore, 12);
+      }
+
+      if (
+        employerHelpRatio >= 0.95 &&
+        borrowedAmount <= 0 &&
+        savingsMonthsAfter >= 6
+      ) {
+        pressureScore = Math.min(pressureScore, 6);
+      }
+
+      if (
+        employerHelpRatio >= 1 &&
+        borrowedAmount <= 0 &&
+        savingsMonthsAfter >= 12 &&
+        lostIncome <= monthlyIncome * 0.05
+      ) {
+        pressureScore = 0;
+      }
+
+      if (
+        monthlyPressureRatio < 8 &&
+        debtOnlyRatio < 10 &&
+        savingsMonthsAfter >= 6 &&
+        payoffStrength !== "weak" &&
+        credentialValue !== "weak"
+      ) {
+        pressureScore = Math.min(pressureScore, 24);
+      }
+
+      if (
+        monthlyPressureRatio < 4 &&
+        debtOnlyRatio < 7 &&
+        savingsMonthsAfter >= 12 &&
+        payoffStrength === "strong" &&
+        (credentialValue === "required" || credentialValue === "strong")
+      ) {
+        pressureScore = Math.min(pressureScore, 8);
+      }
+
+      pressureScore = clamp(Math.round(pressureScore), 0, 100);
+
+      const level = getPressureLevel(pressureScore);
+
+      scoreText.textContent = `${level.label} — ${pressureScore}/100`;
+      fillBar.style.width = `${pressureScore}%`;
+      fillBar.className = `fill ${level.colorClass}`;
+
+      let explanation = "";
+
+      if (pressureScore === 0) {
+        explanation =
+          "This graduate school plan creates virtually no measurable financial pressure based on the income, savings, employer help, borrowing, debt, lost income, and payoff numbers provided.";
+      } else if (pressureScore <= 30) {
+        explanation =
+          "This graduate school plan appears manageable. The main priority is confirming that the credential has real career value and that you avoid unnecessary extra borrowing.";
+      } else if (pressureScore <= 60) {
+        explanation =
+          "This graduate school plan may work, but it deserves caution. Tuition, loans, lost income, existing debt, or uncertain salary upside could reduce flexibility.";
+      } else {
+        explanation =
+          "This graduate school plan could create significant financial pressure. A cheaper program, more aid, employer reimbursement, smaller loan, or clearer payoff path would likely create more flexibility.";
+      }
+
+      resultDetails.innerHTML = `
+        <p><strong>Net graduate school cost:</strong> About $${netProgramCost.toFixed(0)} after employer help or grants entered.</p>
+
+        <p><strong>Estimated monthly loan payment:</strong> About $${estimatedMonthlyLoanPayment.toFixed(0)} per month.</p>
+
+        <p><strong>Opportunity cost:</strong> About $${opportunityCost.toFixed(0)}, including net program cost and estimated lost income while enrolled.</p>
+
+        <p><strong>Net program cost compared with income:</strong> ${totalCostRatio.toFixed(1)}% of annual take-home income.</p>
+
+        <p><strong>Opportunity cost compared with income:</strong> ${opportunityCostRatio.toFixed(1)}% of annual take-home income.</p>
+
+        <p><strong>Debt payment pressure:</strong> ${debtOnlyRatio.toFixed(1)}% of monthly take-home income, including current debt and estimated graduate school borrowing.</p>
+
+        <p><strong>Monthly pressure while enrolled:</strong> ${monthlyPressureRatio.toFixed(1)}% of monthly take-home income, including debt, estimated loan payment, and lost income.</p>
+
+        <p><strong>Emergency savings after planned cash use:</strong> About ${savingsMonthsAfter.toFixed(1)} months of estimated flexibility.</p>
+
+        <p><strong>Expected payoff strength:</strong> ${payoffStrength} based on estimated loan payment versus expected monthly income gain.</p>
+
+        <p><strong>Pressure level:</strong> ${level.stress}.</p>
+
+        <p>${explanation} Recommended next step: ${level.action}</p>
+      `;
+
+      guidance.textContent = "";
+    }
+
+    document
+      .getElementById("gradButton")
+      .addEventListener("click", calculateGraduateSchool);
+  </script>
+</Layout>

@@ -1,0 +1,956 @@
+---
+import Layout from "../layouts/Layout.astro";
+import CalculatorPageShell from "../components/CalculatorPageShell.astro";
+import FAQSection from "../components/FAQSection.astro";
+import RelatedCalculators from "../components/RelatedCalculators.astro";
+import MethodologySection from "../components/MethodologySection.astro";
+import WhenSpendingMakesSense from "../components/WhenSpendingMakesSense.astro";
+import { calculators } from "../data/calculators.js";
+
+const degreeRoiFaqs = [
+  {
+    question: "How do I calculate degree ROI?",
+    answer:
+      "Estimate the total degree cost, subtract grants or employer help, add lost income while enrolled, then compare that opportunity cost with the expected income gain after finishing.",
+  },
+  {
+    question: "What is a good payback period for a degree?",
+    answer:
+      "A shorter payback period is usually safer. A degree that can reasonably recover its cost within a few years is usually less risky than one that takes a decade or more to pay off.",
+  },
+  {
+    question: "Is a degree worth it if the ROI is low?",
+    answer:
+      "A lower-ROI degree may still have personal or career value, but it deserves a safer funding plan, lower borrowing, stronger savings, or clearer non-financial reasons before committing.",
+  },
+];
+
+const relatedCalculators = calculators
+  .filter(
+    (calculator) =>
+      calculator.category === "College" &&
+      calculator.href !== "/degree-roi-calculator"
+  )
+  .slice(0, 4);
+---
+
+<Layout
+  title="Degree ROI Calculator"
+  description="Estimate degree ROI using total cost, grants, loans, lost income, expected salary gain, payback period, debt pressure, and long-term affordability."
+>
+  <style>
+    .container {
+      max-width: 900px;
+      margin: auto;
+    }
+
+    .calculator {
+      background: white;
+      padding: 40px;
+      border-radius: 24px;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.06);
+    }
+
+    .calculator h2 {
+      margin-top: 0;
+      font-size: 2rem;
+      margin-bottom: 18px;
+      color: #0f172a;
+    }
+
+    .calculator-intro {
+      color: #334155;
+      line-height: 1.8;
+      margin-bottom: 30px;
+      font-size: 1.05rem;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+    }
+
+    .field label {
+      display: block;
+      font-weight: 800;
+      margin-bottom: 10px;
+      color: #0f172a;
+    }
+
+    .field input,
+    .field select {
+      width: 100%;
+      padding: 16px;
+      border-radius: 12px;
+      border: 1px solid #cbd5e1;
+      font-size: 1rem;
+      box-sizing: border-box;
+      background: white;
+    }
+
+    .helper-link {
+      margin-top: 10px;
+      font-size: 0.92rem;
+      line-height: 1.5;
+      color: #475569;
+    }
+
+    .helper-link a,
+    .content-link {
+      color: #0f766e;
+      font-weight: 700;
+      text-decoration: none;
+    }
+
+    .helper-link a:hover,
+    .content-link:hover {
+      text-decoration: underline;
+    }
+
+    button {
+      margin-top: 30px;
+      background: #0f766e;
+      color: white;
+      border: none;
+      padding: 18px 32px;
+      border-radius: 999px;
+      font-size: 1.05rem;
+      font-weight: 800;
+      cursor: pointer;
+      transition: opacity 0.2s ease;
+    }
+
+    button:hover {
+      opacity: 0.92;
+    }
+
+    .results {
+      margin-top: 36px;
+      background: #f8fafc;
+      padding: 32px;
+      border-radius: 24px;
+      border: 1px solid var(--border);
+      box-shadow: 0 10px 24px rgba(15, 23, 42, 0.04);
+      display: none;
+    }
+
+    .results.visible {
+      display: block;
+    }
+
+    .score {
+      font-size: clamp(2rem, 4vw, 2.7rem);
+      font-weight: 900;
+      color: #0f172a;
+      margin-bottom: 22px;
+      line-height: 1.15;
+    }
+
+    .bar {
+      width: 100%;
+      height: 16px;
+      background: #dbe4ee;
+      border-radius: 999px;
+      overflow: hidden;
+      margin-bottom: 24px;
+    }
+
+    .fill {
+      height: 100%;
+      width: 0%;
+      border-radius: 999px;
+      transition: width 0.45s ease;
+    }
+
+    .fill.safe {
+      background: linear-gradient(90deg, #0f766e 0%, #14b8a6 100%);
+    }
+
+    .fill.caution {
+      background: linear-gradient(90deg, #ca8a04 0%, #facc15 100%);
+    }
+
+    .fill.danger {
+      background: linear-gradient(90deg, #dc2626 0%, #f97316 100%);
+    }
+
+    .result-details {
+      color: #334155;
+      line-height: 1.9;
+      font-size: 1.02rem;
+    }
+
+    .result-details p {
+      margin: 0 0 12px;
+    }
+
+    .guidance {
+      margin-top: 22px;
+      padding-top: 20px;
+      border-top: 1px solid #dbe4ee;
+      font-size: 1.12rem;
+      line-height: 1.85;
+      color: #1e293b;
+    }
+
+    .disclaimer {
+      margin-top: 24px;
+      font-size: 0.9rem;
+      color: #64748b;
+    }
+
+    .content-section {
+      margin-top: 60px;
+    }
+
+    .content-section h2 {
+      font-size: 2rem;
+      margin-bottom: 20px;
+      color: #0f172a;
+    }
+
+    .content-section p,
+    .content-section li {
+      font-size: 1.1rem;
+      line-height: 1.9;
+      color: #334155;
+    }
+
+    .pillar-card {
+      display: block;
+      background: #f8fafc;
+      border: 1px solid #dbe4ee;
+      border-radius: 20px;
+      padding: 24px;
+      margin-top: 28px;
+      text-decoration: none;
+      transition: transform 0.15s ease;
+    }
+
+    .pillar-card:hover {
+      transform: translateY(-2px);
+    }
+
+    .pillar-card strong {
+      display: block;
+      margin-bottom: 10px;
+      color: #0f172a;
+      font-size: 1.08rem;
+    }
+
+    .pillar-card span {
+      color: #334155;
+      line-height: 1.7;
+      font-size: 0.98rem;
+    }
+
+    @media (max-width: 768px) {
+      .calculator {
+        padding: 24px;
+      }
+
+      .grid {
+        grid-template-columns: 1fr;
+      }
+
+      .calculator h2,
+      .content-section h2 {
+        font-size: 1.7rem;
+      }
+
+      .results {
+        padding: 24px;
+      }
+    }
+  </style>
+
+  <div class="container">
+    <CalculatorPageShell
+      eyebrow="Degree ROI Calculator"
+      title="Degree ROI Calculator"
+      description="Estimate whether a degree may pay off using total cost, lost income, student loans, expected salary gains, payback period, and financial pressure."
+    >
+      <div class="calculator">
+        <h2>Degree ROI and Payback Verdict</h2>
+
+        <p class="calculator-intro">
+          A degree can be valuable, but the payoff depends on cost, time,
+          borrowing, lost income, and realistic salary upside. Enter your degree
+          cost, aid, loans, income, lost income, and expected salary gain to
+          estimate ROI pressure and payback period.
+        </p>
+
+        <div class="grid">
+          <div class="field">
+            <label for="monthlyIncome">Current Monthly Take-Home Income</label>
+            <input id="monthlyIncome" type="number" placeholder="Example: 5200" />
+          </div>
+
+          <div class="field">
+            <label for="savings">Current Savings</label>
+            <input id="savings" type="number" placeholder="Example: 22000" />
+          </div>
+
+          <div class="field">
+            <label for="degreeCost">Total Degree Cost</label>
+            <input id="degreeCost" type="number" placeholder="Example: 60000" />
+          </div>
+
+          <div class="field">
+            <label for="grantsAid">Grants, Scholarships, or Employer Help</label>
+            <input id="grantsAid" type="number" placeholder="Example: 12000" />
+          </div>
+
+          <div class="field">
+            <label for="borrowedAmount">Amount You Expect to Borrow</label>
+            <input id="borrowedAmount" type="number" placeholder="Example: 30000" />
+
+            <div class="helper-link">
+              Testing the loan side?
+              <a href="/should-i-take-out-student-loans">Use the student loan calculator</a>
+            </div>
+          </div>
+
+          <div class="field">
+            <label for="cashUsed">Savings You Plan to Use</label>
+            <input id="cashUsed" type="number" placeholder="Example: 10000" />
+          </div>
+
+          <div class="field">
+            <label for="monthlyDebt">Current Monthly Debt Payments</label>
+            <input id="monthlyDebt" type="number" placeholder="Example: 650" />
+
+            <div class="helper-link">
+              Not sure what counts as debt?
+              <a href="/what-counts-as-debt">Read the debt guide</a>
+            </div>
+          </div>
+
+          <div class="field">
+            <label for="lostIncome">Monthly Income You May Lose While Enrolled</label>
+            <input id="lostIncome" type="number" placeholder="Example: 800" />
+          </div>
+
+          <div class="field">
+            <label for="incomeGain">Expected Monthly Income Gain After Degree</label>
+            <input id="incomeGain" type="number" placeholder="Example: 1800" />
+          </div>
+
+          <div class="field">
+            <label for="years">Years Until Finished</label>
+            <input id="years" type="number" placeholder="Example: 3" />
+          </div>
+
+          <div class="field">
+            <label for="degreeValue">Degree Career Value</label>
+            <select id="degreeValue">
+              <option value="required">Required for target job or license</option>
+              <option value="strong">Strong salary, promotion, or career path</option>
+              <option value="medium" selected>Some career upside</option>
+              <option value="weak">Unclear payoff</option>
+            </select>
+          </div>
+
+          <div class="field">
+            <label for="workStatus">Work Plan During School</label>
+            <select id="workStatus">
+              <option value="full" selected>Keep working full-time</option>
+              <option value="part">Work part-time</option>
+              <option value="pause">Pause or sharply reduce work</option>
+            </select>
+          </div>
+        </div>
+
+        <button id="degreeRoiButton" type="button">Calculate Degree ROI</button>
+
+        <div class="results" id="results">
+          <div class="score" id="scoreText"></div>
+
+          <div class="bar">
+            <div class="fill" id="fillBar"></div>
+          </div>
+
+          <div class="result-details" id="resultDetails"></div>
+
+          <div class="guidance" id="guidance"></div>
+
+          <div class="disclaimer">
+            This is a general educational estimate, not personalized financial advice.
+          </div>
+        </div>
+      </div>
+
+      <section class="content-section">
+        <h2>Start With Payback, Not Just Price</h2>
+
+        <p>
+          A degree ROI calculator should do more than compare tuition with a
+          future salary. The real question is how long it may take for the degree
+          to recover its cost after tuition, aid, borrowing, lost income, and
+          repayment pressure are included.
+        </p>
+
+        <a class="pillar-card" href="/college-cost-calculator">
+          <strong>College Cost Calculator</strong>
+          <span>
+            Estimate total education pressure using tuition, fees, housing,
+            books, loans, savings, expected payoff, and household flexibility.
+          </span>
+        </a>
+
+        <a class="pillar-card" href="/should-i-go-to-graduate-school">
+          <strong>Should I Go to Graduate School?</strong>
+          <span>
+            Pressure-test graduate school using tuition, lost income, current
+            salary, expected salary gains, credential value, and opportunity cost.
+          </span>
+        </a>
+
+        <a class="pillar-card" href="/community-college-vs-university-calculator">
+          <strong>Community College vs University Calculator</strong>
+          <span>
+            Compare two school paths using tuition, housing, transfer savings,
+            borrowing, expected payoff, and financial pressure.
+          </span>
+        </a>
+      </section>
+
+      <section class="content-section">
+        <h2>What Degree ROI Really Means</h2>
+
+        <p>
+          Degree ROI is the relationship between what the degree costs and what
+          it may return through higher income, better job access, promotion
+          potential, licensing, or career stability. A degree can be worthwhile
+          even when the payoff is not instant, but the recovery path should be
+          realistic.
+        </p>
+
+        <p>
+          The strongest ROI cases usually have a clear link between the degree
+          and a better job outcome. The weakest cases often rely on vague hopes
+          that any degree will automatically create higher income.
+        </p>
+
+        <p>
+          This calculator estimates both ROI pressure and payback period. A
+          shorter payback period usually means the degree is easier to defend
+          financially. A longer payback period means the decision may need lower
+          cost, more aid, less borrowing, or stronger career evidence.
+        </p>
+      </section>
+
+      <WhenSpendingMakesSense
+        title="When a Degree Can Have Strong ROI"
+        items={[
+          "The degree is required for the job, license, or career path you want.",
+          "The expected salary gain is large enough to recover tuition, debt, lost income, and time in school.",
+          "Grants, scholarships, employer reimbursement, or transfer credits reduce the net cost.",
+          "The program has strong completion rates, job placement, or practical career support.",
+          "Any loan payment would fit future income without crowding out housing, food, transportation, healthcare, or savings.",
+          "The payback period is short enough that the degree improves flexibility instead of delaying it for years.",
+        ]}
+      />
+
+      <section class="content-section">
+        <h2>When Degree ROI Deserves Caution</h2>
+
+        <p>
+          Degree ROI deserves caution when the program is expensive, the salary
+          gain is modest, the career path is unclear, or the degree requires
+          heavy borrowing before the payoff is realistic.
+        </p>
+
+        <p>
+          A low-ROI result does not mean education has no value. It means this
+          specific version of the degree may need a lower price, better aid,
+          clearer job target, smaller loan, or more flexible timeline.
+        </p>
+
+        <p>
+          Caution is especially important when the degree would strain
+          <a class="content-link" href="/how-much-rent-can-i-afford">
+            housing
+          </a>,
+          <a class="content-link" href="/should-i-spend-this-much-on-groceries-per-month">
+            groceries
+          </a>,
+          emergency savings, transportation, childcare, medical costs, or
+          existing debt.
+        </p>
+      </section>
+
+      <section class="content-section">
+        <h2>Key Inputs That Change Degree ROI</h2>
+
+        <p>
+          The most important inputs are total cost, aid, borrowing, lost income,
+          time to finish, expected salary gain, existing debt, and how much cash
+          remains after paying for school.
+        </p>
+
+        <p>
+          Two degrees with the same sticker price can have completely different
+          ROI. A $50,000 credential that raises income quickly may be stronger
+          than a $20,000 program with unclear career value. The decision should
+          compare cost with realistic payoff, not cost alone.
+        </p>
+
+        <p>
+          You can compare this tool with the broader
+          <a class="content-link" href="/college-calculators">
+            college calculator hub
+          </a>
+          before choosing a school, loan amount, or enrollment timeline.
+        </p>
+      </section>
+
+      <section class="content-section">
+        <h2>Signs a Degree May Not Pay Off Financially</h2>
+
+        <p>
+          Warning signs include weak salary upside, no clear job path, high
+          borrowing, low completion confidence, little emergency savings, or a
+          payback period that stretches far beyond the years you expect to stay
+          in the field.
+        </p>
+
+        <p>
+          A degree can still matter for personal reasons. But when the financial
+          payoff is weak, the safest plan is usually to reduce the cost, avoid
+          large loans, preserve savings, and make sure the degree supports a
+          specific career move.
+        </p>
+      </section>
+
+      <section class="content-section">
+        <h2>What Your Degree ROI Verdict Means</h2>
+
+        <p>
+          This verdict estimates financial pressure and payoff strength, not the
+          personal value of education. A low pressure score means the degree
+          appears easier to absorb financially. A high pressure score means the
+          cost, debt, lost income, or slow payoff could limit future flexibility.
+        </p>
+
+        <p>
+          The calculator gives credit for income recovery power, large savings,
+          strong aid, and a clear salary lift. If someone has very high income or
+          very large savings, the score can fall to zero because the degree cost
+          creates little measurable pressure.
+        </p>
+      </section>
+
+      <div class="content-section">
+        <FAQSection faqs={degreeRoiFaqs} />
+      </div>
+
+      <div class="content-section">
+        <RelatedCalculators calculators={relatedCalculators} />
+      </div>
+    </CalculatorPageShell>
+
+    <MethodologySection category="degree ROI and college affordability" />
+  </div>
+
+  <script is:inline>
+    const clamp = (value, min, max) => Math.min(Math.max(value, min), max);
+
+    const getNumber = (id) => {
+      const rawValue = document.getElementById(id)?.value;
+      const value = Number(rawValue);
+      return Number.isFinite(value) && value >= 0 ? value : 0;
+    };
+
+    function getPressureLevel(score) {
+      if (score <= 30) {
+        return {
+          label: "Low Pressure",
+          stress: "Low pressure",
+          colorClass: "safe",
+          action:
+            "The degree appears financially manageable if the salary gain and career path remain realistic.",
+        };
+      }
+
+      if (score <= 60) {
+        return {
+          label: "Moderate Pressure",
+          stress: "Moderate pressure",
+          colorClass: "caution",
+          action:
+            "Compare lower-cost programs, more aid, smaller loans, employer help, and a clearer payoff path before committing.",
+        };
+      }
+
+      return {
+        label: "High Pressure",
+        stress: "High pressure",
+        colorClass: "danger",
+        action:
+          "Reduce the cost, borrow less, increase aid, delay enrollment, or choose a degree path with stronger payback before moving forward.",
+      };
+    }
+
+    function calculateDegreeRoi() {
+      const monthlyIncome = getNumber("monthlyIncome");
+      const savings = getNumber("savings");
+      const degreeCost = getNumber("degreeCost");
+      const grantsAid = getNumber("grantsAid");
+      const borrowedAmount = getNumber("borrowedAmount");
+      const cashUsed = getNumber("cashUsed");
+      const monthlyDebt = getNumber("monthlyDebt");
+      const lostIncome = getNumber("lostIncome");
+      const incomeGain = getNumber("incomeGain");
+      const years = getNumber("years");
+      const degreeValue = document.getElementById("degreeValue")?.value || "medium";
+      const workStatus = document.getElementById("workStatus")?.value || "full";
+
+      const results = document.getElementById("results");
+      const scoreText = document.getElementById("scoreText");
+      const fillBar = document.getElementById("fillBar");
+      const resultDetails = document.getElementById("resultDetails");
+      const guidance = document.getElementById("guidance");
+
+      results.classList.add("visible");
+
+      if (monthlyIncome <= 0 || degreeCost <= 0) {
+        scoreText.textContent = "Add your numbers first";
+        fillBar.style.width = "0%";
+        fillBar.className = "fill safe";
+
+        resultDetails.innerHTML =
+          "<p>Enter monthly take-home income, degree cost, aid, savings, expected borrowing, lost income, and expected salary gain so the calculator can estimate degree ROI.</p>";
+
+        guidance.textContent = "";
+        return;
+      }
+
+      const netDegreeCost = Math.max(degreeCost - grantsAid, 0);
+      const estimatedMonthlyLoanPayment = borrowedAmount > 0 ? borrowedAmount * 0.012 : 0;
+      const annualIncome = monthlyIncome * 12;
+      const totalLostIncome = lostIncome * Math.max(years, 0) * 12;
+      const opportunityCost = netDegreeCost + totalLostIncome;
+      const annualIncomeGain = incomeGain * 12;
+
+      const paybackYears =
+        annualIncomeGain > 0 ? opportunityCost / Math.max(annualIncomeGain, 1) : 999;
+
+      const fiveYearGain = annualIncomeGain * 5;
+      const tenYearGain = annualIncomeGain * 10;
+      const fiveYearNet = fiveYearGain - opportunityCost;
+      const tenYearNet = tenYearGain - opportunityCost;
+
+      const roiFiveYear =
+        opportunityCost > 0 ? (fiveYearNet / Math.max(opportunityCost, 1)) * 100 : 0;
+
+      const roiTenYear =
+        opportunityCost > 0 ? (tenYearNet / Math.max(opportunityCost, 1)) * 100 : 0;
+
+      const netCostRatio = (netDegreeCost / Math.max(annualIncome, 1)) * 100;
+      const opportunityCostRatio = (opportunityCost / Math.max(annualIncome, 1)) * 100;
+      const borrowedRatio = (borrowedAmount / Math.max(annualIncome, 1)) * 100;
+      const aidCoverageRatio =
+        degreeCost > 0 ? (grantsAid / Math.max(degreeCost, 1)) * 100 : 0;
+
+      const debtOnlyRatio =
+        ((estimatedMonthlyLoanPayment + monthlyDebt) /
+          Math.max(monthlyIncome, 1)) *
+        100;
+
+      const monthlyPressureRatio =
+        ((estimatedMonthlyLoanPayment + monthlyDebt + lostIncome) /
+          Math.max(monthlyIncome, 1)) *
+        100;
+
+      const remainingSavings = Math.max(savings - cashUsed, 0);
+      const savingsMonthsAfter = remainingSavings / Math.max(monthlyIncome * 0.7, 1);
+      const cashUseRatio = cashUsed > 0 ? (cashUsed / Math.max(savings, 1)) * 100 : 0;
+      const netCostCoveredBySavings = savings / Math.max(netDegreeCost, 1);
+      const loanPaymentRatio = estimatedMonthlyLoanPayment / Math.max(monthlyIncome, 1);
+      const incomeGainRatio = incomeGain / Math.max(monthlyIncome, 1);
+      const payoffRatio =
+        incomeGain > 0 ? estimatedMonthlyLoanPayment / Math.max(incomeGain, 1) : 999;
+
+      const payoffStrength =
+        paybackYears <= 3 && incomeGain > 0
+          ? "strong"
+          : paybackYears <= 7 && incomeGain > 0
+            ? "moderate"
+            : "weak";
+
+      let pressureScore = 0;
+
+      pressureScore += clamp(netCostRatio * 0.55, 0, 30);
+      pressureScore += clamp(opportunityCostRatio * 0.3, 0, 26);
+      pressureScore += clamp(borrowedRatio * 0.75, 0, 30);
+      pressureScore += clamp(monthlyPressureRatio * 0.78, 0, 36);
+      pressureScore += clamp(debtOnlyRatio * 0.4, 0, 18);
+      pressureScore += clamp(cashUseRatio * 0.24, 0, 18);
+
+      if (paybackYears === 999) {
+        pressureScore += 24;
+      } else if (paybackYears > 10) {
+        pressureScore += 18;
+      } else if (paybackYears > 7) {
+        pressureScore += 12;
+      } else if (paybackYears <= 3) {
+        pressureScore -= 12;
+      } else if (paybackYears <= 5) {
+        pressureScore -= 7;
+      }
+
+      if (years >= 4) {
+        pressureScore += 10;
+      } else if (years >= 2) {
+        pressureScore += 6;
+      } else if (years > 0) {
+        pressureScore += 3;
+      }
+
+      if (workStatus === "part") {
+        pressureScore += 6;
+      } else if (workStatus === "pause") {
+        pressureScore += 14;
+      }
+
+      if (aidCoverageRatio >= 75) {
+        pressureScore -= 14;
+      } else if (aidCoverageRatio >= 40) {
+        pressureScore -= 8;
+      } else if (aidCoverageRatio <= 5 && degreeCost > 0) {
+        pressureScore += 5;
+      }
+
+      if (savingsMonthsAfter < 1) {
+        pressureScore += monthlyIncome >= netDegreeCost ? 3 : 20;
+      } else if (savingsMonthsAfter < 3) {
+        pressureScore += monthlyIncome >= netDegreeCost * 0.5 ? 4 : 12;
+      } else if (savingsMonthsAfter >= 6) {
+        pressureScore -= 8;
+      }
+
+      if (netCostCoveredBySavings >= 1 && savingsMonthsAfter >= 6) {
+        pressureScore -= 8;
+      }
+
+      if (incomeGain <= 0) {
+        pressureScore += 22;
+      } else if (payoffRatio > 0.55) {
+        pressureScore += 14;
+      } else if (payoffRatio > 0.35) {
+        pressureScore += 8;
+      } else if (payoffRatio <= 0.15) {
+        pressureScore -= 8;
+      }
+
+      if (incomeGainRatio >= 0.4) {
+        pressureScore -= 10;
+      } else if (incomeGainRatio >= 0.25) {
+        pressureScore -= 6;
+      } else if (incomeGainRatio <= 0.08 && netDegreeCost >= 40000) {
+        pressureScore += 8;
+      }
+
+      if (degreeValue === "required") {
+        pressureScore -= 10;
+      } else if (degreeValue === "strong") {
+        pressureScore -= 9;
+      } else if (degreeValue === "weak") {
+        pressureScore += 18;
+      }
+
+      /*
+        SIS recovery-power overrides:
+        These prevent high-income, high-savings, or strong-payback scenarios
+        from showing pressure that is not financially meaningful.
+      */
+
+      const netCostRecoveryMonths = netDegreeCost / Math.max(monthlyIncome, 1);
+      const annualNetCostRatio = netDegreeCost / Math.max(annualIncome, 1);
+      const cashRecoveryMonths = cashUsed / Math.max(monthlyIncome, 1);
+
+      if (
+        monthlyIncome >= 30000 &&
+        annualNetCostRatio <= 0.18 &&
+        debtOnlyRatio <= 8 &&
+        loanPaymentRatio <= 0.02
+      ) {
+        pressureScore = Math.min(pressureScore, 18);
+      }
+
+      if (
+        monthlyIncome >= 50000 &&
+        annualNetCostRatio <= 0.12 &&
+        debtOnlyRatio <= 6 &&
+        loanPaymentRatio <= 0.012
+      ) {
+        pressureScore = Math.min(pressureScore, 8);
+      }
+
+      if (
+        monthlyIncome >= netDegreeCost &&
+        netCostRecoveryMonths <= 1 &&
+        debtOnlyRatio <= 5 &&
+        loanPaymentRatio <= 0.01
+      ) {
+        pressureScore = Math.min(pressureScore, 3);
+      }
+
+      if (
+        monthlyIncome >= netDegreeCost * 1.25 &&
+        debtOnlyRatio <= 5 &&
+        loanPaymentRatio <= 0.008 &&
+        cashRecoveryMonths <= 1
+      ) {
+        pressureScore = 0;
+      }
+
+      if (
+        monthlyIncome >= netDegreeCost * 2 &&
+        debtOnlyRatio <= 8 &&
+        loanPaymentRatio <= 0.015
+      ) {
+        pressureScore = 0;
+      }
+
+      if (
+        savings >= netDegreeCost * 4 &&
+        remainingSavings >= netDegreeCost * 3
+      ) {
+        pressureScore = Math.min(pressureScore, 20);
+      }
+
+      if (
+        savings >= netDegreeCost * 7 &&
+        remainingSavings >= netDegreeCost * 5
+      ) {
+        pressureScore = Math.min(pressureScore, 8);
+      }
+
+      if (
+        savings >= netDegreeCost * 12 &&
+        remainingSavings >= netDegreeCost * 8
+      ) {
+        pressureScore = Math.min(pressureScore, 3);
+      }
+
+      if (
+        savings >= netDegreeCost * 20 &&
+        remainingSavings >= netDegreeCost * 12
+      ) {
+        pressureScore = 0;
+      }
+
+      if (
+        cashUsed > 0 &&
+        cashRecoveryMonths <= 0.25 &&
+        debtOnlyRatio <= 8 &&
+        loanPaymentRatio <= 0.02
+      ) {
+        pressureScore = Math.min(pressureScore, 12);
+      }
+
+      if (
+        aidCoverageRatio >= 90 &&
+        borrowedAmount <= 0 &&
+        savingsMonthsAfter >= 6
+      ) {
+        pressureScore = Math.min(pressureScore, 8);
+      }
+
+      if (
+        aidCoverageRatio >= 100 &&
+        borrowedAmount <= 0 &&
+        savingsMonthsAfter >= 12 &&
+        lostIncome <= monthlyIncome * 0.05
+      ) {
+        pressureScore = 0;
+      }
+
+      if (
+        paybackYears <= 2 &&
+        debtOnlyRatio < 10 &&
+        monthlyPressureRatio < 12 &&
+        savingsMonthsAfter >= 6 &&
+        degreeValue !== "weak"
+      ) {
+        pressureScore = Math.min(pressureScore, 18);
+      }
+
+      if (
+        paybackYears <= 1 &&
+        debtOnlyRatio < 7 &&
+        monthlyPressureRatio < 8 &&
+        savingsMonthsAfter >= 12 &&
+        (degreeValue === "required" || degreeValue === "strong")
+      ) {
+        pressureScore = Math.min(pressureScore, 6);
+      }
+
+      pressureScore = clamp(Math.round(pressureScore), 0, 100);
+
+      const level = getPressureLevel(pressureScore);
+
+      scoreText.textContent = `${level.label} — ${pressureScore}/100`;
+      fillBar.style.width = `${pressureScore}%`;
+      fillBar.className = `fill ${level.colorClass}`;
+
+      const paybackDisplay =
+        paybackYears === 999 ? "No clear payback without an income gain" : `${paybackYears.toFixed(1)} years`;
+
+      let explanation = "";
+
+      if (pressureScore === 0) {
+        explanation =
+          "This degree creates virtually no measurable financial pressure based on the income, savings, aid, borrowing, lost income, and payoff numbers provided.";
+      } else if (pressureScore <= 30) {
+        explanation =
+          "This degree appears financially manageable. The main priority is confirming that the expected income gain and career path are realistic.";
+      } else if (pressureScore <= 60) {
+        explanation =
+          "This degree may work, but it deserves caution. Cost, borrowing, lost income, current debt, or a longer payback period could reduce flexibility.";
+      } else {
+        explanation =
+          "This degree could create significant financial pressure. A lower-cost program, more aid, smaller loan, stronger savings, or clearer payoff path would likely improve the decision.";
+      }
+
+      resultDetails.innerHTML = `
+        <p><strong>Net degree cost:</strong> About $${netDegreeCost.toFixed(0)} after grants, scholarships, or employer help.</p>
+
+        <p><strong>Opportunity cost:</strong> About $${opportunityCost.toFixed(0)}, including net degree cost and estimated lost income while enrolled.</p>
+
+        <p><strong>Estimated payback period:</strong> ${paybackDisplay} based on expected monthly income gain.</p>
+
+        <p><strong>Estimated 5-year net gain:</strong> About $${fiveYearNet.toFixed(0)} after estimated opportunity cost.</p>
+
+        <p><strong>Estimated 10-year net gain:</strong> About $${tenYearNet.toFixed(0)} after estimated opportunity cost.</p>
+
+        <p><strong>Estimated 5-year ROI:</strong> ${roiFiveYear.toFixed(1)}%.</p>
+
+        <p><strong>Estimated 10-year ROI:</strong> ${roiTenYear.toFixed(1)}%.</p>
+
+        <p><strong>Estimated monthly loan payment:</strong> About $${estimatedMonthlyLoanPayment.toFixed(0)} per month.</p>
+
+        <p><strong>Debt payment pressure:</strong> ${debtOnlyRatio.toFixed(1)}% of monthly take-home income, including current debt and estimated school borrowing.</p>
+
+        <p><strong>Monthly pressure while enrolled:</strong> ${monthlyPressureRatio.toFixed(1)}% of monthly take-home income, including debt, estimated loan payment, and lost income.</p>
+
+        <p><strong>Emergency savings after planned cash use:</strong> About ${savingsMonthsAfter.toFixed(1)} months of estimated flexibility.</p>
+
+        <p><strong>Payoff strength:</strong> ${payoffStrength} based on estimated payback period and expected income gain.</p>
+
+        <p><strong>Pressure level:</strong> ${level.stress}.</p>
+
+        <p>${explanation} Recommended next step: ${level.action}</p>
+      `;
+
+      guidance.textContent = "";
+    }
+
+    document
+      .getElementById("degreeRoiButton")
+      .addEventListener("click", calculateDegreeRoi);
+  </script>
+</Layout>

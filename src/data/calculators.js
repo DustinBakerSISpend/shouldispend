@@ -874,8 +874,26 @@ export const calculators = [
   category: "College",
   title: "Should I Spend $20,000 on College?",
   description:
-    "Evaluate college affordability using tuition, savings, student loan risk, expected career payoff, debt pressure, and monthly flexibility.",
+    "Evaluate a moderate college expense using tuition, savings, student loan risk, expected payoff, emergency reserves, and monthly flexibility.",
   href: "/should-i-spend-20000-on-college",
+},
+
+{
+  id: "college-50000",
+  category: "College",
+  title: "Should I Spend $50,000 on College?",
+  description:
+    "Evaluate a larger college expense using debt exposure, savings depletion, expected salary gains, repayment pressure, and long-term flexibility.",
+  href: "/should-i-spend-50000-on-college",
+},
+
+{
+  id: "college-100000",
+  category: "College",
+  title: "Should I Spend $100,000 on College?",
+  description:
+    "Evaluate a six-figure college cost using total debt risk, expected career payoff, savings depletion, repayment pressure, and income recovery power.",
+  href: "/should-i-spend-100000-on-college",
 },
 
 {
@@ -897,12 +915,30 @@ export const calculators = [
 },
 
 {
-  id: "college-50000",
+  id: "college-cost",
   category: "College",
-  title: "Should I Spend $50,000 on College?",
+  title: "College Cost Calculator",
   description:
-    "Evaluate a major college expense using savings, student loan exposure, expected income gains, debt pressure, repayment risk, and long-term flexibility.",
-  href: "/should-i-spend-50000-on-college",
+    "Estimate total college affordability using tuition, fees, housing, books, savings, student loans, expected payoff, and overall pressure.",
+  href: "/college-cost-calculator",
+},
+
+{
+  id: "degree-roi",
+  category: "College",
+  title: "Degree ROI Calculator",
+  description:
+    "Estimate whether a degree may pay off using total cost, lost income, expected salary gains, payback period, debt pressure, and career upside.",
+  href: "/degree-roi-calculator",
+},
+
+{
+  id: "community-college-vs-university",
+  category: "College",
+  title: "Community College vs University Calculator",
+  description:
+    "Compare community college and university costs using tuition, housing, transfer savings, debt risk, expected payoff, and financial pressure.",
+  href: "/community-college-vs-university-calculator",
 },
 
 {
@@ -910,17 +946,35 @@ export const calculators = [
   category: "College",
   title: "Should I Go Back to School?",
   description:
-    "Evaluate going back to school using tuition, lost income, savings, student loan risk, career upside, family obligations, and monthly cash flow.",
+    "Evaluate a general return-to-school decision using tuition, lost income, savings, student loan risk, career upside, and monthly cash flow.",
   href: "/should-i-go-back-to-school",
 },
 
 {
-  id: "college-cost",
+  id: "go-back-to-school-at-40",
   category: "College",
-  title: "College Cost Calculator",
+  title: "Should I Go Back to School at 40?",
   description:
-    "Estimate college affordability using tuition, fees, housing, books, savings, student loans, expected payoff, and overall financial pressure.",
-  href: "/college-cost-calculator",
+    "Evaluate a mid-career school decision using program cost, remaining earning years, salary upside, savings risk, family obligations, and debt pressure.",
+  href: "/should-i-go-back-to-school-at-40",
+},
+
+{
+  id: "graduate-school",
+  category: "College",
+  title: "Should I Go to Graduate School?",
+  description:
+    "Evaluate graduate school using tuition, lost income, current salary, expected salary gains, repayment risk, career ceiling, and opportunity cost.",
+  href: "/should-i-go-to-graduate-school",
+},
+
+{
+  id: "mba",
+  category: "College",
+  title: "Should I Get an MBA?",
+  description:
+    "Evaluate an MBA decision using program cost, employer reimbursement, lost income, salary upside, networking value, and repayment pressure.",
+  href: "/should-i-get-an-mba",
 },
 
 ];
