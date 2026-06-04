@@ -1,0 +1,571 @@
+---
+import Layout from "../layouts/Layout.astro";
+import CalculatorPageShell from "../components/CalculatorPageShell.astro";
+import FAQSection from "../components/FAQSection.astro";
+import RelatedCalculators from "../components/RelatedCalculators.astro";
+import RelatedGuides from "../components/RelatedGuides.astro";
+import MethodologySection from "../components/MethodologySection.astro";
+import FinancialRedFlags from "../components/FinancialRedFlags.astro";
+import CalculatorAssumptions from "../components/CalculatorAssumptions.astro";
+import KeyCostCategories from "../components/KeyCostCategories.astro";
+import ReduceCostTips from "../components/ReduceCostTips.astro";
+import WhenSpendingMakesSense from "../components/WhenSpendingMakesSense.astro";
+---
+
+<Layout
+  title="Can We Afford to Have a Baby?"
+  description="Use this baby affordability calculator to evaluate whether your income, savings, childcare costs, medical bills, parental leave, debt, and monthly cash flow can support having a baby."
+>
+  <style>
+    .container { max-width: 950px; margin: 0 auto; padding: 60px 20px; }
+    .content-section { max-width: 760px; margin: 72px auto 0; }
+    .card { background: var(--card); border: 1px solid var(--border); border-radius: 28px; padding: 34px; }
+    h2 { margin-top: 0; font-size: 2rem; }
+    .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 22px; margin-bottom: 28px; }
+    label { display: block; margin-bottom: 10px; font-weight: 700; }
+    input, select { width: 100%; padding: 18px; border-radius: 14px; border: 1px solid var(--border); font-size: 1.1rem; box-sizing: border-box; background: white; }
+    button { background: #0f172a; color: white; border: none; padding: 16px 28px; border-radius: 14px; font-size: 1rem; font-weight: 700; cursor: pointer; margin-top: 10px; width: 100%; display: block; }
+    button:hover { opacity: 0.92; }
+    .result { margin-top: 40px; border: 1px solid var(--border); border-radius: 24px; padding: 28px; display: none; background: #f8fafc; }
+    .score { font-size: 3rem; font-weight: 800; margin-bottom: 16px; }
+    .bar { width: 100%; height: 16px; background: #dbe3ee; border-radius: 999px; overflow: hidden; margin-bottom: 24px; }
+    .fill { height: 100%; width: 0%; background: #16a34a; border-radius: 999px; transition: width 0.4s ease; }
+    .metric { margin-bottom: 14px; font-size: 1.05rem; }
+    .guidance { margin-top: 26px; font-size: 1.15rem; line-height: 1.7; }
+    .disclaimer { margin-top: 30px; font-size: 0.9rem; color: var(--muted); }
+    .helper-link { margin-top: 10px; font-size: 0.9rem; }
+    .helper-link a { color: var(--primary); font-weight: 600; }
+    .content-section p, .content-section li { line-height: 1.8; }
+  </style>
+
+  <div class="container">
+    <CalculatorPageShell
+      eyebrow="Baby & Parenting Calculator"
+      title="Can We Afford to Have a Baby?"
+      description="Estimate whether your household can financially handle a baby by weighing income, savings, medical bills, childcare, parental leave, baby gear, debt, and monthly cash flow."
+    >
+      <div class="card">
+        <h2>Baby Affordability Verdict</h2>
+
+        <div class="grid">
+          <div>
+            <label for="income">Monthly Take-Home Income</label>
+            <input id="income" type="number" placeholder="8500" min="0" inputmode="decimal" />
+          </div>
+
+          <div>
+            <label for="savings">Emergency Savings</label>
+            <input id="savings" type="number" placeholder="25000" min="0" inputmode="decimal" />
+          </div>
+
+          <div>
+            <label for="expenses">Current Monthly Essential Expenses</label>
+            <input id="expenses" type="number" placeholder="5200" min="0" inputmode="decimal" />
+          </div>
+
+          <div>
+            <label for="debt">Monthly Debt Payments</label>
+            <input id="debt" type="number" placeholder="700" min="0" inputmode="decimal" />
+            <div class="helper-link">
+              <a href="/what-counts-as-debt">Not sure what counts as debt? Read the debt guide</a>
+            </div>
+          </div>
+
+          <div>
+            <label for="childcare">Expected Monthly Childcare Cost</label>
+            <input id="childcare" type="number" placeholder="1400" min="0" inputmode="decimal" />
+          </div>
+
+          <div>
+            <label for="babyMonthly">Other Monthly Baby Costs</label>
+            <input id="babyMonthly" type="number" placeholder="450" min="0" inputmode="decimal" />
+          </div>
+
+          <div>
+            <label for="medical">Expected Medical / Delivery Bills</label>
+            <input id="medical" type="number" placeholder="3500" min="0" inputmode="decimal" />
+          </div>
+
+          <div>
+            <label for="gear">Baby Gear and Setup Costs</label>
+            <input id="gear" type="number" placeholder="5000" min="0" inputmode="decimal" />
+          </div>
+
+          <div>
+            <label for="leaveLoss">Expected Parental Leave Income Loss</label>
+            <input id="leaveLoss" type="number" placeholder="4000" min="0" inputmode="decimal" />
+          </div>
+
+          <div>
+            <label for="support">Family, Employer, or Gift Support</label>
+            <input id="support" type="number" placeholder="2000" min="0" inputmode="decimal" />
+          </div>
+
+          <div>
+            <label for="insurance">Health Insurance Situation</label>
+            <select id="insurance">
+              <option value="strong">Strong Coverage / Predictable Max</option>
+              <option value="average">Average Coverage</option>
+              <option value="weak">Weak, High-Deductible, or Unclear Coverage</option>
+            </select>
+          </div>
+
+          <div>
+            <label for="childcarePlan">Childcare Plan</label>
+            <select id="childcarePlan">
+              <option value="clear">Clear and Budgeted</option>
+              <option value="expensive">Known but Expensive</option>
+              <option value="unclear">Unclear or Waitlisted</option>
+            </select>
+          </div>
+        </div>
+
+        <button id="affordBabyButton" type="button">Calculate Financial Pressure</button>
+
+        <div class="result" id="result">
+          <div class="score" id="score"></div>
+          <div class="bar"><div class="fill" id="barFill"></div></div>
+          <div class="metric" id="stress"></div>
+          <div class="metric" id="cashFlow"></div>
+          <div class="metric" id="savingsAfter"></div>
+          <div class="metric" id="monthlyImpact"></div>
+          <div class="guidance" id="guidance"></div>
+          <div class="disclaimer">
+            This is a general educational estimate, not parenting, medical, legal, tax, insurance, employment, or financial advice.
+          </div>
+        </div>
+      </div>
+
+      <div class="content-section">
+        <h2>What It Really Means to Afford a Baby</h2>
+        <p>
+          Affording a baby is not only about buying diapers, a crib, or a stroller. The bigger question is whether your household can absorb medical bills, parental leave income loss, childcare, baby supplies, insurance changes, and recurring monthly costs without losing financial flexibility.
+        </p>
+        <p>
+          A baby can be financially manageable for many households, but the timing matters. The safest plan usually protects emergency savings, keeps debt under control, confirms childcare early, and leaves enough monthly cash flow after the baby arrives. This calculator treats baby affordability as a household pressure test, not a simple yes-or-no income rule.
+        </p>
+      </div>
+
+      <WhenSpendingMakesSense
+        title="When Having a Baby Looks Financially Manageable"
+        items={[
+          "Monthly income can cover existing bills, debt payments, childcare, and recurring baby costs with some cushion left over.",
+          "Emergency savings remains strong after medical bills, baby setup costs, and parental leave income gaps.",
+          "Health insurance exposure has been checked, including deductibles, coinsurance, and out-of-pocket maximums.",
+          "Childcare costs are researched early enough to avoid surprise pricing or waitlist problems.",
+          "The household can avoid high-interest debt for normal baby expenses.",
+          "Family help, paid leave, employer benefits, or gifts reduce pressure without becoming the entire plan.",
+        ]}
+      />
+
+      <div class="content-section">
+        <h2>When to Slow Down Before Trying or Committing</h2>
+        <p>
+          You may want to slow down if the plan depends on credit cards, assumes unclear childcare, ignores medical bills, drains emergency savings, or leaves almost no monthly cushion after basic expenses.
+        </p>
+        <p>
+          This does not mean a family cannot have a baby. It means the financial plan may need more cash cushion, lower optional spending, better insurance clarity, a childcare plan, or a clearer leave strategy before the pressure becomes manageable.
+        </p>
+      </div>
+
+      <KeyCostCategories
+        items={[
+          {
+            title: "Medical and delivery costs",
+            description:
+              "Prenatal care, delivery bills, deductibles, coinsurance, prescriptions, pediatric visits, and insurance changes can create early pressure.",
+          },
+          {
+            title: "Childcare",
+            description:
+              "Daycare, nanny care, deposits, waitlists, backup care, and schedule gaps are often the largest recurring baby-related expense.",
+          },
+          {
+            title: "Parental leave income loss",
+            description:
+              "Unpaid or partially paid leave can strain cash flow right when medical bills, setup costs, and baby supplies arrive.",
+          },
+          {
+            title: "Baby gear and setup",
+            description:
+              "Car seats, safe sleep, stroller, crib, monitor, feeding supplies, clothing, diapers, and nursery basics can add up quickly.",
+          },
+          {
+            title: "Recurring baby costs",
+            description:
+              "Diapers, wipes, formula, medications, clothing, extra groceries, and supplies can raise monthly expenses beyond the first setup phase.",
+          },
+        ]}
+      />
+
+      <ReduceCostTips
+        items={[
+          "Check health insurance deductibles, coinsurance, and out-of-pocket maximums before estimating medical costs.",
+          "Research childcare prices and waitlists early.",
+          "Build a baby sinking fund before the due date if there is still time.",
+          "Use registry help for practical items like diapers, wipes, bottles, feeding supplies, and safety essentials.",
+          "Delay nonessential baby gear until after the baby arrives and your routine is clearer.",
+          "Confirm paid leave, unpaid leave, short-term disability, PTO, employer benefits, and state leave options.",
+          "Avoid using credit cards for recurring baby expenses unless there is a clear payoff plan.",
+          "Keep a post-birth buffer for the first few months after medical bills, leave, and childcare begin overlapping.",
+        ]}
+      />
+
+      <FinancialRedFlags
+        items={[
+          "Monthly cash flow would be negative after childcare and baby costs.",
+          "Emergency savings would be mostly drained by medical bills, gear, or leave income loss.",
+          "Childcare is unclear close to the expected return-to-work date.",
+          "Health insurance costs are guessed rather than confirmed.",
+          "The plan depends on high-interest credit cards for normal baby expenses.",
+          "Existing debt payments already make the monthly budget tight.",
+          "There is no post-birth cushion for job changes, medical surprises, childcare gaps, or household repairs.",
+        ]}
+      />
+
+      <CalculatorAssumptions
+        items={[
+          "The calculator treats baby affordability as a combination of one-time costs and recurring monthly pressure.",
+          "Monthly income means take-home pay after taxes and payroll deductions.",
+          "Monthly debt payments include credit cards, car loans, student loans, personal loans, and required debt obligations.",
+          "Medical bills, baby gear, and parental leave income loss are treated as near-term cash pressure.",
+          "Childcare and monthly baby costs are treated as recurring household expenses.",
+          "Family help, employer benefits, gifts, and other support reduce near-term out-of-pocket pressure.",
+          "Very high income or very large savings can produce a true 0/100 pressure score when baby-related costs are tiny relative to available resources.",
+        ]}
+      />
+
+      <FAQSection
+        title="Can We Afford to Have a Baby FAQ"
+        faqs={[
+          {
+            question: "How do we know if we can afford to have a baby?",
+            answer:
+              "A baby may be financially manageable if you can cover existing bills, childcare, baby supplies, medical costs, and leave-related income gaps while keeping emergency savings intact and avoiding high-interest debt.",
+          },
+          {
+            question: "How much should we save before having a baby?",
+            answer:
+              "A safer savings target includes expected medical bills, baby setup costs, leave income loss, childcare deposits, recurring baby expenses, and a separate emergency cushion that remains after those costs.",
+          },
+          {
+            question: "Is childcare the biggest baby expense?",
+            answer:
+              "Often, yes. Childcare can become the largest recurring expense for families using daycare, nanny care, or full-time care while both parents work.",
+          },
+          {
+            question: "Should we wait to have a baby until debt is paid off?",
+            answer:
+              "Not always, but high debt payments make baby costs harder to absorb. The key issue is whether debt plus childcare, medical bills, and baby supplies leave enough monthly flexibility.",
+          },
+          {
+            question: "What baby costs are easiest to underestimate?",
+            answer:
+              "Childcare, medical bills, unpaid leave, formula, diapers, insurance changes, and backup care are often underestimated more than obvious gear purchases.",
+          },
+        ]}
+      />
+
+      <MethodologySection category="baby and parenting spending" updated="June 2026" />
+
+      <RelatedGuides
+        guides={[
+          {
+            title: "Baby & Parenting Calculators",
+            href: "/baby-parenting-calculators",
+            description:
+              "Browse baby cost calculators for childcare, first-year expenses, maternity leave, baby gear, and family planning.",
+          },
+          {
+            title: "How Much Emergency Savings Should I Have?",
+            href: "/how-much-emergency-savings-should-i-have",
+            description:
+              "Estimate how much emergency cushion can protect your household before major life expenses.",
+          },
+          {
+            title: "What Counts as Debt?",
+            href: "/what-counts-as-debt",
+            description:
+              "Understand which obligations should be included when estimating financial pressure.",
+          },
+        ]}
+      />
+
+      <RelatedCalculators
+        calculators={[
+          {
+            category: "Baby & Parenting",
+            title: "Baby Cost Calculator",
+            href: "/baby-cost-calculator",
+          },
+          {
+            category: "Baby & Parenting",
+            title: "Should I Spend $20,000 on a Baby’s First Year?",
+            href: "/should-i-spend-20000-on-a-babys-first-year",
+          },
+          {
+            category: "Baby & Parenting",
+            title: "Should I Spend This Much on Childcare?",
+            href: "/should-i-spend-this-much-on-childcare",
+          },
+          {
+            category: "Baby & Parenting",
+            title: "Should I Spend $5,000 on Baby Gear?",
+            href: "/should-i-spend-5000-on-baby-gear",
+          },
+        ]}
+      />
+    </CalculatorPageShell>
+  </div>
+
+  <script is:inline>
+    const clamp = (value, min, max) => Math.min(Math.max(value, min), max);
+
+    const getNumber = (id) => {
+      const rawValue = document.getElementById(id)?.value;
+      const value = Number(rawValue);
+      return Number.isFinite(value) && value >= 0 ? value : 0;
+    };
+
+    function getPressureLevel(score) {
+      if (score <= 30) {
+        return {
+          label: "Low Pressure",
+          stress: "Low pressure",
+          color: "#16a34a",
+          action:
+            "Proceed with a detailed baby budget, confirm insurance and childcare, and preserve a strong post-birth cushion.",
+        };
+      }
+
+      if (score <= 60) {
+        return {
+          label: "Moderate Pressure",
+          stress: "Moderate pressure",
+          color: "#ca8a04",
+          action:
+            "Tighten the plan before the baby arrives, reduce optional spending, and build more savings if possible.",
+        };
+      }
+
+      return {
+        label: "High Pressure",
+        stress: "High pressure",
+        color: "#dc2626",
+        action:
+          "Pause and strengthen the financial plan before relying on debt or draining savings for baby-related costs.",
+      };
+    }
+
+    function calculateBabyAffordability() {
+      const income = getNumber("income");
+      const savings = getNumber("savings");
+      const expenses = getNumber("expenses");
+      const debt = getNumber("debt");
+      const childcare = getNumber("childcare");
+      const babyMonthly = getNumber("babyMonthly");
+      const medical = getNumber("medical");
+      const gear = getNumber("gear");
+      const leaveLoss = getNumber("leaveLoss");
+      const support = getNumber("support");
+
+      const insurance = document.getElementById("insurance").value;
+      const childcarePlan = document.getElementById("childcarePlan").value;
+
+      const result = document.getElementById("result");
+      const scoreEl = document.getElementById("score");
+      const barFill = document.getElementById("barFill");
+      const stressEl = document.getElementById("stress");
+      const cashFlowEl = document.getElementById("cashFlow");
+      const savingsAfterEl = document.getElementById("savingsAfter");
+      const monthlyImpactEl = document.getElementById("monthlyImpact");
+      const guidanceEl = document.getElementById("guidance");
+
+      result.style.display = "block";
+
+      if (income <= 0) {
+        scoreEl.textContent = "Add your numbers first";
+        barFill.style.width = "0%";
+        barFill.style.background = "#16a34a";
+        stressEl.innerHTML = "";
+        cashFlowEl.innerHTML = "";
+        savingsAfterEl.innerHTML = "";
+        monthlyImpactEl.innerHTML = "";
+        guidanceEl.textContent =
+          "Enter positive monthly take-home income so the calculator can estimate baby affordability pressure.";
+        return;
+      }
+
+      const recurringBabyCost = childcare + babyMonthly;
+      const nearTermBabyCost = Math.max(medical + gear + leaveLoss - support, 0);
+      const monthlyRemainingAfterBaby = income - expenses - debt - recurringBabyCost;
+      const monthlyBurnAfterBaby = expenses + debt + recurringBabyCost;
+      const remainingSavings = savings - nearTermBabyCost;
+
+      const recurringBabyRatio = income > 0 ? (recurringBabyCost / income) * 100 : 100;
+      const nearTermIncomeImpact = income > 0 ? (nearTermBabyCost / income) * 100 : 100;
+      const fixedObligationRatio =
+        income > 0 ? ((expenses + debt) / income) * 100 : 100;
+      const savingsImpact =
+        savings > 0 ? (nearTermBabyCost / savings) * 100 : nearTermBabyCost > 0 ? 100 : 0;
+
+      const emergencyMonthsAfter =
+        monthlyBurnAfterBaby > 0
+          ? remainingSavings / monthlyBurnAfterBaby
+          : remainingSavings > 0
+            ? 999
+            : 0;
+
+      const hasAbsurdIncomeBuffer =
+        income >= monthlyBurnAfterBaby * 50 &&
+        recurringBabyCost <= income * 0.02 &&
+        nearTermBabyCost <= income * 0.03 &&
+        monthlyRemainingAfterBaby > income * 0.75;
+
+      const hasAbsurdSavingsBuffer =
+        savings > 0 &&
+        nearTermBabyCost <= savings * 0.01 &&
+        emergencyMonthsAfter >= 60;
+
+      const hasHugeIncomeBuffer =
+        income > 0 &&
+        recurringBabyCost <= income * 0.05 &&
+        nearTermBabyCost <= income * 0.08 &&
+        monthlyRemainingAfterBaby > income * 0.6 &&
+        fixedObligationRatio < 25;
+
+      const hasHugeSavingsBuffer =
+        savings > 0 &&
+        nearTermBabyCost <= savings * 0.03 &&
+        emergencyMonthsAfter >= 36;
+
+      const hasStrongIncomeBuffer =
+        income > 0 &&
+        recurringBabyCost <= income * 0.12 &&
+        nearTermBabyCost <= income * 0.2 &&
+        monthlyRemainingAfterBaby > income * 0.4;
+
+      const hasStrongSavingsBuffer =
+        savings > 0 &&
+        nearTermBabyCost <= savings * 0.12 &&
+        emergencyMonthsAfter >= 12;
+
+      let pressureScore = 0;
+
+      if (
+        hasAbsurdIncomeBuffer ||
+        hasAbsurdSavingsBuffer ||
+        hasHugeIncomeBuffer ||
+        hasHugeSavingsBuffer
+      ) {
+        pressureScore = 0;
+      } else {
+        pressureScore += clamp(recurringBabyRatio * 0.9, 0, 30);
+        pressureScore += clamp(nearTermIncomeImpact * 0.18, 0, 24);
+        pressureScore += clamp(savingsImpact * 0.35, 0, 34);
+        pressureScore += clamp(fixedObligationRatio * 0.2, 0, 24);
+
+        if (remainingSavings < 0) pressureScore += 26;
+        else if (emergencyMonthsAfter < 1 && income < 14000) pressureScore += 18;
+        else if (emergencyMonthsAfter < 3 && income < 17000) pressureScore += 12;
+        else if (emergencyMonthsAfter >= 24) pressureScore -= 18;
+        else if (emergencyMonthsAfter >= 12) pressureScore -= 12;
+        else if (emergencyMonthsAfter >= 6) pressureScore -= 7;
+
+        if (monthlyRemainingAfterBaby < 0) pressureScore += 28;
+        else if (monthlyRemainingAfterBaby < income * 0.08) pressureScore += 16;
+        else if (monthlyRemainingAfterBaby > income * 0.5) pressureScore -= 14;
+        else if (monthlyRemainingAfterBaby > income * 0.35) pressureScore -= 8;
+
+        if (medical > income * 0.5) pressureScore += 8;
+        else if (medical > income * 0.25) pressureScore += 4;
+
+        if (gear > income * 0.5) pressureScore += 7;
+        else if (gear > income * 0.25) pressureScore += 4;
+
+        if (leaveLoss > income * 0.5) pressureScore += 9;
+        else if (leaveLoss > income * 0.25) pressureScore += 5;
+
+        if (insurance === "average") pressureScore += 4;
+        if (insurance === "weak") pressureScore += 13;
+
+        if (childcarePlan === "expensive") pressureScore += 8;
+        if (childcarePlan === "unclear") pressureScore += 15;
+
+        if (hasStrongIncomeBuffer) pressureScore -= 14;
+        if (hasStrongSavingsBuffer) pressureScore -= 18;
+
+        if (
+          recurringBabyRatio < 12 &&
+          savingsImpact < 20 &&
+          fixedObligationRatio < 55 &&
+          emergencyMonthsAfter >= 6 &&
+          monthlyRemainingAfterBaby > income * 0.2
+        ) {
+          pressureScore = Math.min(pressureScore, 32);
+        }
+
+        if (
+          recurringBabyRatio < 7 &&
+          savingsImpact < 10 &&
+          fixedObligationRatio < 45 &&
+          emergencyMonthsAfter >= 12 &&
+          monthlyRemainingAfterBaby > income * 0.35
+        ) {
+          pressureScore = Math.min(pressureScore, 16);
+        }
+
+        if (
+          recurringBabyCost <= income * 0.02 &&
+          nearTermBabyCost <= savings * 0.02 &&
+          emergencyMonthsAfter >= 36 &&
+          fixedObligationRatio < 35
+        ) {
+          pressureScore = 0;
+        }
+
+        if (
+          income >= monthlyBurnAfterBaby * 40 &&
+          recurringBabyCost <= income * 0.03 &&
+          nearTermBabyCost <= income * 0.05
+        ) {
+          pressureScore = 0;
+        }
+      }
+
+      pressureScore = Math.round(clamp(pressureScore, 0, 100));
+      const level = getPressureLevel(pressureScore);
+
+      let guidance = "";
+
+      if (pressureScore === 0) {
+        guidance =
+          `Having a baby appears to create essentially no financial pressure based on the numbers provided. Recurring baby costs equal about ${recurringBabyRatio.toFixed(1)}% of monthly take-home income, and the remaining savings cushion is very strong.`;
+      } else if (pressureScore <= 30) {
+        guidance =
+          `Having a baby appears financially manageable based on the numbers provided. Recurring baby costs equal about ${recurringBabyRatio.toFixed(1)}% of monthly take-home income, and your estimated emergency cushion remains around ${Math.max(emergencyMonthsAfter, 0).toFixed(1)} months after near-term baby costs.`;
+      } else if (pressureScore <= 60) {
+        guidance =
+          `Having a baby may be workable, but it creates noticeable financial pressure. Recurring baby costs equal about ${recurringBabyRatio.toFixed(1)}% of take-home income, and near-term costs use about ${savingsImpact.toFixed(1)}% of available savings.`;
+      } else {
+        guidance =
+          `Having a baby could create real financial strain under these inputs. The combination of childcare, baby supplies, medical bills, leave income loss, debt, or savings impact suggests the plan should be strengthened before moving forward.`;
+      }
+
+      scoreEl.textContent = `${level.label} — ${pressureScore}/100`;
+      scoreEl.style.color = level.color;
+      barFill.style.width = `${pressureScore}%`;
+      barFill.style.background = level.color;
+
+      stressEl.innerHTML = `<strong>Pressure level:</strong> ${level.stress}`;
+      cashFlowEl.innerHTML = `<strong>Monthly cash flow after baby costs:</strong> $${monthlyRemainingAfterBaby.toLocaleString()}`;
+      savingsAfterEl.innerHTML = `<strong>Estimated savings after medical, gear, and leave costs:</strong> $${remainingSavings.toLocaleString()}`;
+      monthlyImpactEl.innerHTML = `<strong>Estimated recurring baby costs:</strong> $${recurringBabyCost.toLocaleString()} per month`;
+      guidanceEl.textContent = `${guidance} Recommended next step: ${level.action}`;
+    }
+
+    document
+      .getElementById("affordBabyButton")
+      .addEventListener("click", calculateBabyAffordability);
+  </script>
+</Layout>

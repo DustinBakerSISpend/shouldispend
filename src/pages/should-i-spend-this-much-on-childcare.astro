@@ -1,0 +1,569 @@
+---
+import Layout from "../layouts/Layout.astro";
+import CalculatorPageShell from "../components/CalculatorPageShell.astro";
+import FAQSection from "../components/FAQSection.astro";
+import RelatedCalculators from "../components/RelatedCalculators.astro";
+import RelatedGuides from "../components/RelatedGuides.astro";
+import MethodologySection from "../components/MethodologySection.astro";
+import FinancialRedFlags from "../components/FinancialRedFlags.astro";
+import CalculatorAssumptions from "../components/CalculatorAssumptions.astro";
+import KeyCostCategories from "../components/KeyCostCategories.astro";
+import ReduceCostTips from "../components/ReduceCostTips.astro";
+import WhenSpendingMakesSense from "../components/WhenSpendingMakesSense.astro";
+---
+
+<Layout
+  title="Should I Spend This Much on Childcare?"
+  description="Use this childcare affordability calculator to decide whether daycare, nanny care, preschool, or other childcare costs fit your income, savings, debt, and monthly cash flow."
+>
+  <style>
+    .container { max-width: 950px; margin: 0 auto; padding: 60px 20px; }
+    .content-section { max-width: 760px; margin: 72px auto 0; }
+    .card { background: var(--card); border: 1px solid var(--border); border-radius: 28px; padding: 34px; }
+    h2 { margin-top: 0; font-size: 2rem; }
+    .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 22px; margin-bottom: 28px; }
+    label { display: block; margin-bottom: 10px; font-weight: 700; }
+    input, select { width: 100%; padding: 18px; border-radius: 14px; border: 1px solid var(--border); font-size: 1.1rem; box-sizing: border-box; background: white; }
+    button { background: #0f172a; color: white; border: none; padding: 16px 28px; border-radius: 14px; font-size: 1rem; font-weight: 700; cursor: pointer; margin-top: 10px; width: 100%; display: block; }
+    button:hover { opacity: 0.92; }
+    .result { margin-top: 40px; border: 1px solid var(--border); border-radius: 24px; padding: 28px; display: none; background: #f8fafc; }
+    .score { font-size: 3rem; font-weight: 800; margin-bottom: 16px; }
+    .bar { width: 100%; height: 16px; background: #dbe3ee; border-radius: 999px; overflow: hidden; margin-bottom: 24px; }
+    .fill { height: 100%; width: 0%; background: #16a34a; border-radius: 999px; transition: width 0.4s ease; }
+    .metric { margin-bottom: 14px; font-size: 1.05rem; }
+    .guidance { margin-top: 26px; font-size: 1.15rem; line-height: 1.7; }
+    .disclaimer { margin-top: 30px; font-size: 0.9rem; color: var(--muted); }
+    .helper-link { margin-top: 10px; font-size: 0.9rem; }
+    .helper-link a { color: var(--primary); font-weight: 600; }
+    .content-section p, .content-section li { line-height: 1.8; }
+  </style>
+
+  <div class="container">
+    <CalculatorPageShell
+      eyebrow="Baby & Parenting Calculator"
+      title="Should I Spend This Much on Childcare?"
+      description="Estimate whether daycare, nanny care, preschool, after-school care, or other childcare costs fit your income, savings, debt, work needs, and monthly cash flow."
+    >
+      <div class="card">
+        <h2>Childcare Cost Pressure Verdict</h2>
+
+        <div class="grid">
+          <div>
+            <label for="childcare">Monthly Childcare Cost</label>
+            <input id="childcare" type="number" placeholder="1600" min="0" inputmode="decimal" />
+          </div>
+
+          <div>
+            <label for="income">Monthly Take-Home Income</label>
+            <input id="income" type="number" placeholder="8000" min="0" inputmode="decimal" />
+          </div>
+
+          <div>
+            <label for="savings">Emergency Savings</label>
+            <input id="savings" type="number" placeholder="20000" min="0" inputmode="decimal" />
+          </div>
+
+          <div>
+            <label for="expenses">Current Monthly Essential Expenses</label>
+            <input id="expenses" type="number" placeholder="4500" min="0" inputmode="decimal" />
+          </div>
+
+          <div>
+            <label for="debt">Monthly Debt Payments</label>
+            <input id="debt" type="number" placeholder="650" min="0" inputmode="decimal" />
+            <div class="helper-link">
+              <a href="/what-counts-as-debt">Not sure what counts as debt? Read the debt guide</a>
+            </div>
+          </div>
+
+          <div>
+            <label for="setup">Deposits, Registration, or Start-Up Fees</label>
+            <input id="setup" type="number" placeholder="800" min="0" inputmode="decimal" />
+          </div>
+
+          <div>
+            <label for="backup">Monthly Backup Care / Extra Fees</label>
+            <input id="backup" type="number" placeholder="200" min="0" inputmode="decimal" />
+          </div>
+
+          <div>
+            <label for="workIncome">Monthly Income Protected by Childcare</label>
+            <input id="workIncome" type="number" placeholder="4500" min="0" inputmode="decimal" />
+          </div>
+
+          <div>
+            <label for="support">Employer, Family, or Tax-Advantaged Help</label>
+            <input id="support" type="number" placeholder="250" min="0" inputmode="decimal" />
+          </div>
+
+          <div>
+            <label for="careType">Type of Childcare</label>
+            <select id="careType">
+              <option value="daycare">Daycare / Center-Based Care</option>
+              <option value="home">In-Home Daycare</option>
+              <option value="nanny">Nanny or Nanny Share</option>
+              <option value="preschool">Preschool / Part-Time Care</option>
+            </select>
+          </div>
+
+          <div>
+            <label for="stability">Childcare Stability</label>
+            <select id="stability">
+              <option value="stable">Reliable and Predictable</option>
+              <option value="mixed">Some Schedule or Cost Uncertainty</option>
+              <option value="unstable">Unclear, Waitlisted, or Unreliable</option>
+            </select>
+          </div>
+
+          <div>
+            <label for="necessity">Work Need</label>
+            <select id="necessity">
+              <option value="essential">Essential for Work</option>
+              <option value="helpful">Helpful but Some Flexibility Exists</option>
+              <option value="optional">Mostly Optional or Convenience-Based</option>
+            </select>
+          </div>
+        </div>
+
+        <button id="childcareButton" type="button">Calculate Financial Pressure</button>
+
+        <div class="result" id="result">
+          <div class="score" id="score"></div>
+          <div class="bar"><div class="fill" id="barFill"></div></div>
+          <div class="metric" id="stress"></div>
+          <div class="metric" id="cashFlow"></div>
+          <div class="metric" id="childcareShare"></div>
+          <div class="metric" id="savingsImpact"></div>
+          <div class="guidance" id="guidance"></div>
+          <div class="disclaimer">
+            This is a general educational estimate, not parenting, tax, legal, childcare, employment, or financial advice.
+          </div>
+        </div>
+      </div>
+
+      <div class="content-section">
+        <h2>What Childcare Really Costs</h2>
+        <p>
+          Childcare is rarely just one monthly bill. Daycare, nanny care, preschool, after-school care, and backup care can include registration fees, deposits, supply fees, late pickup fees, meals, transportation, summer care, schedule changes, and missed-work risk when care falls through.
+        </p>
+        <p>
+          The hardest part is that childcare is both an expense and a work-support system. A high childcare bill may still make sense if it protects income, benefits, career momentum, and household stability. It becomes more dangerous when it consumes most available cash flow or forces the household to rely on credit cards for normal expenses.
+        </p>
+      </div>
+
+      <WhenSpendingMakesSense
+        title="When Spending This Much on Childcare Makes Sense"
+        items={[
+          "The childcare allows one or both parents to keep income, benefits, work hours, or career progress.",
+          "The monthly cost fits without crowding out rent, groceries, utilities, insurance, debt payments, or emergency savings.",
+          "You have accounted for deposits, registration fees, supply fees, backup care, and schedule gaps.",
+          "The provider is reliable, licensed or well-vetted, and realistic for your commute and work schedule.",
+          "Emergency savings remains strong enough to absorb illness, closures, job changes, or unexpected child-related costs.",
+          "Employer benefits, family help, dependent-care FSA funds, or other support meaningfully reduce the pressure.",
+        ]}
+      />
+
+      <div class="content-section">
+        <h2>When to Slow Down Before Committing</h2>
+        <p>
+          You may want to slow down if the childcare bill leaves almost no monthly cushion, requires credit cards, depends on uncertain overtime, or assumes no sick days, closures, transportation issues, or backup care needs.
+        </p>
+        <p>
+          A provider can be excellent and still be financially stressful. Before committing, compare the cost against the income it protects, the flexibility it creates, the savings it leaves behind, and the real household pressure after every recurring bill is paid.
+        </p>
+      </div>
+
+      <KeyCostCategories
+        items={[
+          {
+            title: "Monthly tuition or care fee",
+            description:
+              "The core childcare bill may cover daycare, nanny care, preschool, after-school care, or part-time coverage.",
+          },
+          {
+            title: "Deposits and registration fees",
+            description:
+              "Many providers require enrollment fees, deposits, application fees, annual registration, or prepayment before care begins.",
+          },
+          {
+            title: "Backup care and schedule gaps",
+            description:
+              "Sick days, holidays, closures, waitlists, shift changes, and late pickups can create extra costs or lost income.",
+          },
+          {
+            title: "Work income protected",
+            description:
+              "Childcare affordability should be compared against the income, benefits, career progress, and schedule stability it helps preserve.",
+          },
+          {
+            title: "Tax-advantaged or employer support",
+            description:
+              "Dependent-care FSA funds, employer childcare benefits, family help, or other support can reduce the effective monthly burden.",
+          },
+        ]}
+      />
+
+      <ReduceCostTips
+        items={[
+          "Compare daycare centers, licensed in-home providers, nanny shares, and part-time options.",
+          "Ask for the full fee schedule, including registration, deposits, supplies, meals, holidays, and late pickup fees.",
+          "Check whether your employer offers childcare benefits or dependent-care FSA access.",
+          "Ask family about predictable help before assuming they can cover emergency gaps.",
+          "Consider staggered work schedules if they reduce paid childcare hours without creating burnout.",
+          "Build backup care into the budget instead of treating it as a surprise.",
+          "Review whether a nanny share or part-time care arrangement lowers pressure without sacrificing reliability.",
+          "Revisit the plan every few months as work schedules, income, and childcare needs change.",
+        ]}
+      />
+
+      <FinancialRedFlags
+        items={[
+          "The childcare bill would leave little or no monthly cash cushion.",
+          "You need credit cards to cover normal expenses after paying for care.",
+          "The provider cost is unclear or excludes major fees.",
+          "The care plan is unreliable even though work depends on it.",
+          "The monthly cost exceeds the income it protects by a wide margin without a clear long-term reason.",
+          "Emergency savings would be thin after deposits, registration, or setup fees.",
+          "The plan depends on overtime, bonuses, or family help that is not guaranteed.",
+        ]}
+      />
+
+      <CalculatorAssumptions
+        items={[
+          "The calculator treats childcare as a recurring household expense that may also protect income and work stability.",
+          "Monthly income means take-home pay after taxes and payroll deductions.",
+          "Monthly debt payments include credit cards, car loans, student loans, personal loans, and required debt obligations.",
+          "Childcare support may include employer benefits, family help, dependent-care FSA value, subsidies, or other predictable offsets.",
+          "Deposits and registration fees are treated as immediate pressure on savings.",
+          "Very high income or very large savings can produce a true 0/100 pressure score when childcare costs are tiny relative to available resources.",
+        ]}
+      />
+
+      <FAQSection
+        title="Childcare Cost FAQ"
+        faqs={[
+          {
+            question: "How much should I spend on childcare?",
+            answer:
+              "There is no universal number. A childcare cost is more manageable when it fits monthly cash flow, protects income, leaves emergency savings intact, and does not force the household into high-interest debt.",
+          },
+          {
+            question: "Is daycare worth it if it takes a big part of my paycheck?",
+            answer:
+              "It can be worth it if daycare protects income, benefits, career growth, retirement contributions, or long-term stability. It becomes riskier when the cost leaves no monthly cushion or exceeds the income it protects without a clear reason.",
+          },
+          {
+            question: "Should I use savings for childcare deposits?",
+            answer:
+              "Using savings for deposits may be reasonable if enough emergency cushion remains. It is riskier if the deposit drains cash before monthly childcare costs even begin.",
+          },
+          {
+            question: "Is a nanny more expensive than daycare?",
+            answer:
+              "Often, yes, but the comparison depends on location, number of children, hours, nanny-share options, commute, flexibility, and backup-care needs.",
+          },
+          {
+            question: "What should I ask before choosing childcare?",
+            answer:
+              "Ask about tuition, deposits, fees, holidays, closures, sick policies, late pickup charges, staff ratios, licensing, backup options, and whether the schedule fits your work life.",
+          },
+        ]}
+      />
+
+      <MethodologySection category="baby and parenting spending" updated="June 2026" />
+
+      <RelatedGuides
+        guides={[
+          {
+            title: "Baby & Parenting Calculators",
+            href: "/baby-parenting-calculators",
+            description:
+              "Browse baby cost calculators for childcare, first-year expenses, maternity leave, baby gear, and family planning.",
+          },
+          {
+            title: "What Counts as Debt?",
+            href: "/what-counts-as-debt",
+            description:
+              "Understand which obligations should be included when estimating financial pressure.",
+          },
+          {
+            title: "How Much Emergency Savings Should I Have?",
+            href: "/how-much-emergency-savings-should-i-have",
+            description:
+              "Estimate how much emergency cushion can protect your household before major life expenses.",
+          },
+        ]}
+      />
+
+      <RelatedCalculators
+        calculators={[
+          {
+            category: "Baby & Parenting",
+            title: "Baby Cost Calculator",
+            href: "/baby-cost-calculator",
+          },
+          {
+            category: "Baby & Parenting",
+            title: "Should I Spend $20,000 on a Baby’s First Year?",
+            href: "/should-i-spend-20000-on-a-babys-first-year",
+          },
+          {
+            category: "Baby & Parenting",
+            title: "Should I Use Savings for Maternity Leave?",
+            href: "/should-i-use-savings-for-maternity-leave",
+          },
+          {
+            category: "Baby & Parenting",
+            title: "Can We Afford to Have a Baby?",
+            href: "/can-we-afford-to-have-a-baby",
+          },
+        ]}
+      />
+    </CalculatorPageShell>
+  </div>
+
+  <script is:inline>
+  const clamp = (value, min, max) => Math.min(Math.max(value, min), max);
+
+  const getNumber = (id) => {
+    const rawValue = document.getElementById(id)?.value;
+    const value = Number(rawValue);
+    return Number.isFinite(value) && value >= 0 ? value : 0;
+  };
+
+  function getPressureLevel(score) {
+    if (score <= 30) {
+      return {
+        label: "Low Pressure",
+        stress: "Low pressure",
+        color: "#16a34a",
+        action:
+          "Proceed after confirming the full fee schedule, backup care plan, and any employer or tax-advantaged support.",
+      };
+    }
+
+    if (score <= 60) {
+      return {
+        label: "Moderate Pressure",
+        stress: "Moderate pressure",
+        color: "#ca8a04",
+        action:
+          "Compare providers, build backup care into the budget, and protect emergency savings before committing.",
+      };
+    }
+
+    return {
+      label: "High Pressure",
+      stress: "High pressure",
+      color: "#dc2626",
+      action:
+        "Slow down before committing, compare lower-cost options, and avoid relying on credit cards to cover normal expenses.",
+    };
+  }
+
+  function calculateChildcare() {
+    const childcare = getNumber("childcare");
+    const income = getNumber("income");
+    const savings = getNumber("savings");
+    const expenses = getNumber("expenses");
+    const debt = getNumber("debt");
+    const setup = getNumber("setup");
+    const backup = getNumber("backup");
+    const workIncome = getNumber("workIncome");
+    const support = getNumber("support");
+
+    const careType = document.getElementById("careType").value;
+    const stability = document.getElementById("stability").value;
+    const necessity = document.getElementById("necessity").value;
+
+    const result = document.getElementById("result");
+    const scoreEl = document.getElementById("score");
+    const barFill = document.getElementById("barFill");
+    const stressEl = document.getElementById("stress");
+    const cashFlowEl = document.getElementById("cashFlow");
+    const childcareShareEl = document.getElementById("childcareShare");
+    const savingsImpactEl = document.getElementById("savingsImpact");
+    const guidanceEl = document.getElementById("guidance");
+
+    result.style.display = "block";
+
+    if (childcare <= 0 || income <= 0) {
+      scoreEl.textContent = "Add your numbers first";
+      barFill.style.width = "0%";
+      barFill.style.background = "#16a34a";
+      stressEl.innerHTML = "";
+      cashFlowEl.innerHTML = "";
+      childcareShareEl.innerHTML = "";
+      savingsImpactEl.innerHTML = "";
+      guidanceEl.textContent =
+        "Enter a positive monthly childcare cost and monthly take-home income so the calculator can estimate financial pressure.";
+      return;
+    }
+
+    const netMonthlyChildcare = Math.max(childcare + backup - support, 0);
+    const annualChildcareCost = netMonthlyChildcare * 12;
+    const monthlyRemainingAfterCare = income - expenses - debt - netMonthlyChildcare;
+    const remainingSavings = savings - setup;
+
+    const childcareRatio = income > 0 ? (netMonthlyChildcare / income) * 100 : 100;
+    const annualChildcareToSavingsRatio =
+      savings > 0 ? (annualChildcareCost / savings) * 100 : annualChildcareCost > 0 ? 100 : 0;
+    const fixedObligationRatio =
+      income > 0 ? ((expenses + debt) / income) * 100 : 100;
+    const setupSavingsImpact =
+      savings > 0 ? (setup / savings) * 100 : setup > 0 ? 100 : 0;
+    const workIncomeProtectedRatio =
+      workIncome > 0 ? (netMonthlyChildcare / workIncome) * 100 : 100;
+
+    const monthlyBurnAfterCare = expenses + debt + netMonthlyChildcare;
+
+    const emergencyMonthsAfter =
+      monthlyBurnAfterCare > 0
+        ? remainingSavings / monthlyBurnAfterCare
+        : remainingSavings > 0
+          ? 999
+          : 0;
+
+    const hasAbsurdSavingsBuffer =
+      savings >= annualChildcareCost * 20 &&
+      savings >= monthlyBurnAfterCare * 60 &&
+      setup <= savings * 0.01 &&
+      remainingSavings > 0;
+
+    const hasHugeIncomeBuffer =
+      income > 0 &&
+      netMonthlyChildcare <= income * 0.02 &&
+      monthlyRemainingAfterCare > income * 0.65 &&
+      fixedObligationRatio < 25;
+
+    const hasHugeSavingsBuffer =
+      savings > 0 &&
+      annualChildcareCost <= savings * 0.04 &&
+      emergencyMonthsAfter >= 36 &&
+      setupSavingsImpact <= 1;
+
+    const hasStrongIncomeBuffer =
+      income > 0 &&
+      netMonthlyChildcare <= income * 0.07 &&
+      monthlyRemainingAfterCare > income * 0.4;
+
+    const hasStrongSavingsBuffer =
+      savings > 0 &&
+      annualChildcareCost <= savings * 0.12 &&
+      emergencyMonthsAfter >= 18 &&
+      setupSavingsImpact <= 3;
+
+    let pressureScore = 0;
+
+    if (hasAbsurdSavingsBuffer || hasHugeIncomeBuffer || hasHugeSavingsBuffer) {
+      pressureScore = 0;
+    } else {
+      pressureScore += clamp(childcareRatio * 1.15, 0, 34);
+      pressureScore += clamp(fixedObligationRatio * 0.22, 0, 24);
+      pressureScore += clamp(setupSavingsImpact * 0.25, 0, 18);
+      pressureScore += clamp(annualChildcareToSavingsRatio * 0.12, 0, 18);
+
+      if (remainingSavings < 0) pressureScore += 18;
+      else if (emergencyMonthsAfter < 1 && income < 14000) pressureScore += 17;
+      else if (emergencyMonthsAfter < 3 && income < 17000) pressureScore += 10;
+      else if (emergencyMonthsAfter >= 24) pressureScore -= 18;
+      else if (emergencyMonthsAfter >= 12) pressureScore -= 12;
+      else if (emergencyMonthsAfter >= 6) pressureScore -= 7;
+
+      if (monthlyRemainingAfterCare < 0) pressureScore += 26;
+      else if (monthlyRemainingAfterCare < income * 0.08) pressureScore += 15;
+      else if (monthlyRemainingAfterCare > income * 0.5) pressureScore -= 14;
+      else if (monthlyRemainingAfterCare > income * 0.35) pressureScore -= 8;
+
+      if (workIncomeProtectedRatio > 85 && necessity !== "essential") pressureScore += 14;
+      else if (workIncomeProtectedRatio > 60 && necessity !== "essential") pressureScore += 8;
+      else if (workIncomeProtectedRatio < 35 && necessity === "essential") pressureScore -= 6;
+
+      if (careType === "nanny") pressureScore += 5;
+      if (careType === "home") pressureScore -= 2;
+      if (careType === "preschool") pressureScore -= 1;
+
+      if (stability === "mixed") pressureScore += 6;
+      if (stability === "unstable") pressureScore += 14;
+
+      if (necessity === "helpful") pressureScore += 3;
+      if (necessity === "optional") pressureScore += 12;
+      if (necessity === "essential") pressureScore -= 5;
+
+      if (hasStrongIncomeBuffer) pressureScore -= 14;
+      if (hasStrongSavingsBuffer) pressureScore -= 18;
+
+      if (
+        childcareRatio < 10 &&
+        fixedObligationRatio < 55 &&
+        emergencyMonthsAfter >= 6 &&
+        monthlyRemainingAfterCare > income * 0.2
+      ) {
+        pressureScore = Math.min(pressureScore, 30);
+      }
+
+      if (
+        childcareRatio < 6 &&
+        fixedObligationRatio < 45 &&
+        setupSavingsImpact < 8 &&
+        emergencyMonthsAfter >= 9 &&
+        monthlyRemainingAfterCare > income * 0.35
+      ) {
+        pressureScore = Math.min(pressureScore, 16);
+      }
+
+      if (
+        childcareRatio < 2 &&
+        fixedObligationRatio < 25 &&
+        setupSavingsImpact < 1 &&
+        emergencyMonthsAfter >= 18 &&
+        monthlyRemainingAfterCare > income * 0.65
+      ) {
+        pressureScore = 0;
+      }
+
+      if (
+        annualChildcareCost <= savings * 0.02 &&
+        emergencyMonthsAfter >= 36 &&
+        remainingSavings > monthlyBurnAfterCare * 36
+      ) {
+        pressureScore = 0;
+      }
+    }
+
+    pressureScore = Math.round(clamp(pressureScore, 0, 100));
+    const level = getPressureLevel(pressureScore);
+
+    let guidance = "";
+
+    if (pressureScore === 0) {
+      guidance =
+        `This childcare cost appears to create essentially no financial pressure based on the numbers provided. Net childcare equals about ${childcareRatio.toFixed(1)}% of monthly take-home income, and your savings could cover roughly ${Math.max(emergencyMonthsAfter, 0).toFixed(1)} months of expenses after setup fees.`;
+    } else if (pressureScore <= 30) {
+      guidance =
+        `This childcare cost appears financially manageable based on the numbers provided. Net childcare equals about ${childcareRatio.toFixed(1)}% of monthly take-home income, and your estimated emergency cushion remains around ${Math.max(emergencyMonthsAfter, 0).toFixed(1)} months after setup costs.`;
+    } else if (pressureScore <= 60) {
+      guidance =
+        `This childcare cost may be workable, but it creates noticeable financial pressure. Net childcare equals about ${childcareRatio.toFixed(1)}% of monthly take-home income, and the plan should be checked against savings, backup care, and monthly flexibility.`;
+    } else {
+      guidance =
+        `This childcare cost could create real financial strain. The combination of monthly care costs, existing obligations, setup fees, savings impact, or schedule uncertainty suggests you should compare alternatives before committing.`;
+    }
+
+    scoreEl.textContent = `${level.label} — ${pressureScore}/100`;
+    scoreEl.style.color = level.color;
+    barFill.style.width = `${pressureScore}%`;
+    barFill.style.background = level.color;
+
+    stressEl.innerHTML = `<strong>Pressure level:</strong> ${level.stress}`;
+    cashFlowEl.innerHTML = `<strong>Monthly cash flow after childcare:</strong> $${monthlyRemainingAfterCare.toLocaleString()}`;
+    childcareShareEl.innerHTML = `<strong>Net childcare share of take-home income:</strong> ${childcareRatio.toFixed(1)}%`;
+    savingsImpactEl.innerHTML = `<strong>Estimated savings after deposits or start-up fees:</strong> $${remainingSavings.toLocaleString()}`;
+    guidanceEl.textContent = `${guidance} Recommended next step: ${level.action}`;
+  }
+
+  document
+    .getElementById("childcareButton")
+    .addEventListener("click", calculateChildcare);
+</script>
+</Layout>

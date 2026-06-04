@@ -977,4 +977,58 @@ export const calculators = [
   href: "/should-i-get-an-mba",
 },
 
+{
+  id: "baby-cost",
+  category: "Baby & Parenting",
+  title: "Baby Cost Calculator",
+  description:
+    "Estimate baby affordability using first-year costs, childcare, medical bills, parental leave, savings, debt, and monthly flexibility.",
+  href: "/baby-cost-calculator",
+},
+
+{
+  id: "afford-baby",
+  category: "Baby & Parenting",
+  title: "Can We Afford to Have a Baby?",
+  description:
+    "Evaluate baby affordability using income, housing, childcare, medical costs, savings, debt, parental leave, and emergency cushion.",
+  href: "/can-we-afford-to-have-a-baby",
+},
+
+{
+  id: "baby-first-year-20000",
+  category: "Baby & Parenting",
+  title: "Should I Spend $20,000 on a Baby’s First Year?",
+  description:
+    "Pressure-test first-year baby costs using childcare, diapers, formula, medical bills, gear, savings, debt, and monthly cash flow.",
+  href: "/should-i-spend-20000-on-a-babys-first-year",
+},
+
+{
+  id: "childcare-cost",
+  category: "Baby & Parenting",
+  title: "Should I Spend This Much on Childcare?",
+  description:
+    "Evaluate childcare affordability using monthly cost, income, housing, debt, savings, work tradeoffs, and household flexibility.",
+  href: "/should-i-spend-this-much-on-childcare",
+},
+
+{
+  id: "maternity-leave-savings",
+  category: "Baby & Parenting",
+  title: "Should I Use Savings for Maternity Leave?",
+  description:
+    "Evaluate using savings for maternity leave based on unpaid time off, income loss, emergency reserves, debt, and baby costs.",
+  href: "/should-i-use-savings-for-maternity-leave",
+},
+
+{
+  id: "baby-gear-5000",
+  category: "Baby & Parenting",
+  title: "Should I Spend $5,000 on Baby Gear?",
+  description:
+    "Evaluate baby gear spending using stroller, crib, car seat, nursery, registry help, savings, debt, and first-year budget pressure.",
+  href: "/should-i-spend-5000-on-baby-gear",
+},
+
 ];

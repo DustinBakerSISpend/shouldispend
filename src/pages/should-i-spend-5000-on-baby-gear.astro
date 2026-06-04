@@ -1,0 +1,580 @@
+---
+import Layout from "../layouts/Layout.astro";
+import CalculatorPageShell from "../components/CalculatorPageShell.astro";
+import FAQSection from "../components/FAQSection.astro";
+import RelatedCalculators from "../components/RelatedCalculators.astro";
+import RelatedGuides from "../components/RelatedGuides.astro";
+import MethodologySection from "../components/MethodologySection.astro";
+import FinancialRedFlags from "../components/FinancialRedFlags.astro";
+import CalculatorAssumptions from "../components/CalculatorAssumptions.astro";
+import KeyCostCategories from "../components/KeyCostCategories.astro";
+import ReduceCostTips from "../components/ReduceCostTips.astro";
+import WhenSpendingMakesSense from "../components/WhenSpendingMakesSense.astro";
+---
+
+<Layout
+  title="Should I Spend $5,000 on Baby Gear?"
+  description="Use this baby gear affordability calculator to decide whether $5,000 in strollers, cribs, car seats, nursery furniture, monitors, and baby setup costs fits your income, savings, debt, and cash flow."
+>
+  <style>
+    .container { max-width: 950px; margin: 0 auto; padding: 60px 20px; }
+    .content-section { max-width: 760px; margin: 72px auto 0; }
+    .card { background: var(--card); border: 1px solid var(--border); border-radius: 28px; padding: 34px; }
+    h2 { margin-top: 0; font-size: 2rem; }
+    .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 22px; margin-bottom: 28px; }
+    label { display: block; margin-bottom: 10px; font-weight: 700; }
+    input, select { width: 100%; padding: 18px; border-radius: 14px; border: 1px solid var(--border); font-size: 1.1rem; box-sizing: border-box; background: white; }
+    button { background: #0f172a; color: white; border: none; padding: 16px 28px; border-radius: 14px; font-size: 1rem; font-weight: 700; cursor: pointer; margin-top: 10px; width: 100%; display: block; }
+    button:hover { opacity: 0.92; }
+    .result { margin-top: 40px; border: 1px solid var(--border); border-radius: 24px; padding: 28px; display: none; background: #f8fafc; }
+    .score { font-size: 3rem; font-weight: 800; margin-bottom: 16px; }
+    .bar { width: 100%; height: 16px; background: #dbe3ee; border-radius: 999px; overflow: hidden; margin-bottom: 24px; }
+    .fill { height: 100%; width: 0%; background: #16a34a; border-radius: 999px; transition: width 0.4s ease; }
+    .metric { margin-bottom: 14px; font-size: 1.05rem; }
+    .guidance { margin-top: 26px; font-size: 1.15rem; line-height: 1.7; }
+    .disclaimer { margin-top: 30px; font-size: 0.9rem; color: var(--muted); }
+    .helper-link { margin-top: 10px; font-size: 0.9rem; }
+    .helper-link a { color: var(--primary); font-weight: 600; }
+    .content-section p, .content-section li { line-height: 1.8; }
+  </style>
+
+  <div class="container">
+    <CalculatorPageShell
+      eyebrow="Baby & Parenting Calculator"
+      title="Should I Spend $5,000 on Baby Gear?"
+      description="Estimate whether $5,000 in baby gear fits your income, emergency savings, registry help, debt load, upcoming medical bills, childcare costs, and monthly cash flow."
+    >
+      <div class="card">
+        <h2>Baby Gear Pressure Verdict</h2>
+
+        <div class="grid">
+          <div>
+            <label for="gearCost">Baby Gear Cost</label>
+            <input id="gearCost" type="number" placeholder="5000" min="0" inputmode="decimal" />
+          </div>
+
+          <div>
+            <label for="income">Monthly Take-Home Income</label>
+            <input id="income" type="number" placeholder="7500" min="0" inputmode="decimal" />
+          </div>
+
+          <div>
+            <label for="savings">Emergency Savings</label>
+            <input id="savings" type="number" placeholder="18000" min="0" inputmode="decimal" />
+          </div>
+
+          <div>
+            <label for="expenses">Current Monthly Expenses</label>
+            <input id="expenses" type="number" placeholder="4200" min="0" inputmode="decimal" />
+          </div>
+
+          <div>
+            <label for="debt">Monthly Debt Payments</label>
+            <input id="debt" type="number" placeholder="700" min="0" inputmode="decimal" />
+            <div class="helper-link">
+              <a href="/what-counts-as-debt">Not sure what counts as debt? Read the debt guide</a>
+            </div>
+          </div>
+
+          <div>
+            <label for="support">Registry, Gifts, or Family Help</label>
+            <input id="support" type="number" placeholder="1500" min="0" inputmode="decimal" />
+          </div>
+
+          <div>
+            <label for="medical">Expected Medical / Delivery Bills</label>
+            <input id="medical" type="number" placeholder="3000" min="0" inputmode="decimal" />
+          </div>
+
+          <div>
+            <label for="childcare">Upcoming Monthly Childcare Cost</label>
+            <input id="childcare" type="number" placeholder="1200" min="0" inputmode="decimal" />
+          </div>
+
+          <div>
+            <label for="leaveLoss">Expected Parental Leave Income Loss</label>
+            <input id="leaveLoss" type="number" placeholder="2500" min="0" inputmode="decimal" />
+          </div>
+
+          <div>
+            <label for="safetyShare">Safety-Essential Share</label>
+            <select id="safetyShare">
+              <option value="high">Mostly Safety / Essential Items</option>
+              <option value="mixed">Mix of Essential and Optional</option>
+              <option value="low">Mostly Premium or Optional Gear</option>
+            </select>
+          </div>
+
+          <div>
+            <label for="timing">Purchase Timing</label>
+            <select id="timing">
+              <option value="spread">Spread Over Time</option>
+              <option value="soon">Mostly Before Due Date</option>
+              <option value="rush">Rushed or Last-Minute</option>
+            </select>
+          </div>
+
+          <div>
+            <label for="financing">Financing Plan</label>
+            <select id="financing">
+              <option value="cash">Cash / Registry / Savings</option>
+              <option value="zero">0% Promo or No-Interest Plan</option>
+              <option value="credit">Credit Card or High-Interest Financing</option>
+            </select>
+          </div>
+        </div>
+
+        <button id="gearButton" type="button">Calculate Financial Pressure</button>
+
+        <div class="result" id="result">
+          <div class="score" id="score"></div>
+          <div class="bar"><div class="fill" id="barFill"></div></div>
+          <div class="metric" id="stress"></div>
+          <div class="metric" id="cashFlow"></div>
+          <div class="metric" id="savingsImpact"></div>
+          <div class="metric" id="totalBabyPressure"></div>
+          <div class="guidance" id="guidance"></div>
+          <div class="disclaimer">
+            This is a general educational estimate, not parenting, medical, safety, legal, tax, insurance, or financial advice.
+          </div>
+        </div>
+      </div>
+
+      <div class="content-section">
+        <h2>What $5,000 in Baby Gear Really Includes</h2>
+        <p>
+          A $5,000 baby gear budget can include a crib or bassinet, car seat, stroller, nursery furniture, monitor, bottles, feeding supplies, pump accessories, diapering supplies, clothes, sleep sacks, high chair, babyproofing items, and small purchases that add up quickly.
+        </p>
+        <p>
+          Some baby gear is essential. A safe car seat, safe sleep setup, basic feeding supplies, diapers, and weather-appropriate clothing matter. Other purchases are optional, upgrade-driven, or impossible to evaluate until the baby arrives. This calculator separates the headline gear cost from the larger household picture: medical bills, childcare, leave income loss, savings cushion, debt, and monthly flexibility.
+        </p>
+      </div>
+
+      <WhenSpendingMakesSense
+        title="When Spending $5,000 on Baby Gear Makes Sense"
+        items={[
+          "Most of the spending goes toward safety, sleep, feeding, transportation, and basic care needs.",
+          "Registry gifts, family help, or planned savings reduce the out-of-pocket cost.",
+          "The purchase does not drain emergency savings before medical bills, leave gaps, or childcare costs arrive.",
+          "Monthly cash flow remains healthy after existing bills, debt, and upcoming baby-related costs.",
+          "You have avoided high-interest financing for optional upgrades.",
+          "You are spreading purchases over time instead of panic-buying everything before the due date.",
+        ]}
+      />
+
+      <div class="content-section">
+        <h2>When to Slow Down Before Buying Baby Gear</h2>
+        <p>
+          You may want to slow down if the $5,000 total is driven by premium nursery furniture, luxury strollers, duplicate products, expensive gadgets, or items you are not sure your baby will use.
+        </p>
+        <p>
+          Baby gear shopping can make every item feel urgent. In practice, many families can start with a smaller core setup and add items later. A safer plan protects cash for medical surprises, unpaid leave, childcare deposits, and recurring baby supplies.
+        </p>
+      </div>
+
+      <KeyCostCategories
+        items={[
+          {
+            title: "Safety essentials",
+            description:
+              "Car seats, safe sleep surfaces, babyproofing, and basic medical or feeding supplies should usually come before premium upgrades.",
+          },
+          {
+            title: "Nursery and sleep setup",
+            description:
+              "Cribs, bassinets, mattresses, sheets, dressers, changing areas, monitors, and blackout items can become expensive quickly.",
+          },
+          {
+            title: "Transportation gear",
+            description:
+              "Strollers, car-seat bases, carriers, travel systems, and diaper bags vary widely in price and can inflate the budget.",
+          },
+          {
+            title: "Feeding and diapering",
+            description:
+              "Bottles, pumps, formula accessories, burp cloths, diapers, wipes, creams, and high chairs can create both setup and recurring costs.",
+          },
+          {
+            title: "Optional upgrades",
+            description:
+              "Luxury brands, duplicate products, smart gadgets, and matching nursery sets may be nice but can create avoidable pressure.",
+          },
+        ]}
+      />
+
+      <ReduceCostTips
+        items={[
+          "Prioritize car seat safety, safe sleep, feeding basics, diapers, wipes, and essential clothing first.",
+          "Use the registry for practical items instead of mostly decorative or premium upgrades.",
+          "Buy some items secondhand, but avoid used car seats unless you fully know the history.",
+          "Delay nonessential purchases until after the baby arrives and your routine is clearer.",
+          "Compare stroller and crib options by safety, durability, and daily use rather than brand status.",
+          "Ask experienced parents which items they actually used and which purchases were wasted.",
+          "Avoid buying duplicates until you know what works for your baby.",
+          "Keep cash available for medical bills, childcare deposits, and leave-related income gaps.",
+        ]}
+      />
+
+      <FinancialRedFlags
+        items={[
+          "The gear purchase would drain most of your emergency savings.",
+          "You are financing optional baby gear with high-interest credit cards.",
+          "Medical bills, leave income loss, or childcare deposits have not been planned yet.",
+          "The budget is mostly premium upgrades rather than safety, sleep, feeding, and basic care.",
+          "The purchase leaves little monthly flexibility after rent, groceries, utilities, insurance, and debt payments.",
+          "You are buying everything before the baby arrives without knowing what will actually be useful.",
+          "Registry help or family support is assumed but not confirmed.",
+        ]}
+      />
+
+      <CalculatorAssumptions
+        items={[
+          "The calculator treats baby gear as a mix of essential safety items, practical setup costs, and optional upgrades.",
+          "Monthly income means take-home pay after taxes and payroll deductions.",
+          "Monthly debt payments include credit cards, car loans, student loans, personal loans, and required debt obligations.",
+          "Registry gifts, family help, and baby shower support reduce the out-of-pocket gear cost.",
+          "Medical bills, childcare costs, and parental leave income loss are included because gear spending should not be judged in isolation.",
+          "Very high income or very large savings can produce a true 0/100 pressure score when baby gear costs are tiny relative to available resources.",
+        ]}
+      />
+
+      <FAQSection
+        title="$5,000 Baby Gear FAQ"
+        faqs={[
+          {
+            question: "Is $5,000 a lot to spend on baby gear?",
+            answer:
+              "$5,000 is a major setup budget. It may be manageable if it includes safety essentials and your savings remain strong, but it can be too much if the spending is mostly optional upgrades or requires high-interest debt.",
+          },
+          {
+            question: "What baby gear should I buy first?",
+            answer:
+              "Start with safety, sleep, feeding, diapering, transportation, and basic clothing. Premium nursery furniture, extra gadgets, and duplicate items can usually wait.",
+          },
+          {
+            question: "Should I use emergency savings for baby gear?",
+            answer:
+              "Using some savings may be reasonable for essential items, but draining the emergency fund before delivery, leave, or childcare costs arrive can create risk.",
+          },
+          {
+            question: "Can I buy baby gear secondhand?",
+            answer:
+              "Many items can be bought secondhand, but be careful with safety-sensitive products. Used car seats are risky unless you know the full history, expiration date, and crash status.",
+          },
+          {
+            question: "Should I finance baby gear?",
+            answer:
+              "Financing essential items may be understandable in some cases, but high-interest financing for optional upgrades can create unnecessary pressure before the baby even arrives.",
+          },
+        ]}
+      />
+
+      <MethodologySection category="baby and parenting spending" updated="June 2026" />
+
+      <RelatedGuides
+        guides={[
+          {
+            title: "Baby & Parenting Calculators",
+            href: "/baby-parenting-calculators",
+            description:
+              "Browse baby cost calculators for childcare, first-year expenses, maternity leave, baby gear, and family planning.",
+          },
+          {
+            title: "How Much Emergency Savings Should I Have?",
+            href: "/how-much-emergency-savings-should-i-have",
+            description:
+              "Estimate how much emergency cushion can protect your household before major life expenses.",
+          },
+          {
+            title: "What Counts as Debt?",
+            href: "/what-counts-as-debt",
+            description:
+              "Understand which obligations should be included when estimating financial pressure.",
+          },
+        ]}
+      />
+
+      <RelatedCalculators
+        calculators={[
+          {
+            category: "Baby & Parenting",
+            title: "Baby Cost Calculator",
+            href: "/baby-cost-calculator",
+          },
+          {
+            category: "Baby & Parenting",
+            title: "Should I Spend $20,000 on a Baby’s First Year?",
+            href: "/should-i-spend-20000-on-a-babys-first-year",
+          },
+          {
+            category: "Baby & Parenting",
+            title: "Should I Spend This Much on Childcare?",
+            href: "/should-i-spend-this-much-on-childcare",
+          },
+          {
+            category: "Baby & Parenting",
+            title: "Can We Afford to Have a Baby?",
+            href: "/can-we-afford-to-have-a-baby",
+          },
+        ]}
+      />
+    </CalculatorPageShell>
+  </div>
+
+  <script is:inline>
+    const clamp = (value, min, max) => Math.min(Math.max(value, min), max);
+
+    const getNumber = (id) => {
+      const rawValue = document.getElementById(id)?.value;
+      const value = Number(rawValue);
+      return Number.isFinite(value) && value >= 0 ? value : 0;
+    };
+
+    function getPressureLevel(score) {
+      if (score <= 30) {
+        return {
+          label: "Low Pressure",
+          stress: "Low pressure",
+          color: "#16a34a",
+          action:
+            "Proceed with a practical gear list, prioritize safety essentials, and keep cash available for medical bills, leave gaps, and childcare.",
+        };
+      }
+
+      if (score <= 60) {
+        return {
+          label: "Moderate Pressure",
+          stress: "Moderate pressure",
+          color: "#ca8a04",
+          action:
+            "Trim optional upgrades, use registry help strategically, and delay nonessential purchases until after the baby arrives.",
+        };
+      }
+
+      return {
+        label: "High Pressure",
+        stress: "High pressure",
+        color: "#dc2626",
+        action:
+          "Slow down before buying, focus only on essentials, and avoid high-interest financing for optional baby gear.",
+      };
+    }
+
+    function calculateGearCost() {
+      const gearCost = getNumber("gearCost");
+      const income = getNumber("income");
+      const savings = getNumber("savings");
+      const expenses = getNumber("expenses");
+      const debt = getNumber("debt");
+      const support = getNumber("support");
+      const medical = getNumber("medical");
+      const childcare = getNumber("childcare");
+      const leaveLoss = getNumber("leaveLoss");
+
+      const safetyShare = document.getElementById("safetyShare").value;
+      const timing = document.getElementById("timing").value;
+      const financing = document.getElementById("financing").value;
+
+      const result = document.getElementById("result");
+      const scoreEl = document.getElementById("score");
+      const barFill = document.getElementById("barFill");
+      const stressEl = document.getElementById("stress");
+      const cashFlowEl = document.getElementById("cashFlow");
+      const savingsImpactEl = document.getElementById("savingsImpact");
+      const totalBabyPressureEl = document.getElementById("totalBabyPressure");
+      const guidanceEl = document.getElementById("guidance");
+
+      result.style.display = "block";
+
+      if (gearCost <= 0 || income <= 0) {
+        scoreEl.textContent = "Add your numbers first";
+        barFill.style.width = "0%";
+        barFill.style.background = "#16a34a";
+        stressEl.innerHTML = "";
+        cashFlowEl.innerHTML = "";
+        savingsImpactEl.innerHTML = "";
+        totalBabyPressureEl.innerHTML = "";
+        guidanceEl.textContent =
+          "Enter a positive baby gear cost and monthly take-home income so the calculator can estimate financial pressure.";
+        return;
+      }
+
+      const outOfPocketGearCost = Math.max(gearCost - support, 0);
+      const nearTermBabyPressure = outOfPocketGearCost + medical + leaveLoss;
+      const monthlyBabyPressure = childcare;
+      const monthlyRemainingAfterBaby = income - expenses - debt - monthlyBabyPressure;
+      const monthlyBurnAfterBaby = expenses + debt + monthlyBabyPressure;
+      const remainingSavings = savings - nearTermBabyPressure;
+
+      const gearIncomeImpact = income > 0 ? (outOfPocketGearCost / income) * 100 : 100;
+      const nearTermIncomeImpact = income > 0 ? (nearTermBabyPressure / income) * 100 : 100;
+      const savingsImpact =
+        savings > 0 ? (nearTermBabyPressure / savings) * 100 : nearTermBabyPressure > 0 ? 100 : 0;
+      const fixedObligationRatio =
+        income > 0 ? ((expenses + debt) / income) * 100 : 100;
+      const childcareRatio = income > 0 ? (childcare / income) * 100 : 100;
+
+      const emergencyMonthsAfter =
+        monthlyBurnAfterBaby > 0
+          ? remainingSavings / monthlyBurnAfterBaby
+          : remainingSavings > 0
+            ? 999
+            : 0;
+
+      const hasAbsurdIncomeBuffer =
+        income >= monthlyBurnAfterBaby * 50 &&
+        outOfPocketGearCost <= income * 0.01 &&
+        nearTermBabyPressure <= income * 0.03;
+
+      const hasAbsurdSavingsBuffer =
+        savings > 0 &&
+        nearTermBabyPressure <= savings * 0.01 &&
+        emergencyMonthsAfter >= 60;
+
+      const hasHugeIncomeBuffer =
+        income > 0 &&
+        outOfPocketGearCost <= income * 0.03 &&
+        nearTermBabyPressure <= income * 0.08 &&
+        monthlyRemainingAfterBaby > income * 0.6 &&
+        fixedObligationRatio < 25;
+
+      const hasHugeSavingsBuffer =
+        savings > 0 &&
+        nearTermBabyPressure <= savings * 0.03 &&
+        emergencyMonthsAfter >= 36;
+
+      const hasStrongIncomeBuffer =
+        income > 0 &&
+        outOfPocketGearCost <= income * 0.1 &&
+        nearTermBabyPressure <= income * 0.2 &&
+        monthlyRemainingAfterBaby > income * 0.4;
+
+      const hasStrongSavingsBuffer =
+        savings > 0 &&
+        nearTermBabyPressure <= savings * 0.12 &&
+        emergencyMonthsAfter >= 12;
+
+      let pressureScore = 0;
+
+      if (
+        outOfPocketGearCost === 0 ||
+        hasAbsurdIncomeBuffer ||
+        hasAbsurdSavingsBuffer ||
+        hasHugeIncomeBuffer ||
+        hasHugeSavingsBuffer
+      ) {
+        pressureScore = 0;
+      } else {
+        pressureScore += clamp(gearIncomeImpact * 0.35, 0, 22);
+        pressureScore += clamp(nearTermIncomeImpact * 0.18, 0, 24);
+        pressureScore += clamp(savingsImpact * 0.35, 0, 34);
+        pressureScore += clamp(fixedObligationRatio * 0.18, 0, 22);
+        pressureScore += clamp(childcareRatio * 0.45, 0, 14);
+
+        if (remainingSavings < 0) pressureScore += 24;
+        else if (emergencyMonthsAfter < 1 && income < 14000) pressureScore += 18;
+        else if (emergencyMonthsAfter < 3 && income < 17000) pressureScore += 12;
+        else if (emergencyMonthsAfter >= 24) pressureScore -= 18;
+        else if (emergencyMonthsAfter >= 12) pressureScore -= 12;
+        else if (emergencyMonthsAfter >= 6) pressureScore -= 7;
+
+        if (monthlyRemainingAfterBaby < 0) pressureScore += 24;
+        else if (monthlyRemainingAfterBaby < income * 0.08) pressureScore += 14;
+        else if (monthlyRemainingAfterBaby > income * 0.5) pressureScore -= 14;
+        else if (monthlyRemainingAfterBaby > income * 0.35) pressureScore -= 8;
+
+        if (medical > income * 0.5) pressureScore += 8;
+        else if (medical > income * 0.25) pressureScore += 4;
+
+        if (leaveLoss > income * 0.5) pressureScore += 8;
+        else if (leaveLoss > income * 0.25) pressureScore += 4;
+
+        if (safetyShare === "mixed") pressureScore += 4;
+        if (safetyShare === "low") pressureScore += 13;
+        if (safetyShare === "high") pressureScore -= 5;
+
+        if (timing === "soon") pressureScore += 4;
+        if (timing === "rush") pressureScore += 10;
+        if (timing === "spread") pressureScore -= 4;
+
+        if (financing === "zero") pressureScore += 4;
+        if (financing === "credit") pressureScore += 16;
+        if (financing === "cash") pressureScore -= 3;
+
+        if (hasStrongIncomeBuffer) pressureScore -= 14;
+        if (hasStrongSavingsBuffer) pressureScore -= 18;
+
+        if (
+          gearIncomeImpact < 12 &&
+          savingsImpact < 20 &&
+          fixedObligationRatio < 55 &&
+          emergencyMonthsAfter >= 6 &&
+          monthlyRemainingAfterBaby > income * 0.2
+        ) {
+          pressureScore = Math.min(pressureScore, 30);
+        }
+
+        if (
+          gearIncomeImpact < 6 &&
+          savingsImpact < 10 &&
+          fixedObligationRatio < 45 &&
+          emergencyMonthsAfter >= 12 &&
+          monthlyRemainingAfterBaby > income * 0.35
+        ) {
+          pressureScore = Math.min(pressureScore, 16);
+        }
+
+        if (
+          outOfPocketGearCost <= income * 0.02 &&
+          nearTermBabyPressure <= savings * 0.02 &&
+          emergencyMonthsAfter >= 36 &&
+          fixedObligationRatio < 35
+        ) {
+          pressureScore = 0;
+        }
+
+        if (
+          income >= monthlyBurnAfterBaby * 40 &&
+          outOfPocketGearCost <= income * 0.02 &&
+          nearTermBabyPressure <= income * 0.05
+        ) {
+          pressureScore = 0;
+        }
+      }
+
+      pressureScore = Math.round(clamp(pressureScore, 0, 100));
+      const level = getPressureLevel(pressureScore);
+
+      let guidance = "";
+
+      if (pressureScore === 0) {
+        guidance =
+          `This baby gear purchase appears to create essentially no financial pressure based on the numbers provided. The out-of-pocket gear cost equals about ${gearIncomeImpact.toFixed(1)}% of one month’s take-home income, and the remaining savings cushion is very strong.`;
+      } else if (pressureScore <= 30) {
+        guidance =
+          `This baby gear purchase appears financially manageable based on the numbers provided. The out-of-pocket gear cost equals about ${gearIncomeImpact.toFixed(1)}% of one month’s take-home income, and your estimated emergency cushion remains around ${Math.max(emergencyMonthsAfter, 0).toFixed(1)} months after near-term baby costs.`;
+      } else if (pressureScore <= 60) {
+        guidance =
+          `This baby gear purchase may be workable, but it creates noticeable financial pressure. The near-term baby-related costs use about ${savingsImpact.toFixed(1)}% of available savings, so optional upgrades should be reviewed carefully.`;
+      } else {
+        guidance =
+          `This baby gear purchase could create real financial strain. The combination of gear costs, medical bills, leave income loss, childcare, debt, or savings impact suggests you should focus on essentials and delay optional upgrades.`;
+      }
+
+      scoreEl.textContent = `${level.label} — ${pressureScore}/100`;
+      scoreEl.style.color = level.color;
+      barFill.style.width = `${pressureScore}%`;
+      barFill.style.background = level.color;
+
+      stressEl.innerHTML = `<strong>Pressure level:</strong> ${level.stress}`;
+      cashFlowEl.innerHTML = `<strong>Monthly cash flow after upcoming childcare:</strong> $${monthlyRemainingAfterBaby.toLocaleString()}`;
+      savingsImpactEl.innerHTML = `<strong>Estimated savings after gear, medical, and leave costs:</strong> $${remainingSavings.toLocaleString()}`;
+      totalBabyPressureEl.innerHTML = `<strong>Near-term baby-related cash pressure:</strong> $${nearTermBabyPressure.toLocaleString()}`;
+      guidanceEl.textContent = `${guidance} Recommended next step: ${level.action}`;
+    }
+
+    document
+      .getElementById("gearButton")
+      .addEventListener("click", calculateGearCost);
+  </script>
+</Layout>

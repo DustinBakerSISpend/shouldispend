@@ -1,0 +1,541 @@
+---
+import Layout from "../layouts/Layout.astro";
+import CalculatorPageShell from "../components/CalculatorPageShell.astro";
+import FAQSection from "../components/FAQSection.astro";
+import RelatedCalculators from "../components/RelatedCalculators.astro";
+import RelatedGuides from "../components/RelatedGuides.astro";
+import MethodologySection from "../components/MethodologySection.astro";
+import FinancialRedFlags from "../components/FinancialRedFlags.astro";
+import CalculatorAssumptions from "../components/CalculatorAssumptions.astro";
+import KeyCostCategories from "../components/KeyCostCategories.astro";
+import ReduceCostTips from "../components/ReduceCostTips.astro";
+import WhenSpendingMakesSense from "../components/WhenSpendingMakesSense.astro";
+---
+
+<Layout
+  title="Should I Spend $20,000 on a Baby’s First Year?"
+  description="Use this baby first-year cost calculator to decide whether $20,000 in baby expenses fits your income, savings, childcare costs, medical bills, parental leave, and monthly cash flow."
+>
+  <style>
+    .container { max-width: 950px; margin: 0 auto; padding: 60px 20px; }
+    .content-section { max-width: 760px; margin: 72px auto 0; }
+    .card { background: var(--card); border: 1px solid var(--border); border-radius: 28px; padding: 34px; }
+    h2 { margin-top: 0; font-size: 2rem; }
+    .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 22px; margin-bottom: 28px; }
+    label { display: block; margin-bottom: 10px; font-weight: 700; }
+    input, select { width: 100%; padding: 18px; border-radius: 14px; border: 1px solid var(--border); font-size: 1.1rem; box-sizing: border-box; background: white; }
+    button { background: #0f172a; color: white; border: none; padding: 16px 28px; border-radius: 14px; font-size: 1rem; font-weight: 700; cursor: pointer; margin-top: 10px; width: 100%; display: block; }
+    button:hover { opacity: 0.92; }
+    .result { margin-top: 40px; border: 1px solid var(--border); border-radius: 24px; padding: 28px; display: none; background: #f8fafc; }
+    .score { font-size: 3rem; font-weight: 800; margin-bottom: 16px; }
+    .bar { width: 100%; height: 16px; background: #dbe3ee; border-radius: 999px; overflow: hidden; margin-bottom: 24px; }
+    .fill { height: 100%; width: 0%; background: #16a34a; border-radius: 999px; transition: width 0.4s ease; }
+    .metric { margin-bottom: 14px; font-size: 1.05rem; }
+    .guidance { margin-top: 26px; font-size: 1.15rem; line-height: 1.7; }
+    .disclaimer { margin-top: 30px; font-size: 0.9rem; color: var(--muted); }
+    .helper-link { margin-top: 10px; font-size: 0.9rem; }
+    .helper-link a { color: var(--primary); font-weight: 600; }
+    .content-section p, .content-section li { line-height: 1.8; }
+  </style>
+
+  <div class="container">
+    <CalculatorPageShell
+      eyebrow="Baby & Parenting Calculator"
+      title="Should I Spend $20,000 on a Baby’s First Year?"
+      description="Estimate whether $20,000 in first-year baby costs fits your income, emergency savings, childcare needs, medical bills, parental leave, debt load, and monthly cash flow."
+    >
+      <div class="card">
+        <h2>Baby First-Year Cost Verdict</h2>
+
+        <div class="grid">
+          <div>
+            <label for="cost">Estimated First-Year Baby Cost</label>
+            <input id="cost" type="number" placeholder="20000" min="0" inputmode="decimal" />
+          </div>
+
+          <div>
+            <label for="income">Monthly Take-Home Income</label>
+            <input id="income" type="number" placeholder="7500" min="0" inputmode="decimal" />
+          </div>
+
+          <div>
+            <label for="savings">Emergency Savings</label>
+            <input id="savings" type="number" placeholder="18000" min="0" inputmode="decimal" />
+          </div>
+
+          <div>
+            <label for="expenses">Current Monthly Expenses</label>
+            <input id="expenses" type="number" placeholder="4200" min="0" inputmode="decimal" />
+          </div>
+
+          <div>
+            <label for="debt">Monthly Debt Payments</label>
+            <input id="debt" type="number" placeholder="700" min="0" inputmode="decimal" />
+            <div class="helper-link">
+              <a href="/what-counts-as-debt">Not sure what counts as debt? Read the debt guide</a>
+            </div>
+          </div>
+
+          <div>
+            <label for="childcare">Estimated Monthly Childcare Cost</label>
+            <input id="childcare" type="number" placeholder="1200" min="0" inputmode="decimal" />
+          </div>
+
+          <div>
+            <label for="medical">Out-of-Pocket Medical / Delivery Cost</label>
+            <input id="medical" type="number" placeholder="3500" min="0" inputmode="decimal" />
+          </div>
+
+          <div>
+            <label for="leaveLoss">Expected Parental Leave Income Loss</label>
+            <input id="leaveLoss" type="number" placeholder="3000" min="0" inputmode="decimal" />
+          </div>
+
+          <div>
+            <label for="support">Family Help, Gifts, or Baby Shower Support</label>
+            <input id="support" type="number" placeholder="2000" min="0" inputmode="decimal" />
+          </div>
+
+          <div>
+            <label for="insurance">Health Insurance Situation</label>
+            <select id="insurance">
+              <option value="strong">Strong Coverage / Predictable Max</option>
+              <option value="average">Average Coverage</option>
+              <option value="weak">Weak, High-Deductible, or Unclear Coverage</option>
+            </select>
+          </div>
+
+          <div>
+            <label for="childcareStatus">Childcare Plan</label>
+            <select id="childcareStatus">
+              <option value="clear">Clear and Affordable</option>
+              <option value="tight">Known but Expensive</option>
+              <option value="unclear">Unclear or Waitlisted</option>
+            </select>
+          </div>
+
+          <div>
+            <label for="recurring">New Monthly Baby Supplies</label>
+            <input id="recurring" type="number" placeholder="350" min="0" inputmode="decimal" />
+          </div>
+        </div>
+
+        <button id="babyButton" type="button">Calculate Financial Pressure</button>
+
+        <div class="result" id="result">
+          <div class="score" id="score"></div>
+          <div class="bar"><div class="fill" id="barFill"></div></div>
+          <div class="metric" id="stress"></div>
+          <div class="metric" id="cashFlow"></div>
+          <div class="metric" id="savingsImpact"></div>
+          <div class="metric" id="monthlyImpact"></div>
+          <div class="guidance" id="guidance"></div>
+          <div class="disclaimer">
+            This is a general educational estimate, not parenting, medical, insurance, tax, childcare, legal, or financial advice.
+          </div>
+        </div>
+      </div>
+
+      <div class="content-section">
+        <h2>What a $20,000 Baby First Year Really Includes</h2>
+        <p>
+          A $20,000 first-year baby estimate can sound extreme until the pieces are separated. Delivery bills, insurance deductibles, unpaid parental leave, childcare deposits, diapers, formula, baby furniture, car seats, clothing, medical visits, medications, bottles, pumps, and household changes can stack quickly.
+        </p>
+        <p>
+          The biggest issue is usually not one single crib or stroller. The real pressure comes from combining one-time baby setup costs with recurring monthly costs while income may temporarily fall during parental leave. That is why this calculator weighs cash flow, savings cushion, childcare, medical exposure, and debt pressure together.
+        </p>
+      </div>
+
+      <WhenSpendingMakesSense
+        title="When Spending $20,000 in a Baby’s First Year Makes Sense"
+        items={[
+          "The spending includes unavoidable medical, childcare, safety, and basic household needs.",
+          "You have confirmed insurance deductibles, out-of-pocket maximums, and delivery-cost exposure.",
+          "Childcare is planned early enough to avoid emergency pricing or lost work income.",
+          "Emergency savings remains intact after delivery costs, baby setup costs, and parental leave gaps.",
+          "The new monthly baby costs fit without crowding out rent, groceries, utilities, insurance, and debt payments.",
+          "Family help, baby shower support, HSA funds, FSA funds, or paid leave meaningfully reduce the pressure.",
+        ]}
+      />
+
+      <div class="content-section">
+        <h2>When to Slow Down Before Spending</h2>
+        <p>
+          You may want to slow down if the $20,000 estimate is driven by optional upgrades, premium nursery furniture, expensive travel systems, luxury baby gear, or purchases made before you know what the baby will actually use.
+        </p>
+        <p>
+          Baby spending is emotionally loaded. It is easy to treat every product as essential. In reality, the highest-priority expenses are safety, feeding, sleep, medical care, transportation, and reliable childcare. Many other purchases can wait until you know your baby, your routine, and your actual monthly budget.
+        </p>
+      </div>
+
+      <KeyCostCategories
+        items={[
+          {
+            title: "Delivery and medical bills",
+            description:
+              "Deductibles, coinsurance, hospital charges, prenatal care, prescriptions, specialist visits, and out-of-pocket maximums can shape the real first-year cost.",
+          },
+          {
+            title: "Childcare",
+            description:
+              "Daycare, nanny care, deposits, waitlist fees, backup care, and schedule gaps often become the largest recurring baby-related cost.",
+          },
+          {
+            title: "Parental leave income loss",
+            description:
+              "Unpaid or partially paid leave can create more pressure than baby gear because household income may drop right when new expenses arrive.",
+          },
+          {
+            title: "Baby supplies",
+            description:
+              "Diapers, wipes, formula, bottles, medicine, clothing, sleep supplies, and feeding items create recurring monthly costs.",
+          },
+          {
+            title: "Safety and setup purchases",
+            description:
+              "Car seats, crib or bassinet, stroller, monitor, babyproofing, and basic furniture can be necessary, but premium versions can inflate the total quickly.",
+          },
+        ]}
+      />
+
+      <ReduceCostTips
+        items={[
+          "Confirm your health insurance deductible, coinsurance, and out-of-pocket maximum before delivery.",
+          "Start childcare research early because last-minute options can be more expensive.",
+          "Separate must-have safety items from nice-to-have nursery upgrades.",
+          "Use baby shower support for practical recurring items like diapers, wipes, bottles, and feeding supplies.",
+          "Buy some items secondhand, but avoid used car seats unless you fully know the history.",
+          "Delay nonessential purchases until after the baby arrives and you know what you actually use.",
+          "Check whether HSA, FSA, dependent-care FSA, employer benefits, or paid leave can reduce pressure.",
+          "Build a baby sinking fund before the due date if there is still time.",
+        ]}
+      />
+
+      <FinancialRedFlags
+        items={[
+          "The first-year estimate would drain most of your emergency savings.",
+          "Childcare is still unclear close to the return-to-work date.",
+          "The plan assumes unpaid leave without enough savings to cover the income gap.",
+          "Medical costs are based on guesses rather than insurance details.",
+          "New baby costs would make rent, groceries, utilities, insurance, or debt payments difficult.",
+          "Most of the $20,000 is going toward optional upgrades rather than medical care, childcare, safety, and basics.",
+          "Credit cards or high-interest financing are needed to cover normal baby supplies.",
+        ]}
+      />
+
+      <CalculatorAssumptions
+        items={[
+          "The calculator treats $20,000 as a combined first-year estimate that may include medical bills, baby gear, childcare, supplies, and parental leave income loss.",
+          "Monthly income means take-home pay after taxes and payroll deductions.",
+          "Monthly debt payments include credit cards, car loans, student loans, personal loans, and required debt obligations.",
+          "Childcare and recurring baby supplies are treated as ongoing monthly pressure, not just one-time purchases.",
+          "Family help, gifts, or baby shower support reduce the effective first-year cost.",
+          "Very high income or very large savings can produce a true 0/100 pressure score when baby costs are tiny relative to available resources.",
+        ]}
+      />
+
+      <FAQSection
+        title="$20,000 Baby First-Year Cost FAQ"
+        faqs={[
+          {
+            question: "Is $20,000 a lot for a baby’s first year?",
+            answer:
+              "It is a major amount, but it can be realistic for families facing delivery bills, childcare, parental leave income loss, diapers, formula, furniture, and medical expenses.",
+          },
+          {
+            question: "What is usually the biggest first-year baby expense?",
+            answer:
+              "Childcare and medical costs are often the biggest pressure points. Baby gear can be expensive, but recurring daycare and healthcare exposure usually matter more.",
+          },
+          {
+            question: "Should I use emergency savings for baby expenses?",
+            answer:
+              "Using some savings may be reasonable for delivery bills or unavoidable setup costs, but draining your emergency fund before a baby arrives can create serious risk.",
+          },
+          {
+            question: "How can I reduce first-year baby costs?",
+            answer:
+              "Confirm insurance costs, plan childcare early, borrow or buy some non-safety items secondhand, prioritize practical registry items, and delay nonessential purchases.",
+          },
+          {
+            question: "Should I finance baby purchases?",
+            answer:
+              "Be careful. Financing normal baby supplies or nursery upgrades can add pressure. If financing is needed, prioritize essential medical, safety, or childcare needs over optional purchases.",
+          },
+        ]}
+      />
+
+      <MethodologySection category="baby and parenting spending" updated="June 2026" />
+
+      <RelatedGuides
+        guides={[
+          {
+            title: "What Counts as Debt?",
+            href: "/what-counts-as-debt",
+            description:
+              "Understand which obligations should be included when estimating financial pressure.",
+          },
+          {
+            title: "How Much Emergency Savings Should I Have?",
+            href: "/how-much-emergency-savings-should-i-have",
+            description:
+              "Estimate how much emergency cushion can protect your household before major life expenses.",
+          },
+        ]}
+      />
+
+      <RelatedCalculators
+        calculators={[
+          {
+            category: "Baby & Parenting",
+            title: "Baby Cost Calculator",
+            href: "/baby-cost-calculator",
+          },
+          {
+            category: "Baby & Parenting",
+            title: "Browse Baby & Parenting Calculators",
+            href: "/baby-parenting-calculators",
+          },
+          {
+            category: "Medical",
+            title: "Should I Spend This Much on Medical Bills?",
+            href: "/should-i-spend-this-much-on-medical-bills",
+          },
+          {
+            category: "Debt",
+            title: "How Much Debt Is Too Much?",
+            href: "/how-much-debt-is-too-much",
+          },
+        ]}
+      />
+    </CalculatorPageShell>
+  </div>
+
+  <script is:inline>
+    const clamp = (value, min, max) => Math.min(Math.max(value, min), max);
+
+    const getNumber = (id) => {
+      const rawValue = document.getElementById(id)?.value;
+      const value = Number(rawValue);
+      return Number.isFinite(value) && value >= 0 ? value : 0;
+    };
+
+    function getPressureLevel(score) {
+      if (score <= 30) {
+        return {
+          label: "Low Pressure",
+          stress: "Low pressure",
+          color: "#16a34a",
+          action:
+            "Proceed with a practical baby budget, confirm insurance details, and keep emergency savings protected.",
+        };
+      }
+
+      if (score <= 60) {
+        return {
+          label: "Moderate Pressure",
+          stress: "Moderate pressure",
+          color: "#ca8a04",
+          action:
+            "Separate essential baby costs from optional upgrades, confirm childcare, and build more cash cushion where possible.",
+        };
+      }
+
+      return {
+        label: "High Pressure",
+        stress: "High pressure",
+        color: "#dc2626",
+        action:
+          "Slow down on optional purchases, confirm medical and childcare costs, and avoid high-interest debt for baby expenses.",
+      };
+    }
+
+    function calculateBabyCost() {
+      const cost = getNumber("cost");
+      const income = getNumber("income");
+      const savings = getNumber("savings");
+      const expenses = getNumber("expenses");
+      const debt = getNumber("debt");
+      const childcare = getNumber("childcare");
+      const medical = getNumber("medical");
+      const leaveLoss = getNumber("leaveLoss");
+      const support = getNumber("support");
+      const recurring = getNumber("recurring");
+
+      const insurance = document.getElementById("insurance").value;
+      const childcareStatus = document.getElementById("childcareStatus").value;
+
+      const result = document.getElementById("result");
+      const scoreEl = document.getElementById("score");
+      const barFill = document.getElementById("barFill");
+      const stressEl = document.getElementById("stress");
+      const cashFlowEl = document.getElementById("cashFlow");
+      const savingsImpactEl = document.getElementById("savingsImpact");
+      const monthlyImpactEl = document.getElementById("monthlyImpact");
+      const guidanceEl = document.getElementById("guidance");
+
+      result.style.display = "block";
+
+      if (cost <= 0 || income <= 0) {
+        scoreEl.textContent = "Add your numbers first";
+        barFill.style.width = "0%";
+        barFill.style.background = "#16a34a";
+        stressEl.innerHTML = "";
+        cashFlowEl.innerHTML = "";
+        savingsImpactEl.innerHTML = "";
+        monthlyImpactEl.innerHTML = "";
+        guidanceEl.textContent =
+          "Enter a positive first-year baby cost and monthly take-home income so the calculator can estimate financial pressure.";
+        return;
+      }
+
+      const effectiveCost = Math.max(cost + medical + leaveLoss - support, 0);
+      const estimatedMonthlyBabyCost = childcare + recurring;
+      const monthlyRemainingBeforeBaby = income - expenses - debt;
+      const monthlyRemainingAfterBaby = income - expenses - debt - estimatedMonthlyBabyCost;
+
+      const remainingSavings = savings - effectiveCost;
+
+      const incomeImpact = income > 0 ? (effectiveCost / income) * 100 : 100;
+      const savingsImpact =
+        savings > 0 ? (effectiveCost / savings) * 100 : effectiveCost > 0 ? 100 : 0;
+
+      const fixedObligationRatio =
+        income > 0 ? ((expenses + debt) / income) * 100 : 100;
+
+      const babyMonthlyRatio =
+        income > 0 ? (estimatedMonthlyBabyCost / income) * 100 : 100;
+
+      const emergencyMonthsAfter =
+        expenses + debt + estimatedMonthlyBabyCost > 0
+          ? remainingSavings / (expenses + debt + estimatedMonthlyBabyCost)
+          : remainingSavings > 0
+            ? 999
+            : 0;
+
+      const hasHugeIncomeBuffer =
+        income > 0 &&
+        effectiveCost <= income * 0.08 &&
+        estimatedMonthlyBabyCost <= income * 0.03 &&
+        monthlyRemainingAfterBaby > income * 0.6;
+
+      const hasHugeSavingsBuffer =
+        savings > 0 &&
+        effectiveCost <= savings * 0.03 &&
+        remainingSavings > 0 &&
+        emergencyMonthsAfter >= 18;
+
+      const hasStrongIncomeBuffer =
+        income > 0 &&
+        effectiveCost <= income * 0.18 &&
+        estimatedMonthlyBabyCost <= income * 0.08 &&
+        monthlyRemainingAfterBaby > income * 0.4;
+
+      const hasStrongSavingsBuffer =
+        savings > 0 &&
+        effectiveCost <= savings * 0.12 &&
+        remainingSavings > 0 &&
+        emergencyMonthsAfter >= 9;
+
+      let pressureScore = 0;
+
+      if (hasHugeIncomeBuffer || hasHugeSavingsBuffer) {
+        pressureScore = 0;
+      } else {
+        pressureScore += clamp(incomeImpact * 0.17, 0, 28);
+        pressureScore += clamp(savingsImpact * 0.22, 0, 30);
+        pressureScore += clamp(fixedObligationRatio * 0.2, 0, 24);
+        pressureScore += clamp(babyMonthlyRatio * 0.55, 0, 22);
+
+        if (remainingSavings < 0) pressureScore += 24;
+        else if (emergencyMonthsAfter < 1 && income < 14000) pressureScore += 18;
+        else if (emergencyMonthsAfter < 3 && income < 17000) pressureScore += 11;
+        else if (emergencyMonthsAfter >= 6) pressureScore -= 8;
+        else if (emergencyMonthsAfter >= 12) pressureScore -= 12;
+
+        if (monthlyRemainingAfterBaby < 0) pressureScore += 24;
+        else if (monthlyRemainingAfterBaby < income * 0.08) pressureScore += 14;
+        else if (monthlyRemainingAfterBaby > income * 0.35) pressureScore -= 7;
+
+        if (leaveLoss > income * 0.5) pressureScore += 10;
+        else if (leaveLoss > income * 0.25) pressureScore += 5;
+
+        if (medical > income * 0.5) pressureScore += 10;
+        else if (medical > income * 0.25) pressureScore += 5;
+
+        if (insurance === "average") pressureScore += 4;
+        if (insurance === "weak") pressureScore += 12;
+
+        if (childcareStatus === "tight") pressureScore += 7;
+        if (childcareStatus === "unclear") pressureScore += 14;
+
+        if (hasStrongIncomeBuffer) pressureScore -= 14;
+        if (hasStrongSavingsBuffer) pressureScore -= 14;
+
+        if (
+          incomeImpact < 22 &&
+          savingsImpact < 18 &&
+          babyMonthlyRatio < 8 &&
+          emergencyMonthsAfter >= 6 &&
+          fixedObligationRatio < 55
+        ) {
+          pressureScore = Math.min(pressureScore, 30);
+        }
+
+        if (
+          incomeImpact < 12 &&
+          savingsImpact < 10 &&
+          babyMonthlyRatio < 5 &&
+          emergencyMonthsAfter >= 9 &&
+          fixedObligationRatio < 45
+        ) {
+          pressureScore = Math.min(pressureScore, 16);
+        }
+
+        if (
+          incomeImpact < 5 &&
+          savingsImpact < 3 &&
+          babyMonthlyRatio < 2 &&
+          fixedObligationRatio < 25 &&
+          monthlyRemainingAfterBaby > income * 0.65
+        ) {
+          pressureScore = 0;
+        }
+      }
+
+      pressureScore = Math.round(clamp(pressureScore, 0, 100));
+      const level = getPressureLevel(pressureScore);
+
+      let guidance = "";
+
+      if (pressureScore === 0) {
+        guidance =
+          `This first-year baby cost appears to create essentially no financial pressure based on the numbers provided. The effective first-year cost equals about ${incomeImpact.toFixed(1)}% of one month’s take-home income, and the new monthly baby costs are tiny relative to available cash flow.`;
+      } else if (pressureScore <= 30) {
+        guidance =
+          `This first-year baby cost appears financially manageable based on the numbers provided. The effective first-year cost equals about ${incomeImpact.toFixed(1)}% of one month’s take-home income, and your estimated emergency cushion remains around ${Math.max(emergencyMonthsAfter, 0).toFixed(1)} months after baby-related costs.`;
+      } else if (pressureScore <= 60) {
+        guidance =
+          `This baby budget may be workable, but it creates noticeable financial pressure. The effective first-year cost uses about ${savingsImpact.toFixed(1)}% of available savings, and estimated monthly baby costs equal about ${babyMonthlyRatio.toFixed(1)}% of take-home income.`;
+      } else {
+        guidance =
+          `This baby budget could create real financial strain. The combination of first-year costs, childcare, medical exposure, parental leave, savings impact, and monthly obligations suggests you should slow down before committing to optional spending.`;
+      }
+
+      scoreEl.textContent = `${level.label} — ${pressureScore}/100`;
+      scoreEl.style.color = level.color;
+      barFill.style.width = `${pressureScore}%`;
+      barFill.style.background = level.color;
+
+      stressEl.innerHTML = `<strong>Pressure level:</strong> ${level.stress}`;
+      cashFlowEl.innerHTML = `<strong>Monthly cash flow after baby costs:</strong> $${monthlyRemainingAfterBaby.toLocaleString()}`;
+      savingsImpactEl.innerHTML = `<strong>Estimated savings after first-year baby costs:</strong> $${remainingSavings.toLocaleString()}`;
+      monthlyImpactEl.innerHTML = `<strong>Estimated new monthly baby costs:</strong> $${estimatedMonthlyBabyCost.toLocaleString()} per month`;
+      guidanceEl.textContent = `${guidance} Recommended next step: ${level.action}`;
+    }
+
+    document
+      .getElementById("babyButton")
+      .addEventListener("click", calculateBabyCost);
+  </script>
+</Layout>

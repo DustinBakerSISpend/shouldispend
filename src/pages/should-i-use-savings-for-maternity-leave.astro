@@ -1,0 +1,588 @@
+---
+import Layout from "../layouts/Layout.astro";
+import CalculatorPageShell from "../components/CalculatorPageShell.astro";
+import FAQSection from "../components/FAQSection.astro";
+import RelatedCalculators from "../components/RelatedCalculators.astro";
+import RelatedGuides from "../components/RelatedGuides.astro";
+import MethodologySection from "../components/MethodologySection.astro";
+import FinancialRedFlags from "../components/FinancialRedFlags.astro";
+import CalculatorAssumptions from "../components/CalculatorAssumptions.astro";
+import KeyCostCategories from "../components/KeyCostCategories.astro";
+import ReduceCostTips from "../components/ReduceCostTips.astro";
+import WhenSpendingMakesSense from "../components/WhenSpendingMakesSense.astro";
+---
+
+<Layout
+  title="Should I Use Savings for Maternity Leave?"
+  description="Use this maternity leave savings calculator to decide whether using emergency savings during unpaid or partially paid leave fits your income, expenses, baby costs, debt, and cash flow."
+>
+  <style>
+    .container { max-width: 950px; margin: 0 auto; padding: 60px 20px; }
+    .content-section { max-width: 760px; margin: 72px auto 0; }
+    .card { background: var(--card); border: 1px solid var(--border); border-radius: 28px; padding: 34px; }
+    h2 { margin-top: 0; font-size: 2rem; }
+    .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 22px; margin-bottom: 28px; }
+    label { display: block; margin-bottom: 10px; font-weight: 700; }
+    input, select { width: 100%; padding: 18px; border-radius: 14px; border: 1px solid var(--border); font-size: 1.1rem; box-sizing: border-box; background: white; }
+    button { background: #0f172a; color: white; border: none; padding: 16px 28px; border-radius: 14px; font-size: 1rem; font-weight: 700; cursor: pointer; margin-top: 10px; width: 100%; display: block; }
+    button:hover { opacity: 0.92; }
+    .result { margin-top: 40px; border: 1px solid var(--border); border-radius: 24px; padding: 28px; display: none; background: #f8fafc; }
+    .score { font-size: 3rem; font-weight: 800; margin-bottom: 16px; }
+    .bar { width: 100%; height: 16px; background: #dbe3ee; border-radius: 999px; overflow: hidden; margin-bottom: 24px; }
+    .fill { height: 100%; width: 0%; background: #16a34a; border-radius: 999px; transition: width 0.4s ease; }
+    .metric { margin-bottom: 14px; font-size: 1.05rem; }
+    .guidance { margin-top: 26px; font-size: 1.15rem; line-height: 1.7; }
+    .disclaimer { margin-top: 30px; font-size: 0.9rem; color: var(--muted); }
+    .helper-link { margin-top: 10px; font-size: 0.9rem; }
+    .helper-link a { color: var(--primary); font-weight: 600; }
+    .content-section p, .content-section li { line-height: 1.8; }
+  </style>
+
+  <div class="container">
+    <CalculatorPageShell
+      eyebrow="Baby & Parenting Calculator"
+      title="Should I Use Savings for Maternity Leave?"
+      description="Estimate whether using savings during unpaid or partially paid maternity leave fits your emergency cushion, household expenses, baby costs, debt, and return-to-work plan."
+    >
+      <div class="card">
+        <h2>Maternity Leave Savings Verdict</h2>
+
+        <div class="grid">
+          <div>
+            <label for="savings">Emergency Savings Available</label>
+            <input id="savings" type="number" placeholder="22000" min="0" inputmode="decimal" />
+          </div>
+
+          <div>
+            <label for="income">Normal Monthly Take-Home Income</label>
+            <input id="income" type="number" placeholder="7500" min="0" inputmode="decimal" />
+          </div>
+
+          <div>
+            <label for="leaveIncome">Monthly Income During Leave</label>
+            <input id="leaveIncome" type="number" placeholder="3500" min="0" inputmode="decimal" />
+          </div>
+
+          <div>
+            <label for="leaveMonths">Length of Leave in Months</label>
+            <input id="leaveMonths" type="number" placeholder="3" min="0" step="0.5" inputmode="decimal" />
+          </div>
+
+          <div>
+            <label for="expenses">Monthly Essential Expenses</label>
+            <input id="expenses" type="number" placeholder="4800" min="0" inputmode="decimal" />
+          </div>
+
+          <div>
+            <label for="debt">Monthly Debt Payments</label>
+            <input id="debt" type="number" placeholder="650" min="0" inputmode="decimal" />
+            <div class="helper-link">
+              <a href="/what-counts-as-debt">Not sure what counts as debt? Read the debt guide</a>
+            </div>
+          </div>
+
+          <div>
+            <label for="babyCosts">Monthly Baby Costs During Leave</label>
+            <input id="babyCosts" type="number" placeholder="500" min="0" inputmode="decimal" />
+          </div>
+
+          <div>
+            <label for="medical">Expected Medical / Delivery Bills</label>
+            <input id="medical" type="number" placeholder="3000" min="0" inputmode="decimal" />
+          </div>
+
+          <div>
+            <label for="support">Family, Employer, or Gift Support</label>
+            <input id="support" type="number" placeholder="1000" min="0" inputmode="decimal" />
+          </div>
+
+          <div>
+            <label for="jobSecurity">Return-to-Work Confidence</label>
+            <select id="jobSecurity">
+              <option value="strong">Strong / Confirmed Return Plan</option>
+              <option value="average">Mostly Clear</option>
+              <option value="uncertain">Uncertain or Unstable</option>
+            </select>
+          </div>
+
+          <div>
+            <label for="insurance">Insurance Situation During Leave</label>
+            <select id="insurance">
+              <option value="stable">Stable Coverage</option>
+              <option value="changing">Changing or Extra Premiums</option>
+              <option value="unclear">Unclear Coverage</option>
+            </select>
+          </div>
+
+          <div>
+            <label for="childcarePlan">Post-Leave Childcare Plan</label>
+            <select id="childcarePlan">
+              <option value="clear">Clear and Budgeted</option>
+              <option value="expensive">Known but Expensive</option>
+              <option value="unclear">Unclear or Waitlisted</option>
+            </select>
+          </div>
+        </div>
+
+        <button id="leaveButton" type="button">Calculate Financial Pressure</button>
+
+        <div class="result" id="result">
+          <div class="score" id="score"></div>
+          <div class="bar"><div class="fill" id="barFill"></div></div>
+          <div class="metric" id="stress"></div>
+          <div class="metric" id="gap"></div>
+          <div class="metric" id="savingsAfter"></div>
+          <div class="metric" id="cushion"></div>
+          <div class="guidance" id="guidance"></div>
+          <div class="disclaimer">
+            This is a general educational estimate, not parenting, medical, employment, legal, tax, benefits, or financial advice.
+          </div>
+        </div>
+      </div>
+
+      <div class="content-section">
+        <h2>What Using Savings for Maternity Leave Really Means</h2>
+        <p>
+          Using savings during maternity leave can be reasonable when the income gap is temporary, the return-to-work plan is clear, and enough emergency cushion remains after leave. The danger is treating savings like extra spending money when it may also need to cover medical bills, baby supplies, childcare deposits, insurance changes, and normal household surprises.
+        </p>
+        <p>
+          The real question is not only whether savings can cover the leave. It is whether the household still has enough cash after the leave ends. A safe maternity leave plan should account for reduced income, medical exposure, baby costs, existing debt, childcare timing, and the first few months after returning to work.
+        </p>
+      </div>
+
+      <WhenSpendingMakesSense
+        title="When Using Savings for Maternity Leave Makes Sense"
+        items={[
+          "The leave income gap is temporary and the return-to-work plan is clear.",
+          "Emergency savings remains strong after covering the income gap, medical bills, and baby costs.",
+          "The household can cover rent, groceries, utilities, insurance, debt payments, and baby basics without credit cards.",
+          "Health insurance and benefits during leave have been confirmed.",
+          "Post-leave childcare costs are already estimated and included in the broader plan.",
+          "Family support, paid leave, short-term disability, employer benefits, or gifts reduce the amount taken from savings.",
+        ]}
+      />
+
+      <div class="content-section">
+        <h2>When to Be Careful Before Using Savings</h2>
+        <p>
+          You may want to slow down if the plan drains most of the emergency fund, assumes a perfect return-to-work timeline, ignores medical bills, or leaves no cushion for childcare deposits and recurring baby costs.
+        </p>
+        <p>
+          Maternity leave can also create timing risk. Expenses may rise before income returns to normal. If the plan only works when nothing unexpected happens, the household may need a smaller spending plan, more support, a shorter unpaid gap, or a larger cash reserve.
+        </p>
+      </div>
+
+      <KeyCostCategories
+        items={[
+          {
+            title: "Leave income gap",
+            description:
+              "The core cost is the difference between normal take-home income and income during unpaid or partially paid leave.",
+          },
+          {
+            title: "Medical and delivery bills",
+            description:
+              "Deductibles, coinsurance, hospital bills, prescriptions, follow-up visits, and insurance changes can hit during or soon after leave.",
+          },
+          {
+            title: "New baby costs",
+            description:
+              "Diapers, wipes, formula, feeding supplies, medications, clothing, and extra groceries can raise monthly expenses right away.",
+          },
+          {
+            title: "Post-leave childcare",
+            description:
+              "Daycare deposits, nanny retainers, waitlist fees, and first-month payments can arrive before normal income fully stabilizes.",
+          },
+          {
+            title: "Emergency cushion after leave",
+            description:
+              "The most important number is often how much savings remains after the leave gap and related baby costs are covered.",
+          },
+        ]}
+      />
+
+      <ReduceCostTips
+        items={[
+          "Confirm paid leave, short-term disability, PTO, employer benefits, and state leave options before estimating the gap.",
+          "Ask HR how health insurance premiums, payroll deductions, and benefits work during leave.",
+          "Build a leave-specific sinking fund before the due date if there is still time.",
+          "Separate medical bills, baby setup costs, and monthly living expenses instead of treating them as one vague total.",
+          "Delay nonessential baby purchases until after the baby arrives.",
+          "Use registry help for practical items like diapers, wipes, bottles, formula supplies, and feeding basics.",
+          "Confirm childcare deposits and start dates before returning to work.",
+          "Keep a post-leave buffer for the first few months after income resumes.",
+        ]}
+      />
+
+      <FinancialRedFlags
+        items={[
+          "The plan would drain most or all emergency savings.",
+          "The return-to-work date is uncertain or job security is shaky.",
+          "Health insurance during leave has not been confirmed.",
+          "Medical bills are estimated loosely or ignored.",
+          "The plan depends on credit cards once the baby arrives.",
+          "Post-leave childcare costs are not included.",
+          "Savings would fall below one month of essential expenses after leave.",
+        ]}
+      />
+
+      <CalculatorAssumptions
+        items={[
+          "The calculator treats maternity leave savings use as a temporary income-gap decision.",
+          "Monthly income means take-home pay after taxes and payroll deductions.",
+          "Monthly debt payments include credit cards, car loans, student loans, personal loans, and required debt obligations.",
+          "Baby costs during leave include diapers, formula, feeding supplies, prescriptions, clothing, and other recurring basics.",
+          "Support may include family help, gifts, employer benefits, paid leave supplements, short-term disability, or other predictable assistance.",
+          "Very high income or very large savings can produce a true 0/100 pressure score when the leave gap is tiny relative to available resources.",
+        ]}
+      />
+
+      <FAQSection
+        title="Maternity Leave Savings FAQ"
+        faqs={[
+          {
+            question: "Should I use emergency savings for maternity leave?",
+            answer:
+              "It can make sense if the income gap is temporary and enough emergency cushion remains afterward. It becomes riskier if savings fall too low or the plan ignores medical bills, baby costs, and childcare deposits.",
+          },
+          {
+            question: "How much should I save before maternity leave?",
+            answer:
+              "A safer target includes the expected income gap, medical bills, baby setup costs, several months of baby supplies, and a separate emergency cushion that remains after leave.",
+          },
+          {
+            question: "What if my maternity leave is unpaid?",
+            answer:
+              "Unpaid leave requires a more careful plan because savings must replace income while baby-related expenses increase. Confirm expenses, insurance, return-to-work timing, and childcare before relying heavily on savings.",
+          },
+          {
+            question: "Should I use credit cards during maternity leave?",
+            answer:
+              "Credit cards can create long-term pressure if they are used for normal expenses during leave. A safer plan uses savings, benefits, support, or reduced spending before relying on high-interest debt.",
+          },
+          {
+            question: "What costs should I include in a maternity leave budget?",
+            answer:
+              "Include lost income, medical bills, insurance changes, baby supplies, rent or mortgage, groceries, utilities, debt payments, childcare deposits, and a post-leave buffer.",
+          },
+        ]}
+      />
+
+      <MethodologySection category="baby and parenting spending" updated="June 2026" />
+
+      <RelatedGuides
+        guides={[
+          {
+            title: "Baby & Parenting Calculators",
+            href: "/baby-parenting-calculators",
+            description:
+              "Browse baby cost calculators for childcare, first-year expenses, maternity leave, baby gear, and family planning.",
+          },
+          {
+            title: "How Much Emergency Savings Should I Have?",
+            href: "/how-much-emergency-savings-should-i-have",
+            description:
+              "Estimate how much emergency cushion can protect your household before major life expenses.",
+          },
+          {
+            title: "What Counts as Debt?",
+            href: "/what-counts-as-debt",
+            description:
+              "Understand which obligations should be included when estimating financial pressure.",
+          },
+        ]}
+      />
+
+      <RelatedCalculators
+        calculators={[
+          {
+            category: "Baby & Parenting",
+            title: "Baby Cost Calculator",
+            href: "/baby-cost-calculator",
+          },
+          {
+            category: "Baby & Parenting",
+            title: "Should I Spend This Much on Childcare?",
+            href: "/should-i-spend-this-much-on-childcare",
+          },
+          {
+            category: "Baby & Parenting",
+            title: "Should I Spend $20,000 on a Baby’s First Year?",
+            href: "/should-i-spend-20000-on-a-babys-first-year",
+          },
+          {
+            category: "Baby & Parenting",
+            title: "Can We Afford to Have a Baby?",
+            href: "/can-we-afford-to-have-a-baby",
+          },
+        ]}
+      />
+    </CalculatorPageShell>
+  </div>
+
+  <script is:inline>
+  const clamp = (value, min, max) => Math.min(Math.max(value, min), max);
+
+  const getNumber = (id) => {
+    const rawValue = document.getElementById(id)?.value;
+    const value = Number(rawValue);
+    return Number.isFinite(value) && value >= 0 ? value : 0;
+  };
+
+  function getPressureLevel(score) {
+    if (score <= 30) {
+      return {
+        label: "Low Pressure",
+        stress: "Low pressure",
+        color: "#16a34a",
+        action:
+          "Proceed after confirming paid leave, benefits, insurance, medical bills, and your post-leave childcare plan.",
+      };
+    }
+
+    if (score <= 60) {
+      return {
+        label: "Moderate Pressure",
+        stress: "Moderate pressure",
+        color: "#ca8a04",
+        action:
+          "Tighten the leave budget, protect a post-leave cushion, and reduce optional baby spending where possible.",
+      };
+    }
+
+    return {
+      label: "High Pressure",
+      stress: "High pressure",
+      color: "#dc2626",
+      action:
+        "Slow down before relying heavily on savings, confirm benefits and insurance, and look for ways to reduce the unpaid gap.",
+    };
+  }
+
+  function calculateLeaveSavings() {
+    const savings = getNumber("savings");
+    const income = getNumber("income");
+    const leaveIncome = getNumber("leaveIncome");
+    const leaveMonths = getNumber("leaveMonths");
+    const expenses = getNumber("expenses");
+    const debt = getNumber("debt");
+    const babyCosts = getNumber("babyCosts");
+    const medical = getNumber("medical");
+    const support = getNumber("support");
+
+    const jobSecurity = document.getElementById("jobSecurity").value;
+    const insurance = document.getElementById("insurance").value;
+    const childcarePlan = document.getElementById("childcarePlan").value;
+
+    const result = document.getElementById("result");
+    const scoreEl = document.getElementById("score");
+    const barFill = document.getElementById("barFill");
+    const stressEl = document.getElementById("stress");
+    const gapEl = document.getElementById("gap");
+    const savingsAfterEl = document.getElementById("savingsAfter");
+    const cushionEl = document.getElementById("cushion");
+    const guidanceEl = document.getElementById("guidance");
+
+    result.style.display = "block";
+
+    if (income <= 0 || leaveMonths <= 0) {
+      scoreEl.textContent = "Add your numbers first";
+      barFill.style.width = "0%";
+      barFill.style.background = "#16a34a";
+      stressEl.innerHTML = "";
+      gapEl.innerHTML = "";
+      savingsAfterEl.innerHTML = "";
+      cushionEl.innerHTML = "";
+      guidanceEl.textContent =
+        "Enter positive normal monthly take-home income and leave length so the calculator can estimate financial pressure.";
+      return;
+    }
+
+    const monthlyBurnDuringLeave = expenses + debt + babyCosts;
+    const monthlyShortfallDuringLeave = Math.max(monthlyBurnDuringLeave - leaveIncome, 0);
+    const leaveLivingShortfall = monthlyShortfallDuringLeave * leaveMonths;
+    const medicalAfterSupport = Math.max(medical - support, 0);
+
+    const amountNeededFromSavings = Math.max(leaveLivingShortfall + medicalAfterSupport, 0);
+    const remainingSavings = savings - amountNeededFromSavings;
+
+    const emergencyMonthsAfter =
+      monthlyBurnDuringLeave > 0
+        ? remainingSavings / monthlyBurnDuringLeave
+        : remainingSavings > 0
+          ? 999
+          : 0;
+
+    const savingsImpact =
+      savings > 0
+        ? (amountNeededFromSavings / savings) * 100
+        : amountNeededFromSavings > 0
+          ? 100
+          : 0;
+
+    const drawToIncome =
+      income > 0 ? (amountNeededFromSavings / income) * 100 : 100;
+
+    const fixedObligationRatio =
+      income > 0 ? ((expenses + debt) / income) * 100 : 100;
+
+    const leaveIncomeCoverage =
+      monthlyBurnDuringLeave > 0
+        ? (leaveIncome / monthlyBurnDuringLeave) * 100
+        : leaveIncome > 0
+          ? 999
+          : 0;
+
+    const babyCostRatio = income > 0 ? (babyCosts / income) * 100 : 100;
+    const medicalToIncome = income > 0 ? (medicalAfterSupport / income) * 100 : 100;
+
+    const hasAbsurdIncomeBuffer =
+      income >= monthlyBurnDuringLeave * 50 &&
+      leaveIncome >= monthlyBurnDuringLeave * 20 &&
+      amountNeededFromSavings <= income * 0.01;
+
+    const hasAbsurdSavingsBuffer =
+      savings > 0 &&
+      amountNeededFromSavings <= savings * 0.01 &&
+      emergencyMonthsAfter >= 60;
+
+    const hasHugeIncomeBuffer =
+      income > 0 &&
+      leaveIncome >= monthlyBurnDuringLeave * 3 &&
+      amountNeededFromSavings <= income * 0.03 &&
+      fixedObligationRatio < 20;
+
+    const hasHugeSavingsBuffer =
+      savings > 0 &&
+      amountNeededFromSavings <= savings * 0.03 &&
+      emergencyMonthsAfter >= 36;
+
+    const hasStrongIncomeBuffer =
+      income > 0 &&
+      leaveIncome >= monthlyBurnDuringLeave * 1.5 &&
+      amountNeededFromSavings <= income * 0.12 &&
+      fixedObligationRatio < 40;
+
+    const hasStrongSavingsBuffer =
+      savings > 0 &&
+      amountNeededFromSavings <= savings * 0.12 &&
+      emergencyMonthsAfter >= 12;
+
+    let pressureScore = 0;
+
+    if (
+      amountNeededFromSavings === 0 ||
+      hasAbsurdIncomeBuffer ||
+      hasAbsurdSavingsBuffer ||
+      hasHugeIncomeBuffer ||
+      hasHugeSavingsBuffer
+    ) {
+      pressureScore = 0;
+    } else {
+      pressureScore += clamp(savingsImpact * 0.5, 0, 38);
+      pressureScore += clamp(drawToIncome * 0.12, 0, 18);
+      pressureScore += clamp(fixedObligationRatio * 0.18, 0, 22);
+      pressureScore += clamp(babyCostRatio * 0.35, 0, 12);
+      pressureScore += clamp(medicalToIncome * 0.25, 0, 12);
+
+      if (remainingSavings < 0) pressureScore += 26;
+      else if (emergencyMonthsAfter < 1 && income < 14000) pressureScore += 18;
+      else if (emergencyMonthsAfter < 3 && income < 17000) pressureScore += 12;
+      else if (emergencyMonthsAfter >= 24) pressureScore -= 18;
+      else if (emergencyMonthsAfter >= 12) pressureScore -= 12;
+      else if (emergencyMonthsAfter >= 6) pressureScore -= 7;
+
+      if (leaveIncomeCoverage >= 300) pressureScore -= 18;
+      else if (leaveIncomeCoverage >= 150) pressureScore -= 10;
+      else if (leaveIncomeCoverage < 75) pressureScore += 12;
+      else if (leaveIncomeCoverage < 100) pressureScore += 7;
+
+      if (leaveMonths >= 6 && monthlyShortfallDuringLeave > 0) pressureScore += 10;
+      else if (leaveMonths >= 4 && monthlyShortfallDuringLeave > 0) pressureScore += 6;
+
+      if (jobSecurity === "average") pressureScore += 4;
+      if (jobSecurity === "uncertain") pressureScore += 14;
+
+      if (insurance === "changing") pressureScore += 6;
+      if (insurance === "unclear") pressureScore += 13;
+
+      if (childcarePlan === "expensive") pressureScore += 7;
+      if (childcarePlan === "unclear") pressureScore += 14;
+
+      if (hasStrongIncomeBuffer) pressureScore -= 12;
+      if (hasStrongSavingsBuffer) pressureScore -= 18;
+
+      if (
+        savingsImpact < 20 &&
+        fixedObligationRatio < 55 &&
+        emergencyMonthsAfter >= 6 &&
+        remainingSavings > 0
+      ) {
+        pressureScore = Math.min(pressureScore, 32);
+      }
+
+      if (
+        savingsImpact < 10 &&
+        fixedObligationRatio < 45 &&
+        emergencyMonthsAfter >= 12 &&
+        jobSecurity === "strong" &&
+        insurance === "stable"
+      ) {
+        pressureScore = Math.min(pressureScore, 16);
+      }
+
+      if (
+        amountNeededFromSavings <= savings * 0.02 &&
+        emergencyMonthsAfter >= 36 &&
+        fixedObligationRatio < 35 &&
+        leaveIncome >= monthlyBurnDuringLeave * 2
+      ) {
+        pressureScore = 0;
+      }
+
+      if (
+        income >= monthlyBurnDuringLeave * 40 &&
+        leaveIncome >= monthlyBurnDuringLeave * 10 &&
+        amountNeededFromSavings <= income * 0.02
+      ) {
+        pressureScore = 0;
+      }
+    }
+
+    pressureScore = Math.round(clamp(pressureScore, 0, 100));
+    const level = getPressureLevel(pressureScore);
+
+    let guidance = "";
+
+    if (pressureScore === 0) {
+      guidance =
+        `Using savings for this maternity leave appears to create essentially no financial pressure based on the numbers provided. The estimated savings draw is about ${savingsImpact.toFixed(1)}% of available savings, and leave income covers about ${leaveIncomeCoverage.toFixed(1)}% of monthly leave expenses.`;
+    } else if (pressureScore <= 30) {
+      guidance =
+        `Using savings for this maternity leave appears financially manageable based on the numbers provided. The estimated savings draw is about ${savingsImpact.toFixed(1)}% of available savings, and your emergency cushion remains around ${Math.max(emergencyMonthsAfter, 0).toFixed(1)} months after leave costs.`;
+    } else if (pressureScore <= 60) {
+      guidance =
+        `Using savings for this maternity leave may be workable, but it creates noticeable pressure. The estimated savings draw is about ${savingsImpact.toFixed(1)}% of available savings, so the plan should be checked against medical bills, childcare, and post-leave cash flow.`;
+    } else {
+      guidance =
+        `Using savings for this maternity leave could create real financial strain. The combination of reduced income, living costs, baby costs, medical bills, or limited remaining savings suggests you should revise the plan before relying heavily on cash reserves.`;
+    }
+
+    scoreEl.textContent = `${level.label} — ${pressureScore}/100`;
+    scoreEl.style.color = level.color;
+    barFill.style.width = `${pressureScore}%`;
+    barFill.style.background = level.color;
+
+    stressEl.innerHTML = `<strong>Pressure level:</strong> ${level.stress}`;
+    gapEl.innerHTML = `<strong>Estimated amount needed from savings:</strong> $${amountNeededFromSavings.toLocaleString()}`;
+    savingsAfterEl.innerHTML = `<strong>Estimated savings after leave:</strong> $${remainingSavings.toLocaleString()}`;
+    cushionEl.innerHTML = `<strong>Estimated emergency cushion after leave:</strong> ${Math.max(emergencyMonthsAfter, 0).toFixed(1)} months`;
+    guidanceEl.textContent = `${guidance} Recommended next step: ${level.action}`;
+  }
+
+  document
+    .getElementById("leaveButton")
+    .addEventListener("click", calculateLeaveSavings);
+</script>
+</Layout>

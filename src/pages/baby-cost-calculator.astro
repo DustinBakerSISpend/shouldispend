@@ -1,0 +1,904 @@
+---
+import Layout from "../layouts/Layout.astro";
+import FAQSection from "../components/FAQSection.astro";
+import RelatedCalculators from "../components/RelatedCalculators.astro";
+import MethodologySection from "../components/MethodologySection.astro";
+import WhenSpendingMakesSense from "../components/WhenSpendingMakesSense.astro";
+import { calculators } from "../data/calculators.js";
+
+const relatedCalculators = calculators.filter(
+  (calculator) =>
+    calculator.category === "Baby & Parenting" &&
+    calculator.href !== "/baby-cost-calculator"
+);
+
+const babyCostFaqs = [
+  {
+    question: "How much does a baby cost in the first year?",
+    answer:
+      "First-year baby costs vary widely depending on childcare, health insurance, medical bills, diapers, formula, gear, parental leave, and housing changes. Many households should pressure-test both one-time startup costs and recurring monthly costs before the baby arrives.",
+  },
+  {
+    question: "What is the biggest first-year baby expense?",
+    answer:
+      "For many families, childcare is the largest recurring expense. Medical bills, unpaid parental leave, formula, diapers, insurance changes, and baby gear can also create meaningful pressure.",
+  },
+  {
+    question: "Can a high income make baby costs low pressure?",
+    answer:
+      "Yes. If income is very high, savings are strong, debt is low, and monthly flexibility remains large after baby costs, the pressure score can fall to 0 because the spending is unlikely to create financial strain.",
+  },
+  {
+    question: "Should I drain savings before having a baby?",
+    answer:
+      "Using some savings can be reasonable, especially for leave or medical bills, but wiping out emergency reserves can create risk. A safer plan keeps enough cushion for housing, food, medical surprises, car repairs, and job disruption.",
+  },
+  {
+    question: "Is this calculator financial advice?",
+    answer:
+      "No. This calculator is an educational planning tool. It uses general assumptions to help estimate financial pressure, but it is not personalized financial, tax, medical, legal, or insurance advice.",
+  },
+];
+
+const costCategories = [
+  {
+    title: "Childcare",
+    text:
+      "Daycare, nanny care, part-time help, family support, or one parent reducing work hours can change the real monthly cost dramatically.",
+  },
+  {
+    title: "Medical and Insurance Costs",
+    text:
+      "Delivery bills, deductibles, copays, specialist visits, prescriptions, and adding a child to health insurance can reshape the budget.",
+  },
+  {
+    title: "Parental Leave",
+    text:
+      "Paid leave, unpaid leave, short-term disability, PTO, and temporary income loss can matter as much as baby gear or diapers.",
+  },
+  {
+    title: "Baby Gear and Setup",
+    text:
+      "Cribs, car seats, strollers, monitors, nursery furniture, clothes, feeding supplies, and registry gaps can create upfront pressure.",
+  },
+];
+
+const spendingMakesSense = [
+  "You have a stable income path and the monthly baby costs still leave room for housing, food, transportation, debt payments, and savings.",
+  "Your emergency fund remains intact after expected medical bills, gear purchases, and parental leave income loss.",
+  "Childcare costs have been priced realistically rather than guessed loosely.",
+  "You have a plan for insurance changes, deductibles, unpaid leave, and recurring baby costs after the first few months.",
+];
+
+const redFlags = [
+  "The baby plan depends on draining nearly all emergency savings.",
+  "Childcare costs would force you to rely on credit cards every month.",
+  "Unpaid leave would leave the household behind on rent, mortgage, utilities, or debt payments.",
+  "The first-year plan ignores medical bills, insurance changes, formula, diapers, or work schedule changes.",
+];
+---
+
+<Layout
+  title="Baby Cost Calculator | ShouldISpend"
+  description="Estimate first-year baby affordability using childcare, medical bills, parental leave, savings, debt, income, and monthly flexibility."
+>
+  <style>
+    .container {
+      max-width: 1120px;
+      margin: 0 auto;
+      padding: 76px 24px 90px;
+    }
+
+    .hero {
+      max-width: 900px;
+      margin-bottom: 38px;
+    }
+
+    .eyebrow {
+      color: var(--accent);
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      font-size: 0.78rem;
+      font-weight: 800;
+      margin-bottom: 16px;
+    }
+
+    h1 {
+      font-size: clamp(2.7rem, 7vw, 4.9rem);
+      line-height: 0.98;
+      margin: 0 0 24px;
+      color: var(--text);
+      letter-spacing: -0.05em;
+      max-width: 950px;
+    }
+
+    .intro {
+      max-width: 850px;
+      color: var(--muted);
+      font-size: 1.12rem;
+      line-height: 1.85;
+      margin: 0;
+    }
+
+    .calculator-card {
+      margin-top: 40px;
+      background: #ffffff;
+      border: 1px solid var(--border);
+      border-radius: 28px;
+      padding: 30px;
+      box-shadow: 0 18px 45px rgba(15, 23, 42, 0.06);
+    }
+
+    .calculator-card h2 {
+      margin: 0 0 12px;
+      color: var(--text);
+      font-size: clamp(1.7rem, 4vw, 2.25rem);
+      letter-spacing: -0.035em;
+    }
+
+    .calculator-card > p {
+      color: var(--muted);
+      line-height: 1.78;
+      margin: 0 0 26px;
+      max-width: 860px;
+    }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 18px;
+    }
+
+    .field {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .field label {
+      color: var(--text);
+      font-weight: 800;
+      font-size: 0.94rem;
+    }
+
+    .field span {
+      color: var(--muted);
+      font-size: 0.84rem;
+      line-height: 1.45;
+    }
+
+    .field input,
+    .field select {
+      width: 100%;
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 13px 14px;
+      font-size: 1rem;
+      color: var(--text);
+      background: #fff;
+    }
+
+    .button-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-top: 24px;
+    }
+
+    button {
+      border: 0;
+      border-radius: 999px;
+      padding: 14px 22px;
+      font-weight: 900;
+      cursor: pointer;
+      font-size: 0.98rem;
+    }
+
+    .primary-button {
+      background: var(--accent);
+      color: white;
+    }
+
+    .secondary-button {
+      background: #f1f5f9;
+      color: var(--text);
+    }
+
+    .result {
+      display: none;
+      margin-top: 30px;
+      border: 1px solid var(--border);
+      border-radius: 24px;
+      padding: 24px;
+      background: #f8fafc;
+    }
+
+    .result.show {
+      display: block;
+    }
+
+    .verdict {
+      display: inline-flex;
+      align-items: center;
+      border-radius: 999px;
+      padding: 8px 14px;
+      font-size: 0.88rem;
+      font-weight: 900;
+      margin-bottom: 14px;
+    }
+
+    .verdict.low {
+      background: #dcfce7;
+      color: #166534;
+    }
+
+    .verdict.medium {
+      background: #ffedd5;
+      color: #9a3412;
+    }
+
+    .verdict.high {
+      background: #fee2e2;
+      color: #991b1b;
+    }
+
+    .score-line {
+      color: var(--text);
+      font-size: clamp(1.65rem, 4vw, 2.15rem);
+      line-height: 1.15;
+      margin: 0 0 12px;
+      letter-spacing: -0.035em;
+    }
+
+    .score-line strong {
+      color: var(--text);
+    }
+
+    .bar-shell {
+      width: 100%;
+      height: 14px;
+      background: #e2e8f0;
+      border-radius: 999px;
+      overflow: hidden;
+      margin: 18px 0 20px;
+    }
+
+    .bar-fill {
+      height: 100%;
+      width: 0%;
+      border-radius: 999px;
+      transition: width 0.25s ease;
+    }
+
+    .bar-fill.low {
+      background: #22c55e;
+    }
+
+    .bar-fill.medium {
+      background: #f97316;
+    }
+
+    .bar-fill.high {
+      background: #ef4444;
+    }
+
+    .result-copy {
+      color: var(--muted);
+      line-height: 1.8;
+      margin: 0 0 18px;
+      max-width: 880px;
+    }
+
+    .result-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 14px;
+      margin-top: 20px;
+    }
+
+    .metric {
+      background: white;
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      padding: 16px;
+    }
+
+    .metric span {
+      display: block;
+      color: var(--muted);
+      font-size: 0.82rem;
+      margin-bottom: 6px;
+      line-height: 1.35;
+    }
+
+    .metric strong {
+      display: block;
+      color: var(--text);
+      font-size: 1.08rem;
+    }
+
+    .content-section {
+      margin-top: 76px;
+    }
+
+    .content-section.narrow {
+      max-width: 860px;
+    }
+
+    .section-kicker {
+      color: var(--accent);
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      font-size: 0.76rem;
+      margin-bottom: 12px;
+    }
+
+    .content-section h2 {
+      font-size: clamp(1.85rem, 4vw, 2.35rem);
+      margin: 0 0 18px;
+      line-height: 1.15;
+      color: var(--text);
+      letter-spacing: -0.035em;
+    }
+
+    .content-section p,
+    .content-section li {
+      color: var(--muted);
+      line-height: 1.82;
+      margin-bottom: 18px;
+      font-size: 1.04rem;
+    }
+
+    .info-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 22px;
+      margin-top: 26px;
+    }
+
+    .info-card {
+      background: white;
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 24px;
+    }
+
+    .info-card h3 {
+      color: var(--text);
+      margin: 0 0 10px;
+      font-size: 1.05rem;
+    }
+
+    .info-card p {
+      color: var(--muted);
+      line-height: 1.7;
+      font-size: 0.96rem;
+      margin: 0;
+    }
+
+    .warning-list {
+      display: grid;
+      gap: 14px;
+      margin-top: 24px;
+      padding: 0;
+      list-style: none;
+    }
+
+    .warning-list li {
+      background: #fff7ed;
+      border: 1px solid #fed7aa;
+      border-radius: 18px;
+      padding: 16px 18px;
+      margin: 0;
+      color: #7c2d12;
+      line-height: 1.65;
+    }
+
+    .disclaimer {
+      margin-top: 72px;
+      padding: 28px;
+      border-radius: 24px;
+      border: 1px solid var(--border);
+      background: #f8fafc;
+      max-width: 920px;
+    }
+
+    .disclaimer h2 {
+      margin: 0 0 12px;
+      color: var(--text);
+      font-size: 1.45rem;
+      letter-spacing: -0.025em;
+    }
+
+    .disclaimer p {
+      color: var(--muted);
+      line-height: 1.78;
+      margin: 0;
+    }
+
+    @media (max-width: 820px) {
+      .container {
+        padding: 54px 18px 76px;
+      }
+
+      h1 {
+        font-size: 2.65rem;
+      }
+
+      .intro {
+        font-size: 1.04rem;
+      }
+
+      .calculator-card {
+        padding: 22px;
+      }
+
+      .form-grid,
+      .result-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .content-section {
+        margin-top: 58px;
+      }
+    }
+  </style>
+
+  <main class="container">
+    <section class="hero">
+      <div class="eyebrow">Baby & Parenting Calculator</div>
+
+      <h1>Baby Cost Calculator</h1>
+
+      <p class="intro">
+        A baby budget is rarely one number. Childcare, medical bills, parental
+        leave, diapers, formula, insurance, gear, savings, debt, and monthly
+        cash flow all matter. This calculator helps estimate whether first-year
+        baby costs look manageable, tight, or financially stressful.
+      </p>
+    </section>
+
+    <section class="calculator-card" aria-labelledby="calculator-heading">
+      <h2 id="calculator-heading">Estimate Your First-Year Baby Cost Pressure</h2>
+
+      <p>
+        Enter realistic estimates for income, savings, childcare, medical bills,
+        parental leave, and baby setup costs. The result is a pressure score
+        from 0 to 100, where 0 means very low pressure and 100 means severe
+        financial pressure.
+      </p>
+
+      <form id="babyCostForm">
+        <div class="form-grid">
+          <div class="field">
+            <label for="monthlyIncome">Monthly Take-Home Income</label>
+            <input id="monthlyIncome" type="number" min="0" inputmode="decimal" placeholder="8500" />
+            <span>Use after-tax household income.</span>
+          </div>
+
+          <div class="field">
+            <label for="monthlyExpenses">Current Monthly Essential Expenses</label>
+            <input id="monthlyExpenses" type="number" min="0" inputmode="decimal" placeholder="5600" />
+            <span>Housing, food, utilities, insurance, transportation, minimum debt payments.</span>
+          </div>
+
+          <div class="field">
+            <label for="savings">Emergency Savings Available</label>
+            <input id="savings" type="number" min="0" inputmode="decimal" placeholder="18000" />
+            <span>Cash reserves you could use without selling investments or taking debt.</span>
+          </div>
+
+          <div class="field">
+            <label for="debtPayments">Monthly Non-Mortgage Debt Payments</label>
+            <input id="debtPayments" type="number" min="0" inputmode="decimal" placeholder="650" />
+            <span>Credit cards, student loans, personal loans, car loans, medical debt.</span>
+          </div>
+
+          <div class="field">
+            <label for="childcare">Estimated Monthly Childcare Cost</label>
+            <input id="childcare" type="number" min="0" inputmode="decimal" placeholder="1400" />
+            <span>Daycare, nanny, part-time care, or expected lost income from reduced hours.</span>
+          </div>
+
+          <div class="field">
+            <label for="monthlyBabyCosts">Other Monthly Baby Costs</label>
+            <input id="monthlyBabyCosts" type="number" min="0" inputmode="decimal" placeholder="450" />
+            <span>Diapers, wipes, formula, clothes, supplies, prescriptions, extra groceries.</span>
+          </div>
+
+          <div class="field">
+            <label for="medicalCosts">Expected One-Time Medical Costs</label>
+            <input id="medicalCosts" type="number" min="0" inputmode="decimal" placeholder="4000" />
+            <span>Delivery bills, deductible, copays, specialist care, insurance surprises.</span>
+          </div>
+
+          <div class="field">
+            <label for="gearCosts">Baby Gear and Setup Costs</label>
+            <input id="gearCosts" type="number" min="0" inputmode="decimal" placeholder="5000" />
+            <span>Car seat, crib, stroller, nursery, monitor, clothes, feeding supplies.</span>
+          </div>
+
+          <div class="field">
+            <label for="leaveIncomeLoss">Parental Leave Income Loss</label>
+            <input id="leaveIncomeLoss" type="number" min="0" inputmode="decimal" placeholder="6000" />
+            <span>Unpaid leave, reduced pay, unpaid partner leave, or PTO gap.</span>
+          </div>
+
+          <div class="field">
+            <label for="insuranceIncrease">Monthly Insurance Increase</label>
+            <input id="insuranceIncrease" type="number" min="0" inputmode="decimal" placeholder="250" />
+            <span>Extra monthly cost to add the baby to health insurance or benefits.</span>
+          </div>
+        </div>
+
+        <div class="button-row">
+          <button class="primary-button" type="submit">Calculate Baby Cost Pressure</button>
+          <button class="secondary-button" type="reset">Reset</button>
+        </div>
+      </form>
+
+      <div id="result" class="result" aria-live="polite">
+        <div id="verdict" class="verdict low">Low Pressure</div>
+
+        <h2 class="score-line">
+          Baby cost pressure score: <strong id="score">0/100</strong>
+        </h2>
+
+        <div class="bar-shell" aria-hidden="true">
+          <div id="barFill" class="bar-fill low"></div>
+        </div>
+
+        <p id="resultCopy" class="result-copy"></p>
+
+        <div class="result-grid">
+          <div class="metric">
+            <span>Estimated first-year baby cost</span>
+            <strong id="firstYearCost">$0</strong>
+          </div>
+
+          <div class="metric">
+            <span>New monthly baby pressure</span>
+            <strong id="monthlyPressure">$0</strong>
+          </div>
+
+          <div class="metric">
+            <span>Monthly cushion after baby costs</span>
+            <strong id="monthlyCushion">$0</strong>
+          </div>
+
+          <div class="metric">
+            <span>Emergency savings after one-time costs</span>
+            <strong id="remainingSavings">$0</strong>
+          </div>
+
+          <div class="metric">
+            <span>Baby costs as share of income</span>
+            <strong id="incomeShare">0%</strong>
+          </div>
+
+          <div class="metric">
+            <span>Estimated savings runway after baby costs</span>
+            <strong id="savingsRunway">0 months</strong>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="content-section narrow">
+      <div class="section-kicker">How to Think About It</div>
+
+      <h2>What This Baby Cost Calculator Measures</h2>
+
+      <p>
+        This tool estimates first-year baby affordability by separating one-time
+        costs from recurring monthly pressure. A crib, stroller, car seat, and
+        delivery bill can be expensive, but childcare and insurance increases
+        may affect the household budget every month.
+      </p>
+
+      <p>
+        The score also considers recovery power. A household with very high
+        income, strong savings, low debt, and large monthly flexibility can absorb
+        baby costs with little pressure. A household with modest income, thin
+        savings, high debt, and expensive childcare may feel pressure even when
+        the first-year total looks normal.
+      </p>
+
+      <p>
+        The goal is not to scare parents away from a major life decision. The
+        goal is to make the financial pressure visible early enough to plan
+        around it.
+      </p>
+    </section>
+
+    <WhenSpendingMakesSense
+      title="When Baby Costs May Be Manageable"
+      items={spendingMakesSense}
+    />
+
+    <section class="content-section">
+      <div class="section-kicker">Cost Categories</div>
+
+      <h2>Baby Costs That Change the Real First-Year Number</h2>
+
+      <div class="info-grid">
+        {costCategories.map((item) => (
+          <div class="info-card">
+            <h3>{item.title}</h3>
+            <p>{item.text}</p>
+          </div>
+        ))}
+      </div>
+    </section>
+
+    <section class="content-section narrow">
+      <div class="section-kicker">Caution</div>
+
+      <h2>Red Flags Before Committing to a Baby Budget</h2>
+
+      <p>
+        A baby can be affordable even when the budget gets tighter. The concern
+        begins when the plan depends on debt, optimism, or an emergency fund that
+        disappears before the recurring costs even begin.
+      </p>
+
+      <ul class="warning-list">
+        {redFlags.map((item) => (
+          <li>{item}</li>
+        ))}
+      </ul>
+    </section>
+
+    <section class="content-section narrow">
+      <div class="section-kicker">Tradeoffs</div>
+
+      <h2>First-Year Baby Costs Are Not All Equal</h2>
+
+      <p>
+        Some expenses protect safety and stability: a safe car seat, health
+        insurance, medical care, reliable childcare, and enough savings to handle
+        a rough month. Other expenses are more flexible, including nursery decor,
+        premium strollers, extra gadgets, duplicate gear, and nonessential
+        upgrades.
+      </p>
+
+      <p>
+        If the score is high, the best first move is usually to separate required
+        costs from preference costs. Childcare, leave, insurance, and medical
+        bills deserve priority. Gear upgrades can often be delayed, borrowed,
+        gifted, bought used when safe, or reduced.
+      </p>
+    </section>
+
+    <MethodologySection
+      title="Baby Cost Calculator Methodology"
+      updated="2026"
+      category="Baby & Parenting"
+    >
+      <p>
+        This calculator estimates financial pressure using household take-home
+        income, current essential expenses, emergency savings, debt payments,
+        childcare, monthly baby costs, insurance increases, medical bills, gear
+        costs, and parental leave income loss.
+      </p>
+
+      <p>
+        The pressure score weighs recurring affordability, one-time savings
+        depletion, debt burden, emergency cushion, first-year cost size, and
+        income recovery power. Very high income and strong savings can reduce the
+        score to 0 when the baby costs are genuinely negligible relative to the
+        household’s resources.
+      </p>
+
+      <p>
+        The result is an educational estimate only. It does not account for every
+        tax credit, employer benefit, insurance rule, medical scenario, fertility
+        cost, adoption cost, special-needs expense, or local childcare market.
+      </p>
+    </MethodologySection>
+
+    <section class="disclaimer">
+      <h2>Educational Use Only</h2>
+
+      <p>
+        ShouldISpend calculators are designed to help households think through
+        financial pressure, tradeoffs, and planning assumptions. This page does
+        not provide personalized financial, medical, tax, legal, insurance, or
+        parenting advice. Consider speaking with qualified professionals before
+        making major financial or medical decisions.
+      </p>
+    </section>
+
+    <FAQSection title="Baby Cost Calculator FAQ" faqs={babyCostFaqs} />
+
+    <RelatedCalculators
+      title="More Baby & Parenting Calculators"
+      calculators={relatedCalculators}
+    />
+  </main>
+
+  <script>
+    const form = document.getElementById("babyCostForm");
+    const result = document.getElementById("result");
+    const verdict = document.getElementById("verdict");
+    const scoreEl = document.getElementById("score");
+    const barFill = document.getElementById("barFill");
+    const resultCopy = document.getElementById("resultCopy");
+
+    const firstYearCostEl = document.getElementById("firstYearCost");
+    const monthlyPressureEl = document.getElementById("monthlyPressure");
+    const monthlyCushionEl = document.getElementById("monthlyCushion");
+    const remainingSavingsEl = document.getElementById("remainingSavings");
+    const incomeShareEl = document.getElementById("incomeShare");
+    const savingsRunwayEl = document.getElementById("savingsRunway");
+
+    const money = new Intl.NumberFormat("en-US", {
+      style: "currency",
+      currency: "USD",
+      maximumFractionDigits: 0,
+    });
+
+    function getNumber(id) {
+      const value = Number(document.getElementById(id).value);
+      return Number.isFinite(value) && value > 0 ? value : 0;
+    }
+
+    function clamp(value, min, max) {
+      return Math.max(min, Math.min(max, value));
+    }
+
+    function setClassByScore(score) {
+      const level = score <= 30 ? "low" : score <= 60 ? "medium" : "high";
+
+      verdict.className = `verdict ${level}`;
+      barFill.className = `bar-fill ${level}`;
+
+      if (level === "low") {
+        verdict.textContent = "Low Pressure";
+      } else if (level === "medium") {
+        verdict.textContent = "Moderate Pressure";
+      } else {
+        verdict.textContent = "High Pressure";
+      }
+    }
+
+    function getResultCopy(score, monthlyCushion, firstYearCost, remainingSavings, monthlyIncome) {
+      if (score <= 30) {
+        return `This baby budget appears low pressure based on the numbers entered. Estimated first-year costs are ${money.format(firstYearCost)}, and the household still appears to have meaningful monthly cushion and savings protection after the major baby-related costs. Keep confirming childcare, insurance, and medical estimates, but the plan does not look financially strained from these inputs.`;
+      }
+
+      if (score <= 60) {
+        return `This baby budget looks workable but tight. Estimated first-year costs are ${money.format(firstYearCost)}, and the remaining monthly cushion is ${money.format(monthlyCushion)}. The decision may still be manageable, but childcare, unpaid leave, medical bills, and gear purchases should be planned carefully before the baby arrives.`;
+      }
+
+      if (monthlyIncome >= 20000 && remainingSavings > 25000) {
+        return `The score is elevated because the entered baby costs are large, but your income and savings provide meaningful recovery power. Review whether the spending is intentional and sustainable, especially childcare and leave costs, before treating the plan as truly stressful.`;
+      }
+
+      return `This baby budget shows high financial pressure. Estimated first-year costs are ${money.format(firstYearCost)}, and the plan may leave too little monthly cushion or emergency savings. Before committing to the full spending plan, consider reducing flexible gear costs, confirming childcare numbers, preserving savings, and avoiding high-interest debt.`;
+    }
+
+    form.addEventListener("submit", (event) => {
+      event.preventDefault();
+
+      const monthlyIncome = getNumber("monthlyIncome");
+      const monthlyExpenses = getNumber("monthlyExpenses");
+      const savings = getNumber("savings");
+      const debtPayments = getNumber("debtPayments");
+      const childcare = getNumber("childcare");
+      const monthlyBabyCosts = getNumber("monthlyBabyCosts");
+      const medicalCosts = getNumber("medicalCosts");
+      const gearCosts = getNumber("gearCosts");
+      const leaveIncomeLoss = getNumber("leaveIncomeLoss");
+      const insuranceIncrease = getNumber("insuranceIncrease");
+
+      const recurringBabyCosts = childcare + monthlyBabyCosts + insuranceIncrease;
+      const oneTimeCosts = medicalCosts + gearCosts + leaveIncomeLoss;
+      const firstYearCost = oneTimeCosts + recurringBabyCosts * 12;
+      const currentCushion = monthlyIncome - monthlyExpenses;
+      const monthlyCushion = monthlyIncome - monthlyExpenses - recurringBabyCosts;
+      const remainingSavings = savings - oneTimeCosts;
+      const totalMonthlyObligations = monthlyExpenses + recurringBabyCosts;
+      const incomeShare = monthlyIncome > 0 ? (recurringBabyCosts / monthlyIncome) * 100 : 100;
+      const savingsRunway =
+        totalMonthlyObligations > 0 ? Math.max(0, savings / totalMonthlyObligations) : 99;
+
+      let score = 0;
+
+      const recurringPressure =
+        monthlyIncome > 0 ? clamp((recurringBabyCosts / monthlyIncome) * 125, 0, 34) : 34;
+
+      const cushionPressure =
+        monthlyIncome > 0
+          ? monthlyCushion < 0
+            ? 30
+            : clamp((1 - monthlyCushion / monthlyIncome) * 26, 0, 26)
+          : 26;
+
+      const savingsPressure =
+        savings <= 0
+          ? 18
+          : remainingSavings < 0
+            ? clamp(Math.abs(remainingSavings) / Math.max(monthlyIncome, 1) * 18 + 12, 12, 24)
+            : remainingSavings < totalMonthlyObligations * 2
+              ? 15
+              : remainingSavings < totalMonthlyObligations * 4
+                ? 8
+                : 0;
+
+      const debtPressure =
+        monthlyIncome > 0 ? clamp((debtPayments / monthlyIncome) * 55, 0, 12) : 12;
+
+      const firstYearPressure =
+        monthlyIncome > 0 ? clamp((firstYearCost / (monthlyIncome * 12)) * 24, 0, 16) : 16;
+
+      score =
+        recurringPressure +
+        cushionPressure +
+        savingsPressure +
+        debtPressure +
+        firstYearPressure;
+
+      const highIncomeRecovery =
+        monthlyIncome >= 18000 &&
+        monthlyCushion >= monthlyIncome * 0.35 &&
+        remainingSavings >= totalMonthlyObligations * 6;
+
+      const extremeRecovery =
+        monthlyIncome >= 35000 &&
+        savings >= 150000 &&
+        monthlyCushion >= monthlyIncome * 0.45 &&
+        recurringBabyCosts <= monthlyIncome * 0.12;
+
+      const strongSavingsLowDebt =
+        savings >= totalMonthlyObligations * 8 &&
+        debtPayments <= monthlyIncome * 0.08 &&
+        monthlyCushion >= monthlyIncome * 0.25;
+
+      if (highIncomeRecovery) {
+        score -= 20;
+      }
+
+      if (strongSavingsLowDebt) {
+        score -= 14;
+      }
+
+      if (extremeRecovery) {
+        score = 0;
+      }
+
+      if (monthlyIncome >= 50000 && savings >= 250000 && recurringBabyCosts <= monthlyIncome * 0.08) {
+        score = 0;
+      }
+
+      score = Math.round(clamp(score, 0, 100));
+
+      result.classList.add("show");
+      setClassByScore(score);
+
+      scoreEl.textContent = `${score}/100`;
+      barFill.style.width = `${score}%`;
+      resultCopy.textContent = getResultCopy(
+        score,
+        monthlyCushion,
+        firstYearCost,
+        remainingSavings,
+        monthlyIncome
+      );
+
+      firstYearCostEl.textContent = money.format(firstYearCost);
+      monthlyPressureEl.textContent = money.format(recurringBabyCosts);
+      monthlyCushionEl.textContent = money.format(monthlyCushion);
+      remainingSavingsEl.textContent = money.format(remainingSavings);
+      incomeShareEl.textContent = `${Math.round(incomeShare)}%`;
+      savingsRunwayEl.textContent =
+        savingsRunway >= 99 ? "99+ months" : `${savingsRunway.toFixed(1)} months`;
+    });
+
+    form.addEventListener("reset", () => {
+      result.classList.remove("show");
+      barFill.style.width = "0%";
+    });
+  </script>
+</Layout>
