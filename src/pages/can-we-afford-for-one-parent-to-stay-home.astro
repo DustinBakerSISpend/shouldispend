@@ -1,0 +1,592 @@
+---
+import Layout from "../layouts/Layout.astro";
+import CalculatorPageShell from "../components/CalculatorPageShell.astro";
+import FAQSection from "../components/FAQSection.astro";
+import RelatedCalculators from "../components/RelatedCalculators.astro";
+import RelatedGuides from "../components/RelatedGuides.astro";
+import MethodologySection from "../components/MethodologySection.astro";
+import FinancialRedFlags from "../components/FinancialRedFlags.astro";
+import CalculatorAssumptions from "../components/CalculatorAssumptions.astro";
+import KeyCostCategories from "../components/KeyCostCategories.astro";
+import ReduceCostTips from "../components/ReduceCostTips.astro";
+import WhenSpendingMakesSense from "../components/WhenSpendingMakesSense.astro";
+---
+
+<Layout
+  title="Can We Afford for One Parent to Stay Home?"
+  description="Use this stay-at-home parent affordability calculator to estimate whether losing one income fits your take-home pay, savings, debt, childcare savings, benefits changes, and monthly cash flow."
+>
+  <style>
+    .container { max-width: 950px; margin: 0 auto; padding: 60px 20px; }
+    .content-section { max-width: 760px; margin: 72px auto 0; }
+    .card { background: var(--card); border: 1px solid var(--border); border-radius: 28px; padding: 34px; }
+    h2 { margin-top: 0; font-size: 2rem; }
+    .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 22px; margin-bottom: 28px; }
+    label { display: block; margin-bottom: 10px; font-weight: 700; }
+    input, select { width: 100%; padding: 18px; border-radius: 14px; border: 1px solid var(--border); font-size: 1.1rem; box-sizing: border-box; background: white; }
+    button { background: #0f172a; color: white; border: none; padding: 16px 28px; border-radius: 14px; font-size: 1rem; font-weight: 700; cursor: pointer; margin-top: 10px; width: 100%; display: block; }
+    button:hover { opacity: 0.92; }
+    .result { margin-top: 40px; border: 1px solid var(--border); border-radius: 24px; padding: 28px; display: none; background: #f8fafc; }
+    .score { font-size: 3rem; font-weight: 800; margin-bottom: 16px; }
+    .bar { width: 100%; height: 16px; background: #dbe3ee; border-radius: 999px; overflow: hidden; margin-bottom: 24px; }
+    .fill { height: 100%; width: 0%; background: #16a34a; border-radius: 999px; transition: width 0.4s ease; }
+    .metric { margin-bottom: 14px; font-size: 1.05rem; }
+    .guidance { margin-top: 26px; font-size: 1.15rem; line-height: 1.7; }
+    .disclaimer { margin-top: 30px; font-size: 0.9rem; color: var(--muted); }
+    .helper-link { margin-top: 10px; font-size: 0.9rem; }
+    .helper-link a { color: var(--primary); font-weight: 600; }
+    .content-section p, .content-section li { line-height: 1.8; }
+  </style>
+
+  <div class="container">
+    <CalculatorPageShell
+      eyebrow="Baby & Parenting Calculator"
+      title="Can We Afford for One Parent to Stay Home?"
+      description="Estimate whether your household can handle one parent leaving paid work by comparing lost income, childcare savings, benefits changes, debt, emergency savings, and monthly flexibility."
+    >
+      <div class="card">
+        <h2>Stay-at-Home Parent Pressure Verdict</h2>
+
+        <div class="grid">
+          <div>
+            <label for="workingIncome">Monthly Take-Home Income From Parent Who Keeps Working</label>
+            <input id="workingIncome" type="number" placeholder="6500" min="0" inputmode="decimal" />
+          </div>
+
+          <div>
+            <label for="leavingIncome">Monthly Take-Home Income Parent Would Give Up</label>
+            <input id="leavingIncome" type="number" placeholder="4200" min="0" inputmode="decimal" />
+          </div>
+
+          <div>
+            <label for="savings">Emergency Savings</label>
+            <input id="savings" type="number" placeholder="25000" min="0" inputmode="decimal" />
+          </div>
+
+          <div>
+            <label for="expenses">Current Monthly Expenses Before Childcare</label>
+            <input id="expenses" type="number" placeholder="5200" min="0" inputmode="decimal" />
+          </div>
+
+          <div>
+            <label for="debt">Monthly Debt Payments</label>
+            <input id="debt" type="number" placeholder="800" min="0" inputmode="decimal" />
+            <div class="helper-link">
+              <a href="/what-counts-as-debt">Not sure what counts as debt? Read the debt guide</a>
+            </div>
+          </div>
+
+          <div>
+            <label for="childcareSavings">Monthly Childcare Savings</label>
+            <input id="childcareSavings" type="number" placeholder="1800" min="0" inputmode="decimal" />
+          </div>
+
+          <div>
+            <label for="commuteSavings">Monthly Work-Related Savings</label>
+            <input id="commuteSavings" type="number" placeholder="350" min="0" inputmode="decimal" />
+          </div>
+
+          <div>
+            <label for="benefitCost">Added Monthly Benefits / Insurance Cost</label>
+            <input id="benefitCost" type="number" placeholder="500" min="0" inputmode="decimal" />
+          </div>
+
+          <div>
+            <label for="oneTimeCosts">One-Time Transition Costs</label>
+            <input id="oneTimeCosts" type="number" placeholder="1500" min="0" inputmode="decimal" />
+          </div>
+
+          <div>
+            <label for="jobReturn">Return-to-Work Flexibility</label>
+            <select id="jobReturn">
+              <option value="strong">Strong — Easy to Reenter Work</option>
+              <option value="moderate">Moderate — Some Career Risk</option>
+              <option value="weak">Weak — Hard to Reenter or Replace Income</option>
+            </select>
+          </div>
+
+          <div>
+            <label for="healthCoverage">Health Insurance Situation</label>
+            <select id="healthCoverage">
+              <option value="stable">Stable Coverage Through Working Parent</option>
+              <option value="costlier">Coverage Available but More Expensive</option>
+              <option value="uncertain">Coverage Uncertain or Risky</option>
+            </select>
+          </div>
+
+          <div>
+            <label for="trialPlan">Trial Budget Plan</label>
+            <select id="trialPlan">
+              <option value="tested">Already Tested One-Income Budget</option>
+              <option value="planned">Plan Exists but Not Tested</option>
+              <option value="none">No Trial Budget Yet</option>
+            </select>
+          </div>
+        </div>
+
+        <button id="stayHomeButton" type="button">Calculate Financial Pressure</button>
+
+        <div class="result" id="result">
+          <div class="score" id="score"></div>
+          <div class="bar"><div class="fill" id="barFill"></div></div>
+          <div class="metric" id="stress"></div>
+          <div class="metric" id="netIncomeChange"></div>
+          <div class="metric" id="cashFlow"></div>
+          <div class="metric" id="savingsRunway"></div>
+          <div class="guidance" id="guidance"></div>
+          <div class="disclaimer">
+            This is a general educational estimate, not legal, tax, career, insurance, childcare, parenting, or financial advice.
+          </div>
+        </div>
+      </div>
+
+      <div class="content-section">
+        <h2>What It Really Means for One Parent to Stay Home</h2>
+        <p>
+          The stay-at-home parent decision is not just a salary comparison. A household may lose one paycheck, but it may also save on daycare, commuting, work clothes, convenience meals, parking, gas, and schedule chaos. The real question is whether the new one-income budget leaves enough monthly flexibility after housing, groceries, utilities, debt, insurance, baby costs, and emergencies.
+        </p>
+        <p>
+          This calculator estimates the financial pressure created by stepping away from paid work. It compares the lost take-home pay against childcare and work-related savings, then checks the new monthly surplus, emergency runway, debt pressure, benefit changes, one-time transition costs, and reentry risk. A family with high income, low expenses, and large savings should not be artificially punished. If the income loss is tiny relative to household resources, the score can fall to a true 0/100.
+        </p>
+      </div>
+
+      <WhenSpendingMakesSense
+        title="When One Parent Staying Home Can Make Financial Sense"
+        items={[
+          "Childcare costs would consume a large share of the second income.",
+          "The remaining income comfortably covers housing, groceries, insurance, transportation, debt, and savings goals.",
+          "Emergency savings remain strong after any transition costs.",
+          "Health insurance remains stable and affordable.",
+          "The family has tested the one-income budget before making the change permanent.",
+          "The parent leaving work has a realistic path back into paid work if the budget becomes strained.",
+          "The decision improves family logistics without creating high-interest debt or draining savings.",
+        ]}
+      />
+
+      <div class="content-section">
+        <h2>Why the Second Income Is Not Always the Full Amount</h2>
+        <p>
+          Many families compare one parent’s salary against childcare and stop there. That can miss the real math. The second income may also trigger commuting costs, lunches, wardrobe costs, extra convenience spending, more takeout, backup care, sick-day coverage, and higher tax complexity. On the other hand, staying home can reduce retirement contributions, career momentum, future earning power, employer benefits, and financial independence.
+        </p>
+        <p>
+          The safest approach is to run a trial budget. For one to three months, live only on the income that would remain, move the second income into savings, and see whether the plan works without credit cards, skipped savings, or rising stress.
+        </p>
+      </div>
+
+      <KeyCostCategories
+        items={[
+          {
+            title: "Lost take-home income",
+            description:
+              "The paycheck being given up is the largest direct cost, but the calculator uses take-home pay instead of gross salary because household bills are paid with after-tax dollars.",
+          },
+          {
+            title: "Childcare savings",
+            description:
+              "Daycare, nanny costs, preschool, before-school care, after-school care, and backup care can offset a meaningful part of the lost income.",
+          },
+          {
+            title: "Benefits and insurance",
+            description:
+              "Health insurance, dental coverage, vision, disability coverage, life insurance, and employer benefits can change when one parent leaves work.",
+          },
+          {
+            title: "Monthly flexibility",
+            description:
+              "A one-income plan is safer when the household still has a monthly surplus after bills, debt, groceries, transportation, and recurring child costs.",
+          },
+          {
+            title: "Emergency runway",
+            description:
+              "Savings matter more when only one income remains. Job loss, medical bills, car repairs, or home repairs can become more serious with less income diversity.",
+          },
+          {
+            title: "Career reentry risk",
+            description:
+              "Some careers are easy to pause. Others may involve licensing, skill decay, seniority loss, or a lower future salary after time away.",
+          },
+        ]}
+      />
+
+      <ReduceCostTips
+        items={[
+          "Test the one-income budget before the parent leaves work.",
+          "Move the second income into savings for a few months to see whether the household can function without it.",
+          "Price health insurance before making the decision.",
+          "Keep retirement contributions in the conversation, even if they need to be reduced temporarily.",
+          "Build a larger emergency fund because the household will rely on one paycheck.",
+          "Reduce fixed bills before the transition instead of hoping the budget works later.",
+          "Avoid adding a car payment, larger rent, or major vacation right before moving to one income.",
+          "Consider part-time, freelance, remote, or seasonal work if the gap is close.",
+          "Keep professional licenses, certifications, networks, and skills active if returning to work may matter later.",
+        ]}
+      />
+
+      <FinancialRedFlags
+        items={[
+          "The new one-income budget leaves negative monthly cash flow.",
+          "The household would rely on credit cards to cover normal bills.",
+          "Emergency savings would fall below three months of expenses.",
+          "Health insurance becomes unaffordable or uncertain.",
+          "Debt payments already consume a large share of take-home income.",
+          "The parent leaving work has no realistic path back to income if needed.",
+          "The plan only works if every month goes perfectly.",
+          "The household is also planning a major purchase, move, car loan, or vacation.",
+        ]}
+      />
+
+      <CalculatorAssumptions
+        items={[
+          "Monthly income means take-home pay after taxes and payroll deductions.",
+          "The calculator treats childcare savings and work-related savings as offsets against the income being given up.",
+          "Current monthly expenses should exclude childcare if childcare is entered separately as savings.",
+          "Added benefits cost may include health insurance, dental, vision, life insurance, or other coverage changes.",
+          "Emergency runway is estimated using the post-transition monthly burn rate.",
+          "Career reentry risk is included because leaving paid work can affect future income, not only this month’s budget.",
+          "Very high income or very large savings can produce a true 0/100 pressure score when the income loss is tiny relative to household resources.",
+        ]}
+      />
+
+      <FAQSection
+        title="Stay-at-Home Parent Affordability FAQ"
+        faqs={[
+          {
+            question: "How do I know if we can afford for one parent to stay home?",
+            answer:
+              "Start by comparing the lost take-home income with childcare savings, work-related savings, benefits changes, debt, and the new monthly surplus. The plan is safer when one income still covers bills and savings without credit cards.",
+          },
+          {
+            question: "Should we count childcare savings against the lost income?",
+            answer:
+              "Yes. If one parent staying home eliminates daycare, nanny, or backup care costs, those savings should reduce the real income gap. But benefits, retirement contributions, and career impact still matter.",
+          },
+          {
+            question: "How much emergency savings should we have before going to one income?",
+            answer:
+              "Many households should aim for at least three to six months of expenses, and more can be safer when only one paycheck remains. The right amount depends on job stability, health needs, debt, and family obligations.",
+          },
+          {
+            question: "Is staying home worth it if daycare costs almost equal one income?",
+            answer:
+              "It may be. If childcare and work costs consume most of the second income, staying home can make financial and practical sense. Still check insurance, retirement, career reentry, and monthly cash flow.",
+          },
+          {
+            question: "Should we test the budget first?",
+            answer:
+              "Yes. A trial budget is one of the best ways to reduce risk. Live on the remaining income for a few months and save the second income. If the household needs credit cards to function, the plan may need changes.",
+          },
+        ]}
+      />
+
+      <MethodologySection category="baby and parenting spending" updated="June 2026" />
+
+      <RelatedGuides
+        guides={[
+          {
+            title: "Baby & Parenting Calculators",
+            href: "/baby-parenting-calculators",
+            description:
+              "Browse baby cost calculators for childcare, first-year expenses, maternity leave, baby gear, and family planning.",
+          },
+          {
+            title: "How Much Emergency Savings Should I Have?",
+            href: "/how-much-emergency-savings-should-i-have",
+            description:
+              "Estimate how much emergency cushion can protect your household before major life expenses.",
+          },
+          {
+            title: "What Counts as Debt?",
+            href: "/what-counts-as-debt",
+            description:
+              "Understand which obligations should be included when estimating financial pressure.",
+          },
+        ]}
+      />
+
+      <RelatedCalculators
+        calculators={[
+          {
+            category: "Baby & Parenting",
+            title: "Can We Afford to Have a Baby?",
+            href: "/can-we-afford-to-have-a-baby",
+          },
+          {
+            category: "Baby & Parenting",
+            title: "Should I Spend This Much on Childcare?",
+            href: "/should-i-spend-this-much-on-childcare",
+          },
+          {
+            category: "Baby & Parenting",
+            title: "Should I Use Savings for Maternity Leave?",
+            href: "/should-i-use-savings-for-maternity-leave",
+          },
+          {
+            category: "Baby & Parenting",
+            title: "Baby Cost Calculator",
+            href: "/baby-cost-calculator",
+          },
+        ]}
+      />
+    </CalculatorPageShell>
+  </div>
+
+  <script is:inline>
+    const clamp = (value, min, max) => Math.min(Math.max(value, min), max);
+
+    const getNumber = (id) => {
+      const rawValue = document.getElementById(id)?.value;
+      const value = Number(rawValue);
+      return Number.isFinite(value) && value >= 0 ? value : 0;
+    };
+
+    function getPressureLevel(score) {
+      if (score <= 30) {
+        return {
+          label: "Low Pressure",
+          stress: "Low pressure",
+          color: "#16a34a",
+          action:
+            "The one-income plan appears workable. Test it before making the change permanent and keep building emergency savings.",
+        };
+      }
+
+      if (score <= 60) {
+        return {
+          label: "Moderate Pressure",
+          stress: "Moderate pressure",
+          color: "#ca8a04",
+          action:
+            "The plan may be possible, but tighten fixed expenses, confirm benefits, and test the budget before one parent leaves work.",
+        };
+      }
+
+      return {
+        label: "High Pressure",
+        stress: "High pressure",
+        color: "#dc2626",
+        action:
+          "Do not rush the transition. Reduce fixed bills, build savings, review childcare alternatives, or consider part-time income first.",
+      };
+    }
+
+    function calculateStayHomePressure() {
+      const workingIncome = getNumber("workingIncome");
+      const leavingIncome = getNumber("leavingIncome");
+      const savings = getNumber("savings");
+      const expenses = getNumber("expenses");
+      const debt = getNumber("debt");
+      const childcareSavings = getNumber("childcareSavings");
+      const commuteSavings = getNumber("commuteSavings");
+      const benefitCost = getNumber("benefitCost");
+      const oneTimeCosts = getNumber("oneTimeCosts");
+
+      const jobReturn = document.getElementById("jobReturn").value;
+      const healthCoverage = document.getElementById("healthCoverage").value;
+      const trialPlan = document.getElementById("trialPlan").value;
+
+      const result = document.getElementById("result");
+      const scoreEl = document.getElementById("score");
+      const barFill = document.getElementById("barFill");
+      const stressEl = document.getElementById("stress");
+      const netIncomeChangeEl = document.getElementById("netIncomeChange");
+      const cashFlowEl = document.getElementById("cashFlow");
+      const savingsRunwayEl = document.getElementById("savingsRunway");
+      const guidanceEl = document.getElementById("guidance");
+
+      result.style.display = "block";
+
+      if (workingIncome <= 0) {
+        scoreEl.textContent = "Add your numbers first";
+        barFill.style.width = "0%";
+        barFill.style.background = "#16a34a";
+        stressEl.innerHTML = "";
+        netIncomeChangeEl.innerHTML = "";
+        cashFlowEl.innerHTML = "";
+        savingsRunwayEl.innerHTML = "";
+        guidanceEl.textContent =
+          "Enter a positive monthly take-home income for the parent who would keep working so the calculator can estimate one-income pressure.";
+        return;
+      }
+
+      const totalCurrentIncome = workingIncome + leavingIncome;
+      const monthlyOffsets = childcareSavings + commuteSavings;
+      const netMonthlyIncomeLoss = Math.max(leavingIncome - monthlyOffsets + benefitCost, 0);
+      const postTransitionExpenses = expenses + debt + benefitCost;
+      const postTransitionCashFlow = workingIncome - postTransitionExpenses;
+      const postTransitionBurn = Math.max(postTransitionExpenses, 0);
+      const savingsAfterTransitionCosts = savings - oneTimeCosts;
+
+      const incomeLossRatio =
+        totalCurrentIncome > 0 ? (netMonthlyIncomeLoss / totalCurrentIncome) * 100 : 100;
+      const oneIncomeBurdenRatio =
+        workingIncome > 0 ? (postTransitionExpenses / workingIncome) * 100 : 100;
+      const debtRatio = workingIncome > 0 ? (debt / workingIncome) * 100 : 100;
+      const cashFlowRatio =
+        workingIncome > 0 ? (postTransitionCashFlow / workingIncome) * 100 : -100;
+      const transitionSavingsImpact =
+        savings > 0 ? (oneTimeCosts / savings) * 100 : oneTimeCosts > 0 ? 100 : 0;
+
+      const emergencyMonthsAfter =
+        postTransitionBurn > 0
+          ? savingsAfterTransitionCosts / postTransitionBurn
+          : savingsAfterTransitionCosts > 0
+            ? 999
+            : 0;
+
+      const hasAbsurdIncomeBuffer =
+        workingIncome >= postTransitionExpenses * 50 &&
+        netMonthlyIncomeLoss <= workingIncome * 0.01 &&
+        oneTimeCosts <= workingIncome * 0.03;
+
+      const hasAbsurdSavingsBuffer =
+        savings > 0 &&
+        oneTimeCosts <= savings * 0.01 &&
+        emergencyMonthsAfter >= 60 &&
+        netMonthlyIncomeLoss <= workingIncome * 0.03;
+
+      const hasHugeIncomeBuffer =
+        workingIncome > 0 &&
+        netMonthlyIncomeLoss <= workingIncome * 0.03 &&
+        postTransitionCashFlow > workingIncome * 0.65 &&
+        oneIncomeBurdenRatio < 25;
+
+      const hasHugeSavingsBuffer =
+        savings > 0 &&
+        oneTimeCosts <= savings * 0.03 &&
+        emergencyMonthsAfter >= 36 &&
+        postTransitionCashFlow > 0;
+
+      const hasStrongIncomeBuffer =
+        workingIncome > 0 &&
+        netMonthlyIncomeLoss <= workingIncome * 0.12 &&
+        postTransitionCashFlow > workingIncome * 0.35 &&
+        oneIncomeBurdenRatio < 60;
+
+      const hasStrongSavingsBuffer =
+        savings > 0 &&
+        emergencyMonthsAfter >= 12 &&
+        savingsAfterTransitionCosts > 0;
+
+      let pressureScore = 0;
+
+      if (
+        netMonthlyIncomeLoss === 0 &&
+        postTransitionCashFlow > 0 &&
+        emergencyMonthsAfter >= 12
+      ) {
+        pressureScore = 0;
+      } else if (
+        hasAbsurdIncomeBuffer ||
+        hasAbsurdSavingsBuffer ||
+        hasHugeIncomeBuffer ||
+        hasHugeSavingsBuffer
+      ) {
+        pressureScore = 0;
+      } else {
+        pressureScore += clamp(incomeLossRatio * 0.7, 0, 28);
+        pressureScore += clamp(oneIncomeBurdenRatio * 0.38, 0, 34);
+        pressureScore += clamp(debtRatio * 0.85, 0, 18);
+        pressureScore += clamp(transitionSavingsImpact * 0.35, 0, 16);
+
+        if (postTransitionCashFlow < 0) pressureScore += 32;
+        else if (cashFlowRatio < 0.05) pressureScore += 20;
+        else if (cashFlowRatio < 0.12) pressureScore += 13;
+        else if (cashFlowRatio > 0.5) pressureScore -= 18;
+        else if (cashFlowRatio > 0.35) pressureScore -= 12;
+        else if (cashFlowRatio > 0.25) pressureScore -= 7;
+
+        if (savingsAfterTransitionCosts < 0) pressureScore += 20;
+        else if (emergencyMonthsAfter < 1 && workingIncome < 16000) pressureScore += 22;
+        else if (emergencyMonthsAfter < 3 && workingIncome < 20000) pressureScore += 16;
+        else if (emergencyMonthsAfter < 6 && workingIncome < 25000) pressureScore += 8;
+        else if (emergencyMonthsAfter >= 24) pressureScore -= 18;
+        else if (emergencyMonthsAfter >= 12) pressureScore -= 12;
+        else if (emergencyMonthsAfter >= 6) pressureScore -= 6;
+
+        if (healthCoverage === "costlier") pressureScore += 7;
+        if (healthCoverage === "uncertain") pressureScore += 18;
+        if (healthCoverage === "stable") pressureScore -= 3;
+
+        if (jobReturn === "moderate") pressureScore += 6;
+        if (jobReturn === "weak") pressureScore += 14;
+        if (jobReturn === "strong") pressureScore -= 4;
+
+        if (trialPlan === "planned") pressureScore += 4;
+        if (trialPlan === "none") pressureScore += 12;
+        if (trialPlan === "tested") pressureScore -= 7;
+
+        if (hasStrongIncomeBuffer) pressureScore -= 14;
+        if (hasStrongSavingsBuffer) pressureScore -= 14;
+
+        if (
+          incomeLossRatio < 12 &&
+          oneIncomeBurdenRatio < 55 &&
+          emergencyMonthsAfter >= 6 &&
+          postTransitionCashFlow > workingIncome * 0.2
+        ) {
+          pressureScore = Math.min(pressureScore, 30);
+        }
+
+        if (
+          incomeLossRatio < 6 &&
+          oneIncomeBurdenRatio < 45 &&
+          emergencyMonthsAfter >= 12 &&
+          postTransitionCashFlow > workingIncome * 0.35
+        ) {
+          pressureScore = Math.min(pressureScore, 16);
+        }
+
+        if (
+          netMonthlyIncomeLoss <= workingIncome * 0.02 &&
+          oneTimeCosts <= Math.max(savings * 0.02, workingIncome * 0.05) &&
+          emergencyMonthsAfter >= 36 &&
+          oneIncomeBurdenRatio < 35
+        ) {
+          pressureScore = 0;
+        }
+
+        if (
+          workingIncome >= postTransitionExpenses * 40 &&
+          netMonthlyIncomeLoss <= workingIncome * 0.02 &&
+          oneTimeCosts <= workingIncome * 0.05
+        ) {
+          pressureScore = 0;
+        }
+      }
+
+      pressureScore = Math.round(clamp(pressureScore, 0, 100));
+      const level = getPressureLevel(pressureScore);
+
+      let guidance = "";
+
+      if (pressureScore === 0) {
+        guidance =
+          `Based on the numbers provided, one parent staying home appears to create essentially no financial pressure. The estimated net monthly income change is small relative to household resources, and the remaining emergency runway is very strong.`;
+      } else if (pressureScore <= 30) {
+        guidance =
+          `This one-income plan appears financially manageable based on the numbers provided. Estimated post-transition cash flow is about $${Math.round(postTransitionCashFlow).toLocaleString()} per month, with roughly ${Math.max(emergencyMonthsAfter, 0).toFixed(1)} months of emergency runway after transition costs.`;
+      } else if (pressureScore <= 60) {
+        guidance =
+          `This plan may work, but it creates noticeable pressure. The estimated net monthly income change is about $${Math.round(netMonthlyIncomeLoss).toLocaleString()}, so the household should test the budget and confirm insurance before making the change permanent.`;
+      } else {
+        guidance =
+          `This plan could create significant financial strain. The one-income budget, savings runway, debt load, benefits changes, or career risk suggest that the household should slow down before relying on one paycheck.`;
+      }
+
+      scoreEl.textContent = `${level.label} — ${pressureScore}/100`;
+      scoreEl.style.color = level.color;
+      barFill.style.width = `${pressureScore}%`;
+      barFill.style.background = level.color;
+
+      stressEl.innerHTML = `<strong>Pressure level:</strong> ${level.stress}`;
+      netIncomeChangeEl.innerHTML = `<strong>Estimated net monthly income change:</strong> -$${Math.round(netMonthlyIncomeLoss).toLocaleString()}`;
+      cashFlowEl.innerHTML = `<strong>Estimated one-income monthly cash flow:</strong> $${Math.round(postTransitionCashFlow).toLocaleString()}`;
+      savingsRunwayEl.innerHTML = `<strong>Emergency runway after transition costs:</strong> ${Math.max(emergencyMonthsAfter, 0).toFixed(1)} months`;
+      guidanceEl.textContent = `${guidance} Recommended next step: ${level.action}`;
+    }
+
+    document
+      .getElementById("stayHomeButton")
+      .addEventListener("click", calculateStayHomePressure);
+  </script>
+</Layout>

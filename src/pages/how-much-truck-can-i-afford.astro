@@ -397,88 +397,130 @@ import WhenSpendingMakesSense from "../components/WhenSpendingMakesSense.astro";
   </div>
 
   <script is:inline>
-    const clamp = (value, min, max) => Math.min(Math.max(value, min), max);
+  const clamp = (value, min, max) => Math.min(Math.max(value, min), max);
 
-    const getNumber = (id) => {
-      const rawValue = document.getElementById(id)?.value;
-      const value = Number(rawValue);
-      return Number.isFinite(value) && value >= 0 ? value : 0;
-    };
+  const getNumber = (id) => {
+    const rawValue = document.getElementById(id)?.value;
+    const value = Number(rawValue);
+    return Number.isFinite(value) && value >= 0 ? value : 0;
+  };
 
-    function getPressureLevel(score) {
-      if (score <= 30) {
-        return {
-          label: "Low Pressure",
-          stress: "Low pressure",
-          color: "#16a34a",
-          action: "Keep total truck costs visible and protect savings before upgrading trims or stretching the loan.",
-        };
-      }
-
-      if (score <= 60) {
-        return {
-          label: "Moderate Pressure",
-          stress: "Moderate pressure",
-          color: "#ca8a04",
-          action: "Review insurance, fuel, maintenance, work value, and whether the truck crowds out savings.",
-        };
-      }
-
+  function getPressureLevel(score) {
+    if (score <= 30) {
       return {
-        label: "High Pressure",
-        stress: "High pressure",
-        color: "#dc2626",
-        action: "Slow down before buying and consider a cheaper truck, used model, lower trim, or delaying the purchase.",
+        label: "Low Pressure",
+        stress: "Low pressure",
+        color: "#16a34a",
+        action: "Keep total truck costs visible and protect savings before upgrading trims or stretching the loan.",
       };
     }
 
-    function calculateTruck() {
-      const truckPayment = getNumber("truckPayment");
-      const income = getNumber("income");
-      const insurance = getNumber("insurance");
-      const fuelMaintenance = getNumber("fuelMaintenance");
-      const savings = getNumber("savings");
-      const housing = getNumber("housing");
-      const debt = getNumber("debt");
-      const workValue = getNumber("workValue");
+    if (score <= 60) {
+      return {
+        label: "Moderate Pressure",
+        stress: "Moderate pressure",
+        color: "#ca8a04",
+        action: "Review insurance, fuel, maintenance, work value, and whether the truck crowds out savings.",
+      };
+    }
 
-      const result = document.getElementById("result");
-      const scoreEl = document.getElementById("score");
-      const barFill = document.getElementById("barFill");
-      const paymentShareEl = document.getElementById("paymentShare");
-      const truckCostShareEl = document.getElementById("truckCostShare");
-      const cashFlowEl = document.getElementById("cashFlow");
-      const savingsCushionEl = document.getElementById("savingsCushion");
-      const guidanceEl = document.getElementById("guidance");
+    return {
+      label: "High Pressure",
+      stress: "High pressure",
+      color: "#dc2626",
+      action: "Slow down before buying and consider a cheaper truck, used model, lower trim, or delaying the purchase.",
+    };
+  }
 
-      result.style.display = "block";
+  function calculateTruck() {
+    const truckPayment = getNumber("truckPayment");
+    const income = getNumber("income");
+    const insurance = getNumber("insurance");
+    const fuelMaintenance = getNumber("fuelMaintenance");
+    const savings = getNumber("savings");
+    const housing = getNumber("housing");
+    const debt = getNumber("debt");
+    const workValue = getNumber("workValue");
 
-      if (truckPayment <= 0 || income <= 0) {
-        scoreEl.textContent = "Add your numbers first";
-        barFill.style.width = "0%";
-        barFill.style.background = "#16a34a";
-        paymentShareEl.innerHTML = "";
-        truckCostShareEl.innerHTML = "";
-        cashFlowEl.innerHTML = "";
-        savingsCushionEl.innerHTML = "";
-        guidanceEl.textContent =
-          "Enter a positive estimated truck payment and monthly take-home income so the calculator can estimate affordability pressure.";
-        return;
-      }
+    const result = document.getElementById("result");
+    const scoreEl = document.getElementById("score");
+    const barFill = document.getElementById("barFill");
+    const paymentShareEl = document.getElementById("paymentShare");
+    const truckCostShareEl = document.getElementById("truckCostShare");
+    const cashFlowEl = document.getElementById("cashFlow");
+    const savingsCushionEl = document.getElementById("savingsCushion");
+    const guidanceEl = document.getElementById("guidance");
 
-      const totalTruckCost = truckPayment + insurance + fuelMaintenance;
-      const netTruckCost = Math.max(totalTruckCost - workValue, 0);
-      const paymentIncomeShare = (truckPayment / income) * 100;
-      const truckCostShare = (totalTruckCost / income) * 100;
-      const netTruckCostShare = (netTruckCost / income) * 100;
-      const fixedObligationRatio = ((housing + debt + truckPayment) / income) * 100;
-      const monthlyRemaining = income - housing - debt - totalTruckCost + workValue;
-      const monthlyCoreOutflow = housing + debt + totalTruckCost;
-      const emergencyMonths =
-        monthlyCoreOutflow > 0 ? savings / monthlyCoreOutflow : savings > 0 ? 12 : 0;
+    result.style.display = "block";
 
-      let pressureScore = 0;
+    if (truckPayment <= 0 || income <= 0) {
+      scoreEl.textContent = "Add your numbers first";
+      barFill.style.width = "0%";
+      barFill.style.background = "#16a34a";
+      paymentShareEl.innerHTML = "";
+      truckCostShareEl.innerHTML = "";
+      cashFlowEl.innerHTML = "";
+      savingsCushionEl.innerHTML = "";
+      guidanceEl.textContent =
+        "Enter a positive estimated truck payment and monthly take-home income so the calculator can estimate affordability pressure.";
+      return;
+    }
 
+    const totalTruckCost = truckPayment + insurance + fuelMaintenance;
+    const netTruckCost = Math.max(totalTruckCost - workValue, 0);
+    const paymentIncomeShare = (truckPayment / income) * 100;
+    const truckCostShare = (totalTruckCost / income) * 100;
+    const netTruckCostShare = (netTruckCost / income) * 100;
+    const fixedObligationRatio = ((housing + debt + truckPayment) / income) * 100;
+    const monthlyRemaining = income - housing - debt - totalTruckCost + workValue;
+    const monthlyCoreOutflow = housing + debt + totalTruckCost;
+    const emergencyMonths =
+      monthlyCoreOutflow > 0 ? savings / monthlyCoreOutflow : savings > 0 ? 999 : 0;
+
+    const hasAbsurdIncomeBuffer =
+      income >= monthlyCoreOutflow * 50 &&
+      totalTruckCost <= income * 0.03 &&
+      monthlyRemaining >= income * 0.8;
+
+    const hasAbsurdSavingsBuffer =
+      savings > 0 &&
+      totalTruckCost <= savings * 0.0025 &&
+      emergencyMonths >= 120 &&
+      monthlyRemaining > 0;
+
+    const hasHugeIncomeBuffer =
+      income >= monthlyCoreOutflow * 35 &&
+      totalTruckCost <= income * 0.05 &&
+      monthlyRemaining >= income * 0.7;
+
+    const hasHugeSavingsBuffer =
+      savings > 0 &&
+      totalTruckCost <= savings * 0.006 &&
+      emergencyMonths >= 60 &&
+      monthlyRemaining > 0;
+
+    const hasStrongIncomeBuffer =
+      income >= monthlyCoreOutflow * 18 &&
+      totalTruckCost <= income * 0.08 &&
+      monthlyRemaining >= income * 0.55;
+
+    const hasStrongSavingsBuffer =
+      savings > 0 &&
+      totalTruckCost <= savings * 0.015 &&
+      emergencyMonths >= 24 &&
+      monthlyRemaining > 0;
+
+    let pressureScore = 0;
+
+    if (
+      netTruckCost === 0 ||
+      hasAbsurdIncomeBuffer ||
+      hasAbsurdSavingsBuffer ||
+      hasHugeIncomeBuffer ||
+      hasHugeSavingsBuffer
+    ) {
+      pressureScore = 0;
+    } else {
       pressureScore += clamp(paymentIncomeShare * 2.25, 0, 34);
       pressureScore += clamp(netTruckCostShare * 1.75, 0, 40);
       pressureScore += clamp(fixedObligationRatio * 0.26, 0, 28);
@@ -486,10 +528,17 @@ import WhenSpendingMakesSense from "../components/WhenSpendingMakesSense.astro";
       if (monthlyRemaining < 0) pressureScore += 30;
       else if (monthlyRemaining < income * 0.08) pressureScore += 18;
       else if (monthlyRemaining < income * 0.15) pressureScore += 10;
-      else if (monthlyRemaining > income * 0.3) pressureScore -= 8;
+      else if (monthlyRemaining > income * 0.5) pressureScore -= 16;
+      else if (monthlyRemaining > income * 0.35) pressureScore -= 11;
+      else if (monthlyRemaining > income * 0.25) pressureScore -= 8;
 
       if (emergencyMonths < 1 && income < 15000) pressureScore += 22;
       else if (emergencyMonths < 3 && income < 20000) pressureScore += 12;
+      else if (emergencyMonths < 6 && income < 25000) pressureScore += 6;
+      else if (emergencyMonths >= 60) pressureScore -= 24;
+      else if (emergencyMonths >= 36) pressureScore -= 20;
+      else if (emergencyMonths >= 24) pressureScore -= 16;
+      else if (emergencyMonths >= 12) pressureScore -= 12;
       else if (emergencyMonths >= 6) pressureScore -= 8;
 
       if (truckCostShare >= 28) pressureScore += 18;
@@ -498,19 +547,16 @@ import WhenSpendingMakesSense from "../components/WhenSpendingMakesSense.astro";
       if (paymentIncomeShare >= 16) pressureScore += 14;
       else if (paymentIncomeShare >= 11) pressureScore += 7;
 
-      if (workValue >= totalTruckCost * 0.5 && monthlyRemaining > 0) {
+      if (workValue >= totalTruckCost * 0.75 && monthlyRemaining > 0) {
+        pressureScore -= 18;
+      } else if (workValue >= totalTruckCost * 0.5 && monthlyRemaining > 0) {
         pressureScore -= 12;
       } else if (workValue >= totalTruckCost * 0.25 && monthlyRemaining > 0) {
         pressureScore -= 6;
       }
 
-      if (income >= 15000 && monthlyRemaining > income * 0.25 && emergencyMonths >= 3) {
-        pressureScore -= 9;
-      }
-
-      if (income >= 25000 && monthlyRemaining > income * 0.35 && emergencyMonths >= 6) {
-        pressureScore -= 14;
-      }
+      if (hasStrongIncomeBuffer) pressureScore -= 16;
+      if (hasStrongSavingsBuffer) pressureScore -= 20;
 
       if (
         paymentIncomeShare < 8 &&
@@ -525,57 +571,83 @@ import WhenSpendingMakesSense from "../components/WhenSpendingMakesSense.astro";
       if (
         paymentIncomeShare < 5 &&
         truckCostShare < 11 &&
-        emergencyMonths >= 9 &&
+        emergencyMonths >= 12 &&
         fixedObligationRatio < 40 &&
         monthlyRemaining > income * 0.35
       ) {
         pressureScore = Math.min(pressureScore, 12);
       }
 
-      if (savings >= 1000000 && monthlyRemaining > 0) {
-        pressureScore -= 20;
+      if (
+        paymentIncomeShare < 3 &&
+        truckCostShare < 7 &&
+        emergencyMonths >= 24 &&
+        fixedObligationRatio < 35 &&
+        monthlyRemaining > income * 0.5
+      ) {
+        pressureScore = 0;
       }
 
-      if (savings >= 5000000 && monthlyRemaining > 0) {
-        pressureScore -= 30;
+      if (
+        totalTruckCost <= savings * 0.01 &&
+        emergencyMonths >= 36 &&
+        monthlyRemaining > 0
+      ) {
+        pressureScore = Math.min(pressureScore, 8);
       }
 
-      if (savings >= 10000000 && monthlyRemaining > 0) {
-        pressureScore -= 40;
+      if (
+        totalTruckCost <= savings * 0.005 &&
+        emergencyMonths >= 60 &&
+        monthlyRemaining > 0
+      ) {
+        pressureScore = 0;
       }
 
-      pressureScore = Math.round(clamp(pressureScore, 0, 100));
-
-      const level = getPressureLevel(pressureScore);
-
-      let guidance = "";
-
-      if (pressureScore <= 30) {
-        guidance =
-          `This truck appears financially manageable based on the numbers provided. The payment equals about ${paymentIncomeShare.toFixed(1)}% of take-home income, while total truck costs equal about ${truckCostShare.toFixed(1)}%.`;
-      } else if (pressureScore <= 60) {
-        guidance =
-          `This truck may work, but it creates noticeable pressure. The payment equals about ${paymentIncomeShare.toFixed(1)}% of take-home income, and total truck costs equal about ${truckCostShare.toFixed(1)}%.`;
-      } else {
-        guidance =
-          `This truck could create real financial strain. The payment equals about ${paymentIncomeShare.toFixed(1)}% of take-home income, and the combination of insurance, fuel, maintenance, housing, debt, or savings suggests you should review the full truck cost before committing.`;
+      if (
+        income >= monthlyCoreOutflow * 40 &&
+        totalTruckCost <= income * 0.04 &&
+        monthlyRemaining > income * 0.7
+      ) {
+        pressureScore = 0;
       }
-
-      scoreEl.textContent = `${level.label} — ${pressureScore}/100`;
-      scoreEl.style.color = level.color;
-      barFill.style.width = `${pressureScore}%`;
-      barFill.style.background = level.color;
-
-      paymentShareEl.innerHTML = `<strong>Truck payment share:</strong> ${paymentIncomeShare.toFixed(1)}% of take-home income`;
-      truckCostShareEl.innerHTML = `<strong>Total truck cost share:</strong> ${truckCostShare.toFixed(1)}% of take-home income`;
-      cashFlowEl.innerHTML = `<strong>Monthly cash flow after housing, debt, and truck costs:</strong> $${Math.round(monthlyRemaining).toLocaleString()}`;
-      savingsCushionEl.innerHTML = `<strong>Estimated emergency cushion:</strong> ${Math.max(emergencyMonths, 0).toFixed(1)} months`;
-
-      guidanceEl.textContent = `${guidance} Recommended next step: ${level.action}`;
     }
 
-    document
-      .getElementById("truckButton")
-      .addEventListener("click", calculateTruck);
-  </script>
+    pressureScore = Math.round(clamp(pressureScore, 0, 100));
+
+    const level = getPressureLevel(pressureScore);
+
+    let guidance = "";
+
+    if (pressureScore === 0) {
+      guidance =
+        `This truck appears to create essentially no financial pressure based on the numbers provided. The payment equals about ${paymentIncomeShare.toFixed(1)}% of take-home income, total truck costs equal about ${truckCostShare.toFixed(1)}%, and the savings cushion is extremely strong.`;
+    } else if (pressureScore <= 30) {
+      guidance =
+        `This truck appears financially manageable based on the numbers provided. The payment equals about ${paymentIncomeShare.toFixed(1)}% of take-home income, while total truck costs equal about ${truckCostShare.toFixed(1)}%.`;
+    } else if (pressureScore <= 60) {
+      guidance =
+        `This truck may work, but it creates noticeable pressure. The payment equals about ${paymentIncomeShare.toFixed(1)}% of take-home income, and total truck costs equal about ${truckCostShare.toFixed(1)}%.`;
+    } else {
+      guidance =
+        `This truck could create real financial strain. The payment equals about ${paymentIncomeShare.toFixed(1)}% of take-home income, and the combination of insurance, fuel, maintenance, housing, debt, or savings suggests you should review the full truck cost before committing.`;
+    }
+
+    scoreEl.textContent = `${level.label} — ${pressureScore}/100`;
+    scoreEl.style.color = level.color;
+    barFill.style.width = `${pressureScore}%`;
+    barFill.style.background = level.color;
+
+    paymentShareEl.innerHTML = `<strong>Truck payment share:</strong> ${paymentIncomeShare.toFixed(1)}% of take-home income`;
+    truckCostShareEl.innerHTML = `<strong>Total truck cost share:</strong> ${truckCostShare.toFixed(1)}% of take-home income`;
+    cashFlowEl.innerHTML = `<strong>Monthly cash flow after housing, debt, and truck costs:</strong> $${Math.round(monthlyRemaining).toLocaleString()}`;
+    savingsCushionEl.innerHTML = `<strong>Estimated emergency cushion:</strong> ${Math.max(emergencyMonths, 0).toFixed(1)} months`;
+
+    guidanceEl.textContent = `${guidance} Recommended next step: ${level.action}`;
+  }
+
+  document
+    .getElementById("truckButton")
+    .addEventListener("click", calculateTruck);
+</script>
 </Layout>

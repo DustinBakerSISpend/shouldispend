@@ -1,0 +1,648 @@
+---
+import Layout from "../layouts/Layout.astro";
+import CalculatorPageShell from "../components/CalculatorPageShell.astro";
+import FAQSection from "../components/FAQSection.astro";
+import RelatedCalculators from "../components/RelatedCalculators.astro";
+import RelatedGuides from "../components/RelatedGuides.astro";
+import MethodologySection from "../components/MethodologySection.astro";
+import FinancialRedFlags from "../components/FinancialRedFlags.astro";
+import CalculatorAssumptions from "../components/CalculatorAssumptions.astro";
+import KeyCostCategories from "../components/KeyCostCategories.astro";
+import ReduceCostTips from "../components/ReduceCostTips.astro";
+import WhenSpendingMakesSense from "../components/WhenSpendingMakesSense.astro";
+---
+
+<Layout
+  title="Should I Use Daycare or a Nanny?"
+  description="Compare daycare vs nanny affordability using monthly childcare costs, income, savings, debt, schedule needs, backup care, payroll costs, and household cash flow."
+>
+  <style>
+    .container { max-width: 950px; margin: 0 auto; padding: 60px 20px; }
+    .content-section { max-width: 760px; margin: 72px auto 0; }
+    .card { background: var(--card); border: 1px solid var(--border); border-radius: 28px; padding: 34px; }
+    h2 { margin-top: 0; font-size: 2rem; }
+    .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 22px; margin-bottom: 28px; }
+    label { display: block; margin-bottom: 10px; font-weight: 700; }
+    input, select { width: 100%; padding: 18px; border-radius: 14px; border: 1px solid var(--border); font-size: 1.1rem; box-sizing: border-box; background: white; }
+    button { background: #0f172a; color: white; border: none; padding: 16px 28px; border-radius: 14px; font-size: 1rem; font-weight: 700; cursor: pointer; margin-top: 10px; width: 100%; display: block; }
+    button:hover { opacity: 0.92; }
+    .result { margin-top: 40px; border: 1px solid var(--border); border-radius: 24px; padding: 28px; display: none; background: #f8fafc; }
+    .score { font-size: 3rem; font-weight: 800; margin-bottom: 16px; }
+    .bar { width: 100%; height: 16px; background: #dbe3ee; border-radius: 999px; overflow: hidden; margin-bottom: 24px; }
+    .fill { height: 100%; width: 0%; background: #16a34a; border-radius: 999px; transition: width 0.4s ease; }
+    .metric { margin-bottom: 14px; font-size: 1.05rem; }
+    .guidance { margin-top: 26px; font-size: 1.15rem; line-height: 1.7; }
+    .disclaimer { margin-top: 30px; font-size: 0.9rem; color: var(--muted); }
+    .helper-link { margin-top: 10px; font-size: 0.9rem; }
+    .helper-link a { color: var(--primary); font-weight: 600; }
+    .content-section p, .content-section li { line-height: 1.8; }
+  </style>
+
+  <div class="container">
+    <CalculatorPageShell
+      eyebrow="Baby & Parenting Calculator"
+      title="Should I Use Daycare or a Nanny?"
+      description="Compare daycare and nanny pressure using monthly cost, payroll/admin costs, backup care, income, savings, debt, schedule flexibility, and household cash flow."
+    >
+      <div class="card">
+        <h2>Daycare vs Nanny Pressure Verdict</h2>
+
+        <div class="grid">
+          <div>
+            <label for="daycareCost">Monthly Daycare Cost</label>
+            <input id="daycareCost" type="number" placeholder="1600" min="0" inputmode="decimal" />
+          </div>
+
+          <div>
+            <label for="nannyCost">Monthly Nanny Cost</label>
+            <input id="nannyCost" type="number" placeholder="3600" min="0" inputmode="decimal" />
+          </div>
+
+          <div>
+            <label for="nannyPayroll">Monthly Nanny Payroll / Tax / Admin Cost</label>
+            <input id="nannyPayroll" type="number" placeholder="350" min="0" inputmode="decimal" />
+          </div>
+
+          <div>
+            <label for="backupCare">Monthly Backup Care Cost</label>
+            <input id="backupCare" type="number" placeholder="200" min="0" inputmode="decimal" />
+          </div>
+
+          <div>
+            <label for="commuteCost">Monthly Commute / Pickup Cost</label>
+            <input id="commuteCost" type="number" placeholder="150" min="0" inputmode="decimal" />
+          </div>
+
+          <div>
+            <label for="income">Monthly Take-Home Income</label>
+            <input id="income" type="number" placeholder="8500" min="0" inputmode="decimal" />
+          </div>
+
+          <div>
+            <label for="savings">Emergency Savings</label>
+            <input id="savings" type="number" placeholder="25000" min="0" inputmode="decimal" />
+          </div>
+
+          <div>
+            <label for="expenses">Current Monthly Expenses Before Childcare</label>
+            <input id="expenses" type="number" placeholder="4800" min="0" inputmode="decimal" />
+          </div>
+
+          <div>
+            <label for="debt">Monthly Debt Payments</label>
+            <input id="debt" type="number" placeholder="700" min="0" inputmode="decimal" />
+            <div class="helper-link">
+              <a href="/what-counts-as-debt">Not sure what counts as debt? Read the debt guide</a>
+            </div>
+          </div>
+
+          <div>
+            <label for="children">Children Needing Care</label>
+            <select id="children">
+              <option value="1">1 child</option>
+              <option value="2">2 children</option>
+              <option value="3">3+ children</option>
+            </select>
+          </div>
+
+          <div>
+            <label for="scheduleNeed">Schedule Flexibility Needed</label>
+            <select id="scheduleNeed">
+              <option value="low">Predictable Work Schedule</option>
+              <option value="medium">Some Flexibility Needed</option>
+              <option value="high">High Flexibility Needed</option>
+            </select>
+          </div>
+
+          <div>
+            <label for="availability">Local Availability</label>
+            <select id="availability">
+              <option value="both">Both Options Are Available</option>
+              <option value="daycare">Good Daycare Spot Available</option>
+              <option value="nanny">Strong Nanny Candidate Available</option>
+              <option value="limited">Both Options Are Hard to Find</option>
+            </select>
+          </div>
+
+          <div>
+            <label for="sickCare">Sick-Day Coverage Need</label>
+            <select id="sickCare">
+              <option value="low">Low</option>
+              <option value="medium">Medium</option>
+              <option value="high">High</option>
+            </select>
+          </div>
+
+          <div>
+            <label for="preference">Parent Preference</label>
+            <select id="preference">
+              <option value="neutral">No Strong Preference</option>
+              <option value="daycare">Prefer Daycare Structure</option>
+              <option value="nanny">Prefer In-Home Care</option>
+            </select>
+          </div>
+        </div>
+
+        <button id="careButton" type="button">Compare Daycare and Nanny</button>
+
+        <div class="result" id="result">
+          <div class="score" id="score"></div>
+          <div class="bar"><div class="fill" id="barFill"></div></div>
+          <div class="metric" id="recommendation"></div>
+          <div class="metric" id="daycareMetric"></div>
+          <div class="metric" id="nannyMetric"></div>
+          <div class="metric" id="cashFlow"></div>
+          <div class="metric" id="savingsMetric"></div>
+          <div class="guidance" id="guidance"></div>
+          <div class="disclaimer">
+            This is a general educational estimate, not parenting, employment, tax, legal, insurance, or financial advice.
+          </div>
+        </div>
+      </div>
+
+      <div class="content-section">
+        <h2>How to Compare Daycare vs a Nanny</h2>
+        <p>
+          Daycare usually has a lower monthly price, more structure, social interaction, and predictable policies. A nanny usually costs more, but may provide more flexibility, fewer pickup logistics, in-home care, and better coverage for unusual work schedules.
+        </p>
+        <p>
+          The right answer is not always the cheaper answer. A daycare that forces missed work, long commutes, waitlist stress, or constant backup care may be more expensive than it looks. A nanny can also be more expensive than expected once payroll taxes, paid time off, sick coverage, raises, and backup plans are included.
+        </p>
+      </div>
+
+      <WhenSpendingMakesSense
+        title="When Daycare May Make More Sense"
+        items={[
+          "The daycare cost is clearly lower and your schedule is predictable.",
+          "A good spot is available without a long waitlist or unreliable hours.",
+          "You want classroom structure, peer interaction, and built-in programming.",
+          "Pickup and drop-off logistics do not create major work stress.",
+          "Your emergency fund remains strong after the monthly childcare cost.",
+          "You have backup care for sick days, closures, and holidays.",
+        ]}
+      />
+
+      <WhenSpendingMakesSense
+        title="When a Nanny May Make More Sense"
+        items={[
+          "Your work schedule is inconsistent, early, late, or difficult to match with daycare hours.",
+          "You have multiple children and the nanny premium is smaller than it first appears.",
+          "Pickup, drop-off, illness policies, or closures would create serious work problems.",
+          "You have room in the budget for wages, payroll costs, paid time off, and backup care.",
+          "You strongly value in-home care, fewer transitions, or one-on-one attention.",
+          "The nanny option does not force high-interest debt or drain your emergency savings.",
+        ]}
+      />
+
+      <KeyCostCategories
+        items={[
+          {
+            title: "Base monthly cost",
+            description:
+              "Compare daycare tuition against nanny wages, but do not stop there. The real cost includes payroll, transportation, supplies, and backup care.",
+          },
+          {
+            title: "Payroll and legal setup",
+            description:
+              "Nannies may involve household-employer responsibilities, tax withholding, payroll services, workers’ compensation rules, and written agreements.",
+          },
+          {
+            title: "Backup care",
+            description:
+              "Daycare closures, sick-child policies, nanny sick days, vacations, and holidays can all create backup-care costs.",
+          },
+          {
+            title: "Schedule fit",
+            description:
+              "A cheaper option can become expensive if it causes missed work, late pickups, extra commuting, or constant schedule conflict.",
+          },
+          {
+            title: "Multiple-child math",
+            description:
+              "Nannies can become more competitive when more than one child needs care, while daycare often charges per child.",
+          },
+        ]}
+      />
+
+      <ReduceCostTips
+        items={[
+          "Ask daycare providers for all fees, including registration, supplies, late pickup, meals, and annual increases.",
+          "Price nanny payroll, taxes, paid time off, raises, and backup care before comparing options.",
+          "Consider a nanny share if in-home care is attractive but the full cost is too high.",
+          "Check whether your employer offers dependent care benefits or flexible spending options.",
+          "Build a sick-day and closure plan before choosing either option.",
+          "Recalculate after a second child because the daycare-versus-nanny math can change quickly.",
+          "Avoid choosing a premium option that forces credit card debt or drains emergency savings.",
+        ]}
+      />
+
+      <FinancialRedFlags
+        items={[
+          "Either option leaves negative monthly cash flow after bills, debt, and childcare.",
+          "A nanny only works if payroll taxes, PTO, backup care, or legal setup are ignored.",
+          "Daycare only works if you assume no closures, sick days, commute problems, or late pickup fees.",
+          "The childcare choice would drain emergency savings within a few months.",
+          "You are choosing the cheaper option even though it may put a parent’s job at risk.",
+          "You are choosing the more expensive option mainly out of stress, guilt, or pressure rather than actual need.",
+          "The family has no backup plan if care falls through.",
+        ]}
+      />
+
+      <CalculatorAssumptions
+        items={[
+          "Monthly income means take-home pay after taxes and payroll deductions.",
+          "Current monthly expenses should exclude the new daycare or nanny cost.",
+          "Nanny cost should include regular wages; payroll/admin cost is entered separately.",
+          "Backup care includes sick days, closures, holidays, nanny time off, emergency sitters, or temporary care.",
+          "The calculator compares financial pressure and practical fit, not child development quality.",
+          "Very high income or very large savings can produce a true 0/100 pressure score when childcare costs are tiny relative to available resources.",
+        ]}
+      />
+
+      <FAQSection
+        title="Daycare vs Nanny FAQ"
+        faqs={[
+          {
+            question: "Is daycare cheaper than a nanny?",
+            answer:
+              "Usually, yes. Daycare is often cheaper for one child because costs are shared across a center. A nanny can become more competitive with multiple children, unusual schedules, or expensive backup-care needs.",
+          },
+          {
+            question: "What costs should I add to nanny pay?",
+            answer:
+              "Include payroll taxes, payroll service fees, paid time off, sick days, holidays, raises, workers’ compensation rules if applicable, and backup care.",
+          },
+          {
+            question: "What costs should I add to daycare tuition?",
+            answer:
+              "Include registration fees, deposits, meals, supplies, late pickup fees, annual increases, commuting costs, closure days, and backup care.",
+          },
+          {
+            question: "Is a nanny worth the extra money?",
+            answer:
+              "A nanny may be worth it if schedule flexibility, multiple children, commute savings, in-home care, or job protection outweigh the higher cost. It is risky if the cost creates negative monthly cash flow or drains savings.",
+          },
+          {
+            question: "Should I choose the cheapest childcare option?",
+            answer:
+              "Not always. The cheapest option can be wrong if it is unreliable, creates missed work, or does not fit your schedule. The best option is affordable, reliable, and realistic for your household.",
+          },
+        ]}
+      />
+
+      <MethodologySection category="baby and parenting spending" updated="June 2026" />
+
+      <RelatedGuides
+        guides={[
+          {
+            title: "Baby & Parenting Calculators",
+            href: "/baby-parenting-calculators",
+            description:
+              "Browse baby cost calculators for childcare, first-year expenses, maternity leave, baby gear, and family planning.",
+          },
+          {
+            title: "What Counts as Debt?",
+            href: "/what-counts-as-debt",
+            description:
+              "Understand which obligations should be included when estimating financial pressure.",
+          },
+          {
+            title: "How Much Emergency Savings Should I Have?",
+            href: "/how-much-emergency-savings-should-i-have",
+            description:
+              "Estimate how much emergency cushion can protect your household before major life expenses.",
+          },
+        ]}
+      />
+
+      <RelatedCalculators
+        calculators={[
+          {
+            category: "Baby & Parenting",
+            title: "Should I Spend This Much on Childcare?",
+            href: "/should-i-spend-this-much-on-childcare",
+          },
+          {
+            category: "Baby & Parenting",
+            title: "Can We Afford to Have a Baby?",
+            href: "/can-we-afford-to-have-a-baby",
+          },
+          {
+            category: "Baby & Parenting",
+            title: "Can We Afford for One Parent to Stay Home?",
+            href: "/one-parent-stay-home",
+          },
+          {
+            category: "Baby & Parenting",
+            title: "Can We Afford a Second Child?",
+            href: "/second-child",
+          },
+        ]}
+      />
+    </CalculatorPageShell>
+  </div>
+
+  <script is:inline>
+    const clamp = (value, min, max) => Math.min(Math.max(value, min), max);
+
+    const getNumber = (id) => {
+      const rawValue = document.getElementById(id)?.value;
+      const value = Number(rawValue);
+      return Number.isFinite(value) && value >= 0 ? value : 0;
+    };
+
+    function getPressureLevel(score) {
+      if (score <= 30) {
+        return {
+          label: "Low Pressure",
+          stress: "Low pressure",
+          color: "#16a34a",
+        };
+      }
+
+      if (score <= 60) {
+        return {
+          label: "Moderate Pressure",
+          stress: "Moderate pressure",
+          color: "#ca8a04",
+        };
+      }
+
+      return {
+        label: "High Pressure",
+        stress: "High pressure",
+        color: "#dc2626",
+      };
+    }
+
+    function scoreOption({
+      monthlyCost,
+      income,
+      savings,
+      expenses,
+      debt,
+      backupCare,
+      fitPenalty,
+      fitBonus,
+    }) {
+      const monthlyBurn = expenses + debt + monthlyCost + backupCare;
+      const monthlyRemaining = income - monthlyBurn;
+      const childcareRatio = income > 0 ? ((monthlyCost + backupCare) / income) * 100 : 100;
+      const fixedRatio = income > 0 ? ((expenses + debt) / income) * 100 : 100;
+      const totalRatio = income > 0 ? (monthlyBurn / income) * 100 : 100;
+      const emergencyMonths = monthlyBurn > 0 ? savings / monthlyBurn : savings > 0 ? 999 : 0;
+
+      const hasAbsurdIncomeBuffer =
+        income >= monthlyBurn * 50 &&
+        monthlyCost + backupCare <= income * 0.03 &&
+        monthlyRemaining >= income * 0.8;
+
+      const hasAbsurdSavingsBuffer =
+        savings > 0 &&
+        emergencyMonths >= 60 &&
+        monthlyCost + backupCare <= savings * 0.01;
+
+      const hasHugeIncomeBuffer =
+        income >= monthlyBurn * 35 &&
+        monthlyCost + backupCare <= income * 0.05 &&
+        monthlyRemaining >= income * 0.7;
+
+      const hasHugeSavingsBuffer =
+        savings > 0 &&
+        emergencyMonths >= 36 &&
+        monthlyCost + backupCare <= savings * 0.02;
+
+      if (hasAbsurdIncomeBuffer || hasAbsurdSavingsBuffer || hasHugeIncomeBuffer || hasHugeSavingsBuffer) {
+        return {
+          score: 0,
+          monthlyRemaining,
+          monthlyBurn,
+          childcareRatio,
+          emergencyMonths,
+        };
+      }
+
+      let score = 0;
+
+      score += clamp(childcareRatio * 1.35, 0, 42);
+      score += clamp(fixedRatio * 0.22, 0, 24);
+      score += clamp(totalRatio * 0.25, 0, 28);
+
+      if (monthlyRemaining < 0) score += 30;
+      else if (monthlyRemaining < income * 0.05) score += 20;
+      else if (monthlyRemaining < income * 0.12) score += 12;
+      else if (monthlyRemaining > income * 0.5) score -= 18;
+      else if (monthlyRemaining > income * 0.35) score -= 12;
+      else if (monthlyRemaining > income * 0.25) score -= 7;
+
+      if (emergencyMonths < 1 && income < 14000) score += 22;
+      else if (emergencyMonths < 3 && income < 17000) score += 14;
+      else if (emergencyMonths < 6 && income < 20000) score += 7;
+      else if (emergencyMonths >= 24) score -= 18;
+      else if (emergencyMonths >= 12) score -= 12;
+      else if (emergencyMonths >= 6) score -= 7;
+
+      score += fitPenalty;
+      score -= fitBonus;
+
+      if (
+        childcareRatio < 8 &&
+        fixedRatio < 35 &&
+        emergencyMonths >= 24 &&
+        monthlyRemaining > income * 0.45
+      ) {
+        score = Math.min(score, 12);
+      }
+
+      if (
+        childcareRatio < 5 &&
+        fixedRatio < 30 &&
+        emergencyMonths >= 36 &&
+        monthlyRemaining > income * 0.6
+      ) {
+        score = 0;
+      }
+
+      if (
+        income >= monthlyBurn * 40 &&
+        monthlyCost + backupCare <= income * 0.04
+      ) {
+        score = 0;
+      }
+
+      return {
+        score: Math.round(clamp(score, 0, 100)),
+        monthlyRemaining,
+        monthlyBurn,
+        childcareRatio,
+        emergencyMonths,
+      };
+    }
+
+    function calculateCareChoice() {
+      const daycareCost = getNumber("daycareCost");
+      const nannyCost = getNumber("nannyCost");
+      const nannyPayroll = getNumber("nannyPayroll");
+      const backupCare = getNumber("backupCare");
+      const commuteCost = getNumber("commuteCost");
+      const income = getNumber("income");
+      const savings = getNumber("savings");
+      const expenses = getNumber("expenses");
+      const debt = getNumber("debt");
+
+      const children = document.getElementById("children").value;
+      const scheduleNeed = document.getElementById("scheduleNeed").value;
+      const availability = document.getElementById("availability").value;
+      const sickCare = document.getElementById("sickCare").value;
+      const preference = document.getElementById("preference").value;
+
+      const result = document.getElementById("result");
+      const scoreEl = document.getElementById("score");
+      const barFill = document.getElementById("barFill");
+      const recommendationEl = document.getElementById("recommendation");
+      const daycareMetricEl = document.getElementById("daycareMetric");
+      const nannyMetricEl = document.getElementById("nannyMetric");
+      const cashFlowEl = document.getElementById("cashFlow");
+      const savingsMetricEl = document.getElementById("savingsMetric");
+      const guidanceEl = document.getElementById("guidance");
+
+      result.style.display = "block";
+
+      if ((daycareCost <= 0 && nannyCost <= 0) || income <= 0) {
+        scoreEl.textContent = "Add your numbers first";
+        barFill.style.width = "0%";
+        barFill.style.background = "#16a34a";
+        recommendationEl.innerHTML = "";
+        daycareMetricEl.innerHTML = "";
+        nannyMetricEl.innerHTML = "";
+        cashFlowEl.innerHTML = "";
+        savingsMetricEl.innerHTML = "";
+        guidanceEl.textContent =
+          "Enter at least one childcare cost and your monthly take-home income so the calculator can compare daycare and nanny pressure.";
+        return;
+      }
+
+      const daycareMonthly = daycareCost + commuteCost + backupCare;
+      const nannyMonthly = nannyCost + nannyPayroll + backupCare;
+
+      let daycareFitPenalty = 0;
+      let nannyFitPenalty = 0;
+      let daycareFitBonus = 0;
+      let nannyFitBonus = 0;
+
+      if (children === "2") nannyFitBonus += 4;
+      if (children === "3") nannyFitBonus += 8;
+
+      if (scheduleNeed === "medium") nannyFitBonus += 5;
+      if (scheduleNeed === "medium") daycareFitPenalty += 3;
+      if (scheduleNeed === "high") nannyFitBonus += 10;
+      if (scheduleNeed === "high") daycareFitPenalty += 10;
+
+      if (sickCare === "medium") nannyFitBonus += 3;
+      if (sickCare === "high") nannyFitBonus += 7;
+
+      if (availability === "daycare") nannyFitPenalty += 8;
+      if (availability === "nanny") daycareFitPenalty += 8;
+      if (availability === "limited") {
+        daycareFitPenalty += 6;
+        nannyFitPenalty += 6;
+      }
+
+      if (preference === "daycare") daycareFitBonus += 4;
+      if (preference === "nanny") nannyFitBonus += 4;
+
+      const daycare = scoreOption({
+        monthlyCost: daycareCost + commuteCost,
+        income,
+        savings,
+        expenses,
+        debt,
+        backupCare,
+        fitPenalty: daycareFitPenalty,
+        fitBonus: daycareFitBonus,
+      });
+
+      const nanny = scoreOption({
+        monthlyCost: nannyCost + nannyPayroll,
+        income,
+        savings,
+        expenses,
+        debt,
+        backupCare,
+        fitPenalty: nannyFitPenalty,
+        fitBonus: nannyFitBonus,
+      });
+
+      const daycareAvailable = daycareCost > 0;
+      const nannyAvailable = nannyCost > 0;
+
+      let chosen = null;
+      let alternate = null;
+      let recommendation = "";
+
+      if (daycareAvailable && !nannyAvailable) {
+        chosen = { name: "Daycare", ...daycare, monthly: daycareMonthly };
+        alternate = null;
+        recommendation = "Daycare is the only priced option.";
+      } else if (!daycareAvailable && nannyAvailable) {
+        chosen = { name: "Nanny", ...nanny, monthly: nannyMonthly };
+        alternate = null;
+        recommendation = "A nanny is the only priced option.";
+      } else if (daycare.score + 8 < nanny.score) {
+        chosen = { name: "Daycare", ...daycare, monthly: daycareMonthly };
+        alternate = { name: "Nanny", ...nanny, monthly: nannyMonthly };
+        recommendation = "Daycare appears to be the better fit financially.";
+      } else if (nanny.score + 8 < daycare.score) {
+        chosen = { name: "Nanny", ...nanny, monthly: nannyMonthly };
+        alternate = { name: "Daycare", ...daycare, monthly: daycareMonthly };
+        recommendation = "A nanny appears to be the better fit after cost and schedule factors.";
+      } else {
+        chosen =
+          daycare.monthlyRemaining >= nanny.monthlyRemaining
+            ? { name: "Daycare", ...daycare, monthly: daycareMonthly }
+            : { name: "Nanny", ...nanny, monthly: nannyMonthly };
+        alternate =
+          chosen.name === "Daycare"
+            ? { name: "Nanny", ...nanny, monthly: nannyMonthly }
+            : { name: "Daycare", ...daycare, monthly: daycareMonthly };
+        recommendation = "Both options are close. Choose based on reliability, schedule fit, and backup care.";
+      }
+
+      const level = getPressureLevel(chosen.score);
+
+      let guidance = "";
+
+      if (chosen.score === 0) {
+        guidance =
+          `${chosen.name} creates essentially no financial pressure based on the numbers provided. The monthly childcare cost is tiny compared with income, savings, and remaining cash flow.`;
+      } else if (chosen.score <= 30) {
+        guidance =
+          `${chosen.name} looks financially manageable. Your estimated cash flow after this option is about $${chosen.monthlyRemaining.toLocaleString()} per month, with roughly ${Math.max(chosen.emergencyMonths, 0).toFixed(1)} months of emergency cushion.`;
+      } else if (chosen.score <= 60) {
+        guidance =
+          `${chosen.name} may work, but it creates noticeable pressure. Before committing, confirm all fees, backup care, sick-day plans, and annual increases.`;
+      } else {
+        guidance =
+          `${chosen.name} could create serious financial strain. Consider a lower-cost provider, nanny share, schedule adjustment, family help, or delaying optional expenses before locking this in.`;
+      }
+
+      const monthlyDifference = Math.abs(daycareMonthly - nannyMonthly);
+
+      scoreEl.textContent = `${level.label} — ${chosen.score}/100`;
+      scoreEl.style.color = level.color;
+      barFill.style.width = `${chosen.score}%`;
+      barFill.style.background = level.color;
+
+      recommendationEl.innerHTML = `<strong>Recommendation:</strong> ${recommendation}`;
+      daycareMetricEl.innerHTML = `<strong>Daycare estimated monthly cost:</strong> $${daycareMonthly.toLocaleString()} · Pressure score: ${daycare.score}/100`;
+      nannyMetricEl.innerHTML = `<strong>Nanny estimated monthly cost:</strong> $${nannyMonthly.toLocaleString()} · Pressure score: ${nanny.score}/100`;
+      cashFlowEl.innerHTML = `<strong>Monthly difference:</strong> $${monthlyDifference.toLocaleString()}`;
+      savingsMetricEl.innerHTML = `<strong>Emergency cushion with recommended option:</strong> ${Math.max(chosen.emergencyMonths, 0).toFixed(1)} months`;
+      guidanceEl.textContent = guidance;
+    }
+
+    document
+      .getElementById("careButton")
+      .addEventListener("click", calculateCareChoice);
+  </script>
+</Layout>

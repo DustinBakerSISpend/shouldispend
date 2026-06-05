@@ -1,0 +1,599 @@
+---
+import Layout from "../layouts/Layout.astro";
+import CalculatorPageShell from "../components/CalculatorPageShell.astro";
+import FAQSection from "../components/FAQSection.astro";
+import RelatedCalculators from "../components/RelatedCalculators.astro";
+import RelatedGuides from "../components/RelatedGuides.astro";
+import MethodologySection from "../components/MethodologySection.astro";
+import FinancialRedFlags from "../components/FinancialRedFlags.astro";
+import CalculatorAssumptions from "../components/CalculatorAssumptions.astro";
+import KeyCostCategories from "../components/KeyCostCategories.astro";
+import ReduceCostTips from "../components/ReduceCostTips.astro";
+import WhenSpendingMakesSense from "../components/WhenSpendingMakesSense.astro";
+---
+
+<Layout
+  title="Should I Buy a Minivan?"
+  description="Use this minivan affordability calculator to estimate whether a minivan payment fits your income, savings, insurance, fuel, debt, childcare, family size, and monthly cash flow."
+>
+  <style>
+    .container { max-width: 950px; margin: 0 auto; padding: 60px 20px; }
+    .content-section { max-width: 760px; margin: 72px auto 0; }
+    .card { background: var(--card); border: 1px solid var(--border); border-radius: 28px; padding: 34px; }
+    h2 { margin-top: 0; font-size: 2rem; }
+    .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 22px; margin-bottom: 28px; }
+    label { display: block; margin-bottom: 10px; font-weight: 700; }
+    input, select { width: 100%; padding: 18px; border-radius: 14px; border: 1px solid var(--border); font-size: 1.1rem; box-sizing: border-box; background: white; }
+    button { background: #0f172a; color: white; border: none; padding: 16px 28px; border-radius: 14px; font-size: 1rem; font-weight: 700; cursor: pointer; margin-top: 10px; width: 100%; display: block; }
+    button:hover { opacity: 0.92; }
+    .result { margin-top: 40px; border: 1px solid var(--border); border-radius: 24px; padding: 28px; display: none; background: #f8fafc; }
+    .score { font-size: 3rem; font-weight: 800; margin-bottom: 16px; }
+    .bar { width: 100%; height: 16px; background: #dbe3ee; border-radius: 999px; overflow: hidden; margin-bottom: 24px; }
+    .fill { height: 100%; width: 0%; background: #16a34a; border-radius: 999px; transition: width 0.4s ease; }
+    .metric { margin-bottom: 14px; font-size: 1.05rem; }
+    .guidance { margin-top: 26px; font-size: 1.15rem; line-height: 1.7; }
+    .disclaimer { margin-top: 30px; font-size: 0.9rem; color: var(--muted); }
+    .helper-link { margin-top: 10px; font-size: 0.9rem; }
+    .helper-link a { color: var(--primary); font-weight: 600; }
+    .content-section p, .content-section li { line-height: 1.8; }
+  </style>
+
+  <div class="container">
+    <CalculatorPageShell
+      eyebrow="Baby & Parenting Calculator"
+      title="Should I Buy a Minivan?"
+      description="Estimate whether a minivan fits your household after payment, insurance, fuel, maintenance, savings, debt, childcare, family size, and monthly flexibility."
+    >
+      <div class="card">
+        <h2>Minivan Affordability Pressure Verdict</h2>
+
+        <div class="grid">
+          <div>
+            <label for="vanPayment">Estimated Monthly Minivan Payment</label>
+            <input id="vanPayment" type="number" placeholder="750" min="0" inputmode="decimal" />
+          </div>
+
+          <div>
+            <label for="income">Monthly Take-Home Income</label>
+            <input id="income" type="number" placeholder="8500" min="0" inputmode="decimal" />
+          </div>
+
+          <div>
+            <label for="insurance">Monthly Minivan Insurance</label>
+            <input id="insurance" type="number" placeholder="180" min="0" inputmode="decimal" />
+          </div>
+
+          <div>
+            <label for="fuelMaintenance">Monthly Fuel + Maintenance</label>
+            <input id="fuelMaintenance" type="number" placeholder="300" min="0" inputmode="decimal" />
+          </div>
+
+          <div>
+            <label for="savings">Emergency Savings</label>
+            <input id="savings" type="number" placeholder="25000" min="0" inputmode="decimal" />
+          </div>
+
+          <div>
+            <label for="housing">Monthly Rent or Mortgage</label>
+            <input id="housing" type="number" placeholder="2200" min="0" inputmode="decimal" />
+          </div>
+
+          <div>
+            <label for="debt">Other Monthly Debt Payments</label>
+            <input id="debt" type="number" placeholder="800" min="0" inputmode="decimal" />
+            <div class="helper-link">
+              <a href="/what-counts-as-debt">Not sure what counts as debt? Read the debt guide</a>
+            </div>
+          </div>
+
+          <div>
+            <label for="childcare">Monthly Childcare Costs</label>
+            <input id="childcare" type="number" placeholder="1600" min="0" inputmode="decimal" />
+          </div>
+
+          <div>
+            <label for="currentCarValue">Monthly Value From Replacing Current Car</label>
+            <input id="currentCarValue" type="number" placeholder="0" min="0" inputmode="decimal" />
+          </div>
+
+          <div>
+            <label for="familyNeed">Family Need</label>
+            <select id="familyNeed">
+              <option value="high">High — Multiple Kids / Car Seats / Daily Need</option>
+              <option value="medium">Medium — Growing Family / Convenience</option>
+              <option value="low">Low — Mostly Preference or Upgrade</option>
+            </select>
+          </div>
+
+          <div>
+            <label for="vehicleType">Minivan Choice</label>
+            <select id="vehicleType">
+              <option value="used">Used / Practical Model</option>
+              <option value="new">New Mainstream Model</option>
+              <option value="premium">Premium Trim or Expensive Model</option>
+            </select>
+          </div>
+
+          <div>
+            <label for="financing">Financing Plan</label>
+            <select id="financing">
+              <option value="standard">Standard Auto Loan</option>
+              <option value="cash">Cash or Very Small Loan</option>
+              <option value="long">Long Loan Term to Lower Payment</option>
+            </select>
+          </div>
+        </div>
+
+        <button id="minivanButton" type="button">Calculate Minivan Affordability</button>
+
+        <div class="result" id="result">
+          <div class="score" id="score"></div>
+          <div class="bar"><div class="fill" id="barFill"></div></div>
+          <div class="metric" id="paymentShare"></div>
+          <div class="metric" id="vanCostShare"></div>
+          <div class="metric" id="cashFlow"></div>
+          <div class="metric" id="savingsCushion"></div>
+          <div class="guidance" id="guidance"></div>
+          <div class="disclaimer">
+            This is a general educational estimate, not personal financial, lending, tax, insurance, parenting, safety, or vehicle-buying advice.
+          </div>
+        </div>
+      </div>
+
+      <div class="content-section">
+        <h2>What Minivan Affordability Really Means</h2>
+        <p>
+          A minivan can be one of the most practical family purchases: sliding doors, car-seat room, cargo space, safer loading, road-trip comfort, and easier daily routines. But it still has to survive the household budget.
+        </p>
+        <p>
+          The payment alone does not decide affordability. Insurance, fuel, maintenance, tires, registration, childcare, housing, debt, and emergency savings all matter. A minivan that solves a real family problem can make sense. A minivan that forces a stretched loan, drains savings, or crowds out childcare flexibility deserves a second look.
+        </p>
+      </div>
+
+      <WhenSpendingMakesSense
+        title="When Buying a Minivan Makes Sense"
+        items={[
+          "You have multiple kids, car seats, sports gear, strollers, or family logistics that make the space genuinely useful.",
+          "The full monthly cost fits after housing, debt, childcare, insurance, fuel, and savings.",
+          "The minivan replaces another vehicle cost or reduces transportation stress.",
+          "You have priced insurance and maintenance before committing.",
+          "You can buy a practical model without needing an uncomfortable loan term.",
+          "Emergency savings remain strong after the purchase.",
+        ]}
+      />
+
+      <div class="content-section">
+        <h2>When to Pause Before Buying a Minivan</h2>
+        <p>
+          A minivan purchase gets risky when the monthly payment only looks manageable before childcare, insurance, fuel, debt, and family expenses are included.
+        </p>
+        <p>
+          It also deserves caution if the upgrade is mostly emotional, if a premium trim is doing the damage, or if the only way to make the payment work is a long loan that keeps you underwater for years.
+        </p>
+      </div>
+
+      <KeyCostCategories
+        items={[
+          {
+            title: "Monthly payment",
+            description:
+              "The loan or lease payment is the visible cost, but it should be judged against take-home income and existing family obligations.",
+          },
+          {
+            title: "Insurance and operating costs",
+            description:
+              "Insurance, fuel, tires, maintenance, repairs, and registration can turn a comfortable payment into a tighter monthly burden.",
+          },
+          {
+            title: "Childcare and family costs",
+            description:
+              "A minivan should be evaluated alongside childcare, groceries, medical costs, baby supplies, school costs, and other recurring family expenses.",
+          },
+          {
+            title: "Practical family value",
+            description:
+              "Car-seat access, sliding doors, cargo room, stroller space, road trips, and daily logistics can justify cost when the need is real.",
+          },
+          {
+            title: "Loan risk",
+            description:
+              "Long terms, low down payments, negative equity, and premium trims can make the minivan feel affordable while increasing long-term pressure.",
+          },
+        ]}
+      />
+
+      <ReduceCostTips
+        items={[
+          "Get an insurance quote before choosing the minivan.",
+          "Compare used, certified pre-owned, and new models before choosing a premium trim.",
+          "Avoid stretching the loan term just to make the payment look comfortable.",
+          "Price tires, maintenance, registration, and expected fuel costs.",
+          "Consider whether a lower-trim minivan solves the same family problem.",
+          "Include childcare and baby-related costs before deciding the payment is affordable.",
+          "Use trade-in value carefully and avoid rolling negative equity into the next loan.",
+          "Keep emergency savings separate from the down payment if possible.",
+        ]}
+      />
+
+      <FinancialRedFlags
+        items={[
+          "The minivan payment only works before insurance, fuel, and maintenance are added.",
+          "The purchase would cause negative monthly cash flow after childcare, housing, and debt.",
+          "You need a very long loan term to make the payment feel affordable.",
+          "Emergency savings would be drained by the down payment or purchase.",
+          "The upgrade is mostly for preference, but the budget treats it like a necessity.",
+          "You are rolling negative equity into the minivan loan.",
+          "The premium trim creates the affordability problem, not the basic family vehicle need.",
+        ]}
+      />
+
+      <CalculatorAssumptions
+        items={[
+          "The calculator treats a minivan as a recurring family transportation expense.",
+          "Monthly income means take-home pay after taxes and payroll deductions.",
+          "Monthly debt payments include credit cards, student loans, personal loans, medical debt payments, car loans, and other required obligations.",
+          "Monthly value from replacing a current car can include avoided repairs, removed payments, lower rental needs, or practical household value.",
+          "The calculator does not estimate APR, taxes, registration, depreciation, resale value, warranty value, trade-in value, or negative equity.",
+          "Very high income or very large savings can produce a true 0/100 pressure score when minivan costs are tiny relative to available resources.",
+        ]}
+      />
+
+      <FAQSection
+        title="Minivan Affordability FAQ"
+        faqs={[
+          {
+            question: "Should I buy a minivan for my family?",
+            answer:
+              "A minivan can make sense if it solves real daily problems and the full cost fits your household budget after housing, debt, childcare, insurance, fuel, and savings.",
+          },
+          {
+            question: "Is a minivan cheaper than an SUV?",
+            answer:
+              "Sometimes. Minivans can offer more family space for the money than many large SUVs, but the true cost depends on payment, insurance, fuel, repairs, trim level, and financing.",
+          },
+          {
+            question: "How much should I spend on a minivan?",
+            answer:
+              "The safer number is the one that keeps monthly cash flow positive, preserves emergency savings, and does not require a stretched loan term or high-interest debt.",
+          },
+          {
+            question: "Should I buy new or used?",
+            answer:
+              "Used or certified pre-owned can reduce pressure if the vehicle is reliable and the payment fits. New may make sense if warranty, safety features, and long-term ownership justify the cost.",
+          },
+          {
+            question: "What matters more than the minivan payment?",
+            answer:
+              "The full monthly cost matters more: payment, insurance, fuel, maintenance, childcare, housing, debt, savings, and whether the vehicle solves a real family need.",
+          },
+        ]}
+      />
+
+      <MethodologySection category="baby and parenting spending" updated="June 2026" />
+
+      <RelatedGuides
+        guides={[
+          {
+            title: "Baby & Parenting Calculators",
+            href: "/baby-parenting-calculators",
+            description:
+              "Browse baby cost calculators for childcare, first-year expenses, maternity leave, baby gear, adoption, and family planning.",
+          },
+          {
+            title: "Car Calculators",
+            href: "/car-calculators",
+            description:
+              "Browse car payment, truck affordability, insurance, and transportation-cost calculators.",
+          },
+          {
+            title: "What Counts as Debt?",
+            href: "/what-counts-as-debt",
+            description:
+              "Understand which monthly obligations should be included when estimating financial pressure.",
+          },
+        ]}
+      />
+
+      <RelatedCalculators
+        calculators={[
+          {
+            category: "Baby & Parenting",
+            title: "Can We Afford a Second Child?",
+            href: "/second-child",
+          },
+          {
+            category: "Baby & Parenting",
+            title: "Should I Use Daycare or a Nanny?",
+            href: "/daycare-or-nanny",
+          },
+          {
+            category: "Cars",
+            title: "How Much Car Can I Afford?",
+            href: "/how-much-car-can-i-afford",
+          },
+          {
+            category: "Cars",
+            title: "How Much Truck Can I Afford?",
+            href: "/how-much-truck-can-i-afford",
+          },
+        ]}
+      />
+    </CalculatorPageShell>
+  </div>
+
+  <script is:inline>
+    const clamp = (value, min, max) => Math.min(Math.max(value, min), max);
+
+    const getNumber = (id) => {
+      const rawValue = document.getElementById(id)?.value;
+      const value = Number(rawValue);
+      return Number.isFinite(value) && value >= 0 ? value : 0;
+    };
+
+    function getPressureLevel(score) {
+      if (score <= 30) {
+        return {
+          label: "Low Pressure",
+          stress: "Low pressure",
+          color: "#16a34a",
+          action:
+            "Keep the full minivan cost visible, preserve emergency savings, and avoid paying extra for trim features your family does not need.",
+        };
+      }
+
+      if (score <= 60) {
+        return {
+          label: "Moderate Pressure",
+          stress: "Moderate pressure",
+          color: "#ca8a04",
+          action:
+            "Compare used and lower-trim options, verify insurance and fuel costs, and make sure childcare plus the minivan still leaves room in the budget.",
+        };
+      }
+
+      return {
+        label: "High Pressure",
+        stress: "High pressure",
+        color: "#dc2626",
+        action:
+          "Slow down before buying and consider a cheaper minivan, used model, lower trim, larger down payment, or delaying the purchase.",
+      };
+    }
+
+    function calculateMinivan() {
+      const vanPayment = getNumber("vanPayment");
+      const income = getNumber("income");
+      const insurance = getNumber("insurance");
+      const fuelMaintenance = getNumber("fuelMaintenance");
+      const savings = getNumber("savings");
+      const housing = getNumber("housing");
+      const debt = getNumber("debt");
+      const childcare = getNumber("childcare");
+      const currentCarValue = getNumber("currentCarValue");
+
+      const familyNeed = document.getElementById("familyNeed").value;
+      const vehicleType = document.getElementById("vehicleType").value;
+      const financing = document.getElementById("financing").value;
+
+      const result = document.getElementById("result");
+      const scoreEl = document.getElementById("score");
+      const barFill = document.getElementById("barFill");
+      const paymentShareEl = document.getElementById("paymentShare");
+      const vanCostShareEl = document.getElementById("vanCostShare");
+      const cashFlowEl = document.getElementById("cashFlow");
+      const savingsCushionEl = document.getElementById("savingsCushion");
+      const guidanceEl = document.getElementById("guidance");
+
+      result.style.display = "block";
+
+      if (vanPayment <= 0 || income <= 0) {
+        scoreEl.textContent = "Add your numbers first";
+        barFill.style.width = "0%";
+        barFill.style.background = "#16a34a";
+        paymentShareEl.innerHTML = "";
+        vanCostShareEl.innerHTML = "";
+        cashFlowEl.innerHTML = "";
+        savingsCushionEl.innerHTML = "";
+        guidanceEl.textContent =
+          "Enter a positive estimated minivan payment and monthly take-home income so the calculator can estimate affordability pressure.";
+        return;
+      }
+
+      const totalVanCost = vanPayment + insurance + fuelMaintenance;
+      const netVanCost = Math.max(totalVanCost - currentCarValue, 0);
+      const paymentIncomeShare = (vanPayment / income) * 100;
+      const vanCostShare = (totalVanCost / income) * 100;
+      const netVanCostShare = (netVanCost / income) * 100;
+      const familyObligationRatio = ((housing + debt + childcare + vanPayment) / income) * 100;
+      const monthlyRemaining = income - housing - debt - childcare - totalVanCost + currentCarValue;
+      const monthlyCoreOutflow = housing + debt + childcare + totalVanCost;
+      const emergencyMonths =
+        monthlyCoreOutflow > 0 ? savings / monthlyCoreOutflow : savings > 0 ? 999 : 0;
+
+      const hasAbsurdIncomeBuffer =
+        income >= monthlyCoreOutflow * 50 &&
+        totalVanCost <= income * 0.03 &&
+        monthlyRemaining >= income * 0.8;
+
+      const hasAbsurdSavingsBuffer =
+        savings > 0 &&
+        totalVanCost <= savings * 0.0025 &&
+        emergencyMonths >= 120 &&
+        monthlyRemaining > 0;
+
+      const hasHugeIncomeBuffer =
+        income >= monthlyCoreOutflow * 35 &&
+        totalVanCost <= income * 0.05 &&
+        monthlyRemaining >= income * 0.7;
+
+      const hasHugeSavingsBuffer =
+        savings > 0 &&
+        totalVanCost <= savings * 0.006 &&
+        emergencyMonths >= 60 &&
+        monthlyRemaining > 0;
+
+      const hasStrongIncomeBuffer =
+        income >= monthlyCoreOutflow * 18 &&
+        totalVanCost <= income * 0.08 &&
+        monthlyRemaining >= income * 0.55;
+
+      const hasStrongSavingsBuffer =
+        savings > 0 &&
+        totalVanCost <= savings * 0.015 &&
+        emergencyMonths >= 24 &&
+        monthlyRemaining > 0;
+
+      let pressureScore = 0;
+
+      if (
+        netVanCost === 0 ||
+        hasAbsurdIncomeBuffer ||
+        hasAbsurdSavingsBuffer ||
+        hasHugeIncomeBuffer ||
+        hasHugeSavingsBuffer
+      ) {
+        pressureScore = 0;
+      } else {
+        pressureScore += clamp(paymentIncomeShare * 2.15, 0, 32);
+        pressureScore += clamp(netVanCostShare * 1.65, 0, 38);
+        pressureScore += clamp(familyObligationRatio * 0.24, 0, 30);
+
+        if (monthlyRemaining < 0) pressureScore += 30;
+        else if (monthlyRemaining < income * 0.08) pressureScore += 18;
+        else if (monthlyRemaining < income * 0.15) pressureScore += 10;
+        else if (monthlyRemaining > income * 0.5) pressureScore -= 16;
+        else if (monthlyRemaining > income * 0.35) pressureScore -= 11;
+        else if (monthlyRemaining > income * 0.25) pressureScore -= 8;
+
+        if (emergencyMonths < 1 && income < 15000) pressureScore += 22;
+        else if (emergencyMonths < 3 && income < 20000) pressureScore += 12;
+        else if (emergencyMonths < 6 && income < 25000) pressureScore += 6;
+        else if (emergencyMonths >= 60) pressureScore -= 24;
+        else if (emergencyMonths >= 36) pressureScore -= 20;
+        else if (emergencyMonths >= 24) pressureScore -= 16;
+        else if (emergencyMonths >= 12) pressureScore -= 12;
+        else if (emergencyMonths >= 6) pressureScore -= 8;
+
+        if (vanCostShare >= 24) pressureScore += 18;
+        else if (vanCostShare >= 18) pressureScore += 10;
+
+        if (paymentIncomeShare >= 14) pressureScore += 14;
+        else if (paymentIncomeShare >= 10) pressureScore += 7;
+
+        if (childcare >= income * 0.25) pressureScore += 10;
+        else if (childcare >= income * 0.15) pressureScore += 5;
+
+        if (familyNeed === "high") pressureScore -= 10;
+        if (familyNeed === "medium") pressureScore -= 4;
+        if (familyNeed === "low") pressureScore += 12;
+
+        if (vehicleType === "used") pressureScore -= 5;
+        if (vehicleType === "new") pressureScore += 3;
+        if (vehicleType === "premium") pressureScore += 14;
+
+        if (financing === "cash") pressureScore -= 10;
+        if (financing === "long") pressureScore += 14;
+
+        if (currentCarValue >= totalVanCost * 0.75 && monthlyRemaining > 0) {
+          pressureScore -= 18;
+        } else if (currentCarValue >= totalVanCost * 0.5 && monthlyRemaining > 0) {
+          pressureScore -= 12;
+        } else if (currentCarValue >= totalVanCost * 0.25 && monthlyRemaining > 0) {
+          pressureScore -= 6;
+        }
+
+        if (hasStrongIncomeBuffer) pressureScore -= 16;
+        if (hasStrongSavingsBuffer) pressureScore -= 20;
+
+        if (
+          paymentIncomeShare < 8 &&
+          vanCostShare < 15 &&
+          emergencyMonths >= 6 &&
+          familyObligationRatio < 55 &&
+          monthlyRemaining > income * 0.25
+        ) {
+          pressureScore = Math.min(pressureScore, 28);
+        }
+
+        if (
+          paymentIncomeShare < 5 &&
+          vanCostShare < 10 &&
+          emergencyMonths >= 12 &&
+          familyObligationRatio < 45 &&
+          monthlyRemaining > income * 0.35
+        ) {
+          pressureScore = Math.min(pressureScore, 14);
+        }
+
+        if (
+          paymentIncomeShare < 3 &&
+          vanCostShare < 7 &&
+          emergencyMonths >= 24 &&
+          familyObligationRatio < 35 &&
+          monthlyRemaining > income * 0.5
+        ) {
+          pressureScore = 0;
+        }
+
+        if (
+          totalVanCost <= savings * 0.01 &&
+          emergencyMonths >= 36 &&
+          monthlyRemaining > 0
+        ) {
+          pressureScore = Math.min(pressureScore, 8);
+        }
+
+        if (
+          totalVanCost <= savings * 0.005 &&
+          emergencyMonths >= 60 &&
+          monthlyRemaining > 0
+        ) {
+          pressureScore = 0;
+        }
+
+        if (
+          income >= monthlyCoreOutflow * 40 &&
+          totalVanCost <= income * 0.04 &&
+          monthlyRemaining > income * 0.7
+        ) {
+          pressureScore = 0;
+        }
+      }
+
+      pressureScore = Math.round(clamp(pressureScore, 0, 100));
+      const level = getPressureLevel(pressureScore);
+
+      let guidance = "";
+
+      if (pressureScore === 0) {
+        guidance =
+          `This minivan appears to create essentially no financial pressure based on the numbers provided. The payment equals about ${paymentIncomeShare.toFixed(1)}% of take-home income, total minivan costs equal about ${vanCostShare.toFixed(1)}%, and the savings cushion is extremely strong.`;
+      } else if (pressureScore <= 30) {
+        guidance =
+          `This minivan appears financially manageable based on the numbers provided. The payment equals about ${paymentIncomeShare.toFixed(1)}% of take-home income, while total minivan costs equal about ${vanCostShare.toFixed(1)}%.`;
+      } else if (pressureScore <= 60) {
+        guidance =
+          `This minivan may work, but it creates noticeable pressure. The payment equals about ${paymentIncomeShare.toFixed(1)}% of take-home income, and total minivan costs equal about ${vanCostShare.toFixed(1)}%.`;
+      } else {
+        guidance =
+          `This minivan could create real financial strain. The payment equals about ${paymentIncomeShare.toFixed(1)}% of take-home income, and the combination of insurance, fuel, maintenance, childcare, housing, debt, or savings suggests you should review the full cost before committing.`;
+      }
+
+      scoreEl.textContent = `${level.label} — ${pressureScore}/100`;
+      scoreEl.style.color = level.color;
+      barFill.style.width = `${pressureScore}%`;
+      barFill.style.background = level.color;
+
+      paymentShareEl.innerHTML = `<strong>Minivan payment share:</strong> ${paymentIncomeShare.toFixed(1)}% of take-home income`;
+      vanCostShareEl.innerHTML = `<strong>Total minivan cost share:</strong> ${vanCostShare.toFixed(1)}% of take-home income`;
+      cashFlowEl.innerHTML = `<strong>Monthly cash flow after housing, debt, childcare, and minivan costs:</strong> $${Math.round(monthlyRemaining).toLocaleString()}`;
+      savingsCushionEl.innerHTML = `<strong>Estimated emergency cushion:</strong> ${Math.max(emergencyMonths, 0).toFixed(1)} months`;
+
+      guidanceEl.textContent = `${guidance} Recommended next step: ${level.action}`;
+    }
+
+    document
+      .getElementById("minivanButton")
+      .addEventListener("click", calculateMinivan);
+  </script>
+</Layout>

@@ -1,0 +1,638 @@
+---
+import Layout from "../layouts/Layout.astro";
+import CalculatorPageShell from "../components/CalculatorPageShell.astro";
+import FAQSection from "../components/FAQSection.astro";
+import RelatedCalculators from "../components/RelatedCalculators.astro";
+import RelatedGuides from "../components/RelatedGuides.astro";
+import MethodologySection from "../components/MethodologySection.astro";
+import FinancialRedFlags from "../components/FinancialRedFlags.astro";
+import CalculatorAssumptions from "../components/CalculatorAssumptions.astro";
+import KeyCostCategories from "../components/KeyCostCategories.astro";
+import ReduceCostTips from "../components/ReduceCostTips.astro";
+import WhenSpendingMakesSense from "../components/WhenSpendingMakesSense.astro";
+---
+
+<Layout
+  title="Should I Spend This Much on Summer Camp?"
+  description="Use this summer camp affordability calculator to estimate whether camp costs fit your income, savings, childcare needs, debt, payment timing, and monthly cash flow."
+>
+  <style>
+    .container { max-width: 950px; margin: 0 auto; padding: 60px 20px; }
+    .content-section { max-width: 760px; margin: 72px auto 0; }
+    .card { background: var(--card); border: 1px solid var(--border); border-radius: 28px; padding: 34px; }
+    h2 { margin-top: 0; font-size: 2rem; }
+    .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 22px; margin-bottom: 28px; }
+    label { display: block; margin-bottom: 10px; font-weight: 700; }
+    input, select { width: 100%; padding: 18px; border-radius: 14px; border: 1px solid var(--border); font-size: 1.1rem; box-sizing: border-box; background: white; }
+    button { background: #0f172a; color: white; border: none; padding: 16px 28px; border-radius: 14px; font-size: 1rem; font-weight: 700; cursor: pointer; margin-top: 10px; width: 100%; display: block; }
+    button:hover { opacity: 0.92; }
+    .result { margin-top: 40px; border: 1px solid var(--border); border-radius: 24px; padding: 28px; display: none; background: #f8fafc; }
+    .score { font-size: 3rem; font-weight: 800; margin-bottom: 16px; }
+    .bar { width: 100%; height: 16px; background: #dbe3ee; border-radius: 999px; overflow: hidden; margin-bottom: 24px; }
+    .fill { height: 100%; width: 0%; background: #16a34a; border-radius: 999px; transition: width 0.4s ease; }
+    .metric { margin-bottom: 14px; font-size: 1.05rem; }
+    .guidance { margin-top: 26px; font-size: 1.15rem; line-height: 1.7; }
+    .disclaimer { margin-top: 30px; font-size: 0.9rem; color: var(--muted); }
+    .helper-link { margin-top: 10px; font-size: 0.9rem; }
+    .helper-link a { color: var(--primary); font-weight: 600; }
+    .content-section p, .content-section li { line-height: 1.8; }
+  </style>
+
+  <div class="container">
+    <CalculatorPageShell
+      eyebrow="Baby & Parenting Calculator"
+      title="Should I Spend This Much on Summer Camp?"
+      description="Estimate whether summer camp fits your household after camp tuition, registration fees, supplies, transportation, childcare value, income, savings, debt, and monthly flexibility."
+    >
+      <div class="card">
+        <h2>Summer Camp Pressure Verdict</h2>
+
+        <div class="grid">
+          <div>
+            <label for="campCost">Total Summer Camp Cost</label>
+            <input id="campCost" type="number" placeholder="3500" min="0" inputmode="decimal" />
+          </div>
+
+          <div>
+            <label for="registrationFees">Registration / Activity Fees</label>
+            <input id="registrationFees" type="number" placeholder="300" min="0" inputmode="decimal" />
+          </div>
+
+          <div>
+            <label for="supplies">Supplies, Gear, Meals, or Uniforms</label>
+            <input id="supplies" type="number" placeholder="400" min="0" inputmode="decimal" />
+          </div>
+
+          <div>
+            <label for="transportation">Transportation Cost</label>
+            <input id="transportation" type="number" placeholder="250" min="0" inputmode="decimal" />
+          </div>
+
+          <div>
+            <label for="support">Discounts, Scholarships, or Family Help</label>
+            <input id="support" type="number" placeholder="500" min="0" inputmode="decimal" />
+          </div>
+
+          <div>
+            <label for="childcareValue">Childcare Value Replaced</label>
+            <input id="childcareValue" type="number" placeholder="1200" min="0" inputmode="decimal" />
+          </div>
+
+          <div>
+            <label for="income">Monthly Take-Home Income</label>
+            <input id="income" type="number" placeholder="8500" min="0" inputmode="decimal" />
+          </div>
+
+          <div>
+            <label for="savings">Emergency Savings</label>
+            <input id="savings" type="number" placeholder="22000" min="0" inputmode="decimal" />
+          </div>
+
+          <div>
+            <label for="expenses">Current Monthly Expenses</label>
+            <input id="expenses" type="number" placeholder="5200" min="0" inputmode="decimal" />
+          </div>
+
+          <div>
+            <label for="debt">Monthly Debt Payments</label>
+            <input id="debt" type="number" placeholder="750" min="0" inputmode="decimal" />
+            <div class="helper-link">
+              <a href="/what-counts-as-debt">Not sure what counts as debt? Read the debt guide</a>
+            </div>
+          </div>
+
+          <div>
+            <label for="monthsToPay">Months Until Fully Paid</label>
+            <input id="monthsToPay" type="number" placeholder="3" min="1" inputmode="decimal" />
+          </div>
+
+          <div>
+            <label for="campNeed">Camp Need</label>
+            <select id="campNeed">
+              <option value="high">High — Needed for Childcare / Work Coverage</option>
+              <option value="medium">Medium — Helpful Structure or Enrichment</option>
+              <option value="low">Low — Mostly Optional or Luxury</option>
+            </select>
+          </div>
+
+          <div>
+            <label for="campType">Camp Type</label>
+            <select id="campType">
+              <option value="day">Day Camp</option>
+              <option value="specialty">Specialty / Sports / Arts Camp</option>
+              <option value="overnight">Overnight Camp</option>
+              <option value="premium">Premium or Travel Camp</option>
+            </select>
+          </div>
+
+          <div>
+            <label for="paymentPlan">Payment Plan</label>
+            <select id="paymentPlan">
+              <option value="cash">Cash / Savings / Regular Budget</option>
+              <option value="installments">Installment Plan</option>
+              <option value="credit">Credit Card or High-Interest Debt</option>
+            </select>
+          </div>
+        </div>
+
+        <button id="campButton" type="button">Calculate Summer Camp Pressure</button>
+
+        <div class="result" id="result">
+          <div class="score" id="score"></div>
+          <div class="bar"><div class="fill" id="barFill"></div></div>
+          <div class="metric" id="stress"></div>
+          <div class="metric" id="netCost"></div>
+          <div class="metric" id="monthlyImpact"></div>
+          <div class="metric" id="cashFlow"></div>
+          <div class="metric" id="savingsCushion"></div>
+          <div class="guidance" id="guidance"></div>
+          <div class="disclaimer">
+            This is a general educational estimate, not parenting, tax, childcare, school, legal, or financial advice.
+          </div>
+        </div>
+      </div>
+
+      <div class="content-section">
+        <h2>What Summer Camp Affordability Really Means</h2>
+        <p>
+          Summer camp can be childcare, enrichment, social development, sports training, outdoor time, or a memorable childhood experience. But the cost should be judged against the full household budget, not just whether the camp sounds worthwhile.
+        </p>
+        <p>
+          The real cost may include tuition, registration fees, deposits, meals, uniforms, sports gear, transportation, extended care, field trips, late pickup fees, and payment timing. Camp may also replace childcare a parent would otherwise need to buy, which can reduce the real financial pressure.
+        </p>
+      </div>
+
+      <WhenSpendingMakesSense
+        title="When Spending on Summer Camp Makes Sense"
+        items={[
+          "Camp solves a real childcare gap while parents are working.",
+          "The cost fits without draining emergency savings or creating credit card debt.",
+          "The camp provides meaningful enrichment, structure, social time, or skill development.",
+          "Scholarships, discounts, or family help reduce the out-of-pocket cost.",
+          "Monthly cash flow remains positive after normal bills, debt, and camp payments.",
+          "The payment schedule gives you enough time to plan instead of rushing the expense.",
+        ]}
+      />
+
+      <div class="content-section">
+        <h2>When to Pause Before Paying for Camp</h2>
+        <p>
+          Summer camp gets risky when the price only looks affordable before supplies, transportation, extra fees, and payment timing are included. It also deserves caution if the camp is mostly optional but would force debt, reduce emergency savings, or crowd out more important family expenses.
+        </p>
+        <p>
+          A good camp decision balances value and pressure. A cheaper day camp that solves childcare may be a better financial decision than a premium specialty camp that creates stress all summer.
+        </p>
+      </div>
+
+      <KeyCostCategories
+        items={[
+          {
+            title: "Camp tuition",
+            description:
+              "The headline price usually covers the main program, but it may not include registration fees, deposits, extended care, meals, trips, or supplies.",
+          },
+          {
+            title: "Supplies and gear",
+            description:
+              "Sports equipment, swimsuits, uniforms, lunch supplies, sunscreen, bedding, backpacks, or activity materials can add up.",
+          },
+          {
+            title: "Transportation",
+            description:
+              "Driving, gas, parking, bus fees, rideshare costs, or schedule disruption can change the true camp cost.",
+          },
+          {
+            title: "Childcare value",
+            description:
+              "Camp may replace paid childcare, babysitting, or missed work time, which can reduce the real pressure.",
+          },
+          {
+            title: "Payment timing",
+            description:
+              "A camp that is affordable over six months may feel very different if it must be paid in full next week.",
+          },
+        ]}
+      />
+
+      <ReduceCostTips
+        items={[
+          "Ask for the full fee list before registering.",
+          "Look for early-bird discounts, sibling discounts, scholarships, or community programs.",
+          "Compare day camps before choosing overnight or premium specialty camps.",
+          "Use camp to replace childcare only if hours actually match your work schedule.",
+          "Avoid high-interest credit cards for optional camps.",
+          "Budget for supplies, transportation, meals, and extended care.",
+          "Choose fewer weeks of a stronger camp instead of overcommitting the whole summer.",
+          "Keep emergency savings separate from camp spending when possible.",
+        ]}
+      />
+
+      <FinancialRedFlags
+        items={[
+          "Camp requires credit card debt or a payment plan you cannot comfortably handle.",
+          "The cost drains emergency savings before the summer starts.",
+          "The camp is optional, but the budget treats it like a necessity.",
+          "Transportation, supplies, meals, or extended care are not included.",
+          "Monthly cash flow turns negative while camp is being paid.",
+          "The camp does not actually solve the childcare gap you need covered.",
+          "You are choosing a premium camp because of pressure, guilt, or comparison.",
+        ]}
+      />
+
+      <CalculatorAssumptions
+        items={[
+          "Total camp cost includes tuition before discounts, scholarships, or family help.",
+          "Monthly income means take-home pay after taxes and payroll deductions.",
+          "Current monthly expenses should include housing, groceries, utilities, insurance, transportation, childcare, and normal household costs.",
+          "Childcare value replaced reduces pressure only when camp truly replaces care you would otherwise pay for.",
+          "The calculator does not estimate tax credits, dependent care FSA eligibility, camp quality, safety, licensing, or educational value.",
+          "Very high income or very large savings can produce a true 0/100 pressure score when camp costs are tiny relative to available resources.",
+        ]}
+      />
+
+      <FAQSection
+        title="Summer Camp Affordability FAQ"
+        faqs={[
+          {
+            question: "Is summer camp worth the money?",
+            answer:
+              "Summer camp can be worth it if it provides childcare, structure, enrichment, or meaningful experiences without damaging monthly cash flow or emergency savings.",
+          },
+          {
+            question: "How much should I spend on summer camp?",
+            answer:
+              "The safer amount is what you can pay without high-interest debt, without draining emergency savings, and without crowding out housing, food, childcare, debt payments, or other essentials.",
+          },
+          {
+            question: "Should I use savings for summer camp?",
+            answer:
+              "Using planned savings can make sense, especially for childcare coverage. Using emergency savings for an optional premium camp is riskier.",
+          },
+          {
+            question: "What hidden costs should I expect?",
+            answer:
+              "Common hidden costs include registration fees, deposits, supplies, gear, meals, transportation, extended care, field trips, and late pickup fees.",
+          },
+          {
+            question: "Is overnight camp too expensive?",
+            answer:
+              "Not always, but overnight camp often adds more pressure than day camp. It should be judged against savings, cash flow, family need, and whether lower-cost options solve the same problem.",
+          },
+        ]}
+      />
+
+      <MethodologySection category="baby and parenting spending" updated="June 2026" />
+
+      <RelatedGuides
+        guides={[
+          {
+            title: "Baby & Parenting Calculators",
+            href: "/baby-parenting-calculators",
+            description:
+              "Browse baby and parenting calculators for childcare, first-year costs, maternity leave, adoption, minivans, and summer camp.",
+          },
+          {
+            title: "How Much Emergency Savings Should I Have?",
+            href: "/how-much-emergency-savings-should-i-have",
+            description:
+              "Estimate how much emergency cushion can protect your household before major life expenses.",
+          },
+          {
+            title: "What Counts as Debt?",
+            href: "/what-counts-as-debt",
+            description:
+              "Understand which obligations should be included when estimating financial pressure.",
+          },
+        ]}
+      />
+
+      <RelatedCalculators
+        calculators={[
+          {
+            category: "Baby & Parenting",
+            title: "Should I Use Daycare or a Nanny?",
+            href: "/daycare-or-nanny",
+          },
+          {
+            category: "Baby & Parenting",
+            title: "Should I Buy a Minivan?",
+            href: "/minivan",
+          },
+          {
+            category: "Baby & Parenting",
+            title: "Can We Afford a Second Child?",
+            href: "/second-child",
+          },
+          {
+            category: "Baby & Parenting",
+            title: "Can We Afford to Have a Baby?",
+            href: "/can-we-afford-to-have-a-baby",
+          },
+        ]}
+      />
+    </CalculatorPageShell>
+  </div>
+
+  <script is:inline>
+  const clamp = (value, min, max) => Math.min(Math.max(value, min), max);
+
+  const getNumber = (id) => {
+    const rawValue = document.getElementById(id)?.value;
+    const value = Number(rawValue);
+    return Number.isFinite(value) && value >= 0 ? value : 0;
+  };
+
+  function getPressureLevel(score) {
+    if (score <= 30) {
+      return {
+        label: "Low Pressure",
+        stress: "Low pressure",
+        color: "#16a34a",
+        action:
+          "Register if the camp fits your schedule and value goals, while keeping emergency savings protected.",
+      };
+    }
+
+    if (score <= 60) {
+      return {
+        label: "Moderate Pressure",
+        stress: "Moderate pressure",
+        color: "#ca8a04",
+        action:
+          "Compare lower-cost camps, shorten the number of weeks, confirm all fees, and avoid paying for extras that do not solve a real need.",
+      };
+    }
+
+    return {
+      label: "High Pressure",
+      stress: "High pressure",
+      color: "#dc2626",
+      action:
+        "Pause before registering and look for scholarships, fewer weeks, community programs, family help, or a cheaper childcare plan.",
+    };
+  }
+
+  function calculateCampPressure() {
+    const campCost = getNumber("campCost");
+    const registrationFees = getNumber("registrationFees");
+    const supplies = getNumber("supplies");
+    const transportation = getNumber("transportation");
+    const support = getNumber("support");
+    const childcareValue = getNumber("childcareValue");
+    const income = getNumber("income");
+    const savings = getNumber("savings");
+    const expenses = getNumber("expenses");
+    const debt = getNumber("debt");
+    const monthsToPay = Math.max(getNumber("monthsToPay"), 1);
+
+    const campNeed = document.getElementById("campNeed").value;
+    const campType = document.getElementById("campType").value;
+    const paymentPlan = document.getElementById("paymentPlan").value;
+
+    const result = document.getElementById("result");
+    const scoreEl = document.getElementById("score");
+    const barFill = document.getElementById("barFill");
+    const stressEl = document.getElementById("stress");
+    const netCostEl = document.getElementById("netCost");
+    const monthlyImpactEl = document.getElementById("monthlyImpact");
+    const cashFlowEl = document.getElementById("cashFlow");
+    const savingsCushionEl = document.getElementById("savingsCushion");
+    const guidanceEl = document.getElementById("guidance");
+
+    result.style.display = "block";
+
+    const grossCampCost = campCost + registrationFees + supplies + transportation;
+    const outOfPocketCampCost = Math.max(grossCampCost - support, 0);
+    const netCampCost = Math.max(outOfPocketCampCost - childcareValue, 0);
+
+    if (grossCampCost <= 0 || income <= 0) {
+      scoreEl.textContent = "Add your numbers first";
+      barFill.style.width = "0%";
+      barFill.style.background = "#16a34a";
+      stressEl.innerHTML = "";
+      netCostEl.innerHTML = "";
+      monthlyImpactEl.innerHTML = "";
+      cashFlowEl.innerHTML = "";
+      savingsCushionEl.innerHTML = "";
+      guidanceEl.textContent =
+        "Enter a positive summer camp cost and monthly take-home income so the calculator can estimate affordability pressure.";
+      return;
+    }
+
+    const normalMonthlyBurn = expenses + debt;
+    const monthlyCampImpact = netCampCost / monthsToPay;
+    const remainingSavings = savings - outOfPocketCampCost;
+
+    const cashFunded =
+      paymentPlan === "cash" &&
+      savings > 0 &&
+      outOfPocketCampCost <= savings * 0.05 &&
+      remainingSavings > 0;
+
+    const budgetedMonthlyImpact = cashFunded
+      ? Math.min(monthlyCampImpact, income * 0.04)
+      : monthlyCampImpact;
+
+    const monthlyBurnWithCamp = normalMonthlyBurn + budgetedMonthlyImpact;
+    const monthlyRemaining = income - monthlyBurnWithCamp;
+
+    const emergencyMonths =
+      normalMonthlyBurn > 0
+        ? remainingSavings / normalMonthlyBurn
+        : remainingSavings > 0
+          ? 999
+          : 0;
+
+    const grossCampIncomeShare = (grossCampCost / income) * 100;
+    const netCampIncomeShare = (netCampCost / income) * 100;
+    const monthlyCampShare = (budgetedMonthlyImpact / income) * 100;
+    const savingsImpact =
+      savings > 0 ? (outOfPocketCampCost / savings) * 100 : outOfPocketCampCost > 0 ? 100 : 0;
+    const fixedObligationRatio = (normalMonthlyBurn / income) * 100;
+
+    const hasAbsurdIncomeBuffer =
+      income >= monthlyBurnWithCamp * 50 &&
+      netCampCost <= income * 0.03 &&
+      monthlyRemaining >= income * 0.8;
+
+    const hasAbsurdSavingsBuffer =
+      savings > 0 &&
+      outOfPocketCampCost <= savings * 0.01 &&
+      emergencyMonths >= 60 &&
+      monthlyRemaining > 0;
+
+    const hasHugeIncomeBuffer =
+      income >= monthlyBurnWithCamp * 30 &&
+      netCampCost <= income * 0.05 &&
+      monthlyRemaining >= income * 0.7;
+
+    const hasHugeSavingsBuffer =
+      savings > 0 &&
+      outOfPocketCampCost <= savings * 0.025 &&
+      emergencyMonths >= 24 &&
+      monthlyRemaining > 0;
+
+    const hasStrongIncomeBuffer =
+      income >= monthlyBurnWithCamp * 12 &&
+      netCampCost <= income * 0.12 &&
+      monthlyRemaining >= income * 0.45;
+
+    const hasStrongSavingsBuffer =
+      savings > 0 &&
+      outOfPocketCampCost <= savings * 0.05 &&
+      emergencyMonths >= 12 &&
+      monthlyRemaining > 0;
+
+    let pressureScore = 0;
+
+    if (
+      netCampCost === 0 ||
+      hasAbsurdIncomeBuffer ||
+      hasAbsurdSavingsBuffer ||
+      hasHugeIncomeBuffer ||
+      hasHugeSavingsBuffer
+    ) {
+      pressureScore = 0;
+    } else {
+      pressureScore += clamp(grossCampIncomeShare * 0.45, 0, 18);
+      pressureScore += clamp(netCampIncomeShare * 0.85, 0, 26);
+      pressureScore += clamp(monthlyCampShare * 1.4, 0, 22);
+      pressureScore += clamp(savingsImpact * 0.18, 0, 22);
+      pressureScore += clamp(fixedObligationRatio * 0.14, 0, 18);
+
+      if (remainingSavings < 0) pressureScore += 26;
+      else if (emergencyMonths < 1 && income < 14000) pressureScore += 20;
+      else if (emergencyMonths < 3 && income < 17000) pressureScore += 12;
+      else if (emergencyMonths < 6 && income < 20000) pressureScore += 6;
+      else if (emergencyMonths >= 36) pressureScore -= 22;
+      else if (emergencyMonths >= 24) pressureScore -= 18;
+      else if (emergencyMonths >= 12) pressureScore -= 12;
+      else if (emergencyMonths >= 6) pressureScore -= 8;
+
+      if (monthlyRemaining < 0 && !cashFunded) pressureScore += 24;
+      else if (monthlyRemaining < income * 0.08 && !cashFunded) pressureScore += 14;
+      else if (monthlyRemaining < income * 0.15 && !cashFunded) pressureScore += 7;
+      else if (monthlyRemaining > income * 0.45) pressureScore -= 14;
+      else if (monthlyRemaining > income * 0.3) pressureScore -= 8;
+
+      if (campNeed === "high") pressureScore -= 12;
+      if (campNeed === "medium") pressureScore -= 4;
+      if (campNeed === "low") pressureScore += 12;
+
+      if (campType === "specialty") pressureScore += 4;
+      if (campType === "overnight") pressureScore += 8;
+      if (campType === "premium") pressureScore += 16;
+
+      if (paymentPlan === "cash") pressureScore -= 8;
+      if (paymentPlan === "installments") pressureScore += 3;
+      if (paymentPlan === "credit") pressureScore += 22;
+
+      if (!cashFunded && monthsToPay <= 1 && netCampCost > income * 0.2) pressureScore += 8;
+      else if (monthsToPay >= 4) pressureScore -= 4;
+
+      if (childcareValue >= grossCampCost * 0.75 && remainingSavings > 0) {
+        pressureScore -= 18;
+      } else if (childcareValue >= grossCampCost * 0.5 && remainingSavings > 0) {
+        pressureScore -= 12;
+      } else if (childcareValue >= grossCampCost * 0.25 && remainingSavings > 0) {
+        pressureScore -= 6;
+      }
+
+      if (hasStrongIncomeBuffer) pressureScore -= 16;
+      if (hasStrongSavingsBuffer) pressureScore -= 20;
+
+      if (
+        netCampIncomeShare < 12 &&
+        savingsImpact < 5 &&
+        emergencyMonths >= 12 &&
+        fixedObligationRatio < 65 &&
+        remainingSavings > 0
+      ) {
+        pressureScore = Math.min(pressureScore, 24);
+      }
+
+      if (
+        netCampIncomeShare < 8 &&
+        savingsImpact < 3 &&
+        emergencyMonths >= 18 &&
+        fixedObligationRatio < 60 &&
+        remainingSavings > 0
+      ) {
+        pressureScore = Math.min(pressureScore, 14);
+      }
+
+      if (
+        netCampIncomeShare < 5 &&
+        savingsImpact < 2 &&
+        emergencyMonths >= 24 &&
+        fixedObligationRatio < 55 &&
+        remainingSavings > 0
+      ) {
+        pressureScore = Math.min(pressureScore, 6);
+      }
+
+      if (
+        outOfPocketCampCost <= savings * 0.02 &&
+        emergencyMonths >= 18 &&
+        paymentPlan === "cash" &&
+        remainingSavings > 0
+      ) {
+        pressureScore = Math.min(pressureScore, 12);
+      }
+
+      if (
+        outOfPocketCampCost <= savings * 0.01 &&
+        emergencyMonths >= 36 &&
+        paymentPlan === "cash" &&
+        remainingSavings > 0
+      ) {
+        pressureScore = 0;
+      }
+
+      if (
+        income >= monthlyBurnWithCamp * 35 &&
+        netCampCost <= income * 0.05 &&
+        monthlyRemaining > income * 0.65
+      ) {
+        pressureScore = 0;
+      }
+    }
+
+    pressureScore = Math.round(clamp(pressureScore, 0, 100));
+    const level = getPressureLevel(pressureScore);
+
+    let guidance = "";
+
+    if (pressureScore === 0) {
+      guidance =
+        `This summer camp appears to create essentially no financial pressure based on the numbers provided. The net camp cost is small relative to income or savings, and the savings cushion remains extremely strong.`;
+    } else if (pressureScore <= 30) {
+      guidance =
+        `This summer camp appears financially manageable based on the numbers provided. The net camp cost equals about ${netCampIncomeShare.toFixed(1)}% of one month’s take-home income, and the estimated savings cushion remains around ${Math.max(emergencyMonths, 0).toFixed(1)} months.`;
+    } else if (pressureScore <= 60) {
+      guidance =
+        `This summer camp may work, but it creates noticeable pressure. The out-of-pocket cost uses about ${savingsImpact.toFixed(1)}% of available savings, so confirm all fees and payment timing before registering.`;
+    } else {
+      guidance =
+        `This summer camp could create real financial strain. The combination of camp cost, supplies, transportation, savings impact, debt, or payment timing suggests you should look for a lower-cost option before committing.`;
+    }
+
+    scoreEl.textContent = `${level.label} — ${pressureScore}/100`;
+    scoreEl.style.color = level.color;
+    barFill.style.width = `${pressureScore}%`;
+    barFill.style.background = level.color;
+
+    stressEl.innerHTML = `<strong>Pressure level:</strong> ${level.stress}`;
+    netCostEl.innerHTML = `<strong>Estimated net camp cost after support and childcare value:</strong> $${Math.round(netCampCost).toLocaleString()}`;
+    monthlyImpactEl.innerHTML = `<strong>Estimated monthly camp impact:</strong> $${Math.round(monthlyCampImpact).toLocaleString()}`;
+    cashFlowEl.innerHTML = `<strong>Monthly cash flow while paying for camp:</strong> $${Math.round(monthlyRemaining).toLocaleString()}`;
+    savingsCushionEl.innerHTML = `<strong>Estimated emergency cushion after camp:</strong> ${Math.max(emergencyMonths, 0).toFixed(1)} months`;
+
+    guidanceEl.textContent = `${guidance} Recommended next step: ${level.action}`;
+  }
+
+  document
+    .getElementById("campButton")
+    .addEventListener("click", calculateCampPressure);
+</script>
+</Layout>

@@ -1,0 +1,606 @@
+---
+import Layout from "../layouts/Layout.astro";
+import CalculatorPageShell from "../components/CalculatorPageShell.astro";
+import FAQSection from "../components/FAQSection.astro";
+import RelatedCalculators from "../components/RelatedCalculators.astro";
+import RelatedGuides from "../components/RelatedGuides.astro";
+import MethodologySection from "../components/MethodologySection.astro";
+import FinancialRedFlags from "../components/FinancialRedFlags.astro";
+import CalculatorAssumptions from "../components/CalculatorAssumptions.astro";
+import KeyCostCategories from "../components/KeyCostCategories.astro";
+import ReduceCostTips from "../components/ReduceCostTips.astro";
+import WhenSpendingMakesSense from "../components/WhenSpendingMakesSense.astro";
+---
+
+<Layout
+  title="Can We Afford Adoption?"
+  description="Use this adoption affordability calculator to estimate adoption pressure using agency fees, legal costs, travel, grants, savings, income, debt, parental leave, childcare, and monthly flexibility."
+>
+  <style>
+    .container { max-width: 950px; margin: 0 auto; padding: 60px 20px; }
+    .content-section { max-width: 760px; margin: 72px auto 0; }
+    .card { background: var(--card); border: 1px solid var(--border); border-radius: 28px; padding: 34px; }
+    h2 { margin-top: 0; font-size: 2rem; }
+    .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 22px; margin-bottom: 28px; }
+    label { display: block; margin-bottom: 10px; font-weight: 700; }
+    input, select { width: 100%; padding: 18px; border-radius: 14px; border: 1px solid var(--border); font-size: 1.1rem; box-sizing: border-box; background: white; }
+    button { background: #0f172a; color: white; border: none; padding: 16px 28px; border-radius: 14px; font-size: 1rem; font-weight: 700; cursor: pointer; margin-top: 10px; width: 100%; display: block; }
+    button:hover { opacity: 0.92; }
+    .result { margin-top: 40px; border: 1px solid var(--border); border-radius: 24px; padding: 28px; display: none; background: #f8fafc; }
+    .score { font-size: 3rem; font-weight: 800; margin-bottom: 16px; }
+    .bar { width: 100%; height: 16px; background: #dbe3ee; border-radius: 999px; overflow: hidden; margin-bottom: 24px; }
+    .fill { height: 100%; width: 0%; background: #16a34a; border-radius: 999px; transition: width 0.4s ease; }
+    .metric { margin-bottom: 14px; font-size: 1.05rem; }
+    .guidance { margin-top: 26px; font-size: 1.15rem; line-height: 1.7; }
+    .disclaimer { margin-top: 30px; font-size: 0.9rem; color: var(--muted); }
+    .helper-link { margin-top: 10px; font-size: 0.9rem; }
+    .helper-link a { color: var(--primary); font-weight: 600; }
+    .content-section p, .content-section li { line-height: 1.8; }
+  </style>
+
+  <div class="container">
+    <CalculatorPageShell
+      eyebrow="Baby & Parenting Calculator"
+      title="Can We Afford Adoption?"
+      description="Estimate whether adoption fits your household finances after agency fees, legal costs, travel, grants, savings, debt, leave time, childcare, and monthly cash flow."
+    >
+      <div class="card">
+        <h2>Adoption Affordability Verdict</h2>
+
+        <div class="grid">
+          <div>
+            <label for="agencyFees">Agency / Program Fees</label>
+            <input id="agencyFees" type="number" placeholder="25000" min="0" inputmode="decimal" />
+          </div>
+
+          <div>
+            <label for="legalFees">Legal / Court / Home Study Costs</label>
+            <input id="legalFees" type="number" placeholder="7000" min="0" inputmode="decimal" />
+          </div>
+
+          <div>
+            <label for="travelCosts">Travel / Lodging / Placement Costs</label>
+            <input id="travelCosts" type="number" placeholder="5000" min="0" inputmode="decimal" />
+          </div>
+
+          <div>
+            <label for="postPlacement">Post-Placement / Transition Costs</label>
+            <input id="postPlacement" type="number" placeholder="3000" min="0" inputmode="decimal" />
+          </div>
+
+          <div>
+            <label for="grants">Grants, Employer Help, or Family Support</label>
+            <input id="grants" type="number" placeholder="5000" min="0" inputmode="decimal" />
+          </div>
+
+          <div>
+            <label for="income">Monthly Take-Home Income</label>
+            <input id="income" type="number" placeholder="8500" min="0" inputmode="decimal" />
+          </div>
+
+          <div>
+            <label for="savings">Emergency Savings</label>
+            <input id="savings" type="number" placeholder="35000" min="0" inputmode="decimal" />
+          </div>
+
+          <div>
+            <label for="expenses">Current Monthly Expenses</label>
+            <input id="expenses" type="number" placeholder="5200" min="0" inputmode="decimal" />
+          </div>
+
+          <div>
+            <label for="debt">Monthly Debt Payments</label>
+            <input id="debt" type="number" placeholder="800" min="0" inputmode="decimal" />
+            <div class="helper-link">
+              <a href="/what-counts-as-debt">Not sure what counts as debt? Read the debt guide</a>
+            </div>
+          </div>
+
+          <div>
+            <label for="childcare">Expected Monthly Childcare Increase</label>
+            <input id="childcare" type="number" placeholder="1200" min="0" inputmode="decimal" />
+          </div>
+
+          <div>
+            <label for="leaveLoss">Expected Leave / Time-Off Income Loss</label>
+            <input id="leaveLoss" type="number" placeholder="4000" min="0" inputmode="decimal" />
+          </div>
+
+          <div>
+            <label for="recurringChildCosts">Monthly Child-Related Cost Increase</label>
+            <input id="recurringChildCosts" type="number" placeholder="600" min="0" inputmode="decimal" />
+          </div>
+
+          <div>
+            <label for="adoptionType">Adoption Path</label>
+            <select id="adoptionType">
+              <option value="domestic">Domestic Private / Agency</option>
+              <option value="international">International Adoption</option>
+              <option value="foster">Foster Care Adoption</option>
+              <option value="relative">Relative / Kinship Adoption</option>
+            </select>
+          </div>
+
+          <div>
+            <label for="financing">Financing Plan</label>
+            <select id="financing">
+              <option value="cash">Cash / Savings / Grants</option>
+              <option value="mixed">Some Savings, Some Loan</option>
+              <option value="credit">Credit Card or High-Interest Debt</option>
+            </select>
+          </div>
+
+          <div>
+            <label for="timeline">Timeline</label>
+            <select id="timeline">
+              <option value="planned">Planned Over 12+ Months</option>
+              <option value="soon">Expected Within 6–12 Months</option>
+              <option value="urgent">Fast-Moving or Uncertain Timeline</option>
+            </select>
+          </div>
+        </div>
+
+        <button id="adoptionButton" type="button">Calculate Adoption Pressure</button>
+
+        <div class="result" id="result">
+          <div class="score" id="score"></div>
+          <div class="bar"><div class="fill" id="barFill"></div></div>
+          <div class="metric" id="stress"></div>
+          <div class="metric" id="totalCost"></div>
+          <div class="metric" id="cashFlow"></div>
+          <div class="metric" id="savingsImpact"></div>
+          <div class="metric" id="monthlyImpact"></div>
+          <div class="guidance" id="guidance"></div>
+          <div class="disclaimer">
+            This is a general educational estimate, not adoption, legal, tax, grant, foster care, agency, medical, or financial advice.
+          </div>
+        </div>
+      </div>
+
+      <div class="content-section">
+        <h2>What Adoption Affordability Really Means</h2>
+        <p>
+          Adoption affordability is not just the headline agency fee. Families may also face home study costs, legal fees, court costs, travel, lodging, document fees, post-placement visits, unpaid leave, childcare changes, medical or therapy needs, and a long period of uncertainty before placement is final.
+        </p>
+        <p>
+          This calculator looks at both the near-term adoption cost and the household after the child arrives. A family may be able to pay the adoption invoice but still feel stretched if emergency savings disappear, monthly cash flow turns negative, or the plan depends on high-interest debt.
+        </p>
+      </div>
+
+      <WhenSpendingMakesSense
+        title="When Adoption May Be Financially Workable"
+        items={[
+          "You can cover agency, legal, travel, and post-placement costs without draining emergency savings.",
+          "Grants, employer benefits, family support, or planned savings reduce the out-of-pocket cost.",
+          "Monthly cash flow remains positive after childcare, supplies, insurance, food, and child-related expenses.",
+          "You have a realistic plan for leave time, travel, placement timing, and backup care.",
+          "You are not relying on high-interest credit cards to bridge the adoption cost.",
+          "You have room for uncertainty, delays, extra travel, legal changes, or post-placement support.",
+        ]}
+      />
+
+      <div class="content-section">
+        <h2>When to Slow Down Before Committing</h2>
+        <p>
+          Adoption can move emotionally faster than the financial plan. You may want to slow down if the plan requires draining savings, skipping emergency reserves, taking high-interest debt, ignoring childcare costs, or assuming grants that are not approved yet.
+        </p>
+        <p>
+          A safer adoption budget usually separates confirmed costs from hopeful offsets. Employer reimbursement, grants, tax credits, and family help can matter, but they should not be treated like cash until you understand timing, eligibility, and whether reimbursement happens before or after expenses are paid.
+        </p>
+      </div>
+
+      <KeyCostCategories
+        items={[
+          {
+            title: "Agency and program fees",
+            description:
+              "These may include application fees, program fees, matching fees, placement fees, and required agency payments depending on the adoption path.",
+          },
+          {
+            title: "Legal and home study costs",
+            description:
+              "Home studies, attorney fees, court filings, document preparation, background checks, and post-placement reports can add meaningful cost.",
+          },
+          {
+            title: "Travel and lodging",
+            description:
+              "Domestic travel, international travel, extended lodging, meals, transportation, passports, visas, and repeat trips can change the budget quickly.",
+          },
+          {
+            title: "Leave and transition costs",
+            description:
+              "Unpaid leave, reduced hours, travel time, placement transitions, and time away from work can affect income even after fees are paid.",
+          },
+          {
+            title: "Ongoing child costs",
+            description:
+              "Childcare, food, clothing, health insurance, therapy, school needs, diapers, supplies, and activities matter after placement.",
+          },
+        ]}
+      />
+
+      <ReduceCostTips
+        items={[
+          "Ask agencies for a full written fee schedule before committing.",
+          "Separate confirmed grants or reimbursements from hopeful support.",
+          "Check employer adoption benefits and dependent care benefits early.",
+          "Build a travel and lodging buffer if placement could require short-notice travel.",
+          "Avoid using high-interest credit cards for large adoption expenses.",
+          "Plan for post-placement reports, legal finalization, and transition costs.",
+          "Keep emergency savings separate from adoption savings if possible.",
+          "Compare adoption paths carefully because domestic, international, foster, and kinship adoption costs can differ dramatically.",
+        ]}
+      />
+
+      <FinancialRedFlags
+        items={[
+          "The adoption plan would drain most or all emergency savings.",
+          "The household would have negative monthly cash flow after placement.",
+          "The plan relies on grants, reimbursements, or tax benefits before they are confirmed.",
+          "Travel, legal, post-placement, or leave costs are not included in the estimate.",
+          "High-interest credit cards are needed to pay agency or legal fees.",
+          "Childcare and recurring child costs have not been added to the monthly budget.",
+          "The timeline is uncertain but the budget has no buffer.",
+        ]}
+      />
+
+      <CalculatorAssumptions
+        items={[
+          "Monthly income means take-home pay after taxes and payroll deductions.",
+          "Current monthly expenses should include housing, utilities, groceries, insurance, transportation, and normal household bills.",
+          "Monthly debt payments include credit cards, student loans, car loans, personal loans, and required debt obligations.",
+          "Grants, employer benefits, family support, or fundraising reduce the estimated out-of-pocket adoption cost only if entered by the user.",
+          "The calculator does not estimate legal eligibility, adoption approval, grant approval, tax credit timing, or agency suitability.",
+          "Very high income or very large savings can produce a true 0/100 pressure score when adoption costs are tiny relative to available resources.",
+        ]}
+      />
+
+      <FAQSection
+        title="Adoption Affordability FAQ"
+        faqs={[
+          {
+            question: "How much does adoption usually cost?",
+            answer:
+              "Adoption costs vary widely by path. Foster care adoption may have low direct costs, while private domestic or international adoption can involve agency fees, legal fees, travel, lodging, and post-placement costs.",
+          },
+          {
+            question: "Should we use emergency savings for adoption?",
+            answer:
+              "Using some savings may be reasonable, but draining the emergency fund can be risky because adoption often includes uncertain timing, travel, legal costs, and new monthly child expenses.",
+          },
+          {
+            question: "Do grants or employer benefits make adoption affordable?",
+            answer:
+              "They can help a lot, but timing matters. Some benefits reimburse after expenses are paid, and grants are not guaranteed until approved. Treat unconfirmed support carefully.",
+          },
+          {
+            question: "Is it okay to finance adoption?",
+            answer:
+              "Some families use loans, but high-interest credit card debt can create serious pressure. A safer plan keeps monthly payments manageable and protects emergency savings.",
+          },
+          {
+            question: "What costs do families forget when budgeting for adoption?",
+            answer:
+              "Commonly missed costs include travel, lodging, legal finalization, post-placement reports, unpaid leave, childcare, health insurance changes, therapy, school needs, and emergency backup funds.",
+          },
+        ]}
+      />
+
+      <MethodologySection category="baby and parenting spending" updated="June 2026" />
+
+      <RelatedGuides
+        guides={[
+          {
+            title: "Baby & Parenting Calculators",
+            href: "/baby-parenting-calculators",
+            description:
+              "Browse baby cost calculators for childcare, first-year expenses, maternity leave, baby gear, adoption, and family planning.",
+          },
+          {
+            title: "How Much Emergency Savings Should I Have?",
+            href: "/how-much-emergency-savings-should-i-have",
+            description:
+              "Estimate how much emergency cushion can protect your household before major life expenses.",
+          },
+          {
+            title: "What Counts as Debt?",
+            href: "/what-counts-as-debt",
+            description:
+              "Understand which obligations should be included when estimating financial pressure.",
+          },
+        ]}
+      />
+
+      <RelatedCalculators
+        calculators={[
+          {
+            category: "Baby & Parenting",
+            title: "Can We Afford to Have a Baby?",
+            href: "/can-we-afford-to-have-a-baby",
+          },
+          {
+            category: "Baby & Parenting",
+            title: "Can We Afford a Second Child?",
+            href: "/second-child",
+          },
+          {
+            category: "Baby & Parenting",
+            title: "Should I Use Daycare or a Nanny?",
+            href: "/daycare-or-nanny",
+          },
+          {
+            category: "Baby & Parenting",
+            title: "Baby Cost Calculator",
+            href: "/baby-cost-calculator",
+          },
+        ]}
+      />
+    </CalculatorPageShell>
+  </div>
+
+  <script is:inline>
+    const clamp = (value, min, max) => Math.min(Math.max(value, min), max);
+
+    const getNumber = (id) => {
+      const rawValue = document.getElementById(id)?.value;
+      const value = Number(rawValue);
+      return Number.isFinite(value) && value >= 0 ? value : 0;
+    };
+
+    function getPressureLevel(score) {
+      if (score <= 30) {
+        return {
+          label: "Low Pressure",
+          stress: "Low pressure",
+          color: "#16a34a",
+          action:
+            "Proceed with a written adoption budget, preserve your emergency fund, and confirm fee timing before signing major agreements.",
+        };
+      }
+
+      if (score <= 60) {
+        return {
+          label: "Moderate Pressure",
+          stress: "Moderate pressure",
+          color: "#ca8a04",
+          action:
+            "Build a larger buffer, verify grants or reimbursements, and reduce avoidable costs before committing to the full adoption plan.",
+        };
+      }
+
+      return {
+        label: "High Pressure",
+        stress: "High pressure",
+        color: "#dc2626",
+        action:
+          "Pause before committing, avoid high-interest debt, and look for a lower-cost path, more savings time, grants, employer help, or legal guidance.",
+      };
+    }
+
+    function calculateAdoptionPressure() {
+      const agencyFees = getNumber("agencyFees");
+      const legalFees = getNumber("legalFees");
+      const travelCosts = getNumber("travelCosts");
+      const postPlacement = getNumber("postPlacement");
+      const grants = getNumber("grants");
+      const income = getNumber("income");
+      const savings = getNumber("savings");
+      const expenses = getNumber("expenses");
+      const debt = getNumber("debt");
+      const childcare = getNumber("childcare");
+      const leaveLoss = getNumber("leaveLoss");
+      const recurringChildCosts = getNumber("recurringChildCosts");
+
+      const adoptionType = document.getElementById("adoptionType").value;
+      const financing = document.getElementById("financing").value;
+      const timeline = document.getElementById("timeline").value;
+
+      const result = document.getElementById("result");
+      const scoreEl = document.getElementById("score");
+      const barFill = document.getElementById("barFill");
+      const stressEl = document.getElementById("stress");
+      const totalCostEl = document.getElementById("totalCost");
+      const cashFlowEl = document.getElementById("cashFlow");
+      const savingsImpactEl = document.getElementById("savingsImpact");
+      const monthlyImpactEl = document.getElementById("monthlyImpact");
+      const guidanceEl = document.getElementById("guidance");
+
+      result.style.display = "block";
+
+      const grossAdoptionCost = agencyFees + legalFees + travelCosts + postPlacement + leaveLoss;
+      const outOfPocketAdoptionCost = Math.max(grossAdoptionCost - grants, 0);
+      const monthlyChildIncrease = childcare + recurringChildCosts;
+      const monthlyBurnAfterAdoption = expenses + debt + monthlyChildIncrease;
+      const monthlyRemainingAfterAdoption = income - monthlyBurnAfterAdoption;
+      const remainingSavings = savings - outOfPocketAdoptionCost;
+
+      if (grossAdoptionCost <= 0 || income <= 0) {
+        scoreEl.textContent = "Add your numbers first";
+        barFill.style.width = "0%";
+        barFill.style.background = "#16a34a";
+        stressEl.innerHTML = "";
+        totalCostEl.innerHTML = "";
+        cashFlowEl.innerHTML = "";
+        savingsImpactEl.innerHTML = "";
+        monthlyImpactEl.innerHTML = "";
+        guidanceEl.textContent =
+          "Enter adoption costs and monthly take-home income so the calculator can estimate affordability pressure.";
+        return;
+      }
+
+      const adoptionIncomeImpact = income > 0 ? (outOfPocketAdoptionCost / income) * 100 : 100;
+      const savingsImpact =
+        savings > 0 ? (outOfPocketAdoptionCost / savings) * 100 : outOfPocketAdoptionCost > 0 ? 100 : 0;
+      const fixedObligationRatio = income > 0 ? ((expenses + debt) / income) * 100 : 100;
+      const childCostRatio = income > 0 ? (monthlyChildIncrease / income) * 100 : 100;
+      const totalBurnRatio = income > 0 ? (monthlyBurnAfterAdoption / income) * 100 : 100;
+
+      const emergencyMonthsAfter =
+        monthlyBurnAfterAdoption > 0
+          ? remainingSavings / monthlyBurnAfterAdoption
+          : remainingSavings > 0
+            ? 999
+            : 0;
+
+      const hasAbsurdIncomeBuffer =
+        income >= monthlyBurnAfterAdoption * 50 &&
+        outOfPocketAdoptionCost <= income * 0.03 &&
+        monthlyChildIncrease <= income * 0.03 &&
+        monthlyRemainingAfterAdoption >= income * 0.8;
+
+      const hasAbsurdSavingsBuffer =
+        savings > 0 &&
+        outOfPocketAdoptionCost <= savings * 0.01 &&
+        emergencyMonthsAfter >= 60;
+
+      const hasHugeIncomeBuffer =
+        income > 0 &&
+        outOfPocketAdoptionCost <= income * 0.08 &&
+        monthlyChildIncrease <= income * 0.06 &&
+        monthlyRemainingAfterAdoption > income * 0.65 &&
+        fixedObligationRatio < 25;
+
+      const hasHugeSavingsBuffer =
+        savings > 0 &&
+        outOfPocketAdoptionCost <= savings * 0.03 &&
+        emergencyMonthsAfter >= 36;
+
+      const hasStrongIncomeBuffer =
+        income > 0 &&
+        outOfPocketAdoptionCost <= income * 0.25 &&
+        monthlyChildIncrease <= income * 0.12 &&
+        monthlyRemainingAfterAdoption > income * 0.4;
+
+      const hasStrongSavingsBuffer =
+        savings > 0 &&
+        outOfPocketAdoptionCost <= savings * 0.15 &&
+        emergencyMonthsAfter >= 12;
+
+      let pressureScore = 0;
+
+      if (
+        outOfPocketAdoptionCost === 0 ||
+        hasAbsurdIncomeBuffer ||
+        hasAbsurdSavingsBuffer ||
+        hasHugeIncomeBuffer ||
+        hasHugeSavingsBuffer
+      ) {
+        pressureScore = 0;
+      } else {
+        pressureScore += clamp(adoptionIncomeImpact * 0.16, 0, 30);
+        pressureScore += clamp(savingsImpact * 0.38, 0, 38);
+        pressureScore += clamp(fixedObligationRatio * 0.2, 0, 24);
+        pressureScore += clamp(childCostRatio * 0.8, 0, 20);
+        pressureScore += clamp(totalBurnRatio * 0.18, 0, 20);
+
+        if (remainingSavings < 0) pressureScore += 28;
+        else if (emergencyMonthsAfter < 1 && income < 14000) pressureScore += 22;
+        else if (emergencyMonthsAfter < 3 && income < 17000) pressureScore += 14;
+        else if (emergencyMonthsAfter < 6 && income < 20000) pressureScore += 7;
+        else if (emergencyMonthsAfter >= 24) pressureScore -= 18;
+        else if (emergencyMonthsAfter >= 12) pressureScore -= 12;
+        else if (emergencyMonthsAfter >= 6) pressureScore -= 7;
+
+        if (monthlyRemainingAfterAdoption < 0) pressureScore += 28;
+        else if (monthlyRemainingAfterAdoption < income * 0.08) pressureScore += 16;
+        else if (monthlyRemainingAfterAdoption < income * 0.15) pressureScore += 8;
+        else if (monthlyRemainingAfterAdoption > income * 0.5) pressureScore -= 16;
+        else if (monthlyRemainingAfterAdoption > income * 0.35) pressureScore -= 10;
+
+        if (adoptionType === "international") pressureScore += 8;
+        if (adoptionType === "domestic") pressureScore += 4;
+        if (adoptionType === "relative") pressureScore -= 4;
+        if (adoptionType === "foster") pressureScore -= 10;
+
+        if (financing === "mixed") pressureScore += 8;
+        if (financing === "credit") pressureScore += 22;
+        if (financing === "cash") pressureScore -= 5;
+
+        if (timeline === "soon") pressureScore += 5;
+        if (timeline === "urgent") pressureScore += 12;
+        if (timeline === "planned") pressureScore -= 5;
+
+        if (travelCosts > income * 0.75) pressureScore += 7;
+        else if (travelCosts > income * 0.35) pressureScore += 4;
+
+        if (leaveLoss > income * 0.75) pressureScore += 8;
+        else if (leaveLoss > income * 0.35) pressureScore += 4;
+
+        if (hasStrongIncomeBuffer) pressureScore -= 14;
+        if (hasStrongSavingsBuffer) pressureScore -= 18;
+
+        if (
+          adoptionIncomeImpact < 35 &&
+          savingsImpact < 25 &&
+          fixedObligationRatio < 50 &&
+          emergencyMonthsAfter >= 6 &&
+          monthlyRemainingAfterAdoption > income * 0.22
+        ) {
+          pressureScore = Math.min(pressureScore, 34);
+        }
+
+        if (
+          adoptionIncomeImpact < 18 &&
+          savingsImpact < 12 &&
+          fixedObligationRatio < 40 &&
+          emergencyMonthsAfter >= 12 &&
+          monthlyRemainingAfterAdoption > income * 0.35
+        ) {
+          pressureScore = Math.min(pressureScore, 18);
+        }
+
+        if (
+          outOfPocketAdoptionCost <= income * 0.05 &&
+          outOfPocketAdoptionCost <= savings * 0.02 &&
+          emergencyMonthsAfter >= 36 &&
+          fixedObligationRatio < 35
+        ) {
+          pressureScore = 0;
+        }
+
+        if (
+          income >= monthlyBurnAfterAdoption * 40 &&
+          outOfPocketAdoptionCost <= income * 0.05 &&
+          monthlyChildIncrease <= income * 0.04
+        ) {
+          pressureScore = 0;
+        }
+      }
+
+      pressureScore = Math.round(clamp(pressureScore, 0, 100));
+      const level = getPressureLevel(pressureScore);
+
+      let guidance = "";
+
+      if (pressureScore === 0) {
+        guidance =
+          `This adoption plan appears to create essentially no financial pressure based on the numbers provided. The out-of-pocket adoption cost is small relative to income or savings, and the remaining emergency cushion is very strong.`;
+      } else if (pressureScore <= 30) {
+        guidance =
+          `This adoption plan appears financially manageable based on the numbers provided. Your estimated emergency cushion remains around ${Math.max(emergencyMonthsAfter, 0).toFixed(1)} months after adoption costs.`;
+      } else if (pressureScore <= 60) {
+        guidance =
+          `This adoption plan may be workable, but it creates noticeable financial pressure. The out-of-pocket adoption cost uses about ${savingsImpact.toFixed(1)}% of available savings, so timing, reimbursements, and backup funds matter.`;
+      } else {
+        guidance =
+          `This adoption plan could create real financial strain. The combination of upfront costs, savings impact, monthly child costs, debt, travel, leave loss, or financing suggests you should slow down and strengthen the plan before committing.`;
+      }
+
+      scoreEl.textContent = `${level.label} — ${pressureScore}/100`;
+      scoreEl.style.color = level.color;
+      barFill.style.width = `${pressureScore}%`;
+      barFill.style.background = level.color;
+
+      stressEl.innerHTML = `<strong>Pressure level:</strong> ${level.stress}`;
+      totalCostEl.innerHTML = `<strong>Estimated out-of-pocket adoption cost:</strong> $${outOfPocketAdoptionCost.toLocaleString()}`;
+      cashFlowEl.innerHTML = `<strong>Monthly cash flow after adoption:</strong> $${monthlyRemainingAfterAdoption.toLocaleString()}`;
+      savingsImpactEl.innerHTML = `<strong>Estimated savings after adoption costs:</strong> $${remainingSavings.toLocaleString()}`;
+      monthlyImpactEl.innerHTML = `<strong>Monthly child-related increase:</strong> $${monthlyChildIncrease.toLocaleString()}`;
+      guidanceEl.textContent = `${guidance} Recommended next step: ${level.action}`;
+    }
+
+    document
+      .getElementById("adoptionButton")
+      .addEventListener("click", calculateAdoptionPressure);
+  </script>
+</Layout>

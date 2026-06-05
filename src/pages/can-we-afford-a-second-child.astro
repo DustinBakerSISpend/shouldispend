@@ -1,0 +1,617 @@
+---
+import Layout from "../layouts/Layout.astro";
+import CalculatorPageShell from "../components/CalculatorPageShell.astro";
+import FAQSection from "../components/FAQSection.astro";
+import RelatedCalculators from "../components/RelatedCalculators.astro";
+import RelatedGuides from "../components/RelatedGuides.astro";
+import MethodologySection from "../components/MethodologySection.astro";
+import FinancialRedFlags from "../components/FinancialRedFlags.astro";
+import CalculatorAssumptions from "../components/CalculatorAssumptions.astro";
+import KeyCostCategories from "../components/KeyCostCategories.astro";
+import ReduceCostTips from "../components/ReduceCostTips.astro";
+import WhenSpendingMakesSense from "../components/WhenSpendingMakesSense.astro";
+---
+
+<Layout
+  title="Can We Afford a Second Child?"
+  description="Use this second child affordability calculator to estimate whether another baby fits your income, childcare costs, medical bills, housing pressure, savings, debt, and monthly flexibility."
+>
+  <style>
+    .container { max-width: 950px; margin: 0 auto; padding: 60px 20px; }
+    .content-section { max-width: 760px; margin: 72px auto 0; }
+    .card { background: var(--card); border: 1px solid var(--border); border-radius: 28px; padding: 34px; }
+    h2 { margin-top: 0; font-size: 2rem; }
+    .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 22px; margin-bottom: 28px; }
+    label { display: block; margin-bottom: 10px; font-weight: 700; }
+    input, select { width: 100%; padding: 18px; border-radius: 14px; border: 1px solid var(--border); font-size: 1.1rem; box-sizing: border-box; background: white; }
+    button { background: #0f172a; color: white; border: none; padding: 16px 28px; border-radius: 14px; font-size: 1rem; font-weight: 700; cursor: pointer; margin-top: 10px; width: 100%; display: block; }
+    button:hover { opacity: 0.92; }
+    .result { margin-top: 40px; border: 1px solid var(--border); border-radius: 24px; padding: 28px; display: none; background: #f8fafc; }
+    .score { font-size: 3rem; font-weight: 800; margin-bottom: 16px; }
+    .bar { width: 100%; height: 16px; background: #dbe3ee; border-radius: 999px; overflow: hidden; margin-bottom: 24px; }
+    .fill { height: 100%; width: 0%; background: #16a34a; border-radius: 999px; transition: width 0.4s ease; }
+    .metric { margin-bottom: 14px; font-size: 1.05rem; }
+    .guidance { margin-top: 26px; font-size: 1.15rem; line-height: 1.7; }
+    .disclaimer { margin-top: 30px; font-size: 0.9rem; color: var(--muted); }
+    .helper-link { margin-top: 10px; font-size: 0.9rem; }
+    .helper-link a { color: var(--primary); font-weight: 600; }
+    .content-section p, .content-section li { line-height: 1.8; }
+  </style>
+
+  <div class="container">
+    <CalculatorPageShell
+      eyebrow="Baby & Parenting Calculator"
+      title="Can We Afford a Second Child?"
+      description="Estimate the financial pressure of having another baby by adding childcare, medical bills, supplies, housing changes, leave gaps, savings impact, and monthly cash flow."
+    >
+      <div class="card">
+        <h2>Second Child Pressure Verdict</h2>
+
+        <div class="grid">
+          <div>
+            <label for="income">Monthly Take-Home Income</label>
+            <input id="income" type="number" placeholder="8500" min="0" inputmode="decimal" />
+          </div>
+
+          <div>
+            <label for="savings">Emergency Savings</label>
+            <input id="savings" type="number" placeholder="30000" min="0" inputmode="decimal" />
+          </div>
+
+          <div>
+            <label for="expenses">Current Monthly Expenses</label>
+            <input id="expenses" type="number" placeholder="5200" min="0" inputmode="decimal" />
+          </div>
+
+          <div>
+            <label for="debt">Monthly Debt Payments</label>
+            <input id="debt" type="number" placeholder="850" min="0" inputmode="decimal" />
+            <div class="helper-link">
+              <a href="/what-counts-as-debt">Not sure what counts as debt? Read the debt guide</a>
+            </div>
+          </div>
+
+          <div>
+            <label for="currentChildCosts">Current Monthly Child Costs</label>
+            <input id="currentChildCosts" type="number" placeholder="1400" min="0" inputmode="decimal" />
+          </div>
+
+          <div>
+            <label for="newChildcare">Added Monthly Childcare for Second Child</label>
+            <input id="newChildcare" type="number" placeholder="1200" min="0" inputmode="decimal" />
+          </div>
+
+          <div>
+            <label for="monthlyBabyCosts">Added Monthly Baby Supplies</label>
+            <input id="monthlyBabyCosts" type="number" placeholder="350" min="0" inputmode="decimal" />
+          </div>
+
+          <div>
+            <label for="medical">Expected Pregnancy / Delivery Bills</label>
+            <input id="medical" type="number" placeholder="3500" min="0" inputmode="decimal" />
+          </div>
+
+          <div>
+            <label for="leaveLoss">Expected Parental Leave Income Loss</label>
+            <input id="leaveLoss" type="number" placeholder="2500" min="0" inputmode="decimal" />
+          </div>
+
+          <div>
+            <label for="gear">New Gear / Setup Costs</label>
+            <input id="gear" type="number" placeholder="1500" min="0" inputmode="decimal" />
+          </div>
+
+          <div>
+            <label for="housingChange">Added Monthly Housing / Vehicle Cost</label>
+            <input id="housingChange" type="number" placeholder="0" min="0" inputmode="decimal" />
+          </div>
+
+          <div>
+            <label for="support">Family Help, Gifts, or Employer Benefits</label>
+            <input id="support" type="number" placeholder="1000" min="0" inputmode="decimal" />
+          </div>
+
+          <div>
+            <label for="handMeDowns">Hand-Me-Down Readiness</label>
+            <select id="handMeDowns">
+              <option value="strong">Strong — Many Items Reused</option>
+              <option value="some">Some Reuse, Some New Costs</option>
+              <option value="little">Little Reuse Available</option>
+            </select>
+          </div>
+
+          <div>
+            <label for="childcareFit">Childcare Capacity</label>
+            <select id="childcareFit">
+              <option value="stable">Stable and Already Planned</option>
+              <option value="uncertain">Available but Uncertain</option>
+              <option value="strained">Waitlists, Schedule Gaps, or Very High Cost</option>
+            </select>
+          </div>
+
+          <div>
+            <label for="space">Home / Car Space Situation</label>
+            <select id="space">
+              <option value="ready">Current Home and Car Work</option>
+              <option value="tight">Tight but Manageable</option>
+              <option value="upgrade">Likely Need Bigger Home or Vehicle</option>
+            </select>
+          </div>
+        </div>
+
+        <button id="secondChildButton" type="button">Calculate Financial Pressure</button>
+
+        <div class="result" id="result">
+          <div class="score" id="score"></div>
+          <div class="bar"><div class="fill" id="barFill"></div></div>
+          <div class="metric" id="stress"></div>
+          <div class="metric" id="monthlyPressure"></div>
+          <div class="metric" id="cashFlow"></div>
+          <div class="metric" id="savingsImpact"></div>
+          <div class="guidance" id="guidance"></div>
+          <div class="disclaimer">
+            This is a general educational estimate, not medical, childcare, legal, tax, insurance, parenting, or financial advice.
+          </div>
+        </div>
+      </div>
+
+      <div class="content-section">
+        <h2>What a Second Child Really Changes Financially</h2>
+        <p>
+          A second child is not simply the first child’s cost repeated. Some costs may be lower because you can reuse clothes, cribs, strollers, bottles, toys, and nursery items. Other costs can become much harder because childcare doubles, schedules get tighter, health insurance may change, and a household may need more space, a different vehicle, or more paid help.
+        </p>
+        <p>
+          This calculator looks at the full second-child pressure picture: added childcare, baby supplies, delivery bills, parental leave income loss, gear, housing or vehicle pressure, existing child costs, debt, emergency savings, and monthly flexibility. Like the stay-at-home parent calculator, it uses conservative pressure scoring without fake penalties for high-resource households. If the added cost is tiny relative to income and savings, the score can fall to a true 0/100.
+        </p>
+      </div>
+
+      <WhenSpendingMakesSense
+        title="When a Second Child Can Make Financial Sense"
+        items={[
+          "The household still has positive monthly cash flow after adding childcare, supplies, and any housing or vehicle changes.",
+          "Emergency savings remain strong after medical bills, leave gaps, and setup costs.",
+          "Childcare is available, realistic, and not dependent on a fragile plan.",
+          "Existing debt is manageable and does not crowd out basic family expenses.",
+          "The family can reuse enough baby gear to reduce one-time costs.",
+          "Health insurance, leave benefits, and work schedules have been reviewed before pregnancy or adoption planning.",
+          "The plan still allows some savings, not just survival from paycheck to paycheck.",
+        ]}
+      />
+
+      <div class="content-section">
+        <h2>Why the Second Child Decision Can Feel Different</h2>
+        <p>
+          The first baby often creates the steepest learning curve. The second child can feel easier because the household already owns gear and understands diapers, feeding, sleep, daycare, pediatrician visits, and sick days. But financially, the second child can expose weaknesses that the first child did not: tight housing, limited car space, daycare waitlists, less family help, and less room for unexpected bills.
+        </p>
+        <p>
+          The biggest mistake is judging affordability only by baby supplies. Diapers and clothes matter, but the true pressure usually comes from childcare, lost income, medical bills, and the loss of monthly flexibility. A second child is safer when the family can absorb both one-time costs and recurring costs without draining the emergency fund.
+        </p>
+      </div>
+
+      <KeyCostCategories
+        items={[
+          {
+            title: "Added childcare",
+            description:
+              "Daycare, nanny care, preschool, backup care, and sibling discounts can make or break second-child affordability.",
+          },
+          {
+            title: "Pregnancy and delivery costs",
+            description:
+              "Deductibles, coinsurance, hospital bills, ultrasounds, specialist visits, prescriptions, and postpartum care can create near-term cash pressure.",
+          },
+          {
+            title: "Parental leave income loss",
+            description:
+              "Unpaid or partially paid leave can temporarily reduce income at the same time baby costs increase.",
+          },
+          {
+            title: "Reusable gear versus new setup costs",
+            description:
+              "Hand-me-down clothes, cribs, strollers, monitors, and toys can reduce pressure, but expired car seats or worn-out gear may need replacement.",
+          },
+          {
+            title: "Housing and vehicle pressure",
+            description:
+              "A second child may make the current home, bedrooms, daycare commute, or vehicle setup feel tighter.",
+          },
+          {
+            title: "Existing child costs",
+            description:
+              "The budget must support the first child’s childcare, school, activities, food, medical needs, and supplies before adding another child.",
+          },
+        ]}
+      />
+
+      <ReduceCostTips
+        items={[
+          "Price childcare for two children before relying on a rough estimate.",
+          "Ask about sibling discounts, flexible schedules, and part-time childcare options.",
+          "Reuse safe baby gear where practical, but check expiration dates and safety rules for car seats and sleep products.",
+          "Build a medical-bill fund before delivery if your deductible or out-of-pocket maximum is high.",
+          "Avoid upgrading your home or vehicle unless the monthly payment still fits after baby costs.",
+          "Delay nonessential nursery purchases until after the baby arrives.",
+          "Test the second-child budget for several months by moving the estimated added cost into savings.",
+          "Review health insurance, parental leave, and dependent-care benefits before making final plans.",
+          "Protect emergency savings instead of spending it on optional upgrades.",
+        ]}
+      />
+
+      <FinancialRedFlags
+        items={[
+          "The added monthly cost creates negative cash flow.",
+          "Childcare for two children would consume most of the household’s monthly flexibility.",
+          "Emergency savings would fall below three months of expenses after medical and leave costs.",
+          "The plan depends on family help that is not confirmed.",
+          "A larger car or home is required but the new payment has not been included.",
+          "Existing debt already strains the household before adding another child.",
+          "Medical bills, unpaid leave, or insurance changes are being ignored.",
+          "The family would need credit cards to cover normal baby costs.",
+        ]}
+      />
+
+      <CalculatorAssumptions
+        items={[
+          "Monthly income means take-home pay after taxes and payroll deductions.",
+          "Current monthly expenses should include normal household bills but not the new second-child costs entered separately.",
+          "Current monthly child costs should include the first child’s childcare, school, food, medical, activity, and supply costs.",
+          "Family help, gifts, or employer benefits reduce near-term out-of-pocket costs.",
+          "The calculator treats childcare, baby supplies, and housing or vehicle changes as recurring monthly pressure.",
+          "Medical bills, parental leave loss, and gear are treated as near-term cash pressure.",
+          "Very high income or very large savings can produce a true 0/100 pressure score when second-child costs are tiny relative to household resources.",
+        ]}
+      />
+
+      <FAQSection
+        title="Second Child Affordability FAQ"
+        faqs={[
+          {
+            question: "Is a second child cheaper than the first?",
+            answer:
+              "Sometimes. A second child can be cheaper if you reuse gear, clothes, toys, and furniture. But childcare, medical costs, unpaid leave, food, housing, and vehicle needs can still make the second child financially significant.",
+          },
+          {
+            question: "What is the biggest second-child cost?",
+            answer:
+              "For many families, childcare is the biggest recurring cost. Medical bills, parental leave income loss, and housing or vehicle changes can also create major pressure.",
+          },
+          {
+            question: "Should we have a second child if we are already tight financially?",
+            answer:
+              "A tight budget does not automatically make a second child impossible, but it does raise the risk. Run the numbers with childcare, medical bills, leave, debt, and emergency savings before relying on hope or future raises.",
+          },
+          {
+            question: "How much emergency savings should we have before a second child?",
+            answer:
+              "Many households should aim for at least three to six months of expenses, and more may be safer if childcare is expensive, income is unstable, or only one parent works.",
+          },
+          {
+            question: "How can we test whether we can afford another baby?",
+            answer:
+              "For several months, move the estimated added second-child cost into savings. If the household can do that without credit cards or skipped bills, the plan is stronger.",
+          },
+        ]}
+      />
+
+      <MethodologySection category="baby and parenting spending" updated="June 2026" />
+
+      <RelatedGuides
+        guides={[
+          {
+            title: "Baby & Parenting Calculators",
+            href: "/baby-parenting-calculators",
+            description:
+              "Browse baby cost calculators for childcare, first-year expenses, maternity leave, baby gear, and family planning.",
+          },
+          {
+            title: "How Much Emergency Savings Should I Have?",
+            href: "/how-much-emergency-savings-should-i-have",
+            description:
+              "Estimate how much emergency cushion can protect your household before major life expenses.",
+          },
+          {
+            title: "What Counts as Debt?",
+            href: "/what-counts-as-debt",
+            description:
+              "Understand which obligations should be included when estimating financial pressure.",
+          },
+        ]}
+      />
+
+      <RelatedCalculators
+        calculators={[
+          {
+            category: "Baby & Parenting",
+            title: "Can We Afford to Have a Baby?",
+            href: "/can-we-afford-to-have-a-baby",
+          },
+          {
+            category: "Baby & Parenting",
+            title: "Can We Afford for One Parent to Stay Home?",
+            href: "/can-we-afford-for-one-parent-to-stay-home",
+          },
+          {
+            category: "Baby & Parenting",
+            title: "Baby Cost Calculator",
+            href: "/baby-cost-calculator",
+          },
+          {
+            category: "Baby & Parenting",
+            title: "Should I Spend This Much on Childcare?",
+            href: "/should-i-spend-this-much-on-childcare",
+          },
+        ]}
+      />
+    </CalculatorPageShell>
+  </div>
+
+  <script is:inline>
+    const clamp = (value, min, max) => Math.min(Math.max(value, min), max);
+
+    const getNumber = (id) => {
+      const rawValue = document.getElementById(id)?.value;
+      const value = Number(rawValue);
+      return Number.isFinite(value) && value >= 0 ? value : 0;
+    };
+
+    function getPressureLevel(score) {
+      if (score <= 30) {
+        return {
+          label: "Low Pressure",
+          stress: "Low pressure",
+          color: "#16a34a",
+          action:
+            "The second-child plan appears workable. Confirm childcare, preserve emergency savings, and keep the recurring costs realistic.",
+        };
+      }
+
+      if (score <= 60) {
+        return {
+          label: "Moderate Pressure",
+          stress: "Moderate pressure",
+          color: "#ca8a04",
+          action:
+            "The plan may be possible, but childcare, leave, medical bills, and monthly cash flow should be tightened before moving forward.",
+        };
+      }
+
+      return {
+        label: "High Pressure",
+        stress: "High pressure",
+        color: "#dc2626",
+        action:
+          "Slow down before adding major new costs. Build savings, reduce debt, confirm childcare, or delay optional upgrades first.",
+      };
+    }
+
+    function calculateSecondChildPressure() {
+      const income = getNumber("income");
+      const savings = getNumber("savings");
+      const expenses = getNumber("expenses");
+      const debt = getNumber("debt");
+      const currentChildCosts = getNumber("currentChildCosts");
+      const newChildcare = getNumber("newChildcare");
+      const monthlyBabyCosts = getNumber("monthlyBabyCosts");
+      const medical = getNumber("medical");
+      const leaveLoss = getNumber("leaveLoss");
+      const gear = getNumber("gear");
+      const housingChange = getNumber("housingChange");
+      const support = getNumber("support");
+
+      const handMeDowns = document.getElementById("handMeDowns").value;
+      const childcareFit = document.getElementById("childcareFit").value;
+      const space = document.getElementById("space").value;
+
+      const result = document.getElementById("result");
+      const scoreEl = document.getElementById("score");
+      const barFill = document.getElementById("barFill");
+      const stressEl = document.getElementById("stress");
+      const monthlyPressureEl = document.getElementById("monthlyPressure");
+      const cashFlowEl = document.getElementById("cashFlow");
+      const savingsImpactEl = document.getElementById("savingsImpact");
+      const guidanceEl = document.getElementById("guidance");
+
+      result.style.display = "block";
+
+      if (income <= 0) {
+        scoreEl.textContent = "Add your numbers first";
+        barFill.style.width = "0%";
+        barFill.style.background = "#16a34a";
+        stressEl.innerHTML = "";
+        monthlyPressureEl.innerHTML = "";
+        cashFlowEl.innerHTML = "";
+        savingsImpactEl.innerHTML = "";
+        guidanceEl.textContent =
+          "Enter a positive monthly take-home income so the calculator can estimate second-child financial pressure.";
+        return;
+      }
+
+      const addedMonthlyCost = newChildcare + monthlyBabyCosts + housingChange;
+      const nearTermCost = Math.max(medical + leaveLoss + gear - support, 0);
+      const monthlyBurnAfterSecondChild =
+        expenses + debt + currentChildCosts + addedMonthlyCost;
+      const monthlyRemainingAfterSecondChild = income - monthlyBurnAfterSecondChild;
+      const remainingSavings = savings - nearTermCost;
+
+      const addedMonthlyRatio = income > 0 ? (addedMonthlyCost / income) * 100 : 100;
+      const totalObligationRatio =
+        income > 0 ? (monthlyBurnAfterSecondChild / income) * 100 : 100;
+      const debtRatio = income > 0 ? (debt / income) * 100 : 100;
+      const currentChildRatio =
+        income > 0 ? (currentChildCosts / income) * 100 : 100;
+      const nearTermIncomeImpact = income > 0 ? (nearTermCost / income) * 100 : 100;
+      const savingsImpact =
+        savings > 0 ? (nearTermCost / savings) * 100 : nearTermCost > 0 ? 100 : 0;
+      const cashFlowRatio =
+        income > 0 ? (monthlyRemainingAfterSecondChild / income) * 100 : -100;
+
+      const emergencyMonthsAfter =
+        monthlyBurnAfterSecondChild > 0
+          ? remainingSavings / monthlyBurnAfterSecondChild
+          : remainingSavings > 0
+            ? 999
+            : 0;
+
+      const hasAbsurdIncomeBuffer =
+        income >= monthlyBurnAfterSecondChild * 50 &&
+        addedMonthlyCost <= income * 0.01 &&
+        nearTermCost <= income * 0.03;
+
+      const hasAbsurdSavingsBuffer =
+        savings > 0 &&
+        nearTermCost <= savings * 0.01 &&
+        emergencyMonthsAfter >= 60 &&
+        addedMonthlyCost <= income * 0.03;
+
+      const hasHugeIncomeBuffer =
+        income > 0 &&
+        addedMonthlyCost <= income * 0.03 &&
+        nearTermCost <= income * 0.08 &&
+        monthlyRemainingAfterSecondChild > income * 0.65 &&
+        totalObligationRatio < 35;
+
+      const hasHugeSavingsBuffer =
+        savings > 0 &&
+        nearTermCost <= savings * 0.03 &&
+        emergencyMonthsAfter >= 36 &&
+        monthlyRemainingAfterSecondChild > 0;
+
+      const hasStrongIncomeBuffer =
+        income > 0 &&
+        addedMonthlyCost <= income * 0.12 &&
+        nearTermCost <= income * 0.2 &&
+        monthlyRemainingAfterSecondChild > income * 0.35;
+
+      const hasStrongSavingsBuffer =
+        savings > 0 &&
+        nearTermCost <= savings * 0.12 &&
+        emergencyMonthsAfter >= 12;
+
+      let pressureScore = 0;
+
+      if (
+        addedMonthlyCost === 0 &&
+        nearTermCost === 0 &&
+        monthlyRemainingAfterSecondChild > 0 &&
+        emergencyMonthsAfter >= 12
+      ) {
+        pressureScore = 0;
+      } else if (
+        hasAbsurdIncomeBuffer ||
+        hasAbsurdSavingsBuffer ||
+        hasHugeIncomeBuffer ||
+        hasHugeSavingsBuffer
+      ) {
+        pressureScore = 0;
+      } else {
+        pressureScore += clamp(addedMonthlyRatio * 0.95, 0, 28);
+        pressureScore += clamp(totalObligationRatio * 0.32, 0, 34);
+        pressureScore += clamp(debtRatio * 0.7, 0, 16);
+        pressureScore += clamp(currentChildRatio * 0.25, 0, 12);
+        pressureScore += clamp(nearTermIncomeImpact * 0.22, 0, 18);
+        pressureScore += clamp(savingsImpact * 0.3, 0, 26);
+
+        if (monthlyRemainingAfterSecondChild < 0) pressureScore += 32;
+        else if (cashFlowRatio < 0.05) pressureScore += 20;
+        else if (cashFlowRatio < 0.12) pressureScore += 13;
+        else if (cashFlowRatio > 0.5) pressureScore -= 18;
+        else if (cashFlowRatio > 0.35) pressureScore -= 12;
+        else if (cashFlowRatio > 0.25) pressureScore -= 7;
+
+        if (remainingSavings < 0) pressureScore += 22;
+        else if (emergencyMonthsAfter < 1 && income < 16000) pressureScore += 22;
+        else if (emergencyMonthsAfter < 3 && income < 20000) pressureScore += 16;
+        else if (emergencyMonthsAfter < 6 && income < 25000) pressureScore += 8;
+        else if (emergencyMonthsAfter >= 24) pressureScore -= 18;
+        else if (emergencyMonthsAfter >= 12) pressureScore -= 12;
+        else if (emergencyMonthsAfter >= 6) pressureScore -= 6;
+
+        if (handMeDowns === "some") pressureScore += 3;
+        if (handMeDowns === "little") pressureScore += 9;
+        if (handMeDowns === "strong") pressureScore -= 4;
+
+        if (childcareFit === "uncertain") pressureScore += 7;
+        if (childcareFit === "strained") pressureScore += 16;
+        if (childcareFit === "stable") pressureScore -= 4;
+
+        if (space === "tight") pressureScore += 5;
+        if (space === "upgrade") pressureScore += 15;
+        if (space === "ready") pressureScore -= 3;
+
+        if (hasStrongIncomeBuffer) pressureScore -= 14;
+        if (hasStrongSavingsBuffer) pressureScore -= 14;
+
+        if (
+          addedMonthlyRatio < 12 &&
+          savingsImpact < 20 &&
+          totalObligationRatio < 65 &&
+          emergencyMonthsAfter >= 6 &&
+          monthlyRemainingAfterSecondChild > income * 0.2
+        ) {
+          pressureScore = Math.min(pressureScore, 30);
+        }
+
+        if (
+          addedMonthlyRatio < 6 &&
+          savingsImpact < 10 &&
+          totalObligationRatio < 50 &&
+          emergencyMonthsAfter >= 12 &&
+          monthlyRemainingAfterSecondChild > income * 0.35
+        ) {
+          pressureScore = Math.min(pressureScore, 16);
+        }
+
+        if (
+          addedMonthlyCost <= income * 0.02 &&
+          nearTermCost <= Math.max(savings * 0.02, income * 0.05) &&
+          emergencyMonthsAfter >= 36 &&
+          totalObligationRatio < 35
+        ) {
+          pressureScore = 0;
+        }
+
+        if (
+          income >= monthlyBurnAfterSecondChild * 40 &&
+          addedMonthlyCost <= income * 0.02 &&
+          nearTermCost <= income * 0.05
+        ) {
+          pressureScore = 0;
+        }
+      }
+
+      pressureScore = Math.round(clamp(pressureScore, 0, 100));
+      const level = getPressureLevel(pressureScore);
+
+      let guidance = "";
+
+      if (pressureScore === 0) {
+        guidance =
+          `Based on the numbers provided, a second child appears to create essentially no financial pressure. The added monthly cost and near-term costs are very small relative to household resources, and the remaining emergency runway is strong.`;
+      } else if (pressureScore <= 30) {
+        guidance =
+          `A second child appears financially manageable based on the numbers provided. Estimated monthly cash flow after second-child costs is about $${Math.round(monthlyRemainingAfterSecondChild).toLocaleString()}, with roughly ${Math.max(emergencyMonthsAfter, 0).toFixed(1)} months of emergency runway.`;
+      } else if (pressureScore <= 60) {
+        guidance =
+          `A second child may be workable, but the added monthly cost creates noticeable pressure. The estimated recurring increase is about $${Math.round(addedMonthlyCost).toLocaleString()} per month, so childcare, medical bills, leave, and housing plans should be confirmed carefully.`;
+      } else {
+        guidance =
+          `A second child could create significant financial strain based on the numbers provided. The combination of recurring costs, savings impact, childcare, debt, housing pressure, or medical costs suggests the household should slow down and strengthen the budget first.`;
+      }
+
+      scoreEl.textContent = `${level.label} — ${pressureScore}/100`;
+      scoreEl.style.color = level.color;
+      barFill.style.width = `${pressureScore}%`;
+      barFill.style.background = level.color;
+
+      stressEl.innerHTML = `<strong>Pressure level:</strong> ${level.stress}`;
+      monthlyPressureEl.innerHTML = `<strong>Added monthly second-child cost:</strong> $${Math.round(addedMonthlyCost).toLocaleString()}`;
+      cashFlowEl.innerHTML = `<strong>Estimated monthly cash flow after second-child costs:</strong> $${Math.round(monthlyRemainingAfterSecondChild).toLocaleString()}`;
+      savingsImpactEl.innerHTML = `<strong>Estimated savings after near-term second-child costs:</strong> $${Math.round(remainingSavings).toLocaleString()}`;
+      guidanceEl.textContent = `${guidance} Recommended next step: ${level.action}`;
+    }
+
+    document
+      .getElementById("secondChildButton")
+      .addEventListener("click", calculateSecondChildPressure);
+  </script>
+</Layout>

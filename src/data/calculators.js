@@ -1031,4 +1031,58 @@ export const calculators = [
   href: "/should-i-spend-5000-on-baby-gear",
 },
 
+{
+  id: "one-parent-stay-home",
+  category: "Baby & Parenting",
+  title: "Can We Afford for One Parent to Stay Home?",
+  description:
+    "Evaluate whether one parent leaving paid work fits your household income, childcare savings, benefits changes, debt, emergency savings, and monthly cash flow.",
+  href: "/can-we-afford-for-one-parent-to-stay-home",
+},
+
+{
+  id: "can-we-afford-a-second-child",
+  category: "Baby & Parenting",
+  title: "Can We Afford a Second Child?",
+  description:
+    "Estimate second-child affordability using childcare, medical costs, baby supplies, housing pressure, income, savings, debt, and monthly flexibility.",
+  href: "/can-we-afford-a-second-child",
+},
+
+{
+  id: "daycare-or-nanny",
+  category: "Baby & Parenting",
+  title: "Should I Use Daycare or a Nanny?",
+  description:
+    "Compare daycare vs nanny affordability using childcare costs, payroll expenses, backup care, income, savings, debt, schedule needs, and monthly flexibility.",
+  href: "/daycare-or-nanny",
+},
+
+{
+  id: "afford-adoption",
+  category: "Baby & Parenting",
+  title: "Can We Afford Adoption?",
+  description:
+    "Evaluate adoption affordability using agency fees, legal costs, travel, grants, employer help, savings, debt, emergency cushion, and post-adoption expenses.",
+  href: "/can-we-afford-adoption",
+},
+
+{
+  id: "buy-minivan",
+  category: "Baby & Parenting",
+  title: "Should I Buy a Minivan?",
+  description:
+    "Evaluate whether a minivan fits your family budget using payment, insurance, fuel, maintenance, trade-in value, savings, debt, and monthly cash flow.",
+  href: "/should-i-buy-a-minivan",
+},
+
+{
+  id: "summer-camp-cost",
+  category: "Baby & Parenting",
+  title: "Should I Spend This Much on Summer Camp?",
+  description:
+    "Evaluate summer camp affordability using weekly cost, number of children, childcare needs, income, savings, debt, and family budget flexibility.",
+  href: "/should-i-spend-this-much-on-summer-camp",
+},
+
 ];
