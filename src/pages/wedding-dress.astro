@@ -1,0 +1,599 @@
+---
+import Layout from "../layouts/Layout.astro";
+import CalculatorPageShell from "../components/CalculatorPageShell.astro";
+import FAQSection from "../components/FAQSection.astro";
+import RelatedCalculators from "../components/RelatedCalculators.astro";
+import RelatedGuides from "../components/RelatedGuides.astro";
+import MethodologySection from "../components/MethodologySection.astro";
+import FinancialRedFlags from "../components/FinancialRedFlags.astro";
+import CalculatorAssumptions from "../components/CalculatorAssumptions.astro";
+import KeyCostCategories from "../components/KeyCostCategories.astro";
+import ReduceCostTips from "../components/ReduceCostTips.astro";
+import WhenSpendingMakesSense from "../components/WhenSpendingMakesSense.astro";
+
+const pageUrl = "https://shouldispend.com/wedding-dress";
+
+const faqSchema = {
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  mainEntity: [
+    {
+      "@type": "Question",
+      name: "How much should I spend on a wedding dress?",
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: "A wedding dress budget should fit the total wedding budget, savings, income, debt, alterations, accessories, and post-wedding priorities.",
+      },
+    },
+    {
+      "@type": "Question",
+      name: "Should alterations count in my wedding dress budget?",
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: "Yes. Alterations, accessories, shoes, veil, undergarments, cleaning, preservation, taxes, and rush fees should all be included when judging affordability.",
+      },
+    },
+    {
+      "@type": "Question",
+      name: "Is an expensive wedding dress worth it?",
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: "It can be worth it if it is a high priority, fits the total wedding budget, does not create debt, and does not crowd out higher-priority wedding or financial goals.",
+      },
+    },
+  ],
+};
+---
+
+<Layout
+  title="Should I Spend This Much on a Wedding Dress? Calculator | ShouldISpend"
+  description="Use this wedding dress calculator to decide whether dress, alterations, accessories, savings, income, debt, and total wedding budget make the dress realistic."
+>
+  <script type="application/ld+json" set:html={JSON.stringify(faqSchema)} />
+
+  <style>
+    .container { max-width: 950px; margin: 0 auto; padding: 60px 20px; }
+    .content-section { max-width: 760px; margin: 72px auto 0; }
+    .card { background: var(--card); border: 1px solid var(--border); border-radius: 28px; padding: 34px; }
+    h2 { margin-top: 0; font-size: 2rem; }
+    .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 22px; margin-bottom: 28px; }
+    label { display: block; margin-bottom: 10px; font-weight: 700; }
+    input, select { width: 100%; padding: 18px; border-radius: 14px; border: 1px solid var(--border); font-size: 1.1rem; box-sizing: border-box; background: white; }
+    button { background: #0f766e; color: white; border: none; padding: 16px 28px; border-radius: 14px; font-size: 1rem; font-weight: 700; cursor: pointer; margin-top: 10px; }
+    button:hover { opacity: 0.92; }
+    .result { margin-top: 40px; border: 1px solid var(--border); border-radius: 24px; padding: 28px; display: none; background: #f8fafc; }
+    .score { font-size: 3rem; font-weight: 800; margin-bottom: 16px; line-height: 1.05; }
+    .bar { width: 100%; height: 16px; background: #dbe3ee; border-radius: 999px; overflow: hidden; margin-bottom: 24px; }
+    .fill { height: 100%; width: 0%; background: #16a34a; border-radius: 999px; transition: width 0.4s ease; }
+    .metric { margin-bottom: 14px; font-size: 1.05rem; }
+    .guidance { margin-top: 26px; font-size: 1.15rem; line-height: 1.7; }
+    .disclaimer { margin-top: 30px; font-size: 0.9rem; color: var(--muted); }
+    .helper-link { margin-top: 10px; font-size: 0.9rem; }
+    .helper-link a { color: var(--primary); font-weight: 600; }
+    .content-section p, .content-section li { line-height: 1.8; }
+  </style>
+
+  <div class="container">
+    <CalculatorPageShell
+      eyebrow="Wedding Dress Calculator"
+      title="Should I Spend This Much on a Wedding Dress?"
+      description="Estimate whether a wedding dress is a meaningful splurge or a budget problem after alterations, accessories, savings, income, debt, and the full wedding budget."
+    >
+      <div class="card">
+        <h2>Wedding Dress Pressure Verdict</h2>
+
+        <div class="grid">
+          <div>
+            <label for="income">Combined Annual Income</label>
+            <input id="income" type="number" placeholder="150000" />
+          </div>
+
+          <div>
+            <label for="savings">Total Savings</label>
+            <input id="savings" type="number" placeholder="50000" />
+          </div>
+
+          <div>
+            <label for="dressCost">Dress Price</label>
+            <input id="dressCost" type="number" placeholder="2500" />
+          </div>
+
+          <div>
+            <label for="alterationsCost">Alterations Cost</label>
+            <input id="alterationsCost" type="number" placeholder="700" />
+          </div>
+
+          <div>
+            <label for="accessoriesCost">Accessories, Shoes, Veil, Extras</label>
+            <input id="accessoriesCost" type="number" placeholder="600" />
+          </div>
+
+          <div>
+            <label for="totalWeddingBudget">Total Wedding Budget</label>
+            <input id="totalWeddingBudget" type="number" placeholder="35000" />
+          </div>
+
+          <div>
+            <label for="monthlyTakeHome">Monthly Take-Home Pay</label>
+            <input id="monthlyTakeHome" type="number" placeholder="9500" />
+          </div>
+
+          <div>
+            <label for="debt">Current Debt</label>
+            <input id="debt" type="number" placeholder="12000" />
+            <div class="helper-link">
+              <a href="/what-counts-as-debt">Not sure what counts as debt? Read the debt guide</a>
+            </div>
+          </div>
+
+          <div>
+            <label for="priority">Dress Priority</label>
+            <select id="priority">
+              <option value="1">Low: dress is not a major priority</option>
+              <option value="2" selected>Moderate: important but flexible</option>
+              <option value="3">High: dress matters a lot</option>
+              <option value="4">Very high: this is one of our top priorities</option>
+            </select>
+          </div>
+
+          <div>
+            <label for="timeline">Timeline Pressure</label>
+            <select id="timeline">
+              <option value="1">Low: plenty of time</option>
+              <option value="2" selected>Moderate: normal timeline</option>
+              <option value="3">High: rush fees or limited options possible</option>
+              <option value="4">Very high: last-minute dress decision</option>
+            </select>
+          </div>
+        </div>
+
+        <button id="dressButton" type="button">Get Dress Verdict</button>
+
+        <div class="result" id="result">
+          <div class="score" id="score"></div>
+          <div class="bar"><div class="fill" id="barFill"></div></div>
+
+          <div class="metric" id="stress"></div>
+          <div class="metric" id="totalDressCost"></div>
+          <div class="metric" id="extrasShare"></div>
+          <div class="metric" id="savingsImpact"></div>
+          <div class="metric" id="incomeImpact"></div>
+          <div class="metric" id="monthlyImpact"></div>
+          <div class="metric" id="budgetShare"></div>
+          <div class="metric" id="debtRatio"></div>
+
+          <div class="guidance" id="guidance"></div>
+          <div class="disclaimer">This is a general educational estimate, not financial advice.</div>
+        </div>
+      </div>
+
+      <div class="content-section">
+        <h2>What a Wedding Dress Really Costs</h2>
+        <p>
+          The dress price is rarely the full dress cost. Alterations, veil, shoes, undergarments, accessories, taxes, shipping, rush fees, cleaning, and preservation can turn a reasonable-looking dress into a much larger wedding expense.
+        </p>
+        <p>
+          A wedding dress can be worth a meaningful splurge when it fits the full wedding budget and reflects a real priority. It becomes risky when it quietly steals money from venue, food, photography, honeymoon, debt payoff, emergency savings, or housing goals.
+        </p>
+      </div>
+
+      <WhenSpendingMakesSense
+        title="When a Wedding Dress Splurge Can Make Sense"
+        items={[
+          "The full dress cost, including alterations and accessories, fits inside the total wedding budget.",
+          "You can pay without credit-card debt or emergency-savings damage.",
+          "The dress is a high priority for the person wearing it, not just outside pressure.",
+          "The cost does not force major cuts to photography, food, guest comfort, or post-wedding goals.",
+          "Alterations, rush fees, cleaning, preservation, and accessories have already been included.",
+        ]}
+      />
+
+      <div class="content-section">
+        <h2>When the Dress Budget Gets Risky</h2>
+        <p>
+          The dress budget gets risky when the purchase feels emotional in the moment but creates months of pressure afterward. A dress that requires debt, drains savings, or forces cuts to higher-priority categories may not be the right dress at the right price.
+        </p>
+        <p>
+          Lower-cost dresses, sample sales, preowned gowns, simpler alterations, borrowed accessories, or skipping preservation can keep the look without letting the dress dominate the budget.
+        </p>
+      </div>
+
+      <KeyCostCategories
+        items={[
+          {
+            title: "Dress price",
+            description:
+              "The listed dress price is only the starting point. Taxes, shipping, designer premiums, and rush availability can raise the final cost.",
+          },
+          {
+            title: "Alterations",
+            description:
+              "Hemming, bustle, bodice changes, sleeves, straps, and resizing can be significant, especially with lace, beading, layers, or tight timelines.",
+          },
+          {
+            title: "Accessories and finishing costs",
+            description:
+              "Veil, shoes, jewelry, undergarments, shapewear, hair pieces, cleaning, steaming, and preservation should be counted upfront.",
+          },
+          {
+            title: "Opportunity cost",
+            description:
+              "Money spent on the dress may reduce flexibility for photography, venue, food, honeymoon, savings, or debt payoff.",
+          },
+        ]}
+      />
+
+      <ReduceCostTips
+        items={[
+          "Set a full dress budget before shopping, including alterations and accessories.",
+          "Try sample sales, trunk shows, preowned gowns, or off-the-rack options.",
+          "Ask alteration estimates before buying a complex dress.",
+          "Borrow or simplify accessories instead of upgrading every detail.",
+          "Avoid rush timelines that create limited choices or extra fees.",
+          "Preserve the photo value and comfort of the dress, not just the designer label.",
+        ]}
+      />
+
+      <FinancialRedFlags
+        items={[
+          "The dress requires credit-card debt or a personal loan.",
+          "Alterations and accessories were not included in the budget.",
+          "The dress crowds out higher-priority wedding categories.",
+          "Emergency savings would fall below a safe cushion.",
+          "The purchase is driven by pressure, comparison, or fear of regret.",
+          "The dress budget delays debt payoff, rent stability, housing goals, or honeymoon savings.",
+        ]}
+      />
+
+      <CalculatorAssumptions
+        items={[
+          "The calculator estimates dress pressure using dress price, alterations, accessories, wedding budget, savings, income, debt, priority, and timeline pressure.",
+          "Dress cost should include taxes, rush fees, accessories, shoes, veil, undergarments, alterations, cleaning, and preservation when known.",
+          "Total wedding budget is used to estimate whether the dress is taking too much space from the rest of the event.",
+          "Very high income or very high savings can reduce the pressure score when the dress cost is financially trivial.",
+          "The calculator is designed for general education and does not replace personalized financial advice.",
+        ]}
+      />
+
+      <div class="content-section">
+        <h2>The Best Dress Budget Includes the Whole Look</h2>
+        <p>
+          A dress that looks affordable on the tag can become expensive once the full look is included. The better question is not only “Can I buy this dress?” but “Can I buy this dress, alter it properly, finish the look, and still feel financially comfortable after the wedding?”
+        </p>
+      </div>
+
+      <FAQSection
+        title="Wedding Dress FAQ"
+        faqs={[
+          {
+            question: "How much should I spend on a wedding dress?",
+            answer:
+              "Spend an amount that fits your full wedding budget after alterations, accessories, savings, debt, and post-wedding priorities. The right number depends on your finances and how important the dress is to you.",
+          },
+          {
+            question: "Should alterations be included in the dress budget?",
+            answer:
+              "Yes. Alterations can be a major part of the true dress cost and should be included before deciding whether a dress is affordable.",
+          },
+          {
+            question: "Is it okay to splurge on a wedding dress?",
+            answer:
+              "Yes, if the dress is a genuine priority, the full cost is planned, and the purchase does not create debt or damage emergency savings.",
+          },
+          {
+            question: "How can I save money on a wedding dress?",
+            answer:
+              "Consider sample sales, off-the-rack dresses, preowned gowns, simpler alterations, borrowed accessories, and avoiding rush orders.",
+          },
+          {
+            question: "What costs should I include besides the dress?",
+            answer:
+              "Include alterations, veil, shoes, jewelry, undergarments, shapewear, taxes, shipping, steaming, cleaning, preservation, and rush fees.",
+          },
+        ]}
+      />
+
+      <MethodologySection category="wedding dress affordability" updated="June 2026" />
+
+      <RelatedGuides
+        guides={[
+          {
+            title: "How to Budget for a Wedding Without Going Into Debt",
+            href: "/how-to-budget-for-a-wedding-without-going-into-debt",
+            description:
+              "Build a wedding budget around savings, vendor tradeoffs, debt avoidance, and life after the celebration.",
+          },
+          {
+            title: "What Counts as Debt?",
+            href: "/what-counts-as-debt",
+            description:
+              "See which obligations should be included when judging wedding pressure.",
+          },
+        ]}
+      />
+
+      <RelatedCalculators
+        calculators={[
+          {
+            category: "Weddings",
+            title: "Should I Pay for an Open Bar?",
+            href: "/open-bar",
+          },
+          {
+            category: "Weddings",
+            title: "Should I Spend $20,000 on a Wedding Venue?",
+            href: "/should-i-spend-20000-on-a-wedding-venue",
+          },
+          {
+            category: "Weddings",
+            title: "Should I Hire a Wedding Planner?",
+            href: "/wedding-planner",
+          },
+          {
+            category: "Weddings",
+            title: "Should I Spend $30,000 on a Wedding?",
+            href: "/should-i-spend-30000-on-a-wedding",
+          },
+        ]}
+      />
+    </CalculatorPageShell>
+  </div>
+
+  <script is:inline>
+    const clamp = (value, min, max) => Math.min(Math.max(value, min), max);
+
+    const getNumber = (id) => {
+      const rawValue = document.getElementById(id)?.value;
+      const value = Number(rawValue);
+      return Number.isFinite(value) && value >= 0 ? value : 0;
+    };
+
+    const formatMoney = (value) => {
+      return Math.round(value).toLocaleString("en-US", {
+        style: "currency",
+        currency: "USD",
+        maximumFractionDigits: 0,
+      });
+    };
+
+    function getPressureLevel(score) {
+      if (score <= 30) {
+        return {
+          label: "Low Pressure",
+          stress: "Low pressure",
+          color: "#16a34a",
+          action:
+            "The dress appears manageable. Confirm the full cost, including alterations, accessories, taxes, cleaning, and preservation.",
+        };
+      }
+
+      if (score <= 60) {
+        return {
+          label: "Moderate Pressure",
+          stress: "Moderate pressure",
+          color: "#ca8a04",
+          action:
+            "Consider a lower dress budget, simpler alterations, sample sale, or accessory cuts before committing.",
+        };
+      }
+
+      return {
+        label: "High Pressure",
+        stress: "High pressure",
+        color: "#dc2626",
+        action:
+          "This dress plan may be too aggressive. Reduce the total look cost, avoid debt, or rebuild savings first.",
+      };
+    }
+
+    function calculateDress() {
+      const income = getNumber("income");
+      const savings = getNumber("savings");
+      const dressCost = getNumber("dressCost");
+      const alterationsCost = getNumber("alterationsCost");
+      const accessoriesCost = getNumber("accessoriesCost");
+      const totalWeddingBudget = getNumber("totalWeddingBudget");
+      const enteredMonthlyTakeHome = getNumber("monthlyTakeHome");
+      const debt = getNumber("debt");
+      const priority = getNumber("priority");
+      const timeline = getNumber("timeline");
+
+      const result = document.getElementById("result");
+      const scoreEl = document.getElementById("score");
+      const barFill = document.getElementById("barFill");
+      const stressEl = document.getElementById("stress");
+      const totalDressCostEl = document.getElementById("totalDressCost");
+      const extrasShareEl = document.getElementById("extrasShare");
+      const savingsImpactEl = document.getElementById("savingsImpact");
+      const incomeImpactEl = document.getElementById("incomeImpact");
+      const monthlyImpactEl = document.getElementById("monthlyImpact");
+      const budgetShareEl = document.getElementById("budgetShare");
+      const debtRatioEl = document.getElementById("debtRatio");
+      const guidanceEl = document.getElementById("guidance");
+
+      result.style.display = "block";
+
+      if (income <= 0 || dressCost <= 0) {
+        scoreEl.textContent = "Add your numbers first";
+        barFill.style.width = "0%";
+        barFill.style.background = "#16a34a";
+        stressEl.innerHTML = "";
+        totalDressCostEl.innerHTML = "";
+        extrasShareEl.innerHTML = "";
+        savingsImpactEl.innerHTML = "";
+        incomeImpactEl.innerHTML = "";
+        monthlyImpactEl.innerHTML = "";
+        budgetShareEl.innerHTML = "";
+        debtRatioEl.innerHTML = "";
+        guidanceEl.textContent =
+          "Enter a positive income and dress price so the calculator can estimate wedding dress pressure.";
+        return;
+      }
+
+      const estimatedMonthlyTakeHome = income / 12;
+      const monthlyTakeHome =
+        enteredMonthlyTakeHome > 0 && enteredMonthlyTakeHome <= income
+          ? enteredMonthlyTakeHome
+          : estimatedMonthlyTakeHome;
+
+      const totalDressCost = dressCost + alterationsCost + accessoriesCost;
+      const extrasCost = alterationsCost + accessoriesCost;
+      const budgetForShare = totalWeddingBudget > 0 ? totalWeddingBudget : totalDressCost;
+      const remainingSavings = savings - totalDressCost;
+
+      const savingsImpact = savings > 0 ? (totalDressCost / savings) * 100 : 999;
+      const annualIncomeImpact = (totalDressCost / income) * 100;
+      const monthlyIncomeImpact = (totalDressCost / monthlyTakeHome) * 100;
+      const budgetShare = (totalDressCost / budgetForShare) * 100;
+      const debtRatio = (debt / income) * 100;
+      const remainingSavingsMonths = monthlyTakeHome > 0 ? remainingSavings / monthlyTakeHome : 0;
+      const extrasShare = totalDressCost > 0 ? (extrasCost / totalDressCost) * 100 : 0;
+
+      let pressureScore = 0;
+
+      pressureScore += clamp(savingsImpact * 0.24, 0, 28);
+      pressureScore += clamp(monthlyIncomeImpact * 0.15, 0, 20);
+      pressureScore += clamp(debtRatio * 0.15, 0, 18);
+      pressureScore += clamp(budgetShare * 0.65, 0, 24);
+
+      if (totalDressCost > savings && annualIncomeImpact >= 4) pressureScore += 18;
+      else if (totalDressCost > savings && annualIncomeImpact >= 2) pressureScore += 10;
+      else if (totalDressCost > savings) pressureScore += 5;
+
+      if (remainingSavingsMonths < 1 && annualIncomeImpact >= 3) {
+        pressureScore += 14;
+      } else if (remainingSavingsMonths < 3 && annualIncomeImpact >= 2) {
+        pressureScore += 8;
+      } else if (remainingSavingsMonths >= 6) {
+        pressureScore -= 8;
+      }
+
+      if (budgetShare >= 15) pressureScore += 14;
+      else if (budgetShare >= 10) pressureScore += 8;
+      else if (budgetShare <= 5) pressureScore -= 5;
+
+      if (timeline >= 4) pressureScore += 10;
+      else if (timeline >= 3) pressureScore += 5;
+      else if (timeline <= 1) pressureScore -= 3;
+
+      if (priority >= 4) pressureScore -= 8;
+      else if (priority >= 3) pressureScore -= 4;
+      else if (priority <= 1) pressureScore += 8;
+
+      if (extrasShare >= 45) pressureScore += 6;
+      else if (extrasShare <= 20) pressureScore -= 2;
+
+      if (debtRatio >= 75) pressureScore += 12;
+      else if (debtRatio >= 40) pressureScore += 8;
+      else if (debtRatio <= 5) pressureScore -= 4;
+
+      if (savingsImpact <= 10 && remainingSavings > 0) pressureScore -= 8;
+      if (annualIncomeImpact <= 2) pressureScore -= 8;
+      if (annualIncomeImpact <= 1) pressureScore -= 6;
+      if (monthlyIncomeImpact <= 15) pressureScore -= 5;
+
+      if (
+        income >= 750000 &&
+        annualIncomeImpact <= 1 &&
+        debtRatio <= 15
+      ) {
+        pressureScore = Math.min(pressureScore, 12);
+      }
+
+      if (
+        income >= 1000000 &&
+        annualIncomeImpact <= 0.75 &&
+        debtRatio <= 10
+      ) {
+        pressureScore = Math.min(pressureScore, 6);
+      }
+
+      if (
+        income >= 1000000 &&
+        annualIncomeImpact <= 0.5 &&
+        debtRatio <= 5
+      ) {
+        pressureScore = Math.min(pressureScore, 3);
+      }
+
+      if (
+        savings >= totalDressCost * 25 &&
+        remainingSavingsMonths >= 6 &&
+        debtRatio <= 15
+      ) {
+        pressureScore = Math.min(pressureScore, 12);
+      }
+
+      if (
+        savings >= totalDressCost * 60 &&
+        debtRatio <= 10
+      ) {
+        pressureScore = Math.min(pressureScore, 5);
+      }
+
+      if (
+        income >= 1000000 &&
+        totalDressCost <= monthlyTakeHome * 0.1 &&
+        debtRatio <= 10
+      ) {
+        pressureScore = 0;
+      }
+
+      if (
+        savings >= totalDressCost * 100 &&
+        debtRatio <= 25
+      ) {
+        pressureScore = 0;
+      }
+
+      if (
+        savings >= 1000000 &&
+        totalDressCost <= savings * 0.01 &&
+        debtRatio <= 25
+      ) {
+        pressureScore = 0;
+      }
+
+      pressureScore = clamp(Math.round(pressureScore), 0, 100);
+
+      const level = getPressureLevel(pressureScore);
+
+      let guidance = "";
+
+      if (pressureScore === 0) {
+        guidance =
+          `This wedding dress plan appears financially tiny relative to the numbers provided. The estimated full dress cost is ${formatMoney(totalDressCost)}, or about ${annualIncomeImpact.toFixed(1)}% of annual income and ${savings > 0 ? savingsImpact.toFixed(1) : "0.0"}% of savings. The decision is mainly about personal priority, comfort, alterations, and opportunity cost.`;
+      } else if (pressureScore <= 30) {
+        guidance =
+          `This wedding dress plan appears manageable based on the numbers provided. The estimated full dress cost is ${formatMoney(totalDressCost)}, or about ${budgetShare.toFixed(1)}% of the wedding budget, so the next step is confirming alterations, accessories, taxes, cleaning, preservation, and rush fees.`;
+      } else if (pressureScore <= 60) {
+        guidance =
+          `This wedding dress plan may work, but it deserves caution. The estimated full dress cost is ${formatMoney(totalDressCost)}, or about ${budgetShare.toFixed(1)}% of the wedding budget. A sample sale, simpler alterations, or accessory cuts may protect the rest of the event.`;
+      } else {
+        guidance =
+          `This wedding dress plan could create real financial strain. The estimated full dress cost is ${formatMoney(totalDressCost)}, or about ${savings > 0 ? savingsImpact.toFixed(1) : "an undefined share of"}% of savings and ${budgetShare.toFixed(1)}% of the wedding budget. A lower-cost dress plan would likely be safer.`;
+      }
+
+      scoreEl.textContent = `${level.label} — ${pressureScore}/100`;
+      barFill.style.width = `${pressureScore}%`;
+      barFill.style.background = level.color;
+
+      stressEl.innerHTML = `<strong>Pressure level:</strong> ${level.stress}`;
+      totalDressCostEl.innerHTML = `<strong>Estimated full dress cost:</strong> ${formatMoney(totalDressCost)}`;
+      extrasShareEl.innerHTML = `<strong>Alterations/accessories share:</strong> ${extrasShare.toFixed(1)}% of the full dress cost`;
+      savingsImpactEl.innerHTML = `<strong>Savings impact:</strong> ${
+        savings > 0 ? `${savingsImpact.toFixed(1)}% of savings` : "No savings entered"
+      }`;
+      incomeImpactEl.innerHTML = `<strong>Annual income impact:</strong> ${annualIncomeImpact.toFixed(1)}% of annual income`;
+      monthlyImpactEl.innerHTML = `<strong>Monthly take-home impact:</strong> ${monthlyIncomeImpact.toFixed(1)}% of one month’s take-home pay`;
+      budgetShareEl.innerHTML = `<strong>Dress share of wedding budget:</strong> ${budgetShare.toFixed(1)}%`;
+      debtRatioEl.innerHTML = `<strong>Debt ratio:</strong> ${debtRatio.toFixed(1)}% of annual income`;
+
+      guidanceEl.textContent = `${guidance} Recommended next step: ${level.action}`;
+    }
+
+    document
+      .getElementById("dressButton")
+      .addEventListener("click", calculateDress);
+  </script>
+</Layout>

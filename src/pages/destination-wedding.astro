@@ -1,0 +1,813 @@
+---
+import Layout from "../layouts/Layout.astro";
+import FAQSection from "../components/FAQSection.astro";
+import RelatedCalculators from "../components/RelatedCalculators.astro";
+import RelatedGuides from "../components/RelatedGuides.astro";
+import MethodologySection from "../components/MethodologySection.astro";
+import FinancialRedFlags from "../components/FinancialRedFlags.astro";
+import CalculatorAssumptions from "../components/CalculatorAssumptions.astro";
+import KeyCostCategories from "../components/KeyCostCategories.astro";
+import ReduceCostTips from "../components/ReduceCostTips.astro";
+import WhenSpendingMakesSense from "../components/WhenSpendingMakesSense.astro";
+---
+
+<Layout
+  title="Should I Have a Destination Wedding?"
+  description="Use this destination wedding calculator to decide whether travel, guest costs, wedding budget, savings, debt, and family logistics make a destination wedding realistic."
+>
+  <style>
+    .container {
+      max-width: 920px;
+      margin: 0 auto;
+      padding: 72px 24px;
+    }
+
+    .eyebrow {
+      text-align: center;
+      color: var(--teal);
+      font-weight: 800;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      margin-bottom: 14px;
+    }
+
+    h1 {
+      font-size: clamp(3rem, 7vw, 5rem);
+      text-align: center;
+      margin: 0 0 16px;
+      color: var(--navy);
+      line-height: 1.05;
+    }
+
+    .subtitle {
+      text-align: center;
+      font-size: 22px;
+      color: var(--muted);
+      margin: 0 auto 56px;
+      line-height: 1.5;
+      max-width: 760px;
+    }
+
+    .content-section {
+      max-width: 760px;
+      margin: 72px auto 0;
+    }
+
+    .content-section h2 {
+      font-size: 2rem;
+      margin-bottom: 24px;
+      line-height: 1.2;
+    }
+
+    .content-section p,
+    .content-section li {
+      font-size: 1.08rem;
+      line-height: 1.9;
+      color: #334155;
+      margin-bottom: 24px;
+    }
+
+    .calculator {
+      background: var(--card);
+      border-radius: 24px;
+      padding: 38px;
+      box-shadow: 0 18px 50px rgba(15, 23, 42, 0.08);
+      border: 1px solid rgba(15, 23, 42, 0.05);
+      margin-top: 56px;
+    }
+
+    .calculator h2 {
+      margin-top: 0;
+      color: var(--navy);
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+    }
+
+    label {
+      display: block;
+      font-weight: 800;
+      margin-bottom: 9px;
+      color: var(--navy);
+    }
+
+    input,
+    select {
+      width: 100%;
+      padding: 16px;
+      border-radius: 12px;
+      border: 1px solid var(--border);
+      font-size: 18px;
+      box-sizing: border-box;
+      background: white;
+    }
+
+    input:focus,
+    select:focus {
+      outline: 3px solid rgba(15, 118, 110, 0.18);
+      border-color: var(--teal);
+    }
+
+    button {
+      margin-top: 28px;
+      background: #0f766e;
+      color: white;
+      border: none;
+      padding: 18px 28px;
+      border-radius: 14px;
+      font-size: 19px;
+      font-weight: 900;
+      cursor: pointer;
+    }
+
+    button:hover {
+      opacity: 0.92;
+    }
+
+    .result {
+      margin-top: 34px;
+      background: #f8fafc;
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 30px;
+      display: none;
+    }
+
+    .score {
+      font-size: 36px;
+      font-weight: 900;
+      margin-bottom: 18px;
+      color: var(--navy);
+    }
+
+    .bar {
+      height: 16px;
+      background: #e2e8f0;
+      border-radius: 999px;
+      overflow: hidden;
+      margin-bottom: 24px;
+    }
+
+    .bar-fill {
+      height: 100%;
+      background: var(--teal);
+      width: 0%;
+      transition: width 0.4s ease;
+    }
+
+    .line {
+      margin-bottom: 12px;
+      font-size: 18px;
+      color: var(--text);
+    }
+
+    .guidance {
+      margin-top: 26px;
+      font-size: 20px;
+      line-height: 1.6;
+      color: var(--navy);
+    }
+
+    .verdict-breakdown {
+      margin-top: 18px;
+      padding: 18px;
+      background: #f8fafc;
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      font-size: 0.98rem;
+      line-height: 1.65;
+      color: var(--muted);
+      display: none;
+    }
+
+    .verdict-breakdown strong {
+      color: var(--text);
+    }
+
+    .disclaimer {
+      margin-top: 22px;
+      font-size: 13px;
+      color: #64748b;
+    }
+
+    .helper-link {
+      margin-top: 10px;
+      font-size: 0.9rem;
+    }
+
+    .helper-link a {
+      color: #0f766e;
+      font-weight: 700;
+    }
+
+    @media (max-width: 700px) {
+      .container {
+        padding: 54px 20px;
+      }
+
+      h1 {
+        font-size: 38px;
+      }
+
+      .subtitle {
+        font-size: 18px;
+      }
+
+      .calculator {
+        padding: 24px;
+      }
+
+      .grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+
+  <main class="container">
+    <div class="eyebrow">Destination Wedding Calculator</div>
+
+    <h1>Should I Have a Destination Wedding?</h1>
+
+    <p class="subtitle">
+      Get a practical verdict based on wedding cost, travel expenses, guest burden,
+      income, savings, debt, family pressure, and post-wedding flexibility.
+    </p>
+
+    <div class="calculator">
+      <h2>Destination Wedding Pressure Verdict</h2>
+
+      <div class="grid">
+        <div>
+          <label for="income">Combined Annual Income</label>
+          <input id="income" type="number" placeholder="Example: 150000" />
+        </div>
+
+        <div>
+          <label for="savings">Total Savings</label>
+          <input id="savings" type="number" placeholder="Example: 60000" />
+        </div>
+
+        <div>
+          <label for="weddingCost">Destination Wedding Cost</label>
+          <input id="weddingCost" type="number" placeholder="Example: 25000" />
+        </div>
+
+        <div>
+          <label for="travelCost">Your Travel + Lodging Cost</label>
+          <input id="travelCost" type="number" placeholder="Example: 6000" />
+        </div>
+
+        <div>
+          <label for="guestCount">Expected Guest Count</label>
+          <input id="guestCount" type="number" placeholder="Example: 45" />
+        </div>
+
+        <div>
+          <label for="guestTravelBurden">Average Guest Travel Cost</label>
+          <input id="guestTravelBurden" type="number" placeholder="Example: 1800" />
+        </div>
+
+        <div>
+          <label for="localAlternative">Comparable Local Wedding Cost</label>
+          <input id="localAlternative" type="number" placeholder="Example: 35000" />
+        </div>
+
+        <div>
+          <label for="debt">Current Debt</label>
+          <input id="debt" type="number" placeholder="Example: 15000" />
+
+          <div class="helper-link">
+            <a href="/what-counts-as-debt">
+              Not sure what counts as debt? Read the debt guide
+            </a>
+          </div>
+        </div>
+
+        <div>
+          <label for="familyPressure">Family / Guest Pressure</label>
+          <select id="familyPressure">
+            <option value="1">Low: most key people are supportive</option>
+            <option value="2" selected>Moderate: some concerns but manageable</option>
+            <option value="3">High: important guests may struggle to attend</option>
+            <option value="4">Very high: cost, travel, or accessibility is a major issue</option>
+          </select>
+        </div>
+
+        <div>
+          <label for="complexity">Travel Complexity</label>
+          <select id="complexity">
+            <option value="1">Simple: domestic or easy travel</option>
+            <option value="2" selected>Moderate: flights and hotel blocks needed</option>
+            <option value="3">Complex: passports, transfers, or remote venue</option>
+            <option value="4">Very complex: international, multi-day, or difficult logistics</option>
+          </select>
+        </div>
+      </div>
+
+      <button id="destinationButton" type="button">Get Destination Wedding Verdict</button>
+
+      <div class="result" id="result">
+        <div class="score" id="scoreText"></div>
+
+        <div class="bar">
+          <div class="bar-fill" id="barFill"></div>
+        </div>
+
+        <div class="line" id="stressLine"></div>
+        <div class="line" id="totalCostLine"></div>
+        <div class="line" id="savingsImpactLine"></div>
+        <div class="line" id="incomeImpactLine"></div>
+        <div class="line" id="guestBurdenLine"></div>
+        <div class="line" id="localComparisonLine"></div>
+        <div class="line" id="debtRatioLine"></div>
+
+        <div class="guidance" id="guidance"></div>
+
+        <div class="verdict-breakdown" id="verdictBreakdown"></div>
+
+        <div class="disclaimer">
+          This is a general educational estimate, not financial advice.
+        </div>
+      </div>
+    </div>
+
+    <section class="content-section">
+      <h2>What Makes a Destination Wedding Different</h2>
+
+      <p>
+        A destination wedding is not simply a smaller wedding in a prettier place.
+        It combines wedding costs with travel logistics, lodging, guest affordability,
+        passports, transportation, weather risk, vendor distance, and a much higher
+        chance that some people you care about cannot attend.
+      </p>
+
+      <p>
+        The financial question is whether the destination wedding actually lowers
+        pressure or just shifts the cost into travel, guest burden, extra events,
+        and coordination stress. A destination wedding can be smart when it keeps
+        the guest list intentional, fits savings, and does not create debt after
+        the trip ends.
+      </p>
+    </section>
+
+    <WhenSpendingMakesSense
+      title="When a Destination Wedding Can Make Sense"
+      items={[
+        "The total wedding and travel cost is manageable without high-interest debt.",
+        "The destination naturally keeps the guest list smaller and more intentional.",
+        "Emergency savings remain intact after deposits, travel, lodging, and final payments.",
+        "Key family members and close friends can realistically afford the trip.",
+        "The destination experience matters more to the couple than a large local reception.",
+      ]}
+    />
+
+    <section class="content-section">
+      <h2>When a Destination Wedding Gets Risky</h2>
+
+      <p>
+        Destination weddings become risky when the advertised package price hides
+        the true cost. Flights, lodging, welcome events, excursions, attire,
+        passports, vendor travel, guest transportation, tips, and backup plans can
+        make the final number very different from the first quote.
+      </p>
+
+      <p>
+        The emotional risk matters too. If the destination creates major pressure
+        for parents, siblings, grandparents, wedding-party members, or close friends,
+        the couple may save money while creating stress elsewhere.
+      </p>
+    </section>
+
+    <KeyCostCategories
+      items={[
+        {
+          title: "Wedding package and venue fees",
+          description:
+            "Destination packages may include ceremony basics, but upgrades, private receptions, decor, photography, music, and guest minimums can change the final cost.",
+        },
+        {
+          title: "Travel and lodging",
+          description:
+            "Flights, hotels, resort fees, transfers, passports, baggage, meals, and extra nights should be treated as part of the wedding cost.",
+        },
+        {
+          title: "Guest affordability",
+          description:
+            "Guest travel cost affects attendance, wedding-party pressure, family expectations, and whether the destination feels generous or burdensome.",
+        },
+        {
+          title: "Coordination and backup plans",
+          description:
+            "Remote planning, weather, legal paperwork, vendor communication, and day-of logistics may require a planner or extra buffer.",
+        },
+      ]}
+    />
+
+    <ReduceCostTips
+      items={[
+        "Compare the destination total against a realistic local wedding alternative.",
+        "Keep the guest list focused instead of inviting people who are unlikely to travel.",
+        "Avoid stacking too many welcome parties, excursions, or group meals.",
+        "Choose a destination with simple flights and reasonable hotel options.",
+        "Build a separate buffer for transfers, taxes, tips, weather backups, and travel surprises.",
+      ]}
+    />
+
+    <FinancialRedFlags
+      items={[
+        "The destination wedding requires credit-card debt or a personal loan.",
+        "The package price looks affordable only because travel costs are being ignored.",
+        "Important guests would feel pressured to spend money they cannot afford.",
+        "The couple would drain emergency savings before returning home.",
+        "The destination is being chosen to avoid family conflict but creates a new financial conflict.",
+      ]}
+    />
+
+    <CalculatorAssumptions
+      items={[
+        "The calculator treats destination wedding cost and couple travel cost as the couple’s direct financial obligation.",
+        "The estimate weighs income, savings, debt, total destination cost, local wedding comparison, guest travel burden, family pressure, and travel complexity.",
+        "The calculator treats guest burden as a real planning risk, not just a courtesy issue.",
+        "Very high income or very high savings can reduce the pressure score when the destination wedding is financially trivial.",
+        "The tool is educational and does not replace personalized financial advice.",
+      ]}
+    />
+
+    <section class="content-section">
+      <h2>What Your Destination Wedding Verdict Means</h2>
+
+      <p>
+        A low-pressure result means the destination wedding appears financially
+        manageable and may be a reasonable way to create a smaller, more meaningful
+        event. A moderate result means the idea can still work, but travel, guest
+        expectations, and hidden costs need tighter control.
+      </p>
+
+      <p>
+        A high-pressure result does not mean the destination is impossible. It
+        means the current version may be too expensive, too complicated, or too
+        burdensome compared with a simpler local wedding, courthouse ceremony, or
+        smaller travel celebration.
+      </p>
+    </section>
+
+    <FAQSection
+      title="Destination Wedding FAQ"
+      faqs={[
+        {
+          question: "Is a destination wedding cheaper than a local wedding?",
+          answer:
+            "Sometimes, but not always. Destination weddings can be cheaper when the guest list is smaller, but travel, lodging, upgrades, welcome events, and guest support can erase the savings.",
+        },
+        {
+          question: "Should we have a destination wedding if guests cannot afford it?",
+          answer:
+            "Be careful. A destination wedding may still be right for the couple, but guests should not feel obligated to take on travel costs they cannot afford.",
+        },
+        {
+          question: "What costs should I include in a destination wedding budget?",
+          answer:
+            "Include the wedding package, ceremony fees, reception upgrades, flights, hotels, transfers, passports, vendor travel, attire, welcome events, meals, tips, taxes, and a backup buffer.",
+        },
+        {
+          question: "Can a destination wedding help reduce the guest list?",
+          answer:
+            "Yes. Destination weddings often create a smaller guest list naturally, but that should be handled carefully so close family and friends do not feel excluded by cost.",
+        },
+        {
+          question: "Is a destination wedding worth it?",
+          answer:
+            "It can be worth it when the experience matters deeply, the total cost fits your finances, and the guest burden is acceptable. It is risky when it creates debt, drains savings, or pressures guests.",
+        },
+      ]}
+    />
+
+    <MethodologySection category="destination wedding affordability" updated="June 2026" />
+
+    <RelatedGuides
+      guides={[
+        {
+          title: "How to Budget for a Wedding Without Going Into Debt",
+          href: "/how-to-budget-for-a-wedding-without-going-into-debt",
+          description:
+            "Plan wedding spending without letting the celebration create long-term financial pressure.",
+        },
+        {
+          title: "How Much Vacation Can I Afford?",
+          href: "/how-much-vacation-can-i-afford",
+          description:
+            "Evaluate travel spending, savings pressure, debt risk, and post-trip flexibility.",
+        },
+        {
+          title: "What Counts as Debt?",
+          href: "/what-counts-as-debt",
+          description:
+            "See which debt obligations matter when evaluating wedding affordability.",
+        },
+      ]}
+    />
+
+    <RelatedCalculators
+      calculators={[
+        {
+          category: "Weddings",
+          title: "Should I Hire a Wedding Planner?",
+          href: "/wedding-planner",
+        },
+        {
+          category: "Weddings",
+          title: "Should I Invite This Many Wedding Guests?",
+          href: "/wedding-guest-count",
+        },
+        {
+          category: "Weddings",
+          title: "Should I Spend $10,000 on a Destination Wedding?",
+          href: "/should-i-spend-10000-on-a-destination-wedding",
+        },
+        {
+          category: "Travel",
+          title: "Should I Spend $8,000 on a Honeymoon?",
+          href: "/should-i-spend-8000-on-a-honeymoon",
+        },
+      ]}
+    />
+  </main>
+
+  <script is:inline>
+    const clamp = (value, min, max) => Math.min(Math.max(value, min), max);
+
+    const getNumber = (id) => {
+      const rawValue = document.getElementById(id)?.value;
+      const value = Number(rawValue);
+      return Number.isFinite(value) && value >= 0 ? value : 0;
+    };
+
+    function getDestinationLevel(score) {
+      if (score <= 30) {
+        return {
+          label: "Low Pressure",
+          stress: "Low pressure",
+          color: "#16a34a",
+          action: "Proceed with a clear travel budget and guest communication plan.",
+        };
+      }
+
+      if (score <= 60) {
+        return {
+          label: "Moderate Pressure",
+          stress: "Moderate pressure",
+          color: "#ca8a04",
+          action: "Trim travel extras, simplify events, and protect savings before booking.",
+        };
+      }
+
+      return {
+        label: "High Pressure",
+        stress: "High pressure",
+        color: "#dc2626",
+        action: "Consider a smaller local wedding, simpler destination plan, or longer savings timeline.",
+      };
+    }
+
+    function calculateDestinationWedding() {
+      const income = getNumber("income");
+      const savings = getNumber("savings");
+      const weddingCost = getNumber("weddingCost");
+      const travelCost = getNumber("travelCost");
+      const guestCount = getNumber("guestCount");
+      const guestTravelBurden = getNumber("guestTravelBurden");
+      const localAlternative = getNumber("localAlternative");
+      const debt = getNumber("debt");
+      const familyPressure = getNumber("familyPressure");
+      const complexity = getNumber("complexity");
+
+      const result = document.getElementById("result");
+      const scoreText = document.getElementById("scoreText");
+      const barFill = document.getElementById("barFill");
+      const stressLine = document.getElementById("stressLine");
+      const totalCostLine = document.getElementById("totalCostLine");
+      const savingsImpactLine = document.getElementById("savingsImpactLine");
+      const incomeImpactLine = document.getElementById("incomeImpactLine");
+      const guestBurdenLine = document.getElementById("guestBurdenLine");
+      const localComparisonLine = document.getElementById("localComparisonLine");
+      const debtRatioLine = document.getElementById("debtRatioLine");
+      const guidance = document.getElementById("guidance");
+      const breakdown = document.getElementById("verdictBreakdown");
+
+      result.style.display = "block";
+
+      if (income <= 0 || weddingCost <= 0) {
+        scoreText.textContent = "Add your numbers first";
+        barFill.style.width = "0%";
+        barFill.style.background = "#16a34a";
+        stressLine.innerHTML = "";
+        totalCostLine.innerHTML = "";
+        savingsImpactLine.innerHTML = "";
+        incomeImpactLine.innerHTML = "";
+        guestBurdenLine.innerHTML = "";
+        localComparisonLine.innerHTML = "";
+        debtRatioLine.innerHTML = "";
+        guidance.textContent =
+          "Enter a positive income and destination wedding cost so the calculator can estimate financial pressure.";
+        breakdown.style.display = "none";
+        return;
+      }
+
+      const totalDirectCost = weddingCost + travelCost;
+      const monthlyIncome = income / 12;
+      const remainingSavings = savings - totalDirectCost;
+
+      const savingsImpact = savings > 0 ? (totalDirectCost / savings) * 100 : 999;
+      const annualIncomeImpact = (totalDirectCost / income) * 100;
+      const monthlyIncomeImpact = (totalDirectCost / monthlyIncome) * 100;
+      const debtRatio = (debt / income) * 100;
+      const remainingSavingsMonths = monthlyIncome > 0 ? remainingSavings / monthlyIncome : 0;
+      const localComparison = localAlternative > 0 ? ((totalDirectCost - localAlternative) / localAlternative) * 100 : 0;
+      const guestBurdenIndex = guestTravelBurden / Math.max(monthlyIncome, 1);
+
+      let pressureScore = 0;
+
+      pressureScore += clamp(savingsImpact * 0.26, 0, 32);
+      pressureScore += clamp(monthlyIncomeImpact * 0.17, 0, 25);
+      pressureScore += clamp(debtRatio * 0.16, 0, 18);
+
+      if (totalDirectCost > savings && annualIncomeImpact >= 8) pressureScore += 24;
+      else if (totalDirectCost > savings && annualIncomeImpact >= 3) pressureScore += 14;
+      else if (totalDirectCost > savings) pressureScore += 6;
+
+      if (remainingSavingsMonths < 1 && annualIncomeImpact >= 6) {
+        pressureScore += 18;
+      } else if (remainingSavingsMonths < 3 && annualIncomeImpact >= 4) {
+        pressureScore += 10;
+      } else if (remainingSavingsMonths >= 6) {
+        pressureScore -= 8;
+      }
+
+      if (familyPressure >= 4) pressureScore += 14;
+      else if (familyPressure >= 3) pressureScore += 9;
+      else if (familyPressure <= 1) pressureScore -= 4;
+
+      if (complexity >= 4) pressureScore += 10;
+      else if (complexity >= 3) pressureScore += 6;
+      else if (complexity <= 1) pressureScore -= 3;
+
+      if (guestTravelBurden >= 2500 && guestCount >= 40) pressureScore += 12;
+      else if (guestTravelBurden >= 1500 && guestCount >= 40) pressureScore += 8;
+      else if (guestTravelBurden <= 600) pressureScore -= 3;
+
+      if (localAlternative > 0 && localComparison >= 25) pressureScore += 10;
+      else if (localAlternative > 0 && localComparison >= 10) pressureScore += 5;
+      else if (localAlternative > 0 && localComparison <= -20) pressureScore -= 8;
+      else if (localAlternative > 0 && localComparison <= -10) pressureScore -= 4;
+
+      if (guestCount <= 35 && familyPressure <= 2) pressureScore -= 6;
+      if (guestCount >= 100 && complexity >= 3) pressureScore += 8;
+
+      if (debtRatio >= 75) pressureScore += 12;
+      else if (debtRatio >= 40) pressureScore += 8;
+      else if (debtRatio <= 5) pressureScore -= 4;
+
+      if (savingsImpact <= 10 && remainingSavings > 0) pressureScore -= 8;
+      if (annualIncomeImpact <= 5) pressureScore -= 6;
+      if (annualIncomeImpact <= 2) pressureScore -= 8;
+      if (monthlyIncomeImpact <= 25) pressureScore -= 5;
+
+      if (
+        income >= 750000 &&
+        annualIncomeImpact <= 3 &&
+        debtRatio <= 15
+      ) {
+        pressureScore = Math.min(pressureScore, 18);
+      }
+
+      if (
+        income >= 1000000 &&
+        annualIncomeImpact <= 2 &&
+        debtRatio <= 10
+      ) {
+        pressureScore = Math.min(pressureScore, 8);
+      }
+
+      if (
+        income >= 1000000 &&
+        annualIncomeImpact <= 1.5 &&
+        debtRatio <= 5
+      ) {
+        pressureScore = Math.min(pressureScore, 3);
+      }
+
+      if (
+        savings >= totalDirectCost * 20 &&
+        remainingSavingsMonths >= 6 &&
+        debtRatio <= 15
+      ) {
+        pressureScore = Math.min(pressureScore, 15);
+      }
+
+      if (
+        savings >= totalDirectCost * 50 &&
+        debtRatio <= 10
+      ) {
+        pressureScore = Math.min(pressureScore, 5);
+      }
+
+      if (
+        income >= 1000000 &&
+        totalDirectCost <= monthlyIncome * 0.25 &&
+        debtRatio <= 5
+      ) {
+        pressureScore = 0;
+      }
+
+      if (
+        savings >= totalDirectCost * 100 &&
+        debtRatio <= 5
+      ) {
+        pressureScore = 0;
+      }
+
+      pressureScore = clamp(Math.round(pressureScore), 0, 100);
+
+      const level = getDestinationLevel(pressureScore);
+
+      const guestBurdenText =
+        guestTravelBurden >= 2500
+          ? "High guest travel burden"
+          : guestTravelBurden >= 1200
+            ? "Moderate guest travel burden"
+            : "Lower guest travel burden";
+
+      const localText =
+        localAlternative <= 0
+          ? "No local comparison entered"
+          : localComparison > 0
+            ? `${localComparison.toFixed(1)}% more than local alternative`
+            : `${Math.abs(localComparison).toFixed(1)}% less than local alternative`;
+
+      let guidanceText = "";
+
+      if (pressureScore <= 30) {
+        guidanceText =
+          `A destination wedding appears financially manageable based on the numbers provided. Your estimated direct cost is about ${annualIncomeImpact.toFixed(1)}% of annual income and ${savingsImpact.toFixed(1)}% of savings, so the key is keeping travel extras and guest expectations controlled.`;
+      } else if (pressureScore <= 60) {
+        guidanceText =
+          `A destination wedding may still work, but it needs tighter boundaries. Your estimated direct cost is about ${annualIncomeImpact.toFixed(1)}% of annual income and ${savingsImpact.toFixed(1)}% of savings, before considering the emotional and practical burden on guests.`;
+      } else {
+        guidanceText =
+          `This destination wedding could create too much pressure. Your estimated direct cost is about ${annualIncomeImpact.toFixed(1)}% of annual income and ${savingsImpact.toFixed(1)}% of savings, and the travel complexity or guest burden may make the plan harder to justify.`;
+      }
+
+      scoreText.textContent = `${level.label} — ${pressureScore}/100`;
+
+      barFill.style.width = `${pressureScore}%`;
+      barFill.style.background = level.color;
+
+      stressLine.innerHTML =
+        `<strong>Pressure level:</strong> ${level.stress}`;
+
+      totalCostLine.innerHTML =
+        `<strong>Estimated direct cost:</strong> $${totalDirectCost.toLocaleString()}`;
+
+      savingsImpactLine.innerHTML =
+        `<strong>Savings impact:</strong> ${
+          savings > 0 ? `${savingsImpact.toFixed(1)}% of savings` : "No savings entered"
+        }`;
+
+      incomeImpactLine.innerHTML =
+        `<strong>Income impact:</strong> ${annualIncomeImpact.toFixed(1)}% of annual income`;
+
+      guestBurdenLine.innerHTML =
+        `<strong>Guest burden:</strong> ${guestBurdenText}`;
+
+      localComparisonLine.innerHTML =
+        `<strong>Local comparison:</strong> ${localText}`;
+
+      debtRatioLine.innerHTML =
+        `<strong>Debt ratio:</strong> ${debtRatio.toFixed(1)}% of annual income`;
+
+      guidance.textContent =
+        `${guidanceText} Recommended next step: ${level.action}`;
+
+      breakdown.style.display = "block";
+
+      breakdown.innerHTML = `
+        <strong>Destination Wedding Breakdown:</strong><br><br>
+        - Destination wedding cost plus couple travel equals <strong>$${totalDirectCost.toLocaleString()}</strong>.<br>
+        - Direct cost equals <strong>${annualIncomeImpact.toFixed(1)}%</strong> of annual household income.<br>
+        - Direct cost consumes <strong>${
+          savings > 0 ? savingsImpact.toFixed(1) + "%" : "an undefined share"
+        }</strong> of total savings.<br>
+        - Existing debt load equals <strong>${debtRatio.toFixed(1)}%</strong> of annual income.<br>
+        - Estimated savings after the wedding and travel: <strong>$${Math.max(remainingSavings, 0).toLocaleString()}</strong>.<br><br>
+        This verdict weighs affordability pressure, travel complexity, guest burden, local alternatives, debt, and remaining cushion. Very high income or very high savings can appropriately lower the score when the destination plan is financially minor.
+      `;
+    }
+
+    document
+      .getElementById("destinationButton")
+      .addEventListener("click", calculateDestinationWedding);
+  </script>
+</Layout>

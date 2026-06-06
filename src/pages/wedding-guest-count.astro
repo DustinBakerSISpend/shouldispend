@@ -1,0 +1,614 @@
+---
+import Layout from "../layouts/Layout.astro";
+import CalculatorPageShell from "../components/CalculatorPageShell.astro";
+import FAQSection from "../components/FAQSection.astro";
+import RelatedCalculators from "../components/RelatedCalculators.astro";
+import RelatedGuides from "../components/RelatedGuides.astro";
+import MethodologySection from "../components/MethodologySection.astro";
+import FinancialRedFlags from "../components/FinancialRedFlags.astro";
+import CalculatorAssumptions from "../components/CalculatorAssumptions.astro";
+import KeyCostCategories from "../components/KeyCostCategories.astro";
+import ReduceCostTips from "../components/ReduceCostTips.astro";
+import WhenSpendingMakesSense from "../components/WhenSpendingMakesSense.astro";
+
+const pageUrl = "https://shouldispend.com/wedding-guest-count";
+
+const faqSchema = {
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  mainEntity: [
+    {
+      "@type": "Question",
+      name: "How many wedding guests should I invite?",
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: "The right guest count depends on your total wedding budget, cost per guest, venue capacity, savings, income, debt, and how much financial pressure each added guest creates.",
+      },
+    },
+    {
+      "@type": "Question",
+      name: "Why does guest count affect wedding cost so much?",
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: "Guest count affects catering, bar, rentals, invitations, favors, transportation, tables, linens, staffing, cake, and sometimes venue minimums.",
+      },
+    },
+    {
+      "@type": "Question",
+      name: "Is it better to cut guests or cut wedding details?",
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: "Often, reducing guest count is the most effective way to lower wedding cost without weakening the experience for the people who do attend.",
+      },
+    },
+  ],
+};
+---
+
+<Layout
+  title="Should I Invite This Many Wedding Guests? Calculator | ShouldISpend"
+  description="Use this wedding guest count calculator to decide whether your guest list fits your wedding budget, savings, income, debt, venue, catering, and bar costs."
+>
+  <script type="application/ld+json" set:html={JSON.stringify(faqSchema)} />
+
+  <style>
+    .container { max-width: 950px; margin: 0 auto; padding: 60px 20px; }
+    .content-section { max-width: 760px; margin: 72px auto 0; }
+    .card { background: var(--card); border: 1px solid var(--border); border-radius: 28px; padding: 34px; }
+    h2 { margin-top: 0; font-size: 2rem; }
+    .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 22px; margin-bottom: 28px; }
+    label { display: block; margin-bottom: 10px; font-weight: 700; }
+    input, select { width: 100%; padding: 18px; border-radius: 14px; border: 1px solid var(--border); font-size: 1.1rem; box-sizing: border-box; background: white; }
+    button { background: #0f766e; color: white; border: none; padding: 16px 28px; border-radius: 14px; font-size: 1rem; font-weight: 700; cursor: pointer; margin-top: 10px; }
+    button:hover { opacity: 0.92; }
+    .result { margin-top: 40px; border: 1px solid var(--border); border-radius: 24px; padding: 28px; display: none; background: #f8fafc; }
+    .score { font-size: 3rem; font-weight: 800; margin-bottom: 16px; line-height: 1.05; }
+    .bar { width: 100%; height: 16px; background: #dbe3ee; border-radius: 999px; overflow: hidden; margin-bottom: 24px; }
+    .fill { height: 100%; width: 0%; background: #16a34a; border-radius: 999px; transition: width 0.4s ease; }
+    .metric { margin-bottom: 14px; font-size: 1.05rem; }
+    .guidance { margin-top: 26px; font-size: 1.15rem; line-height: 1.7; }
+    .disclaimer { margin-top: 30px; font-size: 0.9rem; color: var(--muted); }
+    .helper-link { margin-top: 10px; font-size: 0.9rem; }
+    .helper-link a { color: var(--primary); font-weight: 600; }
+    .content-section p, .content-section li { line-height: 1.8; }
+  </style>
+
+  <div class="container">
+    <CalculatorPageShell
+      eyebrow="Wedding Guest Count Calculator"
+      title="Should I Invite This Many Wedding Guests?"
+      description="Estimate whether your guest list is realistic after per-guest cost, venue capacity, wedding budget, savings, income, debt, and family pressure."
+    >
+      <div class="card">
+        <h2>Wedding Guest Count Pressure Verdict</h2>
+
+        <div class="grid">
+          <div>
+            <label for="income">Combined Annual Income</label>
+            <input id="income" type="number" placeholder="150000" />
+          </div>
+
+          <div>
+            <label for="savings">Total Savings</label>
+            <input id="savings" type="number" placeholder="50000" />
+          </div>
+
+          <div>
+            <label for="guestCount">Planned Guest Count</label>
+            <input id="guestCount" type="number" placeholder="150" />
+          </div>
+
+          <div>
+            <label for="costPerGuest">Estimated Cost Per Guest</label>
+            <input id="costPerGuest" type="number" placeholder="175" />
+          </div>
+
+          <div>
+            <label for="fixedWeddingCosts">Fixed Wedding Costs</label>
+            <input id="fixedWeddingCosts" type="number" placeholder="12000" />
+          </div>
+
+          <div>
+            <label for="totalWeddingBudget">Total Wedding Budget</label>
+            <input id="totalWeddingBudget" type="number" placeholder="40000" />
+          </div>
+
+          <div>
+            <label for="monthlyTakeHome">Monthly Take-Home Pay</label>
+            <input id="monthlyTakeHome" type="number" placeholder="9500" />
+          </div>
+
+          <div>
+            <label for="debt">Current Debt</label>
+            <input id="debt" type="number" placeholder="12000" />
+            <div class="helper-link">
+              <a href="/what-counts-as-debt">Not sure what counts as debt? Read the debt guide</a>
+            </div>
+          </div>
+
+          <div>
+            <label for="venueCapacity">Venue Capacity</label>
+            <input id="venueCapacity" type="number" placeholder="175" />
+          </div>
+
+          <div>
+            <label for="familyPressure">Family / Obligation Pressure</label>
+            <select id="familyPressure">
+              <option value="1">Low: easy to keep it small</option>
+              <option value="2" selected>Moderate: some obligations</option>
+              <option value="3">High: family expects a larger list</option>
+              <option value="4">Very high: guest list is politically difficult</option>
+            </select>
+          </div>
+        </div>
+
+        <button id="guestButton" type="button">Get Guest Count Verdict</button>
+
+        <div class="result" id="result">
+          <div class="score" id="score"></div>
+          <div class="bar"><div class="fill" id="barFill"></div></div>
+
+          <div class="metric" id="stress"></div>
+          <div class="metric" id="estimatedWeddingCost"></div>
+          <div class="metric" id="guestDrivenCost"></div>
+          <div class="metric" id="savingsImpact"></div>
+          <div class="metric" id="incomeImpact"></div>
+          <div class="metric" id="monthlyImpact"></div>
+          <div class="metric" id="budgetShare"></div>
+          <div class="metric" id="capacityPressure"></div>
+          <div class="metric" id="debtRatio"></div>
+
+          <div class="guidance" id="guidance"></div>
+          <div class="disclaimer">This is a general educational estimate, not financial advice.</div>
+        </div>
+      </div>
+
+      <div class="content-section">
+        <h2>Why Guest Count Drives the Wedding Budget</h2>
+        <p>
+          Guest count is one of the strongest wedding cost levers because each additional person can affect food, bar, rentals, tables, linens, centerpieces, invitations, favors, transportation, cake, staffing, and sometimes venue minimums.
+        </p>
+        <p>
+          A guest list can feel emotional because it touches family expectations, friendships, work relationships, and old obligations. But financially, every added guest has a real cost. The question is whether the planned guest count fits the wedding budget without forcing debt, draining savings, or squeezing the rest of the event.
+        </p>
+      </div>
+
+      <WhenSpendingMakesSense
+        title="When a Larger Guest List Can Make Sense"
+        items={[
+          "The total guest-driven cost fits comfortably inside the full wedding budget.",
+          "You can invite the planned number of guests without credit-card debt or emergency-savings damage.",
+          "The venue can comfortably hold the guest count without expensive upgrades.",
+          "The couple genuinely values a larger celebration over upgrades, honeymoon spending, or other goals.",
+          "Family contributions are reliable and do not create strings, pressure, or conflict.",
+        ]}
+      />
+
+      <div class="content-section">
+        <h2>When the Guest List Gets Too Big</h2>
+        <p>
+          The guest list is probably too big when every other decision starts to feel compromised. If the planned count forces cheaper food, weaker photography, a worse venue, a stressful bar plan, or post-wedding debt, the list may be controlling the wedding instead of serving it.
+        </p>
+        <p>
+          Cutting guests can be uncomfortable, but it often protects the experience for the people who remain. A smaller wedding can feel more intentional, less rushed, and more financially stable.
+        </p>
+      </div>
+
+      <KeyCostCategories
+        items={[
+          {
+            title: "Food and beverage",
+            description:
+              "Catering and bar packages usually scale directly with guest count, which makes them the largest guest-driven costs.",
+          },
+          {
+            title: "Rentals and tables",
+            description:
+              "More guests may require more tables, chairs, linens, centerpieces, place settings, tents, bathrooms, shuttles, or staffing.",
+          },
+          {
+            title: "Venue capacity",
+            description:
+              "A guest list near or above venue capacity can create layout problems, upgrade costs, or the need for a more expensive venue.",
+          },
+          {
+            title: "Emotional obligations",
+            description:
+              "Family pressure, plus-ones, coworkers, distant relatives, and reciprocal invitations can expand the list beyond the couple’s real priorities.",
+          },
+        ]}
+      />
+
+      <ReduceCostTips
+        items={[
+          "Build an A-list before adding extended family, coworkers, or courtesy invites.",
+          "Set a plus-one rule and apply it consistently.",
+          "Cut guest count before cutting photography, food quality, or emergency savings.",
+          "Use venue capacity as a hard limit, not a target to max out.",
+          "Consider adults-only, immediate-family-only, or ceremony-only invite structures.",
+          "Track the cost of every 10 extra guests so the tradeoff is visible.",
+        ]}
+      />
+
+      <FinancialRedFlags
+        items={[
+          "The guest list requires credit-card debt or a personal loan.",
+          "The estimated wedding cost exceeds the total wedding budget.",
+          "The guest count pushes the venue near or above capacity.",
+          "Family pressure is driving invites the couple does not actually want.",
+          "Emergency savings would fall below a safe cushion after paying guest-driven costs.",
+          "The guest list forces cuts to more important priorities or post-wedding goals.",
+        ]}
+      />
+
+      <CalculatorAssumptions
+        items={[
+          "The calculator estimates guest-list pressure using planned guest count, cost per guest, fixed wedding costs, total wedding budget, savings, income, debt, venue capacity, and family pressure.",
+          "Cost per guest should include catering, bar, rentals, service charges, taxes, gratuities, and guest-driven extras when known.",
+          "Fixed wedding costs include expenses that do not change much with guest count, such as attire, photography, ceremony fees, music, planner, and decor basics.",
+          "Very high income or very high savings can reduce the pressure score when the guest list is financially trivial.",
+          "The calculator is designed for general education and does not replace personalized financial advice.",
+        ]}
+      />
+
+      <div class="content-section">
+        <h2>Every 10 Guests Has a Price</h2>
+        <p>
+          Guest-list decisions become clearer when you price them in groups. At $175 per guest, every 10 extra guests adds about $1,750 before any extra rentals, staffing, cake, transportation, or bar upgrades. That can be the difference between staying on budget and needing debt.
+        </p>
+      </div>
+
+      <FAQSection
+        title="Wedding Guest Count FAQ"
+        faqs={[
+          {
+            question: "How do I know if my wedding guest list is too big?",
+            answer:
+              "Your guest list may be too big if the estimated wedding cost exceeds your budget, requires debt, drains savings, pushes venue capacity, or forces cuts to higher-priority categories.",
+          },
+          {
+            question: "What is a good cost per guest for a wedding?",
+            answer:
+              "There is no universal number. Cost per guest depends on location, catering, bar, venue, rentals, taxes, service charges, and guest experience expectations.",
+          },
+          {
+            question: "Should I cut guests to save money?",
+            answer:
+              "Often, yes. Reducing guest count is one of the most effective ways to lower wedding cost while preserving the experience for the people who attend.",
+          },
+          {
+            question: "Should family pressure affect the guest list?",
+            answer:
+              "Family pressure matters, but it should not force a guest list that creates debt or financial stress unless family contributions are clear, reliable, and comfortable.",
+          },
+          {
+            question: "What costs increase when I add more wedding guests?",
+            answer:
+              "Food, bar, rentals, invitations, favors, cake, staffing, tables, linens, transportation, bathroom needs, and sometimes venue cost can all increase with guest count.",
+          },
+        ]}
+      />
+
+      <MethodologySection category="wedding guest count affordability" updated="June 2026" />
+
+      <RelatedGuides
+        guides={[
+          {
+            title: "How to Budget for a Wedding Without Going Into Debt",
+            href: "/how-to-budget-for-a-wedding-without-going-into-debt",
+            description:
+              "Build a wedding budget around savings, guest count, vendor tradeoffs, debt avoidance, and life after the celebration.",
+          },
+          {
+            title: "What Counts as Debt?",
+            href: "/what-counts-as-debt",
+            description:
+              "See which obligations should be included when judging wedding pressure.",
+          },
+        ]}
+      />
+
+      <RelatedCalculators
+        calculators={[
+          {
+            category: "Weddings",
+            title: "Should I Pay for an Open Bar?",
+            href: "/open-bar",
+          },
+          {
+            category: "Weddings",
+            title: "Should I Spend $20,000 on a Wedding Venue?",
+            href: "/should-i-spend-20000-on-a-wedding-venue",
+          },
+          {
+            category: "Weddings",
+            title: "Should I Hire a Wedding Planner?",
+            href: "/wedding-planner",
+          },
+          {
+            category: "Weddings",
+            title: "Should We Pay for the Wedding Ourselves?",
+            href: "/pay-for-wedding-ourselves",
+          },
+        ]}
+      />
+    </CalculatorPageShell>
+  </div>
+
+  <script is:inline>
+    const clamp = (value, min, max) => Math.min(Math.max(value, min), max);
+
+    const getNumber = (id) => {
+      const rawValue = document.getElementById(id)?.value;
+      const value = Number(rawValue);
+      return Number.isFinite(value) && value >= 0 ? value : 0;
+    };
+
+    const formatMoney = (value) => {
+      return Math.round(value).toLocaleString("en-US", {
+        style: "currency",
+        currency: "USD",
+        maximumFractionDigits: 0,
+      });
+    };
+
+    function getPressureLevel(score) {
+      if (score <= 30) {
+        return {
+          label: "Low Pressure",
+          stress: "Low pressure",
+          color: "#16a34a",
+          action:
+            "This guest count appears manageable. Confirm your per-guest estimate, venue capacity, and rules for plus-ones before finalizing invites.",
+        };
+      }
+
+      if (score <= 60) {
+        return {
+          label: "Moderate Pressure",
+          stress: "Moderate pressure",
+          color: "#ca8a04",
+          action:
+            "Trim courtesy invites, review plus-one rules, and price every 10 extra guests before locking the list.",
+        };
+      }
+
+      return {
+        label: "High Pressure",
+        stress: "High pressure",
+        color: "#dc2626",
+        action:
+          "The guest count may be too aggressive. Reduce the list, lower per-guest costs, or rebuild savings before committing.",
+      };
+    }
+
+    function calculateGuestCount() {
+      const income = getNumber("income");
+      const savings = getNumber("savings");
+      const guestCount = getNumber("guestCount");
+      const costPerGuest = getNumber("costPerGuest");
+      const fixedWeddingCosts = getNumber("fixedWeddingCosts");
+      const totalWeddingBudget = getNumber("totalWeddingBudget");
+      const enteredMonthlyTakeHome = getNumber("monthlyTakeHome");
+      const debt = getNumber("debt");
+      const venueCapacity = getNumber("venueCapacity");
+      const familyPressure = getNumber("familyPressure");
+
+      const result = document.getElementById("result");
+      const scoreEl = document.getElementById("score");
+      const barFill = document.getElementById("barFill");
+      const stressEl = document.getElementById("stress");
+      const estimatedWeddingCostEl = document.getElementById("estimatedWeddingCost");
+      const guestDrivenCostEl = document.getElementById("guestDrivenCost");
+      const savingsImpactEl = document.getElementById("savingsImpact");
+      const incomeImpactEl = document.getElementById("incomeImpact");
+      const monthlyImpactEl = document.getElementById("monthlyImpact");
+      const budgetShareEl = document.getElementById("budgetShare");
+      const capacityPressureEl = document.getElementById("capacityPressure");
+      const debtRatioEl = document.getElementById("debtRatio");
+      const guidanceEl = document.getElementById("guidance");
+
+      result.style.display = "block";
+
+      if (income <= 0 || guestCount <= 0 || costPerGuest <= 0) {
+        scoreEl.textContent = "Add your numbers first";
+        barFill.style.width = "0%";
+        barFill.style.background = "#16a34a";
+        stressEl.innerHTML = "";
+        estimatedWeddingCostEl.innerHTML = "";
+        guestDrivenCostEl.innerHTML = "";
+        savingsImpactEl.innerHTML = "";
+        incomeImpactEl.innerHTML = "";
+        monthlyImpactEl.innerHTML = "";
+        budgetShareEl.innerHTML = "";
+        capacityPressureEl.innerHTML = "";
+        debtRatioEl.innerHTML = "";
+        guidanceEl.textContent =
+          "Enter a positive income, guest count, and cost per guest so the calculator can estimate guest-list pressure.";
+        return;
+      }
+
+      const estimatedMonthlyTakeHome = income / 12;
+      const monthlyTakeHome =
+        enteredMonthlyTakeHome > 0 && enteredMonthlyTakeHome <= income
+          ? enteredMonthlyTakeHome
+          : estimatedMonthlyTakeHome;
+
+      const guestDrivenCost = guestCount * costPerGuest;
+      const estimatedWeddingCost = guestDrivenCost + fixedWeddingCosts;
+      const budgetForShare = totalWeddingBudget > 0 ? totalWeddingBudget : estimatedWeddingCost;
+      const remainingSavings = savings - estimatedWeddingCost;
+
+      const savingsImpact = savings > 0 ? (estimatedWeddingCost / savings) * 100 : 999;
+      const annualIncomeImpact = (estimatedWeddingCost / income) * 100;
+      const monthlyIncomeImpact = (estimatedWeddingCost / monthlyTakeHome) * 100;
+      const budgetShare = (estimatedWeddingCost / budgetForShare) * 100;
+      const debtRatio = (debt / income) * 100;
+      const remainingSavingsMonths = monthlyTakeHome > 0 ? remainingSavings / monthlyTakeHome : 0;
+      const capacityUse = venueCapacity > 0 ? (guestCount / venueCapacity) * 100 : 0;
+      const costPer10Guests = costPerGuest * 10;
+
+      let pressureScore = 0;
+
+      pressureScore += clamp(savingsImpact * 0.24, 0, 30);
+      pressureScore += clamp(monthlyIncomeImpact * 0.15, 0, 22);
+      pressureScore += clamp(debtRatio * 0.15, 0, 18);
+      pressureScore += clamp(budgetShare * 0.22, 0, 22);
+
+      if (estimatedWeddingCost > savings && annualIncomeImpact >= 8) pressureScore += 24;
+      else if (estimatedWeddingCost > savings && annualIncomeImpact >= 3) pressureScore += 14;
+      else if (estimatedWeddingCost > savings) pressureScore += 6;
+
+      if (remainingSavingsMonths < 1 && annualIncomeImpact >= 6) {
+        pressureScore += 18;
+      } else if (remainingSavingsMonths < 3 && annualIncomeImpact >= 4) {
+        pressureScore += 10;
+      } else if (remainingSavingsMonths >= 6) {
+        pressureScore -= 8;
+      }
+
+      if (budgetShare >= 110) pressureScore += 18;
+      else if (budgetShare >= 95) pressureScore += 10;
+      else if (budgetShare <= 80) pressureScore -= 5;
+
+      if (venueCapacity > 0) {
+        if (capacityUse > 100) pressureScore += 18;
+        else if (capacityUse >= 95) pressureScore += 10;
+        else if (capacityUse >= 85) pressureScore += 5;
+        else if (capacityUse <= 70) pressureScore -= 3;
+      }
+
+      if (familyPressure >= 4) pressureScore += 10;
+      else if (familyPressure >= 3) pressureScore += 6;
+      else if (familyPressure <= 1) pressureScore -= 4;
+
+      if (guestCount >= 250) pressureScore += 12;
+      else if (guestCount >= 175) pressureScore += 7;
+      else if (guestCount <= 60) pressureScore -= 6;
+
+      if (costPerGuest >= 250) pressureScore += 8;
+      else if (costPerGuest >= 175) pressureScore += 4;
+      else if (costPerGuest <= 100) pressureScore -= 4;
+
+      if (debtRatio >= 75) pressureScore += 12;
+      else if (debtRatio >= 40) pressureScore += 8;
+      else if (debtRatio <= 5) pressureScore -= 4;
+
+      if (savingsImpact <= 10 && remainingSavings > 0) pressureScore -= 8;
+      if (annualIncomeImpact <= 5) pressureScore -= 6;
+      if (annualIncomeImpact <= 2) pressureScore -= 8;
+      if (monthlyIncomeImpact <= 25) pressureScore -= 5;
+
+      if (
+        income >= 750000 &&
+        annualIncomeImpact <= 3 &&
+        debtRatio <= 15
+      ) {
+        pressureScore = Math.min(pressureScore, 18);
+      }
+
+      if (
+        income >= 1000000 &&
+        annualIncomeImpact <= 2 &&
+        debtRatio <= 10
+      ) {
+        pressureScore = Math.min(pressureScore, 8);
+      }
+
+      if (
+        income >= 1000000 &&
+        annualIncomeImpact <= 1.5 &&
+        debtRatio <= 5
+      ) {
+        pressureScore = Math.min(pressureScore, 3);
+      }
+
+      if (
+        savings >= estimatedWeddingCost * 20 &&
+        remainingSavingsMonths >= 6 &&
+        debtRatio <= 15
+      ) {
+        pressureScore = Math.min(pressureScore, 15);
+      }
+
+      if (
+        savings >= estimatedWeddingCost * 50 &&
+        debtRatio <= 10
+      ) {
+        pressureScore = Math.min(pressureScore, 5);
+      }
+
+      if (
+        income >= 1000000 &&
+        estimatedWeddingCost <= monthlyTakeHome * 0.25 &&
+        debtRatio <= 10
+      ) {
+        pressureScore = 0;
+      }
+
+      if (
+        savings >= estimatedWeddingCost * 100 &&
+        debtRatio <= 25
+      ) {
+        pressureScore = 0;
+      }
+
+      if (
+        savings >= 1000000 &&
+        estimatedWeddingCost <= savings * 0.01 &&
+        debtRatio <= 25
+      ) {
+        pressureScore = 0;
+      }
+
+      pressureScore = clamp(Math.round(pressureScore), 0, 100);
+
+      const level = getPressureLevel(pressureScore);
+
+      const capacityText =
+        venueCapacity <= 0
+          ? "No venue capacity entered"
+          : capacityUse > 100
+            ? `${capacityUse.toFixed(1)}% of venue capacity — over capacity`
+            : `${capacityUse.toFixed(1)}% of venue capacity`;
+
+      let guidance = "";
+
+      if (pressureScore === 0) {
+        guidance =
+          `This guest count appears financially tiny relative to the numbers provided. The estimated wedding cost is ${formatMoney(estimatedWeddingCost)}, or about ${annualIncomeImpact.toFixed(1)}% of annual income and ${savings > 0 ? savingsImpact.toFixed(1) : "0.0"}% of savings. The decision is mainly about who you actually want present, venue comfort, and family expectations.`;
+      } else if (pressureScore <= 30) {
+        guidance =
+          `This guest count appears manageable based on the numbers provided. The estimated wedding cost is ${formatMoney(estimatedWeddingCost)}, and every 10 additional guests adds about ${formatMoney(costPer10Guests)} before extra rentals or staffing.`;
+      } else if (pressureScore <= 60) {
+        guidance =
+          `This guest count may work, but it deserves caution. The estimated wedding cost is ${formatMoney(estimatedWeddingCost)}, or about ${budgetShare.toFixed(1)}% of the listed wedding budget. Tighten plus-one rules and cut courtesy invites before deposits lock in.`;
+      } else {
+        guidance =
+          `This guest count could create real financial strain. The estimated wedding cost is ${formatMoney(estimatedWeddingCost)}, or about ${savings > 0 ? savingsImpact.toFixed(1) : "an undefined share of"}% of savings and ${budgetShare.toFixed(1)}% of the listed wedding budget. A smaller list would likely be safer.`;
+      }
+
+      scoreEl.textContent = `${level.label} — ${pressureScore}/100`;
+      barFill.style.width = `${pressureScore}%`;
+      barFill.style.background = level.color;
+
+      stressEl.innerHTML = `<strong>Pressure level:</strong> ${level.stress}`;
+      estimatedWeddingCostEl.innerHTML = `<strong>Estimated wedding cost:</strong> ${formatMoney(estimatedWeddingCost)}`;
+      guestDrivenCostEl.innerHTML = `<strong>Guest-driven cost:</strong> ${formatMoney(guestDrivenCost)} / about ${formatMoney(costPer10Guests)} per 10 guests`;
+      savingsImpactEl.innerHTML = `<strong>Savings impact:</strong> ${
+        savings > 0 ? `${savingsImpact.toFixed(1)}% of savings` : "No savings entered"
+      }`;
+      incomeImpactEl.innerHTML = `<strong>Annual income impact:</strong> ${annualIncomeImpact.toFixed(1)}% of annual income`;
+      monthlyImpactEl.innerHTML = `<strong>Monthly take-home impact:</strong> ${monthlyIncomeImpact.toFixed(1)}% of one month’s take-home pay`;
+      budgetShareEl.innerHTML = `<strong>Estimated wedding budget use:</strong> ${budgetShare.toFixed(1)}%`;
+      capacityPressureEl.innerHTML = `<strong>Venue capacity pressure:</strong> ${capacityText}`;
+      debtRatioEl.innerHTML = `<strong>Debt ratio:</strong> ${debtRatio.toFixed(1)}% of annual income`;
+
+      guidanceEl.textContent = `${guidance} Recommended next step: ${level.action}`;
+    }
+
+    document
+      .getElementById("guestButton")
+      .addEventListener("click", calculateGuestCount);
+  </script>
+</Layout>

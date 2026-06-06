@@ -1,0 +1,602 @@
+---
+import Layout from "../layouts/Layout.astro";
+import CalculatorPageShell from "../components/CalculatorPageShell.astro";
+import FAQSection from "../components/FAQSection.astro";
+import RelatedCalculators from "../components/RelatedCalculators.astro";
+import RelatedGuides from "../components/RelatedGuides.astro";
+import MethodologySection from "../components/MethodologySection.astro";
+import FinancialRedFlags from "../components/FinancialRedFlags.astro";
+import CalculatorAssumptions from "../components/CalculatorAssumptions.astro";
+import KeyCostCategories from "../components/KeyCostCategories.astro";
+import ReduceCostTips from "../components/ReduceCostTips.astro";
+import WhenSpendingMakesSense from "../components/WhenSpendingMakesSense.astro";
+
+const pageUrl = "https://shouldispend.com/open-bar";
+
+const faqSchema = {
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  mainEntity: [
+    {
+      "@type": "Question",
+      name: "Should I pay for an open bar at my wedding?",
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: "An open bar can make sense if it fits the wedding budget, does not require debt, and leaves enough money for other priorities. It becomes risky when bar costs crowd out essentials or drain savings.",
+      },
+    },
+    {
+      "@type": "Question",
+      name: "How much does an open bar cost?",
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: "Open bar costs vary by guest count, package, hours, venue rules, alcohol type, taxes, gratuities, and service charges.",
+      },
+    },
+    {
+      "@type": "Question",
+      name: "Is a limited bar better than an open bar?",
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: "A limited bar can be a better value if it offers beer, wine, and one or two signature cocktails without the full cost of an unlimited premium bar.",
+      },
+    },
+  ],
+};
+---
+
+<Layout
+  title="Should I Pay for an Open Bar? Calculator | ShouldISpend"
+  description="Use this open bar calculator to decide whether wedding bar costs fit your guest count, wedding budget, savings, income, debt, and priorities."
+>
+  <script type="application/ld+json" set:html={JSON.stringify(faqSchema)} />
+
+  <style>
+    .container { max-width: 950px; margin: 0 auto; padding: 60px 20px; }
+    .content-section { max-width: 760px; margin: 72px auto 0; }
+    .card { background: var(--card); border: 1px solid var(--border); border-radius: 28px; padding: 34px; }
+    h2 { margin-top: 0; font-size: 2rem; }
+    .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 22px; margin-bottom: 28px; }
+    label { display: block; margin-bottom: 10px; font-weight: 700; }
+    input, select { width: 100%; padding: 18px; border-radius: 14px; border: 1px solid var(--border); font-size: 1.1rem; box-sizing: border-box; background: white; }
+    button { background: #0f766e; color: white; border: none; padding: 16px 28px; border-radius: 14px; font-size: 1rem; font-weight: 700; cursor: pointer; margin-top: 10px; }
+    button:hover { opacity: 0.92; }
+    .result { margin-top: 40px; border: 1px solid var(--border); border-radius: 24px; padding: 28px; display: none; background: #f8fafc; }
+    .score { font-size: 3rem; font-weight: 800; margin-bottom: 16px; line-height: 1.05; }
+    .bar { width: 100%; height: 16px; background: #dbe3ee; border-radius: 999px; overflow: hidden; margin-bottom: 24px; }
+    .fill { height: 100%; width: 0%; background: #16a34a; border-radius: 999px; transition: width 0.4s ease; }
+    .metric { margin-bottom: 14px; font-size: 1.05rem; }
+    .guidance { margin-top: 26px; font-size: 1.15rem; line-height: 1.7; }
+    .disclaimer { margin-top: 30px; font-size: 0.9rem; color: var(--muted); }
+    .helper-link { margin-top: 10px; font-size: 0.9rem; }
+    .helper-link a { color: var(--primary); font-weight: 600; }
+    .content-section p, .content-section li { line-height: 1.8; }
+  </style>
+
+  <div class="container">
+    <CalculatorPageShell
+      eyebrow="Wedding Bar Calculator"
+      title="Should I Pay for an Open Bar?"
+      description="Estimate whether an open bar is a generous guest experience or a budget trap after guest count, bar package cost, savings, income, debt, and the full wedding budget."
+    >
+      <div class="card">
+        <h2>Open Bar Pressure Verdict</h2>
+
+        <div class="grid">
+          <div>
+            <label for="income">Combined Annual Income</label>
+            <input id="income" type="number" placeholder="150000" />
+          </div>
+
+          <div>
+            <label for="savings">Total Savings</label>
+            <input id="savings" type="number" placeholder="50000" />
+          </div>
+
+          <div>
+            <label for="guestCount">Guest Count</label>
+            <input id="guestCount" type="number" placeholder="125" />
+          </div>
+
+          <div>
+            <label for="barCostPerGuest">Open Bar Cost Per Guest</label>
+            <input id="barCostPerGuest" type="number" placeholder="65" />
+          </div>
+
+          <div>
+            <label for="barHours">Open Bar Hours</label>
+            <input id="barHours" type="number" placeholder="4" />
+          </div>
+
+          <div>
+            <label for="totalWeddingBudget">Total Wedding Budget</label>
+            <input id="totalWeddingBudget" type="number" placeholder="35000" />
+          </div>
+
+          <div>
+            <label for="monthlyTakeHome">Monthly Take-Home Pay</label>
+            <input id="monthlyTakeHome" type="number" placeholder="9500" />
+          </div>
+
+          <div>
+            <label for="debt">Current Debt</label>
+            <input id="debt" type="number" placeholder="12000" />
+            <div class="helper-link">
+              <a href="/what-counts-as-debt">Not sure what counts as debt? Read the debt guide</a>
+            </div>
+          </div>
+
+          <div>
+            <label for="barType">Bar Package Type</label>
+            <select id="barType">
+              <option value="1">Beer and wine only</option>
+              <option value="2" selected>Standard open bar</option>
+              <option value="3">Premium open bar</option>
+              <option value="4">Top-shelf or extended late-night bar</option>
+            </select>
+          </div>
+
+          <div>
+            <label for="priority">Hospitality Priority</label>
+            <select id="priority">
+              <option value="1">Low: bar is not important to us</option>
+              <option value="2" selected>Moderate: nice but flexible</option>
+              <option value="3">High: guest experience matters</option>
+              <option value="4">Very high: this is a top priority</option>
+            </select>
+          </div>
+        </div>
+
+        <button id="barButton" type="button">Get Open Bar Verdict</button>
+
+        <div class="result" id="result">
+          <div class="score" id="score"></div>
+          <div class="bar"><div class="fill" id="barFill"></div></div>
+
+          <div class="metric" id="stress"></div>
+          <div class="metric" id="totalBarCost"></div>
+          <div class="metric" id="costPerHour"></div>
+          <div class="metric" id="savingsImpact"></div>
+          <div class="metric" id="incomeImpact"></div>
+          <div class="metric" id="monthlyImpact"></div>
+          <div class="metric" id="budgetShare"></div>
+          <div class="metric" id="debtRatio"></div>
+
+          <div class="guidance" id="guidance"></div>
+          <div class="disclaimer">This is a general educational estimate, not financial advice.</div>
+        </div>
+      </div>
+
+      <div class="content-section">
+        <h2>Is an Open Bar Worth It?</h2>
+        <p>
+          An open bar can be one of the most appreciated wedding upgrades, but it is also one of the easiest places for costs to get away from the couple. The real question is not whether guests will like it. They probably will. The question is whether the bar fits the whole wedding budget without crowding out more important priorities.
+        </p>
+        <p>
+          Bar pricing can be confusing because the first quote may not include service charges, gratuities, taxes, bartender fees, minimums, corkage, glassware, extra hours, or premium alcohol upgrades.
+        </p>
+      </div>
+
+      <WhenSpendingMakesSense
+        title="When an Open Bar Can Make Sense"
+        items={[
+          "The bar cost fits comfortably inside the total wedding budget.",
+          "You can pay for the bar without credit-card debt or emergency-savings damage.",
+          "Guest experience is a real priority for the couple.",
+          "The package includes service, gratuity, taxes, bartenders, and clear limits.",
+          "A limited or standard bar is chosen instead of an unnecessary premium upgrade.",
+        ]}
+      />
+
+      <div class="content-section">
+        <h2>When an Open Bar Becomes a Budget Trap</h2>
+        <p>
+          An open bar becomes risky when it is added late, after the venue, catering, photography, attire, music, and honeymoon are already stretching the budget. It can also become risky when the couple chooses a premium package mainly because it feels expected.
+        </p>
+        <p>
+          A limited bar, beer-and-wine package, signature cocktail, hosted cocktail hour, or consumption cap can preserve hospitality without letting alcohol dominate the wedding budget.
+        </p>
+      </div>
+
+      <KeyCostCategories
+        items={[
+          {
+            title: "Guest count",
+            description:
+              "Open bar cost usually scales with guest count, so even a modest per-person price can become expensive at larger weddings.",
+          },
+          {
+            title: "Package type",
+            description:
+              "Beer and wine, standard liquor, premium liquor, top-shelf packages, and late-night extensions can produce very different totals.",
+          },
+          {
+            title: "Service charges and gratuities",
+            description:
+              "Taxes, service charges, bartender fees, gratuities, glassware, corkage, and minimums should be included before judging affordability.",
+          },
+          {
+            title: "Venue rules",
+            description:
+              "Some venues require in-house bar service or preferred vendors, which can limit your ability to control the final cost.",
+          },
+        ]}
+      />
+
+      <ReduceCostTips
+        items={[
+          "Choose beer, wine, and one or two signature cocktails instead of a full premium bar.",
+          "Limit open bar hours and switch to cash bar or soft drinks later.",
+          "Ask whether taxes, gratuities, bartender fees, and service charges are included.",
+          "Set a hosted consumption cap instead of an unlimited package.",
+          "Cut guest count before cutting meaningful parts of the ceremony or reception.",
+          "Avoid top-shelf liquor unless it is genuinely important to the couple.",
+        ]}
+      />
+
+      <FinancialRedFlags
+        items={[
+          "The open bar requires credit-card debt or a personal loan.",
+          "The bar consumes too much of the total wedding budget.",
+          "Taxes, gratuities, service charges, bartender fees, or minimums are unclear.",
+          "The couple feels pressured to pay for alcohol mainly because guests expect it.",
+          "The bar cost would reduce emergency savings below a safe cushion.",
+          "More important priorities are being cut to afford a premium alcohol package.",
+        ]}
+      />
+
+      <CalculatorAssumptions
+        items={[
+          "The calculator estimates bar pressure using guest count, cost per guest, bar hours, wedding budget, savings, income, debt, package type, and hospitality priority.",
+          "Open bar cost should include taxes, gratuities, service charges, bartender fees, and required venue fees when known.",
+          "Total wedding budget is used to estimate whether the bar is taking too much space from the rest of the event.",
+          "Very high income or very high savings can reduce the pressure score when the bar cost is financially trivial.",
+          "The calculator is designed for general education and does not replace personalized financial advice.",
+        ]}
+      />
+
+      <div class="content-section">
+        <h2>The Best Open Bar Decision Is Usually a Middle Ground</h2>
+        <p>
+          The best answer is not always full open bar or no bar. Many couples get the strongest value from a limited hosted bar: beer, wine, a signature cocktail, and a clear time window. That keeps the reception welcoming without turning the alcohol package into a runaway expense.
+        </p>
+      </div>
+
+      <FAQSection
+        title="Open Bar FAQ"
+        faqs={[
+          {
+            question: "Should I have an open bar at my wedding?",
+            answer:
+              "An open bar can make sense if it fits the budget, does not create debt, and matters to the guest experience. If it squeezes core priorities, a limited bar may be smarter.",
+          },
+          {
+            question: "How can I make an open bar cheaper?",
+            answer:
+              "Choose beer and wine, limit hours, offer signature cocktails, avoid top-shelf liquor, cap hosted consumption, or negotiate bartender and service fees upfront.",
+          },
+          {
+            question: "Is a cash bar rude?",
+            answer:
+              "A cash bar is common in some regions and frowned upon in others. A limited hosted bar or drink tickets can be a compromise when a full open bar is too expensive.",
+          },
+          {
+            question: "What costs should I include in an open bar budget?",
+            answer:
+              "Include alcohol, bartenders, glassware, mixers, service charges, gratuities, taxes, corkage, minimums, security, and overtime.",
+          },
+          {
+            question: "Is beer and wine enough for a wedding?",
+            answer:
+              "Often, yes. Beer, wine, and one or two signature cocktails can feel generous without the full cost of a premium open bar.",
+          },
+        ]}
+      />
+
+      <MethodologySection category="open bar affordability" updated="June 2026" />
+
+      <RelatedGuides
+        guides={[
+          {
+            title: "How to Budget for a Wedding Without Going Into Debt",
+            href: "/how-to-budget-for-a-wedding-without-going-into-debt",
+            description:
+              "Build a wedding budget around savings, vendor tradeoffs, debt avoidance, and life after the celebration.",
+          },
+          {
+            title: "What Counts as Debt?",
+            href: "/what-counts-as-debt",
+            description:
+              "See which obligations should be included when judging wedding pressure.",
+          },
+        ]}
+      />
+
+      <RelatedCalculators
+        calculators={[
+          {
+            category: "Weddings",
+            title: "Should I Invite This Many Wedding Guests?",
+            href: "/wedding-guest-count",
+          },
+          {
+            category: "Weddings",
+            title: "Should I Spend $20,000 on a Wedding Venue?",
+            href: "/should-i-spend-20000-on-a-wedding-venue",
+          },
+          {
+            category: "Weddings",
+            title: "Should I Hire a Wedding Planner?",
+            href: "/wedding-planner",
+          },
+          {
+            category: "Weddings",
+            title: "Should I Spend $30,000 on a Wedding?",
+            href: "/should-i-spend-30000-on-a-wedding",
+          },
+        ]}
+      />
+    </CalculatorPageShell>
+  </div>
+
+  <script is:inline>
+    const clamp = (value, min, max) => Math.min(Math.max(value, min), max);
+
+    const getNumber = (id) => {
+      const rawValue = document.getElementById(id)?.value;
+      const value = Number(rawValue);
+      return Number.isFinite(value) && value >= 0 ? value : 0;
+    };
+
+    const formatMoney = (value) => {
+      return Math.round(value).toLocaleString("en-US", {
+        style: "currency",
+        currency: "USD",
+        maximumFractionDigits: 0,
+      });
+    };
+
+    function getPressureLevel(score) {
+      if (score <= 30) {
+        return {
+          label: "Low Pressure",
+          stress: "Low pressure",
+          color: "#16a34a",
+          action:
+            "An open bar appears manageable. Confirm the full quote, included fees, service rules, and bar limits before signing.",
+        };
+      }
+
+      if (score <= 60) {
+        return {
+          label: "Moderate Pressure",
+          stress: "Moderate pressure",
+          color: "#ca8a04",
+          action:
+            "Consider a limited bar, shorter hosted window, drink cap, or beer-and-wine package before choosing a full open bar.",
+        };
+      }
+
+      return {
+        label: "High Pressure",
+        stress: "High pressure",
+        color: "#dc2626",
+        action:
+          "A full open bar may be too aggressive. Reduce the package, limit hours, lower guest count, or protect savings first.",
+      };
+    }
+
+    function calculateOpenBar() {
+      const income = getNumber("income");
+      const savings = getNumber("savings");
+      const guestCount = getNumber("guestCount");
+      const barCostPerGuest = getNumber("barCostPerGuest");
+      const barHours = getNumber("barHours");
+      const totalWeddingBudget = getNumber("totalWeddingBudget");
+      const enteredMonthlyTakeHome = getNumber("monthlyTakeHome");
+      const debt = getNumber("debt");
+      const barType = getNumber("barType");
+      const priority = getNumber("priority");
+
+      const result = document.getElementById("result");
+      const scoreEl = document.getElementById("score");
+      const barFill = document.getElementById("barFill");
+      const stressEl = document.getElementById("stress");
+      const totalBarCostEl = document.getElementById("totalBarCost");
+      const costPerHourEl = document.getElementById("costPerHour");
+      const savingsImpactEl = document.getElementById("savingsImpact");
+      const incomeImpactEl = document.getElementById("incomeImpact");
+      const monthlyImpactEl = document.getElementById("monthlyImpact");
+      const budgetShareEl = document.getElementById("budgetShare");
+      const debtRatioEl = document.getElementById("debtRatio");
+      const guidanceEl = document.getElementById("guidance");
+
+      result.style.display = "block";
+
+      if (income <= 0 || guestCount <= 0 || barCostPerGuest <= 0) {
+        scoreEl.textContent = "Add your numbers first";
+        barFill.style.width = "0%";
+        barFill.style.background = "#16a34a";
+        stressEl.innerHTML = "";
+        totalBarCostEl.innerHTML = "";
+        costPerHourEl.innerHTML = "";
+        savingsImpactEl.innerHTML = "";
+        incomeImpactEl.innerHTML = "";
+        monthlyImpactEl.innerHTML = "";
+        budgetShareEl.innerHTML = "";
+        debtRatioEl.innerHTML = "";
+        guidanceEl.textContent =
+          "Enter a positive income, guest count, and bar cost per guest so the calculator can estimate open bar pressure.";
+        return;
+      }
+
+      const estimatedMonthlyTakeHome = income / 12;
+      const monthlyTakeHome =
+        enteredMonthlyTakeHome > 0 && enteredMonthlyTakeHome <= income
+          ? enteredMonthlyTakeHome
+          : estimatedMonthlyTakeHome;
+
+      const totalBarCost = guestCount * barCostPerGuest;
+      const budgetForShare = totalWeddingBudget > 0 ? totalWeddingBudget : totalBarCost;
+      const remainingSavings = savings - totalBarCost;
+
+      const savingsImpact = savings > 0 ? (totalBarCost / savings) * 100 : 999;
+      const annualIncomeImpact = (totalBarCost / income) * 100;
+      const monthlyIncomeImpact = (totalBarCost / monthlyTakeHome) * 100;
+      const budgetShare = (totalBarCost / budgetForShare) * 100;
+      const debtRatio = (debt / income) * 100;
+      const remainingSavingsMonths = monthlyTakeHome > 0 ? remainingSavings / monthlyTakeHome : 0;
+      const hourlyBarCost = barHours > 0 ? totalBarCost / barHours : totalBarCost;
+
+      let pressureScore = 0;
+
+      pressureScore += clamp(savingsImpact * 0.24, 0, 28);
+      pressureScore += clamp(monthlyIncomeImpact * 0.15, 0, 20);
+      pressureScore += clamp(debtRatio * 0.15, 0, 18);
+      pressureScore += clamp(budgetShare * 0.5, 0, 24);
+
+      if (totalBarCost > savings && annualIncomeImpact >= 5) pressureScore += 20;
+      else if (totalBarCost > savings && annualIncomeImpact >= 2) pressureScore += 10;
+      else if (totalBarCost > savings) pressureScore += 5;
+
+      if (remainingSavingsMonths < 1 && annualIncomeImpact >= 4) {
+        pressureScore += 16;
+      } else if (remainingSavingsMonths < 3 && annualIncomeImpact >= 2) {
+        pressureScore += 8;
+      } else if (remainingSavingsMonths >= 6) {
+        pressureScore -= 8;
+      }
+
+      if (budgetShare >= 25) pressureScore += 14;
+      else if (budgetShare >= 15) pressureScore += 8;
+      else if (budgetShare <= 8) pressureScore -= 5;
+
+      if (barType >= 4) pressureScore += 10;
+      else if (barType >= 3) pressureScore += 5;
+      else if (barType <= 1) pressureScore -= 5;
+
+      if (priority >= 4) pressureScore -= 8;
+      else if (priority >= 3) pressureScore -= 4;
+      else if (priority <= 1) pressureScore += 8;
+
+      if (guestCount >= 200) pressureScore += 8;
+      else if (guestCount >= 150) pressureScore += 4;
+      else if (guestCount <= 60) pressureScore -= 4;
+
+      if (barHours >= 6) pressureScore += 6;
+      else if (barHours <= 3) pressureScore -= 3;
+
+      if (debtRatio >= 75) pressureScore += 12;
+      else if (debtRatio >= 40) pressureScore += 8;
+      else if (debtRatio <= 5) pressureScore -= 4;
+
+      if (savingsImpact <= 10 && remainingSavings > 0) pressureScore -= 8;
+      if (annualIncomeImpact <= 2) pressureScore -= 8;
+      if (annualIncomeImpact <= 1) pressureScore -= 6;
+      if (monthlyIncomeImpact <= 15) pressureScore -= 5;
+
+      if (
+        income >= 750000 &&
+        annualIncomeImpact <= 1 &&
+        debtRatio <= 15
+      ) {
+        pressureScore = Math.min(pressureScore, 12);
+      }
+
+      if (
+        income >= 1000000 &&
+        annualIncomeImpact <= 0.75 &&
+        debtRatio <= 10
+      ) {
+        pressureScore = Math.min(pressureScore, 6);
+      }
+
+      if (
+        income >= 1000000 &&
+        annualIncomeImpact <= 0.5 &&
+        debtRatio <= 5
+      ) {
+        pressureScore = Math.min(pressureScore, 3);
+      }
+
+      if (
+        savings >= totalBarCost * 25 &&
+        remainingSavingsMonths >= 6 &&
+        debtRatio <= 15
+      ) {
+        pressureScore = Math.min(pressureScore, 12);
+      }
+
+      if (
+        savings >= totalBarCost * 60 &&
+        debtRatio <= 10
+      ) {
+        pressureScore = Math.min(pressureScore, 5);
+      }
+
+      if (
+        income >= 1000000 &&
+        totalBarCost <= monthlyTakeHome * 0.1 &&
+        debtRatio <= 10
+      ) {
+        pressureScore = 0;
+      }
+
+      if (
+        savings >= totalBarCost * 100 &&
+        debtRatio <= 25
+      ) {
+        pressureScore = 0;
+      }
+
+      if (
+        savings >= 1000000 &&
+        totalBarCost <= savings * 0.01 &&
+        debtRatio <= 25
+      ) {
+        pressureScore = 0;
+      }
+
+      pressureScore = clamp(Math.round(pressureScore), 0, 100);
+
+      const level = getPressureLevel(pressureScore);
+
+      let guidance = "";
+
+      if (pressureScore === 0) {
+        guidance =
+          `This open bar appears financially tiny relative to the numbers provided. The estimated bar cost is ${formatMoney(totalBarCost)}, or about ${annualIncomeImpact.toFixed(1)}% of annual income and ${savings > 0 ? savingsImpact.toFixed(1) : "0.0"}% of savings. The decision is mainly about guest experience, venue rules, and whether alcohol is a priority.`;
+      } else if (pressureScore <= 30) {
+        guidance =
+          `This open bar appears manageable based on the numbers provided. The estimated bar cost is ${formatMoney(totalBarCost)}, or about ${budgetShare.toFixed(1)}% of the wedding budget, so the next step is confirming taxes, gratuities, bartender fees, service charges, and package limits.`;
+      } else if (pressureScore <= 60) {
+        guidance =
+          `This open bar may work, but it deserves caution. The estimated bar cost is ${formatMoney(totalBarCost)}, or about ${budgetShare.toFixed(1)}% of the wedding budget. A limited bar, shorter window, or hosted cap may protect the rest of the event.`;
+      } else {
+        guidance =
+          `This open bar could create real financial strain. The estimated bar cost is ${formatMoney(totalBarCost)}, or about ${savings > 0 ? savingsImpact.toFixed(1) : "an undefined share of"}% of savings and ${budgetShare.toFixed(1)}% of the wedding budget. A simpler bar plan would likely be safer.`;
+      }
+
+      scoreEl.textContent = `${level.label} — ${pressureScore}/100`;
+      barFill.style.width = `${pressureScore}%`;
+      barFill.style.background = level.color;
+
+      stressEl.innerHTML = `<strong>Pressure level:</strong> ${level.stress}`;
+      totalBarCostEl.innerHTML = `<strong>Estimated open bar cost:</strong> ${formatMoney(totalBarCost)}`;
+      costPerHourEl.innerHTML = `<strong>Estimated bar cost per hour:</strong> ${formatMoney(hourlyBarCost)}`;
+      savingsImpactEl.innerHTML = `<strong>Savings impact:</strong> ${
+        savings > 0 ? `${savingsImpact.toFixed(1)}% of savings` : "No savings entered"
+      }`;
+      incomeImpactEl.innerHTML = `<strong>Annual income impact:</strong> ${annualIncomeImpact.toFixed(1)}% of annual income`;
+      monthlyImpactEl.innerHTML = `<strong>Monthly take-home impact:</strong> ${monthlyIncomeImpact.toFixed(1)}% of one month’s take-home pay`;
+      budgetShareEl.innerHTML = `<strong>Open bar share of wedding budget:</strong> ${budgetShare.toFixed(1)}%`;
+      debtRatioEl.innerHTML = `<strong>Debt ratio:</strong> ${debtRatio.toFixed(1)}% of annual income`;
+
+      guidanceEl.textContent = `${guidance} Recommended next step: ${level.action}`;
+    }
+
+    document
+      .getElementById("barButton")
+      .addEventListener("click", calculateOpenBar);
+  </script>
+</Layout>

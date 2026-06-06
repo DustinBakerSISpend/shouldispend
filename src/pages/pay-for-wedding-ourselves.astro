@@ -1,0 +1,634 @@
+---
+import Layout from "../layouts/Layout.astro";
+import CalculatorPageShell from "../components/CalculatorPageShell.astro";
+import FAQSection from "../components/FAQSection.astro";
+import RelatedCalculators from "../components/RelatedCalculators.astro";
+import RelatedGuides from "../components/RelatedGuides.astro";
+import MethodologySection from "../components/MethodologySection.astro";
+import FinancialRedFlags from "../components/FinancialRedFlags.astro";
+import CalculatorAssumptions from "../components/CalculatorAssumptions.astro";
+import KeyCostCategories from "../components/KeyCostCategories.astro";
+import ReduceCostTips from "../components/ReduceCostTips.astro";
+import WhenSpendingMakesSense from "../components/WhenSpendingMakesSense.astro";
+
+const pageUrl = "https://shouldispend.com/pay-for-wedding-ourselves";
+
+const faqSchema = {
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  mainEntity: [
+    {
+      "@type": "Question",
+      name: "Should we pay for the wedding ourselves?",
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: "Paying for the wedding yourselves can make sense if it protects independence, avoids family pressure, fits your savings and income, and does not create debt or weaken emergency reserves.",
+      },
+    },
+    {
+      "@type": "Question",
+      name: "Is it bad to accept family help for a wedding?",
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: "No. Family help can be valuable if it is clear, reliable, and does not create control issues, guest-list pressure, or expectations the couple is uncomfortable with.",
+      },
+    },
+    {
+      "@type": "Question",
+      name: "How much wedding cost should we pay ourselves?",
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: "The safest self-funded amount is one you can pay without high-interest debt, emergency-savings damage, delayed essentials, or major post-wedding stress.",
+      },
+    },
+  ],
+};
+---
+
+<Layout
+  title="Should We Pay for the Wedding Ourselves? Calculator | ShouldISpend"
+  description="Use this wedding self-funding calculator to decide whether paying for the wedding yourselves fits your income, savings, debt, family help, emergency cushion, and post-wedding goals."
+>
+  <script type="application/ld+json" set:html={JSON.stringify(faqSchema)} />
+
+  <style>
+    .container { max-width: 950px; margin: 0 auto; padding: 60px 20px; }
+    .content-section { max-width: 760px; margin: 72px auto 0; }
+    .card { background: var(--card); border: 1px solid var(--border); border-radius: 28px; padding: 34px; }
+    h2 { margin-top: 0; font-size: 2rem; }
+    .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 22px; margin-bottom: 28px; }
+    label { display: block; margin-bottom: 10px; font-weight: 700; }
+    input, select { width: 100%; padding: 18px; border-radius: 14px; border: 1px solid var(--border); font-size: 1.1rem; box-sizing: border-box; background: white; }
+    button { background: #0f766e; color: white; border: none; padding: 16px 28px; border-radius: 14px; font-size: 1rem; font-weight: 700; cursor: pointer; margin-top: 10px; }
+    button:hover { opacity: 0.92; }
+    .result { margin-top: 40px; border: 1px solid var(--border); border-radius: 24px; padding: 28px; display: none; background: #f8fafc; }
+    .score { font-size: 3rem; font-weight: 800; margin-bottom: 16px; line-height: 1.05; }
+    .bar { width: 100%; height: 16px; background: #dbe3ee; border-radius: 999px; overflow: hidden; margin-bottom: 24px; }
+    .fill { height: 100%; width: 0%; background: #16a34a; border-radius: 999px; transition: width 0.4s ease; }
+    .metric { margin-bottom: 14px; font-size: 1.05rem; }
+    .guidance { margin-top: 26px; font-size: 1.15rem; line-height: 1.7; }
+    .disclaimer { margin-top: 30px; font-size: 0.9rem; color: var(--muted); }
+    .helper-link { margin-top: 10px; font-size: 0.9rem; }
+    .helper-link a { color: var(--primary); font-weight: 600; }
+    .content-section p, .content-section li { line-height: 1.8; }
+  </style>
+
+  <div class="container">
+    <CalculatorPageShell
+      eyebrow="Wedding Self-Funding Calculator"
+      title="Should We Pay for the Wedding Ourselves?"
+      description="Estimate whether self-funding the wedding protects independence or creates too much pressure on savings, debt payoff, housing goals, and emergency reserves."
+    >
+      <div class="card">
+        <h2>Self-Funded Wedding Pressure Verdict</h2>
+
+        <div class="grid">
+          <div>
+            <label for="income">Combined Annual Income</label>
+            <input id="income" type="number" placeholder="150000" />
+          </div>
+
+          <div>
+            <label for="savings">Total Savings</label>
+            <input id="savings" type="number" placeholder="60000" />
+          </div>
+
+          <div>
+            <label for="weddingCost">Total Wedding Cost</label>
+            <input id="weddingCost" type="number" placeholder="35000" />
+          </div>
+
+          <div>
+            <label for="familyHelp">Reliable Family Help</label>
+            <input id="familyHelp" type="number" placeholder="5000" />
+          </div>
+
+          <div>
+            <label for="emergencyTarget">Emergency Savings Target</label>
+            <input id="emergencyTarget" type="number" placeholder="25000" />
+          </div>
+
+          <div>
+            <label for="monthlyTakeHome">Monthly Take-Home Pay</label>
+            <input id="monthlyTakeHome" type="number" placeholder="9500" />
+          </div>
+
+          <div>
+            <label for="debt">Current Debt</label>
+            <input id="debt" type="number" placeholder="12000" />
+            <div class="helper-link">
+              <a href="/what-counts-as-debt">Not sure what counts as debt? Read the debt guide</a>
+            </div>
+          </div>
+
+          <div>
+            <label for="monthlyDebtPayments">Monthly Debt Payments</label>
+            <input id="monthlyDebtPayments" type="number" placeholder="600" />
+          </div>
+
+          <div>
+            <label for="independencePriority">Independence Priority</label>
+            <select id="independencePriority">
+              <option value="1">Low: family help is comfortable</option>
+              <option value="2" selected>Moderate: help is okay with boundaries</option>
+              <option value="3">High: independence matters a lot</option>
+              <option value="4">Very high: avoiding strings is a top priority</option>
+            </select>
+          </div>
+
+          <div>
+            <label for="familyStrings">Family Help Strings / Pressure</label>
+            <select id="familyStrings">
+              <option value="1">Low: no major strings attached</option>
+              <option value="2" selected>Moderate: some opinions expected</option>
+              <option value="3">High: help may affect guest list or decisions</option>
+              <option value="4">Very high: help would create control or conflict</option>
+            </select>
+          </div>
+        </div>
+
+        <button id="selfFundButton" type="button">Get Self-Funding Verdict</button>
+
+        <div class="result" id="result">
+          <div class="score" id="score"></div>
+          <div class="bar"><div class="fill" id="barFill"></div></div>
+
+          <div class="metric" id="stress"></div>
+          <div class="metric" id="selfFundedCost"></div>
+          <div class="metric" id="savingsImpact"></div>
+          <div class="metric" id="incomeImpact"></div>
+          <div class="metric" id="monthlyImpact"></div>
+          <div class="metric" id="emergencyImpact"></div>
+          <div class="metric" id="debtRatio"></div>
+          <div class="metric" id="independenceSignal"></div>
+
+          <div class="guidance" id="guidance"></div>
+          <div class="disclaimer">This is a general educational estimate, not financial advice.</div>
+        </div>
+      </div>
+
+      <div class="content-section">
+        <h2>What It Means to Pay for the Wedding Yourselves</h2>
+        <p>
+          Paying for the wedding yourselves can be empowering. It may give you more control over the guest list, venue, priorities, timing, and boundaries with family. But self-funding only works if the cost fits your broader financial life after the wedding is over.
+        </p>
+        <p>
+          The right question is not whether self-funding feels independent. The question is whether it protects independence without creating new pressure through debt, depleted savings, delayed housing goals, or stress in the first year of marriage.
+        </p>
+      </div>
+
+      <WhenSpendingMakesSense
+        title="When Paying for the Wedding Yourselves Can Make Sense"
+        items={[
+          "You can pay your share without credit-card debt or personal loans.",
+          "Emergency savings remain at or above your target after wedding payments.",
+          "Self-funding protects important boundaries around guest list, style, and family expectations.",
+          "The wedding cost does not delay urgent goals like housing, medical needs, debt payoff, or family planning.",
+          "Both partners agree the independence is worth the financial tradeoff.",
+        ]}
+      />
+
+      <div class="content-section">
+        <h2>When Self-Funding Becomes Too Much</h2>
+        <p>
+          Self-funding becomes risky when the wedding consumes savings that were really meant for emergencies, housing, debt payoff, medical needs, moving costs, or childcare. It can also create pressure when the couple rejects family help for emotional reasons but then takes on debt to preserve independence.
+        </p>
+        <p>
+          A safer compromise may be accepting no-strings help, lowering the total wedding cost, paying for specific categories yourselves, or choosing a smaller wedding that keeps control without sacrificing financial stability.
+        </p>
+      </div>
+
+      <KeyCostCategories
+        items={[
+          {
+            title: "Self-funded wedding share",
+            description:
+              "This is the total wedding cost minus reliable family help. Uncertain gifts or vague promises should not be treated as guaranteed funding.",
+          },
+          {
+            title: "Emergency savings impact",
+            description:
+              "The strongest self-funded plan keeps emergency reserves intact after deposits, final invoices, honeymoon costs, and post-wedding bills.",
+          },
+          {
+            title: "Debt and cash-flow pressure",
+            description:
+              "Existing debt and monthly debt payments make self-funding riskier because less flexibility remains after the wedding.",
+          },
+          {
+            title: "Family strings and independence",
+            description:
+              "Money from family can be helpful or complicated. The real cost may include guest-list pressure, decision control, or emotional conflict.",
+          },
+        ]}
+      />
+
+      <ReduceCostTips
+        items={[
+          "Separate reliable family help from uncertain gifts or verbal promises.",
+          "Set a self-funded cap before signing venue or catering contracts.",
+          "Use family contributions for specific categories only if boundaries are clear.",
+          "Lower guest count before draining emergency savings.",
+          "Avoid credit-card financing for deposits, attire, bar upgrades, or final invoices.",
+          "Protect housing, debt payoff, medical, and emergency goals before wedding upgrades.",
+        ]}
+      />
+
+      <FinancialRedFlags
+        items={[
+          "Self-funding requires credit-card debt or a personal loan.",
+          "The wedding would drop savings below the emergency target.",
+          "The couple is rejecting helpful family support but taking on debt instead.",
+          "Family help is counted even though it is uncertain, conditional, or conflict-heavy.",
+          "The wedding delays rent stability, housing goals, debt payoff, medical needs, or family planning.",
+          "One partner feels pressured into a self-funded budget they are not comfortable with.",
+        ]}
+      />
+
+      <CalculatorAssumptions
+        items={[
+          "The calculator estimates self-funding pressure using wedding cost, reliable family help, income, savings, emergency target, debt, monthly debt payments, and family-boundary factors.",
+          "Reliable family help means money the couple can reasonably count on without hidden conditions or major conflict.",
+          "Emergency target is used to estimate whether savings remain protected after the couple pays its share.",
+          "Very high income or very high savings can reduce the pressure score when the self-funded wedding share is financially trivial.",
+          "The calculator is designed for general education and does not replace personalized financial advice.",
+        ]}
+      />
+
+      <div class="content-section">
+        <h2>The Best Answer May Be Partial Independence</h2>
+        <p>
+          Paying for everything yourselves is not the only way to protect control. Some couples accept help for one category, such as the rehearsal dinner, dress, flowers, or photography, while self-funding the major decisions that matter most to them.
+        </p>
+        <p>
+          The healthiest arrangement is usually clear, written, and emotionally clean: who is contributing, how much, when the money arrives, and whether the contribution gives anyone decision-making power.
+        </p>
+      </div>
+
+      <FAQSection
+        title="Paying for the Wedding Yourselves FAQ"
+        faqs={[
+          {
+            question: "Should we pay for our wedding ourselves?",
+            answer:
+              "It can make sense if self-funding protects independence and fits your finances. It is risky if it creates debt, drains emergency savings, or delays major post-wedding goals.",
+          },
+          {
+            question: "Should we accept money from family for the wedding?",
+            answer:
+              "Family help can be useful if the amount is clear, reliable, and comfortable. Be cautious if the money creates guest-list pressure, decision control, or conflict.",
+          },
+          {
+            question: "Is it worth going into debt to pay for our own wedding?",
+            answer:
+              "Usually no. Wedding debt can create stress after the celebration ends. A smaller self-funded wedding is usually safer than borrowing to preserve independence.",
+          },
+          {
+            question: "How do we set boundaries with family wedding money?",
+            answer:
+              "Clarify the amount, timing, purpose, and decision rights before accepting help. A contribution should not be treated as free money if it comes with expectations you cannot accept.",
+          },
+          {
+            question: "What if paying ourselves means a much smaller wedding?",
+            answer:
+              "That can be a good tradeoff if independence, lower stress, and post-wedding stability matter more than a larger celebration.",
+          },
+        ]}
+      />
+
+      <MethodologySection category="self-funded wedding affordability" updated="June 2026" />
+
+      <RelatedGuides
+        guides={[
+          {
+            title: "How to Budget for a Wedding Without Going Into Debt",
+            href: "/how-to-budget-for-a-wedding-without-going-into-debt",
+            description:
+              "Build a wedding budget around savings, vendor tradeoffs, debt avoidance, and life after the celebration.",
+          },
+          {
+            title: "How Much Emergency Savings Should I Have?",
+            href: "/how-much-emergency-savings-should-i-have",
+            description:
+              "Estimate how much cushion to protect before paying major wedding deposits.",
+          },
+          {
+            title: "What Counts as Debt?",
+            href: "/what-counts-as-debt",
+            description:
+              "See which obligations should be included when judging wedding pressure.",
+          },
+        ]}
+      />
+
+      <RelatedCalculators
+        calculators={[
+          {
+            category: "Weddings",
+            title: "Should I Invite This Many Wedding Guests?",
+            href: "/wedding-guest-count",
+          },
+          {
+            category: "Weddings",
+            title: "Should I Pay for an Open Bar?",
+            href: "/open-bar",
+          },
+          {
+            category: "Weddings",
+            title: "Should I Hire a Wedding Planner?",
+            href: "/wedding-planner",
+          },
+          {
+            category: "Weddings",
+            title: "Should I Spend $30,000 on a Wedding?",
+            href: "/should-i-spend-30000-on-a-wedding",
+          },
+        ]}
+      />
+    </CalculatorPageShell>
+  </div>
+
+  <script is:inline>
+    const clamp = (value, min, max) => Math.min(Math.max(value, min), max);
+
+    const getNumber = (id) => {
+      const rawValue = document.getElementById(id)?.value;
+      const value = Number(rawValue);
+      return Number.isFinite(value) && value >= 0 ? value : 0;
+    };
+
+    const formatMoney = (value) => {
+      return Math.round(value).toLocaleString("en-US", {
+        style: "currency",
+        currency: "USD",
+        maximumFractionDigits: 0,
+      });
+    };
+
+    function getPressureLevel(score) {
+      if (score <= 30) {
+        return {
+          label: "Low Pressure",
+          stress: "Low pressure",
+          color: "#16a34a",
+          action:
+            "Self-funding appears manageable. Keep boundaries clear, protect emergency savings, and avoid late upgrades.",
+        };
+      }
+
+      if (score <= 60) {
+        return {
+          label: "Moderate Pressure",
+          stress: "Moderate pressure",
+          color: "#ca8a04",
+          action:
+            "Consider lowering the wedding cost, accepting clean family help, or protecting more savings before committing.",
+        };
+      }
+
+      return {
+        label: "High Pressure",
+        stress: "High pressure",
+        color: "#dc2626",
+        action:
+          "Self-funding may be too aggressive. Reduce the wedding budget, avoid debt, or delay until savings are stronger.",
+      };
+    }
+
+    function calculateSelfFundedWedding() {
+      const income = getNumber("income");
+      const savings = getNumber("savings");
+      const weddingCost = getNumber("weddingCost");
+      const familyHelp = getNumber("familyHelp");
+      const emergencyTarget = getNumber("emergencyTarget");
+      const enteredMonthlyTakeHome = getNumber("monthlyTakeHome");
+      const debt = getNumber("debt");
+      const monthlyDebtPayments = getNumber("monthlyDebtPayments");
+      const independencePriority = getNumber("independencePriority");
+      const familyStrings = getNumber("familyStrings");
+
+      const result = document.getElementById("result");
+      const scoreEl = document.getElementById("score");
+      const barFill = document.getElementById("barFill");
+      const stressEl = document.getElementById("stress");
+      const selfFundedCostEl = document.getElementById("selfFundedCost");
+      const savingsImpactEl = document.getElementById("savingsImpact");
+      const incomeImpactEl = document.getElementById("incomeImpact");
+      const monthlyImpactEl = document.getElementById("monthlyImpact");
+      const emergencyImpactEl = document.getElementById("emergencyImpact");
+      const debtRatioEl = document.getElementById("debtRatio");
+      const independenceSignalEl = document.getElementById("independenceSignal");
+      const guidanceEl = document.getElementById("guidance");
+
+      result.style.display = "block";
+
+      if (income <= 0 || weddingCost <= 0) {
+        scoreEl.textContent = "Add your numbers first";
+        barFill.style.width = "0%";
+        barFill.style.background = "#16a34a";
+        stressEl.innerHTML = "";
+        selfFundedCostEl.innerHTML = "";
+        savingsImpactEl.innerHTML = "";
+        incomeImpactEl.innerHTML = "";
+        monthlyImpactEl.innerHTML = "";
+        emergencyImpactEl.innerHTML = "";
+        debtRatioEl.innerHTML = "";
+        independenceSignalEl.innerHTML = "";
+        guidanceEl.textContent =
+          "Enter a positive income and wedding cost so the calculator can estimate whether self-funding the wedding makes sense.";
+        return;
+      }
+
+      const estimatedMonthlyTakeHome = income / 12;
+      const monthlyTakeHome =
+        enteredMonthlyTakeHome > 0 && enteredMonthlyTakeHome <= income
+          ? enteredMonthlyTakeHome
+          : estimatedMonthlyTakeHome;
+
+      const selfFundedCost = Math.max(0, weddingCost - familyHelp);
+      const remainingSavings = savings - selfFundedCost;
+
+      const savingsImpact = savings > 0 ? (selfFundedCost / savings) * 100 : 999;
+      const annualIncomeImpact = (selfFundedCost / income) * 100;
+      const monthlyIncomeImpact = (selfFundedCost / monthlyTakeHome) * 100;
+      const debtRatio = (debt / income) * 100;
+      const monthlyDebtLoad = monthlyTakeHome > 0 ? (monthlyDebtPayments / monthlyTakeHome) * 100 : 0;
+      const remainingSavingsMonths = monthlyTakeHome > 0 ? remainingSavings / monthlyTakeHome : 0;
+      const emergencyGap = emergencyTarget > 0 ? remainingSavings - emergencyTarget : remainingSavings;
+      const emergencyTargetRatio = emergencyTarget > 0 ? (remainingSavings / emergencyTarget) * 100 : 999;
+      const familyHelpShare = weddingCost > 0 ? (familyHelp / weddingCost) * 100 : 0;
+
+      let pressureScore = 0;
+
+      pressureScore += clamp(savingsImpact * 0.28, 0, 32);
+      pressureScore += clamp(monthlyIncomeImpact * 0.15, 0, 22);
+      pressureScore += clamp(debtRatio * 0.14, 0, 18);
+      pressureScore += clamp(monthlyDebtLoad * 0.45, 0, 16);
+
+      if (selfFundedCost > savings && annualIncomeImpact >= 8) pressureScore += 24;
+      else if (selfFundedCost > savings && annualIncomeImpact >= 3) pressureScore += 14;
+      else if (selfFundedCost > savings) pressureScore += 6;
+
+      if (emergencyTarget > 0) {
+        if (remainingSavings < 0) pressureScore += 22;
+        else if (emergencyGap < 0 && annualIncomeImpact >= 4) pressureScore += 16;
+        else if (emergencyTargetRatio < 75) pressureScore += 10;
+        else if (emergencyTargetRatio >= 125) pressureScore -= 8;
+      }
+
+      if (remainingSavingsMonths < 1 && annualIncomeImpact >= 6) {
+        pressureScore += 18;
+      } else if (remainingSavingsMonths < 3 && annualIncomeImpact >= 4) {
+        pressureScore += 10;
+      } else if (remainingSavingsMonths >= 6) {
+        pressureScore -= 8;
+      }
+
+      if (familyStrings >= 4 && independencePriority >= 3) pressureScore -= 10;
+      else if (familyStrings >= 3 && independencePriority >= 3) pressureScore -= 6;
+      else if (familyStrings <= 1 && familyHelpShare >= 25) pressureScore += 6;
+
+      if (independencePriority <= 1 && selfFundedCost > savings * 0.4) pressureScore += 8;
+      if (familyHelpShare >= 50 && familyStrings <= 2) pressureScore += 5;
+
+      if (debtRatio >= 75) pressureScore += 12;
+      else if (debtRatio >= 40) pressureScore += 8;
+      else if (debtRatio <= 5) pressureScore -= 4;
+
+      if (monthlyDebtLoad >= 25) pressureScore += 10;
+      else if (monthlyDebtLoad >= 15) pressureScore += 5;
+
+      if (savingsImpact <= 10 && remainingSavings > 0) pressureScore -= 8;
+      if (annualIncomeImpact <= 5) pressureScore -= 6;
+      if (annualIncomeImpact <= 2) pressureScore -= 8;
+      if (monthlyIncomeImpact <= 25) pressureScore -= 5;
+
+      if (
+        income >= 750000 &&
+        annualIncomeImpact <= 3 &&
+        debtRatio <= 15
+      ) {
+        pressureScore = Math.min(pressureScore, 18);
+      }
+
+      if (
+        income >= 1000000 &&
+        annualIncomeImpact <= 2 &&
+        debtRatio <= 10
+      ) {
+        pressureScore = Math.min(pressureScore, 8);
+      }
+
+      if (
+        income >= 1000000 &&
+        annualIncomeImpact <= 1.5 &&
+        debtRatio <= 5
+      ) {
+        pressureScore = Math.min(pressureScore, 3);
+      }
+
+      if (
+        selfFundedCost > 0 &&
+        savings >= selfFundedCost * 20 &&
+        remainingSavingsMonths >= 6 &&
+        debtRatio <= 15
+      ) {
+        pressureScore = Math.min(pressureScore, 15);
+      }
+
+      if (
+        selfFundedCost > 0 &&
+        savings >= selfFundedCost * 50 &&
+        debtRatio <= 10
+      ) {
+        pressureScore = Math.min(pressureScore, 5);
+      }
+
+      if (
+        selfFundedCost === 0
+      ) {
+        pressureScore = 0;
+      }
+
+      if (
+        income >= 1000000 &&
+        selfFundedCost <= monthlyTakeHome * 0.25 &&
+        debtRatio <= 10
+      ) {
+        pressureScore = 0;
+      }
+
+      if (
+        selfFundedCost > 0 &&
+        savings >= selfFundedCost * 100 &&
+        debtRatio <= 25
+      ) {
+        pressureScore = 0;
+      }
+
+      if (
+        selfFundedCost > 0 &&
+        savings >= 1000000 &&
+        selfFundedCost <= savings * 0.01 &&
+        debtRatio <= 25
+      ) {
+        pressureScore = 0;
+      }
+
+      pressureScore = clamp(Math.round(pressureScore), 0, 100);
+
+      const level = getPressureLevel(pressureScore);
+
+      const emergencyText =
+        emergencyTarget <= 0
+          ? `No emergency target entered; estimated savings after wedding: ${formatMoney(remainingSavings)}`
+          : emergencyGap >= 0
+            ? `${formatMoney(remainingSavings)} after wedding / ${formatMoney(emergencyGap)} above target`
+            : `${formatMoney(remainingSavings)} after wedding / ${formatMoney(Math.abs(emergencyGap))} below target`;
+
+      const independenceText =
+        familyStrings >= 3 && independencePriority >= 3
+          ? "Strong reason to self-fund for boundaries"
+          : familyStrings <= 2 && familyHelpShare >= 25
+            ? "Family help may be financially useful if boundaries are clear"
+            : "Independence value depends on comfort and tradeoffs";
+
+      let guidance = "";
+
+      if (pressureScore === 0) {
+        guidance =
+          `Self-funding appears financially tiny relative to the numbers provided. Your estimated self-funded share is ${formatMoney(selfFundedCost)}, or about ${annualIncomeImpact.toFixed(1)}% of annual income and ${savings > 0 ? savingsImpact.toFixed(1) : "0.0"}% of savings. The decision is mainly about independence, boundaries, and what kind of wedding you actually want.`;
+      } else if (pressureScore <= 30) {
+        guidance =
+          `Self-funding appears manageable based on the numbers provided. Your estimated self-funded share is ${formatMoney(selfFundedCost)}, or about ${annualIncomeImpact.toFixed(1)}% of annual income. Keep the budget disciplined and avoid late upgrades.`;
+      } else if (pressureScore <= 60) {
+        guidance =
+          `Self-funding may work, but it deserves caution. Your estimated self-funded share is ${formatMoney(selfFundedCost)}, or about ${savings > 0 ? savingsImpact.toFixed(1) : "an undefined share of"}% of savings. Consider lowering the wedding budget or accepting clean, no-strings help.`;
+      } else {
+        guidance =
+          `Self-funding could create real financial strain. Your estimated self-funded share is ${formatMoney(selfFundedCost)}, or about ${savings > 0 ? savingsImpact.toFixed(1) : "an undefined share of"}% of savings, and it may weaken emergency reserves or debt flexibility.`;
+      }
+
+      scoreEl.textContent = `${level.label} — ${pressureScore}/100`;
+      barFill.style.width = `${pressureScore}%`;
+      barFill.style.background = level.color;
+
+      stressEl.innerHTML = `<strong>Pressure level:</strong> ${level.stress}`;
+      selfFundedCostEl.innerHTML = `<strong>Estimated self-funded share:</strong> ${formatMoney(selfFundedCost)} after ${formatMoney(familyHelp)} of family help`;
+      savingsImpactEl.innerHTML = `<strong>Savings impact:</strong> ${
+        savings > 0 ? `${savingsImpact.toFixed(1)}% of savings` : "No savings entered"
+      }`;
+      incomeImpactEl.innerHTML = `<strong>Annual income impact:</strong> ${annualIncomeImpact.toFixed(1)}% of annual income`;
+      monthlyImpactEl.innerHTML = `<strong>Monthly take-home impact:</strong> ${monthlyIncomeImpact.toFixed(1)}% of one month’s take-home pay`;
+      emergencyImpactEl.innerHTML = `<strong>Emergency savings impact:</strong> ${emergencyText}`;
+      debtRatioEl.innerHTML = `<strong>Debt ratio:</strong> ${debtRatio.toFixed(1)}% of annual income / monthly debt load ${monthlyDebtLoad.toFixed(1)}%`;
+      independenceSignalEl.innerHTML = `<strong>Independence signal:</strong> ${independenceText}`;
+
+      guidanceEl.textContent = `${guidance} Recommended next step: ${level.action}`;
+    }
+
+    document
+      .getElementById("selfFundButton")
+      .addEventListener("click", calculateSelfFundedWedding);
+  </script>
+</Layout>

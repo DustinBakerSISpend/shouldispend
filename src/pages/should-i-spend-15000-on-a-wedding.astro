@@ -229,8 +229,8 @@ import WhenSpendingMakesSense from "../components/WhenSpendingMakesSense.astro";
     <h1>Should I Spend $15,000 on a Wedding?</h1>
 
     <p class="subtitle">
-      Get a practical verdict based on income, savings, debt, stress level, and
-      how much of your financial cushion the wedding would consume.
+      Get a practical verdict based on income, savings, debt, emergency cushion,
+      and how much flexibility the wedding leaves afterward.
     </p>
 
     <div class="calculator">
@@ -384,8 +384,8 @@ import WhenSpendingMakesSense from "../components/WhenSpendingMakesSense.astro";
         "The calculator assumes the wedding cost includes the major event expenses, not only the venue deposit.",
         "The estimate uses annual household income, total savings, current debt, and the planned wedding budget.",
         "The calculator treats high savings impact and high debt pressure as larger risk factors.",
+        "Very high income or very high savings can reduce the pressure score when the wedding cost is financially trivial.",
         "The tool is educational and does not replace personalized financial advice.",
-        "Actual wedding affordability can change based on local prices, family contributions, timing, and payment method.",
       ]}
     />
 
@@ -437,7 +437,7 @@ import WhenSpendingMakesSense from "../components/WhenSpendingMakesSense.astro";
       ]}
     />
 
-    <MethodologySection category="wedding spending" updated="May 2026" />
+    <MethodologySection category="wedding spending" updated="June 2026" />
 
     <RelatedGuides
       guides={[
@@ -460,6 +460,16 @@ import WhenSpendingMakesSense from "../components/WhenSpendingMakesSense.astro";
       calculators={[
         {
           category: "Weddings",
+          title: "Should I Hire a Wedding Planner?",
+          href: "/wedding-planner",
+        },
+        {
+          category: "Weddings",
+          title: "Should I Invite This Many Wedding Guests?",
+          href: "/wedding-guest-count",
+        },
+        {
+          category: "Weddings",
           title: "Should I Spend $30,000 on a Wedding?",
           href: "/should-i-spend-30000-on-a-wedding",
         },
@@ -468,195 +478,233 @@ import WhenSpendingMakesSense from "../components/WhenSpendingMakesSense.astro";
           title: "Should I Spend $50,000 on a Wedding?",
           href: "/should-i-spend-50000-on-a-wedding",
         },
-        {
-          category: "Travel",
-          title: "Should I Spend $15,000 on a Honeymoon?",
-          href: "/should-i-spend-15000-on-a-honeymoon",
-        },
-        {
-          category: "Cars",
-          title: "Should I Spend $700 on a Car Payment?",
-          href: "/should-i-spend-700-on-a-car-payment",
-        },
       ]}
     />
   </main>
 
   <script is:inline>
-  const clamp = (value, min, max) => Math.min(Math.max(value, min), max);
+    const clamp = (value, min, max) => Math.min(Math.max(value, min), max);
 
-  const getNumber = (id) => {
-    const rawValue = document.getElementById(id)?.value;
-    const value = Number(rawValue);
-    return Number.isFinite(value) && value >= 0 ? value : 0;
-  };
-
-  function getPressureLevel(score) {
-    if (score <= 30) {
-      return {
-        label: "Low Pressure",
-        stress: "Low pressure",
-        color: "#16a34a",
-        action: "Proceed with a disciplined wedding budget.",
-      };
-    }
-
-    if (score <= 60) {
-      return {
-        label: "Moderate Pressure",
-        stress: "Moderate pressure",
-        color: "#ca8a04",
-        action: "Reduce wedding upgrades or rebuild savings first.",
-      };
-    }
-
-    return {
-      label: "High Pressure",
-      stress: "High pressure",
-      color: "#dc2626",
-      action: "Lower the wedding budget or delay spending.",
+    const getNumber = (id) => {
+      const rawValue = document.getElementById(id)?.value;
+      const value = Number(rawValue);
+      return Number.isFinite(value) && value >= 0 ? value : 0;
     };
-  }
 
-  function calculateWedding() {
-    const income = getNumber("income");
-    const savings = getNumber("savings");
-    const cost = getNumber("cost");
-    const debt = getNumber("debt");
+    function getPressureLevel(score) {
+      if (score <= 30) {
+        return {
+          label: "Low Pressure",
+          stress: "Low pressure",
+          color: "#16a34a",
+          action: "Proceed with a disciplined wedding budget.",
+        };
+      }
 
-    const result = document.getElementById("result");
-    const scoreText = document.getElementById("scoreText");
-    const barFill = document.getElementById("barFill");
-    const stressEl = document.getElementById("stress");
-    const savingsImpactEl = document.getElementById("savingsImpact");
-    const incomeImpactEl = document.getElementById("incomeImpact");
-    const monthlyIncomeImpactEl = document.getElementById("monthlyIncomeImpact");
-    const debtRatioEl = document.getElementById("debtRatio");
-    const guidanceEl = document.getElementById("guidance");
-    const breakdown = document.getElementById("verdictBreakdown");
+      if (score <= 60) {
+        return {
+          label: "Moderate Pressure",
+          stress: "Moderate pressure",
+          color: "#ca8a04",
+          action: "Trim upgrades, protect savings, and avoid debt.",
+        };
+      }
 
-    result.style.display = "block";
+      return {
+        label: "High Pressure",
+        stress: "High pressure",
+        color: "#dc2626",
+        action: "Lower the wedding budget, delay spending, or rebuild savings first.",
+      };
+    }
 
-    if (income <= 0 || savings <= 0 || cost <= 0) {
-      scoreText.textContent = "Add your numbers first";
-      barFill.style.width = "0%";
-      barFill.style.background = "#16a34a";
-      stressEl.innerHTML = "";
-      savingsImpactEl.innerHTML = "";
-      incomeImpactEl.innerHTML = "";
-      monthlyIncomeImpactEl.innerHTML = "";
-      debtRatioEl.innerHTML = "";
+    function calculateWedding() {
+      const income = getNumber("income");
+      const savings = getNumber("savings");
+      const cost = getNumber("cost");
+      const debt = getNumber("debt");
+
+      const result = document.getElementById("result");
+      const scoreText = document.getElementById("scoreText");
+      const barFill = document.getElementById("barFill");
+      const stressEl = document.getElementById("stress");
+      const savingsImpactEl = document.getElementById("savingsImpact");
+      const incomeImpactEl = document.getElementById("incomeImpact");
+      const monthlyIncomeImpactEl = document.getElementById("monthlyIncomeImpact");
+      const debtRatioEl = document.getElementById("debtRatio");
+      const guidanceEl = document.getElementById("guidance");
+      const breakdown = document.getElementById("verdictBreakdown");
+
+      result.style.display = "block";
+
+      if (income <= 0 || cost <= 0) {
+        scoreText.textContent = "Add your numbers first";
+        barFill.style.width = "0%";
+        barFill.style.background = "#16a34a";
+        stressEl.innerHTML = "";
+        savingsImpactEl.innerHTML = "";
+        incomeImpactEl.innerHTML = "";
+        monthlyIncomeImpactEl.innerHTML = "";
+        debtRatioEl.innerHTML = "";
+        guidanceEl.textContent =
+          "Enter a positive income and wedding cost so the calculator can estimate financial pressure.";
+        breakdown.style.display = "none";
+        return;
+      }
+
+      const monthlyIncome = income / 12;
+      const remainingSavings = savings - cost;
+
+      const savingsImpact = savings > 0 ? (cost / savings) * 100 : 999;
+      const annualIncomeImpact = (cost / income) * 100;
+      const monthlyIncomeImpact = (cost / monthlyIncome) * 100;
+      const debtRatio = (debt / income) * 100;
+      const remainingSavingsMonths = monthlyIncome > 0 ? remainingSavings / monthlyIncome : 0;
+
+      let pressureScore = 0;
+
+      pressureScore += clamp(savingsImpact * 0.28, 0, 34);
+      pressureScore += clamp(monthlyIncomeImpact * 0.18, 0, 26);
+      pressureScore += clamp(debtRatio * 0.18, 0, 20);
+
+      if (cost > savings && annualIncomeImpact >= 8) pressureScore += 24;
+      else if (cost > savings && annualIncomeImpact >= 3) pressureScore += 14;
+      else if (cost > savings) pressureScore += 6;
+
+      if (remainingSavingsMonths < 1 && annualIncomeImpact >= 6) {
+        pressureScore += 18;
+      } else if (remainingSavingsMonths < 3 && annualIncomeImpact >= 4) {
+        pressureScore += 10;
+      } else if (remainingSavingsMonths >= 6) {
+        pressureScore -= 8;
+      }
+
+      if (debtRatio >= 75) pressureScore += 12;
+      else if (debtRatio >= 40) pressureScore += 8;
+      else if (debtRatio <= 5) pressureScore -= 4;
+
+      if (savingsImpact <= 10 && remainingSavings > 0) pressureScore -= 10;
+      if (annualIncomeImpact <= 5) pressureScore -= 6;
+      if (annualIncomeImpact <= 2) pressureScore -= 8;
+      if (monthlyIncomeImpact <= 25) pressureScore -= 6;
+
+      /*
+        Huge-income and huge-savings guardrails:
+        These prevent absurdly wealthy inputs from producing fake high pressure.
+      */
+
+      if (
+        income >= 750000 &&
+        annualIncomeImpact <= 3 &&
+        debtRatio <= 15
+      ) {
+        pressureScore = Math.min(pressureScore, 18);
+      }
+
+      if (
+        income >= 1000000 &&
+        annualIncomeImpact <= 2 &&
+        debtRatio <= 10
+      ) {
+        pressureScore = Math.min(pressureScore, 8);
+      }
+
+      if (
+        income >= 1000000 &&
+        annualIncomeImpact <= 1.5 &&
+        debtRatio <= 5
+      ) {
+        pressureScore = Math.min(pressureScore, 3);
+      }
+
+      if (
+        savings >= cost * 20 &&
+        remainingSavingsMonths >= 6 &&
+        debtRatio <= 15
+      ) {
+        pressureScore = Math.min(pressureScore, 15);
+      }
+
+      if (
+        savings >= cost * 50 &&
+        debtRatio <= 10
+      ) {
+        pressureScore = Math.min(pressureScore, 5);
+      }
+
+      if (
+        income >= 1000000 &&
+        cost <= monthlyIncome * 0.25 &&
+        debtRatio <= 5
+      ) {
+        pressureScore = 0;
+      }
+
+      if (
+        savings >= cost * 100 &&
+        debtRatio <= 5
+      ) {
+        pressureScore = 0;
+      }
+
+      pressureScore = clamp(Math.round(pressureScore), 0, 100);
+
+      const level = getPressureLevel(pressureScore);
+
+      let guidance = "";
+
+      if (pressureScore <= 30) {
+        guidance =
+          `This wedding appears financially manageable based on the numbers provided. The cost equals about ${annualIncomeImpact.toFixed(1)}% of annual income and ${savingsImpact.toFixed(1)}% of savings, so the main priority is staying disciplined and avoiding unnecessary upgrades.`;
+      } else if (pressureScore <= 60) {
+        guidance =
+          `This wedding may work, but it deserves caution. The cost equals about ${annualIncomeImpact.toFixed(1)}% of annual income and ${savingsImpact.toFixed(1)}% of savings, so the budget should be controlled carefully before deposits, guest-count growth, bar upgrades, and vendor add-ons raise the final total.`;
+      } else {
+        guidance =
+          `This wedding could create real financial strain. The cost equals about ${annualIncomeImpact.toFixed(1)}% of annual income and ${savingsImpact.toFixed(1)}% of savings, so reducing the guest list, simplifying the venue, delaying spending, or rebuilding savings would likely be safer.`;
+      }
+
+      scoreText.textContent = `${level.label} — ${pressureScore}/100`;
+
+      barFill.style.width = `${pressureScore}%`;
+      barFill.style.background = level.color;
+
+      stressEl.innerHTML =
+        `<strong>Pressure level:</strong> ${level.stress}`;
+
+      savingsImpactEl.innerHTML =
+        `<strong>Savings impact:</strong> ${
+          savings > 0 ? `${savingsImpact.toFixed(1)}% of savings` : "No savings entered"
+        }`;
+
+      incomeImpactEl.innerHTML =
+        `<strong>Annual income impact:</strong> ${annualIncomeImpact.toFixed(1)}% of annual income`;
+
+      monthlyIncomeImpactEl.innerHTML =
+        `<strong>Monthly income impact:</strong> ${monthlyIncomeImpact.toFixed(1)}% of one month’s income`;
+
+      debtRatioEl.innerHTML =
+        `<strong>Debt ratio:</strong> ${debtRatio.toFixed(1)}% of annual income`;
+
       guidanceEl.textContent =
-        "Enter a positive income, savings amount, wedding cost, and debt so the calculator can estimate financial pressure.";
-      breakdown.style.display = "none";
-      return;
+        `${guidance} Recommended next step: ${level.action}`;
+
+      breakdown.style.display = "block";
+
+      breakdown.innerHTML = `
+        <strong>Financial Breakdown:</strong><br><br>
+        - Wedding cost equals <strong>${annualIncomeImpact.toFixed(1)}%</strong> of annual household income.<br>
+        - Wedding cost consumes <strong>${
+          savings > 0 ? savingsImpact.toFixed(1) + "%" : "an undefined share"
+        }</strong> of total savings.<br>
+        - Existing debt load equals <strong>${debtRatio.toFixed(1)}%</strong> of annual income.<br>
+        - Estimated savings after the wedding: <strong>$${Math.max(remainingSavings, 0).toLocaleString()}</strong>.<br><br>
+        This verdict weighs savings impact, income impact, debt pressure, and remaining cushion. Very high income or very high savings can appropriately lower the score when the wedding cost is financially minor.
+      `;
     }
 
-    const monthlyIncome = income / 12;
-    const savingsImpact = (cost / savings) * 100;
-    const annualIncomeImpact = (cost / income) * 100;
-    const monthlyIncomeImpact = (cost / monthlyIncome) * 100;
-    const debtRatio = (debt / income) * 100;
-
-    const remainingSavings = savings - cost;
-    const remainingSavingsMonths = remainingSavings / monthlyIncome;
-
-    let pressureScore = 0;
-
-    pressureScore += clamp(savingsImpact * 0.42, 0, 42);
-    pressureScore += clamp(monthlyIncomeImpact * 0.26, 0, 28);
-    pressureScore += clamp(debtRatio * 0.22, 0, 18);
-
-    if (cost > savings) pressureScore += 28;
-
-    if (remainingSavingsMonths < 1 && income < 100000) {
-      pressureScore += 20;
-    } else if (remainingSavingsMonths < 3 && income < 150000) {
-      pressureScore += 12;
-    } else if (remainingSavingsMonths >= 6) {
-      pressureScore -= 8;
-    }
-
-    if (debtRatio >= 75) pressureScore += 12;
-    else if (debtRatio >= 40) pressureScore += 8;
-
-    if (
-      annualIncomeImpact < 2 &&
-      savingsImpact < 10 &&
-      remainingSavingsMonths >= 6
-    ) {
-      pressureScore -= 12;
-    }
-
-    if (
-      annualIncomeImpact < 0.25 &&
-      monthlyIncomeImpact < 5 &&
-      debtRatio < 10
-    ) {
-      pressureScore = Math.min(pressureScore, 20);
-    }
-
-    if (
-      annualIncomeImpact < 0.05 &&
-      monthlyIncomeImpact < 1 &&
-      debtRatio < 5
-    ) {
-      pressureScore = Math.min(pressureScore, 10);
-    }
-
-    pressureScore = clamp(Math.round(pressureScore), 0, 100);
-
-    const level = getPressureLevel(pressureScore);
-
-    let guidance = "";
-
-    if (pressureScore <= 30) {
-      guidance =
-        `This wedding appears financially manageable based on the numbers provided. The cost equals about ${monthlyIncomeImpact.toFixed(1)}% of one month’s income and ${savingsImpact.toFixed(1)}% of savings, so the main priority is controlling upgrades, guest-count creep, and last-minute spending.`;
-    } else if (pressureScore <= 60) {
-      guidance =
-        `This wedding may work, but it deserves caution. The cost equals about ${monthlyIncomeImpact.toFixed(1)}% of one month’s income and ${savingsImpact.toFixed(1)}% of savings, which means venue costs, catering, alcohol, photography, and guest count should stay inside a strict budget.`;
-    } else {
-      guidance =
-        `This wedding could create real financial strain. The cost equals about ${monthlyIncomeImpact.toFixed(1)}% of one month’s income and ${savingsImpact.toFixed(1)}% of savings, so reducing the guest list, simplifying the venue, or delaying spending would likely be safer.`;
-    }
-
-    scoreText.textContent = `${level.label} — ${pressureScore}/100`;
-
-    barFill.style.width = `${pressureScore}%`;
-    barFill.style.background = level.color;
-
-    stressEl.innerHTML =
-      `<strong>Pressure level:</strong> ${level.stress}`;
-
-    savingsImpactEl.innerHTML =
-      `<strong>Savings impact:</strong> ${savingsImpact.toFixed(1)}% of savings`;
-
-    incomeImpactEl.innerHTML =
-      `<strong>Annual income impact:</strong> ${annualIncomeImpact.toFixed(1)}% of annual income`;
-
-    monthlyIncomeImpactEl.innerHTML =
-      `<strong>Monthly income impact:</strong> ${monthlyIncomeImpact.toFixed(1)}% of one month’s income`;
-
-    debtRatioEl.innerHTML =
-      `<strong>Debt ratio:</strong> ${debtRatio.toFixed(1)}% of annual income`;
-
-    guidanceEl.textContent =
-      `${guidance} Recommended next step: ${level.action}`;
-
-    breakdown.style.display = "block";
-
-    breakdown.innerHTML = `
-      <strong>Financial Breakdown:</strong><br><br>
-      - Wedding cost equals <strong>${annualIncomeImpact.toFixed(1)}%</strong> of annual household income.<br>
-      - Wedding cost consumes <strong>${savingsImpact.toFixed(1)}%</strong> of total savings.<br>
-      - Existing debt load equals <strong>${debtRatio.toFixed(1)}%</strong> of annual income.<br><br>
-      Weddings become riskier when they create debt, drain emergency savings, or delay long-term financial goals after the celebration ends.
-    `;
-  }
-
-  document
-    .getElementById("weddingButton")
-    .addEventListener("click", calculateWedding);
-</script>
+    document
+      .getElementById("weddingButton")
+      .addEventListener("click", calculateWedding);
+  </script>
 </Layout>

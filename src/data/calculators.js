@@ -1,5 +1,53 @@
 export const calculators = [
   {
+  id: "wedding-planner",
+  category: "Weddings",
+  title: "Should I Hire a Wedding Planner?",
+  description:
+    "Evaluate whether a wedding planner is worth the cost based on your budget, guest count, schedule pressure, vendor complexity, savings, debt, and decision stress.",
+  href: "/wedding-planner",
+},
+{
+  id: "destination-wedding",
+  category: "Weddings",
+  title: "Should I Have a Destination Wedding?",
+  description:
+    "Compare destination wedding pressure using travel costs, guest burden, local wedding alternatives, savings, debt, family help, and post-wedding flexibility.",
+  href: "/destination-wedding",
+},
+{
+  id: "wedding-guest-count",
+  category: "Weddings",
+  title: "Should I Invite This Many Wedding Guests?",
+  description:
+    "Estimate whether your guest list creates manageable wedding pressure or pushes catering, venue, bar, lodging, and family expectations beyond your budget.",
+  href: "/wedding-guest-count",
+},
+{
+  id: "open-bar",
+  category: "Weddings",
+  title: "Should I Pay for an Open Bar?",
+  description:
+    "Evaluate whether an open bar fits your wedding budget using guest count, bar package cost, venue rules, savings cushion, debt pressure, and hospitality priorities.",
+  href: "/open-bar",
+},
+{
+  id: "wedding-dress",
+  category: "Weddings",
+  title: "Should I Spend This Much on a Wedding Dress?",
+  description:
+    "Decide whether a wedding dress budget is reasonable after alterations, accessories, photography value, savings impact, debt pressure, and total wedding costs.",
+  href: "/wedding-dress",
+},
+{
+  id: "pay-for-wedding-ourselves",
+  category: "Weddings",
+  title: "Should We Pay for the Wedding Ourselves?",
+  description:
+    "Evaluate whether self-funding your wedding protects independence or creates too much pressure on savings, debt payoff, housing goals, and emergency reserves.",
+  href: "/pay-for-wedding-ourselves",
+},
+{
   id: "engagement-ring-5000",
   category: "Weddings",
   title: "Should I Spend $5,000 on an Engagement Ring?",

@@ -1,0 +1,779 @@
+---
+import Layout from "../layouts/Layout.astro";
+import FAQSection from "../components/FAQSection.astro";
+import RelatedCalculators from "../components/RelatedCalculators.astro";
+import RelatedGuides from "../components/RelatedGuides.astro";
+import MethodologySection from "../components/MethodologySection.astro";
+import FinancialRedFlags from "../components/FinancialRedFlags.astro";
+import CalculatorAssumptions from "../components/CalculatorAssumptions.astro";
+import KeyCostCategories from "../components/KeyCostCategories.astro";
+import ReduceCostTips from "../components/ReduceCostTips.astro";
+import WhenSpendingMakesSense from "../components/WhenSpendingMakesSense.astro";
+---
+
+<Layout
+  title="Should I Hire a Wedding Planner?"
+  description="Use this wedding planner calculator to decide whether a planner fits your wedding budget, income, savings, guest count, schedule pressure, vendor complexity, and financial goals."
+>
+  <style>
+    .container {
+      max-width: 920px;
+      margin: 0 auto;
+      padding: 72px 24px;
+    }
+
+    .eyebrow {
+      text-align: center;
+      color: var(--teal);
+      font-weight: 800;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      margin-bottom: 14px;
+    }
+
+    h1 {
+      font-size: clamp(3rem, 7vw, 5rem);
+      text-align: center;
+      margin: 0 0 16px;
+      color: var(--navy);
+      line-height: 1.05;
+    }
+
+    .subtitle {
+      text-align: center;
+      font-size: 22px;
+      color: var(--muted);
+      margin: 0 auto 56px;
+      line-height: 1.5;
+      max-width: 760px;
+    }
+
+    .content-section {
+      max-width: 760px;
+      margin: 72px auto 0;
+    }
+
+    .content-section h2 {
+      font-size: 2rem;
+      margin-bottom: 24px;
+      line-height: 1.2;
+    }
+
+    .content-section p,
+    .content-section li {
+      font-size: 1.08rem;
+      line-height: 1.9;
+      color: #334155;
+      margin-bottom: 24px;
+    }
+
+    .calculator {
+      background: var(--card);
+      border-radius: 24px;
+      padding: 38px;
+      box-shadow: 0 18px 50px rgba(15, 23, 42, 0.08);
+      border: 1px solid rgba(15, 23, 42, 0.05);
+      margin-top: 56px;
+    }
+
+    .calculator h2 {
+      margin-top: 0;
+      color: var(--navy);
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+    }
+
+    label {
+      display: block;
+      font-weight: 800;
+      margin-bottom: 9px;
+      color: var(--navy);
+    }
+
+    input,
+    select {
+      width: 100%;
+      padding: 16px;
+      border-radius: 12px;
+      border: 1px solid var(--border);
+      font-size: 18px;
+      box-sizing: border-box;
+      background: white;
+    }
+
+    input:focus,
+    select:focus {
+      outline: 3px solid rgba(15, 118, 110, 0.18);
+      border-color: var(--teal);
+    }
+
+    button {
+      margin-top: 28px;
+      background: #0f766e;
+      color: white;
+      border: none;
+      padding: 18px 28px;
+      border-radius: 14px;
+      font-size: 19px;
+      font-weight: 900;
+      cursor: pointer;
+    }
+
+    button:hover {
+      opacity: 0.92;
+    }
+
+    .result {
+      margin-top: 34px;
+      background: #f8fafc;
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 30px;
+      display: none;
+    }
+
+    .score {
+      font-size: 36px;
+      font-weight: 900;
+      margin-bottom: 18px;
+      color: var(--navy);
+    }
+
+    .bar {
+      height: 16px;
+      background: #e2e8f0;
+      border-radius: 999px;
+      overflow: hidden;
+      margin-bottom: 24px;
+    }
+
+    .bar-fill {
+      height: 100%;
+      background: var(--teal);
+      width: 0%;
+      transition: width 0.4s ease;
+    }
+
+    .line {
+      margin-bottom: 12px;
+      font-size: 18px;
+      color: var(--text);
+    }
+
+    .guidance {
+      margin-top: 26px;
+      font-size: 20px;
+      line-height: 1.6;
+      color: var(--navy);
+    }
+
+    .verdict-breakdown {
+      margin-top: 18px;
+      padding: 18px;
+      background: #f8fafc;
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      font-size: 0.98rem;
+      line-height: 1.65;
+      color: var(--muted);
+      display: none;
+    }
+
+    .verdict-breakdown strong {
+      color: var(--text);
+    }
+
+    .disclaimer {
+      margin-top: 22px;
+      font-size: 13px;
+      color: #64748b;
+    }
+
+    .helper-link {
+      margin-top: 10px;
+      font-size: 0.9rem;
+    }
+
+    .helper-link a {
+      color: #0f766e;
+      font-weight: 700;
+    }
+
+    @media (max-width: 700px) {
+      .container {
+        padding: 54px 20px;
+      }
+
+      h1 {
+        font-size: 38px;
+      }
+
+      .subtitle {
+        font-size: 18px;
+      }
+
+      .calculator {
+        padding: 24px;
+      }
+
+      .grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+
+  <main class="container">
+    <div class="eyebrow">Wedding Planner Calculator</div>
+
+    <h1>Should I Hire a Wedding Planner?</h1>
+
+    <p class="subtitle">
+      Get a practical verdict based on planner cost, total wedding budget,
+      income, savings, debt, guest count, timeline pressure, and vendor complexity.
+    </p>
+
+    <div class="calculator">
+      <h2>Wedding Planner Pressure Verdict</h2>
+
+      <div class="grid">
+        <div>
+          <label for="income">Combined Annual Income</label>
+          <input id="income" type="number" placeholder="Example: 140000" />
+        </div>
+
+        <div>
+          <label for="savings">Total Savings</label>
+          <input id="savings" type="number" placeholder="Example: 50000" />
+        </div>
+
+        <div>
+          <label for="plannerCost">Planner Cost</label>
+          <input id="plannerCost" type="number" placeholder="Example: 3500" />
+        </div>
+
+        <div>
+          <label for="weddingBudget">Total Wedding Budget</label>
+          <input id="weddingBudget" type="number" placeholder="Example: 30000" />
+        </div>
+
+        <div>
+          <label for="guestCount">Guest Count</label>
+          <input id="guestCount" type="number" placeholder="Example: 140" />
+        </div>
+
+        <div>
+          <label for="debt">Current Debt</label>
+          <input id="debt" type="number" placeholder="Example: 12000" />
+
+          <div class="helper-link">
+            <a href="/what-counts-as-debt">
+              Not sure what counts as debt? Read the debt guide
+            </a>
+          </div>
+        </div>
+
+        <div>
+          <label for="complexity">Wedding Complexity</label>
+          <select id="complexity">
+            <option value="1">Simple: one venue, few vendors</option>
+            <option value="2" selected>Moderate: several vendors</option>
+            <option value="3">Complex: many vendors or moving parts</option>
+            <option value="4">Very complex: destination, tented, multi-day, or strict timeline</option>
+          </select>
+        </div>
+
+        <div>
+          <label for="stress">Planning Stress Level</label>
+          <select id="stress">
+            <option value="1">Low: we have time and enjoy planning</option>
+            <option value="2" selected>Moderate: manageable but busy</option>
+            <option value="3">High: planning is already stressful</option>
+            <option value="4">Very high: we need serious help</option>
+          </select>
+        </div>
+      </div>
+
+      <button id="plannerButton" type="button">Get Planner Verdict</button>
+
+      <div class="result" id="result">
+        <div class="score" id="scoreText"></div>
+
+        <div class="bar">
+          <div class="bar-fill" id="barFill"></div>
+        </div>
+
+        <div class="line" id="stressLine"></div>
+        <div class="line" id="budgetShareLine"></div>
+        <div class="line" id="savingsImpactLine"></div>
+        <div class="line" id="incomeImpactLine"></div>
+        <div class="line" id="valueSignalLine"></div>
+        <div class="line" id="debtRatioLine"></div>
+
+        <div class="guidance" id="guidance"></div>
+
+        <div class="verdict-breakdown" id="verdictBreakdown"></div>
+
+        <div class="disclaimer">
+          This is a general educational estimate, not financial advice.
+        </div>
+      </div>
+    </div>
+
+    <section class="content-section">
+      <h2>What a Wedding Planner Actually Changes</h2>
+
+      <p>
+        A wedding planner is not just another aesthetic upgrade. A good planner
+        can help manage vendor communication, timelines, contracts, setup,
+        ceremony flow, reception transitions, family expectations, and the
+        hundreds of small decisions that happen before and during the wedding.
+      </p>
+
+      <p>
+        The financial question is whether the planner cost creates more pressure
+        than the value it provides. A planner may be worth it when the wedding is
+        logistically complex, the couple is short on time, the guest count is
+        large, or expensive mistakes would be easy to make without coordination.
+      </p>
+    </section>
+
+    <WhenSpendingMakesSense
+      title="When Hiring a Wedding Planner Can Make Sense"
+      items={[
+        "The wedding has many vendors, locations, family expectations, or timing details.",
+        "The planner cost fits inside the total wedding budget instead of being added on top.",
+        "You can pay for the planner without credit-card debt or emergency-savings damage.",
+        "The planner may prevent costly mistakes, missed deadlines, duplicate rentals, or vendor confusion.",
+        "The couple wants less stress and more support during the final planning stretch.",
+      ]}
+    />
+
+    <section class="content-section">
+      <h2>When a Planner May Not Be Worth It</h2>
+
+      <p>
+        A planner may be unnecessary if the wedding is small, the venue includes
+        strong coordination, the vendor list is short, and the couple has enough
+        time to manage details without sacrificing work, family, or health.
+      </p>
+
+      <p>
+        It may also be smarter to choose month-of coordination instead of full
+        planning. That keeps the wedding day organized without paying for a
+        planner to manage every early decision.
+      </p>
+    </section>
+
+    <KeyCostCategories
+      items={[
+        {
+          title: "Full-service planning",
+          description:
+            "Full-service planners may help with budget design, vendor search, contracts, design direction, timelines, logistics, and wedding-day execution.",
+        },
+        {
+          title: "Partial planning",
+          description:
+            "Partial planning can work when you have already booked major vendors but need professional help organizing the remaining details.",
+        },
+        {
+          title: "Month-of coordination",
+          description:
+            "Month-of coordination is often the best value when the couple can plan but needs help managing timelines, vendors, setup, and the event day.",
+        },
+        {
+          title: "Venue coordination",
+          description:
+            "Some venues include a coordinator, but that person usually protects the venue’s operations, not every couple-side detail or vendor issue.",
+        },
+      ]}
+    />
+
+    <ReduceCostTips
+      items={[
+        "Ask about month-of coordination before choosing full-service planning.",
+        "Use a planner for logistics, not unlimited design upgrades.",
+        "Confirm what is included before signing the planning contract.",
+        "Choose a venue with tables, chairs, linens, and staff coordination included.",
+        "Keep the guest list and vendor list controlled so planning complexity does not spiral.",
+      ]}
+    />
+
+    <FinancialRedFlags
+      items={[
+        "The planner cost would require credit-card debt or a personal loan.",
+        "The planner is being added after the wedding budget is already maxed out.",
+        "The couple is hiring a planner mainly to justify more upgrades.",
+        "Emergency savings would be drained to afford planning help.",
+        "The venue already includes strong coordination and the wedding is simple.",
+      ]}
+    />
+
+    <CalculatorAssumptions
+      items={[
+        "The calculator assumes planner cost is separate from the rest of the wedding budget unless you intentionally included it.",
+        "The estimate weighs planner cost against income, savings, debt, wedding budget, guest count, complexity, and stress level.",
+        "The calculator treats a planner as more justifiable when complexity and stress are high.",
+        "Very high income or very high savings can reduce the pressure score when planner cost is financially trivial.",
+        "The tool is educational and does not replace personalized financial advice.",
+      ]}
+    />
+
+    <section class="content-section">
+      <h2>What Your Planner Verdict Means</h2>
+
+      <p>
+        A low-pressure result means the planner cost appears financially
+        manageable and may be justified if the wedding has enough complexity.
+        A moderate result means the planner might still be reasonable, but the
+        scope should be narrowed. A high-pressure result means the cost may be
+        creating more financial strain than planning relief.
+      </p>
+
+      <p>
+        The best planner decision is not always “hire” or “skip.” Sometimes the
+        smartest answer is month-of coordination, venue coordination, or a
+        smaller wedding that requires less professional management.
+      </p>
+    </section>
+
+    <FAQSection
+      title="Wedding Planner FAQ"
+      faqs={[
+        {
+          question: "Is hiring a wedding planner worth it?",
+          answer:
+            "A wedding planner can be worth it when the wedding has many vendors, a large guest list, multiple locations, tight timelines, or high stress. It is less useful for a simple wedding with strong venue coordination.",
+        },
+        {
+          question: "Should I hire a full-service planner or month-of coordinator?",
+          answer:
+            "Full-service planning makes more sense for complex weddings or couples with limited time. Month-of coordination can be a better value when most decisions are already made but the wedding day needs structure.",
+        },
+        {
+          question: "Can a wedding planner save money?",
+          answer:
+            "Sometimes. A planner may prevent mistakes, missed deadlines, duplicate rentals, or poor vendor choices. But a planner can also increase spending if the scope encourages more upgrades.",
+        },
+        {
+          question: "What percentage of my wedding budget should go to a planner?",
+          answer:
+            "There is no perfect percentage, but planner pressure rises when the fee consumes a large share of the total wedding budget or forces cuts to more important categories.",
+        },
+        {
+          question: "Should I hire a planner if my venue has a coordinator?",
+          answer:
+            "Maybe not. A venue coordinator usually manages venue operations. A planner or month-of coordinator may still help with couple-side details, timelines, outside vendors, and wedding-party logistics.",
+        },
+      ]}
+    />
+
+    <MethodologySection category="wedding planner affordability" updated="June 2026" />
+
+    <RelatedGuides
+      guides={[
+        {
+          title: "How to Budget for a Wedding Without Going Into Debt",
+          href: "/how-to-budget-for-a-wedding-without-going-into-debt",
+          description:
+            "Plan wedding spending without letting the celebration create long-term financial pressure.",
+        },
+        {
+          title: "What Counts as Debt?",
+          href: "/what-counts-as-debt",
+          description:
+            "See which debt obligations matter when evaluating wedding affordability.",
+        },
+      ]}
+    />
+
+    <RelatedCalculators
+      calculators={[
+        {
+          category: "Weddings",
+          title: "Should I Invite This Many Wedding Guests?",
+          href: "/wedding-guest-count",
+        },
+        {
+          category: "Weddings",
+          title: "Should I Pay for an Open Bar?",
+          href: "/open-bar",
+        },
+        {
+          category: "Weddings",
+          title: "Should I Spend This Much on a Wedding Dress?",
+          href: "/wedding-dress",
+        },
+        {
+          category: "Weddings",
+          title: "Should I Spend $30,000 on a Wedding?",
+          href: "/should-i-spend-30000-on-a-wedding",
+        },
+      ]}
+    />
+  </main>
+
+  <script is:inline>
+    const clamp = (value, min, max) => Math.min(Math.max(value, min), max);
+
+    const getNumber = (id) => {
+      const rawValue = document.getElementById(id)?.value;
+      const value = Number(rawValue);
+      return Number.isFinite(value) && value >= 0 ? value : 0;
+    };
+
+    function getPlannerLevel(score) {
+      if (score <= 30) {
+        return {
+          label: "Low Pressure",
+          stress: "Low pressure",
+          color: "#16a34a",
+          action: "A planner or coordinator can be reasonable if the scope matches the wedding.",
+        };
+      }
+
+      if (score <= 60) {
+        return {
+          label: "Moderate Pressure",
+          stress: "Moderate pressure",
+          color: "#ca8a04",
+          action: "Consider partial planning or month-of coordination before full-service planning.",
+        };
+      }
+
+      return {
+        label: "High Pressure",
+        stress: "High pressure",
+        color: "#dc2626",
+        action: "Skip full-service planning, reduce scope, or rebuild savings before hiring help.",
+      };
+    }
+
+    function calculatePlanner() {
+      const income = getNumber("income");
+      const savings = getNumber("savings");
+      const plannerCost = getNumber("plannerCost");
+      const weddingBudget = getNumber("weddingBudget");
+      const guestCount = getNumber("guestCount");
+      const debt = getNumber("debt");
+      const complexity = getNumber("complexity");
+      const stress = getNumber("stress");
+
+      const result = document.getElementById("result");
+      const scoreText = document.getElementById("scoreText");
+      const barFill = document.getElementById("barFill");
+      const stressLine = document.getElementById("stressLine");
+      const budgetShareLine = document.getElementById("budgetShareLine");
+      const savingsImpactLine = document.getElementById("savingsImpactLine");
+      const incomeImpactLine = document.getElementById("incomeImpactLine");
+      const valueSignalLine = document.getElementById("valueSignalLine");
+      const debtRatioLine = document.getElementById("debtRatioLine");
+      const guidance = document.getElementById("guidance");
+      const breakdown = document.getElementById("verdictBreakdown");
+
+      result.style.display = "block";
+
+      if (income <= 0 || plannerCost <= 0 || weddingBudget <= 0) {
+        scoreText.textContent = "Add your numbers first";
+        barFill.style.width = "0%";
+        barFill.style.background = "#16a34a";
+        stressLine.innerHTML = "";
+        budgetShareLine.innerHTML = "";
+        savingsImpactLine.innerHTML = "";
+        incomeImpactLine.innerHTML = "";
+        valueSignalLine.innerHTML = "";
+        debtRatioLine.innerHTML = "";
+        guidance.textContent =
+          "Enter a positive income, planner cost, and total wedding budget so the calculator can estimate whether hiring a planner makes sense.";
+        breakdown.style.display = "none";
+        return;
+      }
+
+      const monthlyIncome = income / 12;
+      const remainingSavings = savings - plannerCost;
+
+      const plannerBudgetShare = (plannerCost / weddingBudget) * 100;
+      const savingsImpact = savings > 0 ? (plannerCost / savings) * 100 : 999;
+      const annualIncomeImpact = (plannerCost / income) * 100;
+      const monthlyIncomeImpact = (plannerCost / monthlyIncome) * 100;
+      const debtRatio = (debt / income) * 100;
+      const remainingSavingsMonths = monthlyIncome > 0 ? remainingSavings / monthlyIncome : 0;
+
+      const complexityScore = complexity + stress;
+      const guestComplexityBoost = guestCount >= 175 ? 2 : guestCount >= 125 ? 1 : 0;
+      const valueSignal = complexityScore + guestComplexityBoost;
+
+      let pressureScore = 0;
+
+      pressureScore += clamp(savingsImpact * 0.28, 0, 32);
+      pressureScore += clamp(monthlyIncomeImpact * 0.18, 0, 24);
+      pressureScore += clamp(debtRatio * 0.16, 0, 18);
+      pressureScore += clamp(plannerBudgetShare * 1.25, 0, 22);
+
+      if (plannerCost > savings && annualIncomeImpact >= 4) pressureScore += 20;
+      else if (plannerCost > savings && annualIncomeImpact >= 2) pressureScore += 10;
+      else if (plannerCost > savings) pressureScore += 5;
+
+      if (remainingSavingsMonths < 1 && annualIncomeImpact >= 3) {
+        pressureScore += 14;
+      } else if (remainingSavingsMonths < 3 && annualIncomeImpact >= 2) {
+        pressureScore += 8;
+      } else if (remainingSavingsMonths >= 6) {
+        pressureScore -= 8;
+      }
+
+      if (plannerBudgetShare >= 20) pressureScore += 12;
+      else if (plannerBudgetShare >= 12) pressureScore += 7;
+      else if (plannerBudgetShare <= 8) pressureScore -= 4;
+
+      if (valueSignal >= 8) pressureScore -= 14;
+      else if (valueSignal >= 6) pressureScore -= 9;
+      else if (valueSignal <= 3) pressureScore += 8;
+
+      if (guestCount >= 175 && complexity >= 3) pressureScore -= 5;
+      if (guestCount <= 50 && complexity <= 2 && stress <= 2) pressureScore += 8;
+
+      if (debtRatio >= 75) pressureScore += 12;
+      else if (debtRatio >= 40) pressureScore += 8;
+      else if (debtRatio <= 5) pressureScore -= 4;
+
+      if (savingsImpact <= 10 && remainingSavings > 0) pressureScore -= 8;
+      if (annualIncomeImpact <= 2) pressureScore -= 8;
+      if (annualIncomeImpact <= 1) pressureScore -= 6;
+      if (monthlyIncomeImpact <= 15) pressureScore -= 5;
+
+      /*
+        Huge-income and huge-savings guardrails:
+        These prevent absurdly wealthy inputs from producing fake high pressure.
+      */
+
+      if (
+        income >= 750000 &&
+        annualIncomeImpact <= 1 &&
+        debtRatio <= 15
+      ) {
+        pressureScore = Math.min(pressureScore, 12);
+      }
+
+      if (
+        income >= 1000000 &&
+        annualIncomeImpact <= 0.75 &&
+        debtRatio <= 10
+      ) {
+        pressureScore = Math.min(pressureScore, 6);
+      }
+
+      if (
+        income >= 1000000 &&
+        annualIncomeImpact <= 0.5 &&
+        debtRatio <= 5
+      ) {
+        pressureScore = Math.min(pressureScore, 3);
+      }
+
+      if (
+        savings >= plannerCost * 25 &&
+        remainingSavingsMonths >= 6 &&
+        debtRatio <= 15
+      ) {
+        pressureScore = Math.min(pressureScore, 12);
+      }
+
+      if (
+        savings >= plannerCost * 60 &&
+        debtRatio <= 10
+      ) {
+        pressureScore = Math.min(pressureScore, 5);
+      }
+
+      if (
+        income >= 1000000 &&
+        plannerCost <= monthlyIncome * 0.1 &&
+        debtRatio <= 5
+      ) {
+        pressureScore = 0;
+      }
+
+      if (
+        savings >= plannerCost * 100 &&
+        debtRatio <= 5
+      ) {
+        pressureScore = 0;
+      }
+
+      pressureScore = clamp(Math.round(pressureScore), 0, 100);
+
+      const level = getPlannerLevel(pressureScore);
+
+      const valueText =
+        valueSignal >= 8
+          ? "Strong planner value signal"
+          : valueSignal >= 6
+            ? "Moderate planner value signal"
+            : "Limited planner value signal";
+
+      let guidanceText = "";
+
+      if (pressureScore <= 30) {
+        guidanceText =
+          `Hiring a wedding planner appears financially manageable based on the numbers provided. The planner cost equals about ${annualIncomeImpact.toFixed(1)}% of annual income and ${plannerBudgetShare.toFixed(1)}% of the wedding budget, so the decision should come down to scope, vendor complexity, and stress relief.`;
+      } else if (pressureScore <= 60) {
+        guidanceText =
+          `A planner may still make sense, but the scope should be controlled. The planner cost equals about ${plannerBudgetShare.toFixed(1)}% of the wedding budget and ${savingsImpact.toFixed(1)}% of savings, so partial planning or month-of coordination may be safer than full-service help.`;
+      } else {
+        guidanceText =
+          `Hiring a planner could create too much financial pressure. The planner cost equals about ${plannerBudgetShare.toFixed(1)}% of the wedding budget and ${savingsImpact.toFixed(1)}% of savings, so a lower-cost coordinator, simpler venue, or smaller vendor list would likely be safer.`;
+      }
+
+      scoreText.textContent = `${level.label} — ${pressureScore}/100`;
+
+      barFill.style.width = `${pressureScore}%`;
+      barFill.style.background = level.color;
+
+      stressLine.innerHTML =
+        `<strong>Pressure level:</strong> ${level.stress}`;
+
+      budgetShareLine.innerHTML =
+        `<strong>Planner share of wedding budget:</strong> ${plannerBudgetShare.toFixed(1)}%`;
+
+      savingsImpactLine.innerHTML =
+        `<strong>Savings impact:</strong> ${
+          savings > 0 ? `${savingsImpact.toFixed(1)}% of savings` : "No savings entered"
+        }`;
+
+      incomeImpactLine.innerHTML =
+        `<strong>Income impact:</strong> ${annualIncomeImpact.toFixed(1)}% of annual income`;
+
+      valueSignalLine.innerHTML =
+        `<strong>Planner value signal:</strong> ${valueText}`;
+
+      debtRatioLine.innerHTML =
+        `<strong>Debt ratio:</strong> ${debtRatio.toFixed(1)}% of annual income`;
+
+      guidance.textContent =
+        `${guidanceText} Recommended next step: ${level.action}`;
+
+      breakdown.style.display = "block";
+
+      breakdown.innerHTML = `
+        <strong>Planner Breakdown:</strong><br><br>
+        - Planner cost equals <strong>${plannerBudgetShare.toFixed(1)}%</strong> of the total wedding budget.<br>
+        - Planner cost equals <strong>${annualIncomeImpact.toFixed(1)}%</strong> of annual household income.<br>
+        - Planner cost consumes <strong>${
+          savings > 0 ? savingsImpact.toFixed(1) + "%" : "an undefined share"
+        }</strong> of total savings.<br>
+        - Existing debt load equals <strong>${debtRatio.toFixed(1)}%</strong> of annual income.<br>
+        - Estimated savings after hiring the planner: <strong>$${Math.max(remainingSavings, 0).toLocaleString()}</strong>.<br><br>
+        This verdict weighs affordability pressure against planner usefulness. Higher complexity, higher stress, and larger guest counts make professional help more defensible, while high debt, low savings, or a planner fee that dominates the wedding budget raises pressure.
+      `;
+    }
+
+    document
+      .getElementById("plannerButton")
+      .addEventListener("click", calculatePlanner);
+  </script>
+</Layout>

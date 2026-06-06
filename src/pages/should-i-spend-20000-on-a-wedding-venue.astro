@@ -385,195 +385,252 @@ const breadcrumbSchema = {
   </div>
 
   <script is:inline>
-    const clamp = (value, min, max) => Math.min(Math.max(value, min), max);
+  const clamp = (value, min, max) => Math.min(Math.max(value, min), max);
 
-    const getNumber = (id) => {
-      const rawValue = document.getElementById(id)?.value;
-      const value = Number(rawValue);
-      return Number.isFinite(value) && value >= 0 ? value : 0;
-    };
+  const getNumber = (id) => {
+    const rawValue = document.getElementById(id)?.value;
+    const value = Number(rawValue);
+    return Number.isFinite(value) && value >= 0 ? value : 0;
+  };
 
-    const formatMoney = (value) => {
-      return Math.round(value).toLocaleString("en-US", {
-        style: "currency",
-        currency: "USD",
-        maximumFractionDigits: 0,
-      });
-    };
+  const formatMoney = (value) => {
+    return Math.round(value).toLocaleString("en-US", {
+      style: "currency",
+      currency: "USD",
+      maximumFractionDigits: 0,
+    });
+  };
 
-    function getPressureLevel(score) {
-      if (score <= 30) {
-        return {
-          label: "Low Pressure",
-          stress: "Low pressure",
-          color: "#16a34a",
-          action:
-            "This venue appears manageable, but verify the full venue contract and protect the rest of the wedding budget.",
-        };
-      }
-
-      if (score <= 60) {
-        return {
-          label: "Moderate Pressure",
-          stress: "Moderate pressure",
-          color: "#ca8a04",
-          action:
-            "This venue may work, but compare included services, payment schedule, guest count, and remaining budget carefully.",
-        };
-      }
-
+  function getPressureLevel(score) {
+    if (score <= 30) {
       return {
-        label: "High Pressure",
-        stress: "High pressure",
-        color: "#dc2626",
+        label: "Low Pressure",
+        stress: "Low pressure",
+        color: "#16a34a",
         action:
-          "This venue could create real strain. Consider a cheaper venue, lower guest count, or more time to save.",
+          "This venue appears manageable. Verify the contract, included services, payment schedule, and remaining wedding budget.",
       };
     }
 
-    function calculateVenue() {
-      const income = getNumber("income");
-      const savings = getNumber("savings");
-      const venueCost = getNumber("venueCost");
-      const debt = getNumber("debt");
-      const totalWeddingBudget = getNumber("totalWeddingBudget");
-      const monthlyTakeHome = getNumber("monthlyTakeHome");
-
-      const result = document.getElementById("result");
-      const scoreEl = document.getElementById("score");
-      const barFill = document.getElementById("barFill");
-      const stressEl = document.getElementById("stress");
-      const savingsImpactEl = document.getElementById("savingsImpact");
-      const incomeImpactEl = document.getElementById("incomeImpact");
-      const monthlyImpactEl = document.getElementById("monthlyImpact");
-      const debtRatioEl = document.getElementById("debtRatio");
-      const budgetShareEl = document.getElementById("budgetShare");
-      const remainingSavingsEl = document.getElementById("remainingSavings");
-      const guidanceEl = document.getElementById("guidance");
-
-      result.style.display = "block";
-
-      if (income <= 0 || savings <= 0 || venueCost <= 0) {
-        scoreEl.textContent = "Add your numbers first";
-        barFill.style.width = "0%";
-        barFill.style.background = "#16a34a";
-        stressEl.innerHTML = "";
-        savingsImpactEl.innerHTML = "";
-        incomeImpactEl.innerHTML = "";
-        monthlyImpactEl.innerHTML = "";
-        debtRatioEl.innerHTML = "";
-        budgetShareEl.innerHTML = "";
-        remainingSavingsEl.innerHTML = "";
-        guidanceEl.textContent =
-          "Enter a positive income, savings amount, venue cost, debt, total wedding budget, and take-home pay so the calculator can estimate pressure.";
-        return;
-      }
-
-      const monthlyIncome = monthlyTakeHome > 0 ? monthlyTakeHome : income / 12;
-      const budgetForShare = totalWeddingBudget > 0 ? totalWeddingBudget : venueCost;
-      const savingsImpact = (venueCost / savings) * 100;
-      const annualIncomeImpact = (venueCost / income) * 100;
-      const monthlyIncomeImpact = (venueCost / monthlyIncome) * 100;
-      const debtRatio = (debt / income) * 100;
-      const venueBudgetShare = (venueCost / budgetForShare) * 100;
-      const remainingWeddingBudget = Math.max(0, budgetForShare - venueCost);
-      const remainingSavings = savings - venueCost;
-      const remainingSavingsMonths = remainingSavings / monthlyIncome;
-
-      let pressureScore = 0;
-
-      pressureScore += clamp(savingsImpact * 0.36, 0, 34);
-      pressureScore += clamp(monthlyIncomeImpact * 0.2, 0, 22);
-      pressureScore += clamp(debtRatio * 0.2, 0, 16);
-
-      if (venueCost > savings) pressureScore += 26;
-
-      if (remainingSavingsMonths < 1 && income < 100000) {
-        pressureScore += 18;
-      } else if (remainingSavingsMonths < 3 && income < 160000) {
-        pressureScore += 10;
-      } else if (remainingSavingsMonths >= 6) {
-        pressureScore -= 8;
-      }
-
-      if (debtRatio >= 75) pressureScore += 12;
-      else if (debtRatio >= 40) pressureScore += 8;
-
-      if (totalWeddingBudget > 0) {
-        if (venueBudgetShare >= 70) pressureScore += 18;
-        else if (venueBudgetShare >= 55) pressureScore += 12;
-        else if (venueBudgetShare >= 45) pressureScore += 7;
-        else if (venueBudgetShare <= 30) pressureScore -= 4;
-      }
-
-      if (
-        annualIncomeImpact < 2 &&
-        savingsImpact < 10 &&
-        remainingSavingsMonths >= 6 &&
-        debtRatio < 15 &&
-        venueBudgetShare <= 50
-      ) {
-        pressureScore -= 12;
-      }
-
-      if (
-        savingsImpact < 1 &&
-        debtRatio < 10 &&
-        remainingSavingsMonths >= 24
-      ) {
-        pressureScore = 0;
-      } else if (
-        savingsImpact < 3 &&
-        debtRatio < 15 &&
-        remainingSavingsMonths >= 12
-      ) {
-        pressureScore = Math.min(pressureScore, 5);
-      } else if (
-        annualIncomeImpact < 0.25 &&
-        monthlyIncomeImpact < 3 &&
-        savingsImpact < 5 &&
-        debtRatio < 5
-      ) {
-        pressureScore = Math.min(pressureScore, 8);
-      }
-
-      pressureScore = clamp(Math.round(pressureScore), 0, 100);
-
-      const level = getPressureLevel(pressureScore);
-
-      let guidance = "";
-
-      if (pressureScore === 0) {
-        guidance =
-          `This ${formatMoney(venueCost)} venue appears financially tiny relative to the numbers provided. The venue equals about ${annualIncomeImpact.toFixed(1)}% of annual income and ${savingsImpact.toFixed(1)}% of savings, so the decision is mainly about contract terms, included services, guest experience, and opportunity cost.`;
-      } else if (pressureScore <= 30) {
-        guidance =
-          `This ${formatMoney(venueCost)} venue appears manageable based on the numbers provided. The venue equals about ${annualIncomeImpact.toFixed(1)}% of annual income and ${savingsImpact.toFixed(1)}% of savings, so the main priority is confirming what the contract includes and protecting the remaining wedding budget.`;
-      } else if (pressureScore <= 60) {
-        guidance =
-          `This ${formatMoney(venueCost)} venue may work, but it deserves caution. The venue equals about ${venueBudgetShare.toFixed(1)}% of the listed wedding budget, so the rest of the event may feel tight if catering, bar, rentals, or service charges are not already included.`;
-      } else {
-        guidance =
-          `This ${formatMoney(venueCost)} venue could create real financial strain. The venue equals about ${venueBudgetShare.toFixed(1)}% of the listed wedding budget and ${savingsImpact.toFixed(1)}% of savings, so a cheaper venue, smaller guest list, or longer savings window would likely be safer.`;
-      }
-
-      scoreEl.textContent = `${level.label} — ${pressureScore}/100`;
-      barFill.style.width = `${pressureScore}%`;
-      barFill.style.background = level.color;
-
-      stressEl.innerHTML = `<strong>Pressure level:</strong> ${level.stress}`;
-      savingsImpactEl.innerHTML = `<strong>Savings impact:</strong> ${savingsImpact.toFixed(1)}% of savings`;
-      incomeImpactEl.innerHTML = `<strong>Annual income impact:</strong> ${annualIncomeImpact.toFixed(1)}% of annual income`;
-      monthlyImpactEl.innerHTML = `<strong>Monthly take-home impact:</strong> ${monthlyIncomeImpact.toFixed(1)}% of one month’s take-home pay`;
-      debtRatioEl.innerHTML = `<strong>Debt ratio:</strong> ${debtRatio.toFixed(1)}% of annual income`;
-      budgetShareEl.innerHTML = `<strong>Venue share of wedding budget:</strong> ${venueBudgetShare.toFixed(1)}% / ${formatMoney(remainingWeddingBudget)} left for other wedding costs`;
-      remainingSavingsEl.innerHTML = `<strong>Estimated savings after venue:</strong> ${formatMoney(remainingSavings)} / ${remainingSavingsMonths.toFixed(1)} months of take-home pay`;
-
-      guidanceEl.textContent = `${guidance} Recommended next step: ${level.action}`;
+    if (score <= 60) {
+      return {
+        label: "Moderate Pressure",
+        stress: "Moderate pressure",
+        color: "#ca8a04",
+        action:
+          "This venue may work, but compare included services, guest count, catering, bar, rentals, and remaining budget carefully.",
+      };
     }
 
-    document
-      .getElementById("venueButton")
-      .addEventListener("click", calculateVenue);
-  </script>
+    return {
+      label: "High Pressure",
+      stress: "High pressure",
+      color: "#dc2626",
+      action:
+        "This venue could create real strain. Consider a cheaper venue, smaller guest list, lower total wedding budget, or more time to save.",
+    };
+  }
+
+  function calculateVenue() {
+    const income = getNumber("income");
+    const savings = getNumber("savings");
+    const venueCost = getNumber("venueCost");
+    const debt = getNumber("debt");
+    const totalWeddingBudget = getNumber("totalWeddingBudget");
+    const enteredMonthlyTakeHome = getNumber("monthlyTakeHome");
+
+    const result = document.getElementById("result");
+    const scoreEl = document.getElementById("score");
+    const barFill = document.getElementById("barFill");
+    const stressEl = document.getElementById("stress");
+    const savingsImpactEl = document.getElementById("savingsImpact");
+    const incomeImpactEl = document.getElementById("incomeImpact");
+    const monthlyImpactEl = document.getElementById("monthlyImpact");
+    const debtRatioEl = document.getElementById("debtRatio");
+    const budgetShareEl = document.getElementById("budgetShare");
+    const remainingSavingsEl = document.getElementById("remainingSavings");
+    const guidanceEl = document.getElementById("guidance");
+
+    result.style.display = "block";
+
+    if (income <= 0 || venueCost <= 0) {
+      scoreEl.textContent = "Add your numbers first";
+      barFill.style.width = "0%";
+      barFill.style.background = "#16a34a";
+      stressEl.innerHTML = "";
+      savingsImpactEl.innerHTML = "";
+      incomeImpactEl.innerHTML = "";
+      monthlyImpactEl.innerHTML = "";
+      debtRatioEl.innerHTML = "";
+      budgetShareEl.innerHTML = "";
+      remainingSavingsEl.innerHTML = "";
+      guidanceEl.textContent =
+        "Enter a positive income and venue cost so the calculator can estimate venue pressure.";
+      return;
+    }
+
+    const estimatedMonthlyTakeHome = income / 12;
+    const monthlyTakeHome =
+      enteredMonthlyTakeHome > 0 && enteredMonthlyTakeHome <= income
+        ? enteredMonthlyTakeHome
+        : estimatedMonthlyTakeHome;
+
+    const budgetForShare =
+      totalWeddingBudget > 0 ? totalWeddingBudget : venueCost;
+
+    const remainingWeddingBudget = Math.max(0, budgetForShare - venueCost);
+    const remainingSavings = savings - venueCost;
+
+    const savingsImpact = savings > 0 ? (venueCost / savings) * 100 : 999;
+    const annualIncomeImpact = (venueCost / income) * 100;
+    const monthlyIncomeImpact = (venueCost / monthlyTakeHome) * 100;
+    const debtRatio = (debt / income) * 100;
+    const venueBudgetShare = (venueCost / budgetForShare) * 100;
+    const remainingSavingsMonths =
+      monthlyTakeHome > 0 ? remainingSavings / monthlyTakeHome : 0;
+
+    let pressureScore = 0;
+
+    pressureScore += clamp(savingsImpact * 0.26, 0, 30);
+    pressureScore += clamp(monthlyIncomeImpact * 0.16, 0, 22);
+    pressureScore += clamp(debtRatio * 0.16, 0, 18);
+    pressureScore += clamp(venueBudgetShare * 0.22, 0, 18);
+
+    if (venueCost > savings && annualIncomeImpact >= 8) pressureScore += 24;
+    else if (venueCost > savings && annualIncomeImpact >= 3) pressureScore += 14;
+    else if (venueCost > savings) pressureScore += 5;
+
+    if (remainingSavingsMonths < 1 && annualIncomeImpact >= 6) {
+      pressureScore += 18;
+    } else if (remainingSavingsMonths < 3 && annualIncomeImpact >= 4) {
+      pressureScore += 10;
+    } else if (remainingSavingsMonths >= 6) {
+      pressureScore -= 8;
+    }
+
+    if (debtRatio >= 75) pressureScore += 12;
+    else if (debtRatio >= 40) pressureScore += 8;
+    else if (debtRatio <= 5) pressureScore -= 4;
+
+    if (totalWeddingBudget > 0) {
+      if (venueBudgetShare >= 75) pressureScore += 16;
+      else if (venueBudgetShare >= 60) pressureScore += 10;
+      else if (venueBudgetShare >= 45) pressureScore += 5;
+      else if (venueBudgetShare <= 30) pressureScore -= 5;
+    }
+
+    if (savingsImpact <= 10 && remainingSavings > 0) pressureScore -= 8;
+    if (annualIncomeImpact <= 5) pressureScore -= 6;
+    if (annualIncomeImpact <= 2) pressureScore -= 8;
+    if (monthlyIncomeImpact <= 25) pressureScore -= 5;
+
+    if (
+      income >= 750000 &&
+      annualIncomeImpact <= 3 &&
+      debtRatio <= 15
+    ) {
+      pressureScore = Math.min(pressureScore, 18);
+    }
+
+    if (
+      income >= 1000000 &&
+      annualIncomeImpact <= 2 &&
+      debtRatio <= 10
+    ) {
+      pressureScore = Math.min(pressureScore, 8);
+    }
+
+    if (
+      income >= 1000000 &&
+      annualIncomeImpact <= 1.5 &&
+      debtRatio <= 5
+    ) {
+      pressureScore = Math.min(pressureScore, 3);
+    }
+
+    if (
+      savings >= venueCost * 20 &&
+      remainingSavingsMonths >= 6 &&
+      debtRatio <= 15
+    ) {
+      pressureScore = Math.min(pressureScore, 15);
+    }
+
+    if (
+      savings >= venueCost * 50 &&
+      debtRatio <= 10
+    ) {
+      pressureScore = Math.min(pressureScore, 5);
+    }
+
+    if (
+      income >= 1000000 &&
+      venueCost <= monthlyTakeHome * 0.25 &&
+      debtRatio <= 5
+    ) {
+      pressureScore = 0;
+    }
+
+    if (
+  savings >= venueCost * 100 &&
+  debtRatio <= 25
+) {
+  pressureScore = 0;
+}
+
+if (
+  savings >= 1000000 &&
+  venueCost <= savings * 0.01 &&
+  debtRatio <= 25
+) {
+  pressureScore = 0;
+}
+
+    pressureScore = clamp(Math.round(pressureScore), 0, 100);
+
+    const level = getPressureLevel(pressureScore);
+
+    let guidance = "";
+
+    if (pressureScore === 0) {
+      guidance =
+        `This ${formatMoney(venueCost)} venue appears financially tiny relative to the numbers provided. The venue equals about ${annualIncomeImpact.toFixed(1)}% of annual income and ${savings > 0 ? savingsImpact.toFixed(1) : "0.0"}% of savings, so the decision is mainly about contract terms, included services, guest experience, and opportunity cost.`;
+    } else if (pressureScore <= 30) {
+      guidance =
+        `This ${formatMoney(venueCost)} venue appears manageable based on the numbers provided. The venue equals about ${annualIncomeImpact.toFixed(1)}% of annual income and ${savings > 0 ? savingsImpact.toFixed(1) : "an undefined share of"}% of savings, so the main priority is confirming what the contract includes and protecting the remaining wedding budget.`;
+    } else if (pressureScore <= 60) {
+      guidance =
+        `This ${formatMoney(venueCost)} venue may work, but it deserves caution. The venue equals about ${venueBudgetShare.toFixed(1)}% of the listed wedding budget, so the rest of the event may feel tight if catering, bar, rentals, taxes, tips, or service charges are not already included.`;
+    } else {
+      guidance =
+        `This ${formatMoney(venueCost)} venue could create real financial strain. The venue equals about ${venueBudgetShare.toFixed(1)}% of the listed wedding budget and ${savings > 0 ? savingsImpact.toFixed(1) : "an undefined share of"}% of savings, so a cheaper venue, smaller guest list, or longer savings window would likely be safer.`;
+    }
+
+    scoreEl.textContent = `${level.label} — ${pressureScore}/100`;
+    barFill.style.width = `${pressureScore}%`;
+    barFill.style.background = level.color;
+
+    stressEl.innerHTML = `<strong>Pressure level:</strong> ${level.stress}`;
+
+    savingsImpactEl.innerHTML = `<strong>Savings impact:</strong> ${
+      savings > 0 ? `${savingsImpact.toFixed(1)}% of savings` : "No savings entered"
+    }`;
+
+    incomeImpactEl.innerHTML = `<strong>Annual income impact:</strong> ${annualIncomeImpact.toFixed(1)}% of annual income`;
+
+    monthlyImpactEl.innerHTML = `<strong>Monthly take-home impact:</strong> ${monthlyIncomeImpact.toFixed(1)}% of one month’s take-home pay`;
+
+    debtRatioEl.innerHTML = `<strong>Debt ratio:</strong> ${debtRatio.toFixed(1)}% of annual income`;
+
+    budgetShareEl.innerHTML = `<strong>Venue share of wedding budget:</strong> ${venueBudgetShare.toFixed(1)}% / ${formatMoney(remainingWeddingBudget)} left for other wedding costs`;
+
+    remainingSavingsEl.innerHTML = `<strong>Estimated savings after venue:</strong> ${formatMoney(remainingSavings)} / ${remainingSavingsMonths.toFixed(1)} months of take-home pay`;
+
+    guidanceEl.textContent = `${guidance} Recommended next step: ${level.action}`;
+  }
+
+  document
+    .getElementById("venueButton")
+    .addEventListener("click", calculateVenue);
+</script>
 </Layout>
