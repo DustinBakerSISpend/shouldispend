@@ -504,12 +504,23 @@ const relatedCalculators = calculators
   };
 
   function getPressureLevel(score) {
+    if (score <= 5) {
+      return {
+        label: "Almost No Pressure",
+        stress: "Almost no pressure",
+        colorClass: "safe",
+        action:
+          "The payment is not a meaningful financial pressure point based on the income and savings entered.",
+      };
+    }
+
     if (score <= 30) {
       return {
         label: "Low Pressure",
         stress: "Low pressure",
         colorClass: "safe",
-        action: "Maintain the payment only if total vehicle costs stay controlled.",
+        action:
+          "Maintain the payment only if insurance, fuel, repairs, and depreciation still feel worth it.",
       };
     }
 
@@ -518,7 +529,8 @@ const relatedCalculators = calculators
         label: "Moderate Pressure",
         stress: "Moderate pressure",
         colorClass: "caution",
-        action: "Review insurance, fuel, repairs, loan length, and debt exposure carefully.",
+        action:
+          "Review insurance, fuel, repairs, loan length, and debt exposure carefully.",
       };
     }
 
@@ -526,7 +538,8 @@ const relatedCalculators = calculators
       label: "High Pressure",
       stress: "High pressure",
       colorClass: "danger",
-      action: "Reduce the vehicle budget or improve monthly flexibility first.",
+      action:
+        "Reduce the vehicle budget or improve monthly flexibility first.",
     };
   }
 
@@ -554,16 +567,18 @@ const relatedCalculators = calculators
       return;
     }
 
+    const monthlyFlexibilityEstimate = Math.max(income * 0.7, 1);
     const paymentRatio = (payment / income) * 100;
     const totalDebtRatio = ((payment + debt) / income) * 100;
-    const savingsMonths = savings / Math.max(income * 0.7, 1);
+    const savingsMonths = savings / monthlyFlexibilityEstimate;
+    const paymentsCoveredBySavings = savings / payment;
     const sixMonthPaymentImpact =
-      ((payment * 6) / Math.max(savings, 1)) * 100;
+      savings > 0 ? ((payment * 6) / savings) * 100 : 999;
 
     let pressureScore = 0;
 
-    pressureScore += clamp(paymentRatio * 2.35, 0, 46);
-    pressureScore += clamp(totalDebtRatio * 0.75, 0, 32);
+    pressureScore += clamp(paymentRatio * 2.2, 0, 44);
+    pressureScore += clamp(totalDebtRatio * 0.7, 0, 30);
 
     if (paymentRatio >= 25) {
       pressureScore += 26;
@@ -571,14 +586,32 @@ const relatedCalculators = calculators
       pressureScore += 18;
     } else if (paymentRatio >= 12) {
       pressureScore += 9;
+    } else if (paymentRatio <= 3) {
+      pressureScore -= 8;
+    } else if (paymentRatio <= 6) {
+      pressureScore -= 4;
     }
 
-    if (savingsMonths < 1) {
+    if (totalDebtRatio >= 40) {
       pressureScore += 18;
-    } else if (savingsMonths < 3) {
+    } else if (totalDebtRatio >= 30) {
       pressureScore += 10;
+    } else if (totalDebtRatio <= 10) {
+      pressureScore -= 5;
+    }
+
+    if (savings <= 0) {
+      pressureScore += 28;
+    } else if (savingsMonths < 1) {
+      pressureScore += 20;
+    } else if (savingsMonths < 3) {
+      pressureScore += 12;
+    } else if (savingsMonths >= 24) {
+      pressureScore -= 24;
+    } else if (savingsMonths >= 12) {
+      pressureScore -= 18;
     } else if (savingsMonths >= 6) {
-      pressureScore -= 8;
+      pressureScore -= 10;
     }
 
     if (sixMonthPaymentImpact > 100) {
@@ -587,22 +620,53 @@ const relatedCalculators = calculators
       pressureScore += 10;
     } else if (sixMonthPaymentImpact > 35) {
       pressureScore += 5;
+    } else if (sixMonthPaymentImpact <= 1) {
+      pressureScore -= 18;
+    } else if (sixMonthPaymentImpact <= 5) {
+      pressureScore -= 12;
+    } else if (sixMonthPaymentImpact <= 15) {
+      pressureScore -= 7;
     }
 
-    if (
+    if (savings === 0) {
+      pressureScore = Math.max(pressureScore, 45);
+    }
+
+    if (paymentRatio >= 20 || totalDebtRatio >= 35) {
+      pressureScore = Math.max(pressureScore, 65);
+    }
+
+    /*
+      Final override layer.
+      These rules come LAST.
+      A $1,000 payment cannot create real financial pressure
+      when income or savings are absurdly high.
+    */
+
+    if (income >= 1000000 && paymentRatio <= 0.5 && totalDebtRatio <= 2) {
+      pressureScore = 0;
+    } else if (income >= 250000 && paymentRatio <= 1 && totalDebtRatio <= 3) {
+      pressureScore = Math.min(pressureScore, 2);
+    } else if (income >= 100000 && paymentRatio <= 2 && totalDebtRatio <= 5) {
+      pressureScore = Math.min(pressureScore, 5);
+    }
+
+    if (savings >= 1000000 && paymentsCoveredBySavings >= 600) {
+      pressureScore = 0;
+    } else if (savings >= 500000 && paymentsCoveredBySavings >= 300) {
+      pressureScore = Math.min(pressureScore, 2);
+    } else if (savings >= 250000 && paymentsCoveredBySavings >= 180) {
+      pressureScore = Math.min(pressureScore, 5);
+    } else if (savingsMonths >= 120 || paymentsCoveredBySavings >= 120) {
+      pressureScore = Math.min(pressureScore, 8);
+    } else if (savingsMonths >= 60 || paymentsCoveredBySavings >= 60) {
+      pressureScore = Math.min(pressureScore, 12);
+    } else if (
       paymentRatio < 8 &&
       totalDebtRatio < 20 &&
-      savingsMonths >= 6
-    ) {
-      pressureScore = Math.min(pressureScore, 20);
-    }
-
-    if (
-      paymentRatio < 5 &&
-      totalDebtRatio < 10 &&
       savingsMonths >= 12
     ) {
-      pressureScore = Math.min(pressureScore, 10);
+      pressureScore = Math.min(pressureScore, 18);
     }
 
     pressureScore = clamp(Math.round(pressureScore), 0, 100);
@@ -615,7 +679,10 @@ const relatedCalculators = calculators
 
     let explanation = "";
 
-    if (pressureScore <= 30) {
+    if (pressureScore <= 5) {
+      explanation =
+        "This $1,000 car payment is not a meaningful financial pressure point based on the income and savings entered. The decision is less about affordability and more about whether the vehicle is worth the insurance, depreciation, taxes, repairs, and opportunity cost.";
+    } else if (pressureScore <= 30) {
       explanation =
         "This $1,000 car payment appears manageable based on the numbers provided, but the full vehicle cost still matters. Insurance, fuel, maintenance, repairs, registration, tires, and depreciation should all fit comfortably too.";
     } else if (pressureScore <= 60) {
@@ -633,7 +700,11 @@ const relatedCalculators = calculators
 
       <p><strong>Emergency savings cushion:</strong> About ${savingsMonths.toFixed(1)} months of estimated flexibility.</p>
 
-      <p><strong>Six-month payment impact:</strong> ${sixMonthPaymentImpact.toFixed(1)}% of current savings.</p>
+      <p><strong>Payments covered by savings:</strong> About ${paymentsCoveredBySavings.toFixed(0)} monthly car payments.</p>
+
+      <p><strong>Six-month payment impact:</strong> ${
+        savings > 0 ? `${sixMonthPaymentImpact.toFixed(2)}%` : "No savings cushion entered"
+      }.</p>
 
       <p><strong>Pressure level:</strong> ${level.stress}.</p>
 

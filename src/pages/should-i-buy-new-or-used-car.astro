@@ -1,0 +1,701 @@
+---
+import Layout from "../layouts/Layout.astro";
+import CalculatorPageShell from "../components/CalculatorPageShell.astro";
+import FAQSection from "../components/FAQSection.astro";
+import RelatedCalculators from "../components/RelatedCalculators.astro";
+import MethodologySection from "../components/MethodologySection.astro";
+import FinancialRedFlags from "../components/FinancialRedFlags.astro";
+import CalculatorAssumptions from "../components/CalculatorAssumptions.astro";
+import KeyCostCategories from "../components/KeyCostCategories.astro";
+import ReduceCostTips from "../components/ReduceCostTips.astro";
+import WhenSpendingMakesSense from "../components/WhenSpendingMakesSense.astro";
+import { calculators } from "../data/calculators.js";
+
+const newUsedFaqs = [
+  {
+    question: "Is it better to buy a new or used car?",
+    answer:
+      "A used car is often better financially because someone else has already absorbed the steepest depreciation. A new car can make sense when you have strong income, strong savings, low debt, need warranty protection, and plan to keep the vehicle for a long time.",
+  },
+  {
+    question: "When does buying a new car make sense?",
+    answer:
+      "Buying new can make sense if the payment is affordable, the interest rate is strong, you have emergency savings left after the purchase, and the warranty or reliability matters enough to justify the higher price.",
+  },
+  {
+    question: "When is a used car the smarter choice?",
+    answer:
+      "A used car is usually smarter when a new car would stretch your payment, weaken your savings, increase insurance costs, or expose you to fast depreciation.",
+  },
+  {
+    question: "Should I buy used if the interest rate is higher?",
+    answer:
+      "Not always. A used car may have a higher rate, but the lower purchase price can still make it cheaper overall. Compare total payment, insurance, repairs, depreciation, and savings impact instead of only the rate.",
+  },
+];
+
+const relatedCalculators = calculators
+  .filter(
+    (calculator) =>
+      calculator.category === "Cars" &&
+      calculator.href !== "/should-i-buy-new-or-used-car"
+  )
+  .slice(0, 4);
+---
+
+<Layout
+  title="Should I Buy a New or Used Car?"
+  description="Use this new vs used car calculator to compare payment pressure, savings cushion, depreciation risk, warranty value, debt load, and affordability."
+>
+  <style>
+    .container {
+      max-width: 900px;
+      margin: auto;
+    }
+
+    .calculator {
+      background: white;
+      padding: 40px;
+      border-radius: 24px;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.06);
+    }
+
+    .calculator h2 {
+      margin-top: 0;
+      font-size: 2rem;
+      margin-bottom: 18px;
+      color: #0f172a;
+    }
+
+    .calculator-intro {
+      color: #334155;
+      line-height: 1.8;
+      margin-bottom: 30px;
+      font-size: 1.05rem;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+    }
+
+    .field label {
+      display: block;
+      font-weight: 800;
+      margin-bottom: 10px;
+      color: #0f172a;
+    }
+
+    .field input,
+    .field select {
+      width: 100%;
+      padding: 16px;
+      border-radius: 12px;
+      border: 1px solid #cbd5e1;
+      font-size: 1rem;
+      box-sizing: border-box;
+      background: white;
+    }
+
+    button {
+      margin-top: 30px;
+      background: #0f766e;
+      color: white;
+      border: none;
+      padding: 18px 32px;
+      border-radius: 999px;
+      font-size: 1.05rem;
+      font-weight: 800;
+      cursor: pointer;
+      transition: opacity 0.2s ease;
+    }
+
+    button:hover {
+      opacity: 0.92;
+    }
+
+    .results {
+      margin-top: 36px;
+      background: #f8fafc;
+      padding: 32px;
+      border-radius: 24px;
+      border: 1px solid var(--border);
+      box-shadow: 0 10px 24px rgba(15, 23, 42, 0.04);
+      display: none;
+    }
+
+    .results.visible {
+      display: block;
+    }
+
+    .score {
+      font-size: clamp(2rem, 4vw, 2.7rem);
+      font-weight: 900;
+      color: #0f172a;
+      margin-bottom: 22px;
+      line-height: 1.15;
+    }
+
+    .bar {
+      width: 100%;
+      height: 16px;
+      background: #dbe4ee;
+      border-radius: 999px;
+      overflow: hidden;
+      margin-bottom: 24px;
+    }
+
+    .fill {
+      height: 100%;
+      width: 0%;
+      border-radius: 999px;
+      transition: width 0.45s ease;
+    }
+
+    .fill.safe {
+      background: linear-gradient(90deg, #0f766e 0%, #14b8a6 100%);
+    }
+
+    .fill.caution {
+      background: linear-gradient(90deg, #ca8a04 0%, #facc15 100%);
+    }
+
+    .fill.danger {
+      background: linear-gradient(90deg, #dc2626 0%, #f97316 100%);
+    }
+
+    .result-details {
+      color: #334155;
+      line-height: 1.9;
+      font-size: 1.02rem;
+    }
+
+    .result-details p {
+      margin: 0 0 12px;
+    }
+
+    .disclaimer {
+      margin-top: 24px;
+      font-size: 0.9rem;
+      color: #64748b;
+    }
+
+    .content-section {
+      margin-top: 60px;
+    }
+
+    .content-section h2 {
+      font-size: 2rem;
+      margin-bottom: 20px;
+      color: #0f172a;
+    }
+
+    .content-section p,
+    .content-section li {
+      font-size: 1.1rem;
+      line-height: 1.9;
+      color: #334155;
+    }
+
+    .content-link {
+      color: #0f766e;
+      font-weight: 700;
+      text-decoration: none;
+    }
+
+    .content-link:hover {
+      text-decoration: underline;
+    }
+
+    @media (max-width: 768px) {
+      .calculator {
+        padding: 24px;
+      }
+
+      .grid {
+        grid-template-columns: 1fr;
+      }
+
+      .calculator h2,
+      .content-section h2 {
+        font-size: 1.7rem;
+      }
+
+      .results {
+        padding: 24px;
+      }
+    }
+  </style>
+
+  <div class="container">
+    <CalculatorPageShell
+      eyebrow="Car Buying Calculator"
+      title="Should I Buy a New or Used Car?"
+      description="Compare new and used car pressure based on payment, savings, depreciation, warranty value, repair risk, debt load, and monthly flexibility."
+    >
+      <div class="calculator">
+        <h2>New vs Used Car Pressure Verdict</h2>
+
+        <p class="calculator-intro">
+          Enter your income, savings, payment estimates, and ownership concerns.
+          This calculator compares whether a new car or used car creates less
+          financial pressure for your situation.
+        </p>
+
+        <div class="grid">
+          <div class="field">
+            <label for="income">Monthly Take-Home Income</label>
+            <input id="income" type="number" placeholder="Example: 8000" />
+          </div>
+
+          <div class="field">
+            <label for="savings">Current Savings</label>
+            <input id="savings" type="number" placeholder="Example: 25000" />
+          </div>
+
+          <div class="field">
+            <label for="newPayment">Estimated New Car Payment</label>
+            <input id="newPayment" type="number" placeholder="Example: 850" />
+          </div>
+
+          <div class="field">
+            <label for="usedPayment">Estimated Used Car Payment</label>
+            <input id="usedPayment" type="number" placeholder="Example: 550" />
+          </div>
+
+          <div class="field">
+            <label for="debt">Current Monthly Debt Payments</label>
+            <input id="debt" type="number" placeholder="Example: 900" />
+          </div>
+
+          <div class="field">
+            <label for="downPayment">Planned Down Payment</label>
+            <input id="downPayment" type="number" placeholder="Example: 5000" />
+          </div>
+
+          <div class="field">
+            <label for="warranty">How Important Is Warranty Protection?</label>
+            <select id="warranty">
+              <option value="low">Not very important</option>
+              <option value="medium" selected>Somewhat important</option>
+              <option value="high">Very important</option>
+            </select>
+          </div>
+
+          <div class="field">
+            <label for="repairTolerance">Used Car Repair Tolerance</label>
+            <select id="repairTolerance">
+              <option value="high">I can handle repairs</option>
+              <option value="medium" selected>Some repairs are okay</option>
+              <option value="low">Repairs would stress my budget</option>
+            </select>
+          </div>
+        </div>
+
+        <button id="carButton" type="button">Get New vs Used Verdict</button>
+
+        <div class="results" id="results">
+          <div class="score" id="scoreText"></div>
+
+          <div class="bar">
+            <div class="fill" id="fillBar"></div>
+          </div>
+
+          <div class="result-details" id="resultDetails"></div>
+
+          <div class="disclaimer">
+            This is a general educational estimate, not financial advice.
+          </div>
+        </div>
+      </div>
+
+      <section class="content-section">
+        <h2>New vs Used Is Really a Financial Pressure Decision</h2>
+
+        <p>
+          The new car question is not only about whether you like the vehicle.
+          It is about whether the higher payment, faster depreciation, insurance
+          cost, and longer loan risk are worth the warranty, reliability, and
+          lower repair uncertainty.
+        </p>
+
+        <p>
+          A used car usually wins on total cost because the first owner absorbed
+          the steepest depreciation. But a used car can still be the wrong move
+          if it creates repair anxiety, requires immediate maintenance, or comes
+          with a high interest rate and poor history.
+        </p>
+
+        <p>
+          Before deciding, compare both options against your broader
+          <a class="content-link" href="/how-much-car-can-i-afford">
+            car affordability picture
+          </a>
+          instead of looking only at the monthly payment.
+        </p>
+      </section>
+
+      <WhenSpendingMakesSense
+        title="When Buying New Can Make Sense"
+        items={[
+          "Your income is high enough that the new car payment barely affects monthly flexibility.",
+          "You have strong savings left after the down payment.",
+          "You plan to keep the vehicle long enough to spread out the depreciation hit.",
+          "Warranty protection and reliability have real value for your job, family, or commute.",
+          "The new car offer includes a strong interest rate or incentive that narrows the cost gap.",
+        ]}
+      />
+
+      <section class="content-section">
+        <h2>When Used Is Probably the Better Move</h2>
+
+        <p>
+          Used is usually the better financial choice when the new car payment
+          would stretch your monthly budget, weaken your emergency fund, or
+          force a longer loan term. The lower payment can create more room for
+          insurance, fuel, repairs, debt payoff, and savings.
+        </p>
+
+        <p>
+          Used also makes sense when you can buy a reliable model with a clean
+          history, reasonable mileage, and enough savings left to handle
+          maintenance without using credit cards.
+        </p>
+      </section>
+
+      <KeyCostCategories
+        items={[
+          {
+            title: "Depreciation",
+            description:
+              "New cars usually lose value faster early on. Used cars often reduce that first-owner depreciation hit.",
+          },
+          {
+            title: "Monthly payment",
+            description:
+              "The lower payment is not everything, but it strongly affects cash flow, debt ratio, and flexibility.",
+          },
+          {
+            title: "Warranty and repair risk",
+            description:
+              "New cars usually offer more warranty protection. Used cars may need more repair cushion.",
+          },
+          {
+            title: "Insurance and taxes",
+            description:
+              "Newer and more expensive vehicles can carry higher insurance, registration, and tax costs.",
+          },
+        ]}
+      />
+
+      <ReduceCostTips
+        items={[
+          "Compare the total monthly cost, not just the loan payment.",
+          "Check insurance quotes for both the new and used option before deciding.",
+          "Avoid stretching the loan term just to make the new car payment feel affordable.",
+          "Keep enough savings after the down payment for repairs and emergencies.",
+          "Consider lightly used vehicles if new car depreciation is the main concern.",
+        ]}
+      />
+
+      <FinancialRedFlags
+        items={[
+          "The new car payment would crowd out savings or debt payoff.",
+          "You need a very long loan to make the new car affordable.",
+          "The used car is cheaper but has no repair cushion, poor history, or unclear maintenance records.",
+          "You are choosing new mainly because the monthly payment looks manageable, not because the full cost works.",
+          "The down payment would drain emergency savings.",
+        ]}
+      />
+
+      <CalculatorAssumptions
+        items={[
+          "The calculator compares payment pressure, savings cushion, debt load, down payment impact, warranty value, and repair tolerance.",
+          "It does not estimate exact depreciation, insurance, taxes, interest, or repair costs.",
+          "A new car can still be reasonable for high-income or high-savings households.",
+          "A used car can still be risky if repair costs would create stress or debt.",
+          "Huge income or huge savings can reduce the pressure score to zero because the payment is not financially meaningful in that scenario.",
+        ]}
+      />
+
+      <section class="content-section">
+        <h2>The Best Choice Is the One That Protects Flexibility</h2>
+
+        <p>
+          The right answer is not always “used.” It is the option that gives you
+          reliable transportation while protecting monthly flexibility. If the
+          new car barely affects your cash flow and leaves savings intact, it
+          may be fine. If the new car makes the rest of the budget tight, used
+          is usually the smarter move.
+        </p>
+
+        <p>
+          A good car decision should leave room for emergencies, insurance,
+          repairs, savings, housing, food, travel, and normal life — not just
+          the loan payment.
+        </p>
+      </section>
+
+      <div class="content-section">
+        <FAQSection title="New vs Used Car FAQ" faqs={newUsedFaqs} />
+      </div>
+
+      <div class="content-section">
+        <RelatedCalculators calculators={relatedCalculators} />
+      </div>
+    </CalculatorPageShell>
+
+    <MethodologySection category="car buying decisions" updated="June 2026" />
+  </div>
+
+  <script is:inline>
+    const clamp = (value, min, max) => Math.min(Math.max(value, min), max);
+
+    const getNumber = (id) => {
+      const rawValue = document.getElementById(id)?.value;
+      const value = Number(rawValue);
+      return Number.isFinite(value) && value >= 0 ? value : 0;
+    };
+
+    const getValue = (id) => document.getElementById(id)?.value || "";
+
+    function getPressureLevel(score) {
+      if (score <= 5) {
+        return {
+          label: "Almost No Pressure",
+          stress: "Almost no pressure",
+          colorClass: "safe",
+        };
+      }
+
+      if (score <= 30) {
+        return {
+          label: "Used Car Lean",
+          stress: "Low pressure",
+          colorClass: "safe",
+        };
+      }
+
+      if (score <= 60) {
+        return {
+          label: "Close Decision",
+          stress: "Moderate pressure",
+          colorClass: "caution",
+        };
+      }
+
+      return {
+        label: "Used Car Strongly Favored",
+        stress: "High pressure",
+        colorClass: "danger",
+      };
+    }
+
+    function calculateNewVsUsed() {
+      const income = getNumber("income");
+      const savings = getNumber("savings");
+      const newPayment = getNumber("newPayment");
+      const usedPayment = getNumber("usedPayment");
+      const debt = getNumber("debt");
+      const downPayment = getNumber("downPayment");
+      const warranty = getValue("warranty");
+      const repairTolerance = getValue("repairTolerance");
+
+      const results = document.getElementById("results");
+      const scoreText = document.getElementById("scoreText");
+      const fillBar = document.getElementById("fillBar");
+      const resultDetails = document.getElementById("resultDetails");
+
+      results.classList.add("visible");
+
+      if (income <= 0 || newPayment <= 0 || usedPayment <= 0) {
+        scoreText.textContent = "Add your numbers first";
+        fillBar.style.width = "0%";
+        fillBar.className = "fill safe";
+        resultDetails.innerHTML =
+          "<p>Enter income, savings, estimated new car payment, estimated used car payment, debt, and down payment so the calculator can compare the decision.</p>";
+        return;
+      }
+
+      const monthlyFlexibilityEstimate = Math.max(income * 0.7, 1);
+      const paymentGap = Math.max(newPayment - usedPayment, 0);
+      const newPaymentRatio = (newPayment / income) * 100;
+      const usedPaymentRatio = (usedPayment / income) * 100;
+      const newDebtRatio = ((newPayment + debt) / income) * 100;
+      const usedDebtRatio = ((usedPayment + debt) / income) * 100;
+      const savingsAfterDownPayment = Math.max(savings - downPayment, 0);
+      const savingsMonthsAfter =
+        savingsAfterDownPayment / monthlyFlexibilityEstimate;
+      const paymentGapAnnual = paymentGap * 12;
+      const paymentGapSavingsImpact =
+        savingsAfterDownPayment > 0
+          ? (paymentGapAnnual / savingsAfterDownPayment) * 100
+          : 999;
+
+      let pressureScore = 0;
+
+      pressureScore += clamp(newPaymentRatio * 2.1, 0, 38);
+      pressureScore += clamp(newDebtRatio * 0.65, 0, 26);
+      pressureScore += clamp(paymentGap / Math.max(income, 1) * 100 * 2.5, 0, 22);
+
+      if (newPaymentRatio >= 18) {
+        pressureScore += 22;
+      } else if (newPaymentRatio >= 12) {
+        pressureScore += 14;
+      } else if (newPaymentRatio >= 8) {
+        pressureScore += 7;
+      } else if (newPaymentRatio <= 3) {
+        pressureScore -= 8;
+      }
+
+      if (newDebtRatio >= 40) {
+        pressureScore += 18;
+      } else if (newDebtRatio >= 30) {
+        pressureScore += 10;
+      } else if (newDebtRatio <= 10) {
+        pressureScore -= 5;
+      }
+
+      if (savingsAfterDownPayment <= 0) {
+        pressureScore += 28;
+      } else if (savingsMonthsAfter < 1) {
+        pressureScore += 22;
+      } else if (savingsMonthsAfter < 3) {
+        pressureScore += 12;
+      } else if (savingsMonthsAfter >= 24) {
+        pressureScore -= 22;
+      } else if (savingsMonthsAfter >= 12) {
+        pressureScore -= 16;
+      } else if (savingsMonthsAfter >= 6) {
+        pressureScore -= 10;
+      }
+
+      if (paymentGapSavingsImpact > 75) {
+        pressureScore += 12;
+      } else if (paymentGapSavingsImpact > 35) {
+        pressureScore += 7;
+      } else if (paymentGapSavingsImpact <= 5) {
+        pressureScore -= 8;
+      }
+
+      if (warranty === "high") {
+        pressureScore -= 7;
+      } else if (warranty === "low") {
+        pressureScore += 4;
+      }
+
+      if (repairTolerance === "low") {
+        pressureScore -= 5;
+      } else if (repairTolerance === "high") {
+        pressureScore += 4;
+      }
+
+      if (newPayment <= usedPayment + 100) {
+        pressureScore = Math.min(pressureScore, 35);
+      }
+
+      if (newPaymentRatio >= 20 || newDebtRatio >= 35) {
+        pressureScore = Math.max(pressureScore, 65);
+      }
+
+      if (savingsAfterDownPayment === 0) {
+        pressureScore = Math.max(pressureScore, 55);
+      }
+
+      /*
+        Final override layer.
+        Huge income or huge savings should make the bar logical.
+      */
+
+      if (income >= 1000000 && newPaymentRatio <= 0.5 && newDebtRatio <= 2) {
+        pressureScore = 0;
+      } else if (
+        income >= 250000 &&
+        newPaymentRatio <= 1 &&
+        newDebtRatio <= 3
+      ) {
+        pressureScore = Math.min(pressureScore, 2);
+      } else if (
+        income >= 100000 &&
+        newPaymentRatio <= 2 &&
+        newDebtRatio <= 5
+      ) {
+        pressureScore = Math.min(pressureScore, 5);
+      }
+
+      if (
+        savingsAfterDownPayment >= 1000000 &&
+        savingsAfterDownPayment >= newPayment * 600
+      ) {
+        pressureScore = 0;
+      } else if (
+        savingsAfterDownPayment >= 500000 &&
+        savingsAfterDownPayment >= newPayment * 300
+      ) {
+        pressureScore = Math.min(pressureScore, 2);
+      } else if (
+        savingsAfterDownPayment >= 250000 &&
+        savingsAfterDownPayment >= newPayment * 180
+      ) {
+        pressureScore = Math.min(pressureScore, 5);
+      } else if (
+        savingsMonthsAfter >= 120 ||
+        savingsAfterDownPayment >= newPayment * 120
+      ) {
+        pressureScore = Math.min(pressureScore, 8);
+      }
+
+      pressureScore = clamp(Math.round(pressureScore), 0, 100);
+
+      const level = getPressureLevel(pressureScore);
+
+      let recommendation = "";
+      let explanation = "";
+
+      if (pressureScore <= 5) {
+        recommendation = "New or Used Both Look Affordable";
+        explanation =
+          "The new car payment is not a meaningful pressure point based on the income and savings entered. The decision is less about affordability and more about preference, depreciation, warranty value, and how long you plan to keep the vehicle.";
+      } else if (pressureScore <= 30) {
+        recommendation = "Used Car Lean, But New May Be Fine";
+        explanation =
+          "The used car still appears financially stronger, but the new car may be reasonable if warranty protection, reliability, and long-term ownership value matter enough to justify the higher cost.";
+      } else if (pressureScore <= 60) {
+        recommendation = "Compare Carefully Before Buying New";
+        explanation =
+          "This is a close decision. The new car may work, but the higher payment, depreciation, insurance, and savings impact deserve a careful review before committing.";
+      } else {
+        recommendation = "Used Car Is the Safer Financial Choice";
+        explanation =
+          "The new car appears to create too much financial pressure compared with the used option. A used vehicle, lower payment, larger cushion, or delayed purchase would likely protect more flexibility.";
+      }
+
+      scoreText.textContent = `${recommendation} — ${pressureScore}/100`;
+      fillBar.style.width = `${pressureScore}%`;
+      fillBar.className = `fill ${level.colorClass}`;
+
+      resultDetails.innerHTML = `
+        <p><strong>New car payment impact:</strong> ${newPaymentRatio.toFixed(1)}% of monthly take-home income.</p>
+
+        <p><strong>Used car payment impact:</strong> ${usedPaymentRatio.toFixed(1)}% of monthly take-home income.</p>
+
+        <p><strong>New car total debt impact:</strong> ${newDebtRatio.toFixed(1)}% of monthly take-home income.</p>
+
+        <p><strong>Used car total debt impact:</strong> ${usedDebtRatio.toFixed(1)}% of monthly take-home income.</p>
+
+        <p><strong>Monthly payment gap:</strong> $${paymentGap.toLocaleString()} more per month for the new car.</p>
+
+        <p><strong>Savings after down payment:</strong> $${savingsAfterDownPayment.toLocaleString()}, or about ${savingsMonthsAfter.toFixed(1)} months of estimated flexibility.</p>
+
+        <p><strong>Pressure level:</strong> ${level.stress}.</p>
+
+        <p>${explanation}</p>
+      `;
+    }
+
+    document
+      .getElementById("carButton")
+      .addEventListener("click", calculateNewVsUsed);
+  </script>
+</Layout>

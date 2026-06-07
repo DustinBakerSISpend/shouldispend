@@ -1,0 +1,769 @@
+---
+import Layout from "../layouts/Layout.astro";
+import CalculatorPageShell from "../components/CalculatorPageShell.astro";
+import FAQSection from "../components/FAQSection.astro";
+import RelatedCalculators from "../components/RelatedCalculators.astro";
+import MethodologySection from "../components/MethodologySection.astro";
+import FinancialRedFlags from "../components/FinancialRedFlags.astro";
+import CalculatorAssumptions from "../components/CalculatorAssumptions.astro";
+import KeyCostCategories from "../components/KeyCostCategories.astro";
+import ReduceCostTips from "../components/ReduceCostTips.astro";
+import WhenSpendingMakesSense from "../components/WhenSpendingMakesSense.astro";
+import { calculators } from "../data/calculators.js";
+
+const tradeInFaqs = [
+  {
+    question: "Should I trade in my car or keep it?",
+    answer:
+      "Keeping your car is usually better when it is reliable, paid off or close to paid off, and the repair costs are manageable. Trading in can make sense when repair risk is rising, equity is strong, and the new payment does not weaken savings or monthly flexibility.",
+  },
+  {
+    question: "Is it bad to trade in a car with negative equity?",
+    answer:
+      "It can be risky because the unpaid balance may get rolled into the next loan. That makes the new vehicle more expensive, increases the chance of being underwater again, and can create long-term debt pressure.",
+  },
+  {
+    question: "When is keeping an old car the smarter choice?",
+    answer:
+      "Keeping an old car is often smarter when repairs are predictable, the vehicle is safe, and the monthly savings from avoiding a new payment can rebuild your emergency fund or pay down debt.",
+  },
+  {
+    question: "When does trading in a car make sense?",
+    answer:
+      "Trading in can make sense when your current car has strong equity, repair costs are becoming unpredictable, reliability affects work or family life, and the replacement payment still fits comfortably.",
+  },
+];
+
+const relatedCalculators = calculators
+  .filter(
+    (calculator) =>
+      calculator.category === "Cars" &&
+      calculator.href !== "/should-i-trade-in-my-car-or-keep-it"
+  )
+  .slice(0, 4);
+---
+
+<Layout
+  title="Should I Trade In My Car or Keep It?"
+  description="Use this trade-in calculator to compare keeping your car versus trading it in based on equity, payment change, repairs, savings, debt, and financial pressure."
+>
+  <style>
+    .container {
+      max-width: 900px;
+      margin: auto;
+    }
+
+    .calculator {
+      background: white;
+      padding: 40px;
+      border-radius: 24px;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.06);
+    }
+
+    .calculator h2 {
+      margin-top: 0;
+      font-size: 2rem;
+      margin-bottom: 18px;
+      color: #0f172a;
+    }
+
+    .calculator-intro {
+      color: #334155;
+      line-height: 1.8;
+      margin-bottom: 30px;
+      font-size: 1.05rem;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+    }
+
+    .field label {
+      display: block;
+      font-weight: 800;
+      margin-bottom: 10px;
+      color: #0f172a;
+    }
+
+    .field input,
+    .field select {
+      width: 100%;
+      padding: 16px;
+      border-radius: 12px;
+      border: 1px solid #cbd5e1;
+      font-size: 1rem;
+      box-sizing: border-box;
+      background: white;
+    }
+
+    button {
+      margin-top: 30px;
+      background: #0f766e;
+      color: white;
+      border: none;
+      padding: 18px 32px;
+      border-radius: 999px;
+      font-size: 1.05rem;
+      font-weight: 800;
+      cursor: pointer;
+      transition: opacity 0.2s ease;
+    }
+
+    button:hover {
+      opacity: 0.92;
+    }
+
+    .results {
+      margin-top: 36px;
+      background: #f8fafc;
+      padding: 32px;
+      border-radius: 24px;
+      border: 1px solid var(--border);
+      box-shadow: 0 10px 24px rgba(15, 23, 42, 0.04);
+      display: none;
+    }
+
+    .results.visible {
+      display: block;
+    }
+
+    .score {
+      font-size: clamp(2rem, 4vw, 2.7rem);
+      font-weight: 900;
+      color: #0f172a;
+      margin-bottom: 22px;
+      line-height: 1.15;
+    }
+
+    .bar {
+      width: 100%;
+      height: 16px;
+      background: #dbe4ee;
+      border-radius: 999px;
+      overflow: hidden;
+      margin-bottom: 24px;
+    }
+
+    .fill {
+      height: 100%;
+      width: 0%;
+      border-radius: 999px;
+      transition: width 0.45s ease;
+    }
+
+    .fill.safe {
+      background: linear-gradient(90deg, #0f766e 0%, #14b8a6 100%);
+    }
+
+    .fill.caution {
+      background: linear-gradient(90deg, #ca8a04 0%, #facc15 100%);
+    }
+
+    .fill.danger {
+      background: linear-gradient(90deg, #dc2626 0%, #f97316 100%);
+    }
+
+    .result-details {
+      color: #334155;
+      line-height: 1.9;
+      font-size: 1.02rem;
+    }
+
+    .result-details p {
+      margin: 0 0 12px;
+    }
+
+    .disclaimer {
+      margin-top: 24px;
+      font-size: 0.9rem;
+      color: #64748b;
+    }
+
+    .content-section {
+      margin-top: 60px;
+    }
+
+    .content-section h2 {
+      font-size: 2rem;
+      margin-bottom: 20px;
+      color: #0f172a;
+    }
+
+    .content-section p,
+    .content-section li {
+      font-size: 1.1rem;
+      line-height: 1.9;
+      color: #334155;
+    }
+
+    .content-link {
+      color: #0f766e;
+      font-weight: 700;
+      text-decoration: none;
+    }
+
+    .content-link:hover {
+      text-decoration: underline;
+    }
+
+    @media (max-width: 768px) {
+      .calculator {
+        padding: 24px;
+      }
+
+      .grid {
+        grid-template-columns: 1fr;
+      }
+
+      .calculator h2,
+      .content-section h2 {
+        font-size: 1.7rem;
+      }
+
+      .results {
+        padding: 24px;
+      }
+    }
+  </style>
+
+  <div class="container">
+    <CalculatorPageShell
+      eyebrow="Trade-In Calculator"
+      title="Should I Trade In My Car or Keep It?"
+      description="Compare trading in your car versus keeping it based on equity, repair pressure, payment change, savings cushion, debt load, and monthly flexibility."
+    >
+      <div class="calculator">
+        <h2>Trade-In Pressure Verdict</h2>
+
+        <p class="calculator-intro">
+          Enter your income, savings, current car details, and replacement
+          payment estimate. This calculator estimates whether trading in creates
+          financial breathing room or adds unnecessary pressure.
+        </p>
+
+        <div class="grid">
+          <div class="field">
+            <label for="income">Monthly Take-Home Income</label>
+            <input id="income" type="number" placeholder="Example: 8000" />
+          </div>
+
+          <div class="field">
+            <label for="savings">Current Savings</label>
+            <input id="savings" type="number" placeholder="Example: 20000" />
+          </div>
+
+          <div class="field">
+            <label for="currentPayment">Current Monthly Car Payment</label>
+            <input id="currentPayment" type="number" placeholder="Example: 450" />
+          </div>
+
+          <div class="field">
+            <label for="newPayment">Estimated New Monthly Payment</label>
+            <input id="newPayment" type="number" placeholder="Example: 750" />
+          </div>
+
+          <div class="field">
+            <label for="tradeValue">Estimated Trade-In Value</label>
+            <input id="tradeValue" type="number" placeholder="Example: 18000" />
+          </div>
+
+          <div class="field">
+            <label for="loanBalance">Current Loan Balance</label>
+            <input id="loanBalance" type="number" placeholder="Example: 14000" />
+          </div>
+
+          <div class="field">
+            <label for="repairCost">Expected Repairs Next 12 Months</label>
+            <input id="repairCost" type="number" placeholder="Example: 1800" />
+          </div>
+
+          <div class="field">
+            <label for="debt">Other Monthly Debt Payments</label>
+            <input id="debt" type="number" placeholder="Example: 700" />
+          </div>
+
+          <div class="field">
+            <label for="reliability">Current Car Reliability</label>
+            <select id="reliability">
+              <option value="good">Reliable</option>
+              <option value="mixed" selected>Some concerns</option>
+              <option value="poor">Unreliable</option>
+            </select>
+          </div>
+
+          <div class="field">
+            <label for="need">Replacement Need</label>
+            <select id="need">
+              <option value="low">Mostly a want</option>
+              <option value="medium" selected>Some real need</option>
+              <option value="high">Strong work/family/safety need</option>
+            </select>
+          </div>
+        </div>
+
+        <button id="carButton" type="button">Get Trade-In Verdict</button>
+
+        <div class="results" id="results">
+          <div class="score" id="scoreText"></div>
+
+          <div class="bar">
+            <div class="fill" id="fillBar"></div>
+          </div>
+
+          <div class="result-details" id="resultDetails"></div>
+
+          <div class="disclaimer">
+            This is a general educational estimate, not financial advice.
+          </div>
+        </div>
+      </div>
+
+      <section class="content-section">
+        <h2>Trading In Is Not Just a Car Decision</h2>
+
+        <p>
+          A trade-in can feel like a clean reset, but it often swaps one problem
+          for another. The old repair bill may disappear, but the new monthly
+          payment, insurance cost, loan balance, depreciation, and longer debt
+          timeline may create more pressure than keeping the current car.
+        </p>
+
+        <p>
+          Keeping your car is usually strongest when the vehicle is safe,
+          reliable enough, and cheaper to maintain than the replacement payment.
+          Trading in becomes more reasonable when repair risk is rising, equity
+          is positive, and the new payment does not weaken your savings cushion.
+        </p>
+
+        <p>
+          Before deciding, compare this result with the broader
+          <a class="content-link" href="/how-much-car-can-i-afford">
+            car affordability guide
+          </a>
+          and the
+          <a class="content-link" href="/should-i-buy-new-or-used-car">
+            new vs used car calculator
+          </a>.
+        </p>
+      </section>
+
+      <WhenSpendingMakesSense
+        title="When Trading In Can Make Sense"
+        items={[
+          "Your current car has positive equity.",
+          "Repair costs are becoming unpredictable or too frequent.",
+          "The replacement payment stays comfortable compared with take-home income.",
+          "You will still have a real emergency fund after the deal.",
+          "The replacement solves a real work, family, safety, or reliability need.",
+        ]}
+      />
+
+      <section class="content-section">
+        <h2>When Keeping the Car Is Usually Better</h2>
+
+        <p>
+          Keeping the car is usually better when the replacement payment is much
+          higher than your current payment, your trade-in has negative equity,
+          or the repair estimate is smaller than the cost of a new loan.
+        </p>
+
+        <p>
+          A paid-off or nearly paid-off vehicle can be a powerful financial
+          advantage. Even if it needs occasional repairs, avoiding a large
+          monthly payment can free up money for emergency savings, debt payoff,
+          retirement, housing, or other priorities.
+        </p>
+      </section>
+
+      <KeyCostCategories
+        items={[
+          {
+            title: "Equity position",
+            description:
+              "Positive equity can help a trade-in. Negative equity can roll old debt into the next loan and make the new car more expensive.",
+          },
+          {
+            title: "Payment change",
+            description:
+              "A trade-in is riskier when the new payment is much higher than the current car payment.",
+          },
+          {
+            title: "Repair pressure",
+            description:
+              "Repairs matter, but a repair bill is not automatically worse than years of higher payments.",
+          },
+          {
+            title: "Savings cushion",
+            description:
+              "A trade-in should not drain emergency savings or leave you dependent on credit cards for the next surprise expense.",
+          },
+        ]}
+      />
+
+      <ReduceCostTips
+        items={[
+          "Get a repair estimate before assuming the car must be replaced.",
+          "Check trade-in value from more than one source or dealer.",
+          "Avoid rolling negative equity into a longer and larger loan.",
+          "Compare insurance quotes before replacing the vehicle.",
+          "Consider keeping the car another six to twelve months if it helps rebuild savings.",
+        ]}
+      />
+
+      <FinancialRedFlags
+        items={[
+          "You owe more than the car is worth and plan to roll the balance into the next loan.",
+          "The new payment would stretch your monthly budget.",
+          "You are trading mainly because you are bored with the current car.",
+          "The repair estimate is smaller than just a few months of the replacement payment.",
+          "The trade-in would leave you with little or no emergency savings.",
+        ]}
+      />
+
+      <CalculatorAssumptions
+        items={[
+          "The calculator compares trade-in equity, payment change, repair pressure, savings cushion, debt load, reliability, and replacement need.",
+          "It does not estimate exact dealer offers, taxes, registration, insurance, interest rate, depreciation, or repair accuracy.",
+          "Positive equity reduces pressure because it can lower the next loan or preserve flexibility.",
+          "Negative equity increases pressure because old debt may follow you into the next vehicle.",
+          "Huge income or huge savings can reduce the pressure score to zero because the payment change is not financially meaningful in that scenario.",
+        ]}
+      />
+
+      <section class="content-section">
+        <h2>The Best Trade-In Decision Protects Flexibility</h2>
+
+        <p>
+          The right answer is not always “keep it forever” or “trade it now.”
+          The best decision is the one that protects monthly flexibility while
+          giving you reliable transportation.
+        </p>
+
+        <p>
+          If the current car is safe and predictable, keeping it may be the
+          stronger financial move. If the current car is unreliable and the
+          replacement fits cleanly into the budget, trading in can be reasonable.
+        </p>
+      </section>
+
+      <div class="content-section">
+        <FAQSection title="Trade-In or Keep Car FAQ" faqs={tradeInFaqs} />
+      </div>
+
+      <div class="content-section">
+        <RelatedCalculators calculators={relatedCalculators} />
+      </div>
+    </CalculatorPageShell>
+
+    <MethodologySection category="car trade-in decisions" updated="June 2026" />
+  </div>
+
+  <script is:inline>
+  const clamp = (value, min, max) => Math.min(Math.max(value, min), max);
+
+  const getNumber = (id) => {
+    const rawValue = document.getElementById(id)?.value;
+    const value = Number(rawValue);
+    return Number.isFinite(value) && value >= 0 ? value : 0;
+  };
+
+  const getValue = (id) => document.getElementById(id)?.value || "";
+
+  function getPressureLevel(score) {
+    if (score <= 5) {
+      return {
+        label: "Almost No Pressure",
+        stress: "Almost no pressure",
+        colorClass: "safe",
+      };
+    }
+
+    if (score <= 30) {
+      return {
+        label: "Trade-In Can Be Reasonable",
+        stress: "Low pressure",
+        colorClass: "safe",
+      };
+    }
+
+    if (score <= 60) {
+      return {
+        label: "Compare Carefully Before Trading",
+        stress: "Moderate pressure",
+        colorClass: "caution",
+      };
+    }
+
+    return {
+      label: "Keeping the Car Looks Safer",
+      stress: "High pressure",
+      colorClass: "danger",
+    };
+  }
+
+  function calculateTradeIn() {
+    const income = getNumber("income");
+    const savings = getNumber("savings");
+    const currentPayment = getNumber("currentPayment");
+    const newPayment = getNumber("newPayment");
+    const tradeValue = getNumber("tradeValue");
+    const loanBalance = getNumber("loanBalance");
+    const repairCost = getNumber("repairCost");
+    const debt = getNumber("debt");
+    const reliability = getValue("reliability");
+    const need = getValue("need");
+
+    const results = document.getElementById("results");
+    const scoreText = document.getElementById("scoreText");
+    const fillBar = document.getElementById("fillBar");
+    const resultDetails = document.getElementById("resultDetails");
+
+    results.classList.add("visible");
+
+    if (income <= 0 || newPayment <= 0) {
+      scoreText.textContent = "Add your numbers first";
+      fillBar.style.width = "0%";
+      fillBar.className = "fill safe";
+      resultDetails.innerHTML =
+        "<p>Enter income, savings, current payment, estimated replacement payment, trade-in value, loan balance, repair estimate, and debt so the calculator can compare keeping versus trading.</p>";
+      return;
+    }
+
+    const monthlyFlexibilityEstimate = Math.max(income * 0.7, 1);
+    const equity = tradeValue - loanBalance;
+    const positiveEquity = Math.max(equity, 0);
+    const negativeEquity = Math.max(-equity, 0);
+    const paymentIncrease = Math.max(newPayment - currentPayment, 0);
+    const paymentDecrease = Math.max(currentPayment - newPayment, 0);
+    const newPaymentRatio = (newPayment / income) * 100;
+    const newDebtRatio = ((newPayment + debt) / income) * 100;
+    const currentDebtRatio = ((currentPayment + debt) / income) * 100;
+    const savingsMonths = savings / monthlyFlexibilityEstimate;
+    const paymentsCoveredBySavings = savings / newPayment;
+    const twelveMonthIncrease = paymentIncrease * 12;
+    const annualRepairVsIncrease =
+      twelveMonthIncrease > 0 ? (repairCost / twelveMonthIncrease) * 100 : 999;
+
+    let pressureScore = 0;
+
+    pressureScore += clamp(newPaymentRatio * 1.55, 0, 32);
+    pressureScore += clamp(newDebtRatio * 0.45, 0, 20);
+    pressureScore += clamp((paymentIncrease / Math.max(income, 1)) * 100 * 1.4, 0, 16);
+
+    if (newPaymentRatio >= 22) {
+      pressureScore += 22;
+    } else if (newPaymentRatio >= 18) {
+      pressureScore += 14;
+    } else if (newPaymentRatio >= 14) {
+      pressureScore += 8;
+    } else if (newPaymentRatio <= 5) {
+      pressureScore -= 8;
+    }
+
+    if (newDebtRatio >= 40) {
+      pressureScore += 18;
+    } else if (newDebtRatio >= 30) {
+      pressureScore += 10;
+    } else if (newDebtRatio <= 20) {
+      pressureScore -= 4;
+    } else if (newDebtRatio <= 12) {
+      pressureScore -= 7;
+    }
+
+    if (savings <= 0) {
+      pressureScore += 30;
+    } else if (savingsMonths < 1) {
+      pressureScore += 24;
+    } else if (savingsMonths < 3) {
+      pressureScore += 14;
+    } else if (savingsMonths >= 24) {
+      pressureScore -= 34;
+    } else if (savingsMonths >= 12) {
+      pressureScore -= 24;
+    } else if (savingsMonths >= 6) {
+      pressureScore -= 14;
+    }
+
+    if (negativeEquity > 0) {
+      pressureScore += clamp((negativeEquity / Math.max(income, 1)) * 100 * 0.65, 8, 24);
+    } else if (positiveEquity >= newPayment * 12) {
+      pressureScore -= 14;
+    } else if (positiveEquity >= newPayment * 6) {
+      pressureScore -= 8;
+    } else if (positiveEquity > 0) {
+      pressureScore -= 4;
+    }
+
+    if (paymentIncrease >= 800) {
+      pressureScore += 18;
+    } else if (paymentIncrease >= 500) {
+      pressureScore += 12;
+    } else if (paymentIncrease >= 300) {
+      pressureScore += 7;
+    } else if (paymentIncrease >= 150) {
+      pressureScore += 4;
+    } else if (paymentDecrease > 0) {
+      pressureScore -= 12;
+    }
+
+    if (repairCost >= 7000) {
+      pressureScore -= 18;
+    } else if (repairCost >= 4000) {
+      pressureScore -= 12;
+    } else if (repairCost >= 2500) {
+      pressureScore -= 7;
+    } else if (repairCost <= 1000 && paymentIncrease > 0) {
+      pressureScore += 5;
+    }
+
+    if (annualRepairVsIncrease < 25 && paymentIncrease > 0) {
+      pressureScore += 5;
+    } else if (annualRepairVsIncrease > 100 && repairCost > 0) {
+      pressureScore -= 8;
+    }
+
+    if (reliability === "poor") {
+      pressureScore -= 14;
+    } else if (reliability === "mixed") {
+      pressureScore -= 5;
+    } else if (reliability === "good" && paymentIncrease > 0) {
+      pressureScore += 6;
+    }
+
+    if (need === "high") {
+      pressureScore -= 12;
+    } else if (need === "medium") {
+      pressureScore -= 4;
+    } else if (need === "low" && paymentIncrease > 0) {
+      pressureScore += 8;
+    }
+
+    if (newPaymentRatio >= 22 || newDebtRatio >= 40) {
+      pressureScore = Math.max(pressureScore, 65);
+    } else if (newPaymentRatio >= 18 || newDebtRatio >= 35) {
+      pressureScore = Math.max(pressureScore, 58);
+    }
+
+    if (savings === 0) {
+      pressureScore = Math.max(pressureScore, 50);
+    }
+
+    if (negativeEquity >= income * 0.5) {
+      pressureScore = Math.max(pressureScore, 70);
+    }
+
+    if (
+      savingsMonths >= 24 &&
+      equity >= 0 &&
+      newDebtRatio < 30 &&
+      newPaymentRatio < 18
+    ) {
+      pressureScore = Math.min(pressureScore, 55);
+    }
+
+    if (
+      savingsMonths >= 12 &&
+      equity >= 0 &&
+      newDebtRatio < 30 &&
+      need !== "low"
+    ) {
+      pressureScore = Math.min(pressureScore, 60);
+    }
+
+    if (income >= 1000000 && newPaymentRatio <= 0.5 && newDebtRatio <= 2) {
+      pressureScore = 0;
+    } else if (
+      income >= 250000 &&
+      newPaymentRatio <= 1 &&
+      newDebtRatio <= 3
+    ) {
+      pressureScore = Math.min(pressureScore, 2);
+    } else if (
+      income >= 100000 &&
+      newPaymentRatio <= 2 &&
+      newDebtRatio <= 5
+    ) {
+      pressureScore = Math.min(pressureScore, 5);
+    }
+
+    if (savings >= 1000000 && paymentsCoveredBySavings >= 600) {
+      pressureScore = 0;
+    } else if (savings >= 500000 && paymentsCoveredBySavings >= 300) {
+      pressureScore = Math.min(pressureScore, 2);
+    } else if (savings >= 250000 && paymentsCoveredBySavings >= 180) {
+      pressureScore = Math.min(pressureScore, 5);
+    } else if (savingsMonths >= 120 || paymentsCoveredBySavings >= 120) {
+      pressureScore = Math.min(pressureScore, 8);
+    } else if (savingsMonths >= 60 || paymentsCoveredBySavings >= 60) {
+      pressureScore = Math.min(pressureScore, 12);
+    }
+
+    pressureScore = clamp(Math.round(pressureScore), 0, 100);
+
+    const level = getPressureLevel(pressureScore);
+
+    let recommendation = "";
+    let explanation = "";
+
+    if (pressureScore <= 5) {
+      recommendation = "Trade-In Pressure Is Minimal";
+      explanation =
+        "The replacement payment is not a meaningful financial pressure point based on the income and savings entered. The decision is mainly about preference, reliability, equity, depreciation, and whether the replacement is worth it.";
+    } else if (pressureScore <= 30) {
+      recommendation = "Trade-In Can Be Reasonable";
+      explanation =
+        "Trading in appears financially manageable based on the numbers entered. Still compare insurance, taxes, depreciation, and whether keeping the current car would preserve more flexibility.";
+    } else if (pressureScore <= 60) {
+      recommendation = "Compare Carefully Before Trading";
+      explanation =
+        "This trade-in may work, but it deserves caution. The payment increase, savings cushion, repair estimate, equity position, and total debt load should be reviewed before committing.";
+    } else {
+      recommendation = "Keeping the Car Looks Safer";
+      explanation =
+        "Trading in appears to create significant financial pressure compared with keeping the current car. Unless reliability or safety is a serious issue, waiting, repairing, or choosing a cheaper replacement may protect more flexibility.";
+    }
+
+    scoreText.textContent = `${recommendation} — ${pressureScore}/100`;
+    fillBar.style.width = `${pressureScore}%`;
+    fillBar.className = `fill ${level.colorClass}`;
+
+    resultDetails.innerHTML = `
+      <p><strong>Current car payment:</strong> $${currentPayment.toLocaleString()} per month.</p>
+
+      <p><strong>Replacement payment:</strong> $${newPayment.toLocaleString()} per month, or ${newPaymentRatio.toFixed(1)}% of monthly take-home income.</p>
+
+      <p><strong>Payment change:</strong> ${
+        paymentIncrease > 0
+          ? `$${paymentIncrease.toLocaleString()} more per month`
+          : paymentDecrease > 0
+            ? `$${paymentDecrease.toLocaleString()} less per month`
+            : "No monthly payment change"
+      }.</p>
+
+      <p><strong>Equity position:</strong> ${
+        equity >= 0
+          ? `$${positiveEquity.toLocaleString()} in estimated positive equity`
+          : `$${negativeEquity.toLocaleString()} in estimated negative equity`
+      }.</p>
+
+      <p><strong>Current total debt impact:</strong> ${currentDebtRatio.toFixed(1)}% of monthly take-home income.</p>
+
+      <p><strong>Replacement total debt impact:</strong> ${newDebtRatio.toFixed(1)}% of monthly take-home income.</p>
+
+      <p><strong>Savings cushion:</strong> $${savings.toLocaleString()}, or about ${savingsMonths.toFixed(1)} months of estimated flexibility.</p>
+
+      <p><strong>Expected repairs:</strong> $${repairCost.toLocaleString()} over the next 12 months.</p>
+
+      <p><strong>Pressure level:</strong> ${level.stress}.</p>
+
+      <p>${explanation}</p>
+    `;
+  }
+
+  document
+    .getElementById("carButton")
+    .addEventListener("click", calculateTradeIn);
+</script>
+</Layout>

@@ -120,6 +120,54 @@ export const calculators = [
   href: "/how-much-car-can-i-afford",
 },
 {
+  id: "new-vs-used-car",
+  category: "Cars",
+  title: "Should I Buy a New or Used Car?",
+  description:
+    "Compare new and used car pressure based on payment, depreciation, warranty value, savings cushion, debt, and long-term ownership risk.",
+  href: "/should-i-buy-new-or-used-car",
+},
+{
+  id: "trade-in-or-keep-car",
+  category: "Cars",
+  title: "Should I Trade In My Car or Keep It?",
+  description:
+    "Decide whether trading in your car creates breathing room or adds more debt pressure based on equity, repairs, payment change, and savings.",
+  href: "/should-i-trade-in-my-car-or-keep-it",
+},
+{
+  id: "refinance-car-loan",
+  category: "Cars",
+  title: "Should I Refinance My Car Loan?",
+  description:
+    "Estimate whether refinancing your auto loan meaningfully lowers monthly pressure after fees, remaining balance, rate change, and loan term risk.",
+  href: "/should-i-refinance-my-car-loan",
+},
+{
+  id: "car-down-payment",
+  category: "Cars",
+  title: "How Much Should I Put Down on a Car?",
+  description:
+    "Find a safer car down payment target based on vehicle price, savings cushion, emergency fund, loan size, and upside-down risk.",
+  href: "/how-much-should-i-put-down-on-a-car",
+},
+{
+  id: "electric-car-decision",
+  category: "Cars",
+  title: "Should I Buy an Electric Car?",
+  description:
+    "Compare EV affordability against gas savings, charging access, price premium, incentives, insurance, and monthly budget pressure.",
+  href: "/should-i-buy-an-electric-car",
+},
+{
+  id: "road-trip-calculator",
+  category: "Cars",
+  title: "Road Trip Calculator",
+  description:
+    "Estimate road trip fuel cost using miles, MPG, gas price, round trip choice, and passengers for a quick per-person travel budget.",
+  href: "/road-trip-calculator",
+},
+{
   id: "truck-affordability-guide",
   category: "Cars",
   title: "How Much Truck Can I Afford?",

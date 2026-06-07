@@ -1,0 +1,799 @@
+---
+import Layout from "../layouts/Layout.astro";
+import CalculatorPageShell from "../components/CalculatorPageShell.astro";
+import FAQSection from "../components/FAQSection.astro";
+import RelatedCalculators from "../components/RelatedCalculators.astro";
+import MethodologySection from "../components/MethodologySection.astro";
+import FinancialRedFlags from "../components/FinancialRedFlags.astro";
+import CalculatorAssumptions from "../components/CalculatorAssumptions.astro";
+import KeyCostCategories from "../components/KeyCostCategories.astro";
+import ReduceCostTips from "../components/ReduceCostTips.astro";
+import WhenSpendingMakesSense from "../components/WhenSpendingMakesSense.astro";
+import { calculators } from "../data/calculators.js";
+
+const refinanceFaqs = [
+  {
+    question: "Should I refinance my car loan?",
+    answer:
+      "Refinancing can make sense if it lowers your monthly payment, reduces your interest rate, avoids excessive fees, and does not stretch the loan so long that you stay in debt longer than necessary.",
+  },
+  {
+    question: "When is refinancing a car loan a bad idea?",
+    answer:
+      "Refinancing can be a bad idea if the payment drops only because the loan term gets much longer, fees erase the savings, you are already underwater, or you plan to sell or trade the car soon.",
+  },
+  {
+    question: "How much should refinancing save per month?",
+    answer:
+      "There is no single number, but the savings should be large enough to matter after fees. A small payment drop may not be worth it if it adds years of debt or increases total interest.",
+  },
+  {
+    question: "Does refinancing hurt my credit?",
+    answer:
+      "A refinance application may create a hard inquiry, and opening a new loan can affect credit temporarily. The bigger question is whether the new loan improves cash flow without creating longer-term pressure.",
+  },
+];
+
+const relatedCalculators = calculators
+  .filter(
+    (calculator) =>
+      calculator.category === "Cars" &&
+      calculator.href !== "/should-i-refinance-my-car-loan"
+  )
+  .slice(0, 4);
+---
+
+<Layout
+  title="Should I Refinance My Car Loan?"
+  description="Use this car refinance calculator to compare payment savings, fees, remaining balance, loan term risk, savings cushion, debt load, and affordability."
+>
+  <style>
+    .container {
+      max-width: 900px;
+      margin: auto;
+    }
+
+    .calculator {
+      background: white;
+      padding: 40px;
+      border-radius: 24px;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.06);
+    }
+
+    .calculator h2 {
+      margin-top: 0;
+      font-size: 2rem;
+      margin-bottom: 18px;
+      color: #0f172a;
+    }
+
+    .calculator-intro {
+      color: #334155;
+      line-height: 1.8;
+      margin-bottom: 30px;
+      font-size: 1.05rem;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+    }
+
+    .field label {
+      display: block;
+      font-weight: 800;
+      margin-bottom: 10px;
+      color: #0f172a;
+    }
+
+    .field input,
+    .field select {
+      width: 100%;
+      padding: 16px;
+      border-radius: 12px;
+      border: 1px solid #cbd5e1;
+      font-size: 1rem;
+      box-sizing: border-box;
+      background: white;
+    }
+
+    button {
+      margin-top: 30px;
+      background: #0f766e;
+      color: white;
+      border: none;
+      padding: 18px 32px;
+      border-radius: 999px;
+      font-size: 1.05rem;
+      font-weight: 800;
+      cursor: pointer;
+      transition: opacity 0.2s ease;
+    }
+
+    button:hover {
+      opacity: 0.92;
+    }
+
+    .results {
+      margin-top: 36px;
+      background: #f8fafc;
+      padding: 32px;
+      border-radius: 24px;
+      border: 1px solid var(--border);
+      box-shadow: 0 10px 24px rgba(15, 23, 42, 0.04);
+      display: none;
+    }
+
+    .results.visible {
+      display: block;
+    }
+
+    .score {
+      font-size: clamp(2rem, 4vw, 2.7rem);
+      font-weight: 900;
+      color: #0f172a;
+      margin-bottom: 22px;
+      line-height: 1.15;
+    }
+
+    .bar {
+      width: 100%;
+      height: 16px;
+      background: #dbe4ee;
+      border-radius: 999px;
+      overflow: hidden;
+      margin-bottom: 24px;
+    }
+
+    .fill {
+      height: 100%;
+      width: 0%;
+      border-radius: 999px;
+      transition: width 0.45s ease;
+    }
+
+    .fill.safe {
+      background: linear-gradient(90deg, #0f766e 0%, #14b8a6 100%);
+    }
+
+    .fill.caution {
+      background: linear-gradient(90deg, #ca8a04 0%, #facc15 100%);
+    }
+
+    .fill.danger {
+      background: linear-gradient(90deg, #dc2626 0%, #f97316 100%);
+    }
+
+    .result-details {
+      color: #334155;
+      line-height: 1.9;
+      font-size: 1.02rem;
+    }
+
+    .result-details p {
+      margin: 0 0 12px;
+    }
+
+    .disclaimer {
+      margin-top: 24px;
+      font-size: 0.9rem;
+      color: #64748b;
+    }
+
+    .content-section {
+      margin-top: 60px;
+    }
+
+    .content-section h2 {
+      font-size: 2rem;
+      margin-bottom: 20px;
+      color: #0f172a;
+    }
+
+    .content-section p,
+    .content-section li {
+      font-size: 1.1rem;
+      line-height: 1.9;
+      color: #334155;
+    }
+
+    .content-link {
+      color: #0f766e;
+      font-weight: 700;
+      text-decoration: none;
+    }
+
+    .content-link:hover {
+      text-decoration: underline;
+    }
+
+    @media (max-width: 768px) {
+      .calculator {
+        padding: 24px;
+      }
+
+      .grid {
+        grid-template-columns: 1fr;
+      }
+
+      .calculator h2,
+      .content-section h2 {
+        font-size: 1.7rem;
+      }
+
+      .results {
+        padding: 24px;
+      }
+    }
+  </style>
+
+  <div class="container">
+    <CalculatorPageShell
+      eyebrow="Car Refinance Calculator"
+      title="Should I Refinance My Car Loan?"
+      description="Compare your current auto loan with a refinance offer based on monthly savings, fees, loan term, debt pressure, savings cushion, and long-term flexibility."
+    >
+      <div class="calculator">
+        <h2>Car Refinance Pressure Verdict</h2>
+
+        <p class="calculator-intro">
+          Enter your current payment, refinance offer, remaining balance, fees,
+          income, and savings. This calculator estimates whether refinancing
+          lowers real pressure or just stretches the debt.
+        </p>
+
+        <div class="grid">
+          <div class="field">
+            <label for="income">Monthly Take-Home Income</label>
+            <input id="income" type="number" placeholder="Example: 7500" />
+          </div>
+
+          <div class="field">
+            <label for="savings">Current Savings</label>
+            <input id="savings" type="number" placeholder="Example: 18000" />
+          </div>
+
+          <div class="field">
+            <label for="currentPayment">Current Monthly Car Payment</label>
+            <input id="currentPayment" type="number" placeholder="Example: 725" />
+          </div>
+
+          <div class="field">
+            <label for="newPayment">Refinanced Monthly Payment</label>
+            <input id="newPayment" type="number" placeholder="Example: 575" />
+          </div>
+
+          <div class="field">
+            <label for="balance">Current Loan Balance</label>
+            <input id="balance" type="number" placeholder="Example: 28000" />
+          </div>
+
+          <div class="field">
+            <label for="fees">Refinance Fees / Costs</label>
+            <input id="fees" type="number" placeholder="Example: 600" />
+          </div>
+
+          <div class="field">
+            <label for="currentMonths">Months Left on Current Loan</label>
+            <input id="currentMonths" type="number" placeholder="Example: 42" />
+          </div>
+
+          <div class="field">
+            <label for="newMonths">Months on New Loan</label>
+            <input id="newMonths" type="number" placeholder="Example: 60" />
+          </div>
+
+          <div class="field">
+            <label for="debt">Other Monthly Debt Payments</label>
+            <input id="debt" type="number" placeholder="Example: 850" />
+          </div>
+
+          <div class="field">
+            <label for="vehicleValue">Estimated Vehicle Value</label>
+            <input id="vehicleValue" type="number" placeholder="Example: 30000" />
+          </div>
+
+          <div class="field">
+            <label for="goal">Main Refinance Goal</label>
+            <select id="goal">
+              <option value="cashflow" selected>Lower monthly payment</option>
+              <option value="interest">Lower interest / total cost</option>
+              <option value="stress">Avoid monthly budget stress</option>
+            </select>
+          </div>
+
+          <div class="field">
+            <label for="keepPlan">How Long Will You Keep the Car?</label>
+            <select id="keepPlan">
+              <option value="short">Less than 2 years</option>
+              <option value="medium" selected>2 to 4 years</option>
+              <option value="long">More than 4 years</option>
+            </select>
+          </div>
+        </div>
+
+        <button id="carButton" type="button">Get Refinance Verdict</button>
+
+        <div class="results" id="results">
+          <div class="score" id="scoreText"></div>
+
+          <div class="bar">
+            <div class="fill" id="fillBar"></div>
+          </div>
+
+          <div class="result-details" id="resultDetails"></div>
+
+          <div class="disclaimer">
+            This is a general educational estimate, not financial advice.
+          </div>
+        </div>
+      </div>
+
+      <section class="content-section">
+        <h2>Refinancing Should Lower Pressure, Not Hide It</h2>
+
+        <p>
+          A car refinance can be useful when it lowers your payment, improves
+          your rate, or gives your monthly budget breathing room. But a lower
+          payment is not automatically a better loan. If the new loan adds years
+          of debt, increases total interest, or buries fees inside the balance,
+          the refinance may only make the problem look smaller.
+        </p>
+
+        <p>
+          The right refinance decision compares monthly savings, total remaining
+          payments, fees, vehicle value, loan length, and your broader
+          <a class="content-link" href="/how-much-car-can-i-afford">
+            car affordability picture
+          </a>.
+        </p>
+      </section>
+
+      <WhenSpendingMakesSense
+        title="When Refinancing Can Make Sense"
+        items={[
+          "The new payment is meaningfully lower without adding too much time to the loan.",
+          "The refinance fees are small compared with the monthly savings.",
+          "Your credit or market rate improved since the original loan.",
+          "You plan to keep the car long enough to benefit from the savings.",
+          "The new loan improves cash flow without creating new long-term debt pressure.",
+        ]}
+      />
+
+      <section class="content-section">
+        <h2>When You Should Be Careful</h2>
+
+        <p>
+          Be careful when the refinance lowers the payment mainly by stretching
+          the loan. That can make the monthly bill easier while keeping you in
+          debt longer and increasing the risk of owing more than the vehicle is
+          worth.
+        </p>
+
+        <p>
+          Refinancing is also weaker when fees are high, monthly savings are
+          small, the car is already worth less than the loan balance, or you may
+          trade the vehicle before the refinance pays off.
+        </p>
+      </section>
+
+      <KeyCostCategories
+        items={[
+          {
+            title: "Monthly savings",
+            description:
+              "The refinance should lower the payment enough to matter after fees, not just create a tiny monthly difference.",
+          },
+          {
+            title: "Loan term risk",
+            description:
+              "A longer loan can reduce the payment while increasing total time in debt.",
+          },
+          {
+            title: "Fees and break-even point",
+            description:
+              "Application fees, title fees, lender costs, and rolled-in costs can reduce or erase the benefit.",
+          },
+          {
+            title: "Vehicle value",
+            description:
+              "If the balance is higher than the car value, refinancing can keep you underwater longer.",
+          },
+        ]}
+      />
+
+      <ReduceCostTips
+        items={[
+          "Compare offers from a credit union, bank, and online lender.",
+          "Avoid adding many extra months unless monthly cash flow is the real emergency.",
+          "Ask whether fees are paid upfront or rolled into the new balance.",
+          "Check whether the current loan has a prepayment penalty.",
+          "Use monthly savings to rebuild emergency savings or pay down higher-interest debt.",
+        ]}
+      />
+
+      <FinancialRedFlags
+        items={[
+          "The new loan term is much longer than the remaining term.",
+          "The payment drops only a little after fees.",
+          "You are already underwater and adding more time to the loan.",
+          "You plan to trade or sell the car soon.",
+          "The refinance is being used to avoid a larger affordability problem.",
+        ]}
+      />
+
+      <CalculatorAssumptions
+        items={[
+          "The calculator compares payment savings, refinance fees, loan term change, savings cushion, debt load, vehicle value, and keep-plan risk.",
+          "It does not calculate exact interest amortization or lender-specific loan terms.",
+          "A lower payment can still be risky if the loan gets much longer.",
+          "Fees are treated as a cost that must be recovered through monthly savings.",
+          "Huge income or huge savings can reduce the pressure score to zero because the car payment is not financially meaningful in that scenario.",
+        ]}
+      />
+
+      <section class="content-section">
+        <h2>The Best Refinance Improves Flexibility</h2>
+
+        <p>
+          The strongest refinance is one that lowers the payment or total cost
+          without weakening your long-term position. The weakest refinance is one
+          that makes the monthly bill feel better while extending debt far into
+          the future.
+        </p>
+
+        <p>
+          If the refinance frees up cash and you use that room to rebuild
+          savings, pay down debt, or stabilize your budget, it can be a smart
+          move. If it only delays the pain, it may not be worth it.
+        </p>
+      </section>
+
+      <div class="content-section">
+        <FAQSection title="Car Refinance FAQ" faqs={refinanceFaqs} />
+      </div>
+
+      <div class="content-section">
+        <RelatedCalculators calculators={relatedCalculators} />
+      </div>
+    </CalculatorPageShell>
+
+    <MethodologySection category="car loan refinancing" updated="June 2026" />
+  </div>
+
+  <script is:inline>
+    const clamp = (value, min, max) => Math.min(Math.max(value, min), max);
+
+    const getNumber = (id) => {
+      const rawValue = document.getElementById(id)?.value;
+      const value = Number(rawValue);
+      return Number.isFinite(value) && value >= 0 ? value : 0;
+    };
+
+    const getValue = (id) => document.getElementById(id)?.value || "";
+
+    function getPressureLevel(score) {
+      if (score <= 5) {
+        return {
+          label: "Almost No Pressure",
+          stress: "Almost no pressure",
+          colorClass: "safe",
+        };
+      }
+
+      if (score <= 30) {
+        return {
+          label: "Refinance Looks Reasonable",
+          stress: "Low pressure",
+          colorClass: "safe",
+        };
+      }
+
+      if (score <= 60) {
+        return {
+          label: "Compare Carefully Before Refinancing",
+          stress: "Moderate pressure",
+          colorClass: "caution",
+        };
+      }
+
+      return {
+        label: "Refinance Looks Risky",
+        stress: "High pressure",
+        colorClass: "danger",
+      };
+    }
+
+    function calculateRefinance() {
+      const income = getNumber("income");
+      const savings = getNumber("savings");
+      const currentPayment = getNumber("currentPayment");
+      const newPayment = getNumber("newPayment");
+      const balance = getNumber("balance");
+      const fees = getNumber("fees");
+      const currentMonths = getNumber("currentMonths");
+      const newMonths = getNumber("newMonths");
+      const debt = getNumber("debt");
+      const vehicleValue = getNumber("vehicleValue");
+      const goal = getValue("goal");
+      const keepPlan = getValue("keepPlan");
+
+      const results = document.getElementById("results");
+      const scoreText = document.getElementById("scoreText");
+      const fillBar = document.getElementById("fillBar");
+      const resultDetails = document.getElementById("resultDetails");
+
+      results.classList.add("visible");
+
+      if (
+        income <= 0 ||
+        currentPayment <= 0 ||
+        newPayment <= 0 ||
+        currentMonths <= 0 ||
+        newMonths <= 0
+      ) {
+        scoreText.textContent = "Add your numbers first";
+        fillBar.style.width = "0%";
+        fillBar.className = "fill safe";
+        resultDetails.innerHTML =
+          "<p>Enter income, savings, current payment, refinance payment, remaining balance, fees, and loan terms so the calculator can compare the refinance.</p>";
+        return;
+      }
+
+      const monthlyFlexibilityEstimate = Math.max(income * 0.7, 1);
+      const monthlySavings = currentPayment - newPayment;
+      const positiveMonthlySavings = Math.max(monthlySavings, 0);
+      const paymentIncrease = Math.max(newPayment - currentPayment, 0);
+      const currentTotalRemaining = currentPayment * currentMonths;
+      const newTotalRemaining = newPayment * newMonths + fees;
+      const totalCostChange = newTotalRemaining - currentTotalRemaining;
+      const termAdded = Math.max(newMonths - currentMonths, 0);
+      const termReduced = Math.max(currentMonths - newMonths, 0);
+      const breakEvenMonths =
+        positiveMonthlySavings > 0 ? fees / positiveMonthlySavings : 999;
+      const newPaymentRatio = (newPayment / income) * 100;
+      const newDebtRatio = ((newPayment + debt) / income) * 100;
+      const currentDebtRatio = ((currentPayment + debt) / income) * 100;
+      const savingsMonths = savings / monthlyFlexibilityEstimate;
+      const paymentsCoveredBySavings = savings / newPayment;
+      const equity = vehicleValue > 0 ? vehicleValue - balance : 0;
+      const negativeEquity = Math.max(-equity, 0);
+
+      let pressureScore = 35;
+
+      pressureScore += clamp(newPaymentRatio * 1.45, 0, 30);
+      pressureScore += clamp(newDebtRatio * 0.42, 0, 18);
+
+      if (monthlySavings <= 0) {
+        pressureScore += 28;
+      } else if (monthlySavings < 50) {
+        pressureScore += 16;
+      } else if (monthlySavings < 100) {
+        pressureScore += 8;
+      } else if (monthlySavings >= 250) {
+        pressureScore -= 18;
+      } else if (monthlySavings >= 150) {
+        pressureScore -= 12;
+      } else if (monthlySavings >= 100) {
+        pressureScore -= 7;
+      }
+
+      if (paymentIncrease > 0) {
+        pressureScore += 20;
+      }
+
+      if (termAdded >= 36) {
+        pressureScore += 24;
+      } else if (termAdded >= 24) {
+        pressureScore += 16;
+      } else if (termAdded >= 12) {
+        pressureScore += 8;
+      } else if (termReduced > 0) {
+        pressureScore -= 10;
+      }
+
+      if (totalCostChange > 5000) {
+        pressureScore += 20;
+      } else if (totalCostChange > 2500) {
+        pressureScore += 12;
+      } else if (totalCostChange > 1000) {
+        pressureScore += 6;
+      } else if (totalCostChange < -3000) {
+        pressureScore -= 18;
+      } else if (totalCostChange < -1000) {
+        pressureScore -= 10;
+      }
+
+      if (fees > positiveMonthlySavings * 12 && positiveMonthlySavings > 0) {
+        pressureScore += 12;
+      } else if (breakEvenMonths > 12 && positiveMonthlySavings > 0) {
+        pressureScore += 8;
+      } else if (breakEvenMonths <= 6 && positiveMonthlySavings > 0) {
+        pressureScore -= 6;
+      }
+
+      if (savings <= 0) {
+        pressureScore += 24;
+      } else if (savingsMonths < 1) {
+        pressureScore += 18;
+      } else if (savingsMonths < 3) {
+        pressureScore += 10;
+      } else if (savingsMonths >= 24) {
+        pressureScore -= 24;
+      } else if (savingsMonths >= 12) {
+        pressureScore -= 16;
+      } else if (savingsMonths >= 6) {
+        pressureScore -= 10;
+      }
+
+      if (negativeEquity > 0) {
+        pressureScore += clamp((negativeEquity / Math.max(income, 1)) * 100 * 0.55, 6, 20);
+      }
+
+      if (newPaymentRatio >= 20 || newDebtRatio >= 40) {
+        pressureScore = Math.max(pressureScore, 65);
+      } else if (newPaymentRatio >= 16 || newDebtRatio >= 35) {
+        pressureScore = Math.max(pressureScore, 55);
+      }
+
+      if (keepPlan === "short" && breakEvenMonths > 12) {
+        pressureScore += 14;
+      } else if (keepPlan === "long" && monthlySavings > 0) {
+        pressureScore -= 6;
+      }
+
+      if (goal === "cashflow" && monthlySavings >= 150 && newDebtRatio < 35) {
+        pressureScore -= 8;
+      } else if (goal === "interest" && totalCostChange > 0) {
+        pressureScore += 10;
+      } else if (goal === "stress" && savingsMonths < 3) {
+        pressureScore += 6;
+      }
+
+      if (
+        monthlySavings >= 100 &&
+        termAdded <= 12 &&
+        totalCostChange <= 1000 &&
+        breakEvenMonths <= 12
+      ) {
+        pressureScore = Math.min(pressureScore, 35);
+      }
+
+      if (
+        monthlySavings >= 150 &&
+        termAdded <= 6 &&
+        totalCostChange <= 0 &&
+        breakEvenMonths <= 9
+      ) {
+        pressureScore = Math.min(pressureScore, 25);
+      }
+
+      if (
+        monthlySavings <= 0 ||
+        (termAdded >= 24 && totalCostChange > 1000)
+      ) {
+        pressureScore = Math.max(pressureScore, 60);
+      }
+
+      if (savings === 0) {
+        pressureScore = Math.max(pressureScore, 45);
+      }
+
+      if (income >= 1000000 && newPaymentRatio <= 0.5 && newDebtRatio <= 2) {
+        pressureScore = 0;
+      } else if (
+        income >= 250000 &&
+        newPaymentRatio <= 1 &&
+        newDebtRatio <= 3
+      ) {
+        pressureScore = Math.min(pressureScore, 2);
+      } else if (
+        income >= 100000 &&
+        newPaymentRatio <= 2 &&
+        newDebtRatio <= 5
+      ) {
+        pressureScore = Math.min(pressureScore, 5);
+      }
+
+      if (savings >= 1000000 && paymentsCoveredBySavings >= 600) {
+        pressureScore = 0;
+      } else if (savings >= 500000 && paymentsCoveredBySavings >= 300) {
+        pressureScore = Math.min(pressureScore, 2);
+      } else if (savings >= 250000 && paymentsCoveredBySavings >= 180) {
+        pressureScore = Math.min(pressureScore, 5);
+      } else if (savingsMonths >= 120 || paymentsCoveredBySavings >= 120) {
+        pressureScore = Math.min(pressureScore, 8);
+      } else if (savingsMonths >= 60 || paymentsCoveredBySavings >= 60) {
+        pressureScore = Math.min(pressureScore, 12);
+      }
+
+      pressureScore = clamp(Math.round(pressureScore), 0, 100);
+
+      const level = getPressureLevel(pressureScore);
+
+      let recommendation = "";
+      let explanation = "";
+
+      if (pressureScore <= 5) {
+        recommendation = "Refinance Pressure Is Minimal";
+        explanation =
+          "The refinanced payment is not a meaningful financial pressure point based on the income and savings entered. The decision is mainly about fees, loan length, total cost, and whether the paperwork is worth it.";
+      } else if (pressureScore <= 30) {
+        recommendation = "Refinance Looks Reasonable";
+        explanation =
+          "The refinance appears financially reasonable based on the numbers entered. The payment savings, fees, loan term, and total cost should still be checked before signing.";
+      } else if (pressureScore <= 60) {
+        recommendation = "Compare Carefully Before Refinancing";
+        explanation =
+          "This refinance may help, but it deserves caution. Make sure the lower payment is not coming mostly from a longer loan, higher total cost, or fees that take too long to recover.";
+      } else {
+        recommendation = "Refinance Looks Risky";
+        explanation =
+          "This refinance appears to create or hide financial pressure. The new loan may lower the payment on paper while adding too much time, cost, or equity risk.";
+      }
+
+      scoreText.textContent = `${recommendation} — ${pressureScore}/100`;
+      fillBar.style.width = `${pressureScore}%`;
+      fillBar.className = `fill ${level.colorClass}`;
+
+      resultDetails.innerHTML = `
+        <p><strong>Current payment:</strong> $${currentPayment.toLocaleString()} per month.</p>
+
+        <p><strong>Refinanced payment:</strong> $${newPayment.toLocaleString()} per month, or ${newPaymentRatio.toFixed(1)}% of monthly take-home income.</p>
+
+        <p><strong>Monthly savings:</strong> ${
+          monthlySavings > 0
+            ? `$${monthlySavings.toLocaleString()} per month`
+            : monthlySavings < 0
+              ? `$${Math.abs(monthlySavings).toLocaleString()} more per month`
+              : "No monthly savings"
+        }.</p>
+
+        <p><strong>Loan term change:</strong> ${
+          termAdded > 0
+            ? `${termAdded.toFixed(0)} extra months`
+            : termReduced > 0
+              ? `${termReduced.toFixed(0)} fewer months`
+              : "No term change"
+        }.</p>
+
+        <p><strong>Estimated remaining cost change:</strong> ${
+          totalCostChange > 0
+            ? `$${totalCostChange.toLocaleString()} more over the remaining loan comparison`
+            : totalCostChange < 0
+              ? `$${Math.abs(totalCostChange).toLocaleString()} less over the remaining loan comparison`
+              : "About the same total remaining cost"
+        }.</p>
+
+        <p><strong>Break-even point on fees:</strong> ${
+          positiveMonthlySavings > 0
+            ? `${breakEvenMonths.toFixed(1)} months`
+            : "No break-even because the payment does not fall"
+        }.</p>
+
+        <p><strong>Current total debt impact:</strong> ${currentDebtRatio.toFixed(1)}% of monthly take-home income.</p>
+
+        <p><strong>Refinanced total debt impact:</strong> ${newDebtRatio.toFixed(1)}% of monthly take-home income.</p>
+
+        <p><strong>Savings cushion:</strong> $${savings.toLocaleString()}, or about ${savingsMonths.toFixed(1)} months of estimated flexibility.</p>
+
+        <p><strong>Vehicle equity estimate:</strong> ${
+          vehicleValue > 0
+            ? equity >= 0
+              ? `$${equity.toLocaleString()} in estimated equity`
+              : `$${negativeEquity.toLocaleString()} in estimated negative equity`
+            : "Not estimated"
+        }.</p>
+
+        <p><strong>Pressure level:</strong> ${level.stress}.</p>
+
+        <p>${explanation}</p>
+      `;
+    }
+
+    document
+      .getElementById("carButton")
+      .addEventListener("click", calculateRefinance);
+  </script>
+</Layout>

@@ -1,0 +1,798 @@
+---
+import Layout from "../layouts/Layout.astro";
+import CalculatorPageShell from "../components/CalculatorPageShell.astro";
+import FAQSection from "../components/FAQSection.astro";
+import RelatedCalculators from "../components/RelatedCalculators.astro";
+import MethodologySection from "../components/MethodologySection.astro";
+import FinancialRedFlags from "../components/FinancialRedFlags.astro";
+import CalculatorAssumptions from "../components/CalculatorAssumptions.astro";
+import KeyCostCategories from "../components/KeyCostCategories.astro";
+import ReduceCostTips from "../components/ReduceCostTips.astro";
+import WhenSpendingMakesSense from "../components/WhenSpendingMakesSense.astro";
+import { calculators } from "../data/calculators.js";
+
+const electricCarFaqs = [
+  {
+    question: "Should I buy an electric car?",
+    answer:
+      "An electric car can make sense if the payment fits your income, charging is convenient, incentives reduce the real price, and fuel savings offset enough of the cost difference. It is riskier when the EV payment stretches your budget or you do not have reliable charging.",
+  },
+  {
+    question: "Do electric cars really save money?",
+    answer:
+      "They can save money on fuel and some maintenance, but the purchase price, insurance, charging setup, depreciation, and financing still matter. The monthly payment can easily outweigh fuel savings if the EV is much more expensive.",
+  },
+  {
+    question: "Is an EV worth it without home charging?",
+    answer:
+      "It can be, but it is less convenient and often less financially clean. Home charging usually makes the EV ownership math stronger because public fast charging can be more expensive and less predictable.",
+  },
+  {
+    question: "Should I buy an EV for gas savings alone?",
+    answer:
+      "Usually no. Gas savings help, but the decision should include payment pressure, insurance, charging access, incentives, driving habits, resale risk, and your savings cushion.",
+  },
+];
+
+const relatedCalculators = calculators
+  .filter(
+    (calculator) =>
+      calculator.category === "Cars" &&
+      calculator.href !== "/should-i-buy-an-electric-car"
+  )
+  .slice(0, 4);
+---
+
+<Layout
+  title="Should I Buy an Electric Car?"
+  description="Use this electric car calculator to compare EV payment pressure, gas savings, incentives, charging access, savings cushion, debt load, and affordability."
+>
+  <style>
+    .container {
+      max-width: 900px;
+      margin: auto;
+    }
+
+    .calculator {
+      background: white;
+      padding: 40px;
+      border-radius: 24px;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.06);
+    }
+
+    .calculator h2 {
+      margin-top: 0;
+      font-size: 2rem;
+      margin-bottom: 18px;
+      color: #0f172a;
+    }
+
+    .calculator-intro {
+      color: #334155;
+      line-height: 1.8;
+      margin-bottom: 30px;
+      font-size: 1.05rem;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+    }
+
+    .field label {
+      display: block;
+      font-weight: 800;
+      margin-bottom: 10px;
+      color: #0f172a;
+    }
+
+    .field input,
+    .field select {
+      width: 100%;
+      padding: 16px;
+      border-radius: 12px;
+      border: 1px solid #cbd5e1;
+      font-size: 1rem;
+      box-sizing: border-box;
+      background: white;
+    }
+
+    button {
+      margin-top: 30px;
+      background: #0f766e;
+      color: white;
+      border: none;
+      padding: 18px 32px;
+      border-radius: 999px;
+      font-size: 1.05rem;
+      font-weight: 800;
+      cursor: pointer;
+      transition: opacity 0.2s ease;
+    }
+
+    button:hover {
+      opacity: 0.92;
+    }
+
+    .results {
+      margin-top: 36px;
+      background: #f8fafc;
+      padding: 32px;
+      border-radius: 24px;
+      border: 1px solid var(--border);
+      box-shadow: 0 10px 24px rgba(15, 23, 42, 0.04);
+      display: none;
+    }
+
+    .results.visible {
+      display: block;
+    }
+
+    .score {
+      font-size: clamp(2rem, 4vw, 2.7rem);
+      font-weight: 900;
+      color: #0f172a;
+      margin-bottom: 22px;
+      line-height: 1.15;
+    }
+
+    .bar {
+      width: 100%;
+      height: 16px;
+      background: #dbe4ee;
+      border-radius: 999px;
+      overflow: hidden;
+      margin-bottom: 24px;
+    }
+
+    .fill {
+      height: 100%;
+      width: 0%;
+      border-radius: 999px;
+      transition: width 0.45s ease;
+    }
+
+    .fill.safe {
+      background: linear-gradient(90deg, #0f766e 0%, #14b8a6 100%);
+    }
+
+    .fill.caution {
+      background: linear-gradient(90deg, #ca8a04 0%, #facc15 100%);
+    }
+
+    .fill.danger {
+      background: linear-gradient(90deg, #dc2626 0%, #f97316 100%);
+    }
+
+    .result-details {
+      color: #334155;
+      line-height: 1.9;
+      font-size: 1.02rem;
+    }
+
+    .result-details p {
+      margin: 0 0 12px;
+    }
+
+    .disclaimer {
+      margin-top: 24px;
+      font-size: 0.9rem;
+      color: #64748b;
+    }
+
+    .content-section {
+      margin-top: 60px;
+    }
+
+    .content-section h2 {
+      font-size: 2rem;
+      margin-bottom: 20px;
+      color: #0f172a;
+    }
+
+    .content-section p,
+    .content-section li {
+      font-size: 1.1rem;
+      line-height: 1.9;
+      color: #334155;
+    }
+
+    .content-link {
+      color: #0f766e;
+      font-weight: 700;
+      text-decoration: none;
+    }
+
+    .content-link:hover {
+      text-decoration: underline;
+    }
+
+    @media (max-width: 768px) {
+      .calculator {
+        padding: 24px;
+      }
+
+      .grid {
+        grid-template-columns: 1fr;
+      }
+
+      .calculator h2,
+      .content-section h2 {
+        font-size: 1.7rem;
+      }
+
+      .results {
+        padding: 24px;
+      }
+    }
+  </style>
+
+  <div class="container">
+    <CalculatorPageShell
+      eyebrow="Electric Car Calculator"
+      title="Should I Buy an Electric Car?"
+      description="Compare EV affordability based on payment, gas savings, incentives, charging access, savings cushion, debt load, and monthly flexibility."
+    >
+      <div class="calculator">
+        <h2>Electric Car Pressure Verdict</h2>
+
+        <p class="calculator-intro">
+          Enter your income, savings, EV payment estimate, gas-car alternative,
+          fuel savings, incentives, and charging situation. This calculator
+          estimates whether an electric car lowers real pressure or just shifts
+          the cost into a higher vehicle payment.
+        </p>
+
+        <div class="grid">
+          <div class="field">
+            <label for="income">Monthly Take-Home Income</label>
+            <input id="income" type="number" placeholder="Example: 8500" />
+          </div>
+
+          <div class="field">
+            <label for="savings">Current Savings</label>
+            <input id="savings" type="number" placeholder="Example: 25000" />
+          </div>
+
+          <div class="field">
+            <label for="evPayment">Estimated EV Monthly Payment</label>
+            <input id="evPayment" type="number" placeholder="Example: 825" />
+          </div>
+
+          <div class="field">
+            <label for="gasPayment">Comparable Gas Car Payment</label>
+            <input id="gasPayment" type="number" placeholder="Example: 625" />
+          </div>
+
+          <div class="field">
+            <label for="monthlyFuelSavings">Estimated Monthly Fuel Savings</label>
+            <input id="monthlyFuelSavings" type="number" placeholder="Example: 140" />
+          </div>
+
+          <div class="field">
+            <label for="incentives">Tax Credits / Incentives</label>
+            <input id="incentives" type="number" placeholder="Example: 7500" />
+          </div>
+
+          <div class="field">
+            <label for="chargerCost">Home Charger / Setup Cost</label>
+            <input id="chargerCost" type="number" placeholder="Example: 1200" />
+          </div>
+
+          <div class="field">
+            <label for="debt">Other Monthly Debt Payments</label>
+            <input id="debt" type="number" placeholder="Example: 900" />
+          </div>
+
+          <div class="field">
+            <label for="chargingAccess">Charging Access</label>
+            <select id="chargingAccess">
+              <option value="home" selected>Reliable home charging</option>
+              <option value="work">Work or shared charging</option>
+              <option value="public">Mostly public charging</option>
+            </select>
+          </div>
+
+          <div class="field">
+            <label for="drivingNeed">Driving Pattern</label>
+            <select id="drivingNeed">
+              <option value="low">Low mileage / short trips</option>
+              <option value="medium" selected>Normal commuting</option>
+              <option value="high">High mileage / heavy driving</option>
+            </select>
+          </div>
+        </div>
+
+        <button id="carButton" type="button">Get EV Verdict</button>
+
+        <div class="results" id="results">
+          <div class="score" id="scoreText"></div>
+
+          <div class="bar">
+            <div class="fill" id="fillBar"></div>
+          </div>
+
+          <div class="result-details" id="resultDetails"></div>
+
+          <div class="disclaimer">
+            This is a general educational estimate, not financial advice.
+          </div>
+        </div>
+      </div>
+
+      <section class="content-section">
+        <h2>An Electric Car Is Still a Car Payment Decision</h2>
+
+        <p>
+          Electric cars can reduce fuel spending and some maintenance costs, but
+          the purchase still has to work as a vehicle decision. A lower gas bill
+          does not automatically make a higher payment affordable.
+        </p>
+
+        <p>
+          The strongest EV purchase is usually one where the monthly payment
+          fits cleanly, charging is convenient, incentives reduce the real cost,
+          and fuel savings are meaningful enough to matter. The weakest EV
+          purchase is one where the fuel savings are used to justify a payment
+          that would otherwise stretch the budget.
+        </p>
+
+        <p>
+          Before deciding, compare this result with the broader
+          <a class="content-link" href="/how-much-car-can-i-afford">
+            car affordability guide
+          </a>
+          and the
+          <a class="content-link" href="/should-i-buy-new-or-used-car">
+            new vs used car calculator
+          </a>.
+        </p>
+      </section>
+
+      <WhenSpendingMakesSense
+        title="When Buying an Electric Car Can Make Sense"
+        items={[
+          "The EV payment fits comfortably after debt, insurance, and normal expenses.",
+          "You have reliable home or work charging.",
+          "Monthly fuel savings meaningfully offset the EV payment premium.",
+          "Incentives reduce the real purchase cost without draining savings.",
+          "You drive enough miles for fuel savings to matter.",
+        ]}
+      />
+
+      <section class="content-section">
+        <h2>When an EV Can Become Risky</h2>
+
+        <p>
+          An EV can become risky when the payment is much higher than a gas-car
+          alternative, the charging setup is expensive, or you will rely mostly
+          on public charging. The cost may still work, but the savings are less
+          predictable.
+        </p>
+
+        <p>
+          It can also be risky if the purchase depends on a tax credit you may
+          not actually receive, a future fuel savings estimate that is too
+          optimistic, or a loan term that hides the real cost of the vehicle.
+        </p>
+      </section>
+
+      <KeyCostCategories
+        items={[
+          {
+            title: "Payment premium",
+            description:
+              "The EV payment should be compared with a realistic gas-car alternative, not judged in isolation.",
+          },
+          {
+            title: "Charging access",
+            description:
+              "Home or work charging usually makes EV ownership easier and more predictable than relying mostly on public chargers.",
+          },
+          {
+            title: "Fuel savings",
+            description:
+              "Fuel savings can help, but they should offset the EV premium rather than excuse an unaffordable payment.",
+          },
+          {
+            title: "Incentives and setup costs",
+            description:
+              "Tax credits, rebates, charger installation, electrical upgrades, and insurance can change the real affordability picture.",
+          },
+        ]}
+      />
+
+      <ReduceCostTips
+        items={[
+          "Get insurance quotes before buying the EV.",
+          "Estimate home charging setup costs before assuming the savings are clean.",
+          "Compare the EV with a realistic gas or hybrid alternative.",
+          "Do not count a tax credit unless you are confident you qualify.",
+          "Consider used EVs if depreciation has already lowered the purchase price.",
+        ]}
+      />
+
+      <FinancialRedFlags
+        items={[
+          "The EV payment is much higher than the gas-car alternative.",
+          "You do not have reliable home or work charging.",
+          "The purchase only works if every incentive and savings estimate comes true.",
+          "The charger setup cost would weaken your emergency fund.",
+          "You are using fuel savings to justify a payment that already feels tight.",
+        ]}
+      />
+
+      <CalculatorAssumptions
+        items={[
+          "The calculator compares EV payment pressure, gas-car payment alternative, fuel savings, incentives, charger cost, charging access, driving pattern, debt load, and savings cushion.",
+          "It does not calculate exact tax eligibility, electricity rates, insurance, depreciation, maintenance, or resale value.",
+          "Fuel savings are treated as an offset against the EV payment premium.",
+          "Home charging is treated as a financial and convenience advantage.",
+          "Huge income or huge savings can reduce the pressure score to zero because the EV payment is not financially meaningful in that scenario.",
+        ]}
+      />
+
+      <section class="content-section">
+        <h2>The Best EV Decision Protects Monthly Flexibility</h2>
+
+        <p>
+          The best electric car decision is not simply the one with the lowest
+          fuel cost. It is the one that gives you reliable transportation,
+          manageable charging, and a payment that does not crowd out savings,
+          debt payoff, housing, food, travel, or normal life.
+        </p>
+
+        <p>
+          If the EV lowers total ownership pressure and fits your daily routine,
+          it can be a strong move. If it mainly creates a higher car payment
+          with uncertain savings, a gas car, hybrid, used EV, or delayed purchase
+          may be safer.
+        </p>
+      </section>
+
+      <div class="content-section">
+        <FAQSection title="Electric Car FAQ" faqs={electricCarFaqs} />
+      </div>
+
+      <div class="content-section">
+        <RelatedCalculators calculators={relatedCalculators} />
+      </div>
+    </CalculatorPageShell>
+
+    <MethodologySection category="electric car affordability" updated="June 2026" />
+  </div>
+
+  <script is:inline>
+    const clamp = (value, min, max) => Math.min(Math.max(value, min), max);
+
+    const getNumber = (id) => {
+      const rawValue = document.getElementById(id)?.value;
+      const value = Number(rawValue);
+      return Number.isFinite(value) && value >= 0 ? value : 0;
+    };
+
+    const getValue = (id) => document.getElementById(id)?.value || "";
+
+    function getPressureLevel(score) {
+      if (score <= 5) {
+        return {
+          label: "Almost No Pressure",
+          stress: "Almost no pressure",
+          colorClass: "safe",
+        };
+      }
+
+      if (score <= 30) {
+        return {
+          label: "EV Looks Reasonable",
+          stress: "Low pressure",
+          colorClass: "safe",
+        };
+      }
+
+      if (score <= 60) {
+        return {
+          label: "Compare EV Costs Carefully",
+          stress: "Moderate pressure",
+          colorClass: "caution",
+        };
+      }
+
+      return {
+        label: "EV Purchase Looks Risky",
+        stress: "High pressure",
+        colorClass: "danger",
+      };
+    }
+
+    function calculateElectricCar() {
+      const income = getNumber("income");
+      const savings = getNumber("savings");
+      const evPayment = getNumber("evPayment");
+      const gasPayment = getNumber("gasPayment");
+      const monthlyFuelSavings = getNumber("monthlyFuelSavings");
+      const incentives = getNumber("incentives");
+      const chargerCost = getNumber("chargerCost");
+      const debt = getNumber("debt");
+      const chargingAccess = getValue("chargingAccess");
+      const drivingNeed = getValue("drivingNeed");
+
+      const results = document.getElementById("results");
+      const scoreText = document.getElementById("scoreText");
+      const fillBar = document.getElementById("fillBar");
+      const resultDetails = document.getElementById("resultDetails");
+
+      results.classList.add("visible");
+
+      if (income <= 0 || evPayment <= 0 || gasPayment <= 0) {
+        scoreText.textContent = "Add your numbers first";
+        fillBar.style.width = "0%";
+        fillBar.className = "fill safe";
+        resultDetails.innerHTML =
+          "<p>Enter income, savings, EV payment, gas-car payment, fuel savings, incentives, charger costs, and debt so the calculator can compare the EV decision.</p>";
+        return;
+      }
+
+      const monthlyFlexibilityEstimate = Math.max(income * 0.7, 1);
+      const paymentPremium = Math.max(evPayment - gasPayment, 0);
+      const paymentSavings = Math.max(gasPayment - evPayment, 0);
+      const netMonthlyPremium = paymentPremium - monthlyFuelSavings;
+      const netMonthlySavings =
+        monthlyFuelSavings + paymentSavings - paymentPremium;
+      const evPaymentRatio = (evPayment / income) * 100;
+      const evDebtRatio = ((evPayment + debt) / income) * 100;
+      const gasDebtRatio = ((gasPayment + debt) / income) * 100;
+      const savingsAfterSetup = Math.max(savings - chargerCost, 0);
+      const savingsMonthsAfter = savingsAfterSetup / monthlyFlexibilityEstimate;
+      const paymentsCoveredAfter = savingsAfterSetup / evPayment;
+      const setupSavingsImpact =
+        savings > 0 ? (chargerCost / savings) * 100 : 999;
+      const annualFuelSavings = monthlyFuelSavings * 12;
+      const incentiveMonthsEquivalent =
+        evPayment > 0 ? incentives / evPayment : 0;
+
+      let pressureScore = 0;
+
+      pressureScore += clamp(evPaymentRatio * 1.6, 0, 34);
+      pressureScore += clamp(evDebtRatio * 0.5, 0, 22);
+      pressureScore += clamp((Math.max(netMonthlyPremium, 0) / Math.max(income, 1)) * 100 * 2.2, 0, 20);
+
+      if (evPaymentRatio >= 20) {
+        pressureScore += 22;
+      } else if (evPaymentRatio >= 15) {
+        pressureScore += 14;
+      } else if (evPaymentRatio >= 10) {
+        pressureScore += 7;
+      } else if (evPaymentRatio <= 5) {
+        pressureScore -= 8;
+      }
+
+      if (evDebtRatio >= 40) {
+        pressureScore += 18;
+      } else if (evDebtRatio >= 30) {
+        pressureScore += 10;
+      } else if (evDebtRatio <= 20) {
+        pressureScore -= 5;
+      }
+
+      if (savingsAfterSetup <= 0) {
+        pressureScore += 32;
+      } else if (savingsMonthsAfter < 1) {
+        pressureScore += 24;
+      } else if (savingsMonthsAfter < 3) {
+        pressureScore += 14;
+      } else if (savingsMonthsAfter >= 24) {
+        pressureScore -= 30;
+      } else if (savingsMonthsAfter >= 12) {
+        pressureScore -= 22;
+      } else if (savingsMonthsAfter >= 6) {
+        pressureScore -= 14;
+      }
+
+      if (paymentPremium >= 500) {
+        pressureScore += 18;
+      } else if (paymentPremium >= 300) {
+        pressureScore += 12;
+      } else if (paymentPremium >= 150) {
+        pressureScore += 6;
+      } else if (paymentSavings > 0) {
+        pressureScore -= 10;
+      }
+
+      if (netMonthlySavings >= 250) {
+        pressureScore -= 18;
+      } else if (netMonthlySavings >= 150) {
+        pressureScore -= 12;
+      } else if (netMonthlySavings >= 75) {
+        pressureScore -= 7;
+      } else if (netMonthlyPremium >= 250) {
+        pressureScore += 14;
+      } else if (netMonthlyPremium >= 100) {
+        pressureScore += 8;
+      }
+
+      if (incentives >= evPayment * 12) {
+        pressureScore -= 12;
+      } else if (incentives >= evPayment * 6) {
+        pressureScore -= 7;
+      } else if (incentives <= 0 && paymentPremium > 0) {
+        pressureScore += 5;
+      }
+
+      if (chargerCost >= 3000) {
+        pressureScore += 10;
+      } else if (chargerCost >= 1500) {
+        pressureScore += 6;
+      }
+
+      if (setupSavingsImpact >= 50) {
+        pressureScore += 12;
+      } else if (setupSavingsImpact >= 25) {
+        pressureScore += 6;
+      }
+
+      if (chargingAccess === "home") {
+        pressureScore -= 10;
+      } else if (chargingAccess === "work") {
+        pressureScore -= 4;
+      } else if (chargingAccess === "public") {
+        pressureScore += 16;
+      }
+
+      if (drivingNeed === "high") {
+        if (monthlyFuelSavings >= 150) {
+          pressureScore -= 8;
+        } else {
+          pressureScore += 4;
+        }
+      } else if (drivingNeed === "low") {
+        if (paymentPremium > 0) {
+          pressureScore += 8;
+        }
+      }
+
+      if (evPaymentRatio >= 20 || evDebtRatio >= 40) {
+        pressureScore = Math.max(pressureScore, 65);
+      } else if (evPaymentRatio >= 16 || evDebtRatio >= 35) {
+        pressureScore = Math.max(pressureScore, 55);
+      }
+
+      if (savingsAfterSetup === 0) {
+        pressureScore = Math.max(pressureScore, 60);
+      }
+
+      if (chargingAccess === "public" && netMonthlyPremium > 0) {
+        pressureScore = Math.max(pressureScore, 45);
+      }
+
+      if (
+        savingsMonthsAfter >= 12 &&
+        evPaymentRatio < 12 &&
+        evDebtRatio < 30 &&
+        netMonthlyPremium <= 100 &&
+        chargingAccess !== "public"
+      ) {
+        pressureScore = Math.min(pressureScore, 35);
+      }
+
+      if (
+        savingsMonthsAfter >= 6 &&
+        evPaymentRatio < 10 &&
+        evDebtRatio < 25 &&
+        netMonthlySavings >= 75 &&
+        chargingAccess === "home"
+      ) {
+        pressureScore = Math.min(pressureScore, 25);
+      }
+
+      if (income >= 1000000 && evPaymentRatio <= 0.5 && evDebtRatio <= 2) {
+        pressureScore = 0;
+      } else if (
+        income >= 250000 &&
+        evPaymentRatio <= 1 &&
+        evDebtRatio <= 3
+      ) {
+        pressureScore = Math.min(pressureScore, 2);
+      } else if (
+        income >= 100000 &&
+        evPaymentRatio <= 2 &&
+        evDebtRatio <= 5
+      ) {
+        pressureScore = Math.min(pressureScore, 5);
+      }
+
+      if (savingsAfterSetup >= 1000000 && paymentsCoveredAfter >= 600) {
+        pressureScore = 0;
+      } else if (
+        savingsAfterSetup >= 500000 &&
+        paymentsCoveredAfter >= 300
+      ) {
+        pressureScore = Math.min(pressureScore, 2);
+      } else if (
+        savingsAfterSetup >= 250000 &&
+        paymentsCoveredAfter >= 180
+      ) {
+        pressureScore = Math.min(pressureScore, 5);
+      } else if (
+        savingsMonthsAfter >= 120 ||
+        paymentsCoveredAfter >= 120
+      ) {
+        pressureScore = Math.min(pressureScore, 8);
+      } else if (savingsMonthsAfter >= 60 || paymentsCoveredAfter >= 60) {
+        pressureScore = Math.min(pressureScore, 12);
+      }
+
+      pressureScore = clamp(Math.round(pressureScore), 0, 100);
+
+      const level = getPressureLevel(pressureScore);
+
+      let recommendation = "";
+      let explanation = "";
+
+      if (pressureScore <= 5) {
+        recommendation = "EV Pressure Is Minimal";
+        explanation =
+          "The EV payment is not a meaningful financial pressure point based on the income and savings entered. The decision is mainly about preference, charging convenience, incentives, depreciation, and whether the EV fits your lifestyle.";
+      } else if (pressureScore <= 30) {
+        recommendation = "EV Looks Reasonable";
+        explanation =
+          "The EV appears financially manageable based on the numbers entered. Still compare insurance, charging setup, depreciation, and whether the fuel savings are realistic.";
+      } else if (pressureScore <= 60) {
+        recommendation = "Compare EV Costs Carefully";
+        explanation =
+          "This EV may work, but it deserves caution. The payment premium, fuel savings, charging access, incentives, and savings cushion should be reviewed before committing.";
+      } else {
+        recommendation = "EV Purchase Looks Risky";
+        explanation =
+          "The EV appears to create significant financial pressure compared with a gas-car alternative. A cheaper EV, used EV, hybrid, gas car, stronger savings cushion, or delayed purchase may protect more flexibility.";
+      }
+
+      scoreText.textContent = `${recommendation} — ${pressureScore}/100`;
+      fillBar.style.width = `${pressureScore}%`;
+      fillBar.className = `fill ${level.colorClass}`;
+
+      resultDetails.innerHTML = `
+        <p><strong>EV payment:</strong> $${evPayment.toLocaleString()} per month, or ${evPaymentRatio.toFixed(1)}% of monthly take-home income.</p>
+
+        <p><strong>Gas-car comparison payment:</strong> $${gasPayment.toLocaleString()} per month.</p>
+
+        <p><strong>EV payment premium:</strong> ${
+          paymentPremium > 0
+            ? `$${paymentPremium.toLocaleString()} more per month before fuel savings`
+            : paymentSavings > 0
+              ? `$${paymentSavings.toLocaleString()} less per month before fuel savings`
+              : "No payment difference"
+        }.</p>
+
+        <p><strong>Estimated fuel savings:</strong> $${monthlyFuelSavings.toLocaleString()} per month, or $${annualFuelSavings.toLocaleString()} per year.</p>
+
+        <p><strong>Net monthly EV impact:</strong> ${
+          netMonthlySavings > 0
+            ? `$${netMonthlySavings.toLocaleString()} better per month after fuel savings`
+            : netMonthlyPremium > 0
+              ? `$${netMonthlyPremium.toLocaleString()} more per month after fuel savings`
+              : "About even after fuel savings"
+        }.</p>
+
+        <p><strong>Incentives:</strong> $${incentives.toLocaleString()}, equal to about ${incentiveMonthsEquivalent.toFixed(1)} EV payments.</p>
+
+        <p><strong>Charging setup cost:</strong> $${chargerCost.toLocaleString()}.</p>
+
+        <p><strong>EV total debt impact:</strong> ${evDebtRatio.toFixed(1)}% of monthly take-home income.</p>
+
+        <p><strong>Gas-car total debt impact:</strong> ${gasDebtRatio.toFixed(1)}% of monthly take-home income.</p>
+
+        <p><strong>Savings after charging setup:</strong> $${savingsAfterSetup.toLocaleString()}, or about ${savingsMonthsAfter.toFixed(1)} months of estimated flexibility.</p>
+
+        <p><strong>Pressure level:</strong> ${level.stress}.</p>
+
+        <p>${explanation}</p>
+      `;
+    }
+
+    document
+      .getElementById("carButton")
+      .addEventListener("click", calculateElectricCar);
+  </script>
+</Layout>

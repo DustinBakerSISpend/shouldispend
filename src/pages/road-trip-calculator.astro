@@ -1,0 +1,461 @@
+---
+import Layout from "../layouts/Layout.astro";
+import CalculatorPageShell from "../components/CalculatorPageShell.astro";
+import FAQSection from "../components/FAQSection.astro";
+import RelatedCalculators from "../components/RelatedCalculators.astro";
+import MethodologySection from "../components/MethodologySection.astro";
+import CalculatorAssumptions from "../components/CalculatorAssumptions.astro";
+import KeyCostCategories from "../components/KeyCostCategories.astro";
+import ReduceCostTips from "../components/ReduceCostTips.astro";
+import { calculators } from "../data/calculators.js";
+
+const roadTripFaqs = [
+  {
+    question: "How do I calculate gas cost for a road trip?",
+    answer:
+      "Divide total miles by your vehicle’s miles per gallon, then multiply by the gas price per gallon. For example, 600 miles divided by 25 MPG equals 24 gallons. At $3.50 per gallon, the fuel cost is $84.",
+  },
+  {
+    question: "Should I calculate one-way or round-trip mileage?",
+    answer:
+      "Use one-way mileage if you only want the cost to get there. Choose round trip if you want the full there-and-back fuel cost.",
+  },
+  {
+    question: "Does this include hotels, food, tolls, or parking?",
+    answer:
+      "No. This calculator estimates fuel cost only. For a full road trip budget, add lodging, food, tolls, parking, attraction tickets, maintenance, and emergency cash.",
+  },
+  {
+    question: "How accurate is a road trip fuel calculator?",
+    answer:
+      "It is a useful estimate, but real fuel cost can change based on traffic, hills, weather, driving speed, cargo weight, gas prices, and actual MPG.",
+  },
+];
+
+const relatedCalculators = calculators
+  .filter(
+    (calculator) =>
+      calculator.category === "Cars" &&
+      calculator.href !== "/road-trip-calculator"
+  )
+  .slice(0, 4);
+---
+
+<Layout
+  title="Road Trip Calculator"
+  description="Use this road trip calculator to estimate fuel cost based on miles, MPG, gas price, round trip mileage, and passengers."
+>
+  <style>
+    .container {
+      max-width: 900px;
+      margin: auto;
+    }
+
+    .calculator {
+      background: white;
+      padding: 40px;
+      border-radius: 24px;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.06);
+    }
+
+    .calculator h2 {
+      margin-top: 0;
+      font-size: 2rem;
+      margin-bottom: 18px;
+      color: #0f172a;
+    }
+
+    .calculator-intro {
+      color: #334155;
+      line-height: 1.8;
+      margin-bottom: 30px;
+      font-size: 1.05rem;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+    }
+
+    .field label {
+      display: block;
+      font-weight: 800;
+      margin-bottom: 10px;
+      color: #0f172a;
+    }
+
+    .field input,
+    .field select {
+      width: 100%;
+      padding: 16px;
+      border-radius: 12px;
+      border: 1px solid #cbd5e1;
+      font-size: 1rem;
+      box-sizing: border-box;
+      background: white;
+    }
+
+    button {
+      margin-top: 30px;
+      background: #0f766e;
+      color: white;
+      border: none;
+      padding: 18px 32px;
+      border-radius: 999px;
+      font-size: 1.05rem;
+      font-weight: 800;
+      cursor: pointer;
+      transition: opacity 0.2s ease;
+    }
+
+    button:hover {
+      opacity: 0.92;
+    }
+
+    .results {
+      margin-top: 36px;
+      background: #f8fafc;
+      padding: 32px;
+      border-radius: 24px;
+      border: 1px solid var(--border);
+      box-shadow: 0 10px 24px rgba(15, 23, 42, 0.04);
+      display: none;
+    }
+
+    .results.visible {
+      display: block;
+    }
+
+    .total-price {
+      font-size: clamp(2.5rem, 6vw, 4rem);
+      font-weight: 900;
+      color: #0f172a;
+      line-height: 1.05;
+      margin-bottom: 12px;
+    }
+
+    .result-label {
+      font-size: 1.15rem;
+      font-weight: 800;
+      color: #0f766e;
+      margin-bottom: 24px;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+    }
+
+    .result-details {
+      color: #334155;
+      line-height: 1.9;
+      font-size: 1.02rem;
+    }
+
+    .result-details p {
+      margin: 0 0 12px;
+    }
+
+    .mini-summary {
+      margin-top: 24px;
+      padding: 20px;
+      border-radius: 18px;
+      background: white;
+      border: 1px solid #dbe4ee;
+      color: #334155;
+      line-height: 1.8;
+    }
+
+    .disclaimer {
+      margin-top: 24px;
+      font-size: 0.9rem;
+      color: #64748b;
+    }
+
+    .content-section {
+      margin-top: 60px;
+    }
+
+    .content-section h2 {
+      font-size: 2rem;
+      margin-bottom: 20px;
+      color: #0f172a;
+    }
+
+    .content-section p,
+    .content-section li {
+      font-size: 1.1rem;
+      line-height: 1.9;
+      color: #334155;
+    }
+
+    .content-link {
+      color: #0f766e;
+      font-weight: 700;
+      text-decoration: none;
+    }
+
+    .content-link:hover {
+      text-decoration: underline;
+    }
+
+    @media (max-width: 768px) {
+      .calculator {
+        padding: 24px;
+      }
+
+      .grid {
+        grid-template-columns: 1fr;
+      }
+
+      .calculator h2,
+      .content-section h2 {
+        font-size: 1.7rem;
+      }
+
+      .results {
+        padding: 24px;
+      }
+    }
+  </style>
+
+  <div class="container">
+    <CalculatorPageShell
+      eyebrow="Road Trip Calculator"
+      title="Road Trip Calculator"
+      description="Estimate the fuel cost of a road trip using miles, MPG, gas price, round trip mileage, and passenger splitting."
+    >
+      <div class="calculator">
+        <h2>Road Trip Fuel Cost Calculator</h2>
+
+        <p class="calculator-intro">
+          Enter your trip miles, vehicle MPG, gas price, and passenger count.
+          This calculator estimates your total fuel cost and optional cost per
+          person.
+        </p>
+
+        <div class="grid">
+          <div class="field">
+            <label for="miles">Trip Miles</label>
+            <input id="miles" type="number" placeholder="Example: 650" />
+          </div>
+
+          <div class="field">
+            <label for="mpg">Vehicle MPG</label>
+            <input id="mpg" type="number" placeholder="Example: 28" />
+          </div>
+
+          <div class="field">
+            <label for="gasPrice">Gas Price per Gallon</label>
+            <input id="gasPrice" type="number" step="0.01" placeholder="Example: 3.49" />
+          </div>
+
+          <div class="field">
+            <label for="roundTrip">Trip Type</label>
+            <select id="roundTrip">
+              <option value="oneway">One-way</option>
+              <option value="roundtrip" selected>Round trip</option>
+            </select>
+          </div>
+
+          <div class="field">
+            <label for="passengers">People Splitting Fuel</label>
+            <input id="passengers" type="number" placeholder="Example: 2" value="1" />
+          </div>
+
+          <div class="field">
+            <label for="extraMiles">Extra Miles / Detours</label>
+            <input id="extraMiles" type="number" placeholder="Example: 75" />
+          </div>
+        </div>
+
+        <button id="roadTripButton" type="button">Calculate Road Trip Cost</button>
+
+        <div class="results" id="results">
+          <div class="result-label">Estimated Fuel Cost</div>
+
+          <div class="total-price" id="totalPrice"></div>
+
+          <div class="result-details" id="resultDetails"></div>
+
+          <div class="mini-summary" id="tripSummary"></div>
+
+          <div class="disclaimer">
+            This estimate includes fuel only. It does not include hotels, food,
+            tolls, parking, tickets, repairs, or other travel costs.
+          </div>
+        </div>
+      </div>
+
+      <section class="content-section">
+        <h2>How This Road Trip Calculator Works</h2>
+
+        <p>
+          The basic formula is simple: total miles divided by miles per gallon,
+          multiplied by gas price. If you select round trip, the calculator
+          doubles the trip miles before adding any detours.
+        </p>
+
+        <p>
+          Road trip fuel cost is only one part of the travel budget. A cheap gas
+          estimate can still become an expensive trip once hotels, restaurants,
+          tolls, parking, attractions, and emergency spending are included.
+        </p>
+
+        <p>
+          For broader travel affordability, compare this estimate with the
+          <a class="content-link" href="/travel-calculators">
+            travel calculators hub
+          </a>
+          or the
+          <a class="content-link" href="/how-much-car-can-i-afford">
+            car affordability guide
+          </a>.
+        </p>
+      </section>
+
+      <KeyCostCategories
+        items={[
+          {
+            title: "Fuel cost",
+            description:
+              "Fuel is estimated using total miles, vehicle MPG, and gas price per gallon.",
+          },
+          {
+            title: "Round trip mileage",
+            description:
+              "A round trip doubles your entered trip miles before detours are added.",
+          },
+          {
+            title: "Passenger split",
+            description:
+              "If multiple people are splitting fuel, the calculator estimates a per-person share.",
+          },
+          {
+            title: "Other road trip costs",
+            description:
+              "Hotels, meals, tolls, parking, attraction tickets, and vehicle wear are not included in the fuel estimate.",
+          },
+        ]}
+      />
+
+      <ReduceCostTips
+        items={[
+          "Use your real highway MPG if you know it.",
+          "Add extra miles for detours, sightseeing, traffic reroutes, or driving around town.",
+          "Check gas prices along your route instead of using only your local price.",
+          "Split fuel costs clearly before the trip if multiple people are riding together.",
+          "Budget separately for hotels, food, tolls, parking, and emergency expenses.",
+        ]}
+      />
+
+      <CalculatorAssumptions
+        items={[
+          "Fuel cost is calculated as total miles divided by MPG, multiplied by gas price per gallon.",
+          "Round trip doubles the entered trip miles before extra miles are added.",
+          "Extra miles are added once, not doubled.",
+          "Passenger cost assumes the total fuel cost is split evenly.",
+          "The estimate does not include lodging, meals, tolls, parking, maintenance, depreciation, or vehicle wear.",
+        ]}
+      />
+
+      <section class="content-section">
+        <h2>Why Road Trip Fuel Estimates Can Change</h2>
+
+        <p>
+          Real fuel cost can change once you are on the road. Speed, traffic,
+          hills, weather, tire pressure, cargo weight, air conditioning, and
+          city driving can all reduce actual MPG.
+        </p>
+
+        <p>
+          Gas prices can also change by state, city, highway corridor, or
+          station. For a longer trip, it is smart to add a small buffer instead
+          of assuming the exact estimate will match the final receipt total.
+        </p>
+      </section>
+
+      <div class="content-section">
+        <FAQSection title="Road Trip Calculator FAQ" faqs={roadTripFaqs} />
+      </div>
+
+      <div class="content-section">
+        <RelatedCalculators calculators={relatedCalculators} />
+      </div>
+    </CalculatorPageShell>
+
+    <MethodologySection category="road trip fuel cost estimates" updated="June 2026" />
+  </div>
+
+  <script is:inline>
+    const getNumber = (id) => {
+      const rawValue = document.getElementById(id)?.value;
+      const value = Number(rawValue);
+      return Number.isFinite(value) && value >= 0 ? value : 0;
+    };
+
+    const getValue = (id) => document.getElementById(id)?.value || "";
+
+    function formatMoney(value) {
+      return value.toLocaleString(undefined, {
+        style: "currency",
+        currency: "USD",
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2,
+      });
+    }
+
+    function calculateRoadTrip() {
+      const miles = getNumber("miles");
+      const mpg = getNumber("mpg");
+      const gasPrice = getNumber("gasPrice");
+      const passengers = Math.max(getNumber("passengers"), 1);
+      const extraMiles = getNumber("extraMiles");
+      const roundTrip = getValue("roundTrip");
+
+      const results = document.getElementById("results");
+      const totalPrice = document.getElementById("totalPrice");
+      const resultDetails = document.getElementById("resultDetails");
+      const tripSummary = document.getElementById("tripSummary");
+
+      results.classList.add("visible");
+
+      if (miles <= 0 || mpg <= 0 || gasPrice <= 0) {
+        totalPrice.textContent = "$0.00";
+        resultDetails.innerHTML =
+          "<p>Enter trip miles, vehicle MPG, and gas price per gallon to estimate your road trip fuel cost.</p>";
+        tripSummary.textContent = "";
+        return;
+      }
+
+      const baseMiles = roundTrip === "roundtrip" ? miles * 2 : miles;
+      const totalMiles = baseMiles + extraMiles;
+      const gallonsNeeded = totalMiles / mpg;
+      const totalFuelCost = gallonsNeeded * gasPrice;
+      const costPerPerson = totalFuelCost / passengers;
+      const costPerMile = totalFuelCost / totalMiles;
+
+      totalPrice.textContent = formatMoney(totalFuelCost);
+
+      resultDetails.innerHTML = `
+        <p><strong>Total estimated miles:</strong> ${totalMiles.toLocaleString()} miles.</p>
+
+        <p><strong>Estimated gallons needed:</strong> ${gallonsNeeded.toFixed(1)} gallons.</p>
+
+        <p><strong>Gas price used:</strong> ${formatMoney(gasPrice)} per gallon.</p>
+
+        <p><strong>Estimated fuel cost per mile:</strong> ${formatMoney(costPerMile)}.</p>
+
+        <p><strong>Cost per person:</strong> ${formatMoney(costPerPerson)} if split between ${passengers.toFixed(0)} ${passengers === 1 ? "person" : "people"}.</p>
+      `;
+
+      tripSummary.innerHTML = `
+        Your ${roundTrip === "roundtrip" ? "round trip" : "one-way trip"} is estimated at <strong>${totalMiles.toLocaleString()} miles</strong>.
+        At <strong>${mpg.toFixed(1)} MPG</strong> and <strong>${formatMoney(gasPrice)}</strong> per gallon,
+        the estimated fuel cost is <strong>${formatMoney(totalFuelCost)}</strong>.
+      `;
+    }
+
+    document
+      .getElementById("roadTripButton")
+      .addEventListener("click", calculateRoadTrip);
+  </script>
+</Layout>

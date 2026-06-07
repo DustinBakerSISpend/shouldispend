@@ -1,0 +1,759 @@
+---
+import Layout from "../layouts/Layout.astro";
+import CalculatorPageShell from "../components/CalculatorPageShell.astro";
+import FAQSection from "../components/FAQSection.astro";
+import RelatedCalculators from "../components/RelatedCalculators.astro";
+import MethodologySection from "../components/MethodologySection.astro";
+import FinancialRedFlags from "../components/FinancialRedFlags.astro";
+import CalculatorAssumptions from "../components/CalculatorAssumptions.astro";
+import KeyCostCategories from "../components/KeyCostCategories.astro";
+import ReduceCostTips from "../components/ReduceCostTips.astro";
+import WhenSpendingMakesSense from "../components/WhenSpendingMakesSense.astro";
+import { calculators } from "../data/calculators.js";
+
+const downPaymentFaqs = [
+  {
+    question: "How much should I put down on a car?",
+    answer:
+      "A safer down payment is usually large enough to reduce the loan and upside-down risk without draining your emergency savings. Many buyers aim for 10% to 20%, but the right number depends on income, savings, debt, vehicle price, and monthly payment pressure.",
+  },
+  {
+    question: "Is 20% down on a car always necessary?",
+    answer:
+      "No. A 20% down payment can reduce loan risk, but it may be too much if it empties your savings. A smaller down payment can be reasonable when income is strong, the payment is manageable, and savings remain healthy.",
+  },
+  {
+    question: "Is it bad to put zero down on a car?",
+    answer:
+      "Zero down can be risky because it increases the loan balance and makes it easier to owe more than the car is worth. It is less risky for very high-income or high-savings households, but most buyers should be cautious.",
+  },
+  {
+    question: "Should I use my savings for a bigger car down payment?",
+    answer:
+      "Only if you still have enough emergency savings after the purchase. A bigger down payment can lower the loan, but draining savings can make repairs, job loss, medical bills, or other emergencies harder to handle.",
+  },
+];
+
+const relatedCalculators = calculators
+  .filter(
+    (calculator) =>
+      calculator.category === "Cars" &&
+      calculator.href !== "/how-much-should-i-put-down-on-a-car"
+  )
+  .slice(0, 4);
+---
+
+<Layout
+  title="How Much Should I Put Down on a Car?"
+  description="Use this car down payment calculator to estimate a safer down payment based on vehicle price, income, savings, debt, payment pressure, and emergency fund risk."
+>
+  <style>
+    .container {
+      max-width: 900px;
+      margin: auto;
+    }
+
+    .calculator {
+      background: white;
+      padding: 40px;
+      border-radius: 24px;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.06);
+    }
+
+    .calculator h2 {
+      margin-top: 0;
+      font-size: 2rem;
+      margin-bottom: 18px;
+      color: #0f172a;
+    }
+
+    .calculator-intro {
+      color: #334155;
+      line-height: 1.8;
+      margin-bottom: 30px;
+      font-size: 1.05rem;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+    }
+
+    .field label {
+      display: block;
+      font-weight: 800;
+      margin-bottom: 10px;
+      color: #0f172a;
+    }
+
+    .field input,
+    .field select {
+      width: 100%;
+      padding: 16px;
+      border-radius: 12px;
+      border: 1px solid #cbd5e1;
+      font-size: 1rem;
+      box-sizing: border-box;
+      background: white;
+    }
+
+    button {
+      margin-top: 30px;
+      background: #0f766e;
+      color: white;
+      border: none;
+      padding: 18px 32px;
+      border-radius: 999px;
+      font-size: 1.05rem;
+      font-weight: 800;
+      cursor: pointer;
+      transition: opacity 0.2s ease;
+    }
+
+    button:hover {
+      opacity: 0.92;
+    }
+
+    .results {
+      margin-top: 36px;
+      background: #f8fafc;
+      padding: 32px;
+      border-radius: 24px;
+      border: 1px solid var(--border);
+      box-shadow: 0 10px 24px rgba(15, 23, 42, 0.04);
+      display: none;
+    }
+
+    .results.visible {
+      display: block;
+    }
+
+    .score {
+      font-size: clamp(2rem, 4vw, 2.7rem);
+      font-weight: 900;
+      color: #0f172a;
+      margin-bottom: 22px;
+      line-height: 1.15;
+    }
+
+    .bar {
+      width: 100%;
+      height: 16px;
+      background: #dbe4ee;
+      border-radius: 999px;
+      overflow: hidden;
+      margin-bottom: 24px;
+    }
+
+    .fill {
+      height: 100%;
+      width: 0%;
+      border-radius: 999px;
+      transition: width 0.45s ease;
+    }
+
+    .fill.safe {
+      background: linear-gradient(90deg, #0f766e 0%, #14b8a6 100%);
+    }
+
+    .fill.caution {
+      background: linear-gradient(90deg, #ca8a04 0%, #facc15 100%);
+    }
+
+    .fill.danger {
+      background: linear-gradient(90deg, #dc2626 0%, #f97316 100%);
+    }
+
+    .result-details {
+      color: #334155;
+      line-height: 1.9;
+      font-size: 1.02rem;
+    }
+
+    .result-details p {
+      margin: 0 0 12px;
+    }
+
+    .disclaimer {
+      margin-top: 24px;
+      font-size: 0.9rem;
+      color: #64748b;
+    }
+
+    .content-section {
+      margin-top: 60px;
+    }
+
+    .content-section h2 {
+      font-size: 2rem;
+      margin-bottom: 20px;
+      color: #0f172a;
+    }
+
+    .content-section p,
+    .content-section li {
+      font-size: 1.1rem;
+      line-height: 1.9;
+      color: #334155;
+    }
+
+    .content-link {
+      color: #0f766e;
+      font-weight: 700;
+      text-decoration: none;
+    }
+
+    .content-link:hover {
+      text-decoration: underline;
+    }
+
+    @media (max-width: 768px) {
+      .calculator {
+        padding: 24px;
+      }
+
+      .grid {
+        grid-template-columns: 1fr;
+      }
+
+      .calculator h2,
+      .content-section h2 {
+        font-size: 1.7rem;
+      }
+
+      .results {
+        padding: 24px;
+      }
+    }
+  </style>
+
+  <div class="container">
+    <CalculatorPageShell
+      eyebrow="Car Down Payment Calculator"
+      title="How Much Should I Put Down on a Car?"
+      description="Estimate a safer car down payment based on vehicle price, savings cushion, income, debt, payment pressure, and upside-down loan risk."
+    >
+      <div class="calculator">
+        <h2>Car Down Payment Pressure Verdict</h2>
+
+        <p class="calculator-intro">
+          Enter the vehicle price, your savings, income, debt, and planned down
+          payment. This calculator estimates whether your down payment is too
+          small, too aggressive, or reasonably balanced.
+        </p>
+
+        <div class="grid">
+          <div class="field">
+            <label for="income">Monthly Take-Home Income</label>
+            <input id="income" type="number" placeholder="Example: 8000" />
+          </div>
+
+          <div class="field">
+            <label for="savings">Current Savings</label>
+            <input id="savings" type="number" placeholder="Example: 25000" />
+          </div>
+
+          <div class="field">
+            <label for="vehiclePrice">Vehicle Price</label>
+            <input id="vehiclePrice" type="number" placeholder="Example: 42000" />
+          </div>
+
+          <div class="field">
+            <label for="downPayment">Planned Down Payment</label>
+            <input id="downPayment" type="number" placeholder="Example: 6000" />
+          </div>
+
+          <div class="field">
+            <label for="monthlyPayment">Estimated Monthly Payment</label>
+            <input id="monthlyPayment" type="number" placeholder="Example: 725" />
+          </div>
+
+          <div class="field">
+            <label for="debt">Other Monthly Debt Payments</label>
+            <input id="debt" type="number" placeholder="Example: 850" />
+          </div>
+
+          <div class="field">
+            <label for="vehicleType">Vehicle Type</label>
+            <select id="vehicleType">
+              <option value="used" selected>Used car</option>
+              <option value="new">New car</option>
+              <option value="luxury">Luxury / expensive vehicle</option>
+            </select>
+          </div>
+
+          <div class="field">
+            <label for="loanTerm">Expected Loan Term</label>
+            <select id="loanTerm">
+              <option value="short">48 months or less</option>
+              <option value="normal" selected>60 to 72 months</option>
+              <option value="long">73 months or longer</option>
+            </select>
+          </div>
+        </div>
+
+        <button id="carButton" type="button">Get Down Payment Verdict</button>
+
+        <div class="results" id="results">
+          <div class="score" id="scoreText"></div>
+
+          <div class="bar">
+            <div class="fill" id="fillBar"></div>
+          </div>
+
+          <div class="result-details" id="resultDetails"></div>
+
+          <div class="disclaimer">
+            This is a general educational estimate, not financial advice.
+          </div>
+        </div>
+      </div>
+
+      <section class="content-section">
+        <h2>A Good Down Payment Protects Both the Loan and Your Savings</h2>
+
+        <p>
+          A car down payment has two jobs. It should reduce the loan enough to
+          lower payment pressure and upside-down risk, but it should not drain
+          the savings cushion that protects you after the purchase.
+        </p>
+
+        <p>
+          A larger down payment is not automatically smarter. If putting more
+          money down leaves you with little emergency savings, the car may be
+          less affordable even though the loan is smaller.
+        </p>
+
+        <p>
+          Before deciding, compare the down payment with your broader
+          <a class="content-link" href="/how-much-car-can-i-afford">
+            car affordability picture
+          </a>
+          and your monthly payment comfort.
+        </p>
+      </section>
+
+      <WhenSpendingMakesSense
+        title="When a Bigger Down Payment Can Make Sense"
+        items={[
+          "You still have several months of emergency savings after the purchase.",
+          "The down payment meaningfully reduces the monthly payment.",
+          "You want to avoid owing more than the vehicle is worth.",
+          "The vehicle is new, expensive, or likely to depreciate quickly.",
+          "You are using cash that is not needed for housing, debt payoff, or emergencies.",
+        ]}
+      />
+
+      <section class="content-section">
+        <h2>When You Should Put Less Down</h2>
+
+        <p>
+          You may want to put less down if the larger down payment would drain
+          your emergency fund, delay urgent debt payoff, or leave you dependent
+          on credit cards after the purchase.
+        </p>
+
+        <p>
+          The goal is not to make the loan look perfect while the rest of your
+          finances become fragile. A smaller down payment with stronger savings
+          can be safer than a large down payment that leaves no cushion.
+        </p>
+      </section>
+
+      <KeyCostCategories
+        items={[
+          {
+            title: "Emergency savings left over",
+            description:
+              "The safest down payment still leaves cash available for repairs, job loss, medical bills, and other surprises.",
+          },
+          {
+            title: "Loan-to-value risk",
+            description:
+              "A low down payment can make it easier to owe more than the car is worth, especially on new or expensive vehicles.",
+          },
+          {
+            title: "Monthly payment pressure",
+            description:
+              "A larger down payment can lower the monthly payment, but only if it does not weaken the rest of the budget.",
+          },
+          {
+            title: "Loan length and depreciation",
+            description:
+              "Longer loans and faster depreciation increase the value of a stronger down payment.",
+          },
+        ]}
+      />
+
+      <ReduceCostTips
+        items={[
+          "Compare the monthly payment at several down payment amounts before deciding.",
+          "Keep emergency savings intact even if that means putting less down.",
+          "Avoid long loan terms just because the down payment is small.",
+          "Consider a less expensive vehicle if the safe down payment still leaves the payment too high.",
+          "Check insurance costs before using savings for the down payment.",
+        ]}
+      />
+
+      <FinancialRedFlags
+        items={[
+          "The down payment would drain most of your savings.",
+          "A small down payment creates a high loan balance on a fast-depreciating vehicle.",
+          "You need a very long loan term to make the payment work.",
+          "You are using emergency savings to force a vehicle into the budget.",
+          "The monthly payment remains high even after the down payment.",
+        ]}
+      />
+
+      <CalculatorAssumptions
+        items={[
+          "The calculator compares down payment size, vehicle price, savings left over, income, monthly payment, debt load, vehicle type, and loan term risk.",
+          "It does not calculate exact interest, taxes, insurance, registration, trade-in value, or lender requirements.",
+          "A down payment that is too small can increase upside-down loan risk.",
+          "A down payment that is too large can weaken emergency savings.",
+          "Huge income or huge savings can reduce the pressure score to zero because the down payment decision is not financially meaningful in that scenario.",
+        ]}
+      />
+
+      <section class="content-section">
+        <h2>The Best Down Payment Keeps You Flexible</h2>
+
+        <p>
+          The best car down payment is not always the biggest one. It is the one
+          that balances loan risk with real-life flexibility. You want enough
+          money down to avoid a dangerous loan, but enough cash left to handle
+          the next emergency without borrowing.
+        </p>
+
+        <p>
+          If the down payment leaves savings strong and the monthly payment
+          comfortable, the purchase is usually cleaner. If the down payment
+          empties savings or still leaves a stressful payment, the vehicle may
+          be too expensive.
+        </p>
+      </section>
+
+      <div class="content-section">
+        <FAQSection title="Car Down Payment FAQ" faqs={downPaymentFaqs} />
+      </div>
+
+      <div class="content-section">
+        <RelatedCalculators calculators={relatedCalculators} />
+      </div>
+    </CalculatorPageShell>
+
+    <MethodologySection category="car down payment planning" updated="June 2026" />
+  </div>
+
+  <script is:inline>
+    const clamp = (value, min, max) => Math.min(Math.max(value, min), max);
+
+    const getNumber = (id) => {
+      const rawValue = document.getElementById(id)?.value;
+      const value = Number(rawValue);
+      return Number.isFinite(value) && value >= 0 ? value : 0;
+    };
+
+    const getValue = (id) => document.getElementById(id)?.value || "";
+
+    function getPressureLevel(score) {
+      if (score <= 5) {
+        return {
+          label: "Almost No Pressure",
+          stress: "Almost no pressure",
+          colorClass: "safe",
+        };
+      }
+
+      if (score <= 30) {
+        return {
+          label: "Down Payment Looks Balanced",
+          stress: "Low pressure",
+          colorClass: "safe",
+        };
+      }
+
+      if (score <= 60) {
+        return {
+          label: "Adjust the Down Payment Carefully",
+          stress: "Moderate pressure",
+          colorClass: "caution",
+        };
+      }
+
+      return {
+        label: "Down Payment Plan Looks Risky",
+        stress: "High pressure",
+        colorClass: "danger",
+      };
+    }
+
+    function calculateDownPayment() {
+      const income = getNumber("income");
+      const savings = getNumber("savings");
+      const vehiclePrice = getNumber("vehiclePrice");
+      const downPayment = getNumber("downPayment");
+      const monthlyPayment = getNumber("monthlyPayment");
+      const debt = getNumber("debt");
+      const vehicleType = getValue("vehicleType");
+      const loanTerm = getValue("loanTerm");
+
+      const results = document.getElementById("results");
+      const scoreText = document.getElementById("scoreText");
+      const fillBar = document.getElementById("fillBar");
+      const resultDetails = document.getElementById("resultDetails");
+
+      results.classList.add("visible");
+
+      if (income <= 0 || vehiclePrice <= 0 || monthlyPayment <= 0) {
+        scoreText.textContent = "Add your numbers first";
+        fillBar.style.width = "0%";
+        fillBar.className = "fill safe";
+        resultDetails.innerHTML =
+          "<p>Enter income, savings, vehicle price, planned down payment, estimated monthly payment, and debt so the calculator can evaluate the down payment plan.</p>";
+        return;
+      }
+
+      const monthlyFlexibilityEstimate = Math.max(income * 0.7, 1);
+      const savingsAfterDownPayment = Math.max(savings - downPayment, 0);
+      const downPaymentPercent = (downPayment / vehiclePrice) * 100;
+      const loanAmount = Math.max(vehiclePrice - downPayment, 0);
+      const loanToValue = (loanAmount / vehiclePrice) * 100;
+      const paymentRatio = (monthlyPayment / income) * 100;
+      const totalDebtRatio = ((monthlyPayment + debt) / income) * 100;
+      const savingsMonthsAfter =
+        savingsAfterDownPayment / monthlyFlexibilityEstimate;
+      const paymentsCoveredAfter =
+        monthlyPayment > 0 ? savingsAfterDownPayment / monthlyPayment : 0;
+      const savingsUsedPercent =
+        savings > 0 ? (downPayment / savings) * 100 : 999;
+
+      let pressureScore = 0;
+
+      pressureScore += clamp(paymentRatio * 1.65, 0, 34);
+      pressureScore += clamp(totalDebtRatio * 0.5, 0, 22);
+      pressureScore += clamp(loanToValue * 0.18, 0, 22);
+
+      if (paymentRatio >= 20) {
+        pressureScore += 22;
+      } else if (paymentRatio >= 15) {
+        pressureScore += 14;
+      } else if (paymentRatio >= 10) {
+        pressureScore += 7;
+      } else if (paymentRatio <= 5) {
+        pressureScore -= 8;
+      }
+
+      if (totalDebtRatio >= 40) {
+        pressureScore += 18;
+      } else if (totalDebtRatio >= 30) {
+        pressureScore += 10;
+      } else if (totalDebtRatio <= 20) {
+        pressureScore -= 5;
+      }
+
+      if (savingsAfterDownPayment <= 0) {
+        pressureScore += 34;
+      } else if (savingsMonthsAfter < 1) {
+        pressureScore += 26;
+      } else if (savingsMonthsAfter < 3) {
+        pressureScore += 16;
+      } else if (savingsMonthsAfter >= 24) {
+        pressureScore -= 30;
+      } else if (savingsMonthsAfter >= 12) {
+        pressureScore -= 22;
+      } else if (savingsMonthsAfter >= 6) {
+        pressureScore -= 14;
+      }
+
+      if (savingsUsedPercent >= 80) {
+        pressureScore += 18;
+      } else if (savingsUsedPercent >= 60) {
+        pressureScore += 12;
+      } else if (savingsUsedPercent >= 40) {
+        pressureScore += 6;
+      } else if (savingsUsedPercent <= 20 && savingsMonthsAfter >= 3) {
+        pressureScore -= 6;
+      }
+
+      if (downPaymentPercent < 5) {
+        pressureScore += 16;
+      } else if (downPaymentPercent < 10) {
+        pressureScore += 9;
+      } else if (downPaymentPercent >= 20 && savingsMonthsAfter >= 3) {
+        pressureScore -= 10;
+      } else if (downPaymentPercent >= 15 && savingsMonthsAfter >= 3) {
+        pressureScore -= 6;
+      }
+
+      if (vehicleType === "new") {
+        if (downPaymentPercent < 10) {
+          pressureScore += 8;
+        }
+        if (downPaymentPercent >= 20) {
+          pressureScore -= 5;
+        }
+      } else if (vehicleType === "luxury") {
+        pressureScore += 8;
+        if (downPaymentPercent < 20) {
+          pressureScore += 10;
+        }
+      } else if (vehicleType === "used" && downPaymentPercent >= 10) {
+        pressureScore -= 4;
+      }
+
+      if (loanTerm === "long") {
+        pressureScore += 12;
+        if (downPaymentPercent < 15) {
+          pressureScore += 8;
+        }
+      } else if (loanTerm === "short") {
+        pressureScore -= 5;
+      }
+
+      if (loanToValue >= 95) {
+        pressureScore += 12;
+      } else if (loanToValue <= 80 && savingsMonthsAfter >= 3) {
+        pressureScore -= 8;
+      }
+
+      if (paymentRatio >= 20 || totalDebtRatio >= 40) {
+        pressureScore = Math.max(pressureScore, 65);
+      } else if (paymentRatio >= 16 || totalDebtRatio >= 35) {
+        pressureScore = Math.max(pressureScore, 55);
+      }
+
+      if (savingsAfterDownPayment === 0) {
+        pressureScore = Math.max(pressureScore, 60);
+      }
+
+      if (
+        savingsMonthsAfter >= 12 &&
+        paymentRatio < 12 &&
+        totalDebtRatio < 30 &&
+        downPaymentPercent >= 10
+      ) {
+        pressureScore = Math.min(pressureScore, 35);
+      }
+
+      if (
+        savingsMonthsAfter >= 6 &&
+        paymentRatio < 10 &&
+        totalDebtRatio < 25 &&
+        downPaymentPercent >= 15
+      ) {
+        pressureScore = Math.min(pressureScore, 25);
+      }
+
+      if (income >= 1000000 && paymentRatio <= 0.5 && totalDebtRatio <= 2) {
+        pressureScore = 0;
+      } else if (
+        income >= 250000 &&
+        paymentRatio <= 1 &&
+        totalDebtRatio <= 3
+      ) {
+        pressureScore = Math.min(pressureScore, 2);
+      } else if (
+        income >= 100000 &&
+        paymentRatio <= 2 &&
+        totalDebtRatio <= 5
+      ) {
+        pressureScore = Math.min(pressureScore, 5);
+      }
+
+      if (savingsAfterDownPayment >= 1000000 && paymentsCoveredAfter >= 600) {
+        pressureScore = 0;
+      } else if (
+        savingsAfterDownPayment >= 500000 &&
+        paymentsCoveredAfter >= 300
+      ) {
+        pressureScore = Math.min(pressureScore, 2);
+      } else if (
+        savingsAfterDownPayment >= 250000 &&
+        paymentsCoveredAfter >= 180
+      ) {
+        pressureScore = Math.min(pressureScore, 5);
+      } else if (
+        savingsMonthsAfter >= 120 ||
+        paymentsCoveredAfter >= 120
+      ) {
+        pressureScore = Math.min(pressureScore, 8);
+      } else if (savingsMonthsAfter >= 60 || paymentsCoveredAfter >= 60) {
+        pressureScore = Math.min(pressureScore, 12);
+      }
+
+      pressureScore = clamp(Math.round(pressureScore), 0, 100);
+
+      const level = getPressureLevel(pressureScore);
+
+      let recommendation = "";
+      let explanation = "";
+      let suggestedDownPayment = "";
+
+      const conservativeTarget = vehicleType === "luxury" || vehicleType === "new" ? 20 : 15;
+      const minimumTarget = vehicleType === "luxury" ? 20 : 10;
+      const targetDownPayment = Math.round((vehiclePrice * conservativeTarget) / 100);
+      const minimumDownPayment = Math.round((vehiclePrice * minimumTarget) / 100);
+
+      if (pressureScore <= 5) {
+        recommendation = "Down Payment Pressure Is Minimal";
+        explanation =
+          "The down payment and monthly payment are not meaningful financial pressure points based on the income and savings entered. The decision is mainly about loan preference, opportunity cost, and how much cash you want tied up in the vehicle.";
+      } else if (pressureScore <= 30) {
+        recommendation = "Down Payment Looks Balanced";
+        explanation =
+          "This down payment appears reasonably balanced. It reduces the loan while still leaving enough savings cushion based on the numbers entered.";
+      } else if (pressureScore <= 60) {
+        recommendation = "Adjust the Down Payment Carefully";
+        explanation =
+          "This down payment may work, but it deserves caution. The key question is whether the loan risk is low enough without draining too much savings.";
+      } else {
+        recommendation = "Down Payment Plan Looks Risky";
+        explanation =
+          "This down payment plan appears risky. Either the down payment is too small for the vehicle and loan structure, or it uses too much savings and leaves the rest of the budget exposed.";
+      }
+
+      if (downPaymentPercent < minimumTarget && savingsMonthsAfter >= 3) {
+        suggestedDownPayment = `A stronger target would be at least $${minimumDownPayment.toLocaleString()} down, if that still leaves emergency savings intact.`;
+      } else if (savingsMonthsAfter < 3) {
+        suggestedDownPayment =
+          "The bigger issue is savings left after purchase. Consider a smaller down payment, cheaper vehicle, or waiting until your cushion is stronger.";
+      } else {
+        suggestedDownPayment = `A conservative target for this vehicle type is around $${targetDownPayment.toLocaleString()} down, but only if your emergency savings remain healthy.`;
+      }
+
+      scoreText.textContent = `${recommendation} — ${pressureScore}/100`;
+      fillBar.style.width = `${pressureScore}%`;
+      fillBar.className = `fill ${level.colorClass}`;
+
+      resultDetails.innerHTML = `
+        <p><strong>Vehicle price:</strong> $${vehiclePrice.toLocaleString()}.</p>
+
+        <p><strong>Planned down payment:</strong> $${downPayment.toLocaleString()}, or ${downPaymentPercent.toFixed(1)}% of the vehicle price.</p>
+
+        <p><strong>Estimated loan amount:</strong> $${loanAmount.toLocaleString()}, or about ${loanToValue.toFixed(1)}% loan-to-value.</p>
+
+        <p><strong>Estimated monthly payment:</strong> $${monthlyPayment.toLocaleString()}, or ${paymentRatio.toFixed(1)}% of monthly take-home income.</p>
+
+        <p><strong>Total debt impact:</strong> ${totalDebtRatio.toFixed(1)}% of monthly take-home income, including this car payment.</p>
+
+        <p><strong>Savings after down payment:</strong> $${savingsAfterDownPayment.toLocaleString()}, or about ${savingsMonthsAfter.toFixed(1)} months of estimated flexibility.</p>
+
+        <p><strong>Savings used:</strong> ${
+          savings > 0 ? `${savingsUsedPercent.toFixed(1)}% of current savings` : "No savings entered"
+        }.</p>
+
+        <p><strong>Pressure level:</strong> ${level.stress}.</p>
+
+        <p>${explanation}</p>
+
+        <p><strong>Suggested next step:</strong> ${suggestedDownPayment}</p>
+      `;
+    }
+
+    document
+      .getElementById("carButton")
+      .addEventListener("click", calculateDownPayment);
+  </script>
+</Layout>
