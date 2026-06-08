@@ -1,0 +1,680 @@
+---
+import Layout from "../layouts/Layout.astro";
+import CalculatorPageShell from "../components/CalculatorPageShell.astro";
+import FAQSection from "../components/FAQSection.astro";
+import RelatedCalculators from "../components/RelatedCalculators.astro";
+import MethodologySection from "../components/MethodologySection.astro";
+import CalculatorAssumptions from "../components/CalculatorAssumptions.astro";
+import KeyCostCategories from "../components/KeyCostCategories.astro";
+import ReduceCostTips from "../components/ReduceCostTips.astro";
+import { calculators } from "../data/calculators.js";
+
+const groceryFaqs = [
+  {
+    question: "What is a good monthly grocery budget?",
+    answer:
+      "A good monthly grocery budget depends on take-home income, household size, debt payments, savings, dietary needs, food prices, and how often you cook at home. This calculator estimates a practical monthly range instead of using one fixed number.",
+  },
+  {
+    question: "Should my grocery budget be based on income?",
+    answer:
+      "Yes. Household size matters, but income matters too. A $500 grocery budget feels very different on $2,000 per month than it does on $30,000 per month.",
+  },
+  {
+    question: "Does this calculator include restaurants or takeout?",
+    answer:
+      "No. This calculator estimates groceries for home meals. Restaurants, delivery apps, coffee shops, and takeout should be tracked separately.",
+  },
+  {
+    question: "Why does the recommended amount rise for high income?",
+    answer:
+      "The calculator assumes higher-income households can afford more flexibility, higher-quality ingredients, convenience items, bulk buying, specialty diets, or premium groceries without creating financial pressure.",
+  },
+];
+
+const relatedCalculators = calculators
+  .filter(
+    (calculator) =>
+      calculator.category === "Groceries" &&
+      calculator.href !== "/ideal-grocery-budget-calculator"
+  )
+  .slice(0, 4);
+---
+
+<Layout
+  title="Ideal Grocery Budget Calculator"
+  description="Use this ideal grocery budget calculator to estimate how much you should spend on groceries based on income, household size, debt, savings, and food habits."
+>
+  <style>
+    .container {
+      max-width: 900px;
+      margin: auto;
+    }
+
+    .calculator {
+      background: white;
+      padding: 40px;
+      border-radius: 24px;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.06);
+    }
+
+    .calculator h2 {
+      margin-top: 0;
+      font-size: 2rem;
+      margin-bottom: 18px;
+      color: #0f172a;
+    }
+
+    .calculator-intro {
+      color: #334155;
+      line-height: 1.8;
+      margin-bottom: 30px;
+      font-size: 1.05rem;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+    }
+
+    .field label {
+      display: block;
+      font-weight: 800;
+      margin-bottom: 10px;
+      color: #0f172a;
+    }
+
+    .field input,
+    .field select {
+      width: 100%;
+      padding: 16px;
+      border-radius: 12px;
+      border: 1px solid #cbd5e1;
+      font-size: 1rem;
+      box-sizing: border-box;
+      background: white;
+    }
+
+    button {
+      margin-top: 30px;
+      background: #0f766e;
+      color: white;
+      border: none;
+      padding: 18px 32px;
+      border-radius: 999px;
+      font-size: 1.05rem;
+      font-weight: 800;
+      cursor: pointer;
+      transition: opacity 0.2s ease;
+    }
+
+    button:hover {
+      opacity: 0.92;
+    }
+
+    .results {
+      margin-top: 36px;
+      background: #f8fafc;
+      padding: 32px;
+      border-radius: 24px;
+      border: 1px solid var(--border);
+      box-shadow: 0 10px 24px rgba(15, 23, 42, 0.04);
+      display: none;
+    }
+
+    .results.visible {
+      display: block;
+    }
+
+    .budget-number {
+      font-size: clamp(2.5rem, 6vw, 4rem);
+      font-weight: 900;
+      color: #0f172a;
+      line-height: 1.05;
+      margin-bottom: 12px;
+    }
+
+    .result-label {
+      font-size: 1.15rem;
+      font-weight: 800;
+      color: #0f766e;
+      margin-bottom: 24px;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+    }
+
+    .pressure-row {
+      margin: 26px 0;
+    }
+
+    .pressure-header {
+      display: flex;
+      justify-content: space-between;
+      gap: 16px;
+      font-weight: 900;
+      color: #0f172a;
+      margin-bottom: 10px;
+    }
+
+    .bar-track {
+      width: 100%;
+      height: 18px;
+      background: #e2e8f0;
+      border-radius: 999px;
+      overflow: hidden;
+    }
+
+    .bar-fill {
+      width: 0%;
+      height: 100%;
+      background: #0f766e;
+      border-radius: 999px;
+      transition: width 0.25s ease;
+    }
+
+    .result-details {
+      color: #334155;
+      line-height: 1.9;
+      font-size: 1.02rem;
+    }
+
+    .result-details p {
+      margin: 0 0 12px;
+    }
+
+    .mini-summary {
+      margin-top: 24px;
+      padding: 20px;
+      border-radius: 18px;
+      background: white;
+      border: 1px solid #dbe4ee;
+      color: #334155;
+      line-height: 1.8;
+    }
+
+    .content-section {
+      margin-top: 60px;
+    }
+
+    .content-section h2 {
+      font-size: 2rem;
+      margin-bottom: 20px;
+      color: #0f172a;
+    }
+
+    .content-section p,
+    .content-section li {
+      font-size: 1.1rem;
+      line-height: 1.9;
+      color: #334155;
+    }
+
+    .content-link {
+      color: #0f766e;
+      font-weight: 700;
+      text-decoration: none;
+    }
+
+    .content-link:hover {
+      text-decoration: underline;
+    }
+
+    @media (max-width: 768px) {
+      .calculator {
+        padding: 24px;
+      }
+
+      .grid {
+        grid-template-columns: 1fr;
+      }
+
+      .calculator h2,
+      .content-section h2 {
+        font-size: 1.7rem;
+      }
+
+      .results {
+        padding: 24px;
+      }
+    }
+  </style>
+
+  <div class="container">
+    <CalculatorPageShell
+      eyebrow="Ideal Grocery Budget Calculator"
+      title="Ideal Grocery Budget Calculator"
+      description="Estimate a realistic monthly grocery budget using take-home income, household size, debt, savings, food style, and how often you cook at home."
+    >
+      <div class="calculator">
+        <h2>Calculate Your Ideal Grocery Budget</h2>
+
+        <p class="calculator-intro">
+          Enter your monthly take-home income, household size, debt, savings,
+          and food habits. This calculator estimates a monthly grocery budget
+          range that moves up or down based on your actual financial room.
+        </p>
+
+        <div class="grid">
+          <div class="field">
+            <label for="income">Monthly Take-Home Income</label>
+            <input id="income" type="number" placeholder="Example: 6500" />
+          </div>
+
+          <div class="field">
+            <label for="household">Household Size</label>
+            <input id="household" type="number" placeholder="Example: 4" />
+          </div>
+
+          <div class="field">
+            <label for="debt">Monthly Debt Payments</label>
+            <input id="debt" type="number" placeholder="Example: 900" />
+          </div>
+
+          <div class="field">
+            <label for="savings">Emergency Savings</label>
+            <input id="savings" type="number" placeholder="Example: 8000" />
+          </div>
+
+          <div class="field">
+            <label for="foodStyle">Food Style</label>
+            <select id="foodStyle">
+              <option value="basic">Basic / budget-conscious</option>
+              <option value="balanced" selected>Balanced</option>
+              <option value="premium">Organic, specialty, or premium</option>
+            </select>
+          </div>
+
+          <div class="field">
+            <label for="cookFrequency">How Often You Cook at Home</label>
+            <select id="cookFrequency">
+              <option value="low">Not often</option>
+              <option value="medium" selected>Most weeks</option>
+              <option value="high">Most meals</option>
+            </select>
+          </div>
+        </div>
+
+        <button id="groceryButton" type="button">Calculate Ideal Grocery Budget</button>
+
+        <div class="results" id="results">
+          <div class="result-label">Estimated Ideal Monthly Grocery Budget</div>
+
+          <div class="budget-number" id="budgetNumber"></div>
+
+          <div class="pressure-row">
+            <div class="pressure-header">
+              <span id="pressureLabel">Grocery Pressure Score</span>
+              <span id="pressureScore">0 / 100</span>
+            </div>
+            <div class="bar-track">
+              <div class="bar-fill" id="barFill"></div>
+            </div>
+          </div>
+
+          <div class="result-details" id="resultDetails"></div>
+
+          <div class="mini-summary" id="summary"></div>
+        </div>
+      </div>
+
+      <section class="content-section">
+        <h2>How This Ideal Grocery Budget Calculator Works</h2>
+
+        <p>
+          This calculator does not use one flat grocery number for everyone.
+          It starts with household size, then adjusts for take-home income,
+          debt payments, savings, food style, and how often the household cooks
+          at home.
+        </p>
+
+        <p>
+          A lower-income household may need a smaller grocery target even if
+          food prices are high. A higher-income household may reasonably spend
+          more on groceries without creating financial pressure. That is why
+          the final range changes when income changes.
+        </p>
+
+        <p>
+          For related food spending decisions, compare this result with the
+          <a class="content-link" href="/should-i-spend-this-much-on-groceries-per-month">
+            monthly grocery spending calculator
+          </a>
+          or the
+          <a class="content-link" href="/should-i-meal-prep-or-eat-out">
+            meal prep vs eating out calculator
+          </a>.
+        </p>
+      </section>
+
+      <KeyCostCategories
+        items={[
+          {
+            title: "Take-home income",
+            description:
+              "The recommended grocery amount rises when your monthly take-home income gives you more room.",
+          },
+          {
+            title: "Household size",
+            description:
+              "Larger households need more food, but the calculator still checks whether that amount fits the income.",
+          },
+          {
+            title: "Debt payments",
+            description:
+              "Debt reduces flexible monthly cash, which can pull the recommended grocery range lower.",
+          },
+          {
+            title: "Emergency savings",
+            description:
+              "Weak savings make the calculator more conservative. Strong savings allow more flexibility.",
+          },
+          {
+            title: "Food habits",
+            description:
+              "Premium groceries and frequent home cooking increase the estimate. Less cooking at home lowers it.",
+          },
+        ]}
+      />
+
+      <ReduceCostTips
+        items={[
+          "Separate groceries from restaurants, delivery apps, coffee, and snacks bought away from home.",
+          "Use a weekly grocery target instead of waiting until the end of the month.",
+          "Build meals around lower-cost proteins, frozen vegetables, rice, potatoes, pasta, beans, and store brands.",
+          "Track household supplies separately for one month so paper goods and cleaning products do not inflate the food number.",
+          "Avoid cutting groceries so aggressively that the savings simply turn into takeout spending.",
+        ]}
+      />
+
+      <CalculatorAssumptions
+        items={[
+          "Monthly income means take-home pay after taxes and payroll deductions.",
+          "The recommendation is a planning range, not a strict rule.",
+          "Debt payments reduce available grocery flexibility.",
+          "Emergency savings are compared with estimated baseline monthly needs.",
+          "Very high income can increase the recommended dollar amount while still lowering the pressure score to zero.",
+          "Restaurants, delivery, takeout, coffee shops, alcohol, and household supplies are not included unless you personally track them as groceries.",
+        ]}
+      />
+
+      <section class="content-section">
+        <h2>Why the Best Grocery Budget Changes by Income</h2>
+
+        <p>
+          The best grocery budget is not just the cheapest number possible.
+          A household earning $2,000 per month may need a tight grocery target
+          to protect rent, utilities, transportation, and emergency savings.
+          A household earning $30,000 per month can often spend much more on
+          groceries while still keeping the budget healthy.
+        </p>
+
+        <p>
+          This calculator is built for that difference. It gives lower-income
+          households a smaller target, gives larger households room for real
+          food needs, and allows high-income households to see a larger but
+          still reasonable grocery range.
+        </p>
+      </section>
+
+      <section class="content-section">
+        <h2>What Counts as Groceries?</h2>
+
+        <p>
+          Groceries usually include food purchased for home meals: meat,
+          produce, dairy or dairy alternatives, pantry staples, frozen food,
+          snacks, drinks, and basic ingredients. Some households also include
+          paper goods, cleaning supplies, diapers, pet food, or toiletries on
+          the same receipt, but those items can make the grocery number look
+          inflated.
+        </p>
+
+        <p>
+          For a cleaner budget, separate food from household supplies for one
+          month. If a $1,100 grocery month includes diapers, dog food, detergent,
+          paper towels, and pharmacy items, your true food cost may be much
+          lower than it appears.
+        </p>
+      </section>
+
+      <section class="content-section">
+        <h2>When a Grocery Budget Is Too Low</h2>
+
+        <p>
+          A low grocery target is not always better. If the budget is so tight
+          that you run out of food, rely on takeout, skip protein, or make
+          several unplanned midweek trips, the number may be unrealistic.
+          The better target is the lowest budget you can repeat without
+          creating stress, waste, or restaurant overspending.
+        </p>
+      </section>
+
+      <div class="content-section">
+        <FAQSection title="Ideal Grocery Budget Calculator FAQ" faqs={groceryFaqs} />
+      </div>
+
+      <div class="content-section">
+        <RelatedCalculators calculators={relatedCalculators} />
+      </div>
+    </CalculatorPageShell>
+
+    <MethodologySection category="ideal grocery budget estimates" updated="June 2026" />
+  </div>
+
+  <script is:inline>
+    const getNumber = (id) => {
+      const rawValue = document.getElementById(id)?.value;
+      const value = Number(rawValue);
+      return Number.isFinite(value) && value >= 0 ? value : 0;
+    };
+
+    const getValue = (id) => document.getElementById(id)?.value || "";
+
+    function formatMoney(value) {
+      return value.toLocaleString(undefined, {
+        style: "currency",
+        currency: "USD",
+        minimumFractionDigits: 0,
+        maximumFractionDigits: 0,
+      });
+    }
+
+    function clamp(value, min, max) {
+      return Math.min(Math.max(value, min), max);
+    }
+
+    function calculateGroceryBudget() {
+      const income = getNumber("income");
+      const household = Math.max(getNumber("household"), 1);
+      const debt = getNumber("debt");
+      const savings = getNumber("savings");
+      const foodStyle = getValue("foodStyle");
+      const cookFrequency = getValue("cookFrequency");
+
+      const results = document.getElementById("results");
+      const budgetNumber = document.getElementById("budgetNumber");
+      const pressureScore = document.getElementById("pressureScore");
+      const pressureLabel = document.getElementById("pressureLabel");
+      const barFill = document.getElementById("barFill");
+      const resultDetails = document.getElementById("resultDetails");
+      const summary = document.getElementById("summary");
+
+      results.classList.add("visible");
+
+      if (income <= 0 || household <= 0) {
+        budgetNumber.textContent = "$0";
+        pressureScore.textContent = "0 / 100";
+        pressureLabel.textContent = "Enter income and household size";
+        barFill.style.width = "0%";
+        resultDetails.innerHTML =
+          "<p>Enter monthly take-home income and household size to estimate your ideal grocery budget.</p>";
+        summary.textContent = "";
+        return;
+      }
+
+      const safeDebt = Math.min(debt, income);
+      const availableAfterDebt = Math.max(income - safeDebt, 0);
+
+      const firstPersonBaseline = 300;
+      const additionalPersonBaseline = 210;
+      const householdBaseline =
+        firstPersonBaseline + Math.max(household - 1, 0) * additionalPersonBaseline;
+
+      const styleMultiplier =
+        foodStyle === "basic" ? 0.88 : foodStyle === "premium" ? 1.22 : 1;
+
+      const cookMultiplier =
+        cookFrequency === "low" ? 0.86 : cookFrequency === "high" ? 1.16 : 1;
+
+      const adjustedFoodBaseline =
+        householdBaseline * styleMultiplier * cookMultiplier;
+
+      let incomePercent = 0.09;
+
+      if (household === 2) {
+        incomePercent = 0.105;
+      } else if (household === 3) {
+        incomePercent = 0.115;
+      } else if (household === 4) {
+        incomePercent = 0.125;
+      } else if (household >= 5) {
+        incomePercent = 0.135;
+      }
+
+      const incomeBasedBudget = availableAfterDebt * incomePercent;
+
+      const incomeStrength = income / Math.max(adjustedFoodBaseline, 1);
+
+      let incomeWeight = 0.45;
+
+      if (incomeStrength >= 8) {
+        incomeWeight = 0.55;
+      }
+
+      if (incomeStrength >= 14) {
+        incomeWeight = 0.65;
+      }
+
+      if (incomeStrength >= 24) {
+        incomeWeight = 0.72;
+      }
+
+      const baselineWeight = 1 - incomeWeight;
+
+      let idealMidpoint =
+        adjustedFoodBaseline * baselineWeight + incomeBasedBudget * incomeWeight;
+
+      const bareMinimum = household * 165;
+      const practicalFloor = adjustedFoodBaseline * 0.62;
+
+      idealMidpoint = Math.max(idealMidpoint, bareMinimum, practicalFloor);
+
+      const savingsNeed = Math.max(income * 0.65, adjustedFoodBaseline + safeDebt);
+      const savingsMonths = savingsNeed > 0 ? savings / savingsNeed : 0;
+
+      if (savingsMonths < 1) {
+        idealMidpoint *= 0.9;
+      } else if (savingsMonths < 3) {
+        idealMidpoint *= 0.96;
+      } else if (savingsMonths >= 6) {
+        idealMidpoint *= 1.05;
+      }
+
+      const debtShare = safeDebt / income;
+
+      if (debtShare > 0.35) {
+        idealMidpoint *= 0.84;
+      } else if (debtShare > 0.25) {
+        idealMidpoint *= 0.9;
+      } else if (debtShare > 0.18) {
+        idealMidpoint *= 0.95;
+      }
+
+      const lowRange = idealMidpoint * 0.9;
+      const highRange = idealMidpoint * 1.1;
+      const weeklyTarget = idealMidpoint / 4.33;
+      const groceryShare = idealMidpoint / income;
+
+      let pressure = 0;
+
+      if (groceryShare > 0.12) {
+        pressure += (groceryShare - 0.12) * 180;
+      }
+
+      if (groceryShare > 0.18) {
+        pressure += (groceryShare - 0.18) * 260;
+      }
+
+      if (groceryShare > 0.25) {
+        pressure += (groceryShare - 0.25) * 360;
+      }
+
+      if (debtShare > 0.18) {
+        pressure += (debtShare - 0.18) * 130;
+      }
+
+      if (savingsMonths < 1) {
+        pressure += 18;
+      } else if (savingsMonths < 3) {
+        pressure += 9;
+      } else if (savingsMonths >= 6) {
+        pressure -= 10;
+      }
+
+      if (incomeStrength >= 14) {
+        pressure -= 16;
+      }
+
+      if (incomeStrength >= 24) {
+        pressure -= 24;
+      }
+
+      if (incomeStrength >= 40) {
+        pressure = 0;
+      }
+
+      pressure = Math.round(clamp(pressure, 0, 100));
+
+      let verdict = "Low pressure";
+      let label = "Low Grocery Pressure";
+
+      if (pressure >= 70) {
+        verdict = "High pressure";
+        label = "High Grocery Pressure";
+      } else if (pressure >= 35) {
+        verdict = "Moderate pressure";
+        label = "Moderate Grocery Pressure";
+      }
+
+      budgetNumber.textContent = `${formatMoney(lowRange)}–${formatMoney(highRange)}`;
+      pressureScore.textContent = `${pressure} / 100`;
+      pressureLabel.textContent = label;
+      barFill.style.width = `${pressure}%`;
+
+      resultDetails.innerHTML = `
+        <p><strong>Estimated midpoint:</strong> ${formatMoney(idealMidpoint)} per month.</p>
+
+        <p><strong>Estimated weekly target:</strong> ${formatMoney(weeklyTarget)} per week.</p>
+
+        <p><strong>Grocery share of take-home income:</strong> ${(groceryShare * 100).toFixed(1)}%.</p>
+
+        <p><strong>Debt share of take-home income:</strong> ${(debtShare * 100).toFixed(1)}%.</p>
+
+        <p><strong>Emergency savings estimate:</strong> about ${savingsMonths.toFixed(1)} months of baseline expenses.</p>
+      `;
+
+      summary.innerHTML = `
+        For a household of <strong>${household.toFixed(0)}</strong> with
+        <strong>${formatMoney(income)}</strong> in monthly take-home income,
+        a reasonable grocery budget is about
+        <strong>${formatMoney(lowRange)} to ${formatMoney(highRange)}</strong> per month.
+        This creates <strong>${verdict.toLowerCase()}</strong> based on your income,
+        debt, savings, and food habits.
+      `;
+    }
+
+    document
+      .getElementById("groceryButton")
+      .addEventListener("click", calculateGroceryBudget);
+  </script>
+</Layout>

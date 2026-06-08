@@ -622,6 +622,15 @@ export const calculators = [
 },
 
   {
+  id: "ideal-grocery-budget-calculator",
+  category: "Groceries",
+  title: "Ideal Grocery Budget Calculator",
+  description:
+    "Estimate a realistic grocery budget based on monthly take-home income, household size, eating-out habits, and dietary style.",
+  href: "/ideal-grocery-budget-calculator",
+},
+
+{
   id: "groceries-monthly",
   category: "Groceries",
   title: "Should I Spend This Much on Groceries Per Month?",
@@ -685,6 +694,33 @@ export const calculators = [
 },
 
 {
+  id: "cost-per-meal-calculator",
+  category: "Groceries",
+  title: "Cost Per Meal Calculator",
+  description:
+    "Calculate your cost per meal, cost per person, monthly food spending, and annual food spending based on grocery habits and income.",
+  href: "/cost-per-meal-calculator",
+},
+
+{
+  id: "meal-prep-vs-eating-out",
+  category: "Groceries",
+  title: "Meal Prep vs Eating Out Calculator",
+  description:
+    "Compare meal prep and eating out using income, savings, debt, grocery spending, restaurant spending, household size, and weekly purchased meals.",
+  href: "/should-i-meal-prep-or-eat-out",
+},
+
+{
+  id: "dining-out-budget-calculator",
+  category: "Groceries",
+  title: "Eating Out Budget Calculator",
+  description:
+    "Estimate a realistic restaurant, takeout, coffee, and delivery budget based on income, savings, household size, groceries, and dining frequency.",
+  href: "/eating-out-budget-calculator",
+},
+
+{
   id: "dining-out-monthly",
   category: "Groceries",
   title: "Should I Spend This Much Eating Out Per Month?",
@@ -718,6 +754,24 @@ export const calculators = [
   description:
     "Evaluate whether spending $1,000 per month on restaurants, delivery, takeout, and coffee creates financial pressure or fits your income comfortably.",
   href: "/should-i-spend-1000-eating-out-per-month",
+},
+
+{
+  id: "organic-food",
+  category: "Groceries",
+  title: "Should I Buy Organic Food?",
+  description:
+    "Decide whether the organic food premium fits your grocery budget, income, savings cushion, debt load, household size, and monthly flexibility.",
+  href: "/should-i-buy-organic-food",
+},
+
+{
+  id: "leftovers-savings-calculator",
+  category: "Groceries",
+  title: "Leftovers Savings Calculator",
+  description:
+    "Estimate how much money your household loses from discarded meals and how much you could save each month and year by reducing food waste.",
+  href: "/leftovers-savings-calculator",
 },
 
 {

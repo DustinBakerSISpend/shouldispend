@@ -1,0 +1,671 @@
+---
+import Layout from "../layouts/Layout.astro";
+import CalculatorPageShell from "../components/CalculatorPageShell.astro";
+import FAQSection from "../components/FAQSection.astro";
+import RelatedCalculators from "../components/RelatedCalculators.astro";
+import MethodologySection from "../components/MethodologySection.astro";
+import CalculatorAssumptions from "../components/CalculatorAssumptions.astro";
+import KeyCostCategories from "../components/KeyCostCategories.astro";
+import ReduceCostTips from "../components/ReduceCostTips.astro";
+import { calculators } from "../data/calculators.js";
+
+const mealPrepFaqs = [
+  {
+    question: "Is meal prep always cheaper than eating out?",
+    answer:
+      "Usually, but not always. Meal prep is cheaper when you actually eat the food you prepare, avoid waste, and replace restaurant meals instead of adding groceries on top of restaurant spending.",
+  },
+  {
+    question: "Should I meal prep if I have a high income?",
+    answer:
+      "Maybe. A high income lowers the financial pressure of eating out, but meal prep can still help with health goals, consistency, time, and reducing food waste.",
+  },
+  {
+    question: "What counts as eating out?",
+    answer:
+      "Eating out includes restaurants, fast food, delivery apps, takeout, coffee-shop meals, work lunches, and convenience meals bought away from home.",
+  },
+  {
+    question: "How many meals should I prep per week?",
+    answer:
+      "Start with the meals that create the most spending pressure. For many households, replacing two or three work lunches or weeknight takeout meals creates the biggest savings without making the routine unrealistic.",
+  },
+];
+
+const relatedCalculators = calculators
+  .filter(
+    (calculator) =>
+      calculator.category === "Groceries" &&
+      calculator.href !== "/should-i-meal-prep-or-eat-out"
+  )
+  .slice(0, 4);
+---
+
+<Layout
+  title="Should I Meal Prep or Eat Out?"
+  description="Use this meal prep vs eating out calculator to compare weekly meal costs, estimate monthly savings, and see whether eating out creates financial pressure."
+>
+  <style>
+    .container {
+      max-width: 900px;
+      margin: auto;
+    }
+
+    .calculator {
+      background: white;
+      padding: 40px;
+      border-radius: 24px;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.06);
+    }
+
+    .calculator h2 {
+      margin-top: 0;
+      font-size: 2rem;
+      margin-bottom: 18px;
+      color: #0f172a;
+    }
+
+    .calculator-intro {
+      color: #334155;
+      line-height: 1.8;
+      margin-bottom: 30px;
+      font-size: 1.05rem;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+    }
+
+    .field label {
+      display: block;
+      font-weight: 800;
+      margin-bottom: 10px;
+      color: #0f172a;
+    }
+
+    .field input,
+    .field select {
+      width: 100%;
+      padding: 16px;
+      border-radius: 12px;
+      border: 1px solid #cbd5e1;
+      font-size: 1rem;
+      box-sizing: border-box;
+      background: white;
+    }
+
+    button {
+      margin-top: 30px;
+      background: #0f766e;
+      color: white;
+      border: none;
+      padding: 18px 32px;
+      border-radius: 999px;
+      font-size: 1.05rem;
+      font-weight: 800;
+      cursor: pointer;
+      transition: opacity 0.2s ease;
+    }
+
+    button:hover {
+      opacity: 0.92;
+    }
+
+    .results {
+      margin-top: 36px;
+      background: #f8fafc;
+      padding: 32px;
+      border-radius: 24px;
+      border: 1px solid var(--border);
+      box-shadow: 0 10px 24px rgba(15, 23, 42, 0.04);
+      display: none;
+    }
+
+    .results.visible {
+      display: block;
+    }
+
+    .verdict {
+      font-size: clamp(2.2rem, 5vw, 3.6rem);
+      font-weight: 900;
+      color: #0f172a;
+      line-height: 1.05;
+      margin-bottom: 12px;
+    }
+
+    .result-label {
+      font-size: 1.15rem;
+      font-weight: 800;
+      color: #0f766e;
+      margin-bottom: 24px;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+    }
+
+    .pressure-row {
+      margin: 26px 0;
+    }
+
+    .pressure-header {
+      display: flex;
+      justify-content: space-between;
+      gap: 16px;
+      font-weight: 900;
+      color: #0f172a;
+      margin-bottom: 10px;
+    }
+
+    .bar-track {
+      width: 100%;
+      height: 18px;
+      background: #e2e8f0;
+      border-radius: 999px;
+      overflow: hidden;
+    }
+
+    .bar-fill {
+      width: 0%;
+      height: 100%;
+      background: #0f766e;
+      border-radius: 999px;
+      transition: width 0.25s ease;
+    }
+
+    .result-details {
+      color: #334155;
+      line-height: 1.9;
+      font-size: 1.02rem;
+    }
+
+    .result-details p {
+      margin: 0 0 12px;
+    }
+
+    .mini-summary {
+      margin-top: 24px;
+      padding: 20px;
+      border-radius: 18px;
+      background: white;
+      border: 1px solid #dbe4ee;
+      color: #334155;
+      line-height: 1.8;
+    }
+
+    .content-section {
+      margin-top: 60px;
+    }
+
+    .content-section h2 {
+      font-size: 2rem;
+      margin-bottom: 20px;
+      color: #0f172a;
+    }
+
+    .content-section p,
+    .content-section li {
+      font-size: 1.1rem;
+      line-height: 1.9;
+      color: #334155;
+    }
+
+    .content-link {
+      color: #0f766e;
+      font-weight: 700;
+      text-decoration: none;
+    }
+
+    .content-link:hover {
+      text-decoration: underline;
+    }
+
+    @media (max-width: 768px) {
+      .calculator {
+        padding: 24px;
+      }
+
+      .grid {
+        grid-template-columns: 1fr;
+      }
+
+      .calculator h2,
+      .content-section h2 {
+        font-size: 1.7rem;
+      }
+
+      .results {
+        padding: 24px;
+      }
+    }
+  </style>
+
+  <div class="container">
+    <CalculatorPageShell
+      eyebrow="Meal Prep vs Eating Out Calculator"
+      title="Should I Meal Prep or Eat Out?"
+      description="Compare meal prep costs with eating out, estimate monthly savings, and see whether your restaurant spending creates financial pressure."
+    >
+      <div class="calculator">
+        <h2>Meal Prep vs Eating Out Calculator</h2>
+
+        <p class="calculator-intro">
+          Enter your income, household size, meal costs, and current eating-out
+          habits. This calculator estimates whether meal prep is worth it,
+          how much it could save, and how much pressure eating out creates.
+        </p>
+
+        <div class="grid">
+          <div class="field">
+            <label for="income">Monthly Take-Home Income</label>
+            <input id="income" type="number" placeholder="Example: 6500" />
+          </div>
+
+          <div class="field">
+            <label for="household">Household Size</label>
+            <input id="household" type="number" placeholder="Example: 2" />
+          </div>
+
+          <div class="field">
+            <label for="eatOutMeals">Eating-Out Meals per Week</label>
+            <input id="eatOutMeals" type="number" placeholder="Example: 8" />
+          </div>
+
+          <div class="field">
+            <label for="eatOutCost">Average Eating-Out Cost per Meal</label>
+            <input id="eatOutCost" type="number" placeholder="Example: 17" />
+          </div>
+
+          <div class="field">
+            <label for="prepMeals">Meals You Would Prep per Week</label>
+            <input id="prepMeals" type="number" placeholder="Example: 5" />
+          </div>
+
+          <div class="field">
+            <label for="prepCost">Average Meal Prep Cost per Meal</label>
+            <input id="prepCost" type="number" placeholder="Example: 5" />
+          </div>
+
+          <div class="field">
+            <label for="debt">Monthly Debt Payments</label>
+            <input id="debt" type="number" placeholder="Example: 700" />
+          </div>
+
+          <div class="field">
+            <label for="savings">Emergency Savings</label>
+            <input id="savings" type="number" placeholder="Example: 6000" />
+          </div>
+
+          <div class="field">
+            <label for="wasteRisk">Meal Prep Waste Risk</label>
+            <select id="wasteRisk">
+              <option value="low">Low — I usually eat what I prep</option>
+              <option value="medium" selected>Medium — some waste happens</option>
+              <option value="high">High — I often throw food out</option>
+            </select>
+          </div>
+
+          <div class="field">
+            <label for="timeValue">Convenience Value</label>
+            <select id="timeValue">
+              <option value="low">Low — saving money matters most</option>
+              <option value="medium" selected>Medium</option>
+              <option value="high">High — convenience matters a lot</option>
+            </select>
+          </div>
+        </div>
+
+        <button id="mealPrepButton" type="button">Compare Meal Prep and Eating Out</button>
+
+        <div class="results" id="results">
+          <div class="result-label">Recommendation</div>
+
+          <div class="verdict" id="verdict"></div>
+
+          <div class="pressure-row">
+            <div class="pressure-header">
+              <span id="pressureLabel">Eating-Out Pressure Score</span>
+              <span id="pressureScore">0 / 100</span>
+            </div>
+            <div class="bar-track">
+              <div class="bar-fill" id="barFill"></div>
+            </div>
+          </div>
+
+          <div class="result-details" id="resultDetails"></div>
+
+          <div class="mini-summary" id="summary"></div>
+        </div>
+      </div>
+
+      <section class="content-section">
+        <h2>How This Meal Prep vs Eating Out Calculator Works</h2>
+
+        <p>
+          This calculator compares the meals you currently buy away from home
+          with the meals you could realistically prepare instead. It estimates
+          weekly and monthly savings, then checks whether eating out is creating
+          pressure based on income, debt, savings, and household size.
+        </p>
+
+        <p>
+          The goal is not to pretend everyone should meal prep every meal.
+          A household earning $2,000 per month may need to reduce restaurant
+          spending quickly. A household earning $30,000 per month may be able
+          to eat out often with little financial pressure, even if meal prep
+          would still save money.
+        </p>
+
+        <p>
+          For related food planning, compare this result with the
+          <a class="content-link" href="/ideal-grocery-budget-calculator">
+            ideal grocery budget calculator
+          </a>
+          or the
+          <a class="content-link" href="/eating-out-budget-calculator">
+            eating out budget calculator
+          </a>.
+        </p>
+      </section>
+
+      <KeyCostCategories
+        items={[
+          {
+            title: "Eating-out cost",
+            description:
+              "Restaurant, takeout, delivery, fast food, and work lunch costs drive the comparison.",
+          },
+          {
+            title: "Meal prep cost",
+            description:
+              "Meal prep only saves money when the prepared meal actually replaces a meal you would have bought.",
+          },
+          {
+            title: "Monthly income",
+            description:
+              "Higher income lowers the pressure score because the same restaurant spending takes up less of the budget.",
+          },
+          {
+            title: "Debt and savings",
+            description:
+              "Debt payments and weak emergency savings make eating out less flexible.",
+          },
+          {
+            title: "Waste and convenience",
+            description:
+              "Meal prep looks better when waste risk is low. Eating out looks less risky when convenience is worth the premium.",
+          },
+        ]}
+      />
+
+      <ReduceCostTips
+        items={[
+          "Start by replacing the most expensive repeat meal, such as work lunches or delivery dinners.",
+          "Prep two or three meals per week before trying a full seven-day plan.",
+          "Use ingredients that overlap across meals so leftovers do not become waste.",
+          "Keep one backup frozen or pantry meal available to avoid emergency takeout.",
+          "Track restaurant spending separately from groceries so the savings are visible.",
+        ]}
+      />
+
+      <CalculatorAssumptions
+        items={[
+          "Monthly income means take-home pay after taxes and payroll deductions.",
+          "Eating-out meals include restaurants, fast food, takeout, delivery, and purchased work lunches.",
+          "Meal prep savings assume the prepped meal replaces a meal you would have bought.",
+          "Waste risk reduces the expected savings from meal prep.",
+          "High income can lower the pressure score to zero even when eating out costs more.",
+          "The calculator does not include health goals, dietary restrictions, commute time, cooking skill, or personal enjoyment except through the convenience and waste inputs.",
+        ]}
+      />
+
+      <section class="content-section">
+        <h2>When Meal Prep Makes the Most Sense</h2>
+
+        <p>
+          Meal prep makes the most sense when eating out is a repeated habit,
+          not an occasional treat. Replacing five restaurant meals per week can
+          change the monthly budget much more than skipping one nice dinner.
+        </p>
+
+        <p>
+          Meal prep is also strongest when the meals are simple enough to repeat.
+          If the plan requires expensive ingredients, complicated recipes, or
+          food you do not want to eat by Wednesday, the theoretical savings may
+          disappear.
+        </p>
+      </section>
+
+      <section class="content-section">
+        <h2>When Eating Out Can Be Reasonable</h2>
+
+        <p>
+          Eating out is not automatically irresponsible. It can be reasonable
+          when income is high, debt is manageable, savings are strong, and the
+          spending is intentional. Convenience can also be worth paying for
+          during busy seasons.
+        </p>
+
+        <p>
+          The danger is when eating out becomes invisible. A few lunches, coffee
+          stops, delivery fees, tips, and weekend meals can quietly become a
+          major monthly expense without feeling like one big purchase.
+        </p>
+      </section>
+
+      <section class="content-section">
+        <h2>How to Use the Result</h2>
+
+        <p>
+          A “meal prep” recommendation does not mean you need to cook every meal.
+          It means replacing enough purchased meals to lower pressure. A “mixed”
+          recommendation means the best answer may be a weekly cap, such as
+          prepping lunches while keeping one or two restaurant meals.
+        </p>
+
+        <p>
+          A “eating out is affordable” recommendation means the spending appears
+          manageable based on the inputs, not that meal prep has no value.
+          Health goals, family routines, time, and food quality may still make
+          meal prep worthwhile.
+        </p>
+      </section>
+
+      <div class="content-section">
+        <FAQSection title="Meal Prep vs Eating Out FAQ" faqs={mealPrepFaqs} />
+      </div>
+
+      <div class="content-section">
+        <RelatedCalculators calculators={relatedCalculators} />
+      </div>
+    </CalculatorPageShell>
+
+    <MethodologySection category="meal prep vs eating out decisions" updated="June 2026" />
+  </div>
+
+  <script is:inline>
+    const getNumber = (id) => {
+      const rawValue = document.getElementById(id)?.value;
+      const value = Number(rawValue);
+      return Number.isFinite(value) && value >= 0 ? value : 0;
+    };
+
+    const getValue = (id) => document.getElementById(id)?.value || "";
+
+    function formatMoney(value) {
+      return value.toLocaleString(undefined, {
+        style: "currency",
+        currency: "USD",
+        minimumFractionDigits: 0,
+        maximumFractionDigits: 0,
+      });
+    }
+
+    function clamp(value, min, max) {
+      return Math.min(Math.max(value, min), max);
+    }
+
+    function calculateMealPrep() {
+      const income = getNumber("income");
+      const household = Math.max(getNumber("household"), 1);
+      const eatOutMeals = getNumber("eatOutMeals");
+      const eatOutCost = getNumber("eatOutCost");
+      const prepMeals = getNumber("prepMeals");
+      const prepCost = getNumber("prepCost");
+      const debt = getNumber("debt");
+      const savings = getNumber("savings");
+      const wasteRisk = getValue("wasteRisk");
+      const timeValue = getValue("timeValue");
+
+      const results = document.getElementById("results");
+      const verdict = document.getElementById("verdict");
+      const pressureScore = document.getElementById("pressureScore");
+      const pressureLabel = document.getElementById("pressureLabel");
+      const barFill = document.getElementById("barFill");
+      const resultDetails = document.getElementById("resultDetails");
+      const summary = document.getElementById("summary");
+
+      results.classList.add("visible");
+
+      if (income <= 0 || eatOutMeals <= 0 || eatOutCost <= 0 || prepMeals <= 0 || prepCost <= 0) {
+        verdict.textContent = "Add Your Meal Costs";
+        pressureScore.textContent = "0 / 100";
+        pressureLabel.textContent = "Enter meal details";
+        barFill.style.width = "0%";
+        resultDetails.innerHTML =
+          "<p>Enter income, eating-out meals, eating-out cost, meals you would prep, and meal prep cost to compare the options.</p>";
+        summary.textContent = "";
+        return;
+      }
+
+      const safeDebt = Math.min(debt, income);
+      const debtShare = safeDebt / income;
+
+      const replaceableMeals = Math.min(eatOutMeals, prepMeals);
+      const weeklyEatingOutCost = eatOutMeals * eatOutCost;
+      const monthlyEatingOutCost = weeklyEatingOutCost * 4.33;
+
+      const weeklyPrepCost = replaceableMeals * prepCost;
+      const weeklyReplacedRestaurantCost = replaceableMeals * eatOutCost;
+      let weeklyGrossSavings = weeklyReplacedRestaurantCost - weeklyPrepCost;
+
+      const wasteMultiplier =
+        wasteRisk === "low" ? 0.95 : wasteRisk === "high" ? 0.65 : 0.8;
+
+      const expectedWeeklySavings = Math.max(weeklyGrossSavings * wasteMultiplier, 0);
+      const expectedMonthlySavings = expectedWeeklySavings * 4.33;
+      const annualSavings = expectedMonthlySavings * 12;
+
+      const remainingEatingOutMeals = Math.max(eatOutMeals - replaceableMeals, 0);
+      const monthlyAfterPrep =
+        (remainingEatingOutMeals * eatOutCost + replaceableMeals * prepCost) * 4.33;
+
+      const savingsNeed = Math.max(income * 0.65, monthlyEatingOutCost + safeDebt + household * 300);
+      const savingsMonths = savingsNeed > 0 ? savings / savingsNeed : 0;
+
+      const eatingOutShare = monthlyEatingOutCost / income;
+      const afterPrepShare = monthlyAfterPrep / income;
+
+      let pressure = 0;
+
+      if (eatingOutShare > 0.05) {
+        pressure += (eatingOutShare - 0.05) * 230;
+      }
+
+      if (eatingOutShare > 0.09) {
+        pressure += (eatingOutShare - 0.09) * 320;
+      }
+
+      if (eatingOutShare > 0.14) {
+        pressure += (eatingOutShare - 0.14) * 420;
+      }
+
+      if (debtShare > 0.18) {
+        pressure += (debtShare - 0.18) * 120;
+      }
+
+      if (savingsMonths < 1) {
+        pressure += 18;
+      } else if (savingsMonths < 3) {
+        pressure += 9;
+      } else if (savingsMonths >= 6) {
+        pressure -= 10;
+      }
+
+      if (expectedMonthlySavings >= income * 0.04) {
+        pressure += 10;
+      }
+
+      const incomeStrength = income / Math.max(monthlyEatingOutCost, 1);
+
+      if (incomeStrength >= 20) {
+        pressure -= 18;
+      }
+
+      if (incomeStrength >= 35) {
+        pressure -= 28;
+      }
+
+      if (incomeStrength >= 55) {
+        pressure = 0;
+      }
+
+      pressure = Math.round(clamp(pressure, 0, 100));
+
+      let recommendation = "Use a Mixed Plan";
+      let label = "Moderate Eating-Out Pressure";
+
+      const savingsIsMeaningful = expectedMonthlySavings >= Math.max(100, income * 0.025);
+      const eatingOutIsTiny = eatingOutShare <= 0.035;
+      const highConvenience = timeValue === "high";
+      const lowPressure = pressure < 30;
+      const highPressure = pressure >= 65;
+
+      if (highPressure && savingsIsMeaningful) {
+        recommendation = "Meal Prep More Often";
+        label = "High Eating-Out Pressure";
+      } else if (savingsIsMeaningful && !highConvenience && pressure >= 35) {
+        recommendation = "Meal Prep More Often";
+        label = "Moderate Eating-Out Pressure";
+      } else if (eatingOutIsTiny && lowPressure) {
+        recommendation = "Eating Out Is Affordable";
+        label = "Low Eating-Out Pressure";
+      } else if (highConvenience && lowPressure) {
+        recommendation = "Eating Out Is Affordable";
+        label = "Low Eating-Out Pressure";
+      } else if (pressure < 35) {
+        label = "Low Eating-Out Pressure";
+      }
+
+      verdict.textContent = recommendation;
+      pressureScore.textContent = `${pressure} / 100`;
+      pressureLabel.textContent = label;
+      barFill.style.width = `${pressure}%`;
+
+      resultDetails.innerHTML = `
+        <p><strong>Current eating-out cost:</strong> about ${formatMoney(monthlyEatingOutCost)} per month.</p>
+
+        <p><strong>Estimated cost after meal prep:</strong> about ${formatMoney(monthlyAfterPrep)} per month.</p>
+
+        <p><strong>Expected monthly savings:</strong> about ${formatMoney(expectedMonthlySavings)} after adjusting for waste risk.</p>
+
+        <p><strong>Estimated annual savings:</strong> about ${formatMoney(annualSavings)}.</p>
+
+        <p><strong>Eating-out share of take-home income:</strong> ${(eatingOutShare * 100).toFixed(1)}% now, or ${(afterPrepShare * 100).toFixed(1)}% after meal prep.</p>
+
+        <p><strong>Emergency savings estimate:</strong> about ${savingsMonths.toFixed(1)} months of baseline expenses.</p>
+      `;
+
+      summary.innerHTML = `
+        Replacing <strong>${replaceableMeals.toFixed(0)}</strong> eating-out meals per week
+        could save about <strong>${formatMoney(expectedMonthlySavings)}</strong> per month.
+        Based on your income, debt, savings, and convenience preference, the calculator recommends:
+        <strong>${recommendation}</strong>.
+      `;
+    }
+
+    document
+      .getElementById("mealPrepButton")
+      .addEventListener("click", calculateMealPrep);
+  </script>
+</Layout>

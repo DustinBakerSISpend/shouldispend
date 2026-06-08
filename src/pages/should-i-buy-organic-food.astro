@@ -1,0 +1,677 @@
+---
+import Layout from "../layouts/Layout.astro";
+import CalculatorPageShell from "../components/CalculatorPageShell.astro";
+import FAQSection from "../components/FAQSection.astro";
+import RelatedCalculators from "../components/RelatedCalculators.astro";
+import RelatedGuides from "../components/RelatedGuides.astro";
+import MethodologySection from "../components/MethodologySection.astro";
+import FinancialRedFlags from "../components/FinancialRedFlags.astro";
+import CalculatorAssumptions from "../components/CalculatorAssumptions.astro";
+import KeyCostCategories from "../components/KeyCostCategories.astro";
+import ReduceCostTips from "../components/ReduceCostTips.astro";
+import WhenSpendingMakesSense from "../components/WhenSpendingMakesSense.astro";
+---
+
+<Layout
+  title="Should I Buy Organic Food?"
+  description="Use this organic food calculator to estimate whether buying organic groceries fits your income, food budget, savings, debt, and household priorities."
+>
+  <style>
+    .container {
+      max-width: 950px;
+      margin: 0 auto;
+      padding: 60px 20px;
+    }
+
+    .content-section {
+      max-width: 760px;
+      margin: 72px auto 0;
+    }
+
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 28px;
+      padding: 34px;
+    }
+
+    h2 {
+      margin-top: 0;
+      font-size: 2rem;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 22px;
+      margin-bottom: 28px;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 10px;
+      font-weight: 700;
+    }
+
+    input,
+    select {
+      width: 100%;
+      padding: 18px;
+      border-radius: 14px;
+      border: 1px solid var(--border);
+      font-size: 1.05rem;
+      box-sizing: border-box;
+      background: white;
+    }
+
+    button {
+      background: #0f172a;
+      color: white;
+      border: none;
+      padding: 16px 28px;
+      border-radius: 14px;
+      font-size: 1rem;
+      font-weight: 700;
+      cursor: pointer;
+      margin-top: 10px;
+      width: 100%;
+      display: block;
+    }
+
+    button:hover {
+      opacity: 0.92;
+    }
+
+    .result {
+      margin-top: 40px;
+      border: 1px solid var(--border);
+      border-radius: 24px;
+      padding: 28px;
+      display: none;
+      background: #f8fafc;
+    }
+
+    .score {
+      font-size: 3rem;
+      font-weight: 800;
+      margin-bottom: 16px;
+      line-height: 1.05;
+    }
+
+    .bar {
+      width: 100%;
+      height: 16px;
+      background: #dbe3ee;
+      border-radius: 999px;
+      overflow: hidden;
+      margin-bottom: 24px;
+    }
+
+    .fill {
+      height: 100%;
+      width: 0%;
+      background: #16a34a;
+      border-radius: 999px;
+      transition: width 0.4s ease;
+    }
+
+    .metric {
+      margin-bottom: 14px;
+      font-size: 1.05rem;
+      line-height: 1.7;
+    }
+
+    .guidance {
+      margin-top: 26px;
+      font-size: 1.15rem;
+      line-height: 1.7;
+    }
+
+    .disclaimer {
+      margin-top: 30px;
+      font-size: 0.9rem;
+      color: var(--muted);
+    }
+
+    .content-section p,
+    .content-section li {
+      line-height: 1.8;
+    }
+  </style>
+
+  <div class="container">
+    <CalculatorPageShell
+      eyebrow="Organic Food Calculator"
+      title="Should I Buy Organic Food?"
+      description="Estimate whether organic groceries fit your income, current food budget, savings, debt payments, and household priorities."
+    >
+      <div class="card">
+        <h2>Organic Food Pressure Verdict</h2>
+
+        <div class="grid">
+          <div>
+            <label for="income">Monthly Take-Home Income</label>
+            <input id="income" type="number" placeholder="6500" min="0" inputmode="decimal" />
+          </div>
+
+          <div>
+            <label for="household">Household Size</label>
+            <input id="household" type="number" placeholder="3" min="1" inputmode="numeric" />
+          </div>
+
+          <div>
+            <label for="currentGroceries">Current Monthly Grocery Spending</label>
+            <input id="currentGroceries" type="number" placeholder="750" min="0" inputmode="decimal" />
+          </div>
+
+          <div>
+            <label for="organicPremium">Expected Organic Price Increase</label>
+            <select id="organicPremium">
+              <option value="light">Light — about 10% more</option>
+              <option value="moderate" selected>Moderate — about 20% more</option>
+              <option value="heavy">Heavy — about 35% more</option>
+              <option value="full">Mostly organic — about 50% more</option>
+            </select>
+          </div>
+
+          <div>
+            <label for="organicShare">How Much Would You Buy Organic?</label>
+            <select id="organicShare">
+              <option value="some">Some items only</option>
+              <option value="priority" selected>Priority items</option>
+              <option value="most">Most groceries</option>
+              <option value="all">Nearly everything</option>
+            </select>
+          </div>
+
+          <div>
+            <label for="priority">Why Organic?</label>
+            <select id="priority">
+              <option value="low">Preference, but not essential</option>
+              <option value="medium" selected>Important household priority</option>
+              <option value="high">High priority or strong preference</option>
+            </select>
+          </div>
+
+          <div>
+            <label for="savings">Emergency Savings</label>
+            <input id="savings" type="number" placeholder="10000" min="0" inputmode="decimal" />
+          </div>
+
+          <div>
+            <label for="housing">Monthly Rent or Mortgage</label>
+            <input id="housing" type="number" placeholder="1700" min="0" inputmode="decimal" />
+          </div>
+
+          <div>
+            <label for="debt">Monthly Debt Payments</label>
+            <input id="debt" type="number" placeholder="600" min="0" inputmode="decimal" />
+          </div>
+        </div>
+
+        <button id="organicButton" type="button">
+          Calculate Organic Food Pressure
+        </button>
+
+        <div class="result" id="result">
+          <div class="score" id="score"></div>
+
+          <div class="bar">
+            <div class="fill" id="barFill"></div>
+          </div>
+
+          <div class="metric" id="organicCost"></div>
+          <div class="metric" id="foodShare"></div>
+          <div class="metric" id="premiumShare"></div>
+          <div class="metric" id="cashFlow"></div>
+          <div class="metric" id="savingsCushion"></div>
+
+          <div class="guidance" id="guidance"></div>
+
+          <div class="disclaimer">
+            This is a general educational estimate, not personal financial, medical, nutrition, household, or budgeting advice.
+          </div>
+        </div>
+      </div>
+
+      <div class="content-section">
+        <h2>When Buying Organic Food Makes Sense</h2>
+
+        <p>
+          Organic groceries can make sense when the extra cost fits cleanly
+          within your food budget and does not crowd out rent, debt payments,
+          emergency savings, or other basic needs. The decision is not only
+          about whether organic food is “better.” It is also about whether the
+          premium is affordable for your household.
+        </p>
+
+        <p>
+          For many families, the best answer is not all-or-nothing. Buying
+          organic for a few priority items can be more realistic than switching
+          the entire grocery cart overnight.
+        </p>
+      </div>
+
+      <WhenSpendingMakesSense
+        title="When Organic Groceries Can Be Worth It"
+        items={[
+          "Your income comfortably supports the higher grocery cost.",
+          "You have emergency savings and are not using debt to cover food spending.",
+          "Organic food is a real household priority, not just guilt-driven spending.",
+          "You are buying organic for selected items instead of automatically upgrading everything.",
+          "The extra grocery cost does not lead to wasted food or more restaurant spending.",
+        ]}
+      />
+
+      <div class="content-section">
+        <h2>When Organic Food Deserves a Closer Look</h2>
+
+        <p>
+          Organic food deserves a closer look when groceries are already high,
+          debt payments are heavy, emergency savings are thin, or the household
+          is struggling with monthly cash flow. A small price difference can
+          become a large monthly number when it applies to most of the cart.
+        </p>
+
+        <p>
+          The goal is not to avoid organic food forever. The better move may be
+          to buy organic selectively, protect the rest of the budget, and avoid
+          treating every grocery item as equally important.
+        </p>
+      </div>
+
+      <KeyCostCategories
+        items={[
+          {
+            title: "Current grocery spending",
+            description:
+              "The organic premium is added on top of what you already spend, so a high grocery baseline matters.",
+          },
+          {
+            title: "Organic price premium",
+            description:
+              "The calculator estimates whether a 10%, 20%, 35%, or 50% increase fits your monthly budget.",
+          },
+          {
+            title: "Household size",
+            description:
+              "Larger households can see the organic premium grow quickly because more food is purchased each month.",
+          },
+          {
+            title: "Income and fixed bills",
+            description:
+              "Housing, debt, and other required expenses affect whether the higher grocery bill is flexible.",
+          },
+          {
+            title: "Emergency savings",
+            description:
+              "Organic upgrades are less risky when your emergency cushion is already strong.",
+          },
+        ]}
+      />
+
+      <ReduceCostTips
+        items={[
+          "Buy organic selectively instead of upgrading the entire cart.",
+          "Choose organic for the items your household cares about most.",
+          "Use store brands, frozen produce, and sales to reduce the organic premium.",
+          "Avoid buying organic items that regularly go bad before you eat them.",
+          "Compare the organic upgrade with your restaurant, delivery, and snack spending before cutting nutritious groceries.",
+          "Set a monthly organic cap so the spending stays intentional.",
+        ]}
+      />
+
+      <FinancialRedFlags
+        items={[
+          "You are buying organic groceries while carrying credit card debt from normal monthly spending.",
+          "The organic premium causes you to miss savings goals.",
+          "You throw away expensive organic food because the household does not eat it in time.",
+          "You feel pressure to buy organic everything even when only a few items matter to you.",
+          "The higher grocery bill leads to more takeout because the budget feels blown.",
+        ]}
+      />
+
+      <CalculatorAssumptions
+        items={[
+          "Monthly income means take-home pay after taxes and payroll deductions.",
+          "Current grocery spending should include normal grocery food spending before the organic upgrade.",
+          "The organic premium is estimated using the selected price increase and how much of the cart would be organic.",
+          "Monthly debt payments include credit cards, car loans, student loans, personal loans, and other required debt payments.",
+          "Very high income or very strong savings can reduce the pressure score to zero.",
+          "The calculator does not evaluate medical needs, environmental claims, farming practices, pesticides, or nutrition quality.",
+        ]}
+      />
+
+      <FAQSection
+        title="Should I Buy Organic Food FAQ"
+        faqs={[
+          {
+            question: "Is organic food worth the extra money?",
+            answer:
+              "It can be worth it if the extra cost fits your budget and reflects a real household priority. It may not be worth it if it creates debt, weakens savings, or causes food waste.",
+          },
+          {
+            question: "Should I buy everything organic?",
+            answer:
+              "Most households do not need an all-or-nothing approach. Buying organic selectively for priority foods is often more realistic than upgrading the entire cart.",
+          },
+          {
+            question: "How much more expensive is organic food?",
+            answer:
+              "It varies by store, item, and region. This calculator lets you model a light, moderate, heavy, or mostly organic price increase so you can estimate the monthly impact.",
+          },
+          {
+            question: "Should I buy organic if my budget is tight?",
+            answer:
+              "If your budget is tight, focus first on having enough nutritious food, paying essential bills, avoiding debt, and building emergency savings. Organic upgrades can come later or be limited to a few priority items.",
+          },
+          {
+            question: "What is the easiest way to afford organic groceries?",
+            answer:
+              "Buy selectively, use store brands, watch sales, reduce food waste, and avoid upgrading items your household does not strongly care about.",
+          },
+        ]}
+      />
+
+      <MethodologySection category="organic grocery affordability" updated="June 2026" />
+
+      <RelatedGuides
+        guides={[
+          {
+            title: "Grocery Calculators",
+            href: "/grocery-calculators",
+            description:
+              "Browse grocery, food budget, meal prep, eating-out, and household food spending calculators.",
+          },
+          {
+            title: "What Counts as Debt?",
+            href: "/what-counts-as-debt",
+            description:
+              "Understand which monthly obligations should be included when estimating financial pressure.",
+          },
+        ]}
+      />
+
+      <RelatedCalculators
+        calculators={[
+          {
+            category: "Groceries",
+            title: "Ideal Grocery Budget Calculator",
+            href: "/ideal-grocery-budget-calculator",
+          },
+          {
+            category: "Groceries",
+            title: "Should I Meal Prep or Eat Out?",
+            href: "/should-i-meal-prep-or-eat-out",
+          },
+          {
+            category: "Groceries",
+            title: "Should I Spend This Much on Groceries Per Month?",
+            href: "/should-i-spend-this-much-on-groceries-per-month",
+          },
+          {
+            category: "Groceries",
+            title: "Cost Per Meal Calculator",
+            href: "/cost-per-meal-calculator",
+          },
+        ]}
+      />
+    </CalculatorPageShell>
+  </div>
+
+  <script is:inline>
+    const clamp = (value, min, max) => Math.min(Math.max(value, min), max);
+
+    const getNumber = (id) => {
+      const rawValue = document.getElementById(id)?.value;
+      const value = Number(rawValue);
+      return Number.isFinite(value) && value >= 0 ? value : 0;
+    };
+
+    const getValue = (id) => document.getElementById(id)?.value || "";
+
+    const formatMoney = (value) =>
+      value.toLocaleString(undefined, {
+        style: "currency",
+        currency: "USD",
+        maximumFractionDigits: 0,
+      });
+
+    function getPressureLevel(score) {
+      if (score <= 30) {
+        return {
+          label: "Low Pressure",
+          color: "#16a34a",
+          action:
+            "Organic groceries look affordable. Keep the upgrade intentional and continue watching total food spending.",
+        };
+      }
+
+      if (score <= 60) {
+        return {
+          label: "Moderate Pressure",
+          color: "#ca8a04",
+          action:
+            "Buy organic selectively, set a monthly cap, and avoid upgrading items that do not matter much to your household.",
+        };
+      }
+
+      return {
+        label: "High Pressure",
+        color: "#dc2626",
+        action:
+          "Pause a full organic switch. Focus on essentials, reduce food waste, and consider organic only for a few priority items.",
+      };
+    }
+
+    function calculateOrganicFood() {
+      const income = getNumber("income");
+      const householdInput = getNumber("household");
+      const currentGroceries = getNumber("currentGroceries");
+      const savings = getNumber("savings");
+      const housing = getNumber("housing");
+      const debt = getNumber("debt");
+      const organicPremium = getValue("organicPremium");
+      const organicShare = getValue("organicShare");
+      const priority = getValue("priority");
+
+      const result = document.getElementById("result");
+      const scoreEl = document.getElementById("score");
+      const barFill = document.getElementById("barFill");
+      const organicCostEl = document.getElementById("organicCost");
+      const foodShareEl = document.getElementById("foodShare");
+      const premiumShareEl = document.getElementById("premiumShare");
+      const cashFlowEl = document.getElementById("cashFlow");
+      const savingsCushionEl = document.getElementById("savingsCushion");
+      const guidanceEl = document.getElementById("guidance");
+
+      result.style.display = "block";
+
+      if (income <= 0 || currentGroceries <= 0) {
+        scoreEl.textContent = "Add your numbers first";
+        barFill.style.width = "0%";
+        barFill.style.background = "#16a34a";
+        organicCostEl.innerHTML = "";
+        foodShareEl.innerHTML = "";
+        premiumShareEl.innerHTML = "";
+        cashFlowEl.innerHTML = "";
+        savingsCushionEl.innerHTML = "";
+        guidanceEl.textContent =
+          "Enter monthly take-home income and current grocery spending so the calculator can estimate whether organic groceries fit.";
+        return;
+      }
+
+      const household = householdInput > 0 ? householdInput : 1;
+      const safeDebt = Math.min(debt, income);
+
+      const premiumRate =
+        organicPremium === "light"
+          ? 0.1
+          : organicPremium === "heavy"
+            ? 0.35
+            : organicPremium === "full"
+              ? 0.5
+              : 0.2;
+
+      const shareMultiplier =
+        organicShare === "some"
+          ? 0.35
+          : organicShare === "most"
+            ? 0.75
+            : organicShare === "all"
+              ? 1
+              : 0.55;
+
+      const priorityRelief =
+        priority === "low" ? 0 : priority === "high" ? 8 : 4;
+
+      const estimatedOrganicPremium = currentGroceries * premiumRate * shareMultiplier;
+      const estimatedOrganicGroceries = currentGroceries + estimatedOrganicPremium;
+
+      const currentFoodShare = (currentGroceries / income) * 100;
+      const organicFoodShare = (estimatedOrganicGroceries / income) * 100;
+      const premiumIncomeShare = (estimatedOrganicPremium / income) * 100;
+
+      const fixedObligationRatio = ((housing + safeDebt) / income) * 100;
+      const monthlyRemaining = income - housing - safeDebt - estimatedOrganicGroceries;
+      const monthlyCoreOutflow = housing + safeDebt + estimatedOrganicGroceries;
+
+      const emergencyMonths =
+        monthlyCoreOutflow > 0
+          ? savings / monthlyCoreOutflow
+          : savings > 0
+            ? 999
+            : 0;
+
+      const premiumPerPerson = estimatedOrganicPremium / household;
+      const organicPerPerson = estimatedOrganicGroceries / household;
+
+      const absurdSavings =
+        savings >= estimatedOrganicPremium * 250 &&
+        emergencyMonths >= 24 &&
+        estimatedOrganicPremium > 0;
+
+      const absurdIncome =
+        income >= estimatedOrganicPremium * 250 &&
+        premiumIncomeShare <= 0.4 &&
+        organicFoodShare <= 4 &&
+        fixedObligationRatio <= 25;
+
+      const ultraSafeIncome =
+        premiumIncomeShare <= 0.75 &&
+        organicFoodShare <= 7 &&
+        fixedObligationRatio <= 35 &&
+        monthlyRemaining > income * 0.4;
+
+      const ultraSafeSavings =
+        emergencyMonths >= 12 &&
+        savings >= estimatedOrganicPremium * 100;
+
+      let pressureScore = 0;
+
+      pressureScore += clamp(organicFoodShare * 1.25, 0, 38);
+      pressureScore += clamp(premiumIncomeShare * 5.5, 0, 30);
+      pressureScore += clamp(fixedObligationRatio * 0.22, 0, 24);
+
+      if (monthlyRemaining < 0) pressureScore += 30;
+      else if (monthlyRemaining < income * 0.08) pressureScore += 16;
+      else if (monthlyRemaining > income * 0.3) pressureScore -= 8;
+
+      if (emergencyMonths < 1 && income < 12000) pressureScore += 20;
+      else if (emergencyMonths < 3 && income < 15000) pressureScore += 10;
+      else if (emergencyMonths >= 6) pressureScore -= 8;
+
+      if (organicFoodShare > 18) pressureScore += 12;
+      else if (organicFoodShare > 14) pressureScore += 7;
+
+      if (premiumPerPerson > 125) pressureScore += 8;
+      else if (premiumPerPerson > 75) pressureScore += 5;
+
+      if (organicPerPerson > 650 && household === 1) pressureScore += 6;
+      else if (organicPerPerson > 475 && household >= 2) pressureScore += 6;
+
+      pressureScore -= priorityRelief;
+
+      if (income >= 9000 && monthlyRemaining > income * 0.25 && emergencyMonths >= 3) {
+        pressureScore -= 9;
+      }
+
+      if (income >= 15000 && monthlyRemaining > income * 0.3 && emergencyMonths >= 3) {
+        pressureScore -= 12;
+      }
+
+      if (
+        premiumIncomeShare < 2 &&
+        organicFoodShare < 12 &&
+        emergencyMonths >= 6 &&
+        fixedObligationRatio < 45 &&
+        monthlyRemaining > income * 0.3
+      ) {
+        pressureScore = Math.min(pressureScore, 18);
+      }
+
+      if (
+        premiumIncomeShare < 1 &&
+        organicFoodShare < 9 &&
+        emergencyMonths >= 9 &&
+        fixedObligationRatio < 35 &&
+        monthlyRemaining > income * 0.35
+      ) {
+        pressureScore = Math.min(pressureScore, 8);
+      }
+
+      if (ultraSafeIncome && ultraSafeSavings) {
+        pressureScore = 0;
+      }
+
+      if (absurdSavings || absurdIncome) {
+        pressureScore = 0;
+      }
+
+      pressureScore = Math.round(clamp(pressureScore, 0, 100));
+
+      const level = getPressureLevel(pressureScore);
+
+      let verdict = "Buy Organic Selectively";
+
+      if (pressureScore === 0 || pressureScore <= 22) {
+        verdict = "Organic Looks Affordable";
+      } else if (pressureScore >= 65) {
+        verdict = "Limit Organic for Now";
+      }
+
+      let guidance = "";
+
+      if (pressureScore === 0) {
+        guidance =
+          `The organic upgrade creates virtually no measurable financial pressure based on the income, savings, housing, debt, and grocery numbers provided.`;
+      } else if (pressureScore <= 30) {
+        guidance =
+          `Organic groceries appear manageable. The estimated upgrade is about ${formatMoney(estimatedOrganicPremium)} per month, bringing groceries to about ${organicFoodShare.toFixed(1)}% of take-home income.`;
+      } else if (pressureScore <= 60) {
+        guidance =
+          `Organic groceries may fit, but the upgrade deserves limits. The estimated premium is about ${formatMoney(estimatedOrganicPremium)} per month, and total groceries would equal about ${organicFoodShare.toFixed(1)}% of take-home income.`;
+      } else {
+        guidance =
+          `A broad organic switch could create real pressure. The estimated grocery total would be about ${formatMoney(estimatedOrganicGroceries)} per month, before restaurants or other food spending.`;
+      }
+
+      scoreEl.textContent = `${verdict} — ${pressureScore}/100`;
+      scoreEl.style.color = level.color;
+      barFill.style.width = `${pressureScore}%`;
+      barFill.style.background = level.color;
+
+      organicCostEl.innerHTML = `<strong>Estimated organic grocery cost:</strong> ${formatMoney(estimatedOrganicGroceries)} per month`;
+      foodShareEl.innerHTML = `<strong>Grocery share after organic upgrade:</strong> ${organicFoodShare.toFixed(1)}% of take-home income`;
+      premiumShareEl.innerHTML = `<strong>Estimated organic premium:</strong> ${formatMoney(estimatedOrganicPremium)} per month, or ${premiumIncomeShare.toFixed(1)}% of income`;
+      cashFlowEl.innerHTML = `<strong>Monthly cash flow after housing, debt, and organic groceries:</strong> ${formatMoney(monthlyRemaining)}`;
+      savingsCushionEl.innerHTML = `<strong>Estimated emergency cushion:</strong> ${Math.max(emergencyMonths, 0).toFixed(1)} months`;
+
+      guidanceEl.textContent = `${guidance} Recommended next step: ${level.action}`;
+    }
+
+    document
+      .getElementById("organicButton")
+      .addEventListener("click", calculateOrganicFood);
+  </script>
+</Layout>

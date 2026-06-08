@@ -1,0 +1,608 @@
+---
+import Layout from "../layouts/Layout.astro";
+import CalculatorPageShell from "../components/CalculatorPageShell.astro";
+import FAQSection from "../components/FAQSection.astro";
+import RelatedCalculators from "../components/RelatedCalculators.astro";
+import MethodologySection from "../components/MethodologySection.astro";
+import CalculatorAssumptions from "../components/CalculatorAssumptions.astro";
+import KeyCostCategories from "../components/KeyCostCategories.astro";
+import ReduceCostTips from "../components/ReduceCostTips.astro";
+import { calculators } from "../data/calculators.js";
+
+const eatingOutFaqs = [
+  {
+    question: "How much should I spend eating out per month?",
+    answer:
+      "A reasonable eating-out budget depends on take-home income, household size, grocery spending, debt, savings, and lifestyle. This calculator gives a monthly dollar range instead of one fixed number.",
+  },
+  {
+    question: "Should eating out be based on income?",
+    answer:
+      "Yes. A $300 eating-out budget feels very different on $2,000 per month than it does on $20,000 per month. This calculator adjusts the recommended amount based on monthly take-home income.",
+  },
+  {
+    question: "Does this include coffee and delivery?",
+    answer:
+      "Yes. Restaurants, takeout, delivery apps, coffee shops, work lunches, convenience meals, tips, and fees should generally be counted in an eating-out budget.",
+  },
+  {
+    question: "Should I cut eating out to zero?",
+    answer:
+      "Not always. The goal is a repeatable number that fits your budget. Cutting eating out to zero can backfire if it creates burnout or leads to unplanned spending later.",
+  },
+];
+
+const relatedCalculators = calculators
+  .filter(
+    (calculator) =>
+      calculator.category === "Groceries" &&
+      calculator.href !== "/eating-out-budget-calculator"
+  )
+  .slice(0, 4);
+---
+
+<Layout
+  title="Eating Out Budget Calculator"
+  description="Use this eating out budget calculator to estimate how much you should spend on restaurants, takeout, delivery, coffee, and work lunches per month."
+>
+  <style>
+    .container {
+      max-width: 900px;
+      margin: auto;
+    }
+
+    .calculator {
+      background: white;
+      padding: 40px;
+      border-radius: 24px;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.06);
+    }
+
+    .calculator h2 {
+      margin-top: 0;
+      font-size: 2rem;
+      margin-bottom: 18px;
+      color: #0f172a;
+    }
+
+    .calculator-intro {
+      color: #334155;
+      line-height: 1.8;
+      margin-bottom: 30px;
+      font-size: 1.05rem;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+    }
+
+    .field label {
+      display: block;
+      font-weight: 800;
+      margin-bottom: 10px;
+      color: #0f172a;
+    }
+
+    .field input,
+    .field select {
+      width: 100%;
+      padding: 16px;
+      border-radius: 12px;
+      border: 1px solid #cbd5e1;
+      font-size: 1rem;
+      box-sizing: border-box;
+      background: white;
+    }
+
+    button {
+      margin-top: 30px;
+      background: #0f766e;
+      color: white;
+      border: none;
+      padding: 18px 32px;
+      border-radius: 999px;
+      font-size: 1.05rem;
+      font-weight: 800;
+      cursor: pointer;
+      transition: opacity 0.2s ease;
+    }
+
+    button:hover {
+      opacity: 0.92;
+    }
+
+    .results {
+      margin-top: 36px;
+      background: #f8fafc;
+      padding: 32px;
+      border-radius: 24px;
+      border: 1px solid var(--border);
+      box-shadow: 0 10px 24px rgba(15, 23, 42, 0.04);
+      display: none;
+    }
+
+    .results.visible {
+      display: block;
+    }
+
+    .total-price {
+      font-size: clamp(2.5rem, 6vw, 4rem);
+      font-weight: 900;
+      color: #0f172a;
+      line-height: 1.05;
+      margin-bottom: 12px;
+    }
+
+    .result-label {
+      font-size: 1.15rem;
+      font-weight: 800;
+      color: #0f766e;
+      margin-bottom: 24px;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+    }
+
+    .result-details {
+      color: #334155;
+      line-height: 1.9;
+      font-size: 1.02rem;
+    }
+
+    .result-details p {
+      margin: 0 0 12px;
+    }
+
+    .mini-summary {
+      margin-top: 24px;
+      padding: 20px;
+      border-radius: 18px;
+      background: white;
+      border: 1px solid #dbe4ee;
+      color: #334155;
+      line-height: 1.8;
+    }
+
+    .disclaimer {
+      margin-top: 24px;
+      font-size: 0.9rem;
+      color: #64748b;
+    }
+
+    .content-section {
+      margin-top: 60px;
+    }
+
+    .content-section h2 {
+      font-size: 2rem;
+      margin-bottom: 20px;
+      color: #0f172a;
+    }
+
+    .content-section p,
+    .content-section li {
+      font-size: 1.1rem;
+      line-height: 1.9;
+      color: #334155;
+    }
+
+    .content-link {
+      color: #0f766e;
+      font-weight: 700;
+      text-decoration: none;
+    }
+
+    .content-link:hover {
+      text-decoration: underline;
+    }
+
+    @media (max-width: 768px) {
+      .calculator {
+        padding: 24px;
+      }
+
+      .grid {
+        grid-template-columns: 1fr;
+      }
+
+      .calculator h2,
+      .content-section h2 {
+        font-size: 1.7rem;
+      }
+
+      .results {
+        padding: 24px;
+      }
+    }
+  </style>
+
+  <div class="container">
+    <CalculatorPageShell
+      eyebrow="Eating Out Budget Calculator"
+      title="Eating Out Budget Calculator"
+      description="Estimate a wise monthly eating-out budget based on income, groceries, household size, debt, savings, and lifestyle."
+    >
+      <div class="calculator">
+        <h2>How Much Should You Spend Eating Out?</h2>
+
+        <p class="calculator-intro">
+          Enter your monthly take-home income, grocery spending, household size,
+          debt, savings, and eating-out style. This calculator gives you a
+          practical monthly dollar range for restaurants, takeout, delivery,
+          coffee, and work lunches.
+        </p>
+
+        <div class="grid">
+          <div class="field">
+            <label for="income">Monthly Take-Home Income</label>
+            <input id="income" type="number" placeholder="Example: 6500" />
+          </div>
+
+          <div class="field">
+            <label for="household">Household Size</label>
+            <input id="household" type="number" placeholder="Example: 2" />
+          </div>
+
+          <div class="field">
+            <label for="groceries">Monthly Grocery Spending</label>
+            <input id="groceries" type="number" placeholder="Example: 700" />
+          </div>
+
+          <div class="field">
+            <label for="debt">Monthly Debt Payments</label>
+            <input id="debt" type="number" placeholder="Example: 600" />
+          </div>
+
+          <div class="field">
+            <label for="savings">Emergency Savings</label>
+            <input id="savings" type="number" placeholder="Example: 10000" />
+          </div>
+
+          <div class="field">
+            <label for="housing">Monthly Rent or Mortgage</label>
+            <input id="housing" type="number" placeholder="Example: 1800" />
+          </div>
+
+          <div class="field">
+            <label for="lifestyle">Eating-Out Style</label>
+            <select id="lifestyle">
+              <option value="low">Occasional / budget-conscious</option>
+              <option value="medium" selected>Balanced</option>
+              <option value="high">Social, busy, or convenience-heavy</option>
+            </select>
+          </div>
+
+          <div class="field">
+            <label for="goal">Main Goal</label>
+            <select id="goal">
+              <option value="save">Save money aggressively</option>
+              <option value="balanced" selected>Balanced budget</option>
+              <option value="flexible">More lifestyle flexibility</option>
+            </select>
+          </div>
+        </div>
+
+        <button id="eatingOutBudgetButton" type="button">
+          Calculate Eating Out Budget
+        </button>
+
+        <div class="results" id="results">
+          <div class="result-label">Recommended Monthly Eating-Out Budget</div>
+
+          <div class="total-price" id="budgetRange"></div>
+
+          <div class="result-details" id="resultDetails"></div>
+
+          <div class="mini-summary" id="summary"></div>
+
+          <div class="disclaimer">
+            This estimate is for restaurants, takeout, delivery, coffee, work
+            lunches, tips, and fees. It does not include groceries.
+          </div>
+        </div>
+      </div>
+
+      <section class="content-section">
+        <h2>How This Eating Out Budget Calculator Works</h2>
+
+        <p>
+          This calculator estimates a monthly eating-out budget by looking at
+          take-home income, household size, grocery spending, debt, savings,
+          housing, and lifestyle. It is designed to give a dollar range, not a
+          pressure verdict.
+        </p>
+
+        <p>
+          A lower-income household may need a smaller restaurant budget even if
+          eating out is enjoyable. A higher-income household may reasonably
+          spend more on restaurants, delivery, coffee, or convenience without
+          damaging the budget.
+        </p>
+
+        <p>
+          For related food decisions, compare this result with the
+          <a class="content-link" href="/should-i-meal-prep-or-eat-out">
+            meal prep vs eating out calculator
+          </a>
+          or the
+          <a class="content-link" href="/ideal-grocery-budget-calculator">
+            ideal grocery budget calculator
+          </a>.
+        </p>
+      </section>
+
+      <KeyCostCategories
+        items={[
+          {
+            title: "Take-home income",
+            description:
+              "The recommended eating-out budget rises when monthly income gives you more flexible spending room.",
+          },
+          {
+            title: "Grocery spending",
+            description:
+              "Restaurants are easier to afford when groceries are controlled and food at home is not being wasted.",
+          },
+          {
+            title: "Debt payments",
+            description:
+              "Debt lowers the recommended restaurant budget because less income is flexible.",
+          },
+          {
+            title: "Emergency savings",
+            description:
+              "Weak savings make the estimate more conservative. Strong savings allow more lifestyle flexibility.",
+          },
+          {
+            title: "Lifestyle goal",
+            description:
+              "A savings-focused household gets a tighter range. A flexibility-focused household gets more room.",
+          },
+        ]}
+      />
+
+      <ReduceCostTips
+        items={[
+          "Separate restaurants, delivery, coffee, snacks, and groceries into different categories.",
+          "Set a weekly eating-out cap instead of trying to manage one monthly number.",
+          "Keep the restaurant meals you actually value and cut forgettable convenience spending.",
+          "Use pickup instead of delivery when fees and tips are inflating the total.",
+          "Keep easy backup meals at home to prevent emergency takeout.",
+        ]}
+      />
+
+      <CalculatorAssumptions
+        items={[
+          "Monthly income means take-home pay after taxes and payroll deductions.",
+          "Eating out includes restaurants, fast food, takeout, delivery, coffee shops, work lunches, tips, and fees.",
+          "Groceries are excluded from the final eating-out budget but included when estimating total food flexibility.",
+          "Debt payments and weak emergency savings reduce the recommended range.",
+          "Very high income can produce a much higher recommended dollar amount while still being financially safe.",
+          "The estimate is educational guidance, not personal financial advice.",
+        ]}
+      />
+
+      <section class="content-section">
+        <h2>What Counts as Eating Out?</h2>
+
+        <p>
+          Eating out is more than sit-down restaurants. It usually includes
+          fast food, takeout, delivery apps, coffee shops, work lunches, snacks
+          bought away from home, tips, and delivery fees.
+        </p>
+
+        <p>
+          The number can grow quickly because the purchases feel small. A few
+          coffees, two lunches, one delivery order, and a weekend meal can become
+          a meaningful monthly expense without ever feeling like a big purchase.
+        </p>
+      </section>
+
+      <section class="content-section">
+        <h2>Why the Right Eating-Out Budget Changes by Income</h2>
+
+        <p>
+          The right restaurant budget is not the same for every household. A
+          $150 monthly eating-out budget may be generous on a tight income, while
+          a $1,000 budget may be reasonable for a high-income household with low
+          debt and strong savings.
+        </p>
+
+        <p>
+          The goal is to find a number that protects essential bills, keeps
+          groceries under control, supports savings, and still leaves room for
+          meals or convenience you genuinely value.
+        </p>
+      </section>
+
+      <section class="content-section">
+        <h2>How to Use Your Monthly Number</h2>
+
+        <p>
+          Once you have a monthly range, divide it by four to create a weekly
+          cap. A $400 monthly restaurant budget is easier to manage as about
+          $100 per week. That makes it easier to decide whether a delivery order,
+          coffee run, or dinner out fits before the month gets away from you.
+        </p>
+      </section>
+
+      <div class="content-section">
+        <FAQSection title="Eating Out Budget Calculator FAQ" faqs={eatingOutFaqs} />
+      </div>
+
+      <div class="content-section">
+        <RelatedCalculators calculators={relatedCalculators} />
+      </div>
+    </CalculatorPageShell>
+
+    <MethodologySection category="eating out budget estimates" updated="June 2026" />
+  </div>
+
+  <script is:inline>
+    const getNumber = (id) => {
+      const rawValue = document.getElementById(id)?.value;
+      const value = Number(rawValue);
+      return Number.isFinite(value) && value >= 0 ? value : 0;
+    };
+
+    const getValue = (id) => document.getElementById(id)?.value || "";
+
+    function formatMoney(value) {
+      return value.toLocaleString(undefined, {
+        style: "currency",
+        currency: "USD",
+        minimumFractionDigits: 0,
+        maximumFractionDigits: 0,
+      });
+    }
+
+    function clamp(value, min, max) {
+      return Math.min(Math.max(value, min), max);
+    }
+
+    function calculateEatingOutBudget() {
+      const income = getNumber("income");
+      const household = Math.max(getNumber("household"), 1);
+      const groceries = getNumber("groceries");
+      const debt = getNumber("debt");
+      const savings = getNumber("savings");
+      const housing = getNumber("housing");
+      const lifestyle = getValue("lifestyle");
+      const goal = getValue("goal");
+
+      const results = document.getElementById("results");
+      const budgetRange = document.getElementById("budgetRange");
+      const resultDetails = document.getElementById("resultDetails");
+      const summary = document.getElementById("summary");
+
+      results.classList.add("visible");
+
+      if (income <= 0) {
+        budgetRange.textContent = "$0";
+        resultDetails.innerHTML =
+          "<p>Enter monthly take-home income to estimate a monthly eating-out budget.</p>";
+        summary.textContent = "";
+        return;
+      }
+
+      const safeDebt = Math.min(debt, income);
+      const requiredOutflow = housing + safeDebt + groceries;
+      const flexibleCash = Math.max(income - requiredOutflow, 0);
+
+      let incomePercent = 0.045;
+
+      if (income >= 4000) {
+        incomePercent = 0.055;
+      }
+
+      if (income >= 8000) {
+        incomePercent = 0.07;
+      }
+
+      if (income >= 15000) {
+        incomePercent = 0.085;
+      }
+
+      if (income >= 30000) {
+        incomePercent = 0.1;
+      }
+
+      const lifestyleMultiplier =
+        lifestyle === "low" ? 0.72 : lifestyle === "high" ? 1.22 : 1;
+
+      const goalMultiplier =
+        goal === "save" ? 0.7 : goal === "flexible" ? 1.2 : 1;
+
+      const householdFloor = household * 45;
+      const incomeBasedBudget = income * incomePercent;
+      const flexibleCashBudget = flexibleCash * 0.18;
+
+      let recommendedMidpoint =
+        incomeBasedBudget * 0.65 + flexibleCashBudget * 0.35;
+
+      recommendedMidpoint *= lifestyleMultiplier * goalMultiplier;
+
+      const savingsNeed = Math.max(income * 0.65, requiredOutflow + household * 300);
+      const savingsMonths = savingsNeed > 0 ? savings / savingsNeed : 0;
+
+      if (savingsMonths < 1) {
+        recommendedMidpoint *= 0.78;
+      } else if (savingsMonths < 3) {
+        recommendedMidpoint *= 0.9;
+      } else if (savingsMonths >= 6) {
+        recommendedMidpoint *= 1.08;
+      }
+
+      const debtShare = safeDebt / income;
+      const housingShare = housing / income;
+      const groceryShare = groceries / income;
+
+      if (debtShare > 0.35) {
+        recommendedMidpoint *= 0.65;
+      } else if (debtShare > 0.25) {
+        recommendedMidpoint *= 0.78;
+      } else if (debtShare > 0.18) {
+        recommendedMidpoint *= 0.88;
+      }
+
+      if (housingShare > 0.45) {
+        recommendedMidpoint *= 0.72;
+      } else if (housingShare > 0.35) {
+        recommendedMidpoint *= 0.85;
+      }
+
+      if (groceryShare > 0.18) {
+        recommendedMidpoint *= 0.82;
+      } else if (groceryShare > 0.14) {
+        recommendedMidpoint *= 0.9;
+      }
+
+      const practicalMinimum =
+        income < 2500 ? 40 : income < 4500 ? 75 : householdFloor;
+
+      recommendedMidpoint = Math.max(recommendedMidpoint, practicalMinimum);
+
+      const lowRange = recommendedMidpoint * 0.82;
+      const highRange = recommendedMidpoint * 1.18;
+      const weeklyLow = lowRange / 4.33;
+      const weeklyHigh = highRange / 4.33;
+      const finalShare = recommendedMidpoint / income;
+      const totalFoodShare = (groceries + recommendedMidpoint) / income;
+
+      let guidance = "balanced";
+
+      if (finalShare <= 0.035) {
+        guidance = "conservative";
+      } else if (finalShare >= 0.09) {
+        guidance = "flexible";
+      }
+
+      budgetRange.textContent = `${formatMoney(lowRange)}–${formatMoney(highRange)}`;
+
+      resultDetails.innerHTML = `
+        <p><strong>Estimated midpoint:</strong> ${formatMoney(recommendedMidpoint)} per month.</p>
+
+        <p><strong>Weekly target:</strong> about ${formatMoney(weeklyLow)} to ${formatMoney(weeklyHigh)} per week.</p>
+
+        <p><strong>Eating-out share of take-home income:</strong> about ${(finalShare * 100).toFixed(1)}% at the midpoint.</p>
+
+        <p><strong>Total food share with groceries:</strong> about ${(totalFoodShare * 100).toFixed(1)}% of take-home income.</p>
+
+        <p><strong>Emergency savings estimate:</strong> about ${savingsMonths.toFixed(1)} months of baseline expenses.</p>
+      `;
+
+      summary.innerHTML = `
+        Based on <strong>${formatMoney(income)}</strong> in monthly take-home income,
+        <strong>${formatMoney(groceries)}</strong> in groceries, household size,
+        debt, housing, savings, and lifestyle, a wise eating-out budget is about
+        <strong>${formatMoney(lowRange)} to ${formatMoney(highRange)}</strong> per month.
+        This is a <strong>${guidance}</strong> restaurant budget, not a hard limit.
+      `;
+    }
+
+    document
+      .getElementById("eatingOutBudgetButton")
+      .addEventListener("click", calculateEatingOutBudget);
+  </script>
+</Layout>

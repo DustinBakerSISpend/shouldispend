@@ -1,0 +1,640 @@
+---
+import Layout from "../layouts/Layout.astro";
+import CalculatorPageShell from "../components/CalculatorPageShell.astro";
+import FAQSection from "../components/FAQSection.astro";
+import RelatedCalculators from "../components/RelatedCalculators.astro";
+import MethodologySection from "../components/MethodologySection.astro";
+import CalculatorAssumptions from "../components/CalculatorAssumptions.astro";
+import KeyCostCategories from "../components/KeyCostCategories.astro";
+import ReduceCostTips from "../components/ReduceCostTips.astro";
+import { calculators } from "../data/calculators.js";
+
+const costPerMealFaqs = [
+  {
+    question: "How do I calculate cost per meal?",
+    answer:
+      "Add the total cost of ingredients, then divide by the number of meals or servings you actually get. If you spend $60 and get 10 meals, your cost per meal is $6.",
+  },
+  {
+    question: "Should I include pantry staples?",
+    answer:
+      "Include pantry staples if they are a meaningful cost for the recipe. Small amounts of salt, oil, spices, or condiments can be estimated, but they do not need to be perfect.",
+  },
+  {
+    question: "Should I include leftovers?",
+    answer:
+      "Yes. Leftovers lower the cost per meal because the same ingredient cost creates more servings.",
+  },
+  {
+    question: "What is a good cost per meal?",
+    answer:
+      "A good cost per meal depends on income, household size, diet, and local food prices. A $4 meal may be necessary on a tight income, while a $12 home-cooked meal may be reasonable for a high-income household.",
+  },
+];
+
+const relatedCalculators = calculators
+  .filter(
+    (calculator) =>
+      calculator.category === "Groceries" &&
+      calculator.href !== "/cost-per-meal-calculator"
+  )
+  .slice(0, 4);
+---
+
+<Layout
+  title="Cost Per Meal Calculator"
+  description="Use this cost per meal calculator to estimate meal cost, weekly food cost, monthly impact, and affordability based on income."
+>
+  <style>
+    .container {
+      max-width: 900px;
+      margin: auto;
+    }
+
+    .calculator {
+      background: white;
+      padding: 40px;
+      border-radius: 24px;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.06);
+    }
+
+    .calculator h2 {
+      margin-top: 0;
+      font-size: 2rem;
+      margin-bottom: 18px;
+      color: #0f172a;
+    }
+
+    .calculator-intro {
+      color: #334155;
+      line-height: 1.8;
+      margin-bottom: 30px;
+      font-size: 1.05rem;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+    }
+
+    .field label {
+      display: block;
+      font-weight: 800;
+      margin-bottom: 10px;
+      color: #0f172a;
+    }
+
+    .field input,
+    .field select {
+      width: 100%;
+      padding: 16px;
+      border-radius: 12px;
+      border: 1px solid #cbd5e1;
+      font-size: 1rem;
+      box-sizing: border-box;
+      background: white;
+    }
+
+    button {
+      margin-top: 30px;
+      background: #0f766e;
+      color: white;
+      border: none;
+      padding: 18px 32px;
+      border-radius: 999px;
+      font-size: 1.05rem;
+      font-weight: 800;
+      cursor: pointer;
+      transition: opacity 0.2s ease;
+    }
+
+    button:hover {
+      opacity: 0.92;
+    }
+
+    .results {
+      margin-top: 36px;
+      background: #f8fafc;
+      padding: 32px;
+      border-radius: 24px;
+      border: 1px solid var(--border);
+      box-shadow: 0 10px 24px rgba(15, 23, 42, 0.04);
+      display: none;
+    }
+
+    .results.visible {
+      display: block;
+    }
+
+    .total-price {
+      font-size: clamp(2.5rem, 6vw, 4rem);
+      font-weight: 900;
+      color: #0f172a;
+      line-height: 1.05;
+      margin-bottom: 12px;
+    }
+
+    .result-label {
+      font-size: 1.15rem;
+      font-weight: 800;
+      color: #0f766e;
+      margin-bottom: 24px;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+    }
+
+    .pressure-row {
+      margin: 26px 0;
+    }
+
+    .pressure-header {
+      display: flex;
+      justify-content: space-between;
+      gap: 16px;
+      font-weight: 900;
+      color: #0f172a;
+      margin-bottom: 10px;
+    }
+
+    .bar-track {
+      width: 100%;
+      height: 18px;
+      background: #e2e8f0;
+      border-radius: 999px;
+      overflow: hidden;
+    }
+
+    .bar-fill {
+      width: 0%;
+      height: 100%;
+      background: #0f766e;
+      border-radius: 999px;
+      transition: width 0.25s ease;
+    }
+
+    .result-details {
+      color: #334155;
+      line-height: 1.9;
+      font-size: 1.02rem;
+    }
+
+    .result-details p {
+      margin: 0 0 12px;
+    }
+
+    .mini-summary {
+      margin-top: 24px;
+      padding: 20px;
+      border-radius: 18px;
+      background: white;
+      border: 1px solid #dbe4ee;
+      color: #334155;
+      line-height: 1.8;
+    }
+
+    .content-section {
+      margin-top: 60px;
+    }
+
+    .content-section h2 {
+      font-size: 2rem;
+      margin-bottom: 20px;
+      color: #0f172a;
+    }
+
+    .content-section p,
+    .content-section li {
+      font-size: 1.1rem;
+      line-height: 1.9;
+      color: #334155;
+    }
+
+    .content-link {
+      color: #0f766e;
+      font-weight: 700;
+      text-decoration: none;
+    }
+
+    .content-link:hover {
+      text-decoration: underline;
+    }
+
+    @media (max-width: 768px) {
+      .calculator {
+        padding: 24px;
+      }
+
+      .grid {
+        grid-template-columns: 1fr;
+      }
+
+      .calculator h2,
+      .content-section h2 {
+        font-size: 1.7rem;
+      }
+
+      .results {
+        padding: 24px;
+      }
+    }
+  </style>
+
+  <div class="container">
+    <CalculatorPageShell
+      eyebrow="Cost Per Meal Calculator"
+      title="Cost Per Meal Calculator"
+      description="Calculate your cost per meal and see whether that meal cost fits your income, household size, debt, and savings."
+    >
+      <div class="calculator">
+        <h2>Calculate Cost Per Meal</h2>
+
+        <p class="calculator-intro">
+          Enter your ingredient cost, servings, meals per week, and monthly
+          income. This calculator estimates cost per meal, monthly food impact,
+          and whether the meal cost creates financial pressure.
+        </p>
+
+        <div class="grid">
+          <div class="field">
+            <label for="ingredientCost">Total Ingredient Cost</label>
+            <input id="ingredientCost" type="number" placeholder="Example: 54" />
+          </div>
+
+          <div class="field">
+            <label for="servings">Meals / Servings Produced</label>
+            <input id="servings" type="number" placeholder="Example: 8" />
+          </div>
+
+          <div class="field">
+            <label for="mealsPerWeek">How Many Similar Meals per Week?</label>
+            <input id="mealsPerWeek" type="number" placeholder="Example: 10" />
+          </div>
+
+          <div class="field">
+            <label for="income">Monthly Take-Home Income</label>
+            <input id="income" type="number" placeholder="Example: 6500" />
+          </div>
+
+          <div class="field">
+            <label for="household">Household Size</label>
+            <input id="household" type="number" placeholder="Example: 3" />
+          </div>
+
+          <div class="field">
+            <label for="debt">Monthly Debt Payments</label>
+            <input id="debt" type="number" placeholder="Example: 700" />
+          </div>
+
+          <div class="field">
+            <label for="savings">Emergency Savings</label>
+            <input id="savings" type="number" placeholder="Example: 8000" />
+          </div>
+
+          <div class="field">
+            <label for="mealType">Meal Type</label>
+            <select id="mealType">
+              <option value="budget">Budget / simple staples</option>
+              <option value="balanced" selected>Balanced home meal</option>
+              <option value="premium">Premium, organic, or specialty</option>
+            </select>
+          </div>
+        </div>
+
+        <button id="mealCostButton" type="button">Calculate Cost Per Meal</button>
+
+        <div class="results" id="results">
+          <div class="result-label">Estimated Cost Per Meal</div>
+
+          <div class="total-price" id="costPerMeal"></div>
+
+          <div class="pressure-row">
+            <div class="pressure-header">
+              <span id="pressureLabel">Meal Cost Pressure Score</span>
+              <span id="pressureScore">0 / 100</span>
+            </div>
+            <div class="bar-track">
+              <div class="bar-fill" id="barFill"></div>
+            </div>
+          </div>
+
+          <div class="result-details" id="resultDetails"></div>
+
+          <div class="mini-summary" id="summary"></div>
+        </div>
+      </div>
+
+      <section class="content-section">
+        <h2>How This Cost Per Meal Calculator Works</h2>
+
+        <p>
+          The basic math is simple: total ingredient cost divided by the number
+          of meals or servings produced. If a recipe costs $48 and produces
+          eight meals, the cost per meal is $6.
+        </p>
+
+        <p>
+          The calculator then estimates what that meal cost would mean if you
+          repeated similar meals throughout the week. That matters because a
+          single $12 homemade meal may be fine, but ten $12 homemade meals per
+          week can become a major monthly grocery expense.
+        </p>
+
+        <p>
+          For broader food planning, compare this result with the
+          <a class="content-link" href="/ideal-grocery-budget-calculator">
+            ideal grocery budget calculator
+          </a>
+          or the
+          <a class="content-link" href="/should-i-meal-prep-or-eat-out">
+            meal prep vs eating out calculator
+          </a>.
+        </p>
+      </section>
+
+      <KeyCostCategories
+        items={[
+          {
+            title: "Ingredient cost",
+            description:
+              "The total recipe cost is the starting point. Include the food you actually bought for the meal.",
+          },
+          {
+            title: "Servings produced",
+            description:
+              "More servings lower the cost per meal, especially when leftovers are eaten instead of wasted.",
+          },
+          {
+            title: "Meals per week",
+            description:
+              "Repeating the same cost pattern shows the real monthly impact.",
+          },
+          {
+            title: "Monthly income",
+            description:
+              "A high cost per meal creates less pressure when take-home income is much higher.",
+          },
+          {
+            title: "Debt and savings",
+            description:
+              "Debt payments and weak emergency savings make expensive meal routines less flexible.",
+          },
+        ]}
+      />
+
+      <ReduceCostTips
+        items={[
+          "Use the number of servings you actually eat, not the optimistic serving count on a recipe.",
+          "Batch cook ingredients that can be reused across multiple meals.",
+          "Compare cost per meal with your usual restaurant or takeout cost.",
+          "Watch for expensive ingredients used only once, such as specialty sauces or herbs.",
+          "Freeze leftovers before they become waste.",
+        ]}
+      />
+
+      <CalculatorAssumptions
+        items={[
+          "Cost per meal equals total ingredient cost divided by meals or servings produced.",
+          "Monthly impact assumes similar meals are repeated at the entered weekly frequency.",
+          "Monthly income means take-home pay after taxes and payroll deductions.",
+          "High income can lower the pressure score to zero even when the cost per meal is high.",
+          "The calculator does not include cooking time, fuel, appliance cost, delivery fees, or restaurant tips unless you add them to the ingredient cost.",
+        ]}
+      />
+
+      <section class="content-section">
+        <h2>What Is a Good Cost Per Meal?</h2>
+
+        <p>
+          A good cost per meal depends on income and household size. A tight
+          budget may require meals closer to a few dollars per serving. A
+          higher-income household may reasonably spend more for convenience,
+          protein, organic ingredients, dietary needs, or variety.
+        </p>
+
+        <p>
+          The most useful comparison is not just cheap versus expensive. It is
+          whether the meal cost can be repeated without crowding out rent,
+          debt payments, emergency savings, and other food needs.
+        </p>
+      </section>
+
+      <section class="content-section">
+        <h2>Why Leftovers Matter</h2>
+
+        <p>
+          Leftovers can make a meal dramatically cheaper. A $40 recipe that
+          produces four meals costs $10 per meal. If the same recipe stretches
+          to eight meals, the cost drops to $5 per meal.
+        </p>
+
+        <p>
+          But leftovers only help when they are actually eaten. If half the food
+          is thrown out, the real cost per meal is much higher than the recipe
+          looked on paper.
+        </p>
+      </section>
+
+      <section class="content-section">
+        <h2>Cost Per Meal vs Eating Out</h2>
+
+        <p>
+          A home-cooked meal does not need to be extremely cheap to be worth it.
+          If a $9 homemade meal replaces a $22 takeout order, the savings are
+          still meaningful. The problem is when expensive groceries are bought
+          and the household still eats out anyway.
+        </p>
+
+        <p>
+          For the cleanest comparison, track groceries and restaurants
+          separately. That makes it easier to see whether cooking at home is
+          actually replacing outside food spending.
+        </p>
+      </section>
+
+      <div class="content-section">
+        <FAQSection title="Cost Per Meal Calculator FAQ" faqs={costPerMealFaqs} />
+      </div>
+
+      <div class="content-section">
+        <RelatedCalculators calculators={relatedCalculators} />
+      </div>
+    </CalculatorPageShell>
+
+    <MethodologySection category="cost per meal estimates" updated="June 2026" />
+  </div>
+
+  <script is:inline>
+    const getNumber = (id) => {
+      const rawValue = document.getElementById(id)?.value;
+      const value = Number(rawValue);
+      return Number.isFinite(value) && value >= 0 ? value : 0;
+    };
+
+    const getValue = (id) => document.getElementById(id)?.value || "";
+
+    function formatMoney(value) {
+      return value.toLocaleString(undefined, {
+        style: "currency",
+        currency: "USD",
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2,
+      });
+    }
+
+    function formatWholeMoney(value) {
+      return value.toLocaleString(undefined, {
+        style: "currency",
+        currency: "USD",
+        minimumFractionDigits: 0,
+        maximumFractionDigits: 0,
+      });
+    }
+
+    function clamp(value, min, max) {
+      return Math.min(Math.max(value, min), max);
+    }
+
+    function calculateCostPerMeal() {
+      const ingredientCost = getNumber("ingredientCost");
+      const servings = getNumber("servings");
+      const mealsPerWeek = getNumber("mealsPerWeek");
+      const income = getNumber("income");
+      const household = Math.max(getNumber("household"), 1);
+      const debt = getNumber("debt");
+      const savings = getNumber("savings");
+      const mealType = getValue("mealType");
+
+      const results = document.getElementById("results");
+      const costPerMealEl = document.getElementById("costPerMeal");
+      const pressureScore = document.getElementById("pressureScore");
+      const pressureLabel = document.getElementById("pressureLabel");
+      const barFill = document.getElementById("barFill");
+      const resultDetails = document.getElementById("resultDetails");
+      const summary = document.getElementById("summary");
+
+      results.classList.add("visible");
+
+      if (ingredientCost <= 0 || servings <= 0 || mealsPerWeek <= 0 || income <= 0) {
+        costPerMealEl.textContent = "$0.00";
+        pressureScore.textContent = "0 / 100";
+        pressureLabel.textContent = "Enter meal and income details";
+        barFill.style.width = "0%";
+        resultDetails.innerHTML =
+          "<p>Enter ingredient cost, servings, weekly meal frequency, and monthly take-home income to calculate cost per meal.</p>";
+        summary.textContent = "";
+        return;
+      }
+
+      const safeDebt = Math.min(debt, income);
+      const debtShare = safeDebt / income;
+
+      const costPerMeal = ingredientCost / servings;
+      const weeklyMealCost = costPerMeal * mealsPerWeek;
+      const monthlyMealCost = weeklyMealCost * 4.33;
+      const annualMealCost = monthlyMealCost * 12;
+      const mealShare = monthlyMealCost / income;
+
+      const savingsNeed = Math.max(income * 0.65, monthlyMealCost + safeDebt + household * 300);
+      const savingsMonths = savingsNeed > 0 ? savings / savingsNeed : 0;
+
+      const mealTypeMultiplier =
+        mealType === "budget" ? 0.85 : mealType === "premium" ? 1.2 : 1;
+
+      const householdBenchmark =
+        (household === 1 ? 7 : household === 2 ? 8 : household <= 4 ? 9 : 10) *
+        mealTypeMultiplier;
+
+      const costComparedToBenchmark = costPerMeal / householdBenchmark;
+      const incomeStrength = income / Math.max(monthlyMealCost, 1);
+
+      let pressure = 0;
+
+      if (costComparedToBenchmark > 1) {
+        pressure += (costComparedToBenchmark - 1) * 18;
+      }
+
+      if (mealShare > 0.08) {
+        pressure += (mealShare - 0.08) * 180;
+      }
+
+      if (mealShare > 0.13) {
+        pressure += (mealShare - 0.13) * 280;
+      }
+
+      if (mealShare > 0.2) {
+        pressure += (mealShare - 0.2) * 380;
+      }
+
+      if (debtShare > 0.18) {
+        pressure += (debtShare - 0.18) * 120;
+      }
+
+      if (savingsMonths < 1) {
+        pressure += 18;
+      } else if (savingsMonths < 3) {
+        pressure += 9;
+      } else if (savingsMonths >= 6) {
+        pressure -= 10;
+      }
+
+      if (incomeStrength >= 18) {
+        pressure -= 15;
+      }
+
+      if (incomeStrength >= 32) {
+        pressure -= 25;
+      }
+
+      if (incomeStrength >= 55) {
+        pressure = 0;
+      }
+
+      pressure = Math.round(clamp(pressure, 0, 100));
+
+      let label = "Low Meal Cost Pressure";
+      let verdict = "low pressure";
+
+      if (pressure >= 70) {
+        label = "High Meal Cost Pressure";
+        verdict = "high pressure";
+      } else if (pressure >= 35) {
+        label = "Moderate Meal Cost Pressure";
+        verdict = "moderate pressure";
+      }
+
+      costPerMealEl.textContent = formatMoney(costPerMeal);
+      pressureScore.textContent = `${pressure} / 100`;
+      pressureLabel.textContent = label;
+      barFill.style.width = `${pressure}%`;
+
+      resultDetails.innerHTML = `
+        <p><strong>Total recipe cost:</strong> ${formatMoney(ingredientCost)}.</p>
+
+        <p><strong>Meals or servings produced:</strong> ${servings.toFixed(0)}.</p>
+
+        <p><strong>Estimated weekly cost:</strong> ${formatWholeMoney(weeklyMealCost)} for ${mealsPerWeek.toFixed(0)} similar meals.</p>
+
+        <p><strong>Estimated monthly impact:</strong> ${formatWholeMoney(monthlyMealCost)}.</p>
+
+        <p><strong>Estimated annual impact:</strong> ${formatWholeMoney(annualMealCost)}.</p>
+
+        <p><strong>Share of take-home income:</strong> ${(mealShare * 100).toFixed(1)}%.</p>
+
+        <p><strong>Emergency savings estimate:</strong> about ${savingsMonths.toFixed(1)} months of baseline expenses.</p>
+      `;
+
+      summary.innerHTML = `
+        This meal costs about <strong>${formatMoney(costPerMeal)}</strong> per serving.
+        If you eat <strong>${mealsPerWeek.toFixed(0)}</strong> similar meals per week,
+        the monthly impact is about <strong>${formatWholeMoney(monthlyMealCost)}</strong>.
+        Based on your income, debt, savings, and household size, this creates
+        <strong>${verdict}</strong>.
+      `;
+    }
+
+    document
+      .getElementById("mealCostButton")
+      .addEventListener("click", calculateCostPerMeal);
+  </script>
+</Layout>

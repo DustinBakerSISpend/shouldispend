@@ -1,0 +1,694 @@
+---
+import Layout from "../layouts/Layout.astro";
+import CalculatorPageShell from "../components/CalculatorPageShell.astro";
+import FAQSection from "../components/FAQSection.astro";
+import RelatedCalculators from "../components/RelatedCalculators.astro";
+import MethodologySection from "../components/MethodologySection.astro";
+import CalculatorAssumptions from "../components/CalculatorAssumptions.astro";
+import KeyCostCategories from "../components/KeyCostCategories.astro";
+import ReduceCostTips from "../components/ReduceCostTips.astro";
+import { calculators } from "../data/calculators.js";
+
+const leftoversFaqs = [
+  {
+    question: "How much money can leftovers save?",
+    answer:
+      "Leftovers save money when they replace meals you would have bought or cooked separately. The savings depend on how many leftover meals you actually eat, what they replace, and how much food usually gets wasted.",
+  },
+  {
+    question: "Do leftovers count as meal prep?",
+    answer:
+      "Yes, leftovers can function like simple meal prep. Cooking once and eating twice can lower cost per meal, reduce restaurant spending, and make weeknight food decisions easier.",
+  },
+  {
+    question: "Should I count food that gets thrown away?",
+    answer:
+      "Yes. Food waste reduces the real savings from leftovers. This calculator adjusts savings based on how often leftovers are actually eaten.",
+  },
+  {
+    question: "Are leftovers worth it for high-income households?",
+    answer:
+      "They can be, but the financial pressure is lower. A high-income household may still value leftovers for convenience, less waste, easier lunches, or fewer delivery orders.",
+  },
+];
+
+const relatedCalculators = calculators
+  .filter(
+    (calculator) =>
+      calculator.category === "Groceries" &&
+      calculator.href !== "/leftovers-savings-calculator"
+  )
+  .slice(0, 4);
+---
+
+<Layout
+  title="Leftovers Savings Calculator"
+  description="Use this leftovers savings calculator to estimate how much money leftovers can save each month by replacing takeout, lunches, and extra grocery meals."
+>
+  <style>
+    .container {
+      max-width: 900px;
+      margin: auto;
+    }
+
+    .calculator {
+      background: white;
+      padding: 40px;
+      border-radius: 24px;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.06);
+    }
+
+    .calculator h2 {
+      margin-top: 0;
+      font-size: 2rem;
+      margin-bottom: 18px;
+      color: #0f172a;
+    }
+
+    .calculator-intro {
+      color: #334155;
+      line-height: 1.8;
+      margin-bottom: 30px;
+      font-size: 1.05rem;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+    }
+
+    .field label {
+      display: block;
+      font-weight: 800;
+      margin-bottom: 10px;
+      color: #0f172a;
+    }
+
+    .field input,
+    .field select {
+      width: 100%;
+      padding: 16px;
+      border-radius: 12px;
+      border: 1px solid #cbd5e1;
+      font-size: 1rem;
+      box-sizing: border-box;
+      background: white;
+    }
+
+    button {
+      margin-top: 30px;
+      background: #0f766e;
+      color: white;
+      border: none;
+      padding: 18px 32px;
+      border-radius: 999px;
+      font-size: 1.05rem;
+      font-weight: 800;
+      cursor: pointer;
+      transition: opacity 0.2s ease;
+    }
+
+    button:hover {
+      opacity: 0.92;
+    }
+
+    .results {
+      margin-top: 36px;
+      background: #f8fafc;
+      padding: 32px;
+      border-radius: 24px;
+      border: 1px solid var(--border);
+      box-shadow: 0 10px 24px rgba(15, 23, 42, 0.04);
+      display: none;
+    }
+
+    .results.visible {
+      display: block;
+    }
+
+    .total-price {
+      font-size: clamp(2.5rem, 6vw, 4rem);
+      font-weight: 900;
+      color: #0f172a;
+      line-height: 1.05;
+      margin-bottom: 12px;
+    }
+
+    .result-label {
+      font-size: 1.15rem;
+      font-weight: 800;
+      color: #0f766e;
+      margin-bottom: 24px;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+    }
+
+    .pressure-row {
+      margin: 26px 0;
+    }
+
+    .pressure-header {
+      display: flex;
+      justify-content: space-between;
+      gap: 16px;
+      font-weight: 900;
+      color: #0f172a;
+      margin-bottom: 10px;
+    }
+
+    .bar-track {
+      width: 100%;
+      height: 18px;
+      background: #e2e8f0;
+      border-radius: 999px;
+      overflow: hidden;
+    }
+
+    .bar-fill {
+      width: 0%;
+      height: 100%;
+      background: #0f766e;
+      border-radius: 999px;
+      transition: width 0.25s ease;
+    }
+
+    .result-details {
+      color: #334155;
+      line-height: 1.9;
+      font-size: 1.02rem;
+    }
+
+    .result-details p {
+      margin: 0 0 12px;
+    }
+
+    .mini-summary {
+      margin-top: 24px;
+      padding: 20px;
+      border-radius: 18px;
+      background: white;
+      border: 1px solid #dbe4ee;
+      color: #334155;
+      line-height: 1.8;
+    }
+
+    .disclaimer {
+      margin-top: 24px;
+      font-size: 0.9rem;
+      color: #64748b;
+    }
+
+    .content-section {
+      margin-top: 60px;
+    }
+
+    .content-section h2 {
+      font-size: 2rem;
+      margin-bottom: 20px;
+      color: #0f172a;
+    }
+
+    .content-section p,
+    .content-section li {
+      font-size: 1.1rem;
+      line-height: 1.9;
+      color: #334155;
+    }
+
+    .content-link {
+      color: #0f766e;
+      font-weight: 700;
+      text-decoration: none;
+    }
+
+    .content-link:hover {
+      text-decoration: underline;
+    }
+
+    @media (max-width: 768px) {
+      .calculator {
+        padding: 24px;
+      }
+
+      .grid {
+        grid-template-columns: 1fr;
+      }
+
+      .calculator h2,
+      .content-section h2 {
+        font-size: 1.7rem;
+      }
+
+      .results {
+        padding: 24px;
+      }
+    }
+  </style>
+
+  <div class="container">
+    <CalculatorPageShell
+      eyebrow="Leftovers Savings Calculator"
+      title="Leftovers Savings Calculator"
+      description="Estimate how much money leftovers can save by replacing takeout, delivery, work lunches, and extra grocery meals."
+    >
+      <div class="calculator">
+        <h2>Calculate Leftovers Savings</h2>
+
+        <p class="calculator-intro">
+          Enter how many leftover meals you could realistically eat each week,
+          what those meals would replace, and your monthly income. This
+          calculator estimates monthly and yearly savings from actually using
+          leftovers instead of wasting food or buying more meals.
+        </p>
+
+        <div class="grid">
+          <div class="field">
+            <label for="leftoverMeals">Leftover Meals Eaten per Week</label>
+            <input id="leftoverMeals" type="number" placeholder="Example: 5" />
+          </div>
+
+          <div class="field">
+            <label for="replacementCost">Average Cost of Meal Replaced</label>
+            <input id="replacementCost" type="number" placeholder="Example: 14" />
+          </div>
+
+          <div class="field">
+            <label for="leftoverCost">Extra Cost to Make Leftovers</label>
+            <input id="leftoverCost" type="number" placeholder="Example: 3" />
+          </div>
+
+          <div class="field">
+            <label for="wasteRate">How Often Leftovers Actually Get Eaten</label>
+            <select id="wasteRate">
+              <option value="high">Almost always</option>
+              <option value="medium" selected>Most of the time</option>
+              <option value="low">About half the time</option>
+              <option value="poor">Rarely</option>
+            </select>
+          </div>
+
+          <div class="field">
+            <label for="income">Monthly Take-Home Income</label>
+            <input id="income" type="number" placeholder="Example: 6500" />
+          </div>
+
+          <div class="field">
+            <label for="household">Household Size</label>
+            <input id="household" type="number" placeholder="Example: 3" />
+          </div>
+
+          <div class="field">
+            <label for="debt">Monthly Debt Payments</label>
+            <input id="debt" type="number" placeholder="Example: 600" />
+          </div>
+
+          <div class="field">
+            <label for="savings">Emergency Savings</label>
+            <input id="savings" type="number" placeholder="Example: 8000" />
+          </div>
+
+          <div class="field">
+            <label for="goal">Main Goal</label>
+            <select id="goal">
+              <option value="save" selected>Save money</option>
+              <option value="waste">Reduce food waste</option>
+              <option value="convenience">Make meals easier</option>
+            </select>
+          </div>
+
+          <div class="field">
+            <label for="replacementType">What Leftovers Usually Replace</label>
+            <select id="replacementType">
+              <option value="takeout" selected>Takeout / delivery / restaurants</option>
+              <option value="lunch">Work lunches or school lunches</option>
+              <option value="grocery">Another grocery meal</option>
+              <option value="mixed">A mix of meals</option>
+            </select>
+          </div>
+        </div>
+
+        <button id="leftoversButton" type="button">
+          Calculate Leftovers Savings
+        </button>
+
+        <div class="results" id="results">
+          <div class="result-label">Estimated Monthly Leftovers Savings</div>
+
+          <div class="total-price" id="savingsRange"></div>
+
+          <div class="pressure-row">
+            <div class="pressure-header">
+              <span id="pressureLabel">Food Waste / Dining Pressure</span>
+              <span id="pressureScore">0 / 100</span>
+            </div>
+            <div class="bar-track">
+              <div class="bar-fill" id="barFill"></div>
+            </div>
+          </div>
+
+          <div class="result-details" id="resultDetails"></div>
+
+          <div class="mini-summary" id="summary"></div>
+
+          <div class="disclaimer">
+            This estimate assumes leftovers replace meals you would otherwise
+            buy or cook separately. If leftovers are thrown away, the savings
+            shrink quickly.
+          </div>
+        </div>
+      </div>
+
+      <section class="content-section">
+        <h2>How This Leftovers Savings Calculator Works</h2>
+
+        <p>
+          This calculator estimates the difference between the meal you would
+          have bought or cooked separately and the extra cost of creating a
+          leftover meal. If a leftover replaces a $15 lunch and costs about $3
+          in extra ingredients, the gross savings is about $12 for that meal.
+        </p>
+
+        <p>
+          The calculator then adjusts the estimate for how often leftovers
+          actually get eaten. That matters because leftovers only save money
+          when they replace another meal. Food that sits in the refrigerator and
+          gets thrown away is not savings.
+        </p>
+
+        <p>
+          For related food decisions, compare this result with the
+          <a class="content-link" href="/eating-out-budget-calculator">
+            eating out budget calculator
+          </a>
+          or the
+          <a class="content-link" href="/cost-per-meal-calculator">
+            cost per meal calculator
+          </a>.
+        </p>
+      </section>
+
+      <KeyCostCategories
+        items={[
+          {
+            title: "Meals replaced",
+            description:
+              "Leftovers save the most when they replace takeout, delivery, work lunches, or separate grocery meals.",
+          },
+          {
+            title: "Extra ingredient cost",
+            description:
+              "The true savings is the replaced meal cost minus the extra cost of making enough food for leftovers.",
+          },
+          {
+            title: "Waste rate",
+            description:
+              "Savings fall when leftovers are forgotten, disliked, or thrown away.",
+          },
+          {
+            title: "Monthly income",
+            description:
+              "Higher income lowers the financial pressure of wasted food or restaurant spending, but the savings can still be meaningful.",
+          },
+          {
+            title: "Debt and savings",
+            description:
+              "Debt payments and weak emergency savings make repeat food waste or takeout replacement more important.",
+          },
+        ]}
+      />
+
+      <ReduceCostTips
+        items={[
+          "Plan leftovers for specific lunches or dinners instead of vaguely hoping they get eaten.",
+          "Store leftovers in clear containers so they are easy to see.",
+          "Freeze extra portions before they become refrigerator clutter.",
+          "Make larger batches only for meals your household actually likes reheated.",
+          "Use leftovers to replace the most expensive repeat meals first, such as work lunches or delivery.",
+          "Label containers with the date so good food does not get ignored.",
+        ]}
+      />
+
+      <CalculatorAssumptions
+        items={[
+          "Monthly income means take-home pay after taxes and payroll deductions.",
+          "Savings are based on leftover meals that replace meals you would otherwise buy or cook separately.",
+          "The extra cost to make leftovers should include added ingredients needed to produce extra portions.",
+          "The calculator adjusts savings based on how often leftovers actually get eaten.",
+          "Very high income or very strong savings can reduce the pressure score to zero.",
+          "The result is educational guidance, not personal financial or nutrition advice.",
+        ]}
+      />
+
+      <section class="content-section">
+        <h2>When Leftovers Save the Most Money</h2>
+
+        <p>
+          Leftovers save the most money when they replace expensive repeat
+          purchases. Replacing a $16 work lunch with a $3 leftover portion can
+          matter much more than replacing a cheap meal you would have cooked at
+          home anyway.
+        </p>
+
+        <p>
+          The strongest leftover routines are specific. For example, cooking
+          extra dinner on Sunday so Monday and Tuesday lunches are already
+          handled is easier to repeat than simply hoping extra food gets used.
+        </p>
+      </section>
+
+      <section class="content-section">
+        <h2>When Leftovers Do Not Really Save Money</h2>
+
+        <p>
+          Leftovers do not save money if they are thrown away, forgotten, or
+          replaced by takeout anyway. They can also fail when the household
+          makes too much of a meal nobody wants to eat twice.
+        </p>
+
+        <p>
+          A smaller leftover plan that actually gets eaten is usually better
+          than a large batch-cooking plan that looks efficient but creates food
+          waste.
+        </p>
+      </section>
+
+      <section class="content-section">
+        <h2>How to Use Your Leftovers Savings Number</h2>
+
+        <p>
+          Treat the monthly savings number as a planning target. If the
+          calculator estimates $200 per month in savings, decide where that
+          money should go before it disappears into other spending. It could
+          support emergency savings, debt payoff, groceries, or a planned
+          restaurant budget.
+        </p>
+      </section>
+
+      <div class="content-section">
+        <FAQSection title="Leftovers Savings Calculator FAQ" faqs={leftoversFaqs} />
+      </div>
+
+      <div class="content-section">
+        <RelatedCalculators calculators={relatedCalculators} />
+      </div>
+    </CalculatorPageShell>
+
+    <MethodologySection category="leftovers savings estimates" updated="June 2026" />
+  </div>
+
+  <script is:inline>
+    const getNumber = (id) => {
+      const rawValue = document.getElementById(id)?.value;
+      const value = Number(rawValue);
+      return Number.isFinite(value) && value >= 0 ? value : 0;
+    };
+
+    const getValue = (id) => document.getElementById(id)?.value || "";
+
+    function formatMoney(value) {
+      return value.toLocaleString(undefined, {
+        style: "currency",
+        currency: "USD",
+        minimumFractionDigits: 0,
+        maximumFractionDigits: 0,
+      });
+    }
+
+    function clamp(value, min, max) {
+      return Math.min(Math.max(value, min), max);
+    }
+
+    function calculateLeftoversSavings() {
+      const leftoverMeals = getNumber("leftoverMeals");
+      const replacementCost = getNumber("replacementCost");
+      const leftoverCost = getNumber("leftoverCost");
+      const income = getNumber("income");
+      const household = Math.max(getNumber("household"), 1);
+      const debt = getNumber("debt");
+      const savings = getNumber("savings");
+      const wasteRate = getValue("wasteRate");
+      const goal = getValue("goal");
+      const replacementType = getValue("replacementType");
+
+      const results = document.getElementById("results");
+      const savingsRange = document.getElementById("savingsRange");
+      const pressureScore = document.getElementById("pressureScore");
+      const pressureLabel = document.getElementById("pressureLabel");
+      const barFill = document.getElementById("barFill");
+      const resultDetails = document.getElementById("resultDetails");
+      const summary = document.getElementById("summary");
+
+      results.classList.add("visible");
+
+      if (leftoverMeals <= 0 || replacementCost <= 0 || income <= 0) {
+        savingsRange.textContent = "$0";
+        pressureScore.textContent = "0 / 100";
+        pressureLabel.textContent = "Enter leftovers and income details";
+        barFill.style.width = "0%";
+        resultDetails.innerHTML =
+          "<p>Enter leftover meals per week, the cost of the meal being replaced, and monthly take-home income to estimate savings.</p>";
+        summary.textContent = "";
+        return;
+      }
+
+      const safeDebt = Math.min(debt, income);
+      const netSavingsPerMeal = Math.max(replacementCost - leftoverCost, 0);
+
+      const eatenMultiplier =
+        wasteRate === "high"
+          ? 0.95
+          : wasteRate === "low"
+            ? 0.55
+            : wasteRate === "poor"
+              ? 0.25
+              : 0.78;
+
+      const replacementMultiplier =
+        replacementType === "takeout"
+          ? 1
+          : replacementType === "lunch"
+            ? 0.92
+            : replacementType === "grocery"
+              ? 0.68
+              : 0.85;
+
+      const goalMultiplier =
+        goal === "save" ? 1 : goal === "waste" ? 0.95 : 0.9;
+
+      const weeklyGrossSavings = leftoverMeals * netSavingsPerMeal;
+      const expectedWeeklySavings =
+        weeklyGrossSavings * eatenMultiplier * replacementMultiplier * goalMultiplier;
+
+      const monthlySavingsMidpoint = expectedWeeklySavings * 4.33;
+      const annualSavings = monthlySavingsMidpoint * 12;
+
+      const lowRange = monthlySavingsMidpoint * 0.82;
+      const highRange = monthlySavingsMidpoint * 1.18;
+
+      const monthlyMealsReplaced = leftoverMeals * 4.33 * eatenMultiplier;
+      const savingsShare = monthlySavingsMidpoint / income;
+      const debtShare = safeDebt / income;
+
+      const baselineMonthlyNeeds = Math.max(income * 0.65, safeDebt + household * 450);
+      const savingsMonths = baselineMonthlyNeeds > 0 ? savings / baselineMonthlyNeeds : 0;
+
+      const incomeStrength = income / Math.max(monthlySavingsMidpoint, 1);
+
+      let pressure = 0;
+
+      if (savingsShare >= 0.02) {
+        pressure += 10;
+      }
+
+      if (savingsShare >= 0.04) {
+        pressure += 14;
+      }
+
+      if (savingsShare >= 0.07) {
+        pressure += 18;
+      }
+
+      if (debtShare > 0.18) {
+        pressure += (debtShare - 0.18) * 120;
+      }
+
+      if (savingsMonths < 1) {
+        pressure += 18;
+      } else if (savingsMonths < 3) {
+        pressure += 9;
+      } else if (savingsMonths >= 6) {
+        pressure -= 10;
+      }
+
+      if (wasteRate === "poor") {
+        pressure += 12;
+      } else if (wasteRate === "low") {
+        pressure += 7;
+      }
+
+      if (replacementCost >= 18 && leftoverMeals >= 4) {
+        pressure += 8;
+      }
+
+      if (incomeStrength >= 35) {
+        pressure -= 18;
+      }
+
+      if (incomeStrength >= 60) {
+        pressure -= 28;
+      }
+
+      if (incomeStrength >= 100 || income >= 30000) {
+        pressure = 0;
+      }
+
+      if (savings >= monthlySavingsMidpoint * 200 && savingsMonths >= 24) {
+        pressure = 0;
+      }
+
+      pressure = Math.round(clamp(pressure, 0, 100));
+
+      let label = "Low Food Waste Pressure";
+      let verdict = "nice extra savings";
+
+      if (pressure >= 70) {
+        label = "High Food Waste Pressure";
+        verdict = "important savings";
+      } else if (pressure >= 35) {
+        label = "Moderate Food Waste Pressure";
+        verdict = "meaningful savings";
+      }
+
+      savingsRange.textContent = `${formatMoney(lowRange)}–${formatMoney(highRange)}`;
+      pressureScore.textContent = `${pressure} / 100`;
+      pressureLabel.textContent = label;
+      barFill.style.width = `${pressure}%`;
+
+      resultDetails.innerHTML = `
+        <p><strong>Estimated midpoint:</strong> ${formatMoney(monthlySavingsMidpoint)} saved per month.</p>
+
+        <p><strong>Estimated annual savings:</strong> about ${formatMoney(annualSavings)}.</p>
+
+        <p><strong>Net savings per leftover meal:</strong> about ${formatMoney(netSavingsPerMeal)} before waste adjustment.</p>
+
+        <p><strong>Expected meals replaced:</strong> about ${monthlyMealsReplaced.toFixed(1)} meals per month after waste adjustment.</p>
+
+        <p><strong>Savings as share of take-home income:</strong> about ${(savingsShare * 100).toFixed(1)}%.</p>
+
+        <p><strong>Emergency savings estimate:</strong> about ${savingsMonths.toFixed(1)} months of baseline expenses.</p>
+      `;
+
+      summary.innerHTML = `
+        If you eat about <strong>${leftoverMeals.toFixed(0)}</strong> leftover meals per week,
+        your expected savings are about <strong>${formatMoney(lowRange)} to ${formatMoney(highRange)}</strong>
+        per month. For your income, debt, savings, and household size, that is
+        <strong>${verdict}</strong>.
+      `;
+    }
+
+    document
+      .getElementById("leftoversButton")
+      .addEventListener("click", calculateLeftoversSavings);
+  </script>
+</Layout>
