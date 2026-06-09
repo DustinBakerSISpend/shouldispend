@@ -550,6 +550,42 @@ export const calculators = [
   },
   
 {
+  id: "funeral-price",
+  category: "Funeral Costs",
+  title: "Funeral Price Calculator",
+  description:
+    "Estimate a realistic funeral cost range based on burial, cremation, viewing, casket, cemetery, reception, flowers, obituary, transportation, and memorial choices.",
+  href: "/funeral-price-calculator",
+},
+
+{
+  id: "cremation-cost",
+  category: "Funeral Costs",
+  title: "Cremation Cost Calculator",
+  description:
+    "Estimate direct cremation, memorial service, urn, keepsake, obituary, travel, and reception costs before choosing a funeral plan.",
+  href: "/cremation-cost-calculator",
+},
+
+{
+  id: "burial-cost",
+  category: "Funeral Costs",
+  title: "Burial Cost Calculator",
+  description:
+    "Estimate burial costs including casket, plot, vault, headstone, opening and closing fees, transportation, and service expenses.",
+  href: "/burial-cost-calculator",
+},
+
+{
+  id: "funeral-vs-cremation",
+  category: "Funeral Costs",
+  title: "Funeral vs. Cremation Cost Calculator",
+  description:
+    "Compare burial, cremation, direct cremation, memorial services, cemetery costs, family preferences, and total funeral spending pressure.",
+  href: "/funeral-vs-cremation-cost-calculator",
+},
+
+{
   id: "funeral-5000",
   category: "Funeral Costs",
   title: "Should I Spend $5,000 on a Funeral?",
@@ -586,21 +622,39 @@ export const calculators = [
 },
 
 {
+  id: "can-i-afford-a-funeral",
+  category: "Funeral Costs",
+  title: "Can I Afford a Funeral?",
+  description:
+    "Compare funeral quotes against savings, insurance proceeds, family help, debt, income, and household obligations before committing.",
+  href: "/can-i-afford-a-funeral",
+},
+
+{
+  id: "funeral-payment-plan",
+  category: "Funeral Costs",
+  title: "Funeral Payment Plan Calculator",
+  description:
+    "Estimate monthly payments, interest, payoff timeline, and financing pressure before putting funeral costs on a payment plan.",
+  href: "/funeral-payment-plan-calculator",
+},
+
+{
+  id: "funeral-insurance",
+  category: "Funeral Costs",
+  title: "Funeral Insurance Calculator",
+  description:
+    "Compare premiums, expected benefits, age, health, savings alternatives, and whether funeral insurance is better than saving directly.",
+  href: "/funeral-insurance-calculator",
+},
+
+{
   id: "funeral-savings",
   category: "Funeral Costs",
   title: "Should I Use Savings for Funeral Costs?",
   description:
     "Decide whether using savings for funeral expenses protects the family or creates risk by draining emergency reserves, rent money, or monthly flexibility.",
   href: "/should-i-use-savings-for-funeral-costs",
-},
-
-{
-  id: "funeral-vs-cremation",
-  category: "Funeral Costs",
-  title: "Funeral vs. Cremation Cost Calculator",
-  description:
-    "Compare burial, cremation, direct cremation, memorial services, cemetery costs, family preferences, and total funeral spending pressure.",
-  href: "/funeral-vs-cremation-cost-calculator",
 },
 
 {

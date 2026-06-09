@@ -1,0 +1,722 @@
+---
+import Layout from "../layouts/Layout.astro";
+import CalculatorPageShell from "../components/CalculatorPageShell.astro";
+import FAQSection from "../components/FAQSection.astro";
+import RelatedCalculators from "../components/RelatedCalculators.astro";
+import MethodologySection from "../components/MethodologySection.astro";
+import CalculatorAssumptions from "../components/CalculatorAssumptions.astro";
+import KeyCostCategories from "../components/KeyCostCategories.astro";
+import ReduceCostTips from "../components/ReduceCostTips.astro";
+import { calculators } from "../data/calculators.js";
+
+const burialFaqs = [
+  {
+    question: "How much does burial usually cost?",
+    answer:
+      "Burial often costs more than direct cremation because it can include funeral home services, casket, viewing, embalming or preparation, cemetery plot, vault, opening and closing fees, headstone, transportation, flowers, obituary, and reception.",
+  },
+  {
+    question: "Why does this burial calculator show a recommended spending range?",
+    answer:
+      "A burial estimate alone does not show affordability. This calculator compares the selected burial plan against take-home income, emergency savings, debt payments, family help, and insurance support.",
+  },
+  {
+    question: "What burial costs are easiest to miss?",
+    answer:
+      "Families often miss cemetery plot costs, vault requirements, opening and closing fees, headstone or marker costs, death certificates, transportation, obituary placement, flowers, printed programs, and reception expenses.",
+  },
+  {
+    question: "Is a burial payment plan a good idea?",
+    answer:
+      "A payment plan can help with timing, but it still creates debt. Review the monthly payment, interest, fees, payoff timeline, and whether the payment would crowd out rent, groceries, medical costs, or other obligations.",
+  },
+  {
+    question: "Does this calculator use gross income or take-home income?",
+    answer:
+      "Use monthly take-home pay. That gives a more realistic view of what the household can actually spend after taxes and payroll deductions.",
+  },
+];
+
+const relatedCalculators = calculators
+  .filter(
+    (calculator) =>
+      calculator.category === "Funeral Costs" &&
+      calculator.href !== "/burial-cost-calculator"
+  )
+  .slice(0, 4);
+---
+
+<Layout
+  title="Burial Cost Calculator"
+  description="Estimate a wise burial spending range based on casket, cemetery plot, vault, headstone, opening and closing fees, viewing, service, income, savings, debt, and family help."
+>
+  <style>
+    .container {
+      max-width: 900px;
+      margin: auto;
+    }
+
+    .calculator {
+      background: white;
+      padding: 40px;
+      border-radius: 24px;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.06);
+    }
+
+    .calculator h2 {
+      margin-top: 0;
+      font-size: 2rem;
+      margin-bottom: 18px;
+      color: #0f172a;
+    }
+
+    .calculator-intro {
+      color: #334155;
+      line-height: 1.8;
+      margin-bottom: 30px;
+      font-size: 1.05rem;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+    }
+
+    .field label {
+      display: block;
+      font-weight: 800;
+      margin-bottom: 10px;
+      color: #0f172a;
+    }
+
+    .field input,
+    .field select {
+      width: 100%;
+      padding: 16px;
+      border-radius: 12px;
+      border: 1px solid #cbd5e1;
+      font-size: 1rem;
+      box-sizing: border-box;
+      background: white;
+    }
+
+    button {
+      margin-top: 30px;
+      background: #0f766e;
+      color: white;
+      border: none;
+      padding: 18px 32px;
+      border-radius: 999px;
+      font-size: 1.05rem;
+      font-weight: 800;
+      cursor: pointer;
+      transition: opacity 0.2s ease;
+    }
+
+    button:hover {
+      opacity: 0.92;
+    }
+
+    .results {
+      margin-top: 36px;
+      background: #f8fafc;
+      padding: 32px;
+      border-radius: 24px;
+      border: 1px solid var(--border);
+      box-shadow: 0 10px 24px rgba(15, 23, 42, 0.04);
+      display: none;
+    }
+
+    .results.visible {
+      display: block;
+    }
+
+    .total-price {
+      font-size: clamp(2.5rem, 6vw, 4rem);
+      font-weight: 900;
+      color: #0f172a;
+      line-height: 1.05;
+      margin-bottom: 12px;
+    }
+
+    .result-label {
+      font-size: 1.15rem;
+      font-weight: 800;
+      color: #0f766e;
+      margin-bottom: 24px;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+    }
+
+    .result-details {
+      color: #334155;
+      line-height: 1.9;
+      font-size: 1.02rem;
+    }
+
+    .result-details p {
+      margin: 0 0 12px;
+    }
+
+    .mini-summary {
+      margin-top: 24px;
+      padding: 20px;
+      border-radius: 18px;
+      background: white;
+      border: 1px solid #dbe4ee;
+      color: #334155;
+      line-height: 1.8;
+    }
+
+    .disclaimer {
+      margin-top: 24px;
+      font-size: 0.9rem;
+      color: #64748b;
+    }
+
+    .content-section {
+      margin-top: 60px;
+    }
+
+    .content-section h2 {
+      font-size: 2rem;
+      margin-bottom: 20px;
+      color: #0f172a;
+    }
+
+    .content-section p,
+    .content-section li {
+      font-size: 1.1rem;
+      line-height: 1.9;
+      color: #334155;
+    }
+
+    .content-link {
+      color: #0f766e;
+      font-weight: 700;
+      text-decoration: none;
+    }
+
+    .content-link:hover {
+      text-decoration: underline;
+    }
+
+    @media (max-width: 768px) {
+      .calculator {
+        padding: 24px;
+      }
+
+      .grid {
+        grid-template-columns: 1fr;
+      }
+
+      .calculator h2,
+      .content-section h2 {
+        font-size: 1.7rem;
+      }
+
+      .results {
+        padding: 24px;
+      }
+    }
+  </style>
+
+  <div class="container">
+    <CalculatorPageShell
+      eyebrow="Burial Cost Calculator"
+      title="Burial Cost Calculator"
+      description="Estimate a wise burial spending range based on casket, plot, vault, headstone, opening and closing fees, service choices, savings, income, debt, and family help."
+    >
+      <div class="calculator">
+        <h2>Estimate a Burial Cost Range</h2>
+
+        <p class="calculator-intro">
+          Enter the burial choices and household numbers below. This calculator
+          gives a recommended burial spending range and compares it with the
+          selected burial plan estimate.
+        </p>
+
+        <div class="grid">
+          <div class="field">
+            <label for="burialType">Burial Service Type</label>
+            <select id="burialType">
+              <option value="simple">Simple burial</option>
+              <option value="traditional" selected>Traditional burial with service</option>
+              <option value="viewing">Burial with viewing and visitation</option>
+              <option value="premium">Higher-cost burial package</option>
+            </select>
+          </div>
+
+          <div class="field">
+            <label for="casketLevel">Casket Choice</label>
+            <select id="casketLevel">
+              <option value="basic">Basic casket</option>
+              <option value="standard" selected>Standard casket</option>
+              <option value="premium">Premium casket</option>
+              <option value="luxury">Luxury casket</option>
+            </select>
+          </div>
+
+          <div class="field">
+            <label for="plotLevel">Cemetery Plot</label>
+            <select id="plotLevel">
+              <option value="alreadyOwned">Already owned / prepaid</option>
+              <option value="basic" selected>Basic plot</option>
+              <option value="standard">Standard plot</option>
+              <option value="premium">Higher-cost plot</option>
+            </select>
+          </div>
+
+          <div class="field">
+            <label for="vaultLevel">Vault / Grave Liner</label>
+            <select id="vaultLevel">
+              <option value="none">None / not required</option>
+              <option value="basic" selected>Basic vault or liner</option>
+              <option value="standard">Standard vault</option>
+              <option value="premium">Premium vault</option>
+            </select>
+          </div>
+
+          <div class="field">
+            <label for="openClose">Opening and Closing Fees</label>
+            <select id="openClose">
+              <option value="included">Included / prepaid</option>
+              <option value="standard" selected>Standard fees</option>
+              <option value="higher">Higher local fees</option>
+            </select>
+          </div>
+
+          <div class="field">
+            <label for="markerLevel">Marker or Headstone</label>
+            <select id="markerLevel">
+              <option value="none">None right now</option>
+              <option value="marker">Basic marker</option>
+              <option value="headstone" selected>Headstone</option>
+              <option value="premium">Premium headstone or monument</option>
+            </select>
+          </div>
+
+          <div class="field">
+            <label for="serviceExtras">Flowers, Obituary, Programs</label>
+            <select id="serviceExtras">
+              <option value="minimal">Minimal</option>
+              <option value="standard" selected>Standard</option>
+              <option value="expanded">Expanded</option>
+            </select>
+          </div>
+
+          <div class="field">
+            <label for="reception">Reception / Food</label>
+            <select id="reception">
+              <option value="none">None</option>
+              <option value="small">Small reception</option>
+              <option value="medium" selected>Medium reception</option>
+              <option value="large">Large reception</option>
+            </select>
+          </div>
+
+          <div class="field">
+            <label for="transportation">Transportation Needs</label>
+            <select id="transportation">
+              <option value="minimal">Minimal</option>
+              <option value="standard" selected>Standard</option>
+              <option value="extended">Extended transportation</option>
+            </select>
+          </div>
+
+          <div class="field">
+            <label for="familyContributions">Family / Insurance Help</label>
+            <input id="familyContributions" type="number" placeholder="Example: 5000" />
+          </div>
+
+          <div class="field">
+            <label for="monthlyIncome">Monthly Take-Home Income</label>
+            <input id="monthlyIncome" type="number" placeholder="Example: 7000" />
+          </div>
+
+          <div class="field">
+            <label for="emergencySavings">Emergency Savings Available</label>
+            <input id="emergencySavings" type="number" placeholder="Example: 12000" />
+          </div>
+
+          <div class="field">
+            <label for="currentDebtPayments">Monthly Debt Payments</label>
+            <input id="currentDebtPayments" type="number" placeholder="Example: 900" />
+          </div>
+        </div>
+
+        <button id="burialButton" type="button">Calculate Burial Cost Range</button>
+
+        <div class="results" id="results">
+          <div class="result-label">Recommended Burial Spending Range</div>
+
+          <div class="total-price" id="totalPrice"></div>
+
+          <div class="result-details" id="resultDetails"></div>
+
+          <div class="mini-summary" id="priceSummary"></div>
+
+          <div class="disclaimer">
+            This is an educational estimate, not a funeral home or cemetery
+            quote. Ask for itemized pricing before committing to a burial
+            package, casket, plot, vault, marker, opening and closing fees, or
+            payment plan.
+          </div>
+        </div>
+      </div>
+
+      <section class="content-section">
+        <h2>How This Burial Cost Calculator Works</h2>
+
+        <p>
+          This calculator estimates two things: what the selected burial plan may
+          cost and what the household can reasonably spend based on income,
+          savings, debt, and family or insurance help.
+        </p>
+
+        <p>
+          Burial often includes more separate cost categories than direct
+          cremation. The final bill can include funeral home services, casket,
+          preparation, viewing, cemetery plot, vault, opening and closing fees,
+          marker or headstone, flowers, obituary, transportation, and reception.
+        </p>
+
+        <p>
+          For a broader funeral estimate, use the
+          <a class="content-link" href="/funeral-price-calculator">
+            Funeral Price Calculator
+          </a>
+          or compare burial against cremation with the
+          <a class="content-link" href="/funeral-vs-cremation-cost-calculator">
+            Funeral vs. Cremation Cost Calculator
+          </a>.
+        </p>
+      </section>
+
+      <KeyCostCategories
+        items={[
+          {
+            title: "Casket and service type",
+            description:
+              "A simple burial, traditional burial, viewing, or higher-cost package can change the starting range quickly.",
+          },
+          {
+            title: "Cemetery plot and vault",
+            description:
+              "Plots, vaults, grave liners, cemetery administration fees, and local requirements can add thousands to the burial cost.",
+          },
+          {
+            title: "Opening, closing, and marker costs",
+            description:
+              "Opening and closing fees, grave markers, headstones, monuments, engraving, and installation can be separate from the funeral home bill.",
+          },
+          {
+            title: "Reception and extras",
+            description:
+              "Flowers, obituary placement, printed programs, food, venue rental, transportation, and service extras can raise the final cost.",
+          },
+        ]}
+      />
+
+      <ReduceCostTips
+        items={[
+          "Ask for separate itemized pricing from the funeral home and the cemetery.",
+          "Check whether the plot, vault, opening and closing fees, and marker are included or separate.",
+          "Compare casket levels before agreeing to a package.",
+          "Delay the headstone or monument if paying immediately would create debt pressure.",
+          "Keep the reception simple if food and venue costs are stretching the budget.",
+          "Avoid financing burial costs unless the payment fits safely inside monthly cash flow.",
+        ]}
+      />
+
+      <CalculatorAssumptions
+        items={[
+          "The calculator estimates a selected burial plan range and a recommended spending range.",
+          "Monthly income means take-home pay, not gross income.",
+          "Family or insurance help is included in the recommended spending range.",
+          "Emergency savings are partly protected before burial spending is treated as available.",
+          "A very high income and strong savings can produce a much higher safe spending range.",
+          "This page does not use a verdict bar because the output is a dollar range, not a pressure score.",
+        ]}
+      />
+
+      <section class="content-section">
+        <h2>Why Burial Costs Can Rise Fast</h2>
+
+        <p>
+          Burial can become expensive because the bill is often split across more
+          than one provider. The funeral home may quote one set of costs, while
+          the cemetery may charge separately for the plot, vault, opening and
+          closing, marker, installation, and administrative fees.
+        </p>
+
+        <p>
+          The safest approach is to ask what is required now, what can wait, what
+          is optional, and what lower-cost version would still honor the person
+          respectfully.
+        </p>
+      </section>
+
+      <section class="content-section">
+        <h2>When a Burial Budget Looks Reasonable</h2>
+
+        <p>
+          A burial budget is easier to defend when insurance, prepaid
+          arrangements, family contributions, or savings above an emergency
+          cushion cover most of the cost. It becomes risky when the plan depends
+          on credit-card debt, drains basic reserves, or leaves one person
+          responsible for a bill the household cannot carry.
+        </p>
+
+        <p>
+          A household with very high take-home income, low debt, and strong
+          savings can absorb more. A household with tight income or high debt may
+          need a simpler burial, delayed headstone, smaller reception, or more
+          shared family help.
+        </p>
+      </section>
+
+      <div class="content-section">
+        <FAQSection title="Burial Cost Calculator FAQ" faqs={burialFaqs} />
+      </div>
+
+      <div class="content-section">
+        <RelatedCalculators calculators={relatedCalculators} />
+      </div>
+    </CalculatorPageShell>
+
+    <MethodologySection category="burial cost estimates" updated="June 2026" />
+  </div>
+
+  <script is:inline>
+    const getNumber = (id) => {
+      const rawValue = document.getElementById(id)?.value;
+      const value = Number(rawValue);
+      return Number.isFinite(value) && value >= 0 ? value : 0;
+    };
+
+    const getValue = (id) => document.getElementById(id)?.value || "";
+
+    function formatMoney(value) {
+      return value.toLocaleString(undefined, {
+        style: "currency",
+        currency: "USD",
+        minimumFractionDigits: 0,
+        maximumFractionDigits: 0,
+      });
+    }
+
+    const costRanges = {
+      burialType: {
+        simple: [4500, 9000],
+        traditional: [8000, 15000],
+        viewing: [10000, 19000],
+        premium: [16000, 30000],
+      },
+      casketLevel: {
+        basic: [800, 1800],
+        standard: [1800, 4500],
+        premium: [4500, 9000],
+        luxury: [9000, 18000],
+      },
+      plotLevel: {
+        alreadyOwned: [0, 500],
+        basic: [1200, 3500],
+        standard: [3000, 7000],
+        premium: [7000, 15000],
+      },
+      vaultLevel: {
+        none: [0, 0],
+        basic: [900, 1800],
+        standard: [1800, 3500],
+        premium: [3500, 7000],
+      },
+      openClose: {
+        included: [0, 500],
+        standard: [900, 2500],
+        higher: [2500, 5000],
+      },
+      markerLevel: {
+        none: [0, 0],
+        marker: [500, 1800],
+        headstone: [1800, 5000],
+        premium: [5000, 12000],
+      },
+      serviceExtras: {
+        minimal: [200, 800],
+        standard: [800, 2500],
+        expanded: [2500, 6000],
+      },
+      reception: {
+        none: [0, 0],
+        small: [400, 1200],
+        medium: [1200, 3000],
+        large: [3000, 7000],
+      },
+      transportation: {
+        minimal: [200, 600],
+        standard: [600, 1800],
+        extended: [1800, 4000],
+      },
+    };
+
+    function addRange(total, range) {
+      return [total[0] + range[0], total[1] + range[1]];
+    }
+
+    function getRange(group, key) {
+      return costRanges[group]?.[key] || [0, 0];
+    }
+
+    function getPlanLabel(burialType) {
+      if (burialType === "simple") return "simple burial";
+      if (burialType === "traditional") return "traditional burial with a service";
+      if (burialType === "viewing") return "burial with viewing and visitation";
+      return "higher-cost burial package";
+    }
+
+    function calculateWiseSpendRange(income, savings, debtPayments, help) {
+      const debtRatio = income > 0 ? debtPayments / income : 1;
+
+      const protectedEmergencyFund =
+        income >= 30000 ? income * 0.5 :
+        income >= 15000 ? income * 1 :
+        income >= 8000 ? income * 1.5 :
+        income >= 4000 ? income * 2 :
+        income * 2.5;
+
+      const usableSavings = Math.max(0, savings - protectedEmergencyFund);
+
+      let incomeCapacity = 0;
+
+      if (income <= 0) {
+        incomeCapacity = 0;
+      } else if (income >= 30000) {
+        incomeCapacity = income * 1.25;
+      } else if (income >= 15000) {
+        incomeCapacity = income * 0.75;
+      } else if (income >= 8000) {
+        incomeCapacity = income * 0.45;
+      } else if (income >= 4000) {
+        incomeCapacity = income * 0.25;
+      } else {
+        incomeCapacity = income * 0.12;
+      }
+
+      if (debtRatio > 0.45) incomeCapacity *= 0.35;
+      else if (debtRatio > 0.3) incomeCapacity *= 0.55;
+      else if (debtRatio > 0.2) incomeCapacity *= 0.75;
+      else if (debtRatio <= 0.1) incomeCapacity *= 1.15;
+
+      const low = Math.max(0, help + usableSavings * 0.35 + incomeCapacity * 0.45);
+      const high = Math.max(low + 500, help + usableSavings * 0.75 + incomeCapacity);
+
+      return {
+        low,
+        high,
+        usableSavings,
+        protectedEmergencyFund,
+        debtRatio,
+      };
+    }
+
+    function getRecommendation(plannedLow, plannedHigh, wiseHigh, context) {
+      if (plannedHigh <= wiseHigh) {
+        return "This burial plan appears to fit the household’s current spending range.";
+      }
+
+      if (plannedLow <= wiseHigh) {
+        return "The lower end of this burial plan may fit, but the higher end should be trimmed, negotiated, delayed, or covered with additional help.";
+      }
+
+      if (context.usableSavings <= 0) {
+        return "This burial plan is above the wise range because current savings should mostly be protected for basic household stability.";
+      }
+
+      if (context.debtRatio > 0.3) {
+        return "This burial plan is above the wise range because existing debt already limits monthly flexibility.";
+      }
+
+      return "This burial plan is above the wise range. Consider a simpler burial, lower-cost casket, delayed headstone, smaller reception, family help, or cremation alternatives.";
+    }
+
+    function calculateBurialCost() {
+      const burialType = getValue("burialType");
+      const casketLevel = getValue("casketLevel");
+      const plotLevel = getValue("plotLevel");
+      const vaultLevel = getValue("vaultLevel");
+      const openClose = getValue("openClose");
+      const markerLevel = getValue("markerLevel");
+      const serviceExtras = getValue("serviceExtras");
+      const reception = getValue("reception");
+      const transportation = getValue("transportation");
+
+      const familyContributions = getNumber("familyContributions");
+      const monthlyIncome = getNumber("monthlyIncome");
+      const emergencySavings = getNumber("emergencySavings");
+      const currentDebtPayments = getNumber("currentDebtPayments");
+
+      const results = document.getElementById("results");
+      const totalPrice = document.getElementById("totalPrice");
+      const resultDetails = document.getElementById("resultDetails");
+      const priceSummary = document.getElementById("priceSummary");
+
+      let plannedRange = [0, 0];
+
+      plannedRange = addRange(plannedRange, getRange("burialType", burialType));
+      plannedRange = addRange(plannedRange, getRange("casketLevel", casketLevel));
+      plannedRange = addRange(plannedRange, getRange("plotLevel", plotLevel));
+      plannedRange = addRange(plannedRange, getRange("vaultLevel", vaultLevel));
+      plannedRange = addRange(plannedRange, getRange("openClose", openClose));
+      plannedRange = addRange(plannedRange, getRange("markerLevel", markerLevel));
+      plannedRange = addRange(plannedRange, getRange("serviceExtras", serviceExtras));
+      plannedRange = addRange(plannedRange, getRange("reception", reception));
+      plannedRange = addRange(plannedRange, getRange("transportation", transportation));
+
+      const wiseRange = calculateWiseSpendRange(
+        monthlyIncome,
+        emergencySavings,
+        currentDebtPayments,
+        familyContributions
+      );
+
+      const serviceLabel = getPlanLabel(burialType);
+      const recommendation = getRecommendation(
+        plannedRange[0],
+        plannedRange[1],
+        wiseRange.high,
+        wiseRange
+      );
+
+      results.classList.add("visible");
+
+      totalPrice.textContent = `${formatMoney(wiseRange.low)}–${formatMoney(wiseRange.high)}`;
+
+      resultDetails.innerHTML = `
+        <p><strong>Recommended burial spending range:</strong> ${formatMoney(wiseRange.low)}–${formatMoney(wiseRange.high)}.</p>
+
+        <p><strong>Estimated cost of the selected burial plan:</strong> ${formatMoney(plannedRange[0])}–${formatMoney(plannedRange[1])}.</p>
+
+        <p><strong>Main plan type:</strong> ${serviceLabel}.</p>
+
+        <p><strong>Emergency savings protected before burial spending:</strong> ${formatMoney(wiseRange.protectedEmergencyFund)}.</p>
+
+        <p><strong>Savings available above that cushion:</strong> ${formatMoney(wiseRange.usableSavings)}.</p>
+
+        <p><strong>Recommendation:</strong> ${recommendation}</p>
+      `;
+
+      priceSummary.innerHTML = `
+        Based on the household numbers entered, a wiser burial budget is about
+        <strong>${formatMoney(wiseRange.low)}–${formatMoney(wiseRange.high)}</strong>.
+        The selected burial setup is estimated at
+        <strong>${formatMoney(plannedRange[0])}–${formatMoney(plannedRange[1])}</strong>.
+      `;
+    }
+
+    document
+      .getElementById("burialButton")
+      .addEventListener("click", calculateBurialCost);
+  </script>
+</Layout>

@@ -1,0 +1,621 @@
+---
+import Layout from "../layouts/Layout.astro";
+import CalculatorPageShell from "../components/CalculatorPageShell.astro";
+import FAQSection from "../components/FAQSection.astro";
+import RelatedCalculators from "../components/RelatedCalculators.astro";
+import MethodologySection from "../components/MethodologySection.astro";
+import CalculatorAssumptions from "../components/CalculatorAssumptions.astro";
+import KeyCostCategories from "../components/KeyCostCategories.astro";
+import ReduceCostTips from "../components/ReduceCostTips.astro";
+import { calculators } from "../data/calculators.js";
+
+const funeralInsuranceFaqs = [
+  {
+    question: "How much should I pay for funeral insurance per month?",
+    answer:
+      "A reasonable funeral insurance premium depends on the coverage gap, age, health, income, debt, savings, and existing life insurance. This calculator estimates a practical monthly premium range instead of giving a yes-or-no verdict.",
+  },
+  {
+    question: "Is funeral insurance worth it?",
+    answer:
+      "Funeral insurance may be worth it if there is a real funeral funding gap and the monthly premium fits comfortably. It is usually less useful when savings, existing life insurance, or family help already cover the likely funeral cost.",
+  },
+  {
+    question: "Should I buy funeral insurance or save money instead?",
+    answer:
+      "Saving directly can be better when the funeral gap is small, income is stable, and the household can build the fund quickly. Insurance may make more sense when the gap is large and the premium is affordable.",
+  },
+  {
+    question: "What makes funeral insurance too expensive?",
+    answer:
+      "A premium may be too expensive if it strains monthly cash flow, lasts for years, has a waiting period, or costs more over time than the likely benefit.",
+  },
+  {
+    question: "Does this calculator use gross income or take-home income?",
+    answer:
+      "Use monthly take-home income. That is the money actually available after taxes and payroll deductions.",
+  },
+];
+
+const relatedCalculators = calculators
+  .filter(
+    (calculator) =>
+      calculator.category === "Funeral Costs" &&
+      calculator.href !== "/funeral-insurance-calculator"
+  )
+  .slice(0, 4);
+---
+
+<Layout
+  title="Funeral Insurance Calculator"
+  description="Estimate a reasonable monthly funeral insurance premium range based on funeral cost, coverage gap, savings, life insurance, income, debt, age, and health."
+>
+  <style>
+    .container {
+      max-width: 900px;
+      margin: auto;
+    }
+
+    .calculator {
+      background: white;
+      padding: 40px;
+      border-radius: 24px;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.06);
+    }
+
+    .calculator h2 {
+      margin-top: 0;
+      font-size: 2rem;
+      margin-bottom: 18px;
+      color: #0f172a;
+    }
+
+    .calculator-intro {
+      color: #334155;
+      line-height: 1.8;
+      margin-bottom: 30px;
+      font-size: 1.05rem;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+    }
+
+    .field label {
+      display: block;
+      font-weight: 800;
+      margin-bottom: 10px;
+      color: #0f172a;
+    }
+
+    .field input,
+    .field select {
+      width: 100%;
+      padding: 16px;
+      border-radius: 12px;
+      border: 1px solid #cbd5e1;
+      font-size: 1rem;
+      box-sizing: border-box;
+      background: white;
+    }
+
+    button {
+      margin-top: 30px;
+      background: #0f766e;
+      color: white;
+      border: none;
+      padding: 18px 32px;
+      border-radius: 999px;
+      font-size: 1.05rem;
+      font-weight: 800;
+      cursor: pointer;
+      transition: opacity 0.2s ease;
+    }
+
+    button:hover {
+      opacity: 0.92;
+    }
+
+    .results {
+      margin-top: 36px;
+      background: #f8fafc;
+      padding: 32px;
+      border-radius: 24px;
+      border: 1px solid var(--border);
+      box-shadow: 0 10px 24px rgba(15, 23, 42, 0.04);
+      display: none;
+    }
+
+    .results.visible {
+      display: block;
+    }
+
+    .total-price {
+      font-size: clamp(2.5rem, 6vw, 4rem);
+      font-weight: 900;
+      color: #0f172a;
+      line-height: 1.05;
+      margin-bottom: 12px;
+    }
+
+    .result-label {
+      font-size: 1.15rem;
+      font-weight: 800;
+      color: #0f766e;
+      margin-bottom: 24px;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+    }
+
+    .result-details {
+      color: #334155;
+      line-height: 1.9;
+      font-size: 1.02rem;
+    }
+
+    .result-details p {
+      margin: 0 0 12px;
+    }
+
+    .mini-summary {
+      margin-top: 24px;
+      padding: 20px;
+      border-radius: 18px;
+      background: white;
+      border: 1px solid #dbe4ee;
+      color: #334155;
+      line-height: 1.8;
+    }
+
+    .disclaimer {
+      margin-top: 24px;
+      font-size: 0.9rem;
+      color: #64748b;
+    }
+
+    .content-section {
+      margin-top: 60px;
+    }
+
+    .content-section h2 {
+      font-size: 2rem;
+      margin-bottom: 20px;
+      color: #0f172a;
+    }
+
+    .content-section p,
+    .content-section li {
+      font-size: 1.1rem;
+      line-height: 1.9;
+      color: #334155;
+    }
+
+    .content-link {
+      color: #0f766e;
+      font-weight: 700;
+      text-decoration: none;
+    }
+
+    .content-link:hover {
+      text-decoration: underline;
+    }
+
+    @media (max-width: 768px) {
+      .calculator {
+        padding: 24px;
+      }
+
+      .grid {
+        grid-template-columns: 1fr;
+      }
+
+      .calculator h2,
+      .content-section h2 {
+        font-size: 1.7rem;
+      }
+
+      .results {
+        padding: 24px;
+      }
+    }
+  </style>
+
+  <div class="container">
+    <CalculatorPageShell
+      eyebrow="Funeral Insurance Calculator"
+      title="Funeral Insurance Calculator"
+      description="Estimate a reasonable monthly funeral insurance premium range based on your funeral funding gap, age, health, savings, existing coverage, income, and debt."
+    >
+      <div class="calculator">
+        <h2>Estimate a Funeral Insurance Premium Range</h2>
+
+        <p class="calculator-intro">
+          Enter the expected funeral cost, existing savings, life insurance,
+          family help, age, health, and monthly budget. This calculator estimates
+          the most you should reasonably pay per month for funeral insurance.
+        </p>
+
+        <div class="grid">
+          <div class="field">
+            <label for="funeralCost">Expected Funeral Cost</label>
+            <input id="funeralCost" type="number" placeholder="Example: 15000" />
+          </div>
+
+          <div class="field">
+            <label for="desiredBenefit">Desired Funeral Insurance Benefit</label>
+            <input id="desiredBenefit" type="number" placeholder="Example: 10000" />
+          </div>
+
+          <div class="field">
+            <label for="age">Current Age</label>
+            <input id="age" type="number" placeholder="Example: 63" />
+          </div>
+
+          <div class="field">
+            <label for="health">Health / Approval Outlook</label>
+            <select id="health">
+              <option value="good" selected>Good / likely standard options</option>
+              <option value="average">Average / some limitations</option>
+              <option value="limited">Limited / likely expensive or graded</option>
+            </select>
+          </div>
+
+          <div class="field">
+            <label for="savings">Savings Available for Funeral Costs</label>
+            <input id="savings" type="number" placeholder="Example: 5000" />
+          </div>
+
+          <div class="field">
+            <label for="lifeInsurance">Existing Life Insurance Available</label>
+            <input id="lifeInsurance" type="number" placeholder="Example: 15000" />
+          </div>
+
+          <div class="field">
+            <label for="familyHelp">Realistic Family Help</label>
+            <input id="familyHelp" type="number" placeholder="Example: 1000" />
+          </div>
+
+          <div class="field">
+            <label for="monthlyIncome">Monthly Take-Home Income</label>
+            <input id="monthlyIncome" type="number" placeholder="Example: 6500" />
+          </div>
+
+          <div class="field">
+            <label for="debtPayments">Monthly Debt Payments</label>
+            <input id="debtPayments" type="number" placeholder="Example: 800" />
+          </div>
+
+          <div class="field">
+            <label for="essentialBills">Monthly Essential Bills</label>
+            <input id="essentialBills" type="number" placeholder="Example: 3000" />
+          </div>
+
+          <div class="field">
+            <label for="waitingPeriod">Policy Waiting Period</label>
+            <select id="waitingPeriod">
+              <option value="none" selected>No waiting period</option>
+              <option value="twoYears">Two-year graded benefit</option>
+              <option value="unclear">Unclear / not sure</option>
+            </select>
+          </div>
+
+          <div class="field">
+            <label for="savingAlternative">Could You Save Monthly Instead?</label>
+            <select id="savingAlternative">
+              <option value="yes" selected>Yes, realistically</option>
+              <option value="maybe">Maybe, but not reliably</option>
+              <option value="no">No, insurance would be easier</option>
+            </select>
+          </div>
+        </div>
+
+        <button id="insuranceButton" type="button">Calculate Premium Range</button>
+
+        <div class="results" id="results">
+          <div class="result-label">Recommended Monthly Premium Range</div>
+
+          <div class="total-price" id="totalPrice"></div>
+
+          <div class="result-details" id="resultDetails"></div>
+
+          <div class="mini-summary" id="priceSummary"></div>
+
+          <div class="disclaimer">
+            This is an educational estimate, not an insurance quote. Review
+            policy terms, waiting periods, exclusions, benefit limits, and total
+            lifetime premium cost before buying.
+          </div>
+        </div>
+      </div>
+
+      <section class="content-section">
+        <h2>How This Funeral Insurance Calculator Works</h2>
+
+        <p>
+          This calculator first estimates the actual funeral funding gap. It
+          subtracts savings, existing life insurance, and realistic family help
+          from the expected funeral cost. If there is no real gap, the
+          recommended premium is $0.
+        </p>
+
+        <p>
+          If a gap remains, the calculator estimates a reasonable monthly premium
+          range using the needed benefit, age, health, income, debt, essential
+          bills, and whether saving directly is realistic.
+        </p>
+
+        <p>
+          For broader funeral planning, compare this with the
+          <a class="content-link" href="/funeral-price-calculator">
+            Funeral Price Calculator
+          </a>
+          and
+          <a class="content-link" href="/can-i-afford-a-funeral">
+            Can I Afford a Funeral?
+          </a>.
+        </p>
+      </section>
+
+      <KeyCostCategories
+        items={[
+          {
+            title: "Actual funding gap",
+            description:
+              "The best funeral insurance premium depends on the amount not already covered by savings, life insurance, prepaid help, or family contributions.",
+          },
+          {
+            title: "Monthly affordability",
+            description:
+              "A premium should fit safely after essential bills and current debt payments.",
+          },
+          {
+            title: "Age and health",
+            description:
+              "Older age, health limitations, and graded policies can make funeral insurance more expensive or less useful.",
+          },
+          {
+            title: "Saving directly",
+            description:
+              "If the household can realistically save the gap quickly, funeral insurance may not be worth a monthly premium.",
+          },
+        ]}
+      />
+
+      <ReduceCostTips
+        items={[
+          "Do not buy coverage for funeral costs that are already covered.",
+          "Compare the monthly premium against saving the same amount directly.",
+          "Avoid policies where lifetime premiums could exceed the useful benefit.",
+          "Check whether the policy has a waiting period or graded benefit.",
+          "Buy only enough coverage to fill the real funding gap.",
+          "Review existing life insurance before buying a separate funeral policy.",
+        ]}
+      />
+
+      <CalculatorAssumptions
+        items={[
+          "Monthly income means take-home pay, not gross income.",
+          "Existing savings, life insurance, and realistic family help reduce the coverage gap.",
+          "If the funeral is already covered, the recommended premium range is $0.",
+          "The calculator estimates a reasonable premium range, not an actual policy quote.",
+          "Age, health, waiting period, income, debt, and savings affect the recommended range.",
+          "This calculator does not replace professional insurance or financial advice.",
+        ]}
+      />
+
+      <section class="content-section">
+        <h2>When Funeral Insurance Makes Sense</h2>
+
+        <p>
+          Funeral insurance can make sense when the family has a real funding
+          gap, limited savings, no usable life insurance, uncertain family help,
+          and a premium that fits comfortably into the monthly budget.
+        </p>
+
+        <p>
+          It usually makes less sense when the household already has enough
+          savings or life insurance to cover the likely funeral cost. In that
+          case, a new policy may add another monthly bill without solving a real
+          problem.
+        </p>
+      </section>
+
+      <section class="content-section">
+        <h2>Funeral Insurance vs. Saving Directly</h2>
+
+        <p>
+          Saving directly can be better when the funding gap is small and monthly
+          cash flow is stable. The household keeps control of the money and does
+          not have to worry about policy exclusions, waiting periods, or lifetime
+          premium cost.
+        </p>
+
+        <p>
+          Insurance may be more useful when the funding gap is larger, the family
+          would struggle to save the full amount, and the monthly premium is low
+          enough to fit safely inside the budget.
+        </p>
+      </section>
+
+      <div class="content-section">
+        <FAQSection title="Funeral Insurance Calculator FAQ" faqs={funeralInsuranceFaqs} />
+      </div>
+
+      <div class="content-section">
+        <RelatedCalculators calculators={relatedCalculators} />
+      </div>
+    </CalculatorPageShell>
+
+    <MethodologySection category="funeral insurance premium estimates" updated="June 2026" />
+  </div>
+
+  <script is:inline>
+  const getNumber = (id) => {
+    const value = Number(document.getElementById(id)?.value);
+    return Number.isFinite(value) && value >= 0 ? value : 0;
+  };
+
+  const getValue = (id) => document.getElementById(id)?.value || "";
+
+  function formatMoney(value) {
+    return value.toLocaleString(undefined, {
+      style: "currency",
+      currency: "USD",
+      minimumFractionDigits: 0,
+      maximumFractionDigits: 0,
+    });
+  }
+
+  function getAgeRate(age) {
+    if (age <= 40) return 0.005;
+    if (age <= 50) return 0.007;
+    if (age <= 60) return 0.01;
+    if (age <= 70) return 0.014;
+    if (age <= 80) return 0.02;
+    return 0.03;
+  }
+
+  function getHealthRate(health) {
+    if (health === "good") return 1;
+    if (health === "average") return 1.25;
+    return 1.6;
+  }
+
+  function getWaitingDiscount(waitingPeriod) {
+    if (waitingPeriod === "none") return 1;
+    if (waitingPeriod === "twoYears") return 0.8;
+    return 0.7;
+  }
+
+  function getSavingFactor(savingAlternative) {
+    if (savingAlternative === "yes") return 0.75;
+    if (savingAlternative === "maybe") return 1;
+    return 1.15;
+  }
+
+  function getIncomePremiumCap(income, monthlyFlex) {
+    if (monthlyFlex <= 0) return 0;
+
+    let cap = income * 0.012;
+
+    if (income < 2500) cap = income * 0.006;
+    else if (income < 5000) cap = income * 0.009;
+    else if (income < 10000) cap = income * 0.012;
+    else if (income < 25000) cap = income * 0.01;
+    else cap = income * 0.006;
+
+    return Math.min(cap, monthlyFlex * 0.2);
+  }
+
+  function calculateFuneralInsurance() {
+    const funeralCost = getNumber("funeralCost");
+    const desiredBenefit = getNumber("desiredBenefit");
+    const age = getNumber("age");
+    const health = getValue("health");
+    const savings = getNumber("savings");
+    const lifeInsurance = getNumber("lifeInsurance");
+    const familyHelp = getNumber("familyHelp");
+    const monthlyIncome = getNumber("monthlyIncome");
+    const debtPayments = getNumber("debtPayments");
+    const essentialBills = getNumber("essentialBills");
+    const waitingPeriod = getValue("waitingPeriod");
+    const savingAlternative = getValue("savingAlternative");
+
+    const results = document.getElementById("results");
+    const totalPrice = document.getElementById("totalPrice");
+    const resultDetails = document.getElementById("resultDetails");
+    const priceSummary = document.getElementById("priceSummary");
+
+    results.classList.add("visible");
+
+    if (funeralCost <= 0 || monthlyIncome <= 0) {
+      totalPrice.textContent = "$0–$0";
+      resultDetails.innerHTML =
+        "<p>Enter an expected funeral cost and monthly take-home income.</p>";
+      priceSummary.textContent = "";
+      return;
+    }
+
+    const existingFunding = savings + lifeInsurance + familyHelp;
+    const fundingGap = Math.max(0, funeralCost - existingFunding);
+    const usefulCoverage = desiredBenefit > 0
+      ? Math.min(desiredBenefit, fundingGap)
+      : fundingGap;
+
+    const monthlyFlex = monthlyIncome - debtPayments - essentialBills;
+    const debtRatio = debtPayments / monthlyIncome;
+    const essentialsRatio = essentialBills / monthlyIncome;
+
+    if (fundingGap <= 0 || usefulCoverage <= 0) {
+      totalPrice.textContent = "$0–$0";
+      resultDetails.innerHTML = `
+        <p><strong>Recommended monthly premium:</strong> $0.</p>
+        <p><strong>Expected funeral cost:</strong> ${formatMoney(funeralCost)}.</p>
+        <p><strong>Existing funeral funding:</strong> ${formatMoney(existingFunding)}.</p>
+        <p><strong>Remaining funding gap:</strong> ${formatMoney(fundingGap)}.</p>
+        <p><strong>Monthly flexibility after essentials and debt:</strong> ${formatMoney(monthlyFlex)}.</p>
+        <p><strong>Recommendation:</strong> Do not buy funeral insurance for a cost that is already covered.</p>
+      `;
+      priceSummary.innerHTML =
+        "The funeral is already covered by savings, life insurance, or family help. The ideal premium is <strong>$0 per month</strong>.";
+      return;
+    }
+
+    let basePremium =
+      usefulCoverage *
+      getAgeRate(age) *
+      getHealthRate(health) *
+      getWaitingDiscount(waitingPeriod) *
+      getSavingFactor(savingAlternative);
+
+    if (debtRatio >= 0.45) basePremium *= 0.55;
+    else if (debtRatio >= 0.3) basePremium *= 0.75;
+    else if (debtRatio >= 0.2) basePremium *= 0.9;
+
+    if (essentialsRatio >= 0.75) basePremium *= 0.55;
+    else if (essentialsRatio >= 0.6) basePremium *= 0.75;
+    else if (essentialsRatio >= 0.45) basePremium *= 0.9;
+
+    const incomeCap = getIncomePremiumCap(monthlyIncome, monthlyFlex);
+    const lifetimeCap = usefulCoverage / 120;
+    const sensiblePremium = Math.min(basePremium, incomeCap, lifetimeCap);
+
+    const lowPremium = Math.max(0, sensiblePremium * 0.75);
+    const highPremium = Math.max(lowPremium, sensiblePremium * 1.25);
+
+    const selfFundMonths = monthlyFlex > 0 ? fundingGap / monthlyFlex : 999;
+
+    totalPrice.textContent = `${formatMoney(lowPremium)}–${formatMoney(highPremium)}`;
+
+    resultDetails.innerHTML = `
+      <p><strong>Recommended monthly premium range:</strong> ${formatMoney(lowPremium)}–${formatMoney(highPremium)}.</p>
+      <p><strong>Expected funeral cost:</strong> ${formatMoney(funeralCost)}.</p>
+      <p><strong>Existing funeral funding:</strong> ${formatMoney(existingFunding)}.</p>
+      <p><strong>Remaining funding gap:</strong> ${formatMoney(fundingGap)}.</p>
+      <p><strong>Useful coverage amount:</strong> ${formatMoney(usefulCoverage)}.</p>
+      <p><strong>Monthly flexibility after essentials and debt:</strong> ${formatMoney(monthlyFlex)}.</p>
+      <p><strong>Estimated time to self-fund the gap:</strong> ${
+        selfFundMonths >= 999
+          ? "Cash flow is too tight to estimate."
+          : `${selfFundMonths.toFixed(1)} month${selfFundMonths === 1 ? "" : "s"}.`
+      }</p>
+      <p><strong>Recommendation:</strong> ${
+        highPremium <= 0
+          ? "Do not add a premium right now. The household budget is already too tight."
+          : "A policy may make sense only if the quote falls inside or below this range."
+      }</p>
+    `;
+
+    priceSummary.innerHTML = `
+      Based on the actual funding gap and monthly budget, a reasonable funeral
+      insurance premium is about <strong>${formatMoney(lowPremium)}–${formatMoney(highPremium)} per month</strong>.
+    `;
+  }
+
+  document
+    .getElementById("insuranceButton")
+    .addEventListener("click", calculateFuneralInsurance);
+</script>
+</Layout>

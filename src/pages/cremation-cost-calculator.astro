@@ -1,0 +1,701 @@
+---
+import Layout from "../layouts/Layout.astro";
+import CalculatorPageShell from "../components/CalculatorPageShell.astro";
+import FAQSection from "../components/FAQSection.astro";
+import RelatedCalculators from "../components/RelatedCalculators.astro";
+import MethodologySection from "../components/MethodologySection.astro";
+import CalculatorAssumptions from "../components/CalculatorAssumptions.astro";
+import KeyCostCategories from "../components/KeyCostCategories.astro";
+import ReduceCostTips from "../components/ReduceCostTips.astro";
+import { calculators } from "../data/calculators.js";
+
+const cremationFaqs = [
+  {
+    question: "How much does cremation usually cost?",
+    answer:
+      "Cremation can range from a lower-cost direct cremation to a more expensive cremation with viewing, memorial service, urn, obituary, flowers, reception, travel, and keepsakes. The final cost depends on the service level and optional choices.",
+  },
+  {
+    question: "Why does this calculator show a recommended range?",
+    answer:
+      "A cremation cost estimate is useful, but families also need to know what they can wisely spend based on take-home income, emergency savings, debt, insurance help, and family contributions.",
+  },
+  {
+    question: "Is direct cremation the cheapest option?",
+    answer:
+      "Direct cremation is usually one of the lowest-cost options because it skips a formal viewing, traditional funeral service, casket, and many cemetery-related expenses.",
+  },
+  {
+    question: "Can cremation still become expensive?",
+    answer:
+      "Yes. Cremation costs can rise quickly when families add a viewing, memorial service, upgraded urn, obituary, flowers, printed programs, reception, travel, keepsakes, or burial of ashes.",
+  },
+  {
+    question: "Does this calculator use gross income or take-home income?",
+    answer:
+      "Use monthly take-home pay. That gives a more realistic view of what the household can actually spend after taxes and payroll deductions.",
+  },
+];
+
+const relatedCalculators = calculators
+  .filter(
+    (calculator) =>
+      calculator.category === "Funeral Costs" &&
+      calculator.href !== "/cremation-cost-calculator"
+  )
+  .slice(0, 4);
+---
+
+<Layout
+  title="Cremation Cost Calculator"
+  description="Estimate a realistic cremation spending range based on direct cremation, memorial service, urn, keepsakes, obituary, travel, reception, savings, income, debt, and family help."
+>
+  <style>
+    .container {
+      max-width: 900px;
+      margin: auto;
+    }
+
+    .calculator {
+      background: white;
+      padding: 40px;
+      border-radius: 24px;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.06);
+    }
+
+    .calculator h2 {
+      margin-top: 0;
+      font-size: 2rem;
+      margin-bottom: 18px;
+      color: #0f172a;
+    }
+
+    .calculator-intro {
+      color: #334155;
+      line-height: 1.8;
+      margin-bottom: 30px;
+      font-size: 1.05rem;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+    }
+
+    .field label {
+      display: block;
+      font-weight: 800;
+      margin-bottom: 10px;
+      color: #0f172a;
+    }
+
+    .field input,
+    .field select {
+      width: 100%;
+      padding: 16px;
+      border-radius: 12px;
+      border: 1px solid #cbd5e1;
+      font-size: 1rem;
+      box-sizing: border-box;
+      background: white;
+    }
+
+    button {
+      margin-top: 30px;
+      background: #0f766e;
+      color: white;
+      border: none;
+      padding: 18px 32px;
+      border-radius: 999px;
+      font-size: 1.05rem;
+      font-weight: 800;
+      cursor: pointer;
+      transition: opacity 0.2s ease;
+    }
+
+    button:hover {
+      opacity: 0.92;
+    }
+
+    .results {
+      margin-top: 36px;
+      background: #f8fafc;
+      padding: 32px;
+      border-radius: 24px;
+      border: 1px solid var(--border);
+      box-shadow: 0 10px 24px rgba(15, 23, 42, 0.04);
+      display: none;
+    }
+
+    .results.visible {
+      display: block;
+    }
+
+    .total-price {
+      font-size: clamp(2.5rem, 6vw, 4rem);
+      font-weight: 900;
+      color: #0f172a;
+      line-height: 1.05;
+      margin-bottom: 12px;
+    }
+
+    .result-label {
+      font-size: 1.15rem;
+      font-weight: 800;
+      color: #0f766e;
+      margin-bottom: 24px;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+    }
+
+    .result-details {
+      color: #334155;
+      line-height: 1.9;
+      font-size: 1.02rem;
+    }
+
+    .result-details p {
+      margin: 0 0 12px;
+    }
+
+    .mini-summary {
+      margin-top: 24px;
+      padding: 20px;
+      border-radius: 18px;
+      background: white;
+      border: 1px solid #dbe4ee;
+      color: #334155;
+      line-height: 1.8;
+    }
+
+    .disclaimer {
+      margin-top: 24px;
+      font-size: 0.9rem;
+      color: #64748b;
+    }
+
+    .content-section {
+      margin-top: 60px;
+    }
+
+    .content-section h2 {
+      font-size: 2rem;
+      margin-bottom: 20px;
+      color: #0f172a;
+    }
+
+    .content-section p,
+    .content-section li {
+      font-size: 1.1rem;
+      line-height: 1.9;
+      color: #334155;
+    }
+
+    .content-link {
+      color: #0f766e;
+      font-weight: 700;
+      text-decoration: none;
+    }
+
+    .content-link:hover {
+      text-decoration: underline;
+    }
+
+    @media (max-width: 768px) {
+      .calculator {
+        padding: 24px;
+      }
+
+      .grid {
+        grid-template-columns: 1fr;
+      }
+
+      .calculator h2,
+      .content-section h2 {
+        font-size: 1.7rem;
+      }
+
+      .results {
+        padding: 24px;
+      }
+    }
+  </style>
+
+  <div class="container">
+    <CalculatorPageShell
+      eyebrow="Cremation Cost Calculator"
+      title="Cremation Cost Calculator"
+      description="Estimate a wise cremation spending range based on cremation type, memorial choices, urn, reception, travel, keepsakes, savings, income, debt, and family help."
+    >
+      <div class="calculator">
+        <h2>Estimate a Cremation Cost Range</h2>
+
+        <p class="calculator-intro">
+          Enter the cremation choices and household numbers below. This
+          calculator gives a recommended cremation spending range and compares it
+          with the selected cremation plan estimate.
+        </p>
+
+        <div class="grid">
+          <div class="field">
+            <label for="cremationType">Cremation Type</label>
+            <select id="cremationType">
+              <option value="direct" selected>Direct cremation</option>
+              <option value="memorial">Cremation with memorial service</option>
+              <option value="viewing">Cremation with viewing</option>
+              <option value="fullService">Full-service cremation package</option>
+            </select>
+          </div>
+
+          <div class="field">
+            <label for="memorialSize">Memorial / Gathering Size</label>
+            <select id="memorialSize">
+              <option value="none">No formal gathering</option>
+              <option value="small" selected>Small gathering</option>
+              <option value="medium">Medium memorial</option>
+              <option value="large">Large memorial</option>
+            </select>
+          </div>
+
+          <div class="field">
+            <label for="urnLevel">Urn Choice</label>
+            <select id="urnLevel">
+              <option value="basic" selected>Basic urn</option>
+              <option value="standard">Standard urn</option>
+              <option value="premium">Premium urn</option>
+            </select>
+          </div>
+
+          <div class="field">
+            <label for="keepsakes">Keepsakes / Extra Urns</label>
+            <select id="keepsakes">
+              <option value="none" selected>None</option>
+              <option value="some">Some keepsakes</option>
+              <option value="many">Several keepsakes</option>
+            </select>
+          </div>
+
+          <div class="field">
+            <label for="obituaryExtras">Obituary, Flowers, Programs</label>
+            <select id="obituaryExtras">
+              <option value="minimal">Minimal</option>
+              <option value="standard" selected>Standard</option>
+              <option value="expanded">Expanded</option>
+            </select>
+          </div>
+
+          <div class="field">
+            <label for="reception">Reception / Food</label>
+            <select id="reception">
+              <option value="none">None</option>
+              <option value="small" selected>Small reception</option>
+              <option value="medium">Medium reception</option>
+              <option value="large">Large reception</option>
+            </select>
+          </div>
+
+          <div class="field">
+            <label for="travel">Family Travel / Transportation</label>
+            <select id="travel">
+              <option value="none" selected>Minimal</option>
+              <option value="some">Some travel help</option>
+              <option value="heavy">Major travel needs</option>
+            </select>
+          </div>
+
+          <div class="field">
+            <label for="ashesPlacement">Ashes Placement</label>
+            <select id="ashesPlacement">
+              <option value="home" selected>Kept by family</option>
+              <option value="scattering">Scattering ceremony</option>
+              <option value="niche">Columbarium niche</option>
+              <option value="burial">Burial of ashes</option>
+            </select>
+          </div>
+
+          <div class="field">
+            <label for="familyContributions">Family / Insurance Help</label>
+            <input id="familyContributions" type="number" placeholder="Example: 3000" />
+          </div>
+
+          <div class="field">
+            <label for="monthlyIncome">Monthly Take-Home Income</label>
+            <input id="monthlyIncome" type="number" placeholder="Example: 7000" />
+          </div>
+
+          <div class="field">
+            <label for="emergencySavings">Emergency Savings Available</label>
+            <input id="emergencySavings" type="number" placeholder="Example: 12000" />
+          </div>
+
+          <div class="field">
+            <label for="currentDebtPayments">Monthly Debt Payments</label>
+            <input id="currentDebtPayments" type="number" placeholder="Example: 900" />
+          </div>
+        </div>
+
+        <button id="cremationButton" type="button">Calculate Cremation Cost Range</button>
+
+        <div class="results" id="results">
+          <div class="result-label">Recommended Cremation Spending Range</div>
+
+          <div class="total-price" id="totalPrice"></div>
+
+          <div class="result-details" id="resultDetails"></div>
+
+          <div class="mini-summary" id="priceSummary"></div>
+
+          <div class="disclaimer">
+            This is an educational estimate, not a funeral home quote. Ask for
+            itemized cremation pricing before committing to a service package,
+            urn, memorial, reception, niche, burial of ashes, or payment plan.
+          </div>
+        </div>
+      </div>
+
+      <section class="content-section">
+        <h2>How This Cremation Cost Calculator Works</h2>
+
+        <p>
+          This calculator estimates two things: what the selected cremation plan
+          may cost and what the household can reasonably spend based on income,
+          savings, debt, and family or insurance help.
+        </p>
+
+        <p>
+          Direct cremation usually starts lower because it avoids many burial and
+          traditional funeral costs. But cremation with a viewing, memorial
+          service, urn upgrades, reception, obituary, flowers, keepsakes, travel,
+          niche placement, or burial of ashes can still become expensive.
+        </p>
+
+        <p>
+          For a broader comparison, use the
+          <a class="content-link" href="/funeral-price-calculator">
+            Funeral Price Calculator
+          </a>
+          or compare cremation against burial with the
+          <a class="content-link" href="/funeral-vs-cremation-cost-calculator">
+            Funeral vs. Cremation Cost Calculator
+          </a>.
+        </p>
+      </section>
+
+      <KeyCostCategories
+        items={[
+          {
+            title: "Cremation type",
+            description:
+              "Direct cremation, cremation with a memorial, cremation with viewing, and full-service cremation packages have very different cost ranges.",
+          },
+          {
+            title: "Memorial and reception",
+            description:
+              "A gathering, venue, food, printed programs, flowers, and livestreaming can raise the final cost even when burial is not involved.",
+          },
+          {
+            title: "Urn and keepsakes",
+            description:
+              "Urns, keepsake urns, jewelry, extra containers, engraving, and personalization can add more than families expect.",
+          },
+          {
+            title: "Ashes placement",
+            description:
+              "Keeping ashes at home is usually cheaper than a niche, burial of ashes, marker, cemetery fees, or a separate scattering ceremony.",
+          },
+        ]}
+      />
+
+      <ReduceCostTips
+        items={[
+          "Ask whether the quoted price is direct cremation or cremation with services.",
+          "Separate required cremation costs from optional memorial upgrades.",
+          "Compare keeping ashes at home, scattering, a niche, and burial of ashes before deciding.",
+          "Limit keepsakes if multiple small urns or jewelry pieces would stretch the budget.",
+          "Keep the reception simple if food and venue costs are pushing the plan too high.",
+          "Avoid financing cremation costs unless the payment fits safely inside monthly cash flow.",
+        ]}
+      />
+
+      <CalculatorAssumptions
+        items={[
+          "The calculator estimates a selected cremation plan range and a recommended spending range.",
+          "Monthly income means take-home pay, not gross income.",
+          "Family or insurance help is included in the recommended spending range.",
+          "Emergency savings are partly protected before cremation spending is treated as available.",
+          "A very high income and strong savings can produce a much higher safe spending range.",
+          "This page does not use a verdict bar because the output is a dollar range, not a pressure score.",
+        ]}
+      />
+
+      <section class="content-section">
+        <h2>Why Cremation Costs Can Still Surprise Families</h2>
+
+        <p>
+          Many families choose cremation expecting it to be automatically cheap.
+          That can be true for direct cremation, but the cost changes once a
+          viewing, memorial service, upgraded urn, obituary, flowers, printed
+          programs, reception, travel, keepsakes, niche, or cemetery option is
+          added.
+        </p>
+
+        <p>
+          The most useful question is not just “How much is cremation?” It is
+          “Which cremation plan fits the household without draining emergency
+          savings or creating debt?”
+        </p>
+      </section>
+
+      <section class="content-section">
+        <h2>When a Cremation Budget Looks Reasonable</h2>
+
+        <p>
+          A cremation budget is easier to defend when it is covered by insurance,
+          family contributions, prepaid arrangements, or savings above a basic
+          emergency cushion. The same cremation plan becomes risky when it
+          requires credit-card debt, wipes out rent money, or leaves one person
+          financially exposed after the service.
+        </p>
+
+        <p>
+          A household with very high take-home income, low debt, and strong
+          savings can absorb more. A household with tight income or high debt may
+          need direct cremation, a smaller memorial, or more shared family help.
+        </p>
+      </section>
+
+      <div class="content-section">
+        <FAQSection title="Cremation Cost Calculator FAQ" faqs={cremationFaqs} />
+      </div>
+
+      <div class="content-section">
+        <RelatedCalculators calculators={relatedCalculators} />
+      </div>
+    </CalculatorPageShell>
+
+    <MethodologySection category="cremation cost estimates" updated="June 2026" />
+  </div>
+
+  <script is:inline>
+    const getNumber = (id) => {
+      const rawValue = document.getElementById(id)?.value;
+      const value = Number(rawValue);
+      return Number.isFinite(value) && value >= 0 ? value : 0;
+    };
+
+    const getValue = (id) => document.getElementById(id)?.value || "";
+
+    function formatMoney(value) {
+      return value.toLocaleString(undefined, {
+        style: "currency",
+        currency: "USD",
+        minimumFractionDigits: 0,
+        maximumFractionDigits: 0,
+      });
+    }
+
+    const costRanges = {
+      cremationType: {
+        direct: [1000, 3000],
+        memorial: [3000, 7000],
+        viewing: [5000, 10000],
+        fullService: [7000, 14000],
+      },
+      memorialSize: {
+        none: [0, 0],
+        small: [400, 1200],
+        medium: [1200, 3500],
+        large: [3500, 8000],
+      },
+      urnLevel: {
+        basic: [75, 300],
+        standard: [300, 1200],
+        premium: [1200, 3500],
+      },
+      keepsakes: {
+        none: [0, 0],
+        some: [150, 800],
+        many: [800, 2500],
+      },
+      obituaryExtras: {
+        minimal: [100, 500],
+        standard: [500, 1800],
+        expanded: [1800, 4500],
+      },
+      reception: {
+        none: [0, 0],
+        small: [400, 1200],
+        medium: [1200, 3000],
+        large: [3000, 7000],
+      },
+      travel: {
+        none: [0, 300],
+        some: [300, 1500],
+        heavy: [1500, 5000],
+      },
+      ashesPlacement: {
+        home: [0, 200],
+        scattering: [200, 1200],
+        niche: [1500, 6000],
+        burial: [2000, 8000],
+      },
+    };
+
+    function addRange(total, range) {
+      return [total[0] + range[0], total[1] + range[1]];
+    }
+
+    function getRange(group, key) {
+      return costRanges[group]?.[key] || [0, 0];
+    }
+
+    function getPlanLabel(cremationType) {
+      if (cremationType === "direct") return "direct cremation";
+      if (cremationType === "memorial") return "cremation with a memorial service";
+      if (cremationType === "viewing") return "cremation with viewing";
+      return "full-service cremation package";
+    }
+
+    function calculateWiseSpendRange(income, savings, debtPayments, help) {
+      const debtRatio = income > 0 ? debtPayments / income : 1;
+
+      const protectedEmergencyFund =
+        income >= 30000 ? income * 0.5 :
+        income >= 15000 ? income * 1 :
+        income >= 8000 ? income * 1.5 :
+        income >= 4000 ? income * 2 :
+        income * 2.5;
+
+      const usableSavings = Math.max(0, savings - protectedEmergencyFund);
+
+      let incomeCapacity = 0;
+
+      if (income <= 0) {
+        incomeCapacity = 0;
+      } else if (income >= 30000) {
+        incomeCapacity = income * 1.25;
+      } else if (income >= 15000) {
+        incomeCapacity = income * 0.75;
+      } else if (income >= 8000) {
+        incomeCapacity = income * 0.45;
+      } else if (income >= 4000) {
+        incomeCapacity = income * 0.25;
+      } else {
+        incomeCapacity = income * 0.12;
+      }
+
+      if (debtRatio > 0.45) incomeCapacity *= 0.35;
+      else if (debtRatio > 0.3) incomeCapacity *= 0.55;
+      else if (debtRatio > 0.2) incomeCapacity *= 0.75;
+      else if (debtRatio <= 0.1) incomeCapacity *= 1.15;
+
+      const low = Math.max(0, help + usableSavings * 0.35 + incomeCapacity * 0.45);
+      const high = Math.max(low + 500, help + usableSavings * 0.75 + incomeCapacity);
+
+      return {
+        low,
+        high,
+        usableSavings,
+        protectedEmergencyFund,
+        debtRatio,
+      };
+    }
+
+    function getRecommendation(plannedLow, plannedHigh, wiseHigh, context) {
+      if (plannedHigh <= wiseHigh) {
+        return "This cremation plan appears to fit the household’s current spending range.";
+      }
+
+      if (plannedLow <= wiseHigh) {
+        return "The lower end of this cremation plan may fit, but the higher end should be trimmed, negotiated, or covered with additional help.";
+      }
+
+      if (context.usableSavings <= 0) {
+        return "This cremation plan is above the wise range because current savings should mostly be protected for basic household stability.";
+      }
+
+      if (context.debtRatio > 0.3) {
+        return "This cremation plan is above the wise range because existing debt already limits monthly flexibility.";
+      }
+
+      return "This cremation plan is above the wise range. Consider direct cremation, a smaller memorial, fewer keepsakes, a simpler reception, or more family help.";
+    }
+
+    function calculateCremationCost() {
+      const cremationType = getValue("cremationType");
+      const memorialSize = getValue("memorialSize");
+      const urnLevel = getValue("urnLevel");
+      const keepsakes = getValue("keepsakes");
+      const obituaryExtras = getValue("obituaryExtras");
+      const reception = getValue("reception");
+      const travel = getValue("travel");
+      const ashesPlacement = getValue("ashesPlacement");
+
+      const familyContributions = getNumber("familyContributions");
+      const monthlyIncome = getNumber("monthlyIncome");
+      const emergencySavings = getNumber("emergencySavings");
+      const currentDebtPayments = getNumber("currentDebtPayments");
+
+      const results = document.getElementById("results");
+      const totalPrice = document.getElementById("totalPrice");
+      const resultDetails = document.getElementById("resultDetails");
+      const priceSummary = document.getElementById("priceSummary");
+
+      let plannedRange = [0, 0];
+
+      plannedRange = addRange(plannedRange, getRange("cremationType", cremationType));
+      plannedRange = addRange(plannedRange, getRange("memorialSize", memorialSize));
+      plannedRange = addRange(plannedRange, getRange("urnLevel", urnLevel));
+      plannedRange = addRange(plannedRange, getRange("keepsakes", keepsakes));
+      plannedRange = addRange(plannedRange, getRange("obituaryExtras", obituaryExtras));
+      plannedRange = addRange(plannedRange, getRange("reception", reception));
+      plannedRange = addRange(plannedRange, getRange("travel", travel));
+      plannedRange = addRange(plannedRange, getRange("ashesPlacement", ashesPlacement));
+
+      const wiseRange = calculateWiseSpendRange(
+        monthlyIncome,
+        emergencySavings,
+        currentDebtPayments,
+        familyContributions
+      );
+
+      const serviceLabel = getPlanLabel(cremationType);
+      const recommendation = getRecommendation(
+        plannedRange[0],
+        plannedRange[1],
+        wiseRange.high,
+        wiseRange
+      );
+
+      results.classList.add("visible");
+
+      totalPrice.textContent = `${formatMoney(wiseRange.low)}–${formatMoney(wiseRange.high)}`;
+
+      resultDetails.innerHTML = `
+        <p><strong>Recommended cremation spending range:</strong> ${formatMoney(wiseRange.low)}–${formatMoney(wiseRange.high)}.</p>
+
+        <p><strong>Estimated cost of the selected cremation plan:</strong> ${formatMoney(plannedRange[0])}–${formatMoney(plannedRange[1])}.</p>
+
+        <p><strong>Main plan type:</strong> ${serviceLabel}.</p>
+
+        <p><strong>Emergency savings protected before cremation spending:</strong> ${formatMoney(wiseRange.protectedEmergencyFund)}.</p>
+
+        <p><strong>Savings available above that cushion:</strong> ${formatMoney(wiseRange.usableSavings)}.</p>
+
+        <p><strong>Recommendation:</strong> ${recommendation}</p>
+      `;
+
+      priceSummary.innerHTML = `
+        Based on the household numbers entered, a wiser cremation budget is about
+        <strong>${formatMoney(wiseRange.low)}–${formatMoney(wiseRange.high)}</strong>.
+        The selected cremation setup is estimated at
+        <strong>${formatMoney(plannedRange[0])}–${formatMoney(plannedRange[1])}</strong>.
+      `;
+    }
+
+    document
+      .getElementById("cremationButton")
+      .addEventListener("click", calculateCremationCost);
+  </script>
+</Layout>
