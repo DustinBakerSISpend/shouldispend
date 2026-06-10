@@ -1,0 +1,747 @@
+---
+import Layout from "../layouts/Layout.astro";
+import CalculatorPageShell from "../components/CalculatorPageShell.astro";
+import FAQSection from "../components/FAQSection.astro";
+import RelatedCalculators from "../components/RelatedCalculators.astro";
+import RelatedGuides from "../components/RelatedGuides.astro";
+import MethodologySection from "../components/MethodologySection.astro";
+import FinancialRedFlags from "../components/FinancialRedFlags.astro";
+import CalculatorAssumptions from "../components/CalculatorAssumptions.astro";
+import KeyCostCategories from "../components/KeyCostCategories.astro";
+import ReduceCostTips from "../components/ReduceCostTips.astro";
+import WhenSpendingMakesSense from "../components/WhenSpendingMakesSense.astro";
+---
+
+<Layout
+  title="Should I Spend $3,000 on Garage Door Replacement?"
+  description="Use this garage door replacement calculator to decide whether a $3,000 garage door project fits your income, savings, debt, safety needs, opener condition, insulation value, repair history, and home value."
+>
+  <style>
+    .container {
+      max-width: 950px;
+      margin: 0 auto;
+      padding: 60px 20px;
+    }
+
+    .content-section {
+      max-width: 760px;
+      margin: 72px auto 0;
+    }
+
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 28px;
+      padding: 34px;
+    }
+
+    h2 {
+      margin-top: 0;
+      font-size: 2rem;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 22px;
+      margin-bottom: 28px;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 10px;
+      font-weight: 700;
+    }
+
+    input,
+    select {
+      width: 100%;
+      padding: 18px;
+      border-radius: 14px;
+      border: 1px solid var(--border);
+      font-size: 1.1rem;
+      box-sizing: border-box;
+      background: white;
+    }
+
+    button {
+      background: #0f172a;
+      color: white;
+      border: none;
+      padding: 16px 28px;
+      border-radius: 14px;
+      font-size: 1rem;
+      font-weight: 700;
+      cursor: pointer;
+      margin-top: 10px;
+      width: 100%;
+      display: block;
+    }
+
+    button:hover {
+      opacity: 0.92;
+    }
+
+    .result {
+      margin-top: 40px;
+      border: 1px solid var(--border);
+      border-radius: 24px;
+      padding: 28px;
+      display: none;
+      background: #f8fafc;
+    }
+
+    .score {
+      font-size: 3rem;
+      font-weight: 800;
+      margin-bottom: 16px;
+    }
+
+    .bar {
+      width: 100%;
+      height: 16px;
+      background: #dbe3ee;
+      border-radius: 999px;
+      overflow: hidden;
+      margin-bottom: 24px;
+    }
+
+    .fill {
+      height: 100%;
+      width: 0%;
+      background: #16a34a;
+      border-radius: 999px;
+      transition: width 0.4s ease;
+    }
+
+    .metric {
+      margin-bottom: 14px;
+      font-size: 1.05rem;
+    }
+
+    .guidance {
+      margin-top: 26px;
+      font-size: 1.15rem;
+      line-height: 1.7;
+    }
+
+    .disclaimer {
+      margin-top: 30px;
+      font-size: 0.9rem;
+      color: var(--muted);
+    }
+
+    .helper-link {
+      margin-top: 10px;
+      font-size: 0.9rem;
+    }
+
+    .helper-link a {
+      color: var(--primary);
+      font-weight: 600;
+    }
+
+    .content-section p,
+    .content-section li {
+      line-height: 1.8;
+    }
+  </style>
+
+  <div class="container">
+    <CalculatorPageShell
+      eyebrow="Home Improvement Calculator"
+      title="Should I Spend $3,000 on Garage Door Replacement?"
+      description="Estimate whether a $3,000 garage door replacement fits your income, emergency savings, debt load, monthly expenses, home value, safety risk, opener condition, insulation value, curb appeal, and repair history."
+    >
+      <div class="card">
+        <h2>Garage Door Replacement Pressure Verdict</h2>
+
+        <div class="grid">
+          <div>
+            <label for="cost">Garage Door Replacement Cost</label>
+            <input id="cost" type="number" placeholder="3000" min="0" inputmode="decimal" />
+          </div>
+
+          <div>
+            <label for="income">Monthly Take-Home Income</label>
+            <input id="income" type="number" placeholder="7000" min="0" inputmode="decimal" />
+          </div>
+
+          <div>
+            <label for="savings">Emergency Savings</label>
+            <input id="savings" type="number" placeholder="15000" min="0" inputmode="decimal" />
+          </div>
+
+          <div>
+            <label for="expenses">Monthly Expenses</label>
+            <input id="expenses" type="number" placeholder="4500" min="0" inputmode="decimal" />
+          </div>
+
+          <div>
+            <label for="debt">Monthly Debt Payments</label>
+            <input id="debt" type="number" placeholder="700" min="0" inputmode="decimal" />
+
+            <div class="helper-link">
+              <a href="/what-counts-as-debt">
+                Not sure what counts as debt? Read the debt guide
+              </a>
+            </div>
+          </div>
+
+          <div>
+            <label for="homeValue">Estimated Home Value</label>
+            <input id="homeValue" type="number" placeholder="350000" min="0" inputmode="decimal" />
+          </div>
+
+          <div>
+            <label for="safetyRisk">Safety / Security Risk</label>
+            <select id="safetyRisk">
+              <option value="low">Low — door mostly works</option>
+              <option value="medium" selected>Moderate — unreliable or damaged</option>
+              <option value="high">High — unsafe, stuck, broken spring, or security concern</option>
+            </select>
+          </div>
+
+          <div>
+            <label for="openerCondition">Opener Condition</label>
+            <select id="openerCondition">
+              <option value="good">Works well</option>
+              <option value="aging" selected>Aging or unreliable</option>
+              <option value="failing">Failing, noisy, unsafe, or incompatible</option>
+            </select>
+          </div>
+
+          <div>
+            <label for="insulationNeed">Insulation / Attached Garage Need</label>
+            <select id="insulationNeed">
+              <option value="low">Detached or low insulation need</option>
+              <option value="medium" selected>Some comfort or energy benefit</option>
+              <option value="high">Attached garage, bedrooms nearby, or major temperature issue</option>
+            </select>
+          </div>
+
+          <div>
+            <label for="repairHistory">Repair History</label>
+            <select id="repairHistory">
+              <option value="none">Few or no recent repairs</option>
+              <option value="some" selected>Several recent repairs</option>
+              <option value="frequent">Frequent repairs or repeated failures</option>
+            </select>
+          </div>
+
+          <div>
+            <label for="curbAppeal">Curb Appeal / Resale Value</label>
+            <select id="curbAppeal">
+              <option value="low">Not important right now</option>
+              <option value="medium" selected>Some curb appeal value</option>
+              <option value="high">Highly visible door or preparing to sell</option>
+            </select>
+          </div>
+
+          <div>
+            <label for="financed">Amount Financed</label>
+            <input id="financed" type="number" placeholder="0" min="0" inputmode="decimal" />
+          </div>
+        </div>
+
+        <button id="garageDoorButton" type="button">
+          Calculate Financial Pressure
+        </button>
+
+        <div class="result" id="result">
+          <div class="score" id="score"></div>
+
+          <div class="bar">
+            <div class="fill" id="barFill"></div>
+          </div>
+
+          <div class="metric" id="stress"></div>
+          <div class="metric" id="cashFlow"></div>
+          <div class="metric" id="savingsImpact"></div>
+          <div class="metric" id="projectContext"></div>
+          <div class="metric" id="financingImpact"></div>
+
+          <div class="guidance" id="guidance"></div>
+
+          <div class="disclaimer">
+            This is a general educational estimate, not construction, legal, warranty, safety, or financial advice.
+          </div>
+        </div>
+      </div>
+
+      <div class="content-section">
+        <h2>What a $3,000 Garage Door Replacement Really Means</h2>
+
+        <p>
+          A garage door replacement can be a safety repair, a security upgrade, a curb appeal project, or a practical fix for an unreliable door. The same $3,000 project can be sensible for one household and unnecessary pressure for another.
+        </p>
+
+        <p>
+          The decision depends on more than the price. Emergency savings, monthly cash flow, debt payments, financing, home value, safety risk, opener condition, insulation needs, repair history, and resale plans all matter.
+        </p>
+      </div>
+
+      <WhenSpendingMakesSense
+        title="When Paying for Garage Door Replacement Makes Sense"
+        items={[
+          "The garage door is unsafe, stuck, unreliable, damaged, or creating a security concern.",
+          "The opener, springs, tracks, panels, or hardware are failing together.",
+          "The garage is attached and insulation would improve comfort or temperature control.",
+          "You have had repeated repairs and replacement is more practical than another patch.",
+          "You can pay without draining emergency savings or taking on uncomfortable financing.",
+        ]}
+      />
+
+      <div class="content-section">
+        <h2>When You Should Slow Down Before Replacing a Garage Door</h2>
+
+        <p>
+          Slow down if the problem is limited to one repairable part, the replacement is mostly cosmetic, or the quote bundles upgrades you do not need.
+        </p>
+
+        <p>
+          Before committing, ask whether the issue is the opener, springs, tracks, sensors, panels, or weatherstripping. A full replacement can make sense, but not every noisy or ugly garage door needs a complete project.
+        </p>
+      </div>
+
+      <KeyCostCategories
+        items={[
+          {
+            title: "Door type and materials",
+            description:
+              "Steel, insulated steel, wood, composite, windows, custom sizing, and design upgrades can all change the replacement price.",
+          },
+          {
+            title: "Opener and hardware",
+            description:
+              "Openers, springs, tracks, rollers, sensors, keypad access, smart controls, and reinforced hardware may add to the total cost.",
+          },
+          {
+            title: "Safety and security",
+            description:
+              "A failing garage door can create injury risk, vehicle access problems, or security issues if it no longer closes reliably.",
+          },
+          {
+            title: "Insulation and curb appeal",
+            description:
+              "Insulation can matter more for attached garages, nearby bedrooms, harsh climates, and homes where the garage door dominates the front exterior.",
+          },
+        ]}
+      />
+
+      <ReduceCostTips
+        items={[
+          "Ask whether repair is realistic before replacing the full door.",
+          "Get at least two written quotes for the same door type and insulation level.",
+          "Avoid paying for decorative upgrades if safety and reliability are the main goals.",
+          "Compare insulated and non-insulated options based on your actual garage use.",
+          "Confirm whether the opener, springs, tracks, sensors, and hardware are included.",
+          "Avoid financing a mostly cosmetic garage door if emergency savings are thin.",
+        ]}
+      />
+
+      <FinancialRedFlags
+        items={[
+          "The door is mostly cosmetic but the project would drain emergency savings.",
+          "The quote does not explain whether the opener, springs, tracks, removal, or hardware are included.",
+          "Financing would make monthly bills uncomfortable.",
+          "A basic repair would solve the actual problem.",
+          "The contractor is pushing expensive design upgrades before addressing safety and function.",
+        ]}
+      />
+
+      <CalculatorAssumptions
+        items={[
+          "The calculator treats garage door replacement as a home improvement that may be safety-related, functional, cosmetic, or resale-related.",
+          "Monthly income means take-home pay after taxes and payroll deductions.",
+          "Emergency savings means cash available after normal monthly obligations.",
+          "Monthly debt payments include credit cards, car loans, student loans, personal loans, and other required debt payments.",
+          "Home value is used only as context for whether the project is unusually large or reasonable relative to the property.",
+          "The estimate does not evaluate garage door safety, spring tension, installer quality, building codes, warranties, or local labor costs.",
+        ]}
+      />
+
+      <FAQSection
+        title="Garage Door Replacement Spending FAQ"
+        faqs={[
+          {
+            question: "Is $3,000 too much for a garage door replacement?",
+            answer:
+              "It depends on door size, insulation, material, windows, opener work, hardware, labor, removal, and local pricing. A $3,000 garage door can be reasonable, but it should still be compared against multiple written quotes.",
+          },
+          {
+            question: "Should I repair or replace my garage door?",
+            answer:
+              "Repair may make sense if the problem is limited to springs, sensors, rollers, tracks, or the opener. Replacement becomes more reasonable when the door is damaged, unsafe, unreliable, poorly insulated, or has repeated repair issues.",
+          },
+          {
+            question: "Should I finance a garage door replacement?",
+            answer:
+              "Financing may make sense if the door is unsafe or unusable and the payment is comfortable. It is riskier when the project is mostly cosmetic and emergency savings are thin.",
+          },
+          {
+            question: "Does a new garage door help home value?",
+            answer:
+              "A new garage door can improve curb appeal and buyer perception, especially when it faces the street. It should not be treated as a guaranteed dollar-for-dollar return.",
+          },
+          {
+            question: "Is an insulated garage door worth it?",
+            answer:
+              "Insulation is more useful for attached garages, garages with rooms nearby, harsh climates, workshops, or homes where temperature control matters. It may matter less for detached garages used only for storage.",
+          },
+        ]}
+      />
+
+      <MethodologySection category="home improvement spending" updated="June 2026" />
+
+      <RelatedGuides
+        guides={[
+          {
+            title: "Home Improvement Calculators",
+            href: "/home-improvement-calculators",
+            description:
+              "Browse home repair and renovation calculators for urgent repairs, upgrades, and major homeowner decisions.",
+          },
+          {
+            title: "What Counts as Debt?",
+            href: "/what-counts-as-debt",
+            description:
+              "Understand which monthly obligations should be included when estimating financial pressure.",
+          },
+        ]}
+      />
+
+      <RelatedCalculators
+        calculators={[
+          {
+            category: "Home Improvement",
+            title: "Home Improvement Annual Cost Calculator",
+            href: "/home-improvement-annual-cost-calculator",
+          },
+          {
+            category: "Home Improvement",
+            title: "Should I Spend This Much on Home Repairs?",
+            href: "/should-i-spend-this-much-on-home-repairs",
+          },
+          {
+            category: "Home Improvement",
+            title: "Should I Spend $8,000 on Fence Replacement?",
+            href: "/should-i-spend-8000-on-fence-replacement",
+          },
+          {
+            category: "Home Improvement",
+            title: "Browse Home Improvement Calculators",
+            href: "/home-improvement-calculators",
+          },
+        ]}
+      />
+    </CalculatorPageShell>
+  </div>
+
+  <script is:inline>
+    const clamp = (value, min, max) => Math.min(Math.max(value, min), max);
+
+    const getNumber = (id) => {
+      const rawValue = document.getElementById(id)?.value;
+      const value = Number(rawValue);
+      return Number.isFinite(value) && value >= 0 ? value : 0;
+    };
+
+    const getValue = (id) => document.getElementById(id)?.value || "";
+
+    function formatMoney(value) {
+      return value.toLocaleString(undefined, {
+        style: "currency",
+        currency: "USD",
+        minimumFractionDigits: 0,
+        maximumFractionDigits: 0,
+      });
+    }
+
+    function getPressureLevel(score) {
+      if (score <= 30) {
+        return {
+          label: "Low Pressure",
+          stress: "Low pressure",
+          color: "#16a34a",
+          action:
+            "Proceed after comparing quotes, confirming what is included, and protecting your emergency fund.",
+        };
+      }
+
+      if (score <= 60) {
+        return {
+          label: "Moderate Pressure",
+          stress: "Moderate pressure",
+          color: "#ca8a04",
+          action:
+            "Compare repair versus replacement, check opener and hardware needs, and use financing only if the payment stays comfortable.",
+        };
+      }
+
+      return {
+        label: "High Pressure",
+        stress: "High pressure",
+        color: "#dc2626",
+        action:
+          "Slow down before committing, especially if the project is cosmetic, financed, repairable, or likely to drain savings.",
+      };
+    }
+
+    function calculateGarageDoor() {
+      const cost = getNumber("cost");
+      const income = getNumber("income");
+      const savings = getNumber("savings");
+      const expenses = getNumber("expenses");
+      const debt = getNumber("debt");
+      const homeValue = getNumber("homeValue");
+      const financed = getNumber("financed");
+
+      const safetyRisk = getValue("safetyRisk");
+      const openerCondition = getValue("openerCondition");
+      const insulationNeed = getValue("insulationNeed");
+      const repairHistory = getValue("repairHistory");
+      const curbAppeal = getValue("curbAppeal");
+
+      const result = document.getElementById("result");
+      const scoreEl = document.getElementById("score");
+      const barFill = document.getElementById("barFill");
+      const stressEl = document.getElementById("stress");
+      const cashFlowEl = document.getElementById("cashFlow");
+      const savingsImpactEl = document.getElementById("savingsImpact");
+      const projectContextEl = document.getElementById("projectContext");
+      const financingImpactEl = document.getElementById("financingImpact");
+      const guidanceEl = document.getElementById("guidance");
+
+      result.style.display = "block";
+
+      if (cost <= 0 || income <= 0) {
+        scoreEl.textContent = "Add your numbers first";
+        barFill.style.width = "0%";
+        barFill.style.background = "#16a34a";
+        stressEl.innerHTML = "";
+        cashFlowEl.innerHTML = "";
+        savingsImpactEl.innerHTML = "";
+        projectContextEl.innerHTML = "";
+        financingImpactEl.innerHTML = "";
+        guidanceEl.textContent =
+          "Enter a positive garage door replacement cost and monthly take-home income so the calculator can estimate financial pressure.";
+        return;
+      }
+
+      const netCost = cost;
+      const financedUsed = Math.min(financed, netCost);
+      const outOfPocket = Math.max(netCost - financedUsed, 0);
+
+      const monthlyBills = expenses + debt;
+      const monthlyRemaining = income - monthlyBills;
+      const remainingSavings = savings - outOfPocket;
+
+      const incomeImpact = netCost / income;
+      const outOfPocketIncomeImpact = outOfPocket / income;
+      const fixedObligationRatio = monthlyBills / income;
+      const cashFlowRatio = monthlyRemaining / income;
+      const savingsImpact = savings > 0 ? outOfPocket / savings : outOfPocket > 0 ? 1 : 0;
+      const financedShare = netCost > 0 ? financedUsed / netCost : 0;
+      const homeValueImpact = homeValue > 0 ? netCost / homeValue : 0;
+
+      const monthlyBurn = Math.max(monthlyBills, 1);
+      const emergencyMonthsAfter = remainingSavings > 0 ? remainingSavings / monthlyBurn : 0;
+
+      const canCashFlowImmediately = monthlyRemaining >= outOfPocket;
+      const canCashFlowComfortably = monthlyRemaining >= outOfPocket * 2;
+      const savingsCanCover = savings >= outOfPocket;
+      const noFinancing = financedUsed === 0;
+
+      let projectNeedScore = 0;
+      let projectRiskScore = 0;
+
+      if (safetyRisk === "medium") projectNeedScore += 10;
+      if (safetyRisk === "high") projectNeedScore += 24;
+
+      if (openerCondition === "aging") projectNeedScore += 6;
+      if (openerCondition === "failing") projectNeedScore += 14;
+
+      if (insulationNeed === "medium") projectNeedScore += 4;
+      if (insulationNeed === "high") projectNeedScore += 9;
+
+      if (repairHistory === "some") projectNeedScore += 7;
+      if (repairHistory === "frequent") projectNeedScore += 16;
+
+      if (curbAppeal === "medium") projectNeedScore += 3;
+      if (curbAppeal === "high") projectNeedScore += 6;
+
+      if (homeValue > 0 && homeValueImpact > 0.025) projectRiskScore += 6;
+      else if (homeValue > 0 && homeValueImpact > 0.015) projectRiskScore += 3;
+
+      if (
+        safetyRisk === "low" &&
+        openerCondition === "good" &&
+        repairHistory === "none" &&
+        curbAppeal !== "high"
+      ) {
+        projectRiskScore += 10;
+      }
+
+      let pressureScore = 0;
+
+      if (netCost === 0) {
+        pressureScore = 0;
+      } else {
+        const incomePoints = clamp(outOfPocketIncomeImpact * 55, 0, 30);
+        const savingsPoints = clamp(savingsImpact * 45, 0, 30);
+        const obligationPoints = clamp(fixedObligationRatio * 35, 0, 25);
+
+        pressureScore = incomePoints + savingsPoints + obligationPoints;
+
+        if (!savingsCanCover && !canCashFlowImmediately) {
+          pressureScore += 35;
+        } else if (!savingsCanCover && canCashFlowImmediately) {
+          pressureScore += 8;
+        }
+
+        if (remainingSavings < 0 && monthlyRemaining < outOfPocket) {
+          pressureScore += 25;
+        } else if (emergencyMonthsAfter < 1 && !canCashFlowComfortably) {
+          pressureScore += 18;
+        } else if (emergencyMonthsAfter < 3 && !canCashFlowComfortably) {
+          pressureScore += 10;
+        } else if (emergencyMonthsAfter >= 12) {
+          pressureScore -= 18;
+        } else if (emergencyMonthsAfter >= 6) {
+          pressureScore -= 10;
+        }
+
+        if (monthlyRemaining < 0) {
+          pressureScore += 30;
+        } else if (cashFlowRatio < 0.1) {
+          pressureScore += 16;
+        } else if (cashFlowRatio < 0.2) {
+          pressureScore += 8;
+        } else if (cashFlowRatio >= 0.75) {
+          pressureScore -= 20;
+        } else if (cashFlowRatio >= 0.5) {
+          pressureScore -= 14;
+        } else if (cashFlowRatio >= 0.35) {
+          pressureScore -= 8;
+        }
+
+        if (financedUsed > 0) {
+          pressureScore += clamp(financedShare * 22, 6, 22);
+        }
+
+        pressureScore += projectRiskScore;
+
+        if (projectNeedScore >= 42) {
+          pressureScore -= 10;
+        } else if (projectNeedScore >= 26) {
+          pressureScore -= 6;
+        } else if (projectNeedScore <= 8) {
+          pressureScore += 8;
+        }
+
+        if (
+          noFinancing &&
+          outOfPocketIncomeImpact <= 0.02 &&
+          (savingsImpact <= 0.05 || canCashFlowComfortably) &&
+          cashFlowRatio >= 0.35
+        ) {
+          pressureScore = 0;
+        } else if (
+          noFinancing &&
+          outOfPocketIncomeImpact <= 0.05 &&
+          emergencyMonthsAfter >= 12 &&
+          cashFlowRatio >= 0.3
+        ) {
+          pressureScore = Math.min(pressureScore, 3);
+        } else if (
+          noFinancing &&
+          savings >= cost * 50 &&
+          emergencyMonthsAfter >= 24 &&
+          fixedObligationRatio <= 0.5
+        ) {
+          pressureScore = 0;
+        } else if (
+          noFinancing &&
+          savings >= cost * 20 &&
+          emergencyMonthsAfter >= 18 &&
+          fixedObligationRatio <= 0.6
+        ) {
+          pressureScore = Math.min(pressureScore, 2);
+        } else if (
+          noFinancing &&
+          canCashFlowComfortably &&
+          cashFlowRatio >= 0.5 &&
+          outOfPocketIncomeImpact <= 0.2
+        ) {
+          pressureScore = Math.min(pressureScore, 5);
+        } else if (
+          noFinancing &&
+          canCashFlowImmediately &&
+          savingsCanCover &&
+          emergencyMonthsAfter >= 6
+        ) {
+          pressureScore = Math.min(pressureScore, 12);
+        }
+
+        if (
+          noFinancing &&
+          income >= 30000 &&
+          monthlyRemaining >= outOfPocket * 3 &&
+          fixedObligationRatio <= 0.5
+        ) {
+          pressureScore = Math.min(pressureScore, 3);
+        }
+
+        if (
+          noFinancing &&
+          income >= 100000 &&
+          monthlyRemaining >= outOfPocket &&
+          fixedObligationRatio <= 0.75
+        ) {
+          pressureScore = 0;
+        }
+      }
+
+      pressureScore = Math.round(clamp(pressureScore, 0, 100));
+      const level = getPressureLevel(pressureScore);
+
+      let projectContext = "Moderate garage door need";
+      if (projectNeedScore >= 42) projectContext = "Strong safety or functional need";
+      else if (projectNeedScore >= 26) projectContext = "Meaningful practical need";
+      else if (projectNeedScore <= 8) projectContext = "Mostly optional or cosmetic";
+
+      let guidance = "";
+
+      if (pressureScore === 0) {
+        guidance =
+          `This garage door replacement creates essentially no financial pressure based on the numbers provided. The out-of-pocket cost is small relative to your income, cash flow, or savings, and the project does not appear to threaten your emergency position.`;
+      } else if (pressureScore <= 30) {
+        guidance =
+          `This garage door replacement appears financially manageable. The cost equals about ${(incomeImpact * 100).toFixed(1)}% of one month’s take-home income, and your estimated emergency cushion remains around ${emergencyMonthsAfter.toFixed(1)} months after the out-of-pocket cost.`;
+      } else if (pressureScore <= 60) {
+        guidance =
+          `This garage door replacement may work, but it creates noticeable financial pressure. The cost equals about ${(incomeImpact * 100).toFixed(1)}% of one month’s take-home income, and the out-of-pocket portion uses about ${(savingsImpact * 100).toFixed(1)}% of available savings.`;
+      } else {
+        guidance =
+          `This garage door replacement could create real financial strain. The combination of savings impact, financing, debt, monthly obligations, or project risk suggests you should slow down before committing aggressively.`;
+      }
+
+      scoreEl.textContent = `${level.label} — ${pressureScore}/100`;
+      scoreEl.style.color = level.color;
+      barFill.style.width = `${pressureScore}%`;
+      barFill.style.background = level.color;
+
+      stressEl.innerHTML = `<strong>Pressure level:</strong> ${level.stress}`;
+      cashFlowEl.innerHTML = `<strong>Monthly cash flow after bills and debt:</strong> ${formatMoney(monthlyRemaining)}`;
+      savingsImpactEl.innerHTML = `<strong>Savings after out-of-pocket garage door cost:</strong> ${formatMoney(remainingSavings)}`;
+      projectContextEl.innerHTML = `<strong>Project context:</strong> ${projectContext}`;
+      financingImpactEl.innerHTML = `<strong>Financed portion of project cost:</strong> ${(financedShare * 100).toFixed(1)}%`;
+      guidanceEl.textContent = `${guidance} Recommended next step: ${level.action}`;
+    }
+
+    document
+      .getElementById("garageDoorButton")
+      .addEventListener("click", calculateGarageDoor);
+  </script>
+</Layout>

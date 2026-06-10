@@ -1,0 +1,755 @@
+---
+import Layout from "../layouts/Layout.astro";
+import CalculatorPageShell from "../components/CalculatorPageShell.astro";
+import FAQSection from "../components/FAQSection.astro";
+import RelatedCalculators from "../components/RelatedCalculators.astro";
+import RelatedGuides from "../components/RelatedGuides.astro";
+import MethodologySection from "../components/MethodologySection.astro";
+import FinancialRedFlags from "../components/FinancialRedFlags.astro";
+import CalculatorAssumptions from "../components/CalculatorAssumptions.astro";
+import KeyCostCategories from "../components/KeyCostCategories.astro";
+import ReduceCostTips from "../components/ReduceCostTips.astro";
+import WhenSpendingMakesSense from "../components/WhenSpendingMakesSense.astro";
+---
+
+<Layout
+  title="Should I Spend $6,000 on Driveway Repair?"
+  description="Use this driveway repair calculator to decide whether a $6,000 driveway project fits your income, savings, debt, cracking severity, drainage issues, safety risk, curb appeal, urgency, home value, and financing options."
+>
+  <style>
+    .container {
+      max-width: 950px;
+      margin: 0 auto;
+      padding: 60px 20px;
+    }
+
+    .content-section {
+      max-width: 760px;
+      margin: 72px auto 0;
+    }
+
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 28px;
+      padding: 34px;
+    }
+
+    h2 {
+      margin-top: 0;
+      font-size: 2rem;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 22px;
+      margin-bottom: 28px;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 10px;
+      font-weight: 700;
+    }
+
+    input,
+    select {
+      width: 100%;
+      padding: 18px;
+      border-radius: 14px;
+      border: 1px solid var(--border);
+      font-size: 1.1rem;
+      box-sizing: border-box;
+      background: white;
+    }
+
+    button {
+      background: #0f172a;
+      color: white;
+      border: none;
+      padding: 16px 28px;
+      border-radius: 14px;
+      font-size: 1rem;
+      font-weight: 700;
+      cursor: pointer;
+      margin-top: 10px;
+      width: 100%;
+      display: block;
+    }
+
+    button:hover {
+      opacity: 0.92;
+    }
+
+    .result {
+      margin-top: 40px;
+      border: 1px solid var(--border);
+      border-radius: 24px;
+      padding: 28px;
+      display: none;
+      background: #f8fafc;
+    }
+
+    .score {
+      font-size: 3rem;
+      font-weight: 800;
+      margin-bottom: 16px;
+    }
+
+    .bar {
+      width: 100%;
+      height: 16px;
+      background: #dbe3ee;
+      border-radius: 999px;
+      overflow: hidden;
+      margin-bottom: 24px;
+    }
+
+    .fill {
+      height: 100%;
+      width: 0%;
+      background: #16a34a;
+      border-radius: 999px;
+      transition: width 0.4s ease;
+    }
+
+    .metric {
+      margin-bottom: 14px;
+      font-size: 1.05rem;
+    }
+
+    .guidance {
+      margin-top: 26px;
+      font-size: 1.15rem;
+      line-height: 1.7;
+    }
+
+    .disclaimer {
+      margin-top: 30px;
+      font-size: 0.9rem;
+      color: var(--muted);
+    }
+
+    .helper-link {
+      margin-top: 10px;
+      font-size: 0.9rem;
+    }
+
+    .helper-link a {
+      color: var(--primary);
+      font-weight: 600;
+    }
+
+    .content-section p,
+    .content-section li {
+      line-height: 1.8;
+    }
+  </style>
+
+  <div class="container">
+    <CalculatorPageShell
+      eyebrow="Home Improvement Calculator"
+      title="Should I Spend $6,000 on Driveway Repair?"
+      description="Estimate whether a $6,000 driveway repair fits your income, emergency savings, debt load, monthly expenses, home value, cracking severity, drainage issues, safety risk, curb appeal, urgency, and financing options."
+    >
+      <div class="card">
+        <h2>Driveway Repair Pressure Verdict</h2>
+
+        <div class="grid">
+          <div>
+            <label for="cost">Driveway Repair Cost</label>
+            <input id="cost" type="number" placeholder="6000" min="0" inputmode="decimal" />
+          </div>
+
+          <div>
+            <label for="income">Monthly Take-Home Income</label>
+            <input id="income" type="number" placeholder="7000" min="0" inputmode="decimal" />
+          </div>
+
+          <div>
+            <label for="savings">Emergency Savings</label>
+            <input id="savings" type="number" placeholder="20000" min="0" inputmode="decimal" />
+          </div>
+
+          <div>
+            <label for="expenses">Monthly Expenses</label>
+            <input id="expenses" type="number" placeholder="4500" min="0" inputmode="decimal" />
+          </div>
+
+          <div>
+            <label for="debt">Monthly Debt Payments</label>
+            <input id="debt" type="number" placeholder="700" min="0" inputmode="decimal" />
+
+            <div class="helper-link">
+              <a href="/what-counts-as-debt">
+                Not sure what counts as debt? Read the debt guide
+              </a>
+            </div>
+          </div>
+
+          <div>
+            <label for="homeValue">Estimated Home Value</label>
+            <input id="homeValue" type="number" placeholder="350000" min="0" inputmode="decimal" />
+          </div>
+
+          <div>
+            <label for="crackingSeverity">Cracking / Surface Severity</label>
+            <select id="crackingSeverity">
+              <option value="minor">Minor cracks or cosmetic wear</option>
+              <option value="moderate" selected>Moderate cracking, settling, or uneven areas</option>
+              <option value="major">Major cracks, potholes, sinking, or broken sections</option>
+            </select>
+          </div>
+
+          <div>
+            <label for="drainageIssues">Drainage Issues</label>
+            <select id="drainageIssues">
+              <option value="none">No drainage issue</option>
+              <option value="some" selected>Some pooling or water flow concerns</option>
+              <option value="serious">Water draining toward home, garage, or foundation</option>
+            </select>
+          </div>
+
+          <div>
+            <label for="safetyRisk">Safety / Trip Risk</label>
+            <select id="safetyRisk">
+              <option value="low">Low safety risk</option>
+              <option value="medium" selected>Moderate trip, tire, or access risk</option>
+              <option value="high">High trip, fall, vehicle, ice, or access risk</option>
+            </select>
+          </div>
+
+          <div>
+            <label for="repairUrgency">Repair Urgency</label>
+            <select id="repairUrgency">
+              <option value="planned">Planned improvement</option>
+              <option value="soon" selected>Should repair soon</option>
+              <option value="urgent">Urgent before damage spreads</option>
+            </select>
+          </div>
+
+          <div>
+            <label for="curbAppeal">Curb Appeal / Resale Value</label>
+            <select id="curbAppeal">
+              <option value="low">Not important right now</option>
+              <option value="medium" selected>Some curb appeal value</option>
+              <option value="high">Highly visible driveway or preparing to sell</option>
+            </select>
+          </div>
+
+          <div>
+            <label for="financed">Amount Financed</label>
+            <input id="financed" type="number" placeholder="0" min="0" inputmode="decimal" />
+          </div>
+        </div>
+
+        <button id="drivewayButton" type="button">
+          Calculate Financial Pressure
+        </button>
+
+        <div class="result" id="result">
+          <div class="score" id="score"></div>
+
+          <div class="bar">
+            <div class="fill" id="barFill"></div>
+          </div>
+
+          <div class="metric" id="stress"></div>
+          <div class="metric" id="cashFlow"></div>
+          <div class="metric" id="savingsImpact"></div>
+          <div class="metric" id="projectContext"></div>
+          <div class="metric" id="financingImpact"></div>
+
+          <div class="guidance" id="guidance"></div>
+
+          <div class="disclaimer">
+            This is a general educational estimate, not construction, drainage, engineering, legal, or financial advice.
+          </div>
+        </div>
+      </div>
+
+      <div class="content-section">
+        <h2>What a $6,000 Driveway Repair Really Means</h2>
+
+        <p>
+          A driveway repair can be cosmetic, practical, or protective. Small cracks may be mostly about curb appeal, while sinking sections, drainage problems, potholes, or water flowing toward the home can become a bigger repair if ignored.
+        </p>
+
+        <p>
+          The same $6,000 driveway project can be reasonable for one household and financially awkward for another. The decision depends on income, emergency savings, debt, monthly cash flow, home value, safety risk, drainage exposure, repair urgency, and whether the project requires financing.
+        </p>
+      </div>
+
+      <WhenSpendingMakesSense
+        title="When Paying for Driveway Repair Makes Sense"
+        items={[
+          "The driveway has major cracks, potholes, sinking sections, or trip hazards.",
+          "Water is pooling, draining toward the house, or creating foundation or garage risk.",
+          "The damage is spreading and delay could make the eventual repair more expensive.",
+          "The driveway affects daily access, vehicle safety, snow removal, drainage, or resale presentation.",
+          "You can pay without draining emergency savings or taking on uncomfortable financing.",
+        ]}
+      />
+
+      <div class="content-section">
+        <h2>When You Should Slow Down Before Repairing a Driveway</h2>
+
+        <p>
+          Slow down if the issue is mostly cosmetic, the quote does not explain the repair method, or the contractor is recommending a full replacement when patching, resurfacing, sealing, or drainage correction might be enough.
+        </p>
+
+        <p>
+          Before committing, clarify whether the quote includes demolition, base preparation, grading, drainage correction, permits, haul-away, sealant, resurfacing, concrete, asphalt, or replacement. Driveway work can look simple but become expensive when the base or drainage is the real problem.
+        </p>
+      </div>
+
+      <KeyCostCategories
+        items={[
+          {
+            title: "Cracking, sinking, and surface damage",
+            description:
+              "Minor cracks may be repairable, while sinking sections, potholes, broken concrete, or widespread asphalt failure can require more expensive work.",
+          },
+          {
+            title: "Drainage and grading",
+            description:
+              "Water flowing toward the home, garage, sidewalk, or foundation can turn a driveway issue into a broader property-protection decision.",
+          },
+          {
+            title: "Materials and repair method",
+            description:
+              "Concrete, asphalt, resurfacing, patching, sealing, base repair, demolition, and haul-away all affect the final cost.",
+          },
+          {
+            title: "Safety and curb appeal",
+            description:
+              "Trip hazards, ice buildup, vehicle access, snow removal, and first impressions can make the project more practical than cosmetic.",
+          },
+        ]}
+      />
+
+      <ReduceCostTips
+        items={[
+          "Ask whether sealing, patching, resurfacing, or partial repair would solve the problem.",
+          "Get at least two or three written driveway quotes with the same scope.",
+          "Confirm whether drainage correction is included or priced separately.",
+          "Avoid paying for a full replacement if the base is stable and surface repair is enough.",
+          "Ask what prep work, grading, demolition, haul-away, and warranty are included.",
+          "Avoid financing a mostly cosmetic driveway repair if emergency savings are thin.",
+        ]}
+      />
+
+      <FinancialRedFlags
+        items={[
+          "The driveway is mostly cosmetic but the project would drain emergency savings.",
+          "Water is draining toward the home and the quote does not address grading or drainage.",
+          "The contractor recommends replacement without explaining why repair or resurfacing will not work.",
+          "Financing would make monthly bills uncomfortable.",
+          "The quote does not explain materials, prep, demolition, base work, drainage, or warranty coverage.",
+        ]}
+      />
+
+      <CalculatorAssumptions
+        items={[
+          "The calculator treats driveway repair as a home improvement that may be cosmetic, safety-related, drainage-related, or resale-related.",
+          "Monthly income means take-home pay after taxes and payroll deductions.",
+          "Emergency savings means cash available after normal monthly obligations.",
+          "Monthly debt payments include credit cards, car loans, student loans, personal loans, and other required debt payments.",
+          "Home value is used only as context for whether the project is unusually large or reasonable relative to the property.",
+          "The estimate does not evaluate drainage engineering, contractor quality, soil conditions, permits, base failure, or local paving costs.",
+        ]}
+      />
+
+      <FAQSection
+        title="Driveway Repair Spending FAQ"
+        faqs={[
+          {
+            question: "Is $6,000 too much for driveway repair?",
+            answer:
+              "It depends on driveway size, material, cracking, drainage, base condition, demolition, grading, labor, and location. A $6,000 driveway project can be reasonable, but the quote should explain the scope clearly.",
+          },
+          {
+            question: "Should I repair, resurface, or replace my driveway?",
+            answer:
+              "Repair or resurfacing may work when the base is stable and the damage is mostly surface-level. Replacement becomes more realistic when the driveway is sinking, breaking apart, draining poorly, or failing across large sections.",
+          },
+          {
+            question: "Should I finance driveway repair?",
+            answer:
+              "Financing may make sense if the driveway creates safety, drainage, or access problems and the payment is comfortable. It is riskier when the project is mostly cosmetic and emergency savings are thin.",
+          },
+          {
+            question: "Are driveway drainage problems urgent?",
+            answer:
+              "They can be. Water flowing toward the home, garage, foundation, or basement can create more expensive damage than the driveway itself.",
+          },
+          {
+            question: "Does driveway repair help home value?",
+            answer:
+              "A repaired driveway can improve curb appeal and buyer perception, especially if the current driveway is cracked, uneven, or highly visible. It should not be treated as a guaranteed dollar-for-dollar return.",
+          },
+        ]}
+      />
+
+      <MethodologySection category="home improvement spending" updated="June 2026" />
+
+      <RelatedGuides
+        guides={[
+          {
+            title: "Home Improvement Calculators",
+            href: "/home-improvement-calculators",
+            description:
+              "Browse home repair and renovation calculators for urgent repairs, upgrades, and major homeowner decisions.",
+          },
+          {
+            title: "What Counts as Debt?",
+            href: "/what-counts-as-debt",
+            description:
+              "Understand which monthly obligations should be included when estimating financial pressure.",
+          },
+        ]}
+      />
+
+      <RelatedCalculators
+        calculators={[
+          {
+            category: "Home Improvement",
+            title: "Home Improvement Annual Cost Calculator",
+            href: "/home-improvement-annual-cost-calculator",
+          },
+          {
+            category: "Home Improvement",
+            title: "Should I Spend This Much on Home Repairs?",
+            href: "/should-i-spend-this-much-on-home-repairs",
+          },
+          {
+            category: "Home Improvement",
+            title: "Should I Spend $8,000 on Fence Replacement?",
+            href: "/should-i-spend-8000-on-fence-replacement",
+          },
+          {
+            category: "Home Improvement",
+            title: "Browse Home Improvement Calculators",
+            href: "/home-improvement-calculators",
+          },
+        ]}
+      />
+    </CalculatorPageShell>
+  </div>
+
+  <script is:inline>
+    const clamp = (value, min, max) => Math.min(Math.max(value, min), max);
+
+    const getNumber = (id) => {
+      const rawValue = document.getElementById(id)?.value;
+      const value = Number(rawValue);
+      return Number.isFinite(value) && value >= 0 ? value : 0;
+    };
+
+    const getValue = (id) => document.getElementById(id)?.value || "";
+
+    function formatMoney(value) {
+      return value.toLocaleString(undefined, {
+        style: "currency",
+        currency: "USD",
+        minimumFractionDigits: 0,
+        maximumFractionDigits: 0,
+      });
+    }
+
+    function getPressureLevel(score) {
+      if (score <= 30) {
+        return {
+          label: "Low Pressure",
+          stress: "Low pressure",
+          color: "#16a34a",
+          action:
+            "Proceed after comparing quotes, confirming repair scope, checking drainage, and protecting your emergency fund.",
+        };
+      }
+
+      if (score <= 60) {
+        return {
+          label: "Moderate Pressure",
+          stress: "Moderate pressure",
+          color: "#ca8a04",
+          action:
+            "Compare repair, resurfacing, and replacement options before financing or approving a larger scope.",
+        };
+      }
+
+      return {
+        label: "High Pressure",
+        stress: "High pressure",
+        color: "#dc2626",
+        action:
+          "Slow down before committing, especially if the project is cosmetic, financed, unclear in scope, or likely to drain savings.",
+      };
+    }
+
+    function calculateDriveway() {
+      const cost = getNumber("cost");
+      const income = getNumber("income");
+      const savings = getNumber("savings");
+      const expenses = getNumber("expenses");
+      const debt = getNumber("debt");
+      const homeValue = getNumber("homeValue");
+      const financed = getNumber("financed");
+
+      const crackingSeverity = getValue("crackingSeverity");
+      const drainageIssues = getValue("drainageIssues");
+      const safetyRisk = getValue("safetyRisk");
+      const repairUrgency = getValue("repairUrgency");
+      const curbAppeal = getValue("curbAppeal");
+
+      const result = document.getElementById("result");
+      const scoreEl = document.getElementById("score");
+      const barFill = document.getElementById("barFill");
+      const stressEl = document.getElementById("stress");
+      const cashFlowEl = document.getElementById("cashFlow");
+      const savingsImpactEl = document.getElementById("savingsImpact");
+      const projectContextEl = document.getElementById("projectContext");
+      const financingImpactEl = document.getElementById("financingImpact");
+      const guidanceEl = document.getElementById("guidance");
+
+      result.style.display = "block";
+
+      if (cost <= 0 || income <= 0) {
+        scoreEl.textContent = "Add your numbers first";
+        barFill.style.width = "0%";
+        barFill.style.background = "#16a34a";
+        stressEl.innerHTML = "";
+        cashFlowEl.innerHTML = "";
+        savingsImpactEl.innerHTML = "";
+        projectContextEl.innerHTML = "";
+        financingImpactEl.innerHTML = "";
+        guidanceEl.textContent =
+          "Enter a positive driveway repair cost and monthly take-home income so the calculator can estimate financial pressure.";
+        return;
+      }
+
+      const netCost = cost;
+      const financedUsed = Math.min(financed, netCost);
+      const outOfPocket = Math.max(netCost - financedUsed, 0);
+
+      const monthlyBills = expenses + debt;
+      const monthlyRemaining = income - monthlyBills;
+      const remainingSavings = savings - outOfPocket;
+
+      const incomeImpact = netCost / income;
+      const outOfPocketIncomeImpact = outOfPocket / income;
+      const fixedObligationRatio = monthlyBills / income;
+      const cashFlowRatio = monthlyRemaining / income;
+      const savingsImpact = savings > 0 ? outOfPocket / savings : outOfPocket > 0 ? 1 : 0;
+      const financedShare = netCost > 0 ? financedUsed / netCost : 0;
+      const homeValueImpact = homeValue > 0 ? netCost / homeValue : 0;
+
+      const monthlyBurn = Math.max(monthlyBills, 1);
+      const emergencyMonthsAfter = remainingSavings > 0 ? remainingSavings / monthlyBurn : 0;
+
+      const canCashFlowImmediately = monthlyRemaining >= outOfPocket;
+      const canCashFlowComfortably = monthlyRemaining >= outOfPocket * 2;
+      const savingsCanCover = savings >= outOfPocket;
+      const noFinancing = financedUsed === 0;
+
+      let projectNeedScore = 0;
+      let projectRiskScore = 0;
+
+      if (crackingSeverity === "moderate") projectNeedScore += 10;
+      if (crackingSeverity === "major") projectNeedScore += 24;
+
+      if (drainageIssues === "some") projectNeedScore += 10;
+      if (drainageIssues === "serious") projectNeedScore += 28;
+
+      if (safetyRisk === "medium") projectNeedScore += 8;
+      if (safetyRisk === "high") projectNeedScore += 20;
+
+      if (repairUrgency === "soon") projectNeedScore += 8;
+      if (repairUrgency === "urgent") projectNeedScore += 18;
+
+      if (curbAppeal === "medium") projectNeedScore += 3;
+      if (curbAppeal === "high") projectNeedScore += 7;
+
+      if (homeValue > 0 && homeValueImpact > 0.035) projectRiskScore += 8;
+      else if (homeValue > 0 && homeValueImpact > 0.02) projectRiskScore += 4;
+
+      if (
+        crackingSeverity === "minor" &&
+        drainageIssues === "none" &&
+        safetyRisk === "low" &&
+        repairUrgency === "planned" &&
+        curbAppeal !== "high"
+      ) {
+        projectRiskScore += 12;
+      }
+
+      if (drainageIssues === "serious" || safetyRisk === "high") {
+        projectRiskScore -= 5;
+      }
+
+      let pressureScore = 0;
+
+      if (netCost === 0) {
+        pressureScore = 0;
+      } else {
+        const incomePoints = clamp(outOfPocketIncomeImpact * 55, 0, 30);
+        const savingsPoints = clamp(savingsImpact * 45, 0, 30);
+        const obligationPoints = clamp(fixedObligationRatio * 35, 0, 25);
+
+        pressureScore = incomePoints + savingsPoints + obligationPoints;
+
+        if (!savingsCanCover && !canCashFlowImmediately) {
+          pressureScore += 35;
+        } else if (!savingsCanCover && canCashFlowImmediately) {
+          pressureScore += 8;
+        }
+
+        if (remainingSavings < 0 && monthlyRemaining < outOfPocket) {
+          pressureScore += 25;
+        } else if (emergencyMonthsAfter < 1 && !canCashFlowComfortably) {
+          pressureScore += 18;
+        } else if (emergencyMonthsAfter < 3 && !canCashFlowComfortably) {
+          pressureScore += 10;
+        } else if (emergencyMonthsAfter >= 12) {
+          pressureScore -= 18;
+        } else if (emergencyMonthsAfter >= 6) {
+          pressureScore -= 10;
+        }
+
+        if (monthlyRemaining < 0) {
+          pressureScore += 30;
+        } else if (cashFlowRatio < 0.1) {
+          pressureScore += 16;
+        } else if (cashFlowRatio < 0.2) {
+          pressureScore += 8;
+        } else if (cashFlowRatio >= 0.75) {
+          pressureScore -= 20;
+        } else if (cashFlowRatio >= 0.5) {
+          pressureScore -= 14;
+        } else if (cashFlowRatio >= 0.35) {
+          pressureScore -= 8;
+        }
+
+        if (financedUsed > 0) {
+          pressureScore += clamp(financedShare * 22, 6, 22);
+        }
+
+        pressureScore += projectRiskScore;
+
+        if (projectNeedScore >= 62) {
+          pressureScore -= 14;
+        } else if (projectNeedScore >= 42) {
+          pressureScore -= 9;
+        } else if (projectNeedScore >= 24) {
+          pressureScore -= 5;
+        } else if (projectNeedScore <= 7) {
+          pressureScore += 8;
+        }
+
+        if (
+          noFinancing &&
+          outOfPocketIncomeImpact <= 0.02 &&
+          (savingsImpact <= 0.05 || canCashFlowComfortably) &&
+          cashFlowRatio >= 0.35
+        ) {
+          pressureScore = 0;
+        } else if (
+          noFinancing &&
+          outOfPocketIncomeImpact <= 0.05 &&
+          emergencyMonthsAfter >= 12 &&
+          cashFlowRatio >= 0.3
+        ) {
+          pressureScore = Math.min(pressureScore, 3);
+        } else if (
+          noFinancing &&
+          savings >= cost * 50 &&
+          emergencyMonthsAfter >= 24 &&
+          fixedObligationRatio <= 0.5
+        ) {
+          pressureScore = 0;
+        } else if (
+          noFinancing &&
+          savings >= cost * 20 &&
+          emergencyMonthsAfter >= 18 &&
+          fixedObligationRatio <= 0.6
+        ) {
+          pressureScore = Math.min(pressureScore, 2);
+        } else if (
+          noFinancing &&
+          canCashFlowComfortably &&
+          cashFlowRatio >= 0.5 &&
+          outOfPocketIncomeImpact <= 0.2
+        ) {
+          pressureScore = Math.min(pressureScore, 5);
+        } else if (
+          noFinancing &&
+          canCashFlowImmediately &&
+          savingsCanCover &&
+          emergencyMonthsAfter >= 6
+        ) {
+          pressureScore = Math.min(pressureScore, 12);
+        }
+
+        if (
+          noFinancing &&
+          income >= 30000 &&
+          monthlyRemaining >= outOfPocket * 3 &&
+          fixedObligationRatio <= 0.5
+        ) {
+          pressureScore = Math.min(pressureScore, 3);
+        }
+
+        if (
+          noFinancing &&
+          income >= 100000 &&
+          monthlyRemaining >= outOfPocket &&
+          fixedObligationRatio <= 0.75
+        ) {
+          pressureScore = 0;
+        }
+      }
+
+      pressureScore = Math.round(clamp(pressureScore, 0, 100));
+      const level = getPressureLevel(pressureScore);
+
+      let projectContext = "Moderate driveway need";
+      if (projectNeedScore >= 62) projectContext = "Urgent safety or drainage need";
+      else if (projectNeedScore >= 42) projectContext = "Strong practical need";
+      else if (projectNeedScore >= 24) projectContext = "Meaningful practical need";
+      else if (projectNeedScore <= 7) projectContext = "Mostly optional or cosmetic";
+
+      let guidance = "";
+
+      if (pressureScore === 0) {
+        guidance =
+          `This driveway repair creates essentially no financial pressure based on the numbers provided. The out-of-pocket cost is small relative to your income, cash flow, or savings, and the project does not appear to threaten your emergency position.`;
+      } else if (pressureScore <= 30) {
+        guidance =
+          `This driveway repair appears financially manageable. The cost equals about ${(incomeImpact * 100).toFixed(1)}% of one month’s take-home income, and your estimated emergency cushion remains around ${emergencyMonthsAfter.toFixed(1)} months after the out-of-pocket cost.`;
+      } else if (pressureScore <= 60) {
+        guidance =
+          `This driveway repair may work, but it creates noticeable financial pressure. The cost equals about ${(incomeImpact * 100).toFixed(1)}% of one month’s take-home income, and the out-of-pocket portion uses about ${(savingsImpact * 100).toFixed(1)}% of available savings.`;
+      } else {
+        guidance =
+          `This driveway repair could create real financial strain. The combination of savings impact, financing, debt, monthly obligations, or project scope suggests you should slow down before committing aggressively unless the driveway is creating safety, drainage, or access problems.`;
+      }
+
+      scoreEl.textContent = `${level.label} — ${pressureScore}/100`;
+      scoreEl.style.color = level.color;
+      barFill.style.width = `${pressureScore}%`;
+      barFill.style.background = level.color;
+
+      stressEl.innerHTML = `<strong>Pressure level:</strong> ${level.stress}`;
+      cashFlowEl.innerHTML = `<strong>Monthly cash flow after bills and debt:</strong> ${formatMoney(monthlyRemaining)}`;
+      savingsImpactEl.innerHTML = `<strong>Savings after out-of-pocket driveway cost:</strong> ${formatMoney(remainingSavings)}`;
+      projectContextEl.innerHTML = `<strong>Project context:</strong> ${projectContext}`;
+      financingImpactEl.innerHTML = `<strong>Financed portion of project cost:</strong> ${(financedShare * 100).toFixed(1)}%`;
+      guidanceEl.textContent = `${guidance} Recommended next step: ${level.action}`;
+    }
+
+    document
+      .getElementById("drivewayButton")
+      .addEventListener("click", calculateDriveway);
+  </script>
+</Layout>

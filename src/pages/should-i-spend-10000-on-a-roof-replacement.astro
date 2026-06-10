@@ -390,163 +390,257 @@ import WhenSpendingMakesSense from "../components/WhenSpendingMakesSense.astro";
   </div>
 
   <script is:inline>
-    const clamp = (value, min, max) => Math.min(Math.max(value, min), max);
+  const clamp = (value, min, max) => Math.min(Math.max(value, min), max);
 
-    const getNumber = (id) => {
-      const rawValue = document.getElementById(id)?.value;
-      const value = Number(rawValue);
-      return Number.isFinite(value) && value >= 0 ? value : 0;
-    };
+  const getNumber = (id) => {
+    const rawValue = document.getElementById(id)?.value;
+    const value = Number(rawValue);
+    return Number.isFinite(value) && value >= 0 ? value : 0;
+  };
 
-    function getPressureLevel(score) {
-      if (score <= 30) {
-        return {
-          label: "Low Pressure",
-          stress: "Low pressure",
-          color: "#16a34a",
-          action: "Proceed only after comparing quotes, confirming scope, and protecting your emergency fund.",
-        };
-      }
+  function formatMoney(value) {
+    return value.toLocaleString(undefined, {
+      style: "currency",
+      currency: "USD",
+      minimumFractionDigits: 0,
+      maximumFractionDigits: 0,
+    });
+  }
 
-      if (score <= 60) {
-        return {
-          label: "Moderate Pressure",
-          stress: "Moderate pressure",
-          color: "#ca8a04",
-          action: "Review insurance, compare contractors, and consider financing only if the monthly payment is comfortable.",
-        };
-      }
-
+  function getPressureLevel(score) {
+    if (score <= 30) {
       return {
-        label: "High Pressure",
-        stress: "High pressure",
-        color: "#dc2626",
-        action: "Avoid rushed financing, get more quotes, confirm urgency, and protect essential monthly bills first.",
+        label: "Low Pressure",
+        stress: "Low pressure",
+        color: "#16a34a",
+        action:
+          "Proceed after comparing quotes, confirming roof scope, and keeping your emergency fund protected.",
       };
     }
 
-    function calculateRoof() {
-      const cost = getNumber("cost");
-      const income = getNumber("income");
-      const savings = getNumber("savings");
-      const expenses = getNumber("expenses");
-      const debt = getNumber("debt");
-      const insurance = getNumber("insurance");
-      const financed = getNumber("financed");
+    if (score <= 60) {
+      return {
+        label: "Moderate Pressure",
+        stress: "Moderate pressure",
+        color: "#ca8a04",
+        action:
+          "Review insurance, compare contractors, and use financing only if the monthly payment stays comfortable.",
+      };
+    }
 
-      const result = document.getElementById("result");
-      const scoreEl = document.getElementById("score");
-      const barFill = document.getElementById("barFill");
-      const stressEl = document.getElementById("stress");
-      const cashFlowEl = document.getElementById("cashFlow");
-      const savingsImpactEl = document.getElementById("savingsImpact");
-      const financingImpactEl = document.getElementById("financingImpact");
-      const guidanceEl = document.getElementById("guidance");
+    return {
+      label: "High Pressure",
+      stress: "High pressure",
+      color: "#dc2626",
+      action:
+        "Avoid rushed financing, confirm urgency, get more quotes, and protect essential monthly bills first.",
+    };
+  }
 
-      result.style.display = "block";
+  function calculateRoof() {
+    const cost = getNumber("cost");
+    const income = getNumber("income");
+    const savings = getNumber("savings");
+    const expenses = getNumber("expenses");
+    const debt = getNumber("debt");
+    const insurance = getNumber("insurance");
+    const financed = getNumber("financed");
 
-      if (cost <= 0 || income <= 0) {
-        scoreEl.textContent = "Add your numbers first";
-        barFill.style.width = "0%";
-        barFill.style.background = "#16a34a";
-        stressEl.innerHTML = "";
-        cashFlowEl.innerHTML = "";
-        savingsImpactEl.innerHTML = "";
-        financingImpactEl.innerHTML = "";
-        guidanceEl.textContent =
-          "Enter a positive roof replacement cost and monthly take-home income so the calculator can estimate financial pressure.";
-        return;
+    const result = document.getElementById("result");
+    const scoreEl = document.getElementById("score");
+    const barFill = document.getElementById("barFill");
+    const stressEl = document.getElementById("stress");
+    const cashFlowEl = document.getElementById("cashFlow");
+    const savingsImpactEl = document.getElementById("savingsImpact");
+    const financingImpactEl = document.getElementById("financingImpact");
+    const guidanceEl = document.getElementById("guidance");
+
+    result.style.display = "block";
+
+    if (cost <= 0 || income <= 0) {
+      scoreEl.textContent = "Add your numbers first";
+      barFill.style.width = "0%";
+      barFill.style.background = "#16a34a";
+      stressEl.innerHTML = "";
+      cashFlowEl.innerHTML = "";
+      savingsImpactEl.innerHTML = "";
+      financingImpactEl.innerHTML = "";
+      guidanceEl.textContent =
+        "Enter a positive roof replacement cost and monthly take-home income so the calculator can estimate financial pressure.";
+      return;
+    }
+
+    const netCost = Math.max(cost - insurance, 0);
+    const financedUsed = Math.min(financed, netCost);
+    const outOfPocket = Math.max(netCost - financedUsed, 0);
+
+    const monthlyBills = expenses + debt;
+    const monthlyRemaining = income - monthlyBills;
+    const remainingSavings = savings - outOfPocket;
+
+    const incomeImpact = netCost / income;
+    const outOfPocketIncomeImpact = outOfPocket / income;
+    const fixedObligationRatio = monthlyBills / income;
+    const cashFlowRatio = monthlyRemaining / income;
+    const savingsImpact = savings > 0 ? outOfPocket / savings : outOfPocket > 0 ? 1 : 0;
+    const financedShare = netCost > 0 ? financedUsed / netCost : 0;
+
+    const monthlyBurn = Math.max(monthlyBills, 1);
+    const emergencyMonthsBefore = savings / monthlyBurn;
+    const emergencyMonthsAfter = remainingSavings > 0 ? remainingSavings / monthlyBurn : 0;
+
+    const canCashFlowImmediately = monthlyRemaining >= outOfPocket;
+    const canCashFlowComfortably = monthlyRemaining >= outOfPocket * 2;
+    const savingsCanCover = savings >= outOfPocket;
+    const noFinancing = financedUsed === 0;
+
+    let pressureScore = 0;
+
+    if (netCost === 0) {
+      pressureScore = 0;
+    } else {
+      const incomePoints = clamp(outOfPocketIncomeImpact * 55, 0, 30);
+      const savingsPoints = clamp(savingsImpact * 45, 0, 30);
+      const obligationPoints = clamp(fixedObligationRatio * 35, 0, 25);
+
+      pressureScore = incomePoints + savingsPoints + obligationPoints;
+
+      if (!savingsCanCover && !canCashFlowImmediately) {
+        pressureScore += 35;
+      } else if (!savingsCanCover && canCashFlowImmediately) {
+        pressureScore += 8;
       }
 
-      const netCost = Math.max(cost - insurance, 0);
-      const outOfPocket = Math.max(netCost - financed, 0);
-      const monthlyRemaining = income - expenses - debt;
-      const remainingSavings = savings - outOfPocket;
-      const savingsImpact = savings > 0 ? (outOfPocket / savings) * 100 : 100;
-      const incomeImpact = (netCost / income) * 100;
-      const fixedObligationRatio = income > 0 ? ((expenses + debt) / income) * 100 : 100;
-      const emergencyMonths =
-        expenses > 0 ? remainingSavings / expenses : remainingSavings > 0 ? 12 : 0;
-      const financedShare = netCost > 0 ? (financed / netCost) * 100 : 0;
-
-      let pressureScore = 0;
-
-      pressureScore += clamp(incomeImpact * 0.28, 0, 32);
-      pressureScore += clamp(savingsImpact * 0.24, 0, 30);
-      pressureScore += clamp(fixedObligationRatio * 0.22, 0, 24);
-
-      if (remainingSavings < 0) pressureScore += 26;
-      else if (emergencyMonths < 1 && income < 12000) pressureScore += 18;
-      else if (emergencyMonths < 3 && income < 15000) pressureScore += 10;
-      else if (emergencyMonths >= 6) pressureScore -= 8;
-
-      if (financed > 0) pressureScore += clamp(financedShare * 0.14, 4, 14);
-
-      if (monthlyRemaining < 0) pressureScore += 18;
-      else if (monthlyRemaining < income * 0.1) pressureScore += 10;
-      else if (monthlyRemaining > income * 0.35) pressureScore -= 6;
-
-      if (insurance >= cost * 0.5 && remainingSavings > 0) {
-        pressureScore -= 8;
-      }
-
-      if (income >= 12000 && remainingSavings > 0 && fixedObligationRatio < 65) {
+      if (remainingSavings < 0 && monthlyRemaining < outOfPocket) {
+        pressureScore += 25;
+      } else if (emergencyMonthsAfter < 1 && !canCashFlowComfortably) {
+        pressureScore += 18;
+      } else if (emergencyMonthsAfter < 3 && !canCashFlowComfortably) {
+        pressureScore += 10;
+      } else if (emergencyMonthsAfter >= 12) {
+        pressureScore -= 18;
+      } else if (emergencyMonthsAfter >= 6) {
         pressureScore -= 10;
       }
 
-      if (income >= 20000 && remainingSavings > 0 && fixedObligationRatio < 55) {
-        pressureScore -= 12;
+      if (monthlyRemaining < 0) {
+        pressureScore += 30;
+      } else if (cashFlowRatio < 0.1) {
+        pressureScore += 16;
+      } else if (cashFlowRatio < 0.2) {
+        pressureScore += 8;
+      } else if (cashFlowRatio >= 0.75) {
+        pressureScore -= 20;
+      } else if (cashFlowRatio >= 0.5) {
+        pressureScore -= 14;
+      } else if (cashFlowRatio >= 0.35) {
+        pressureScore -= 8;
+      }
+
+      if (financedUsed > 0) {
+        pressureScore += clamp(financedShare * 22, 6, 22);
+      }
+
+      if (insurance >= cost * 0.5 && outOfPocket > 0) {
+        pressureScore -= 8;
       }
 
       if (
-        incomeImpact < 15 &&
-        savingsImpact < 15 &&
-        emergencyMonths >= 6 &&
-        fixedObligationRatio < 55
+        noFinancing &&
+        outOfPocketIncomeImpact <= 0.02 &&
+        (savingsImpact <= 0.05 || canCashFlowComfortably) &&
+        cashFlowRatio >= 0.35
       ) {
-        pressureScore = Math.min(pressureScore, 28);
+        pressureScore = 0;
+      } else if (
+        noFinancing &&
+        outOfPocketIncomeImpact <= 0.05 &&
+        emergencyMonthsAfter >= 12 &&
+        cashFlowRatio >= 0.3
+      ) {
+        pressureScore = Math.min(pressureScore, 3);
+      } else if (
+        noFinancing &&
+        savings >= cost * 50 &&
+        emergencyMonthsAfter >= 24 &&
+        fixedObligationRatio <= 0.5
+      ) {
+        pressureScore = 0;
+      } else if (
+        noFinancing &&
+        savings >= cost * 20 &&
+        emergencyMonthsAfter >= 18 &&
+        fixedObligationRatio <= 0.6
+      ) {
+        pressureScore = Math.min(pressureScore, 2);
+      } else if (
+        noFinancing &&
+        canCashFlowComfortably &&
+        cashFlowRatio >= 0.5 &&
+        outOfPocketIncomeImpact <= 0.2
+      ) {
+        pressureScore = Math.min(pressureScore, 5);
+      } else if (
+        noFinancing &&
+        canCashFlowImmediately &&
+        savingsCanCover &&
+        emergencyMonthsAfter >= 6
+      ) {
+        pressureScore = Math.min(pressureScore, 12);
       }
 
       if (
-        incomeImpact < 8 &&
-        savingsImpact < 8 &&
-        emergencyMonths >= 9 &&
-        fixedObligationRatio < 45
+        noFinancing &&
+        income >= 30000 &&
+        monthlyRemaining >= outOfPocket * 3 &&
+        fixedObligationRatio <= 0.5
       ) {
-        pressureScore = Math.min(pressureScore, 15);
+        pressureScore = Math.min(pressureScore, 3);
       }
 
-      pressureScore = Math.round(clamp(pressureScore, 0, 100));
-
-      const level = getPressureLevel(pressureScore);
-
-      let guidance = "";
-
-      if (pressureScore <= 30) {
-        guidance =
-          `This roof replacement appears financially manageable based on the numbers provided. The net cost equals about ${incomeImpact.toFixed(1)}% of one month’s take-home income, and your estimated emergency cushion remains around ${Math.max(emergencyMonths, 0).toFixed(1)} months after the out-of-pocket cost.`;
-      } else if (pressureScore <= 60) {
-        guidance =
-          `This roof replacement may work, but it creates noticeable financial pressure. The net cost equals about ${incomeImpact.toFixed(1)}% of one month’s take-home income, and the out-of-pocket portion uses about ${savingsImpact.toFixed(1)}% of available savings.`;
-      } else {
-        guidance =
-          `This roof replacement could create real financial strain. The net cost equals about ${incomeImpact.toFixed(1)}% of one month’s take-home income, and the combination of savings impact, financing, debt, or monthly obligations suggests you should slow down before committing aggressively.`;
+      if (
+        noFinancing &&
+        income >= 100000 &&
+        monthlyRemaining >= outOfPocket &&
+        fixedObligationRatio <= 0.75
+      ) {
+        pressureScore = 0;
       }
-
-      scoreEl.textContent = `${level.label} — ${pressureScore}/100`;
-      scoreEl.style.color = level.color;
-      barFill.style.width = `${pressureScore}%`;
-      barFill.style.background = level.color;
-
-      stressEl.innerHTML = `<strong>Pressure level:</strong> ${level.stress}`;
-      cashFlowEl.innerHTML = `<strong>Monthly cash flow after bills and debt:</strong> $${monthlyRemaining.toLocaleString()}`;
-      savingsImpactEl.innerHTML = `<strong>Savings after out-of-pocket roof cost:</strong> $${remainingSavings.toLocaleString()}`;
-      financingImpactEl.innerHTML = `<strong>Financed portion of net cost:</strong> ${financedShare.toFixed(1)}%`;
-      guidanceEl.textContent = `${guidance} Recommended next step: ${level.action}`;
     }
 
-    document
-      .getElementById("roofButton")
-      .addEventListener("click", calculateRoof);
-  </script>
+    pressureScore = Math.round(clamp(pressureScore, 0, 100));
+    const level = getPressureLevel(pressureScore);
+
+    let guidance = "";
+
+    if (pressureScore === 0) {
+      guidance =
+        `This roof replacement creates essentially no financial pressure based on the numbers provided. The out-of-pocket cost is small relative to your income, cash flow, or savings, and the project does not appear to threaten your emergency position.`;
+    } else if (pressureScore <= 30) {
+      guidance =
+        `This roof replacement appears financially manageable. The net cost equals about ${(incomeImpact * 100).toFixed(1)}% of one month’s take-home income, and your estimated emergency cushion remains around ${emergencyMonthsAfter.toFixed(1)} months after the out-of-pocket cost.`;
+    } else if (pressureScore <= 60) {
+      guidance =
+        `This roof replacement may work, but it creates noticeable financial pressure. The net cost equals about ${(incomeImpact * 100).toFixed(1)}% of one month’s take-home income, and the out-of-pocket portion uses about ${(savingsImpact * 100).toFixed(1)}% of available savings.`;
+    } else {
+      guidance =
+        `This roof replacement could create real financial strain. The net cost equals about ${(incomeImpact * 100).toFixed(1)}% of one month’s take-home income, and the combination of savings impact, financing, debt, or monthly obligations suggests you should slow down before committing aggressively.`;
+    }
+
+    scoreEl.textContent = `${level.label} — ${pressureScore}/100`;
+    scoreEl.style.color = level.color;
+    barFill.style.width = `${pressureScore}%`;
+    barFill.style.background = level.color;
+
+    stressEl.innerHTML = `<strong>Pressure level:</strong> ${level.stress}`;
+    cashFlowEl.innerHTML = `<strong>Monthly cash flow after bills and debt:</strong> ${formatMoney(monthlyRemaining)}`;
+    savingsImpactEl.innerHTML = `<strong>Savings after out-of-pocket roof cost:</strong> ${formatMoney(remainingSavings)}`;
+    financingImpactEl.innerHTML = `<strong>Financed portion of net cost:</strong> ${(financedShare * 100).toFixed(1)}%`;
+    guidanceEl.textContent = `${guidance} Recommended next step: ${level.action}`;
+  }
+
+  document
+    .getElementById("roofButton")
+    .addEventListener("click", calculateRoof);
+</script>
 </Layout>

@@ -1,0 +1,749 @@
+---
+import Layout from "../layouts/Layout.astro";
+import CalculatorPageShell from "../components/CalculatorPageShell.astro";
+import FAQSection from "../components/FAQSection.astro";
+import RelatedCalculators from "../components/RelatedCalculators.astro";
+import RelatedGuides from "../components/RelatedGuides.astro";
+import MethodologySection from "../components/MethodologySection.astro";
+import FinancialRedFlags from "../components/FinancialRedFlags.astro";
+import CalculatorAssumptions from "../components/CalculatorAssumptions.astro";
+import KeyCostCategories from "../components/KeyCostCategories.astro";
+import ReduceCostTips from "../components/ReduceCostTips.astro";
+import WhenSpendingMakesSense from "../components/WhenSpendingMakesSense.astro";
+---
+
+<Layout
+  title="Should I Spend $2,500 on Water Heater Replacement?"
+  description="Use this water heater replacement calculator to decide whether a $2,500 water heater project fits your income, savings, debt, age of unit, leak risk, household need, repair history, urgency, and financing options."
+>
+  <style>
+    .container {
+      max-width: 950px;
+      margin: 0 auto;
+      padding: 60px 20px;
+    }
+
+    .content-section {
+      max-width: 760px;
+      margin: 72px auto 0;
+    }
+
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 28px;
+      padding: 34px;
+    }
+
+    h2 {
+      margin-top: 0;
+      font-size: 2rem;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 22px;
+      margin-bottom: 28px;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 10px;
+      font-weight: 700;
+    }
+
+    input,
+    select {
+      width: 100%;
+      padding: 18px;
+      border-radius: 14px;
+      border: 1px solid var(--border);
+      font-size: 1.1rem;
+      box-sizing: border-box;
+      background: white;
+    }
+
+    button {
+      background: #0f172a;
+      color: white;
+      border: none;
+      padding: 16px 28px;
+      border-radius: 14px;
+      font-size: 1rem;
+      font-weight: 700;
+      cursor: pointer;
+      margin-top: 10px;
+      width: 100%;
+      display: block;
+    }
+
+    button:hover {
+      opacity: 0.92;
+    }
+
+    .result {
+      margin-top: 40px;
+      border: 1px solid var(--border);
+      border-radius: 24px;
+      padding: 28px;
+      display: none;
+      background: #f8fafc;
+    }
+
+    .score {
+      font-size: 3rem;
+      font-weight: 800;
+      margin-bottom: 16px;
+    }
+
+    .bar {
+      width: 100%;
+      height: 16px;
+      background: #dbe3ee;
+      border-radius: 999px;
+      overflow: hidden;
+      margin-bottom: 24px;
+    }
+
+    .fill {
+      height: 100%;
+      width: 0%;
+      background: #16a34a;
+      border-radius: 999px;
+      transition: width 0.4s ease;
+    }
+
+    .metric {
+      margin-bottom: 14px;
+      font-size: 1.05rem;
+    }
+
+    .guidance {
+      margin-top: 26px;
+      font-size: 1.15rem;
+      line-height: 1.7;
+    }
+
+    .disclaimer {
+      margin-top: 30px;
+      font-size: 0.9rem;
+      color: var(--muted);
+    }
+
+    .helper-link {
+      margin-top: 10px;
+      font-size: 0.9rem;
+    }
+
+    .helper-link a {
+      color: var(--primary);
+      font-weight: 600;
+    }
+
+    .content-section p,
+    .content-section li {
+      line-height: 1.8;
+    }
+  </style>
+
+  <div class="container">
+    <CalculatorPageShell
+      eyebrow="Home Improvement Calculator"
+      title="Should I Spend $2,500 on Water Heater Replacement?"
+      description="Estimate whether a $2,500 water heater replacement fits your income, emergency savings, debt load, monthly expenses, leak risk, household need, repair history, urgency, and financing options."
+    >
+      <div class="card">
+        <h2>Water Heater Replacement Pressure Verdict</h2>
+
+        <div class="grid">
+          <div>
+            <label for="cost">Water Heater Replacement Cost</label>
+            <input id="cost" type="number" placeholder="2500" min="0" inputmode="decimal" />
+          </div>
+
+          <div>
+            <label for="income">Monthly Take-Home Income</label>
+            <input id="income" type="number" placeholder="7000" min="0" inputmode="decimal" />
+          </div>
+
+          <div>
+            <label for="savings">Emergency Savings</label>
+            <input id="savings" type="number" placeholder="15000" min="0" inputmode="decimal" />
+          </div>
+
+          <div>
+            <label for="expenses">Monthly Expenses</label>
+            <input id="expenses" type="number" placeholder="4500" min="0" inputmode="decimal" />
+          </div>
+
+          <div>
+            <label for="debt">Monthly Debt Payments</label>
+            <input id="debt" type="number" placeholder="700" min="0" inputmode="decimal" />
+
+            <div class="helper-link">
+              <a href="/what-counts-as-debt">
+                Not sure what counts as debt? Read the debt guide
+              </a>
+            </div>
+          </div>
+
+          <div>
+            <label for="unitAge">Water Heater Age</label>
+            <select id="unitAge">
+              <option value="newer">0–5 years</option>
+              <option value="middle" selected>6–9 years</option>
+              <option value="old">10–12 years</option>
+              <option value="veryOld">13+ years</option>
+            </select>
+          </div>
+
+          <div>
+            <label for="leakRisk">Leak / Failure Risk</label>
+            <select id="leakRisk">
+              <option value="low">Low — working normally</option>
+              <option value="medium" selected>Moderate — inconsistent hot water or corrosion</option>
+              <option value="high">High — leaking, rust, noise, or active failure signs</option>
+            </select>
+          </div>
+
+          <div>
+            <label for="householdSize">Household Hot Water Need</label>
+            <select id="householdSize">
+              <option value="low">1–2 people / low demand</option>
+              <option value="medium" selected>3–4 people / normal demand</option>
+              <option value="high">5+ people, frequent laundry, or high demand</option>
+            </select>
+          </div>
+
+          <div>
+            <label for="replacementUrgency">Replacement Urgency</label>
+            <select id="replacementUrgency">
+              <option value="planned">Planned replacement</option>
+              <option value="soon" selected>Should happen soon</option>
+              <option value="emergency">Emergency or no reliable hot water</option>
+            </select>
+          </div>
+
+          <div>
+            <label for="repairHistory">Repair History</label>
+            <select id="repairHistory">
+              <option value="none">Few or no recent repairs</option>
+              <option value="some" selected>Some repairs or warning signs</option>
+              <option value="frequent">Repeated repairs or recurring problems</option>
+            </select>
+          </div>
+
+          <div>
+            <label for="financed">Amount Financed</label>
+            <input id="financed" type="number" placeholder="0" min="0" inputmode="decimal" />
+          </div>
+        </div>
+
+        <button id="waterHeaterButton" type="button">
+          Calculate Financial Pressure
+        </button>
+
+        <div class="result" id="result">
+          <div class="score" id="score"></div>
+
+          <div class="bar">
+            <div class="fill" id="barFill"></div>
+          </div>
+
+          <div class="metric" id="stress"></div>
+          <div class="metric" id="cashFlow"></div>
+          <div class="metric" id="savingsImpact"></div>
+          <div class="metric" id="projectContext"></div>
+          <div class="metric" id="financingImpact"></div>
+
+          <div class="guidance" id="guidance"></div>
+
+          <div class="disclaimer">
+            This is a general educational estimate, not plumbing, appliance, code, warranty, or financial advice.
+          </div>
+        </div>
+      </div>
+
+      <div class="content-section">
+        <h2>What a $2,500 Water Heater Replacement Really Means</h2>
+
+        <p>
+          A water heater replacement is different from a cosmetic upgrade. When the unit is leaking, failing, old, or unreliable, waiting can create water damage, emergency labor costs, and daily household disruption.
+        </p>
+
+        <p>
+          The financial decision still matters. A $2,500 replacement is easier to justify when the unit is old or failing and the cost does not drain emergency savings. It becomes more stressful when the project requires financing, arrives alongside other bills, or replaces a unit that still has a realistic repair path.
+        </p>
+      </div>
+
+      <WhenSpendingMakesSense
+        title="When Paying for Water Heater Replacement Makes Sense"
+        items={[
+          "The water heater is leaking, rusting, making loud noises, or failing to provide reliable hot water.",
+          "The unit is old enough that another repair would only delay replacement.",
+          "A larger household depends on reliable hot water every day.",
+          "The replacement prevents water damage, emergency service charges, or repeated repair bills.",
+          "You can pay without wiping out emergency savings or taking on uncomfortable financing.",
+        ]}
+      />
+
+      <div class="content-section">
+        <h2>When You Should Slow Down Before Replacing a Water Heater</h2>
+
+        <p>
+          Slow down if the unit is newer, the issue is minor, or the quote bundles upgrades you do not need. Sometimes the problem is a thermostat, heating element, pilot light, valve, or maintenance issue instead of a full replacement.
+        </p>
+
+        <p>
+          Before committing, ask what is included in the price: disposal, permits, expansion tank, code upgrades, drain pan, shutoff valves, gas line work, venting, electrical changes, and warranty coverage.
+        </p>
+      </div>
+
+      <KeyCostCategories
+        items={[
+          {
+            title: "Unit type and size",
+            description:
+              "Tank size, fuel type, tankless versus traditional, efficiency rating, and brand can all change the replacement price.",
+          },
+          {
+            title: "Installation and code work",
+            description:
+              "Permits, venting, drain pans, expansion tanks, shutoff valves, gas or electrical changes, and disposal can add to the final bill.",
+          },
+          {
+            title: "Leak and water damage risk",
+            description:
+              "A leaking or failing water heater can damage floors, walls, belongings, and nearby mechanical systems if replacement is delayed.",
+          },
+          {
+            title: "Household disruption",
+            description:
+              "Loss of hot water affects showers, laundry, dishes, children, guests, and daily routines, especially in larger households.",
+          },
+        ]}
+      />
+
+      <ReduceCostTips
+        items={[
+          "Ask whether a repair is realistic before replacing a newer unit.",
+          "Get at least two written quotes if the replacement is not an emergency.",
+          "Compare tank and tankless options based on payback, not just sales pitch.",
+          "Confirm whether permits, disposal, code upgrades, valves, venting, and warranty are included.",
+          "Avoid financing if the payment creates stress and the unit can be safely repaired.",
+          "Replace before a predictable failure becomes a weekend emergency call.",
+        ]}
+      />
+
+      <FinancialRedFlags
+        items={[
+          "The project would drain nearly all emergency savings.",
+          "The quote does not explain installation, permits, disposal, code upgrades, or warranty coverage.",
+          "Financing would make monthly bills uncomfortable.",
+          "The unit is newer and the problem may be repairable.",
+          "You are being pushed into a tankless upgrade without clear savings or household need.",
+        ]}
+      />
+
+      <CalculatorAssumptions
+        items={[
+          "The calculator treats water heater replacement as a home repair that may be urgent, semi-urgent, or planned.",
+          "Monthly income means take-home pay after taxes and payroll deductions.",
+          "Emergency savings means cash available after normal monthly obligations.",
+          "Monthly debt payments include credit cards, car loans, student loans, personal loans, and other required debt payments.",
+          "Project urgency, leak risk, unit age, household demand, and repair history affect whether the cost is practical or optional.",
+          "The estimate does not evaluate plumbing codes, installer quality, fuel type, venting, warranties, permits, or actual appliance condition.",
+        ]}
+      />
+
+      <FAQSection
+        title="Water Heater Replacement Spending FAQ"
+        faqs={[
+          {
+            question: "Is $2,500 too much for water heater replacement?",
+            answer:
+              "It depends on tank size, fuel type, installation complexity, location, permits, code upgrades, disposal, and warranty coverage. A $2,500 replacement can be reasonable, but the quote should explain what is included.",
+          },
+          {
+            question: "Should I repair or replace my water heater?",
+            answer:
+              "Repair may make sense for a newer unit with a specific fixable issue. Replacement becomes more reasonable when the unit is old, leaking, rusty, unreliable, or has repeated repair problems.",
+          },
+          {
+            question: "Should I finance a water heater replacement?",
+            answer:
+              "Financing may make sense if the unit has failed and the payment is comfortable. It is riskier when the payment strains the budget or the replacement is not urgent.",
+          },
+          {
+            question: "Is a leaking water heater an emergency?",
+            answer:
+              "A leak can become urgent because water damage may spread quickly. Shut off water if needed, protect nearby belongings, and get professional help before the problem grows.",
+          },
+          {
+            question: "Is tankless worth the extra cost?",
+            answer:
+              "Tankless can make sense for some households, but it should be compared against installation cost, fuel or electrical upgrades, maintenance, hot water demand, and realistic payback.",
+          },
+        ]}
+      />
+
+      <MethodologySection category="home improvement spending" updated="June 2026" />
+
+      <RelatedGuides
+        guides={[
+          {
+            title: "Home Improvement Calculators",
+            href: "/home-improvement-calculators",
+            description:
+              "Browse home repair and renovation calculators for urgent repairs, upgrades, and major homeowner decisions.",
+          },
+          {
+            title: "What Counts as Debt?",
+            href: "/what-counts-as-debt",
+            description:
+              "Understand which monthly obligations should be included when estimating financial pressure.",
+          },
+        ]}
+      />
+
+      <RelatedCalculators
+        calculators={[
+          {
+            category: "Home Improvement",
+            title: "Home Improvement Annual Cost Calculator",
+            href: "/home-improvement-annual-cost-calculator",
+          },
+          {
+            category: "Home Improvement",
+            title: "Should I Spend This Much on Home Repairs?",
+            href: "/should-i-spend-this-much-on-home-repairs",
+          },
+          {
+            category: "Home Improvement",
+            title: "Should I Spend $5,000 on Plumbing Repairs?",
+            href: "/should-i-spend-5000-on-plumbing-repairs",
+          },
+          {
+            category: "Home Improvement",
+            title: "Browse Home Improvement Calculators",
+            href: "/home-improvement-calculators",
+          },
+        ]}
+      />
+    </CalculatorPageShell>
+  </div>
+
+  <script is:inline>
+    const clamp = (value, min, max) => Math.min(Math.max(value, min), max);
+
+    const getNumber = (id) => {
+      const rawValue = document.getElementById(id)?.value;
+      const value = Number(rawValue);
+      return Number.isFinite(value) && value >= 0 ? value : 0;
+    };
+
+    const getValue = (id) => document.getElementById(id)?.value || "";
+
+    function formatMoney(value) {
+      return value.toLocaleString(undefined, {
+        style: "currency",
+        currency: "USD",
+        minimumFractionDigits: 0,
+        maximumFractionDigits: 0,
+      });
+    }
+
+    function getPressureLevel(score) {
+      if (score <= 30) {
+        return {
+          label: "Low Pressure",
+          stress: "Low pressure",
+          color: "#16a34a",
+          action:
+            "Proceed after comparing quotes, confirming what is included, and keeping your emergency fund protected.",
+        };
+      }
+
+      if (score <= 60) {
+        return {
+          label: "Moderate Pressure",
+          stress: "Moderate pressure",
+          color: "#ca8a04",
+          action:
+            "Compare repair versus replacement, confirm installation scope, and use financing only if the payment stays comfortable.",
+        };
+      }
+
+      return {
+        label: "High Pressure",
+        stress: "High pressure",
+        color: "#dc2626",
+        action:
+          "Slow down before committing unless the replacement is urgent, especially if financing or savings drain would make monthly bills harder.",
+      };
+    }
+
+    function calculateWaterHeater() {
+      const cost = getNumber("cost");
+      const income = getNumber("income");
+      const savings = getNumber("savings");
+      const expenses = getNumber("expenses");
+      const debt = getNumber("debt");
+      const financed = getNumber("financed");
+
+      const unitAge = getValue("unitAge");
+      const leakRisk = getValue("leakRisk");
+      const householdSize = getValue("householdSize");
+      const replacementUrgency = getValue("replacementUrgency");
+      const repairHistory = getValue("repairHistory");
+
+      const result = document.getElementById("result");
+      const scoreEl = document.getElementById("score");
+      const barFill = document.getElementById("barFill");
+      const stressEl = document.getElementById("stress");
+      const cashFlowEl = document.getElementById("cashFlow");
+      const savingsImpactEl = document.getElementById("savingsImpact");
+      const projectContextEl = document.getElementById("projectContext");
+      const financingImpactEl = document.getElementById("financingImpact");
+      const guidanceEl = document.getElementById("guidance");
+
+      result.style.display = "block";
+
+      if (cost <= 0 || income <= 0) {
+        scoreEl.textContent = "Add your numbers first";
+        barFill.style.width = "0%";
+        barFill.style.background = "#16a34a";
+        stressEl.innerHTML = "";
+        cashFlowEl.innerHTML = "";
+        savingsImpactEl.innerHTML = "";
+        projectContextEl.innerHTML = "";
+        financingImpactEl.innerHTML = "";
+        guidanceEl.textContent =
+          "Enter a positive water heater replacement cost and monthly take-home income so the calculator can estimate financial pressure.";
+        return;
+      }
+
+      const netCost = cost;
+      const financedUsed = Math.min(financed, netCost);
+      const outOfPocket = Math.max(netCost - financedUsed, 0);
+
+      const monthlyBills = expenses + debt;
+      const monthlyRemaining = income - monthlyBills;
+      const remainingSavings = savings - outOfPocket;
+
+      const incomeImpact = netCost / income;
+      const outOfPocketIncomeImpact = outOfPocket / income;
+      const fixedObligationRatio = monthlyBills / income;
+      const cashFlowRatio = monthlyRemaining / income;
+      const savingsImpact = savings > 0 ? outOfPocket / savings : outOfPocket > 0 ? 1 : 0;
+      const financedShare = netCost > 0 ? financedUsed / netCost : 0;
+
+      const monthlyBurn = Math.max(monthlyBills, 1);
+      const emergencyMonthsAfter = remainingSavings > 0 ? remainingSavings / monthlyBurn : 0;
+
+      const canCashFlowImmediately = monthlyRemaining >= outOfPocket;
+      const canCashFlowComfortably = monthlyRemaining >= outOfPocket * 2;
+      const savingsCanCover = savings >= outOfPocket;
+      const noFinancing = financedUsed === 0;
+
+      let projectNeedScore = 0;
+      let projectRiskScore = 0;
+
+      if (unitAge === "middle") projectNeedScore += 5;
+      if (unitAge === "old") projectNeedScore += 14;
+      if (unitAge === "veryOld") projectNeedScore += 22;
+
+      if (leakRisk === "medium") projectNeedScore += 12;
+      if (leakRisk === "high") projectNeedScore += 28;
+
+      if (householdSize === "medium") projectNeedScore += 5;
+      if (householdSize === "high") projectNeedScore += 10;
+
+      if (replacementUrgency === "soon") projectNeedScore += 10;
+      if (replacementUrgency === "emergency") projectNeedScore += 26;
+
+      if (repairHistory === "some") projectNeedScore += 7;
+      if (repairHistory === "frequent") projectNeedScore += 16;
+
+      if (
+        unitAge === "newer" &&
+        leakRisk === "low" &&
+        repairHistory === "none" &&
+        replacementUrgency === "planned"
+      ) {
+        projectRiskScore += 16;
+      }
+
+      if (
+        replacementUrgency === "emergency" ||
+        leakRisk === "high"
+      ) {
+        projectRiskScore -= 6;
+      }
+
+      let pressureScore = 0;
+
+      if (netCost === 0) {
+        pressureScore = 0;
+      } else {
+        const incomePoints = clamp(outOfPocketIncomeImpact * 55, 0, 30);
+        const savingsPoints = clamp(savingsImpact * 45, 0, 30);
+        const obligationPoints = clamp(fixedObligationRatio * 35, 0, 25);
+
+        pressureScore = incomePoints + savingsPoints + obligationPoints;
+
+        if (!savingsCanCover && !canCashFlowImmediately) {
+          pressureScore += 35;
+        } else if (!savingsCanCover && canCashFlowImmediately) {
+          pressureScore += 8;
+        }
+
+        if (remainingSavings < 0 && monthlyRemaining < outOfPocket) {
+          pressureScore += 25;
+        } else if (emergencyMonthsAfter < 1 && !canCashFlowComfortably) {
+          pressureScore += 18;
+        } else if (emergencyMonthsAfter < 3 && !canCashFlowComfortably) {
+          pressureScore += 10;
+        } else if (emergencyMonthsAfter >= 12) {
+          pressureScore -= 18;
+        } else if (emergencyMonthsAfter >= 6) {
+          pressureScore -= 10;
+        }
+
+        if (monthlyRemaining < 0) {
+          pressureScore += 30;
+        } else if (cashFlowRatio < 0.1) {
+          pressureScore += 16;
+        } else if (cashFlowRatio < 0.2) {
+          pressureScore += 8;
+        } else if (cashFlowRatio >= 0.75) {
+          pressureScore -= 20;
+        } else if (cashFlowRatio >= 0.5) {
+          pressureScore -= 14;
+        } else if (cashFlowRatio >= 0.35) {
+          pressureScore -= 8;
+        }
+
+        if (financedUsed > 0) {
+          pressureScore += clamp(financedShare * 22, 6, 22);
+        }
+
+        pressureScore += projectRiskScore;
+
+        if (projectNeedScore >= 58) {
+          pressureScore -= 14;
+        } else if (projectNeedScore >= 38) {
+          pressureScore -= 9;
+        } else if (projectNeedScore >= 24) {
+          pressureScore -= 5;
+        } else if (projectNeedScore <= 8) {
+          pressureScore += 8;
+        }
+
+        if (
+          noFinancing &&
+          outOfPocketIncomeImpact <= 0.02 &&
+          (savingsImpact <= 0.05 || canCashFlowComfortably) &&
+          cashFlowRatio >= 0.35
+        ) {
+          pressureScore = 0;
+        } else if (
+          noFinancing &&
+          outOfPocketIncomeImpact <= 0.05 &&
+          emergencyMonthsAfter >= 12 &&
+          cashFlowRatio >= 0.3
+        ) {
+          pressureScore = Math.min(pressureScore, 3);
+        } else if (
+          noFinancing &&
+          savings >= cost * 50 &&
+          emergencyMonthsAfter >= 24 &&
+          fixedObligationRatio <= 0.5
+        ) {
+          pressureScore = 0;
+        } else if (
+          noFinancing &&
+          savings >= cost * 20 &&
+          emergencyMonthsAfter >= 18 &&
+          fixedObligationRatio <= 0.6
+        ) {
+          pressureScore = Math.min(pressureScore, 2);
+        } else if (
+          noFinancing &&
+          canCashFlowComfortably &&
+          cashFlowRatio >= 0.5 &&
+          outOfPocketIncomeImpact <= 0.2
+        ) {
+          pressureScore = Math.min(pressureScore, 5);
+        } else if (
+          noFinancing &&
+          canCashFlowImmediately &&
+          savingsCanCover &&
+          emergencyMonthsAfter >= 6
+        ) {
+          pressureScore = Math.min(pressureScore, 12);
+        }
+
+        if (
+          noFinancing &&
+          income >= 30000 &&
+          monthlyRemaining >= outOfPocket * 3 &&
+          fixedObligationRatio <= 0.5
+        ) {
+          pressureScore = Math.min(pressureScore, 3);
+        }
+
+        if (
+          noFinancing &&
+          income >= 100000 &&
+          monthlyRemaining >= outOfPocket &&
+          fixedObligationRatio <= 0.75
+        ) {
+          pressureScore = 0;
+        }
+      }
+
+      pressureScore = Math.round(clamp(pressureScore, 0, 100));
+      const level = getPressureLevel(pressureScore);
+
+      let projectContext = "Moderate water heater need";
+      if (projectNeedScore >= 58) projectContext = "Urgent replacement need";
+      else if (projectNeedScore >= 38) projectContext = "Strong practical need";
+      else if (projectNeedScore >= 24) projectContext = "Meaningful practical need";
+      else if (projectNeedScore <= 8) projectContext = "Mostly optional or early replacement";
+
+      let guidance = "";
+
+      if (pressureScore === 0) {
+        guidance =
+          `This water heater replacement creates essentially no financial pressure based on the numbers provided. The out-of-pocket cost is small relative to your income, cash flow, or savings, and the project does not appear to threaten your emergency position.`;
+      } else if (pressureScore <= 30) {
+        guidance =
+          `This water heater replacement appears financially manageable. The cost equals about ${(incomeImpact * 100).toFixed(1)}% of one month’s take-home income, and your estimated emergency cushion remains around ${emergencyMonthsAfter.toFixed(1)} months after the out-of-pocket cost.`;
+      } else if (pressureScore <= 60) {
+        guidance =
+          `This water heater replacement may work, but it creates noticeable financial pressure. The cost equals about ${(incomeImpact * 100).toFixed(1)}% of one month’s take-home income, and the out-of-pocket portion uses about ${(savingsImpact * 100).toFixed(1)}% of available savings.`;
+      } else {
+        guidance =
+          `This water heater replacement could create real financial strain. The combination of savings impact, financing, debt, monthly obligations, or replacement urgency suggests you should slow down before committing aggressively unless the unit is actively failing.`;
+      }
+
+      scoreEl.textContent = `${level.label} — ${pressureScore}/100`;
+      scoreEl.style.color = level.color;
+      barFill.style.width = `${pressureScore}%`;
+      barFill.style.background = level.color;
+
+      stressEl.innerHTML = `<strong>Pressure level:</strong> ${level.stress}`;
+      cashFlowEl.innerHTML = `<strong>Monthly cash flow after bills and debt:</strong> ${formatMoney(monthlyRemaining)}`;
+      savingsImpactEl.innerHTML = `<strong>Savings after out-of-pocket water heater cost:</strong> ${formatMoney(remainingSavings)}`;
+      projectContextEl.innerHTML = `<strong>Project context:</strong> ${projectContext}`;
+      financingImpactEl.innerHTML = `<strong>Financed portion of project cost:</strong> ${(financedShare * 100).toFixed(1)}%`;
+      guidanceEl.textContent = `${guidance} Recommended next step: ${level.action}`;
+    }
+
+    document
+      .getElementById("waterHeaterButton")
+      .addEventListener("click", calculateWaterHeater);
+  </script>
+</Layout>

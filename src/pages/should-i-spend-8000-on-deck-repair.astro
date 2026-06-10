@@ -1,0 +1,755 @@
+---
+import Layout from "../layouts/Layout.astro";
+import CalculatorPageShell from "../components/CalculatorPageShell.astro";
+import FAQSection from "../components/FAQSection.astro";
+import RelatedCalculators from "../components/RelatedCalculators.astro";
+import RelatedGuides from "../components/RelatedGuides.astro";
+import MethodologySection from "../components/MethodologySection.astro";
+import FinancialRedFlags from "../components/FinancialRedFlags.astro";
+import CalculatorAssumptions from "../components/CalculatorAssumptions.astro";
+import KeyCostCategories from "../components/KeyCostCategories.astro";
+import ReduceCostTips from "../components/ReduceCostTips.astro";
+import WhenSpendingMakesSense from "../components/WhenSpendingMakesSense.astro";
+---
+
+<Layout
+  title="Should I Spend $8,000 on Deck Repair?"
+  description="Use this deck repair calculator to decide whether an $8,000 deck project fits your income, savings, debt, structural risk, railing safety, stairs, rot, usable space, urgency, home value, and financing options."
+>
+  <style>
+    .container {
+      max-width: 950px;
+      margin: 0 auto;
+      padding: 60px 20px;
+    }
+
+    .content-section {
+      max-width: 760px;
+      margin: 72px auto 0;
+    }
+
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 28px;
+      padding: 34px;
+    }
+
+    h2 {
+      margin-top: 0;
+      font-size: 2rem;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 22px;
+      margin-bottom: 28px;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 10px;
+      font-weight: 700;
+    }
+
+    input,
+    select {
+      width: 100%;
+      padding: 18px;
+      border-radius: 14px;
+      border: 1px solid var(--border);
+      font-size: 1.1rem;
+      box-sizing: border-box;
+      background: white;
+    }
+
+    button {
+      background: #0f172a;
+      color: white;
+      border: none;
+      padding: 16px 28px;
+      border-radius: 14px;
+      font-size: 1rem;
+      font-weight: 700;
+      cursor: pointer;
+      margin-top: 10px;
+      width: 100%;
+      display: block;
+    }
+
+    button:hover {
+      opacity: 0.92;
+    }
+
+    .result {
+      margin-top: 40px;
+      border: 1px solid var(--border);
+      border-radius: 24px;
+      padding: 28px;
+      display: none;
+      background: #f8fafc;
+    }
+
+    .score {
+      font-size: 3rem;
+      font-weight: 800;
+      margin-bottom: 16px;
+    }
+
+    .bar {
+      width: 100%;
+      height: 16px;
+      background: #dbe3ee;
+      border-radius: 999px;
+      overflow: hidden;
+      margin-bottom: 24px;
+    }
+
+    .fill {
+      height: 100%;
+      width: 0%;
+      background: #16a34a;
+      border-radius: 999px;
+      transition: width 0.4s ease;
+    }
+
+    .metric {
+      margin-bottom: 14px;
+      font-size: 1.05rem;
+    }
+
+    .guidance {
+      margin-top: 26px;
+      font-size: 1.15rem;
+      line-height: 1.7;
+    }
+
+    .disclaimer {
+      margin-top: 30px;
+      font-size: 0.9rem;
+      color: var(--muted);
+    }
+
+    .helper-link {
+      margin-top: 10px;
+      font-size: 0.9rem;
+    }
+
+    .helper-link a {
+      color: var(--primary);
+      font-weight: 600;
+    }
+
+    .content-section p,
+    .content-section li {
+      line-height: 1.8;
+    }
+  </style>
+
+  <div class="container">
+    <CalculatorPageShell
+      eyebrow="Home Improvement Calculator"
+      title="Should I Spend $8,000 on Deck Repair?"
+      description="Estimate whether an $8,000 deck repair fits your income, emergency savings, debt load, monthly expenses, home value, rot, structural risk, railing safety, stair condition, urgency, outdoor living value, and financing options."
+    >
+      <div class="card">
+        <h2>Deck Repair Pressure Verdict</h2>
+
+        <div class="grid">
+          <div>
+            <label for="cost">Deck Repair Cost</label>
+            <input id="cost" type="number" placeholder="8000" min="0" inputmode="decimal" />
+          </div>
+
+          <div>
+            <label for="income">Monthly Take-Home Income</label>
+            <input id="income" type="number" placeholder="7500" min="0" inputmode="decimal" />
+          </div>
+
+          <div>
+            <label for="savings">Emergency Savings</label>
+            <input id="savings" type="number" placeholder="25000" min="0" inputmode="decimal" />
+          </div>
+
+          <div>
+            <label for="expenses">Monthly Expenses</label>
+            <input id="expenses" type="number" placeholder="4800" min="0" inputmode="decimal" />
+          </div>
+
+          <div>
+            <label for="debt">Monthly Debt Payments</label>
+            <input id="debt" type="number" placeholder="700" min="0" inputmode="decimal" />
+
+            <div class="helper-link">
+              <a href="/what-counts-as-debt">
+                Not sure what counts as debt? Read the debt guide
+              </a>
+            </div>
+          </div>
+
+          <div>
+            <label for="homeValue">Estimated Home Value</label>
+            <input id="homeValue" type="number" placeholder="375000" min="0" inputmode="decimal" />
+          </div>
+
+          <div>
+            <label for="rotCondition">Rot / Board Condition</label>
+            <select id="rotCondition">
+              <option value="minor">Minor weathering or a few bad boards</option>
+              <option value="moderate" selected>Moderate rot, soft boards, or surface failure</option>
+              <option value="major">Major rot, widespread soft spots, or failing sections</option>
+            </select>
+          </div>
+
+          <div>
+            <label for="structuralRisk">Structural / Ledger Risk</label>
+            <select id="structuralRisk">
+              <option value="low">No known structural concern</option>
+              <option value="some" selected>Some movement, sagging, or support concerns</option>
+              <option value="serious">Serious ledger, joist, footing, or collapse concern</option>
+            </select>
+          </div>
+
+          <div>
+            <label for="safetyRisk">Railing / Stair Safety Risk</label>
+            <select id="safetyRisk">
+              <option value="low">Low safety risk</option>
+              <option value="medium" selected>Loose railings, uneven stairs, or moderate risk</option>
+              <option value="high">High fall, stair, railing, or access risk</option>
+            </select>
+          </div>
+
+          <div>
+            <label for="repairUrgency">Repair Urgency</label>
+            <select id="repairUrgency">
+              <option value="planned">Planned improvement</option>
+              <option value="soon" selected>Should repair soon</option>
+              <option value="urgent">Urgent before unsafe use or further damage</option>
+            </select>
+          </div>
+
+          <div>
+            <label for="outdoorValue">Outdoor Living / Resale Value</label>
+            <select id="outdoorValue">
+              <option value="low">Not important right now</option>
+              <option value="medium" selected>Useful living space or moderate resale value</option>
+              <option value="high">High-use deck, entertaining space, or preparing to sell</option>
+            </select>
+          </div>
+
+          <div>
+            <label for="financed">Amount Financed</label>
+            <input id="financed" type="number" placeholder="0" min="0" inputmode="decimal" />
+          </div>
+        </div>
+
+        <button id="deckButton" type="button">
+          Calculate Financial Pressure
+        </button>
+
+        <div class="result" id="result">
+          <div class="score" id="score"></div>
+
+          <div class="bar">
+            <div class="fill" id="barFill"></div>
+          </div>
+
+          <div class="metric" id="stress"></div>
+          <div class="metric" id="cashFlow"></div>
+          <div class="metric" id="savingsImpact"></div>
+          <div class="metric" id="projectContext"></div>
+          <div class="metric" id="financingImpact"></div>
+
+          <div class="guidance" id="guidance"></div>
+
+          <div class="disclaimer">
+            This is a general educational estimate, not construction, engineering, inspection, permit, legal, or financial advice.
+          </div>
+        </div>
+      </div>
+
+      <div class="content-section">
+        <h2>What an $8,000 Deck Repair Really Means</h2>
+
+        <p>
+          A deck repair can be a cosmetic project, a quality-of-life upgrade, or a safety issue. Replacing worn boards is one thing. Fixing rot, loose railings, failing stairs, sagging joists, ledger problems, or support issues is a different decision.
+        </p>
+
+        <p>
+          The same $8,000 deck project can be financially easy for one household and risky for another. The decision depends on income, emergency savings, debt, monthly cash flow, structural risk, safety exposure, repair urgency, home value, outdoor living value, and whether the project requires financing.
+        </p>
+      </div>
+
+      <WhenSpendingMakesSense
+        title="When Paying for Deck Repair Makes Sense"
+        items={[
+          "The deck has rot, soft boards, loose railings, failing stairs, sagging sections, or visible structural concerns.",
+          "The repair protects against a larger replacement cost later.",
+          "The deck is used often for family space, grilling, entertaining, pets, children, or outdoor access.",
+          "You are preparing to sell and the current deck would hurt buyer confidence or inspection results.",
+          "You can pay without draining emergency savings or creating uncomfortable monthly payments.",
+        ]}
+      />
+
+      <div class="content-section">
+        <h2>When You Should Slow Down Before Repairing a Deck</h2>
+
+        <p>
+          Slow down if the project is mostly cosmetic, the quote does not explain whether the framing is sound, or the contractor is recommending a large repair without separating boards, railings, stairs, framing, footings, and ledger work.
+        </p>
+
+        <p>
+          Before committing, clarify whether the quote includes demolition, disposal, permits, railing code updates, stair work, joist repair, ledger attachment, flashing, footings, decking boards, staining, sealing, and warranty coverage. Deck work can become expensive quickly if the visible surface is not the real problem.
+        </p>
+      </div>
+
+      <KeyCostCategories
+        items={[
+          {
+            title: "Rot, soft boards, and surface failure",
+            description:
+              "A few bad boards may be a smaller repair, while widespread rot or soft spots can signal deeper framing or moisture problems.",
+          },
+          {
+            title: "Structure, ledger, joists, and footings",
+            description:
+              "Sagging, movement, poor attachment, failing supports, or ledger issues can make the project more urgent than cosmetic.",
+          },
+          {
+            title: "Railings, stairs, and code concerns",
+            description:
+              "Loose railings, unsafe stairs, missing guards, or old construction details can create real fall risk and inspection problems.",
+          },
+          {
+            title: "Outdoor living and resale value",
+            description:
+              "A safe, usable deck can add daily value, but the project should still fit your cash flow and emergency savings.",
+          },
+        ]}
+      />
+
+      <ReduceCostTips
+        items={[
+          "Ask whether partial board replacement, railing repair, stair repair, or resurfacing would solve the issue.",
+          "Get at least two or three written deck quotes with the same scope.",
+          "Separate cosmetic upgrades from safety or structural repairs.",
+          "Ask whether framing, joists, ledger, flashing, and footings were inspected.",
+          "Confirm whether permits, demolition, haul-away, staining, sealing, and warranty are included.",
+          "Avoid financing a mostly cosmetic deck refresh if emergency savings are thin.",
+        ]}
+      />
+
+      <FinancialRedFlags
+        items={[
+          "The deck feels unsafe but the quote only covers surface boards.",
+          "The contractor does not mention ledger attachment, flashing, joists, railings, stairs, or supports.",
+          "The project is mostly cosmetic but would drain emergency savings.",
+          "Financing would make monthly bills uncomfortable.",
+          "The quote is vague about permits, materials, demolition, disposal, code updates, or warranty coverage.",
+        ]}
+      />
+
+      <CalculatorAssumptions
+        items={[
+          "The calculator treats deck repair as a home improvement that may be cosmetic, safety-related, structural, or resale-related.",
+          "Monthly income means take-home pay after taxes and payroll deductions.",
+          "Emergency savings means cash available after normal monthly obligations.",
+          "Monthly debt payments include credit cards, car loans, student loans, personal loans, and other required debt payments.",
+          "Home value is used only as context for whether the project is unusually large or reasonable relative to the property.",
+          "The estimate does not evaluate structural engineering, building code compliance, permits, contractor quality, hidden rot, soil movement, or local labor costs.",
+        ]}
+      />
+
+      <FAQSection
+        title="Deck Repair Spending FAQ"
+        faqs={[
+          {
+            question: "Is $8,000 too much for deck repair?",
+            answer:
+              "It depends on deck size, materials, railings, stairs, framing, rot, permits, demolition, labor, and location. An $8,000 deck repair can be reasonable if structural or safety work is included, but the quote should explain the scope clearly.",
+          },
+          {
+            question: "Should I repair or replace my deck?",
+            answer:
+              "Repair may make sense when the frame is sound and the issue is mostly boards, railings, stairs, or surface wear. Replacement becomes more realistic when rot, sagging, ledger problems, footings, or framing failure are widespread.",
+          },
+          {
+            question: "Should I finance deck repair?",
+            answer:
+              "Financing may make sense if the deck is unsafe or structurally compromised and the payment is comfortable. It is riskier when the project is mostly cosmetic and emergency savings are thin.",
+          },
+          {
+            question: "Are loose railings or bad stairs urgent?",
+            answer:
+              "They can be. Loose railings, unstable stairs, soft boards, or sagging sections can create fall risk and should be treated differently than cosmetic wear.",
+          },
+          {
+            question: "Does deck repair help home value?",
+            answer:
+              "A safe, usable deck can improve buyer perception and outdoor living value, especially if the current deck looks unsafe or neglected. It should not be treated as a guaranteed dollar-for-dollar return.",
+          },
+        ]}
+      />
+
+      <MethodologySection category="home improvement spending" updated="June 2026" />
+
+      <RelatedGuides
+        guides={[
+          {
+            title: "Home Improvement Calculators",
+            href: "/home-improvement-calculators",
+            description:
+              "Browse home repair and renovation calculators for urgent repairs, upgrades, and major homeowner decisions.",
+          },
+          {
+            title: "What Counts as Debt?",
+            href: "/what-counts-as-debt",
+            description:
+              "Understand which monthly obligations should be included when estimating financial pressure.",
+          },
+        ]}
+      />
+
+      <RelatedCalculators
+        calculators={[
+          {
+            category: "Home Improvement",
+            title: "Home Improvement Annual Cost Calculator",
+            href: "/home-improvement-annual-cost-calculator",
+          },
+          {
+            category: "Home Improvement",
+            title: "Should I Spend $6,000 on Driveway Repair?",
+            href: "/should-i-spend-6000-on-driveway-repair",
+          },
+          {
+            category: "Home Improvement",
+            title: "Should I Spend $8,000 on Fence Replacement?",
+            href: "/should-i-spend-8000-on-fence-replacement",
+          },
+          {
+            category: "Home Improvement",
+            title: "Browse Home Improvement Calculators",
+            href: "/home-improvement-calculators",
+          },
+        ]}
+      />
+    </CalculatorPageShell>
+  </div>
+
+  <script is:inline>
+    const clamp = (value, min, max) => Math.min(Math.max(value, min), max);
+
+    const getNumber = (id) => {
+      const rawValue = document.getElementById(id)?.value;
+      const value = Number(rawValue);
+      return Number.isFinite(value) && value >= 0 ? value : 0;
+    };
+
+    const getValue = (id) => document.getElementById(id)?.value || "";
+
+    function formatMoney(value) {
+      return value.toLocaleString(undefined, {
+        style: "currency",
+        currency: "USD",
+        minimumFractionDigits: 0,
+        maximumFractionDigits: 0,
+      });
+    }
+
+    function getPressureLevel(score) {
+      if (score <= 30) {
+        return {
+          label: "Low Pressure",
+          stress: "Low pressure",
+          color: "#16a34a",
+          action:
+            "Proceed after comparing quotes, confirming the repair scope, checking safety items, and protecting your emergency fund.",
+        };
+      }
+
+      if (score <= 60) {
+        return {
+          label: "Moderate Pressure",
+          stress: "Moderate pressure",
+          color: "#ca8a04",
+          action:
+            "Compare partial repair, safety repair, resurfacing, and replacement options before financing or approving a larger scope.",
+        };
+      }
+
+      return {
+        label: "High Pressure",
+        stress: "High pressure",
+        color: "#dc2626",
+        action:
+          "Slow down before committing, especially if the project is cosmetic, financed, unclear in scope, or likely to drain savings.",
+      };
+    }
+
+    function calculateDeck() {
+      const cost = getNumber("cost");
+      const income = getNumber("income");
+      const savings = getNumber("savings");
+      const expenses = getNumber("expenses");
+      const debt = getNumber("debt");
+      const homeValue = getNumber("homeValue");
+      const financed = getNumber("financed");
+
+      const rotCondition = getValue("rotCondition");
+      const structuralRisk = getValue("structuralRisk");
+      const safetyRisk = getValue("safetyRisk");
+      const repairUrgency = getValue("repairUrgency");
+      const outdoorValue = getValue("outdoorValue");
+
+      const result = document.getElementById("result");
+      const scoreEl = document.getElementById("score");
+      const barFill = document.getElementById("barFill");
+      const stressEl = document.getElementById("stress");
+      const cashFlowEl = document.getElementById("cashFlow");
+      const savingsImpactEl = document.getElementById("savingsImpact");
+      const projectContextEl = document.getElementById("projectContext");
+      const financingImpactEl = document.getElementById("financingImpact");
+      const guidanceEl = document.getElementById("guidance");
+
+      result.style.display = "block";
+
+      if (cost <= 0 || income <= 0) {
+        scoreEl.textContent = "Add your numbers first";
+        barFill.style.width = "0%";
+        barFill.style.background = "#16a34a";
+        stressEl.innerHTML = "";
+        cashFlowEl.innerHTML = "";
+        savingsImpactEl.innerHTML = "";
+        projectContextEl.innerHTML = "";
+        financingImpactEl.innerHTML = "";
+        guidanceEl.textContent =
+          "Enter a positive deck repair cost and monthly take-home income so the calculator can estimate financial pressure.";
+        return;
+      }
+
+      const netCost = cost;
+      const financedUsed = Math.min(financed, netCost);
+      const outOfPocket = Math.max(netCost - financedUsed, 0);
+
+      const monthlyBills = expenses + debt;
+      const monthlyRemaining = income - monthlyBills;
+      const remainingSavings = savings - outOfPocket;
+
+      const incomeImpact = netCost / income;
+      const outOfPocketIncomeImpact = outOfPocket / income;
+      const fixedObligationRatio = monthlyBills / income;
+      const cashFlowRatio = monthlyRemaining / income;
+      const savingsImpact = savings > 0 ? outOfPocket / savings : outOfPocket > 0 ? 1 : 0;
+      const financedShare = netCost > 0 ? financedUsed / netCost : 0;
+      const homeValueImpact = homeValue > 0 ? netCost / homeValue : 0;
+
+      const monthlyBurn = Math.max(monthlyBills, 1);
+      const emergencyMonthsAfter = remainingSavings > 0 ? remainingSavings / monthlyBurn : 0;
+
+      const canCashFlowImmediately = monthlyRemaining >= outOfPocket;
+      const canCashFlowComfortably = monthlyRemaining >= outOfPocket * 2;
+      const savingsCanCover = savings >= outOfPocket;
+      const noFinancing = financedUsed === 0;
+
+      let projectNeedScore = 0;
+      let projectRiskScore = 0;
+
+      if (rotCondition === "moderate") projectNeedScore += 10;
+      if (rotCondition === "major") projectNeedScore += 24;
+
+      if (structuralRisk === "some") projectNeedScore += 14;
+      if (structuralRisk === "serious") projectNeedScore += 32;
+
+      if (safetyRisk === "medium") projectNeedScore += 10;
+      if (safetyRisk === "high") projectNeedScore += 24;
+
+      if (repairUrgency === "soon") projectNeedScore += 8;
+      if (repairUrgency === "urgent") projectNeedScore += 18;
+
+      if (outdoorValue === "medium") projectNeedScore += 3;
+      if (outdoorValue === "high") projectNeedScore += 7;
+
+      if (homeValue > 0 && homeValueImpact > 0.04) projectRiskScore += 8;
+      else if (homeValue > 0 && homeValueImpact > 0.025) projectRiskScore += 4;
+
+      if (
+        rotCondition === "minor" &&
+        structuralRisk === "low" &&
+        safetyRisk === "low" &&
+        repairUrgency === "planned" &&
+        outdoorValue !== "high"
+      ) {
+        projectRiskScore += 12;
+      }
+
+      if (structuralRisk === "serious" || safetyRisk === "high") {
+        projectRiskScore -= 6;
+      }
+
+      let pressureScore = 0;
+
+      if (netCost === 0) {
+        pressureScore = 0;
+      } else {
+        const incomePoints = clamp(outOfPocketIncomeImpact * 55, 0, 30);
+        const savingsPoints = clamp(savingsImpact * 45, 0, 30);
+        const obligationPoints = clamp(fixedObligationRatio * 35, 0, 25);
+
+        pressureScore = incomePoints + savingsPoints + obligationPoints;
+
+        if (!savingsCanCover && !canCashFlowImmediately) {
+          pressureScore += 35;
+        } else if (!savingsCanCover && canCashFlowImmediately) {
+          pressureScore += 8;
+        }
+
+        if (remainingSavings < 0 && monthlyRemaining < outOfPocket) {
+          pressureScore += 25;
+        } else if (emergencyMonthsAfter < 1 && !canCashFlowComfortably) {
+          pressureScore += 18;
+        } else if (emergencyMonthsAfter < 3 && !canCashFlowComfortably) {
+          pressureScore += 10;
+        } else if (emergencyMonthsAfter >= 12) {
+          pressureScore -= 18;
+        } else if (emergencyMonthsAfter >= 6) {
+          pressureScore -= 10;
+        }
+
+        if (monthlyRemaining < 0) {
+          pressureScore += 30;
+        } else if (cashFlowRatio < 0.1) {
+          pressureScore += 16;
+        } else if (cashFlowRatio < 0.2) {
+          pressureScore += 8;
+        } else if (cashFlowRatio >= 0.75) {
+          pressureScore -= 20;
+        } else if (cashFlowRatio >= 0.5) {
+          pressureScore -= 14;
+        } else if (cashFlowRatio >= 0.35) {
+          pressureScore -= 8;
+        }
+
+        if (financedUsed > 0) {
+          pressureScore += clamp(financedShare * 22, 6, 22);
+        }
+
+        pressureScore += projectRiskScore;
+
+        if (projectNeedScore >= 66) {
+          pressureScore -= 15;
+        } else if (projectNeedScore >= 46) {
+          pressureScore -= 10;
+        } else if (projectNeedScore >= 26) {
+          pressureScore -= 5;
+        } else if (projectNeedScore <= 7) {
+          pressureScore += 8;
+        }
+
+        if (
+          noFinancing &&
+          outOfPocketIncomeImpact <= 0.02 &&
+          (savingsImpact <= 0.05 || canCashFlowComfortably) &&
+          cashFlowRatio >= 0.35
+        ) {
+          pressureScore = 0;
+        } else if (
+          noFinancing &&
+          outOfPocketIncomeImpact <= 0.05 &&
+          emergencyMonthsAfter >= 12 &&
+          cashFlowRatio >= 0.3
+        ) {
+          pressureScore = Math.min(pressureScore, 3);
+        } else if (
+          noFinancing &&
+          savings >= cost * 50 &&
+          emergencyMonthsAfter >= 24 &&
+          fixedObligationRatio <= 0.5
+        ) {
+          pressureScore = 0;
+        } else if (
+          noFinancing &&
+          savings >= cost * 20 &&
+          emergencyMonthsAfter >= 18 &&
+          fixedObligationRatio <= 0.6
+        ) {
+          pressureScore = Math.min(pressureScore, 2);
+        } else if (
+          noFinancing &&
+          canCashFlowComfortably &&
+          cashFlowRatio >= 0.5 &&
+          outOfPocketIncomeImpact <= 0.2
+        ) {
+          pressureScore = Math.min(pressureScore, 5);
+        } else if (
+          noFinancing &&
+          canCashFlowImmediately &&
+          savingsCanCover &&
+          emergencyMonthsAfter >= 6
+        ) {
+          pressureScore = Math.min(pressureScore, 12);
+        }
+
+        if (
+          noFinancing &&
+          income >= 30000 &&
+          monthlyRemaining >= outOfPocket * 3 &&
+          fixedObligationRatio <= 0.5
+        ) {
+          pressureScore = Math.min(pressureScore, 3);
+        }
+
+        if (
+          noFinancing &&
+          income >= 100000 &&
+          monthlyRemaining >= outOfPocket &&
+          fixedObligationRatio <= 0.75
+        ) {
+          pressureScore = 0;
+        }
+      }
+
+      pressureScore = Math.round(clamp(pressureScore, 0, 100));
+      const level = getPressureLevel(pressureScore);
+
+      let projectContext = "Moderate deck need";
+      if (projectNeedScore >= 66) projectContext = "Urgent safety or structural need";
+      else if (projectNeedScore >= 46) projectContext = "Strong practical need";
+      else if (projectNeedScore >= 26) projectContext = "Meaningful practical need";
+      else if (projectNeedScore <= 7) projectContext = "Mostly optional or cosmetic";
+
+      let guidance = "";
+
+      if (pressureScore === 0) {
+        guidance =
+          `This deck repair creates essentially no financial pressure based on the numbers provided. The out-of-pocket cost is small relative to your income, cash flow, or savings, and the project does not appear to threaten your emergency position.`;
+      } else if (pressureScore <= 30) {
+        guidance =
+          `This deck repair appears financially manageable. The cost equals about ${(incomeImpact * 100).toFixed(1)}% of one month’s take-home income, and your estimated emergency cushion remains around ${emergencyMonthsAfter.toFixed(1)} months after the out-of-pocket cost.`;
+      } else if (pressureScore <= 60) {
+        guidance =
+          `This deck repair may work, but it creates noticeable financial pressure. The cost equals about ${(incomeImpact * 100).toFixed(1)}% of one month’s take-home income, and the out-of-pocket portion uses about ${(savingsImpact * 100).toFixed(1)}% of available savings.`;
+      } else {
+        guidance =
+          `This deck repair could create real financial strain. The combination of savings impact, financing, debt, monthly obligations, or project scope suggests you should slow down before committing aggressively unless the deck is creating safety, access, or structural problems.`;
+      }
+
+      scoreEl.textContent = `${level.label} — ${pressureScore}/100`;
+      scoreEl.style.color = level.color;
+      barFill.style.width = `${pressureScore}%`;
+      barFill.style.background = level.color;
+
+      stressEl.innerHTML = `<strong>Pressure level:</strong> ${level.stress}`;
+      cashFlowEl.innerHTML = `<strong>Monthly cash flow after bills and debt:</strong> ${formatMoney(monthlyRemaining)}`;
+      savingsImpactEl.innerHTML = `<strong>Savings after out-of-pocket deck cost:</strong> ${formatMoney(remainingSavings)}`;
+      projectContextEl.innerHTML = `<strong>Project context:</strong> ${projectContext}`;
+      financingImpactEl.innerHTML = `<strong>Financed portion of project cost:</strong> ${(financedShare * 100).toFixed(1)}%`;
+      guidanceEl.textContent = `${guidance} Recommended next step: ${level.action}`;
+    }
+
+    document
+      .getElementById("deckButton")
+      .addEventListener("click", calculateDeck);
+  </script>
+</Layout>

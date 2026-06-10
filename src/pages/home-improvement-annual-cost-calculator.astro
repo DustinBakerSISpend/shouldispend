@@ -1,0 +1,719 @@
+---
+import Layout from "../layouts/Layout.astro";
+import CalculatorPageShell from "../components/CalculatorPageShell.astro";
+import FAQSection from "../components/FAQSection.astro";
+import RelatedCalculators from "../components/RelatedCalculators.astro";
+import MethodologySection from "../components/MethodologySection.astro";
+import CalculatorAssumptions from "../components/CalculatorAssumptions.astro";
+import KeyCostCategories from "../components/KeyCostCategories.astro";
+import ReduceCostTips from "../components/ReduceCostTips.astro";
+import { calculators } from "../data/calculators.js";
+
+const homeImprovementFaqs = [
+  {
+    question: "How much should I budget each year for home repairs and improvements?",
+    answer:
+      "A practical starting point is 1% to 3% of home value per year, adjusted for home age, condition, climate, major systems, savings, income, debt, and renovation goals. Older homes, harsh climates, weak emergency savings, and aging systems usually need a higher yearly range.",
+  },
+  {
+    question: "Is this calculator for repairs or renovations?",
+    answer:
+      "Both. The lower end of the range is meant for basic repairs and maintenance. The higher end includes more room for upgrades, replacements, and planned improvements.",
+  },
+  {
+    question: "Should emergency savings affect my home improvement budget?",
+    answer:
+      "Yes. Low emergency savings should push more money toward repairs and essentials instead of cosmetic upgrades. Strong emergency savings can support a larger planned improvement budget without creating the same cash-flow risk.",
+  },
+  {
+    question: "Does this replace contractor estimates?",
+    answer:
+      "No. This calculator gives a yearly planning range. Actual project costs depend on labor, materials, permits, location, home condition, and contractor pricing.",
+  },
+];
+
+const relatedCalculators = calculators
+  .filter(
+    (calculator) =>
+      calculator.category === "Home Improvement" &&
+      calculator.href !== "/home-improvement-annual-cost-calculator"
+  )
+  .slice(0, 4);
+---
+
+<Layout
+  title="Home Improvement Annual Cost Calculator"
+  description="Estimate a realistic annual home improvement budget range using home value, home age, condition, savings, income, debt, climate, systems age, and renovation goals."
+>
+  <style>
+    .container {
+      max-width: 900px;
+      margin: auto;
+    }
+
+    .calculator {
+      background: white;
+      padding: 40px;
+      border-radius: 24px;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.06);
+    }
+
+    .calculator h2 {
+      margin-top: 0;
+      font-size: 2rem;
+      margin-bottom: 18px;
+      color: #0f172a;
+    }
+
+    .calculator-intro {
+      color: #334155;
+      line-height: 1.8;
+      margin-bottom: 30px;
+      font-size: 1.05rem;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+    }
+
+    .field label {
+      display: block;
+      font-weight: 800;
+      margin-bottom: 10px;
+      color: #0f172a;
+    }
+
+    .field input,
+    .field select {
+      width: 100%;
+      padding: 16px;
+      border-radius: 12px;
+      border: 1px solid #cbd5e1;
+      font-size: 1rem;
+      box-sizing: border-box;
+      background: white;
+    }
+
+    button {
+      margin-top: 30px;
+      background: #0f766e;
+      color: white;
+      border: none;
+      padding: 18px 32px;
+      border-radius: 999px;
+      font-size: 1.05rem;
+      font-weight: 800;
+      cursor: pointer;
+      transition: opacity 0.2s ease;
+    }
+
+    button:hover {
+      opacity: 0.92;
+    }
+
+    .results {
+      margin-top: 36px;
+      background: #f8fafc;
+      padding: 32px;
+      border-radius: 24px;
+      border: 1px solid var(--border);
+      box-shadow: 0 10px 24px rgba(15, 23, 42, 0.04);
+      display: none;
+    }
+
+    .results.visible {
+      display: block;
+    }
+
+    .total-price {
+      font-size: clamp(2.4rem, 6vw, 4rem);
+      font-weight: 900;
+      color: #0f172a;
+      line-height: 1.05;
+      margin-bottom: 12px;
+    }
+
+    .result-label {
+      font-size: 1.15rem;
+      font-weight: 800;
+      color: #0f766e;
+      margin-bottom: 24px;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+    }
+
+    .result-details {
+      color: #334155;
+      line-height: 1.9;
+      font-size: 1.02rem;
+    }
+
+    .result-details p {
+      margin: 0 0 12px;
+    }
+
+    .mini-summary {
+      margin-top: 24px;
+      padding: 20px;
+      border-radius: 18px;
+      background: white;
+      border: 1px solid #dbe4ee;
+      color: #334155;
+      line-height: 1.8;
+    }
+
+    .budget-split {
+      margin-top: 20px;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
+
+    .budget-card {
+      background: white;
+      border: 1px solid #dbe4ee;
+      border-radius: 18px;
+      padding: 18px;
+    }
+
+    .budget-card strong {
+      display: block;
+      color: #0f172a;
+      margin-bottom: 8px;
+      font-size: 1.05rem;
+    }
+
+    .budget-card span {
+      color: #334155;
+      line-height: 1.7;
+    }
+
+    .disclaimer {
+      margin-top: 24px;
+      font-size: 0.9rem;
+      color: #64748b;
+    }
+
+    .content-section {
+      margin-top: 60px;
+    }
+
+    .content-section h2 {
+      font-size: 2rem;
+      margin-bottom: 20px;
+      color: #0f172a;
+    }
+
+    .content-section p,
+    .content-section li {
+      font-size: 1.1rem;
+      line-height: 1.9;
+      color: #334155;
+    }
+
+    .content-link {
+      color: #0f766e;
+      font-weight: 700;
+      text-decoration: none;
+    }
+
+    .content-link:hover {
+      text-decoration: underline;
+    }
+
+    @media (max-width: 768px) {
+      .calculator {
+        padding: 24px;
+      }
+
+      .grid,
+      .budget-split {
+        grid-template-columns: 1fr;
+      }
+
+      .calculator h2,
+      .content-section h2 {
+        font-size: 1.7rem;
+      }
+
+      .results {
+        padding: 24px;
+      }
+    }
+  </style>
+
+  <div class="container">
+    <CalculatorPageShell
+      eyebrow="Home Improvement Annual Cost Calculator"
+      title="Home Improvement Annual Cost Calculator"
+      description="Estimate a realistic yearly home repair and improvement budget range based on your home, savings, income, debt, systems risk, and renovation goals."
+    >
+      <div class="calculator">
+        <h2>Estimate Your Annual Home Improvement Budget</h2>
+
+        <p class="calculator-intro">
+          Enter your home value, home condition, savings, monthly take-home pay,
+          debt, major systems age, and improvement goals. This calculator gives
+          a practical yearly dollar range instead of a pressure score.
+        </p>
+
+        <div class="grid">
+          <div class="field">
+            <label for="homeValue">Home Value</label>
+            <input id="homeValue" type="number" placeholder="Example: 350000" />
+          </div>
+
+          <div class="field">
+            <label for="homeAge">Home Age</label>
+            <select id="homeAge">
+              <option value="newer">0–10 years</option>
+              <option value="middle" selected>11–30 years</option>
+              <option value="older">31–60 years</option>
+              <option value="historic">60+ years</option>
+            </select>
+          </div>
+
+          <div class="field">
+            <label for="homeCondition">Current Home Condition</label>
+            <select id="homeCondition">
+              <option value="excellent">Excellent / recently updated</option>
+              <option value="good" selected>Good / normal wear</option>
+              <option value="fair">Fair / several repairs coming</option>
+              <option value="poor">Poor / neglected or problem-heavy</option>
+            </select>
+          </div>
+
+          <div class="field">
+            <label for="climate">Climate Severity</label>
+            <select id="climate">
+              <option value="mild">Mild climate</option>
+              <option value="normal" selected>Normal seasonal wear</option>
+              <option value="harsh">Harsh winters, heat, storms, or moisture</option>
+            </select>
+          </div>
+
+          <div class="field">
+            <label for="diyAbility">DIY Ability</label>
+            <select id="diyAbility">
+              <option value="high">Can handle many repairs</option>
+              <option value="some" selected>Can handle basic repairs</option>
+              <option value="low">Mostly hire contractors</option>
+            </select>
+          </div>
+
+          <div class="field">
+            <label for="emergencySavings">Emergency Savings</label>
+            <input id="emergencySavings" type="number" placeholder="Example: 18000" />
+          </div>
+
+          <div class="field">
+            <label for="monthlyIncome">Monthly Take-Home Income</label>
+            <input id="monthlyIncome" type="number" placeholder="Example: 6500" />
+          </div>
+
+          <div class="field">
+            <label for="monthlyDebt">Monthly Debt Payments</label>
+            <input id="monthlyDebt" type="number" placeholder="Example: 900" />
+          </div>
+
+          <div class="field">
+            <label for="systemsAge">Major Systems Age</label>
+            <select id="systemsAge">
+              <option value="new">Mostly newer systems</option>
+              <option value="mixed" selected>Mixed ages</option>
+              <option value="aging">Roof, HVAC, plumbing, or electrical aging</option>
+              <option value="nearReplacement">One or more systems near replacement</option>
+            </select>
+          </div>
+
+          <div class="field">
+            <label for="renovationGoals">Renovation Goals</label>
+            <select id="renovationGoals">
+              <option value="maintenance">Repairs and maintenance only</option>
+              <option value="balanced" selected>Some repairs and some upgrades</option>
+              <option value="improvement">Active improvement projects</option>
+              <option value="aggressive">Major renovation goals</option>
+            </select>
+          </div>
+        </div>
+
+        <button id="homeImprovementButton" type="button">
+          Calculate Annual Budget Range
+        </button>
+
+        <div class="results" id="results">
+          <div class="result-label">Recommended Annual Budget Range</div>
+
+          <div class="total-price" id="totalPrice"></div>
+
+          <div class="result-details" id="resultDetails"></div>
+
+          <div class="budget-split">
+            <div class="budget-card">
+              <strong>Maintenance Reserve</strong>
+              <span id="maintenanceReserve"></span>
+            </div>
+
+            <div class="budget-card">
+              <strong>Improvement Flex Budget</strong>
+              <span id="improvementReserve"></span>
+            </div>
+          </div>
+
+          <div class="mini-summary" id="budgetSummary"></div>
+
+          <div class="disclaimer">
+            This is a planning range, not a contractor estimate. Actual costs
+            depend on labor rates, materials, permits, damage severity, home
+            layout, and local pricing.
+          </div>
+        </div>
+      </div>
+
+      <section class="content-section">
+        <h2>How This Home Improvement Budget Calculator Works</h2>
+
+        <p>
+          This calculator starts with a percentage of home value, then adjusts
+          the range for age, condition, climate, DIY ability, major systems,
+          savings, income, debt, and renovation goals.
+        </p>
+
+        <p>
+          The point is not to tell every homeowner to save the same flat amount.
+          A newer $250,000 home with strong savings and basic maintenance needs
+          should not produce the same annual range as an older $500,000 home
+          with aging systems, harsh weather exposure, and major upgrade plans.
+        </p>
+
+        <p>
+          For individual project decisions, compare this yearly range with
+          related calculators like
+          <a class="content-link" href="/should-i-spend-10000-on-a-roof-replacement">
+            roof replacement
+          </a>,
+          <a class="content-link" href="/should-i-spend-8000-on-hvac-replacement">
+            HVAC replacement
+          </a>, or
+          <a class="content-link" href="/should-i-spend-this-much-on-home-repairs">
+            home repair affordability
+          </a>.
+        </p>
+      </section>
+
+      <KeyCostCategories
+        items={[
+          {
+            title: "Home value",
+            description:
+              "More expensive homes usually cost more to maintain because materials, finishes, systems, and replacement costs tend to scale up.",
+          },
+          {
+            title: "Age and condition",
+            description:
+              "Older homes and homes with deferred maintenance need a larger annual budget than newer homes with recently updated systems.",
+          },
+          {
+            title: "Major systems risk",
+            description:
+              "Roof, HVAC, plumbing, water heater, electrical, windows, drainage, and foundation issues can quickly overwhelm a small yearly budget.",
+          },
+          {
+            title: "Emergency savings",
+            description:
+              "Strong emergency savings gives you more flexibility. Weak savings means the budget should lean toward essential repairs before cosmetic upgrades.",
+          },
+          {
+            title: "Income and debt load",
+            description:
+              "Monthly take-home income and debt payments determine how much annual home spending is realistic without creating cash-flow stress.",
+          },
+        ]}
+      />
+
+      <ReduceCostTips
+        items={[
+          "Separate emergency repairs from cosmetic upgrades before spending.",
+          "Build a yearly maintenance reserve even when nothing feels urgent.",
+          "Get multiple quotes for large projects instead of using the first estimate.",
+          "Use DIY only where mistakes are low-risk and code issues are unlikely.",
+          "Prioritize water, electrical, structural, heating, cooling, and safety issues before resale upgrades.",
+          "Avoid financing cosmetic improvements if emergency savings are thin.",
+        ]}
+      />
+
+      <CalculatorAssumptions
+        items={[
+          "The calculator estimates an annual planning range, not a guaranteed project cost.",
+          "Monthly income means take-home pay after taxes and payroll deductions.",
+          "The base range is tied to home value and adjusted for risk factors.",
+          "Low emergency savings shifts the recommendation toward repair reserves rather than optional upgrades.",
+          "High income and high savings can support a larger annual improvement range, but the output remains a budget range, not a pressure score.",
+          "The estimate does not include mortgage payments, property taxes, insurance premiums, utilities, or HOA dues.",
+        ]}
+      />
+
+      <section class="content-section">
+        <h2>What Your Annual Home Budget Should Cover</h2>
+
+        <p>
+          A good yearly home improvement budget should cover predictable
+          maintenance, surprise repairs, and planned upgrades. The mistake is
+          treating every available dollar as renovation money while leaving no
+          cushion for roof leaks, HVAC failures, plumbing problems, drainage
+          issues, or appliance replacement.
+        </p>
+
+        <p>
+          The lower end of the range is the practical maintenance target. That
+          is the amount to protect the home and avoid falling behind. The higher
+          end is the improvement target. That is the amount that can support
+          upgrades, replacements, curb appeal work, and quality-of-life projects
+          when the rest of the financial picture is stable.
+        </p>
+      </section>
+
+      <div class="content-section">
+        <FAQSection title="Home Improvement Annual Cost Calculator FAQ" faqs={homeImprovementFaqs} />
+      </div>
+
+      <div class="content-section">
+        <RelatedCalculators calculators={relatedCalculators} />
+      </div>
+    </CalculatorPageShell>
+
+    <MethodologySection category="annual home improvement budget estimates" updated="June 2026" />
+  </div>
+
+  <script is:inline>
+    const getNumber = (id) => {
+      const rawValue = document.getElementById(id)?.value;
+      const value = Number(rawValue);
+      return Number.isFinite(value) && value >= 0 ? value : 0;
+    };
+
+    const getValue = (id) => document.getElementById(id)?.value || "";
+
+    function formatMoney(value) {
+      return value.toLocaleString(undefined, {
+        style: "currency",
+        currency: "USD",
+        minimumFractionDigits: 0,
+        maximumFractionDigits: 0,
+      });
+    }
+
+    function clamp(value, min, max) {
+      return Math.min(Math.max(value, min), max);
+    }
+
+    function calculateHomeImprovementBudget() {
+      const homeValue = getNumber("homeValue");
+      const emergencySavings = getNumber("emergencySavings");
+      const monthlyIncome = getNumber("monthlyIncome");
+      const monthlyDebt = getNumber("monthlyDebt");
+
+      const homeAge = getValue("homeAge");
+      const homeCondition = getValue("homeCondition");
+      const climate = getValue("climate");
+      const diyAbility = getValue("diyAbility");
+      const systemsAge = getValue("systemsAge");
+      const renovationGoals = getValue("renovationGoals");
+
+      const results = document.getElementById("results");
+      const totalPrice = document.getElementById("totalPrice");
+      const resultDetails = document.getElementById("resultDetails");
+      const budgetSummary = document.getElementById("budgetSummary");
+      const maintenanceReserve = document.getElementById("maintenanceReserve");
+      const improvementReserve = document.getElementById("improvementReserve");
+
+      results.classList.add("visible");
+
+      if (homeValue <= 0 || monthlyIncome <= 0) {
+        totalPrice.textContent = "$0–$0";
+        resultDetails.innerHTML =
+          "<p>Enter your home value and monthly take-home income to estimate a realistic yearly home improvement budget range.</p>";
+        maintenanceReserve.textContent = "";
+        improvementReserve.textContent = "";
+        budgetSummary.textContent = "";
+        return;
+      }
+
+      let lowPercent = 0.01;
+      let highPercent = 0.02;
+
+      const ageAdjustments = {
+        newer: [-0.0025, -0.0025],
+        middle: [0, 0],
+        older: [0.004, 0.007],
+        historic: [0.008, 0.012],
+      };
+
+      const conditionAdjustments = {
+        excellent: [-0.0025, -0.004],
+        good: [0, 0],
+        fair: [0.005, 0.009],
+        poor: [0.012, 0.018],
+      };
+
+      const climateAdjustments = {
+        mild: [-0.001, -0.0015],
+        normal: [0, 0],
+        harsh: [0.0035, 0.006],
+      };
+
+      const systemsAdjustments = {
+        new: [-0.002, -0.003],
+        mixed: [0, 0],
+        aging: [0.006, 0.01],
+        nearReplacement: [0.012, 0.018],
+      };
+
+      const goalAdjustments = {
+        maintenance: [-0.001, -0.004],
+        balanced: [0, 0],
+        improvement: [0.003, 0.01],
+        aggressive: [0.006, 0.02],
+      };
+
+      const diyAdjustments = {
+        high: [-0.002, -0.004],
+        some: [0, 0],
+        low: [0.002, 0.004],
+      };
+
+      const adjustments = [
+        ageAdjustments[homeAge],
+        conditionAdjustments[homeCondition],
+        climateAdjustments[climate],
+        systemsAdjustments[systemsAge],
+        goalAdjustments[renovationGoals],
+        diyAdjustments[diyAbility],
+      ];
+
+      adjustments.forEach(([low, high]) => {
+        lowPercent += low;
+        highPercent += high;
+      });
+
+      const debtRatio = monthlyDebt / monthlyIncome;
+      const savingsMonths = emergencySavings / monthlyIncome;
+      const annualIncome = monthlyIncome * 12;
+
+      if (savingsMonths < 1) {
+        lowPercent += 0.002;
+        highPercent -= 0.006;
+      } else if (savingsMonths < 3) {
+        highPercent -= 0.003;
+      } else if (savingsMonths >= 6) {
+        highPercent += 0.004;
+      }
+
+      if (debtRatio > 0.35) {
+        highPercent -= 0.006;
+      } else if (debtRatio > 0.2) {
+        highPercent -= 0.003;
+      } else if (debtRatio < 0.08) {
+        highPercent += 0.003;
+      }
+
+      lowPercent = clamp(lowPercent, 0.006, 0.055);
+      highPercent = clamp(highPercent, lowPercent + 0.004, 0.08);
+
+      let lowBudget = homeValue * lowPercent;
+      let highBudget = homeValue * highPercent;
+
+      const conservativeIncomeCap = annualIncome * 0.045;
+      const normalIncomeCap = annualIncome * 0.08;
+      const strongIncomeCap = annualIncome * 0.14;
+
+      let incomeCap = normalIncomeCap;
+
+      if (savingsMonths < 1 || debtRatio > 0.35) {
+        incomeCap = conservativeIncomeCap;
+      } else if (savingsMonths >= 6 && debtRatio < 0.12) {
+        incomeCap = strongIncomeCap;
+      }
+
+      highBudget = Math.min(highBudget, incomeCap);
+
+      if (renovationGoals === "aggressive" && savingsMonths >= 6 && debtRatio < 0.15) {
+        highBudget = Math.max(highBudget, Math.min(homeValue * 0.055, annualIncome * 0.16));
+      }
+
+      if (highBudget < lowBudget * 1.25) {
+        highBudget = lowBudget * 1.35;
+      }
+
+      const minimumUsefulBudget = homeValue < 200000 ? 1200 : 1800;
+      lowBudget = Math.max(lowBudget, minimumUsefulBudget);
+
+      if (homeCondition === "excellent" && systemsAge === "new" && homeAge === "newer") {
+        lowBudget *= 0.85;
+      }
+
+      if (savingsMonths < 1 && renovationGoals !== "maintenance") {
+        highBudget = Math.min(highBudget, lowBudget * 1.45);
+      }
+
+      lowBudget = Math.round(lowBudget / 100) * 100;
+      highBudget = Math.round(highBudget / 100) * 100;
+
+      if (highBudget <= lowBudget) {
+        highBudget = lowBudget + 1200;
+      }
+
+      const maintenanceLow = Math.round((lowBudget * 0.65) / 100) * 100;
+      const maintenanceHigh = Math.round((highBudget * 0.55) / 100) * 100;
+      const improvementLow = Math.max(0, lowBudget - maintenanceLow);
+      const improvementHigh = Math.max(0, highBudget - maintenanceHigh);
+
+      let rangeLabel = "Balanced Planning Range";
+      let recommendation = "This range leaves room for normal maintenance plus selective upgrades.";
+
+      if (savingsMonths < 1) {
+        rangeLabel = "Repair-First Budget";
+        recommendation =
+          "Your emergency savings are thin, so the range should focus on maintenance, safety, water, electrical, heating, cooling, and urgent repairs before cosmetic upgrades.";
+      } else if (homeCondition === "poor" || systemsAge === "nearReplacement") {
+        rangeLabel = "High-Risk Home Budget";
+        recommendation =
+          "Your home profile points to elevated repair risk. Use the lower end for essential reserves and the higher end only if cash flow and savings can support it.";
+      } else if (renovationGoals === "aggressive" && savingsMonths >= 6 && debtRatio < 0.15) {
+        rangeLabel = "Upgrade-Ready Budget";
+        recommendation =
+          "Your savings and debt profile can support a larger improvement budget, as long as you keep emergency reserves separate from renovation spending.";
+      } else if (homeCondition === "excellent" && systemsAge === "new") {
+        rangeLabel = "Lower-Maintenance Budget";
+        recommendation =
+          "Your home profile supports a lighter annual range, but keeping a reserve still protects you from surprise repairs.";
+      }
+
+      totalPrice.textContent = `${formatMoney(lowBudget)}–${formatMoney(highBudget)}`;
+
+      resultDetails.innerHTML = `
+        <p><strong>${rangeLabel}:</strong> Based on your inputs, a realistic yearly home repair and improvement budget is <strong>${formatMoney(lowBudget)} to ${formatMoney(highBudget)}</strong>.</p>
+
+        <p><strong>Monthly equivalent:</strong> roughly <strong>${formatMoney(lowBudget / 12)} to ${formatMoney(highBudget / 12)}</strong> per month.</p>
+
+        <p><strong>Home value basis:</strong> the range equals about <strong>${(lowBudget / homeValue * 100).toFixed(1)}% to ${(highBudget / homeValue * 100).toFixed(1)}%</strong> of your home value per year.</p>
+
+        <p><strong>Financial flexibility:</strong> your emergency savings equal about <strong>${savingsMonths.toFixed(1)} months</strong> of take-home income, and your monthly debt equals about <strong>${(debtRatio * 100).toFixed(0)}%</strong> of take-home pay.</p>
+      `;
+
+      maintenanceReserve.textContent = `${formatMoney(maintenanceLow)}–${formatMoney(maintenanceHigh)} for repairs, maintenance, system upkeep, and surprise issues.`;
+
+      improvementReserve.textContent = `${formatMoney(improvementLow)}–${formatMoney(improvementHigh)} for upgrades, cosmetic improvements, curb appeal, and planned projects.`;
+
+      budgetSummary.innerHTML = `
+        ${recommendation}
+      `;
+    }
+
+    document
+      .getElementById("homeImprovementButton")
+      .addEventListener("click", calculateHomeImprovementBudget);
+  </script>
+</Layout>

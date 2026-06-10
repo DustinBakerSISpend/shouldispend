@@ -966,6 +966,15 @@ export const calculators = [
 },
 
 {
+  id: "home-improvement-annual-cost",
+  category: "Home Improvement",
+  title: "Home Improvement Annual Cost Calculator",
+  description:
+    "Estimate a realistic yearly home repair and improvement budget using home value, home age, condition, climate, systems risk, savings, and renovation goals.",
+  href: "/home-improvement-annual-cost-calculator",
+},
+
+{
   id: "home-repairs-cost",
   category: "Home Improvement",
   title: "Should I Spend This Much on Home Repairs?",
@@ -999,6 +1008,15 @@ export const calculators = [
   description:
     "Evaluate HVAC replacement affordability using repair urgency, emergency savings, financing risk, debt pressure, and monthly cash flow.",
   href: "/should-i-spend-8000-on-hvac-replacement",
+},
+
+{
+  id: "water-heater-replacement-2500",
+  category: "Home Improvement",
+  title: "Should I Spend $2,500 on Water Heater Replacement?",
+  description:
+    "Evaluate water heater replacement affordability using age, leak risk, household need, repair history, emergency savings, financing pressure, and monthly cash flow.",
+  href: "/should-i-spend-2500-on-water-heater-replacement",
 },
 
 {
@@ -1047,12 +1065,48 @@ export const calculators = [
 },
 
 {
+  id: "garage-door-replacement-3000",
+  category: "Home Improvement",
+  title: "Should I Spend $3,000 on Garage Door Replacement?",
+  description:
+    "Evaluate garage door replacement affordability using safety risk, opener condition, insulation value, repair history, curb appeal, emergency savings, and debt pressure.",
+  href: "/should-i-spend-3000-on-garage-door-replacement",
+},
+
+{
+  id: "driveway-repair-6000",
+  category: "Home Improvement",
+  title: "Should I Spend $6,000 on Driveway Repair?",
+  description:
+    "Evaluate driveway repair affordability using cracking severity, drainage issues, safety risk, curb appeal, emergency savings, home value, and repair urgency.",
+  href: "/should-i-spend-6000-on-driveway-repair",
+},
+
+{
   id: "foundation-repair-15000",
   category: "Home Improvement",
   title: "Should I Spend $15,000 on Foundation Repair?",
   description:
     "Evaluate foundation repair affordability using structural risk, emergency savings, financing pressure, debt load, and long-term home stability.",
   href: "/should-i-spend-15000-on-foundation-repair",
+},
+
+{
+  id: "fence-replacement-8000",
+  category: "Home Improvement",
+  title: "Should I Spend $8,000 on Fence Replacement?",
+  description:
+    "Evaluate fence replacement affordability using damage severity, safety and privacy need, HOA pressure, property line risk, emergency savings, financing, and home value.",
+  href: "/should-i-spend-8000-on-fence-replacement",
+},
+
+{
+  id: "deck-repair-8000",
+  category: "Home Improvement",
+  title: "Should I Spend $8,000 on Deck Repair?",
+  description:
+    "Evaluate deck repair affordability using structural risk, rot, safety concerns, entertainment use, emergency savings, financing pressure, urgency, and home value.",
+  href: "/should-i-spend-8000-on-deck-repair",
 },
 
 {

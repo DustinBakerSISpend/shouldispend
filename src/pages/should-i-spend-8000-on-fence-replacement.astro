@@ -1,0 +1,755 @@
+---
+import Layout from "../layouts/Layout.astro";
+import CalculatorPageShell from "../components/CalculatorPageShell.astro";
+import FAQSection from "../components/FAQSection.astro";
+import RelatedCalculators from "../components/RelatedCalculators.astro";
+import RelatedGuides from "../components/RelatedGuides.astro";
+import MethodologySection from "../components/MethodologySection.astro";
+import FinancialRedFlags from "../components/FinancialRedFlags.astro";
+import CalculatorAssumptions from "../components/CalculatorAssumptions.astro";
+import KeyCostCategories from "../components/KeyCostCategories.astro";
+import ReduceCostTips from "../components/ReduceCostTips.astro";
+import WhenSpendingMakesSense from "../components/WhenSpendingMakesSense.astro";
+---
+
+<Layout
+  title="Should I Spend $8,000 on Fence Replacement?"
+  description="Use this fence replacement calculator to decide whether an $8,000 fence project fits your income, emergency savings, debt, home value, safety needs, privacy needs, HOA risk, and financing options."
+>
+  <style>
+    .container {
+      max-width: 950px;
+      margin: 0 auto;
+      padding: 60px 20px;
+    }
+
+    .content-section {
+      max-width: 760px;
+      margin: 72px auto 0;
+    }
+
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 28px;
+      padding: 34px;
+    }
+
+    h2 {
+      margin-top: 0;
+      font-size: 2rem;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 22px;
+      margin-bottom: 28px;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 10px;
+      font-weight: 700;
+    }
+
+    input,
+    select {
+      width: 100%;
+      padding: 18px;
+      border-radius: 14px;
+      border: 1px solid var(--border);
+      font-size: 1.1rem;
+      box-sizing: border-box;
+      background: white;
+    }
+
+    button {
+      background: #0f172a;
+      color: white;
+      border: none;
+      padding: 16px 28px;
+      border-radius: 14px;
+      font-size: 1rem;
+      font-weight: 700;
+      cursor: pointer;
+      margin-top: 10px;
+      width: 100%;
+      display: block;
+    }
+
+    button:hover {
+      opacity: 0.92;
+    }
+
+    .result {
+      margin-top: 40px;
+      border: 1px solid var(--border);
+      border-radius: 24px;
+      padding: 28px;
+      display: none;
+      background: #f8fafc;
+    }
+
+    .score {
+      font-size: 3rem;
+      font-weight: 800;
+      margin-bottom: 16px;
+    }
+
+    .bar {
+      width: 100%;
+      height: 16px;
+      background: #dbe3ee;
+      border-radius: 999px;
+      overflow: hidden;
+      margin-bottom: 24px;
+    }
+
+    .fill {
+      height: 100%;
+      width: 0%;
+      background: #16a34a;
+      border-radius: 999px;
+      transition: width 0.4s ease;
+    }
+
+    .metric {
+      margin-bottom: 14px;
+      font-size: 1.05rem;
+    }
+
+    .guidance {
+      margin-top: 26px;
+      font-size: 1.15rem;
+      line-height: 1.7;
+    }
+
+    .disclaimer {
+      margin-top: 30px;
+      font-size: 0.9rem;
+      color: var(--muted);
+    }
+
+    .helper-link {
+      margin-top: 10px;
+      font-size: 0.9rem;
+    }
+
+    .helper-link a {
+      color: var(--primary);
+      font-weight: 600;
+    }
+
+    .content-section p,
+    .content-section li {
+      line-height: 1.8;
+    }
+  </style>
+
+  <div class="container">
+    <CalculatorPageShell
+      eyebrow="Home Improvement Calculator"
+      title="Should I Spend $8,000 on Fence Replacement?"
+      description="Estimate whether an $8,000 fence replacement fits your income, emergency savings, debt load, monthly expenses, home value, safety needs, privacy concerns, HOA risk, and financing options."
+    >
+      <div class="card">
+        <h2>Fence Replacement Pressure Verdict</h2>
+
+        <div class="grid">
+          <div>
+            <label for="cost">Fence Replacement Cost</label>
+            <input id="cost" type="number" placeholder="8000" min="0" inputmode="decimal" />
+          </div>
+
+          <div>
+            <label for="income">Monthly Take-Home Income</label>
+            <input id="income" type="number" placeholder="7000" min="0" inputmode="decimal" />
+          </div>
+
+          <div>
+            <label for="savings">Emergency Savings</label>
+            <input id="savings" type="number" placeholder="20000" min="0" inputmode="decimal" />
+          </div>
+
+          <div>
+            <label for="expenses">Monthly Expenses</label>
+            <input id="expenses" type="number" placeholder="4500" min="0" inputmode="decimal" />
+          </div>
+
+          <div>
+            <label for="debt">Monthly Debt Payments</label>
+            <input id="debt" type="number" placeholder="700" min="0" inputmode="decimal" />
+
+            <div class="helper-link">
+              <a href="/what-counts-as-debt">
+                Not sure what counts as debt? Read the debt guide
+              </a>
+            </div>
+          </div>
+
+          <div>
+            <label for="homeValue">Estimated Home Value</label>
+            <input id="homeValue" type="number" placeholder="350000" min="0" inputmode="decimal" />
+          </div>
+
+          <div>
+            <label for="damageSeverity">Fence Condition</label>
+            <select id="damageSeverity">
+              <option value="minor">Mostly cosmetic damage</option>
+              <option value="moderate" selected>Several damaged sections</option>
+              <option value="major">Major leaning, rot, storm, or collapse risk</option>
+            </select>
+          </div>
+
+          <div>
+            <label for="safetyNeed">Safety or Pet / Child Need</label>
+            <select id="safetyNeed">
+              <option value="low">Low safety need</option>
+              <option value="medium" selected>Moderate safety need</option>
+              <option value="high">High safety, pet, child, or pool concern</option>
+            </select>
+          </div>
+
+          <div>
+            <label for="privacyNeed">Privacy Need</label>
+            <select id="privacyNeed">
+              <option value="low">Low privacy need</option>
+              <option value="medium" selected>Moderate privacy need</option>
+              <option value="high">High privacy or neighbor issue</option>
+            </select>
+          </div>
+
+          <div>
+            <label for="hoaRisk">HOA / Code / Neighbor Pressure</label>
+            <select id="hoaRisk">
+              <option value="none">No known issue</option>
+              <option value="some" selected>Possible HOA, code, or neighbor pressure</option>
+              <option value="active">Active notice, dispute, or compliance issue</option>
+            </select>
+          </div>
+
+          <div>
+            <label for="propertyLineRisk">Property Line Risk</label>
+            <select id="propertyLineRisk">
+              <option value="clear" selected>Property line is clear</option>
+              <option value="uncertain">Property line is uncertain</option>
+              <option value="disputed">Boundary or neighbor dispute exists</option>
+            </select>
+          </div>
+
+          <div>
+            <label for="financed">Amount Financed</label>
+            <input id="financed" type="number" placeholder="0" min="0" inputmode="decimal" />
+          </div>
+        </div>
+
+        <button id="fenceButton" type="button">
+          Calculate Financial Pressure
+        </button>
+
+        <div class="result" id="result">
+          <div class="score" id="score"></div>
+
+          <div class="bar">
+            <div class="fill" id="barFill"></div>
+          </div>
+
+          <div class="metric" id="stress"></div>
+          <div class="metric" id="cashFlow"></div>
+          <div class="metric" id="savingsImpact"></div>
+          <div class="metric" id="projectContext"></div>
+          <div class="metric" id="financingImpact"></div>
+
+          <div class="guidance" id="guidance"></div>
+
+          <div class="disclaimer">
+            This is a general educational estimate, not construction, legal, property-line, HOA, or financial advice.
+          </div>
+        </div>
+      </div>
+
+      <div class="content-section">
+        <h2>What an $8,000 Fence Replacement Really Means</h2>
+
+        <p>
+          A fence replacement can be a practical home repair, a safety project, a privacy upgrade, or a property-line headache. The same $8,000 fence can be reasonable for one household and financially awkward for another.
+        </p>
+
+        <p>
+          The decision depends on more than the price. Emergency savings, monthly cash flow, debt payments, financing, home value, fence condition, safety needs, privacy needs, HOA pressure, and property-line certainty all matter.
+        </p>
+      </div>
+
+      <WhenSpendingMakesSense
+        title="When Paying for Fence Replacement Makes Sense"
+        items={[
+          "The fence is leaning, rotting, collapsing, storm-damaged, or no longer functional.",
+          "You need a secure yard for children, pets, a pool, privacy, or safety.",
+          "The project fixes an HOA, code, neighbor, or curb appeal problem.",
+          "You can pay without draining emergency savings or taking on uncomfortable financing.",
+          "The property line is clear before installation begins.",
+        ]}
+      />
+
+      <div class="content-section">
+        <h2>When You Should Slow Down Before Replacing a Fence</h2>
+
+        <p>
+          Slow down if the fence is mostly cosmetic, the property line is uncertain, the neighbor dispute is unresolved, or the quote does not clearly explain materials, posts, gates, removal, permits, and labor.
+        </p>
+
+        <p>
+          Fence replacement can also become more expensive than expected when posts need removal, grading is uneven, gates are custom, the yard has obstacles, or HOA rules limit materials and height.
+        </p>
+      </div>
+
+      <KeyCostCategories
+        items={[
+          {
+            title: "Materials and linear footage",
+            description:
+              "Wood, vinyl, aluminum, chain link, composite, height, gates, and total linear footage drive the core replacement price.",
+          },
+          {
+            title: "Posts, removal, and labor",
+            description:
+              "Old fence removal, post extraction, concrete, digging conditions, slopes, and installation labor can materially change the final bill.",
+          },
+          {
+            title: "Safety and privacy value",
+            description:
+              "A fence can be more urgent when it protects children, pets, a pool, privacy, or basic yard security.",
+          },
+          {
+            title: "HOA and property-line risk",
+            description:
+              "HOA rules, permits, surveys, easements, neighbor disputes, and unclear boundaries can turn a simple fence project into a bigger decision.",
+          },
+        ]}
+      />
+
+      <ReduceCostTips
+        items={[
+          "Get at least two or three written fence quotes before choosing a contractor.",
+          "Confirm the property line before replacing the fence.",
+          "Ask whether partial replacement or post repair would solve the problem.",
+          "Compare wood, vinyl, aluminum, and chain link before defaulting to the most expensive option.",
+          "Check HOA rules, permit requirements, height limits, and gate requirements before signing.",
+          "Avoid financing a mostly cosmetic fence if emergency savings are thin.",
+        ]}
+      />
+
+      <FinancialRedFlags
+        items={[
+          "The fence is mostly cosmetic but the project would drain emergency savings.",
+          "The property line is uncertain or disputed.",
+          "The contractor quote does not include removal, posts, gates, permits, or materials.",
+          "Financing would make monthly bills uncomfortable.",
+          "HOA or code rules have not been checked before work begins.",
+        ]}
+      />
+
+      <CalculatorAssumptions
+        items={[
+          "The calculator treats fence replacement as a home improvement that may be practical, cosmetic, safety-related, or compliance-related.",
+          "Monthly income means take-home pay after taxes and payroll deductions.",
+          "Emergency savings means cash available after normal monthly obligations.",
+          "Monthly debt payments include credit cards, car loans, student loans, personal loans, and other required debt payments.",
+          "Home value is used only as context for whether the project is unusually large or reasonable relative to the property.",
+          "The estimate does not evaluate property-line law, easements, HOA rules, contractor quality, permits, or local fence codes.",
+        ]}
+      />
+
+      <FAQSection
+        title="Fence Replacement Spending FAQ"
+        faqs={[
+          {
+            question: "Is $8,000 too much for a fence replacement?",
+            answer:
+              "It depends on material, height, gates, linear footage, labor, removal, terrain, and location. An $8,000 fence can be reasonable for a full replacement, but it should still be compared against multiple written quotes.",
+          },
+          {
+            question: "Should I finance a fence replacement?",
+            answer:
+              "Financing may make sense if the fence solves a real safety, privacy, or compliance issue and the payment is comfortable. It is riskier when the fence is mostly cosmetic and emergency savings are thin.",
+          },
+          {
+            question: "Should I replace the whole fence or repair part of it?",
+            answer:
+              "Partial repair may make sense if the damage is limited to a few sections or posts. Full replacement becomes more reasonable when the fence is widely rotted, leaning, mismatched, storm-damaged, or near the end of its useful life.",
+          },
+          {
+            question: "Should I get a survey before replacing a fence?",
+            answer:
+              "If the property line is uncertain, disputed, or close to a neighbor’s structure, a survey may prevent a costly mistake. Fence placement problems can be much more expensive than the survey itself.",
+          },
+          {
+            question: "Does a fence increase home value?",
+            answer:
+              "A fence can improve privacy, curb appeal, pet usability, and buyer appeal, but it usually should not be treated as a guaranteed dollar-for-dollar resale return.",
+          },
+        ]}
+      />
+
+      <MethodologySection category="home improvement spending" updated="June 2026" />
+
+      <RelatedGuides
+        guides={[
+          {
+            title: "Home Improvement Calculators",
+            href: "/home-improvement-calculators",
+            description:
+              "Browse home repair and renovation calculators for urgent repairs, upgrades, and major homeowner decisions.",
+          },
+          {
+            title: "What Counts as Debt?",
+            href: "/what-counts-as-debt",
+            description:
+              "Understand which monthly obligations should be included when estimating financial pressure.",
+          },
+        ]}
+      />
+
+      <RelatedCalculators
+        calculators={[
+          {
+            category: "Home Improvement",
+            title: "Home Improvement Annual Cost Calculator",
+            href: "/home-improvement-annual-cost-calculator",
+          },
+          {
+            category: "Home Improvement",
+            title: "Should I Spend This Much on Home Repairs?",
+            href: "/should-i-spend-this-much-on-home-repairs",
+          },
+          {
+            category: "Home Improvement",
+            title: "Should I Spend $6,000 on Driveway Repair?",
+            href: "/should-i-spend-6000-on-driveway-repair",
+          },
+          {
+            category: "Home Improvement",
+            title: "Browse Home Improvement Calculators",
+            href: "/home-improvement-calculators",
+          },
+        ]}
+      />
+    </CalculatorPageShell>
+  </div>
+
+  <script is:inline>
+    const clamp = (value, min, max) => Math.min(Math.max(value, min), max);
+
+    const getNumber = (id) => {
+      const rawValue = document.getElementById(id)?.value;
+      const value = Number(rawValue);
+      return Number.isFinite(value) && value >= 0 ? value : 0;
+    };
+
+    const getValue = (id) => document.getElementById(id)?.value || "";
+
+    function formatMoney(value) {
+      return value.toLocaleString(undefined, {
+        style: "currency",
+        currency: "USD",
+        minimumFractionDigits: 0,
+        maximumFractionDigits: 0,
+      });
+    }
+
+    function getPressureLevel(score) {
+      if (score <= 30) {
+        return {
+          label: "Low Pressure",
+          stress: "Low pressure",
+          color: "#16a34a",
+          action:
+            "Proceed after comparing quotes, confirming the property line, checking HOA rules, and protecting your emergency fund.",
+        };
+      }
+
+      if (score <= 60) {
+        return {
+          label: "Moderate Pressure",
+          stress: "Moderate pressure",
+          color: "#ca8a04",
+          action:
+            "Compare repair versus replacement, confirm property-line details, and use financing only if the payment stays comfortable.",
+        };
+      }
+
+      return {
+        label: "High Pressure",
+        stress: "High pressure",
+        color: "#dc2626",
+        action:
+          "Slow down before committing, especially if the project is cosmetic, financed, property-line uncertain, or likely to drain savings.",
+      };
+    }
+
+    function calculateFence() {
+      const cost = getNumber("cost");
+      const income = getNumber("income");
+      const savings = getNumber("savings");
+      const expenses = getNumber("expenses");
+      const debt = getNumber("debt");
+      const homeValue = getNumber("homeValue");
+      const financed = getNumber("financed");
+
+      const damageSeverity = getValue("damageSeverity");
+      const safetyNeed = getValue("safetyNeed");
+      const privacyNeed = getValue("privacyNeed");
+      const hoaRisk = getValue("hoaRisk");
+      const propertyLineRisk = getValue("propertyLineRisk");
+
+      const result = document.getElementById("result");
+      const scoreEl = document.getElementById("score");
+      const barFill = document.getElementById("barFill");
+      const stressEl = document.getElementById("stress");
+      const cashFlowEl = document.getElementById("cashFlow");
+      const savingsImpactEl = document.getElementById("savingsImpact");
+      const projectContextEl = document.getElementById("projectContext");
+      const financingImpactEl = document.getElementById("financingImpact");
+      const guidanceEl = document.getElementById("guidance");
+
+      result.style.display = "block";
+
+      if (cost <= 0 || income <= 0) {
+        scoreEl.textContent = "Add your numbers first";
+        barFill.style.width = "0%";
+        barFill.style.background = "#16a34a";
+        stressEl.innerHTML = "";
+        cashFlowEl.innerHTML = "";
+        savingsImpactEl.innerHTML = "";
+        projectContextEl.innerHTML = "";
+        financingImpactEl.innerHTML = "";
+        guidanceEl.textContent =
+          "Enter a positive fence replacement cost and monthly take-home income so the calculator can estimate financial pressure.";
+        return;
+      }
+
+      const netCost = cost;
+      const financedUsed = Math.min(financed, netCost);
+      const outOfPocket = Math.max(netCost - financedUsed, 0);
+
+      const monthlyBills = expenses + debt;
+      const monthlyRemaining = income - monthlyBills;
+      const remainingSavings = savings - outOfPocket;
+
+      const incomeImpact = netCost / income;
+      const outOfPocketIncomeImpact = outOfPocket / income;
+      const fixedObligationRatio = monthlyBills / income;
+      const cashFlowRatio = monthlyRemaining / income;
+      const savingsImpact = savings > 0 ? outOfPocket / savings : outOfPocket > 0 ? 1 : 0;
+      const financedShare = netCost > 0 ? financedUsed / netCost : 0;
+      const homeValueImpact = homeValue > 0 ? netCost / homeValue : 0;
+
+      const monthlyBurn = Math.max(monthlyBills, 1);
+      const emergencyMonthsAfter = remainingSavings > 0 ? remainingSavings / monthlyBurn : 0;
+
+      const canCashFlowImmediately = monthlyRemaining >= outOfPocket;
+      const canCashFlowComfortably = monthlyRemaining >= outOfPocket * 2;
+      const savingsCanCover = savings >= outOfPocket;
+      const noFinancing = financedUsed === 0;
+
+      let projectNeedScore = 0;
+      let projectRiskScore = 0;
+
+      if (damageSeverity === "minor") projectNeedScore += 0;
+      if (damageSeverity === "moderate") projectNeedScore += 8;
+      if (damageSeverity === "major") projectNeedScore += 18;
+
+      if (safetyNeed === "medium") projectNeedScore += 8;
+      if (safetyNeed === "high") projectNeedScore += 18;
+
+      if (privacyNeed === "medium") projectNeedScore += 4;
+      if (privacyNeed === "high") projectNeedScore += 8;
+
+      if (hoaRisk === "some") projectNeedScore += 5;
+      if (hoaRisk === "active") projectNeedScore += 14;
+
+      if (propertyLineRisk === "uncertain") projectRiskScore += 10;
+      if (propertyLineRisk === "disputed") projectRiskScore += 22;
+
+      if (homeValue > 0 && homeValueImpact > 0.04) projectRiskScore += 8;
+      else if (homeValue > 0 && homeValueImpact > 0.025) projectRiskScore += 4;
+
+      let pressureScore = 0;
+
+      if (netCost === 0) {
+        pressureScore = 0;
+      } else {
+        const incomePoints = clamp(outOfPocketIncomeImpact * 55, 0, 30);
+        const savingsPoints = clamp(savingsImpact * 45, 0, 30);
+        const obligationPoints = clamp(fixedObligationRatio * 35, 0, 25);
+
+        pressureScore = incomePoints + savingsPoints + obligationPoints;
+
+        if (!savingsCanCover && !canCashFlowImmediately) {
+          pressureScore += 35;
+        } else if (!savingsCanCover && canCashFlowImmediately) {
+          pressureScore += 8;
+        }
+
+        if (remainingSavings < 0 && monthlyRemaining < outOfPocket) {
+          pressureScore += 25;
+        } else if (emergencyMonthsAfter < 1 && !canCashFlowComfortably) {
+          pressureScore += 18;
+        } else if (emergencyMonthsAfter < 3 && !canCashFlowComfortably) {
+          pressureScore += 10;
+        } else if (emergencyMonthsAfter >= 12) {
+          pressureScore -= 18;
+        } else if (emergencyMonthsAfter >= 6) {
+          pressureScore -= 10;
+        }
+
+        if (monthlyRemaining < 0) {
+          pressureScore += 30;
+        } else if (cashFlowRatio < 0.1) {
+          pressureScore += 16;
+        } else if (cashFlowRatio < 0.2) {
+          pressureScore += 8;
+        } else if (cashFlowRatio >= 0.75) {
+          pressureScore -= 20;
+        } else if (cashFlowRatio >= 0.5) {
+          pressureScore -= 14;
+        } else if (cashFlowRatio >= 0.35) {
+          pressureScore -= 8;
+        }
+
+        if (financedUsed > 0) {
+          pressureScore += clamp(financedShare * 22, 6, 22);
+        }
+
+        pressureScore += projectRiskScore;
+
+        if (projectNeedScore >= 34) {
+          pressureScore -= 10;
+        } else if (projectNeedScore >= 22) {
+          pressureScore -= 6;
+        } else if (projectNeedScore <= 6) {
+          pressureScore += 8;
+        }
+
+        if (
+          propertyLineRisk === "disputed" &&
+          damageSeverity !== "major" &&
+          safetyNeed !== "high"
+        ) {
+          pressureScore += 12;
+        }
+
+        if (
+          noFinancing &&
+          outOfPocketIncomeImpact <= 0.02 &&
+          (savingsImpact <= 0.05 || canCashFlowComfortably) &&
+          cashFlowRatio >= 0.35 &&
+          propertyLineRisk !== "disputed"
+        ) {
+          pressureScore = 0;
+        } else if (
+          noFinancing &&
+          outOfPocketIncomeImpact <= 0.05 &&
+          emergencyMonthsAfter >= 12 &&
+          cashFlowRatio >= 0.3 &&
+          propertyLineRisk !== "disputed"
+        ) {
+          pressureScore = Math.min(pressureScore, 3);
+        } else if (
+          noFinancing &&
+          savings >= cost * 50 &&
+          emergencyMonthsAfter >= 24 &&
+          fixedObligationRatio <= 0.5 &&
+          propertyLineRisk !== "disputed"
+        ) {
+          pressureScore = 0;
+        } else if (
+          noFinancing &&
+          savings >= cost * 20 &&
+          emergencyMonthsAfter >= 18 &&
+          fixedObligationRatio <= 0.6 &&
+          propertyLineRisk !== "disputed"
+        ) {
+          pressureScore = Math.min(pressureScore, 2);
+        } else if (
+          noFinancing &&
+          canCashFlowComfortably &&
+          cashFlowRatio >= 0.5 &&
+          outOfPocketIncomeImpact <= 0.2 &&
+          propertyLineRisk !== "disputed"
+        ) {
+          pressureScore = Math.min(pressureScore, 5);
+        } else if (
+          noFinancing &&
+          canCashFlowImmediately &&
+          savingsCanCover &&
+          emergencyMonthsAfter >= 6 &&
+          propertyLineRisk !== "disputed"
+        ) {
+          pressureScore = Math.min(pressureScore, 12);
+        }
+
+        if (
+          noFinancing &&
+          income >= 30000 &&
+          monthlyRemaining >= outOfPocket * 3 &&
+          fixedObligationRatio <= 0.5 &&
+          propertyLineRisk !== "disputed"
+        ) {
+          pressureScore = Math.min(pressureScore, 3);
+        }
+
+        if (
+          noFinancing &&
+          income >= 100000 &&
+          monthlyRemaining >= outOfPocket &&
+          fixedObligationRatio <= 0.75 &&
+          propertyLineRisk !== "disputed"
+        ) {
+          pressureScore = 0;
+        }
+      }
+
+      pressureScore = Math.round(clamp(pressureScore, 0, 100));
+      const level = getPressureLevel(pressureScore);
+
+      let projectContext = "Moderate fence need";
+      if (projectNeedScore >= 34) projectContext = "Strong practical need";
+      else if (projectNeedScore >= 22) projectContext = "Meaningful practical need";
+      else if (projectNeedScore <= 6) projectContext = "Mostly optional or cosmetic";
+
+      let guidance = "";
+
+      if (pressureScore === 0) {
+        guidance =
+          `This fence replacement creates essentially no financial pressure based on the numbers provided. The out-of-pocket cost is small relative to your income, cash flow, or savings, and the project does not appear to threaten your emergency position.`;
+      } else if (pressureScore <= 30) {
+        guidance =
+          `This fence replacement appears financially manageable. The cost equals about ${(incomeImpact * 100).toFixed(1)}% of one month’s take-home income, and your estimated emergency cushion remains around ${emergencyMonthsAfter.toFixed(1)} months after the out-of-pocket cost.`;
+      } else if (pressureScore <= 60) {
+        guidance =
+          `This fence replacement may work, but it creates noticeable financial pressure. The cost equals about ${(incomeImpact * 100).toFixed(1)}% of one month’s take-home income, and the out-of-pocket portion uses about ${(savingsImpact * 100).toFixed(1)}% of available savings.`;
+      } else {
+        guidance =
+          `This fence replacement could create real financial strain. The combination of savings impact, financing, debt, monthly obligations, or project risk suggests you should slow down before committing aggressively.`;
+      }
+
+      scoreEl.textContent = `${level.label} — ${pressureScore}/100`;
+      scoreEl.style.color = level.color;
+      barFill.style.width = `${pressureScore}%`;
+      barFill.style.background = level.color;
+
+      stressEl.innerHTML = `<strong>Pressure level:</strong> ${level.stress}`;
+      cashFlowEl.innerHTML = `<strong>Monthly cash flow after bills and debt:</strong> ${formatMoney(monthlyRemaining)}`;
+      savingsImpactEl.innerHTML = `<strong>Savings after out-of-pocket fence cost:</strong> ${formatMoney(remainingSavings)}`;
+      projectContextEl.innerHTML = `<strong>Project context:</strong> ${projectContext}`;
+      financingImpactEl.innerHTML = `<strong>Financed portion of project cost:</strong> ${(financedShare * 100).toFixed(1)}%`;
+      guidanceEl.textContent = `${guidance} Recommended next step: ${level.action}`;
+    }
+
+    document
+      .getElementById("fenceButton")
+      .addEventListener("click", calculateFence);
+  </script>
+</Layout>
