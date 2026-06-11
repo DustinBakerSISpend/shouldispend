@@ -1,0 +1,886 @@
+---
+import Layout from "../layouts/Layout.astro";
+import CalculatorPageShell from "../components/CalculatorPageShell.astro";
+import FAQSection from "../components/FAQSection.astro";
+import RelatedCalculators from "../components/RelatedCalculators.astro";
+import MethodologySection from "../components/MethodologySection.astro";
+import CalculatorAssumptions from "../components/CalculatorAssumptions.astro";
+import KeyCostCategories from "../components/KeyCostCategories.astro";
+import ReduceCostTips from "../components/ReduceCostTips.astro";
+import FinancialRedFlags from "../components/FinancialRedFlags.astro";
+import { calculators } from "../data/calculators.js";
+
+const tuitionFaqs = [
+  {
+    question: "Is this ideal tuition range per year or total college cost?",
+    answer:
+      "This calculator estimates a recommended annual tuition range. It is not a four-year total and does not include every possible housing, food, travel, or supply cost unless those costs affect your inputs.",
+  },
+  {
+    question: "Who should use this calculator?",
+    answer:
+      "Students, parents, and families sharing college costs can use it. The first question asks who is primarily paying so the calculator can interpret income, savings, debt, and outside help more clearly.",
+  },
+  {
+    question: "Should I include scholarships and grants?",
+    answer:
+      "Yes. Enter aid, grants, and scholarships separately. They reduce the amount that must come from income, savings, loans, or family help.",
+  },
+  {
+    question: "Does outside tuition help change the recommended range?",
+    answer:
+      "Yes, but only if the help is reliable. Parent help, grandparent help, employer aid, or other outside tuition support can raise the realistic annual range if the amount and timing are clear.",
+  },
+];
+
+const relatedCalculators = calculators
+  .filter(
+    (calculator) =>
+      calculator.category === "College" &&
+      calculator.href !== "/ideal-tuition-cost-calculator"
+  )
+  .slice(0, 6);
+---
+
+<Layout
+  title="Ideal Tuition Cost Calculator"
+  description="Find a realistic annual tuition range using who is paying, income, savings, aid, scholarships, outside help, housing plans, school type, and expected payoff."
+>
+  <style>
+    .container {
+      max-width: 900px;
+      margin: auto;
+    }
+
+    .calculator {
+      background: white;
+      padding: 40px;
+      border-radius: 24px;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.06);
+    }
+
+    .calculator h2 {
+      margin-top: 0;
+      font-size: 2rem;
+      margin-bottom: 18px;
+      color: #0f172a;
+    }
+
+    .calculator-intro,
+    .annual-note,
+    .helper-text {
+      color: #334155;
+      line-height: 1.8;
+      font-size: 1.05rem;
+    }
+
+    .calculator-intro {
+      margin-bottom: 30px;
+    }
+
+    .annual-note {
+      background: #ecfeff;
+      border: 1px solid #99f6e4;
+      border-radius: 18px;
+      padding: 18px 20px;
+      font-weight: 800;
+      color: #115e59;
+      margin-bottom: 30px;
+    }
+
+    .step-box {
+      background: #f8fafc;
+      border: 1px solid #dbe4ee;
+      border-radius: 22px;
+      padding: 26px;
+      margin-bottom: 28px;
+    }
+
+    .step-label {
+      color: #0f766e;
+      font-size: 0.9rem;
+      font-weight: 900;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      margin-bottom: 8px;
+    }
+
+    .step-box h3 {
+      margin: 0 0 10px;
+      color: #0f172a;
+      font-size: 1.35rem;
+    }
+
+    .helper-text {
+      margin: 0 0 20px;
+    }
+
+    .choice-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 14px;
+      margin-top: 18px;
+    }
+
+    .choice-card {
+      border: 1px solid #cbd5e1;
+      background: white;
+      border-radius: 18px;
+      padding: 18px;
+      cursor: pointer;
+      transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .choice-card input {
+      margin-right: 8px;
+    }
+
+    .choice-card strong {
+      display: block;
+      color: #0f172a;
+      margin-bottom: 6px;
+    }
+
+    .choice-card span {
+      display: block;
+      color: #475569;
+      line-height: 1.6;
+      font-size: 0.95rem;
+    }
+
+    .choice-card:has(input:checked) {
+      border-color: #0f766e;
+      box-shadow: 0 0 0 3px rgba(15, 118, 110, 0.12);
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+    }
+
+    .field label {
+      display: block;
+      font-weight: 800;
+      margin-bottom: 10px;
+      color: #0f172a;
+    }
+
+    .field input,
+    .field select {
+      width: 100%;
+      padding: 16px;
+      border-radius: 12px;
+      border: 1px solid #cbd5e1;
+      font-size: 1rem;
+      box-sizing: border-box;
+      background: white;
+    }
+
+    .field-hint {
+      display: block;
+      margin-top: 8px;
+      color: #64748b;
+      font-size: 0.9rem;
+      line-height: 1.5;
+    }
+
+    .full-width {
+      grid-column: 1 / -1;
+    }
+
+    .hidden {
+      display: none;
+    }
+
+    button {
+      margin-top: 30px;
+      background: #0f766e;
+      color: white;
+      border: none;
+      padding: 18px 32px;
+      border-radius: 999px;
+      font-size: 1.05rem;
+      font-weight: 800;
+      cursor: pointer;
+      transition: opacity 0.2s ease;
+    }
+
+    button:hover {
+      opacity: 0.92;
+    }
+
+    .results {
+      margin-top: 36px;
+      background: #f8fafc;
+      padding: 32px;
+      border-radius: 24px;
+      border: 1px solid var(--border);
+      box-shadow: 0 10px 24px rgba(15, 23, 42, 0.04);
+      display: none;
+    }
+
+    .results.visible {
+      display: block;
+    }
+
+    .total-price {
+      font-size: clamp(2.4rem, 6vw, 4rem);
+      font-weight: 900;
+      color: #0f172a;
+      line-height: 1.05;
+      margin-bottom: 12px;
+    }
+
+    .result-label {
+      font-size: 1.15rem;
+      font-weight: 800;
+      color: #0f766e;
+      margin-bottom: 24px;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+    }
+
+    .result-details {
+      color: #334155;
+      line-height: 1.9;
+      font-size: 1.02rem;
+    }
+
+    .result-details p {
+      margin: 0 0 12px;
+    }
+
+    .mini-summary,
+    .help-box {
+      margin-top: 24px;
+      padding: 20px;
+      border-radius: 18px;
+      background: white;
+      border: 1px solid #dbe4ee;
+      color: #334155;
+      line-height: 1.8;
+    }
+
+    .help-box {
+      background: #fffbeb;
+      border-color: #fde68a;
+    }
+
+    .disclaimer {
+      margin-top: 24px;
+      font-size: 0.9rem;
+      color: #64748b;
+    }
+
+    .content-section {
+      margin-top: 60px;
+    }
+
+    .content-section h2 {
+      font-size: 2rem;
+      margin-bottom: 20px;
+      color: #0f172a;
+    }
+
+    .content-section p,
+    .content-section li {
+      font-size: 1.1rem;
+      line-height: 1.9;
+      color: #334155;
+    }
+
+    .content-link {
+      color: #0f766e;
+      font-weight: 700;
+      text-decoration: none;
+    }
+
+    .content-link:hover {
+      text-decoration: underline;
+    }
+
+    @media (max-width: 768px) {
+      .calculator {
+        padding: 24px;
+      }
+
+      .grid,
+      .choice-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .full-width {
+        grid-column: auto;
+      }
+
+      .calculator h2,
+      .content-section h2 {
+        font-size: 1.7rem;
+      }
+
+      .results {
+        padding: 24px;
+      }
+    }
+  </style>
+
+  <div class="container">
+    <CalculatorPageShell
+      eyebrow="College Calculator"
+      title="Ideal Tuition Cost Calculator"
+      description="Estimate a realistic annual tuition range by first choosing who is paying, then entering income, savings, aid, scholarships, outside help, housing choices, school type, degree goal, and expected payoff."
+    >
+      <div class="calculator">
+        <h2>Find Your Ideal Annual Tuition Range</h2>
+
+        <p class="calculator-intro">
+          This planner-style calculator does not use a pressure bar. It first
+          asks who is primarily paying for college, then returns a recommended
+          annual tuition range for one school year.
+        </p>
+
+        <div class="annual-note">
+          Important: this result is per year. It is not the total four-year cost
+          of college.
+        </div>
+
+        <div class="step-box">
+          <div class="step-label">Step 1</div>
+          <h3>Who is primarily paying for college?</h3>
+          <p class="helper-text">
+            Pick the setup that best matches the real plan. This controls how
+            the calculator interprets income, savings, debt, and outside help.
+          </p>
+
+          <div class="choice-grid">
+            <label class="choice-card">
+              <input type="radio" name="payerType" value="student" />
+              <strong>Student</strong>
+              <span>The student is mainly paying with work income, savings, aid, or loans.</span>
+            </label>
+
+            <label class="choice-card">
+              <input type="radio" name="payerType" value="family" checked />
+              <strong>Parent / Family</strong>
+              <span>Parents or household supporters are mainly paying.</span>
+            </label>
+
+            <label class="choice-card">
+              <input type="radio" name="payerType" value="shared" />
+              <strong>Shared</strong>
+              <span>The student and family are both meaningfully contributing.</span>
+            </label>
+          </div>
+        </div>
+
+        <div class="step-box">
+          <div class="step-label">Step 2</div>
+          <h3>Will there be outside help with tuition?</h3>
+          <p class="helper-text">
+            Outside help means money beyond the primary payer: parent help,
+            grandparent help, relatives, employer aid, 529 support, or other
+            reliable tuition support.
+          </p>
+
+          <div class="grid">
+            <div class="field">
+              <label for="outsideHelpChoice">Outside Tuition Help</label>
+              <select id="outsideHelpChoice">
+                <option value="no" selected>No outside help</option>
+                <option value="yes">Yes, there will be outside help</option>
+              </select>
+            </div>
+
+            <div class="field hidden" id="outsideHelpField">
+              <label for="familyHelp">Outside Tuition Help per Year</label>
+              <input id="familyHelp" type="number" placeholder="Example: 5000" />
+              <span class="field-hint">Use annual help only. Do not enter vague or uncertain help.</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="step-box">
+          <div class="step-label">Step 3</div>
+          <h3>Enter the money actually supporting college</h3>
+
+          <div class="grid">
+            <div class="field payer-family payer-shared">
+              <label for="householdIncome">Parent / Household Monthly Take-Home Income</label>
+              <input id="householdIncome" type="number" placeholder="Example: 6500" />
+              <span class="field-hint">Use after-tax income from the parent, family, or household helping pay.</span>
+            </div>
+
+            <div class="field payer-student payer-shared">
+              <label for="studentIncome">Student Monthly Take-Home Income</label>
+              <input id="studentIncome" type="number" placeholder="Example: 900" />
+              <span class="field-hint">Use after-tax income from student work, internships, or side income.</span>
+            </div>
+
+            <div class="field">
+              <label for="savings">Savings Available for College</label>
+              <input id="savings" type="number" placeholder="Example: 18000" />
+            </div>
+
+            <div class="field">
+              <label for="emergencyFund">Emergency Fund</label>
+              <input id="emergencyFund" type="number" placeholder="Example: 12000" />
+            </div>
+
+            <div class="field">
+              <label for="monthlyDebt">Monthly Debt Payments</label>
+              <input id="monthlyDebt" type="number" placeholder="Example: 450" />
+            </div>
+
+            <div class="field">
+              <label for="expectedAid">Expected Annual Financial Aid</label>
+              <input id="expectedAid" type="number" placeholder="Example: 6000" />
+            </div>
+
+            <div class="field">
+              <label for="grantsScholarships">Annual Grants / Scholarships</label>
+              <input id="grantsScholarships" type="number" placeholder="Example: 4000" />
+            </div>
+
+            <div class="field">
+              <label for="housingPlan">Housing Plan</label>
+              <select id="housingPlan">
+                <option value="home">Live at home / low housing cost</option>
+                <option value="shared">Shared housing or modest apartment</option>
+                <option value="campus">Campus housing / dorm</option>
+                <option value="expensive">Expensive housing market</option>
+              </select>
+            </div>
+
+            <div class="field">
+              <label for="commutePlan">Commute Plan</label>
+              <select id="commutePlan">
+                <option value="low">Low-cost commute</option>
+                <option value="moderate">Moderate commute cost</option>
+                <option value="high">High commute or car cost</option>
+              </select>
+            </div>
+
+            <div class="field">
+              <label for="degreeGoal">Degree Goal</label>
+              <select id="degreeGoal">
+                <option value="certificate">Certificate / associate path</option>
+                <option value="bachelors" selected>Bachelor’s degree</option>
+                <option value="graduate">Graduate or professional degree</option>
+              </select>
+            </div>
+
+            <div class="field">
+              <label for="schoolType">School Type</label>
+              <select id="schoolType">
+                <option value="community">Community college</option>
+                <option value="instate" selected>In-state public university</option>
+                <option value="private">Private college</option>
+                <option value="outofstate">Out-of-state public university</option>
+              </select>
+            </div>
+
+            <div class="field full-width">
+              <label for="expectedSalary">Expected Starting Salary After Graduation</label>
+              <input id="expectedSalary" type="number" placeholder="Example: 55000" />
+            </div>
+          </div>
+        </div>
+
+        <button id="tuitionButton" type="button">Calculate Ideal Tuition Range</button>
+
+        <div class="results" id="results">
+          <div class="result-label">Recommended Annual Tuition Range</div>
+          <div class="total-price" id="tuitionRange"></div>
+          <div class="result-details" id="resultDetails"></div>
+          <div class="mini-summary" id="tuitionSummary"></div>
+          <div class="help-box" id="familyHelpBox"></div>
+
+          <div class="disclaimer">
+            This is an annual tuition planning estimate. It is not financial aid
+            advice, a loan approval estimate, or a guarantee that a specific
+            school is affordable.
+          </div>
+        </div>
+      </div>
+
+      <section class="content-section">
+        <h2>How This Ideal Tuition Cost Calculator Works</h2>
+
+        <p>
+          This calculator starts by identifying who is actually paying for
+          college: the student, the family, or both. That matters because student
+          income, parent income, household debt, savings, and outside help do
+          not mean the same thing in every college plan.
+        </p>
+
+        <p>
+          The result is intentionally shown as a range, not a single perfect
+          number. College costs change by aid package, major, housing choice,
+          transfer credits, fees, books, commuting, and family support.
+        </p>
+
+        <p>
+          For broader college planning, compare this result with the
+          <a class="content-link" href="/college-cost-calculator">College Cost Calculator</a>,
+          the
+          <a class="content-link" href="/degree-roi-calculator">Degree ROI Calculator</a>,
+          and the
+          <a class="content-link" href="/should-i-take-out-student-loans">student loan calculator</a>.
+        </p>
+      </section>
+
+      <section class="content-section">
+        <h2>When a Higher Tuition Range Can Make Sense</h2>
+
+        <p>
+          A higher annual tuition range can make sense when the payer has strong
+          income, reliable savings, low debt, a protected emergency fund,
+          meaningful grants or scholarships, and a degree path with clear income
+          upside.
+        </p>
+
+        <p>
+          It can also make sense when the more expensive school materially
+          improves the outcome: better licensing placement, stronger internships,
+          a required program, a safer living arrangement, or a faster graduation
+          path that prevents extra semesters.
+        </p>
+      </section>
+
+      <KeyCostCategories
+        items={[
+          {
+            title: "Annual tuition",
+            description:
+              "The calculator returns a recommended tuition range for one school year, not the total cost of the entire degree.",
+          },
+          {
+            title: "Who is paying",
+            description:
+              "Student-paid, family-paid, and shared college plans use income and savings differently, so the calculator asks this first.",
+          },
+          {
+            title: "Outside tuition help",
+            description:
+              "Reliable support from parents, relatives, employers, 529 plans, or other sources can raise the realistic range.",
+          },
+          {
+            title: "Aid, grants, and scholarships",
+            description:
+              "Gift aid can expand the realistic tuition range because it lowers the amount that must come from income, savings, or loans.",
+          },
+          {
+            title: "Housing and commuting",
+            description:
+              "Living at home, commuting cheaply, or avoiding expensive housing can make more tuition affordable without increasing total college pressure.",
+          },
+        ]}
+      />
+
+      <ReduceCostTips
+        items={[
+          "Compare net tuition after grants and scholarships, not just the published sticker price.",
+          "Price community college, transfer pathways, and in-state public options before committing to a higher-cost school.",
+          "Separate tuition from housing, food, books, transportation, fees, and personal spending.",
+          "Treat outside help as reliable only if the amount and timing are clear.",
+          "Avoid using emergency savings for tuition unless the remaining cushion is still strong.",
+          "Use the expected starting salary to sanity-check whether debt would be manageable after graduation.",
+        ]}
+      />
+
+      <FinancialRedFlags
+        items={[
+          "The tuition plan depends on vague outside help that has not been clearly committed.",
+          "Emergency savings would be drained below a basic cushion.",
+          "The student would need large loans for a degree with uncertain earnings.",
+          "Housing, food, transportation, and fees are being ignored while tuition is evaluated alone.",
+          "Existing monthly debt already makes the payer’s budget tight.",
+          "The school is more expensive mainly for preference, prestige, or location rather than a clear academic or career reason.",
+        ]}
+      />
+
+      <CalculatorAssumptions
+        items={[
+          "Monthly income means take-home pay, not gross income.",
+          "The recommended range is annual tuition only, not cumulative four-year cost.",
+          "Expected aid, grants, scholarships, and outside help are treated as annual amounts.",
+          "Emergency savings are protected before tuition flexibility is increased.",
+          "High income, high savings, low debt, strong aid, and reliable outside help can produce a higher recommended tuition range without artificial pressure.",
+          "Housing and commute choices adjust the recommendation because they affect the total affordability picture.",
+        ]}
+      />
+
+      <section class="content-section">
+        <h2>Why Annual Tuition Matters More Than Sticker Price</h2>
+
+        <p>
+          A school with a high sticker price may become reasonable after grants,
+          scholarships, and reliable outside help. A cheaper school can still
+          become stressful if housing, transportation, fees, or lost work income
+          make the full plan hard to carry.
+        </p>
+
+        <p>
+          The cleanest comparison is annual tuition after reliable help, then
+          total yearly college cost after housing and commuting. That keeps the
+          decision grounded in cash flow instead of emotion.
+        </p>
+      </section>
+
+      <div class="content-section">
+        <FAQSection title="Ideal Tuition Cost Calculator FAQ" faqs={tuitionFaqs} />
+      </div>
+
+      <div class="content-section">
+        <RelatedCalculators calculators={relatedCalculators} />
+      </div>
+    </CalculatorPageShell>
+
+    <MethodologySection category="college tuition affordability planning" updated="June 2026" />
+  </div>
+
+  <script is:inline>
+    const getNumber = (id) => {
+      const rawValue = document.getElementById(id)?.value;
+      const value = Number(rawValue);
+      return Number.isFinite(value) && value >= 0 ? value : 0;
+    };
+
+    const getValue = (id) => document.getElementById(id)?.value || "";
+
+    const getPayerType = () =>
+      document.querySelector('input[name="payerType"]:checked')?.value ||
+      "family";
+
+    function formatMoney(value) {
+      return value.toLocaleString(undefined, {
+        style: "currency",
+        currency: "USD",
+        maximumFractionDigits: 0,
+      });
+    }
+
+    function formatPayerLabel(payerType) {
+      if (payerType === "student") return "Student-paid plan";
+      if (payerType === "shared") return "Shared student-and-family plan";
+      return "Parent / family-paid plan";
+    }
+
+    function updateConditionalFields() {
+      const payerType = getPayerType();
+      const outsideHelpChoice = getValue("outsideHelpChoice");
+      const outsideHelpField = document.getElementById("outsideHelpField");
+      const householdFields = document.querySelectorAll(".payer-family");
+      const studentFields = document.querySelectorAll(".payer-student");
+      const sharedFields = document.querySelectorAll(".payer-shared");
+
+      outsideHelpField.classList.toggle("hidden", outsideHelpChoice !== "yes");
+
+      householdFields.forEach((field) => {
+        field.classList.toggle("hidden", payerType === "student");
+      });
+
+      studentFields.forEach((field) => {
+        field.classList.toggle("hidden", payerType === "family");
+      });
+
+      sharedFields.forEach((field) => {
+        field.classList.toggle("hidden", false);
+      });
+
+      if (outsideHelpChoice !== "yes") {
+        document.getElementById("familyHelp").value = "";
+      }
+    }
+
+    function calculateIdealTuition() {
+      const payerType = getPayerType();
+
+      const householdIncome =
+        payerType === "student" ? 0 : getNumber("householdIncome");
+
+      const studentIncome =
+        payerType === "family" ? 0 : getNumber("studentIncome");
+
+      const savings = getNumber("savings");
+      const emergencyFund = getNumber("emergencyFund");
+      const monthlyDebt = getNumber("monthlyDebt");
+      const expectedAid = getNumber("expectedAid");
+      const grantsScholarships = getNumber("grantsScholarships");
+      const outsideHelpChoice = getValue("outsideHelpChoice");
+      const familyHelp =
+        outsideHelpChoice === "yes" ? getNumber("familyHelp") : 0;
+      const expectedSalary = getNumber("expectedSalary");
+
+      const housingPlan = getValue("housingPlan");
+      const commutePlan = getValue("commutePlan");
+      const degreeGoal = getValue("degreeGoal");
+      const schoolType = getValue("schoolType");
+
+      const results = document.getElementById("results");
+      const tuitionRange = document.getElementById("tuitionRange");
+      const resultDetails = document.getElementById("resultDetails");
+      const tuitionSummary = document.getElementById("tuitionSummary");
+      const familyHelpBox = document.getElementById("familyHelpBox");
+
+      results.classList.add("visible");
+
+      const totalMonthlySupportIncome = householdIncome + studentIncome;
+      const annualHouseholdIncome = householdIncome * 12;
+      const annualStudentIncome = studentIncome * 12;
+      const annualSupportIncome = totalMonthlySupportIncome * 12;
+      const annualGiftHelp = expectedAid + grantsScholarships + familyHelp;
+
+      const debtRatio =
+        totalMonthlySupportIncome > 0
+          ? monthlyDebt / totalMonthlySupportIncome
+          : 0;
+
+      const emergencyMonths =
+        totalMonthlySupportIncome > 0
+          ? emergencyFund / totalMonthlySupportIncome
+          : 0;
+
+      if (totalMonthlySupportIncome <= 0 && savings <= 0 && annualGiftHelp <= 0) {
+        tuitionRange.textContent = "$0–$3,000 per year";
+        resultDetails.innerHTML =
+          "<p>Enter the income, savings, aid, scholarships, or outside help that will actually support college costs.</p>";
+        tuitionSummary.textContent = "";
+        familyHelpBox.textContent = "";
+        return;
+      }
+
+      let baseCapacity = 0;
+
+      if (payerType === "student") {
+        baseCapacity += annualStudentIncome * 0.12;
+      } else if (payerType === "family") {
+        baseCapacity += annualHouseholdIncome * 0.075;
+      } else {
+        baseCapacity += annualHouseholdIncome * 0.065;
+        baseCapacity += annualStudentIncome * 0.1;
+      }
+
+      baseCapacity += Math.min(savings * 0.22, 18000);
+      baseCapacity += Math.min(annualGiftHelp, 35000);
+
+      if (emergencyMonths >= 6) baseCapacity += 5000;
+      else if (emergencyMonths >= 3) baseCapacity += 2500;
+      else if (emergencyFund > 0) baseCapacity -= 3000;
+      else baseCapacity -= 6000;
+
+      if (debtRatio >= 0.3) baseCapacity -= 9000;
+      else if (debtRatio >= 0.2) baseCapacity -= 5000;
+      else if (debtRatio <= 0.05 && totalMonthlySupportIncome > 0)
+        baseCapacity += 3500;
+
+      if (housingPlan === "home") baseCapacity += 5500;
+      if (housingPlan === "shared") baseCapacity += 2000;
+      if (housingPlan === "campus") baseCapacity -= 2500;
+      if (housingPlan === "expensive") baseCapacity -= 7000;
+
+      if (commutePlan === "moderate") baseCapacity -= 1500;
+      if (commutePlan === "high") baseCapacity -= 4500;
+
+      if (degreeGoal === "certificate") baseCapacity -= 2500;
+      if (degreeGoal === "graduate")
+        baseCapacity += expectedSalary >= 75000 ? 4500 : -3500;
+
+      if (schoolType === "community") baseCapacity -= 3000;
+      if (schoolType === "private")
+        baseCapacity += expectedSalary >= 70000 ? 3500 : -2500;
+      if (schoolType === "outofstate")
+        baseCapacity += expectedSalary >= 75000 ? 2500 : -4000;
+
+      if (expectedSalary >= 90000) baseCapacity += 7000;
+      else if (expectedSalary >= 65000) baseCapacity += 4000;
+      else if (expectedSalary > 0 && expectedSalary < 40000)
+        baseCapacity -= 5000;
+
+      if (
+        totalMonthlySupportIncome >= 20000 &&
+        emergencyMonths >= 9 &&
+        debtRatio <= 0.05 &&
+        savings >= 75000
+      ) {
+        baseCapacity += 20000;
+      }
+
+      const capacity = Math.max(0, baseCapacity);
+
+      let low = 3000;
+      let high = 8000;
+      let label = "Conservative tuition target";
+
+      if (capacity >= 8000 && capacity < 18000) {
+        low = 8000;
+        high = 18000;
+        label = "Moderate tuition target";
+      } else if (capacity >= 18000 && capacity < 35000) {
+        low = 18000;
+        high = 35000;
+        label = "Flexible tuition target";
+      } else if (capacity >= 35000) {
+        low = 35000;
+        high = 55000;
+        label = "High-flexibility tuition target";
+      }
+
+      if (capacity < 3000) {
+        low = 0;
+        high = 3000;
+        label = "Very conservative tuition target";
+      }
+
+      tuitionRange.textContent = `${formatMoney(low)}–${formatMoney(high)} per year`;
+
+      resultDetails.innerHTML = `
+        <p><strong>Payment setup:</strong> ${formatPayerLabel(payerType)}.</p>
+
+        <p><strong>Planning category:</strong> ${label}.</p>
+
+        <p><strong>Annual income supporting college:</strong> ${formatMoney(annualSupportIncome)}.</p>
+
+        <p><strong>Annual aid, grants, scholarships, and outside help:</strong> ${formatMoney(annualGiftHelp)}.</p>
+
+        <p><strong>Emergency fund coverage:</strong> ${emergencyMonths.toFixed(1)} months of support income.</p>
+
+        <p><strong>Monthly debt load:</strong> ${(debtRatio * 100).toFixed(1)}% of monthly support income.</p>
+      `;
+
+      tuitionSummary.innerHTML = `
+        Based on your payment setup, income, savings, aid, housing plan, commute plan, school type, and expected salary,
+        a realistic annual tuition target is around <strong>${formatMoney(low)}–${formatMoney(high)} per year</strong>.
+        This is a yearly tuition range, not the full cost of the degree.
+      `;
+
+      if (familyHelp > 0) {
+        familyHelpBox.innerHTML = `
+          <strong>Outside tuition help included:</strong> ${formatMoney(familyHelp)} per year.
+          Treat this as usable only if the amount, timing, and source are reliable. If that help is uncertain,
+          rerun the calculator without it before choosing a school.
+        `;
+      } else {
+        familyHelpBox.innerHTML = `
+          <strong>No outside tuition help entered.</strong>
+          That makes the tuition range more dependent on the primary payer’s income, savings, grants, scholarships, and manageable housing costs.
+        `;
+      }
+    }
+
+    document
+      .querySelectorAll('input[name="payerType"]')
+      .forEach((input) => input.addEventListener("change", updateConditionalFields));
+
+    document
+      .getElementById("outsideHelpChoice")
+      .addEventListener("change", updateConditionalFields);
+
+    document
+      .getElementById("tuitionButton")
+      .addEventListener("click", calculateIdealTuition);
+
+    updateConditionalFields();
+  </script>
+</Layout>

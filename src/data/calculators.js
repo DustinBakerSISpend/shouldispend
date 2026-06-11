@@ -1182,6 +1182,60 @@ export const calculators = [
 },
 
 {
+  id: "ideal-tuition-cost",
+  category: "College",
+  title: "Ideal Tuition Cost Calculator",
+  description:
+    "Find a realistic annual tuition range using income, savings, aid, scholarships, housing plans, school type, degree goal, and expected payoff.",
+  href: "/ideal-tuition-cost-calculator",
+},
+
+{
+  id: "out-of-state-tuition-15000",
+  category: "College",
+  title: "Should I Spend $15,000 More on Out-of-State Tuition?",
+  description:
+    "Evaluate an out-of-state tuition premium using residency rules, aid gaps, program strength, career upside, savings, debt risk, and family help.",
+  href: "/should-i-spend-15000-on-out-of-state-tuition",
+},
+
+{
+  id: "campus-housing-12000",
+  category: "College",
+  title: "Should I Spend $12,000 on Campus Housing?",
+  description:
+    "Evaluate campus housing using dorm cost, commute alternatives, safety, independence, aid coverage, meal plans, savings, income, and debt pressure.",
+  href: "/should-i-spend-12000-on-campus-housing",
+},
+
+{
+  id: "college-meal-plan-5000",
+  category: "College",
+  title: "Should I Spend $5,000 on a College Meal Plan?",
+  description:
+    "Evaluate a college meal plan using required costs, grocery alternatives, campus access, schedule demands, dietary needs, aid coverage, and savings.",
+  href: "/should-i-spend-5000-on-college-meal-plan",
+},
+
+{
+  id: "study-abroad-10000",
+  category: "College",
+  title: "Should I Spend $10,000 on Study Abroad?",
+  description:
+    "Evaluate study abroad using degree relevance, career value, scholarships, travel costs, safety, opportunity cost, savings, income, and debt risk.",
+  href: "/should-i-spend-10000-on-study-abroad",
+},
+
+{
+  id: "college-laptop-supplies-3000",
+  category: "College",
+  title: "Should I Spend $3,000 on a College Laptop and Supplies?",
+  description:
+    "Evaluate laptop and supply costs using major requirements, specs, used options, financial aid refunds, savings, income, debt, and necessity.",
+  href: "/should-i-spend-3000-on-college-laptop-and-supplies",
+},
+
+{
   id: "degree-roi",
   category: "College",
   title: "Degree ROI Calculator",

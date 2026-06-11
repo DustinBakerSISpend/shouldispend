@@ -1,0 +1,874 @@
+---
+import Layout from "../layouts/Layout.astro";
+import CalculatorPageShell from "../components/CalculatorPageShell.astro";
+import FAQSection from "../components/FAQSection.astro";
+import RelatedCalculators from "../components/RelatedCalculators.astro";
+import MethodologySection from "../components/MethodologySection.astro";
+import WhenSpendingMakesSense from "../components/WhenSpendingMakesSense.astro";
+import CalculatorAssumptions from "../components/CalculatorAssumptions.astro";
+import KeyCostCategories from "../components/KeyCostCategories.astro";
+import ReduceCostTips from "../components/ReduceCostTips.astro";
+import FinancialRedFlags from "../components/FinancialRedFlags.astro";
+import { calculators } from "../data/calculators.js";
+
+const mealPlanFaqs = [
+  {
+    question: "Is $5,000 too much to spend on a college meal plan?",
+    answer:
+      "$5,000 can make sense if the plan is required, aid covers it, the student has limited cooking access, or dietary needs are easier to manage on campus. It is harder to justify when groceries or a smaller plan would work.",
+  },
+  {
+    question: "Is this calculator for the student or the parent?",
+    answer:
+      "It is for whoever is paying for the meal plan. That may be the student, a parent, or both. Use the income, savings, aid, and debt that will actually support the cost.",
+  },
+  {
+    question: "Should I include financial aid refunds?",
+    answer:
+      "Yes. Include aid, scholarships, 529 funds, family help, or other reliable support that can be used for the meal plan.",
+  },
+  {
+    question: "What if the meal plan is required?",
+    answer:
+      "If the plan is required, the calculator reduces pressure because the decision is less optional. Still, the cost should be compared against total college affordability.",
+  },
+];
+
+const relatedCalculators = calculators
+  .filter(
+    (calculator) =>
+      calculator.category === "College" &&
+      calculator.href !== "/should-i-spend-5000-on-college-meal-plan"
+  )
+  .slice(0, 6);
+---
+
+<Layout
+  title="Should I Spend $5,000 on a College Meal Plan?"
+  description="Evaluate whether spending $5,000 on a college meal plan makes sense based on required status, grocery alternatives, aid, savings, income, debt, schedule, and dietary needs."
+>
+  <style>
+    .container {
+      max-width: 900px;
+      margin: auto;
+    }
+
+    .calculator {
+      background: white;
+      padding: 40px;
+      border-radius: 24px;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.06);
+    }
+
+    .calculator h2 {
+      margin-top: 0;
+      font-size: 2rem;
+      margin-bottom: 18px;
+      color: #0f172a;
+    }
+
+    .calculator-intro,
+    .annual-note {
+      color: #334155;
+      line-height: 1.8;
+      margin-bottom: 30px;
+      font-size: 1.05rem;
+    }
+
+    .annual-note {
+      background: #ecfeff;
+      border: 1px solid #99f6e4;
+      border-radius: 18px;
+      padding: 18px 20px;
+      font-weight: 800;
+      color: #115e59;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+    }
+
+    .field label {
+      display: block;
+      font-weight: 800;
+      margin-bottom: 10px;
+      color: #0f172a;
+    }
+
+    .field input,
+    .field select {
+      width: 100%;
+      padding: 16px;
+      border-radius: 12px;
+      border: 1px solid #cbd5e1;
+      font-size: 1rem;
+      box-sizing: border-box;
+      background: white;
+    }
+
+    .field-hint {
+      display: block;
+      margin-top: 8px;
+      color: #64748b;
+      font-size: 0.9rem;
+      line-height: 1.5;
+    }
+
+    .helper-link {
+      margin-top: 10px;
+      font-size: 0.92rem;
+      line-height: 1.5;
+      color: #475569;
+    }
+
+    .helper-link a,
+    .content-link {
+      color: #0f766e;
+      font-weight: 700;
+      text-decoration: none;
+    }
+
+    .helper-link a:hover,
+    .content-link:hover {
+      text-decoration: underline;
+    }
+
+    button {
+      margin-top: 30px;
+      background: #0f766e;
+      color: white;
+      border: none;
+      padding: 18px 32px;
+      border-radius: 999px;
+      font-size: 1.05rem;
+      font-weight: 800;
+      cursor: pointer;
+      transition: opacity 0.2s ease;
+    }
+
+    button:hover {
+      opacity: 0.92;
+    }
+
+    .results {
+      margin-top: 36px;
+      background: #f8fafc;
+      padding: 32px;
+      border-radius: 24px;
+      border: 1px solid var(--border);
+      box-shadow: 0 10px 24px rgba(15, 23, 42, 0.04);
+      display: none;
+    }
+
+    .results.visible {
+      display: block;
+    }
+
+    .score {
+      font-size: clamp(2rem, 4vw, 2.7rem);
+      font-weight: 900;
+      color: #0f172a;
+      margin-bottom: 22px;
+      line-height: 1.15;
+    }
+
+    .bar {
+      width: 100%;
+      height: 16px;
+      background: #dbe4ee;
+      border-radius: 999px;
+      overflow: hidden;
+      margin-bottom: 24px;
+    }
+
+    .fill {
+      height: 100%;
+      width: 0%;
+      border-radius: 999px;
+      transition: width 0.45s ease;
+    }
+
+    .fill.safe {
+      background: linear-gradient(90deg, #0f766e 0%, #14b8a6 100%);
+    }
+
+    .fill.caution {
+      background: linear-gradient(90deg, #ca8a04 0%, #facc15 100%);
+    }
+
+    .fill.danger {
+      background: linear-gradient(90deg, #dc2626 0%, #f97316 100%);
+    }
+
+    .result-details {
+      color: #334155;
+      line-height: 1.9;
+      font-size: 1.02rem;
+    }
+
+    .result-details p {
+      margin: 0 0 12px;
+    }
+
+    .guidance {
+      margin-top: 22px;
+      padding-top: 20px;
+      border-top: 1px solid #dbe4ee;
+      font-size: 1.12rem;
+      line-height: 1.85;
+      color: #1e293b;
+    }
+
+    .disclaimer {
+      margin-top: 24px;
+      font-size: 0.9rem;
+      color: #64748b;
+    }
+
+    .content-section {
+      margin-top: 60px;
+    }
+
+    .content-section h2 {
+      font-size: 2rem;
+      margin-bottom: 20px;
+      color: #0f172a;
+    }
+
+    .content-section p,
+    .content-section li {
+      font-size: 1.1rem;
+      line-height: 1.9;
+      color: #334155;
+    }
+
+    .pillar-card {
+      display: block;
+      background: #f8fafc;
+      border: 1px solid #dbe4ee;
+      border-radius: 20px;
+      padding: 24px;
+      margin-top: 28px;
+      text-decoration: none;
+      transition: transform 0.15s ease;
+    }
+
+    .pillar-card:hover {
+      transform: translateY(-2px);
+    }
+
+    .pillar-card strong {
+      display: block;
+      margin-bottom: 10px;
+      color: #0f172a;
+      font-size: 1.08rem;
+    }
+
+    .pillar-card span {
+      color: #334155;
+      line-height: 1.7;
+      font-size: 0.98rem;
+    }
+
+    @media (max-width: 768px) {
+      .calculator {
+        padding: 24px;
+      }
+
+      .grid {
+        grid-template-columns: 1fr;
+      }
+
+      .calculator h2,
+      .content-section h2 {
+        font-size: 1.7rem;
+      }
+
+      .results {
+        padding: 24px;
+      }
+    }
+  </style>
+
+  <div class="container">
+    <CalculatorPageShell
+      eyebrow="College Meal Plan Calculator"
+      title="Should I Spend $5,000 on a College Meal Plan?"
+      description="Pressure-test a college meal plan against grocery alternatives, required status, campus access, dietary needs, aid coverage, savings, income, debt, and borrowing."
+    >
+      <div class="calculator">
+        <h2>$5,000 College Meal Plan Pressure Verdict</h2>
+
+        <p class="calculator-intro">
+          College meal plans can simplify food, schedule, and campus access. They
+          can also be overpriced if groceries, cooking, or a smaller plan would
+          work. Use the income, savings, aid, and debt that will actually support
+          the meal plan.
+        </p>
+
+        <div class="annual-note">
+          Important: this evaluates one school-year meal plan, not the total
+          cost of the full degree.
+        </div>
+
+        <div class="grid">
+          <div class="field">
+            <label for="mealPlanCost">Meal Plan Cost per Year</label>
+            <input id="mealPlanCost" type="number" value="5000" placeholder="Example: 5000" />
+          </div>
+
+          <div class="field">
+            <label for="income">Monthly Take-Home Income Supporting Food Costs</label>
+            <input id="income" type="number" placeholder="Example: 6500" />
+            <span class="field-hint">Use student income, parent income, or both — only if it will help pay.</span>
+          </div>
+
+          <div class="field">
+            <label for="savings">Savings Available for College Food Costs</label>
+            <input id="savings" type="number" placeholder="Example: 8000" />
+          </div>
+
+          <div class="field">
+            <label for="emergencyFund">Emergency Fund After Food Savings</label>
+            <input id="emergencyFund" type="number" placeholder="Example: 6000" />
+          </div>
+
+          <div class="field">
+            <label for="monthlyDebt">Current Monthly Debt Payments</label>
+            <input id="monthlyDebt" type="number" placeholder="Example: 350" />
+            <div class="helper-link">
+              Not sure what counts as debt?
+              <a href="/what-counts-as-debt">Read the debt guide</a>
+            </div>
+          </div>
+
+          <div class="field">
+            <label for="borrowed">Amount Borrowed for the Meal Plan</label>
+            <input id="borrowed" type="number" placeholder="Example: 2000" />
+            <div class="helper-link">
+              Testing the loan side?
+              <a href="/should-i-take-out-student-loans">Use the student loan calculator</a>
+            </div>
+          </div>
+
+          <div class="field">
+            <label for="aid">Aid / Scholarships Covering Meal Plan</label>
+            <input id="aid" type="number" placeholder="Example: 1000" />
+          </div>
+
+          <div class="field">
+            <label for="outsideHelp">Reliable Family or Outside Help per Year</label>
+            <input id="outsideHelp" type="number" placeholder="Example: 1500" />
+          </div>
+
+          <div class="field">
+            <label for="cashUsed">Savings Used for Meal Plan</label>
+            <input id="cashUsed" type="number" placeholder="Example: 1500" />
+          </div>
+
+          <div class="field">
+            <label for="requiredPlan">Meal Plan Requirement</label>
+            <select id="requiredPlan">
+              <option value="required">Required by school or housing contract</option>
+              <option value="partial" selected>Partly required or strongly encouraged</option>
+              <option value="optional">Optional</option>
+            </select>
+          </div>
+
+          <div class="field">
+            <label for="groceryAlternative">Cheaper Grocery Alternative</label>
+            <select id="groceryAlternative">
+              <option value="none">No realistic grocery/cooking option</option>
+              <option value="weak">Cheaper option exists but has drawbacks</option>
+              <option value="strong" selected>Good cheaper grocery option exists</option>
+            </select>
+          </div>
+
+          <div class="field">
+            <label for="foodNeed">Food Access / Schedule Need</label>
+            <select id="foodNeed">
+              <option value="strong">Strong need: schedule, access, allergies, or reliability</option>
+              <option value="medium" selected>Some convenience or routine benefit</option>
+              <option value="weak">Mostly preference or convenience</option>
+            </select>
+          </div>
+        </div>
+
+        <button id="mealPlanButton" type="button">Get Meal Plan Verdict</button>
+
+        <div class="results" id="results">
+          <div class="score" id="scoreText"></div>
+          <div class="bar">
+            <div class="fill" id="fillBar"></div>
+          </div>
+          <div class="result-details" id="resultDetails"></div>
+          <div class="guidance" id="guidance"></div>
+          <div class="disclaimer">
+            This is a general educational estimate, not personalized financial advice.
+          </div>
+        </div>
+      </div>
+
+      <section class="content-section">
+        <h2>Start With the Real Food Tradeoff</h2>
+
+        <p>
+          A college meal plan should be compared against the realistic
+          alternative: groceries, cooking, commuter meals, a smaller meal block,
+          family support, or a mix of dining dollars and home-prepared food.
+        </p>
+
+        <p>
+          A $5,000 meal plan can be reasonable when it is required, covered by
+          aid, or solves a real access problem. It is harder to justify when the
+          student has kitchen access, a flexible schedule, and a cheaper grocery
+          option that would work.
+        </p>
+
+        <a class="pillar-card" href="/should-i-spend-12000-on-campus-housing">
+          <strong>Should I Spend $12,000 on Campus Housing?</strong>
+          <span>
+            Test whether dorm costs, commute alternatives, aid, savings, debt,
+            safety, and academic fit justify living on campus.
+          </span>
+        </a>
+
+        <a class="pillar-card" href="/college-cost-calculator">
+          <strong>College Cost Calculator</strong>
+          <span>
+            Estimate total college pressure using tuition, fees, housing, food,
+            books, loans, savings, aid, and expected payoff.
+          </span>
+        </a>
+
+        <a class="pillar-card" href="/ideal-tuition-cost-calculator">
+          <strong>Ideal Tuition Cost Calculator</strong>
+          <span>
+            Find a realistic annual tuition range before adding housing, meal
+            plans, transportation, and other school costs.
+          </span>
+        </a>
+      </section>
+
+      <section class="content-section">
+        <h2>What a College Meal Plan Really Includes</h2>
+
+        <p>
+          A meal plan may include dining hall swipes, dining dollars, convenience
+          store credits, commuter meals, guest passes, or required minimums tied
+          to campus housing. The published price may not match the value if
+          unused meals expire or the student regularly eats off campus.
+        </p>
+
+        <p>
+          The benefit side matters too. A meal plan can reduce planning stress,
+          protect food access, support a busy class schedule, and help students
+          with limited transportation or cooking access. The question is whether
+          that benefit is worth the uncovered cost.
+        </p>
+      </section>
+
+      <WhenSpendingMakesSense
+        title="When Spending $5,000 on a College Meal Plan Can Make Sense"
+        items={[
+          "Aid, scholarships, dining support, or reliable help cover most or all of the cost.",
+          "The meal plan is required by housing or school policy.",
+          "The student lacks reliable cooking access, transportation, or grocery options.",
+          "The student has schedule, dietary, allergy, or health needs that make campus dining useful.",
+          "Borrowing is low or unnecessary.",
+          "Emergency savings remain protected after any cash contribution.",
+        ]}
+      />
+
+      <KeyCostCategories
+        items={[
+          {
+            title: "Annual meal plan cost",
+            description:
+              "This calculator evaluates one school year of meal-plan cost, not the entire college degree.",
+          },
+          {
+            title: "Aid and outside help",
+            description:
+              "Financial aid refunds, scholarships, 529 funds, or family help can reduce the uncovered meal-plan cost.",
+          },
+          {
+            title: "Grocery alternative",
+            description:
+              "A strong cheaper grocery option makes the meal plan harder to justify unless the plan is required or solves a real access problem.",
+          },
+          {
+            title: "Borrowing",
+            description:
+              "Borrowing for food should be treated carefully because it can add repayment pressure after the meals are already gone.",
+          },
+          {
+            title: "Food access and schedule",
+            description:
+              "A meal plan may be more valuable when the student has limited cooking access, a demanding schedule, or specific dietary needs.",
+          },
+        ]}
+      />
+
+      <ReduceCostTips
+        items={[
+          "Check whether the meal plan is required before comparing alternatives.",
+          "Compare the meal plan against realistic groceries, not an unrealistic bare-minimum food budget.",
+          "Ask whether unused meal swipes or dining dollars roll over.",
+          "Choose the smallest plan that fits the student’s real eating pattern.",
+          "Separate meal-plan cost from dorm cost so the full housing-and-food decision stays clear.",
+          "Avoid borrowing for a meal plan if groceries or a smaller plan would work.",
+        ]}
+      />
+
+      <FinancialRedFlags
+        items={[
+          "The meal plan is optional and mainly chosen for convenience while a good cheaper option exists.",
+          "The student regularly eats off campus, skips meals, or would leave swipes unused.",
+          "The plan requires borrowing even though groceries would be manageable.",
+          "Savings would be drained below a basic emergency cushion.",
+          "Dietary restrictions or allergies make the plan less useful than expected.",
+          "The meal plan is bundled into housing without checking the real annual food cost.",
+        ]}
+      />
+
+      <CalculatorAssumptions
+        items={[
+          "Monthly income means take-home pay, not gross income.",
+          "This calculator evaluates one school year of meal-plan cost, not the full college cost.",
+          "Aid, scholarships, and outside help are treated as annual amounts.",
+          "Estimated student loan payment uses a rough monthly payment equal to 1.2% of the borrowed amount.",
+          "If aid and outside help fully cover the meal plan, pressure can be 0/100.",
+          "Huge income, huge savings, low debt, no borrowing, and strong affordability can produce 0/100 with no artificial minimum.",
+        ]}
+      />
+
+      <section class="content-section">
+        <h2>When the Cheaper Food Option Wins</h2>
+
+        <p>
+          A cheaper grocery setup may be the better move when the student has
+          kitchen access, transportation, a predictable schedule, and enough
+          discipline to eat consistently without relying on campus dining.
+        </p>
+
+        <p>
+          Saving even part of a $5,000 meal plan can leave room for books,
+          transportation, emergency costs, or future semesters. The meal plan
+          should earn its cost unless it is required or clearly solves a real
+          food-access problem.
+        </p>
+      </section>
+
+      <section class="content-section">
+        <h2>What Your Meal Plan Verdict Means</h2>
+
+        <p>
+          A low-pressure result means the meal plan appears manageable based on
+          the income, savings, aid, borrowing, and support entered. A moderate
+          result means the plan may still work, but cheaper food options and
+          unused-meal risk should be tested.
+        </p>
+
+        <p>
+          A high-pressure result does not mean campus dining is bad. It means
+          this version of the food plan may need more aid, less borrowing, a
+          smaller plan, or a cheaper grocery strategy before it becomes
+          financially durable.
+        </p>
+      </section>
+
+      <div class="content-section">
+        <FAQSection title="College Meal Plan FAQ" faqs={mealPlanFaqs} />
+      </div>
+
+      <div class="content-section">
+        <RelatedCalculators calculators={relatedCalculators} />
+      </div>
+    </CalculatorPageShell>
+
+    <MethodologySection category="college meal plan affordability" updated="June 2026" />
+  </div>
+
+  <script is:inline>
+    const clamp = (value, min, max) => Math.min(Math.max(value, min), max);
+
+    const getNumber = (id) => {
+      const rawValue = document.getElementById(id)?.value;
+      const value = Number(rawValue);
+      return Number.isFinite(value) && value >= 0 ? value : 0;
+    };
+
+    const getValue = (id) => document.getElementById(id)?.value || "";
+
+    function formatDollars(value) {
+      return `$${Math.round(value).toLocaleString()}`;
+    }
+
+    function getPressureLevel(score) {
+      if (score <= 30) {
+        return {
+          label: "Low Pressure",
+          stress: "Low pressure",
+          colorClass: "safe",
+          action:
+            "Confirm meal-plan rules, rollover limits, and aid coverage, but the food cost appears manageable.",
+        };
+      }
+
+      if (score <= 60) {
+        return {
+          label: "Moderate Pressure",
+          stress: "Moderate pressure",
+          colorClass: "caution",
+          action:
+            "Compare groceries, smaller meal plans, dining dollars, aid coverage, and unused-meal risk before committing.",
+        };
+      }
+
+      return {
+        label: "High Pressure",
+        stress: "High pressure",
+        colorClass: "danger",
+        action:
+          "Reduce the meal-plan cost, avoid borrowing, choose a cheaper food option, or build more cushion before committing.",
+      };
+    }
+
+    function calculateMealPlanPressure() {
+      const mealPlanCost = getNumber("mealPlanCost") || 5000;
+      const income = getNumber("income");
+      const savings = getNumber("savings");
+      const emergencyFund = getNumber("emergencyFund");
+      const monthlyDebt = getNumber("monthlyDebt");
+      const requestedBorrowed = getNumber("borrowed");
+      const aid = getNumber("aid");
+      const outsideHelp = getNumber("outsideHelp");
+      const requestedCashUsed = getNumber("cashUsed");
+      const requiredPlan = getValue("requiredPlan") || "partial";
+      const groceryAlternative = getValue("groceryAlternative") || "strong";
+      const foodNeed = getValue("foodNeed") || "medium";
+
+      const results = document.getElementById("results");
+      const scoreText = document.getElementById("scoreText");
+      const fillBar = document.getElementById("fillBar");
+      const resultDetails = document.getElementById("resultDetails");
+      const guidance = document.getElementById("guidance");
+
+      results.classList.add("visible");
+
+      if (mealPlanCost <= 0) {
+        scoreText.textContent = "Add the meal plan cost first";
+        fillBar.style.width = "0%";
+        fillBar.className = "fill safe";
+        resultDetails.innerHTML =
+          "<p>Enter the annual college meal plan cost to calculate pressure.</p>";
+        guidance.textContent = "";
+        return;
+      }
+
+      if (income <= 0 && savings <= 0 && aid <= 0 && outsideHelp <= 0) {
+        scoreText.textContent = "Add your numbers first";
+        fillBar.style.width = "0%";
+        fillBar.className = "fill safe";
+        resultDetails.innerHTML =
+          "<p>Enter income, savings, aid, outside help, or borrowing that will support the meal plan.</p>";
+        guidance.textContent = "";
+        return;
+      }
+
+      const annualIncome = income * 12;
+      const giftHelp = aid + outsideHelp;
+      const uncoveredCost = Math.max(mealPlanCost - giftHelp, 0);
+
+      const borrowed = Math.min(requestedBorrowed, uncoveredCost);
+      const cashNeededAfterBorrowing = Math.max(uncoveredCost - borrowed, 0);
+      const cashUsed =
+        uncoveredCost <= 0
+          ? 0
+          : Math.min(
+              requestedCashUsed > 0 ? requestedCashUsed : cashNeededAfterBorrowing,
+              cashNeededAfterBorrowing
+            );
+
+      const remainingSavings = Math.max(savings - cashUsed, 0);
+      const estimatedLoanPayment = borrowed > 0 ? borrowed * 0.012 : 0;
+
+      const emergencyMonths = income > 0 ? emergencyFund / income : 0;
+      const savingsMonthsAfter = income > 0 ? remainingSavings / income : 0;
+      const totalLiquidMonthsAfter =
+        income > 0 ? (remainingSavings + emergencyFund) / income : 0;
+
+      const debtRatioAfter =
+        income > 0 ? ((monthlyDebt + estimatedLoanPayment) / income) * 100 : 0;
+
+      const uncoveredCostRatio =
+        income > 0
+          ? (uncoveredCost / Math.max(annualIncome, 1)) * 100
+          : uncoveredCost > 0
+            ? 100
+            : 0;
+
+      const cashUseRatio =
+        cashUsed > 0 ? (cashUsed / Math.max(savings, 1)) * 100 : 0;
+
+      const borrowedShare =
+        borrowed > 0 && uncoveredCost > 0 ? (borrowed / uncoveredCost) * 100 : 0;
+
+      let pressureScore = 0;
+      let hardGateReason = "";
+
+      if (uncoveredCost === 0) {
+        pressureScore = 0;
+        hardGateReason =
+          "Aid and outside help fully cover the annual meal plan cost.";
+      } else if (
+        income >= mealPlanCost * 2 &&
+        debtRatioAfter <= 10 &&
+        borrowed <= income * 0.1
+      ) {
+        pressureScore = 0;
+        hardGateReason =
+          "Monthly take-home income is large enough that the uncovered meal plan cost creates no meaningful pressure.";
+      } else if (
+        savings >= mealPlanCost * 20 &&
+        remainingSavings >= mealPlanCost * 15
+      ) {
+        pressureScore = 0;
+        hardGateReason =
+          "Savings are large enough that the meal plan cost creates no meaningful pressure.";
+      } else if (
+        uncoveredCost <= income * 0.25 &&
+        debtRatioAfter <= 10 &&
+        borrowed === 0
+      ) {
+        pressureScore = 0;
+        hardGateReason =
+          "The uncovered meal plan cost is less than one week of take-home income with no borrowing needed.";
+      } else {
+        pressureScore += clamp(uncoveredCostRatio * 1.7, 0, 28);
+        pressureScore += clamp(cashUseRatio * 0.22, 0, 16);
+        pressureScore += clamp(debtRatioAfter * 0.6, 0, 26);
+
+        if (borrowed > 0) {
+          pressureScore += clamp(borrowedShare * 0.14, 0, 14);
+        }
+
+        if (emergencyMonths < 1) {
+          pressureScore += savings >= mealPlanCost * 5 ? 2 : 16;
+        } else if (emergencyMonths < 3) {
+          pressureScore += savings >= mealPlanCost * 5 ? 1 : 7;
+        } else if (emergencyMonths >= 6) {
+          pressureScore -= 8;
+        }
+
+        if (savingsMonthsAfter >= 24) pressureScore -= 18;
+        else if (savingsMonthsAfter >= 12) pressureScore -= 12;
+        else if (savingsMonthsAfter >= 6) pressureScore -= 6;
+        else if (cashUsed > 0 && savingsMonthsAfter < 1) pressureScore += 12;
+
+        if (requiredPlan === "required") pressureScore -= 8;
+        else if (requiredPlan === "optional") pressureScore += 8;
+
+        if (groceryAlternative === "strong") pressureScore += 8;
+        else if (groceryAlternative === "none") pressureScore -= 8;
+
+        if (foodNeed === "strong") pressureScore -= 10;
+        else if (foodNeed === "weak") pressureScore += 8;
+
+        if (giftHelp >= mealPlanCost * 0.75) pressureScore -= 14;
+        else if (giftHelp >= mealPlanCost * 0.5) pressureScore -= 10;
+        else if (giftHelp >= mealPlanCost * 0.25) pressureScore -= 5;
+
+        if (
+          savings >= mealPlanCost * 12 &&
+          remainingSavings >= mealPlanCost * 10 &&
+          debtRatioAfter <= 12
+        ) {
+          pressureScore = Math.min(pressureScore, 5);
+        }
+
+        if (
+          savings >= mealPlanCost * 8 &&
+          remainingSavings >= mealPlanCost * 6 &&
+          debtRatioAfter <= 15
+        ) {
+          pressureScore = Math.min(pressureScore, 10);
+        }
+
+        if (
+          income >= mealPlanCost &&
+          uncoveredCost <= income &&
+          debtRatioAfter <= 12
+        ) {
+          pressureScore = Math.min(pressureScore, 5);
+        }
+
+        if (
+          borrowed === 0 &&
+          uncoveredCost <= income &&
+          debtRatioAfter <= 10
+        ) {
+          pressureScore = Math.min(pressureScore, 3);
+        }
+      }
+
+      pressureScore = clamp(Math.round(pressureScore), 0, 100);
+
+      const level = getPressureLevel(pressureScore);
+
+      scoreText.textContent = `${level.label} — ${pressureScore}/100`;
+      fillBar.style.width = `${pressureScore}%`;
+      fillBar.className = `fill ${level.colorClass}`;
+
+      let explanation = "";
+
+      if (pressureScore === 0) {
+        explanation =
+          hardGateReason ||
+          "This college meal plan creates virtually no measurable pressure based on the income, savings, debt, borrowing, and aid entered.";
+      } else if (pressureScore <= 30) {
+        explanation =
+          "This college meal plan appears manageable. The main job is confirming the plan requirement, food access, and cheaper alternatives.";
+      } else if (pressureScore <= 60) {
+        explanation =
+          "This meal plan decision may work, but it deserves caution. Compare groceries, smaller plans, dining dollars, and unused-meal risk before committing.";
+      } else {
+        explanation =
+          "This meal plan decision could create significant financial pressure. A cheaper food plan, more aid, less borrowing, or stronger savings cushion would likely be safer.";
+      }
+
+      resultDetails.innerHTML = `
+        <p><strong>Annual meal plan cost:</strong> ${formatDollars(mealPlanCost)}.</p>
+
+        <p><strong>Aid and outside help applied:</strong> ${formatDollars(giftHelp)}.</p>
+
+        <p><strong>Uncovered meal plan cost:</strong> ${formatDollars(uncoveredCost)}.</p>
+
+        <p><strong>Uncovered cost impact:</strong> ${uncoveredCostRatio.toFixed(1)}% of annual take-home income.</p>
+
+        <p><strong>Estimated loan payment:</strong> About ${formatDollars(estimatedLoanPayment)} per month based on uncovered borrowing.</p>
+
+        <p><strong>Debt impact after borrowing:</strong> ${debtRatioAfter.toFixed(1)}% of monthly take-home income, including estimated meal plan borrowing.</p>
+
+        <p><strong>Emergency fund coverage:</strong> ${emergencyMonths.toFixed(1)} months of take-home income.</p>
+
+        <p><strong>Savings after planned cash use:</strong> About ${savingsMonthsAfter.toFixed(1)} months of take-home income.</p>
+
+        <p><strong>Total liquid cushion after meal plan:</strong> About ${totalLiquidMonthsAfter.toFixed(1)} months of take-home income.</p>
+
+        <p><strong>Pressure level:</strong> ${level.stress}.</p>
+
+        <p>${explanation} Recommended next step: ${level.action}</p>
+      `;
+
+      guidance.textContent = "";
+    }
+
+    document
+      .getElementById("mealPlanButton")
+      .addEventListener("click", calculateMealPlanPressure);
+  </script>
+</Layout>
