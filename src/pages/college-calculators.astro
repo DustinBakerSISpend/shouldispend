@@ -2,6 +2,12 @@
 import Layout from "../layouts/Layout.astro";
 import CalculatorCard from "../components/CalculatorCard.astro";
 import FAQSection from "../components/FAQSection.astro";
+import MethodologySection from "../components/MethodologySection.astro";
+import KeyCostCategories from "../components/KeyCostCategories.astro";
+import ReduceCostTips from "../components/ReduceCostTips.astro";
+import FinancialRedFlags from "../components/FinancialRedFlags.astro";
+import CalculatorAssumptions from "../components/CalculatorAssumptions.astro";
+import RelatedCalculators from "../components/RelatedCalculators.astro";
 import { calculators } from "../data/calculators.js";
 
 const collegeCalculators = calculators.filter(
@@ -10,22 +16,22 @@ const collegeCalculators = calculators.filter(
 
 const featuredCollegeLinks = [
   {
+    href: "/ideal-tuition-cost-calculator",
+    title: "Ideal Tuition Cost Calculator",
+    text:
+      "Find a realistic annual tuition range before comparing schools, aid packages, housing plans, and career payoff.",
+  },
+  {
     href: "/college-cost-calculator",
     title: "College Cost Calculator",
     text:
       "Estimate the real pressure of tuition, fees, housing, books, savings, loans, and monthly cash flow before committing.",
   },
   {
-    href: "/should-i-spend-20000-on-college",
-    title: "$20,000 College Calculator",
+    href: "/degree-roi-calculator",
+    title: "Degree ROI Calculator",
     text:
-      "Pressure-test a lower-cost degree, certificate, semester, or program against income, savings, debt, and expected payoff.",
-  },
-  {
-    href: "/should-i-spend-50000-on-college",
-    title: "$50,000 College Calculator",
-    text:
-      "Evaluate whether a larger college expense creates manageable long-term pressure or too much financial strain.",
+      "Compare total cost, lost income, expected salary gains, payback period, debt pressure, and career upside.",
   },
   {
     href: "/should-i-take-out-student-loans",
@@ -43,22 +49,34 @@ const planningLinks = [
       "Decide whether using cash for school protects your future or drains too much emergency and household cushion.",
   },
   {
-    href: "/should-i-go-back-to-school",
-    title: "Should I Go Back to School?",
+    href: "/should-i-spend-15000-on-out-of-state-tuition",
+    title: "Should I Spend $15,000 More on Out-of-State Tuition?",
     text:
-      "Weigh tuition, time away from work, career upside, debt risk, age, savings, and family obligations.",
+      "Test whether an out-of-state premium is justified by program strength, aid, residency rules, and career upside.",
   },
   {
-    href: "/how-much-emergency-savings-should-i-have",
-    title: "Emergency Savings Guide",
+    href: "/should-i-spend-12000-on-campus-housing",
+    title: "Should I Spend $12,000 on Campus Housing?",
     text:
-      "See how much cushion to preserve before redirecting savings toward tuition, fees, books, or housing.",
+      "Compare dorm costs against commute alternatives, aid coverage, independence, safety, and academic fit.",
   },
   {
-    href: "/what-counts-as-debt",
-    title: "What Counts as Debt?",
+    href: "/should-i-spend-5000-on-college-meal-plan",
+    title: "Should I Spend $5,000 on a College Meal Plan?",
     text:
-      "Understand which existing obligations matter before adding student loans or education-related payments.",
+      "Evaluate required or optional meal plans against groceries, campus access, dietary needs, aid, and cash flow.",
+  },
+  {
+    href: "/should-i-spend-10000-on-study-abroad",
+    title: "Should I Spend $10,000 on Study Abroad?",
+    text:
+      "Pressure-test study abroad against scholarships, travel costs, safety, degree relevance, and career value.",
+  },
+  {
+    href: "/should-i-spend-3000-on-college-laptop-and-supplies",
+    title: "Should I Spend $3,000 on a College Laptop and Supplies?",
+    text:
+      "Evaluate laptop and supply costs using major requirements, specs, used options, aid refunds, and necessity.",
   },
 ];
 
@@ -66,22 +84,32 @@ const collegeCostFactors = [
   {
     title: "Tuition and Fees",
     text:
-      "The published price may not include program fees, technology fees, lab costs, graduation fees, or course-specific charges.",
+      "The published price may not include program fees, technology fees, lab costs, graduation fees, transfer fees, testing charges, or course-specific expenses.",
   },
   {
     title: "Housing and Transportation",
     text:
-      "Rent, dorms, commuting, parking, gas, flights, and moving costs can change the real college budget quickly.",
+      "Dorms, rent, commuting, parking, gas, flights, moving costs, and campus access can change the real college budget quickly.",
   },
   {
     title: "Books, Supplies, and Equipment",
     text:
-      "Laptops, software, uniforms, tools, textbooks, exam fees, and professional materials can add pressure beyond tuition.",
+      "Laptops, software, uniforms, tools, textbooks, exam fees, calculators, and professional materials can add pressure beyond tuition.",
   },
   {
     title: "Lost Income and Time",
     text:
       "Going back to school can reduce work hours, delay earnings, or create childcare and schedule costs that matter as much as tuition.",
+  },
+  {
+    title: "Student Loans",
+    text:
+      "Borrowing can make school possible, but the repayment math has to fit future income, existing debt, and the degree’s realistic payoff.",
+  },
+  {
+    title: "Emergency Savings",
+    text:
+      "A college plan that wipes out emergency savings can become risky even when tuition itself looks manageable.",
   },
 ];
 
@@ -111,12 +139,21 @@ const collegeFaqs = [
     answer:
       "Using savings can reduce borrowing, but it should not wipe out emergency reserves or leave the household unable to handle rent, repairs, medical bills, childcare, or job disruption.",
   },
+  {
+    question: "Should I choose the cheapest college option?",
+    answer:
+      "Not always. The cheapest school may be smart when outcomes are similar, but a more expensive option can make sense if it improves graduation odds, licensing, internships, job placement, safety, or time to completion.",
+  },
 ];
+
+const relatedCollegeCalculators = collegeCalculators
+  .filter((calculator) => calculator.href !== "/college-calculators")
+  .slice(0, 8);
 ---
 
 <Layout
   title="College Cost Calculators | ShouldISpend"
-  description="Browse college cost calculators for tuition, student loans, savings, going back to school, and major education spending decisions."
+  description="Browse college cost calculators for tuition, student loans, housing, meal plans, study abroad, savings, degree ROI, and major education spending decisions."
 >
   <style>
     .container {
@@ -336,9 +373,9 @@ const collegeFaqs = [
       <p class="intro">
         College can be a smart investment, a manageable stretch, or a financial
         strain depending on tuition, housing, books, loans, savings, income,
-        career upside, and family obligations. These calculators help pressure-test
-        education spending before you commit cash, borrow money, or rearrange your
-        life around school.
+        career upside, and family obligations. These calculators help
+        pressure-test education spending before you commit cash, borrow money,
+        or rearrange your life around school.
       </p>
     </section>
 
@@ -346,21 +383,24 @@ const collegeFaqs = [
       <div class="trust-item">
         <strong>Beyond tuition</strong>
         <span>
-          College affordability includes housing, fees, books, supplies, lost income, and repayment pressure.
+          College affordability includes housing, meal plans, books, supplies,
+          fees, lost income, and repayment pressure.
         </span>
       </div>
 
       <div class="trust-item">
         <strong>Loan-aware planning</strong>
         <span>
-          Tools flag when borrowing may create more stress than the degree can reasonably justify.
+          Tools flag when borrowing may create more stress than the degree can
+          reasonably justify.
         </span>
       </div>
 
       <div class="trust-item">
         <strong>Payoff-first framing</strong>
         <span>
-          The goal is education that improves your future without cornering your present finances.
+          The goal is education that improves your future without cornering your
+          present finances.
         </span>
       </div>
     </div>
@@ -372,8 +412,9 @@ const collegeFaqs = [
 
       <p>
         Use these tools to compare tuition decisions, student loans, savings
-        tradeoffs, and back-to-school plans against your income, emergency fund,
-        existing debt, monthly flexibility, and expected career payoff.
+        tradeoffs, housing, meal plans, study abroad, laptop costs, and
+        back-to-school plans against your income, emergency fund, existing debt,
+        monthly flexibility, and expected career payoff.
       </p>
 
       <div class="grid">
@@ -394,10 +435,10 @@ const collegeFaqs = [
       <h2>Compare Common College Spending Decisions</h2>
 
       <p>
-        A $20,000 program, a $50,000 degree path, and a student loan decision
-        can create very different levels of pressure. The safest choice is not
-        always the cheapest one, but the numbers should make sense before the
-        commitment becomes difficult to unwind.
+        A $20,000 program, a $50,000 degree path, a dorm contract, and a student
+        loan decision can create very different levels of pressure. The safest
+        choice is not always the cheapest one, but the numbers should make sense
+        before the commitment becomes difficult to unwind.
       </p>
 
       <div class="link-grid">
@@ -417,22 +458,22 @@ const collegeFaqs = [
 
       <p>
         There is no universal correct college budget. The right amount depends
-        on grants, scholarships, household income, existing debt, emergency
-        savings, the strength of the program, career goals, and the income you
-        can reasonably expect after finishing.
+        on grants, scholarships, household income, student income, existing debt,
+        emergency savings, the strength of the program, career goals, and the
+        income you can reasonably expect after finishing.
       </p>
 
       <p>
         A college expense that is manageable for one person may be risky for
-        another. A safer education budget usually avoids high-interest debt,
-        preserves some emergency cushion, and has a realistic path to improved
-        earning power or career stability.
+        another. A safer education budget usually avoids unnecessary borrowing,
+        protects some emergency cushion, and has a realistic path to improved
+        earning power, career stability, licensing, or advancement.
       </p>
 
       <p>
         The healthiest question is not “Can I technically enroll?” It is “Will
         this education decision still feel financially defensible after the bill,
-        the loans, and the life changes show up?”
+        the loans, the housing costs, and the life changes show up?”
       </p>
     </section>
 
@@ -440,6 +481,12 @@ const collegeFaqs = [
       <div class="section-kicker">Hidden Costs</div>
 
       <h2>College Expenses That Quietly Change the Real Price</h2>
+
+      <p>
+        Tuition is only one part of the decision. Some college plans look
+        affordable until housing, food, technology, travel, parking, software,
+        lost income, and loan payments enter the picture.
+      </p>
 
       <div class="info-grid">
         {collegeCostFactors.map((item) => (
@@ -451,13 +498,76 @@ const collegeFaqs = [
       </div>
     </section>
 
+    <KeyCostCategories
+      items={[
+        {
+          title: "Tuition and fees",
+          description:
+            "The base price matters, but program fees, lab charges, technology fees, transfer fees, and course-specific costs can change the real number.",
+        },
+        {
+          title: "Housing and food",
+          description:
+            "Dorms, rent, commuting, meal plans, groceries, and campus access often determine whether college is actually manageable.",
+        },
+        {
+          title: "Loans and repayment",
+          description:
+            "Student loans should be judged against future income, existing debt, repayment flexibility, and the degree's realistic payoff.",
+        },
+        {
+          title: "Savings and emergency cushion",
+          description:
+            "Using savings may reduce debt, but it can create risk if it leaves the student or household with too little backup cash.",
+        },
+        {
+          title: "Career payoff",
+          description:
+            "Higher costs are easier to justify when the program improves earnings, licensure, job access, promotion potential, or career stability.",
+        },
+      ]}
+    />
+
+    <ReduceCostTips
+      items={[
+        "Compare net price after grants, scholarships, and reliable help — not only the published sticker price.",
+        "Separate tuition from housing, food, books, laptop costs, transportation, and personal spending.",
+        "Check whether credits transfer cleanly before choosing community college, transfer paths, graduate programs, or study abroad.",
+        "Use expected starting salary to test whether future loan payments are likely to be manageable.",
+        "Consider lower-cost paths first: in-state schools, community college, employer reimbursement, scholarships, and part-time enrollment.",
+        "Avoid using emergency savings for college unless the remaining cushion is still strong.",
+      ]}
+    />
+
+    <FinancialRedFlags
+      items={[
+        "The plan depends on vague family help, uncertain aid, or scholarships that may not renew.",
+        "The student would need large loans for a degree with unclear earnings or weak completion odds.",
+        "Emergency savings would be drained below a basic cushion.",
+        "Housing, food, transportation, laptop costs, and fees are being ignored while tuition is evaluated alone.",
+        "The more expensive option is mainly for preference, prestige, or location rather than a clear academic or career reason.",
+        "The expected loan payment would crowd out rent, transportation, medical costs, or other basic obligations after graduation.",
+      ]}
+    />
+
+    <CalculatorAssumptions
+      items={[
+        "Monthly income means take-home pay, not gross income.",
+        "College affordability depends on the full education plan, not tuition alone.",
+        "Aid, grants, scholarships, and reliable outside help should be treated separately from borrowed money.",
+        "Emergency savings should generally be protected before increasing tuition, housing, travel, or supply spending.",
+        "A higher-cost school can still make sense if the program clearly improves completion odds, career access, licensing, or earning power.",
+        "A lower-cost school can be the better choice when outcomes are similar and debt risk is lower.",
+      ]}
+    />
+
     <section class="content-section">
       <div class="section-kicker">Planning Guides</div>
 
       <h2>College Planning and Financial Pressure Guides</h2>
 
       <p>
-        These guides help connect education spending with the bigger household
+        These guides connect education spending with the bigger household
         picture: savings, debt, emergency funds, monthly obligations, and the
         tradeoff between future opportunity and present financial pressure.
       </p>
@@ -472,17 +582,44 @@ const collegeFaqs = [
       </div>
     </section>
 
+    <section class="content-section narrow">
+      <div class="section-kicker">How to Use These Tools</div>
+
+      <h2>Use College Calculators as a Pressure Test, Not a Permission Slip</h2>
+
+      <p>
+        A calculator result should not be the only reason to choose a school,
+        borrow money, or go back to class. It should reveal whether the decision
+        fits the money available, the debt already present, the cash cushion left
+        afterward, and the likely payoff.
+      </p>
+
+      <p>
+        The strongest college decisions usually have three things in common:
+        the cost is clear, the funding source is realistic, and the expected
+        benefit is specific. The weakest decisions often rely on vague optimism:
+        “I’ll figure out the loans later,” “the degree should help somehow,” or
+        “the expensive school just feels better.”
+      </p>
+    </section>
+
     <section class="callout">
-      <h2>Use College Calculators as a Pressure Test</h2>
+      <h2>Use College Calculators Before the Bill Becomes Permanent</h2>
 
       <p>
         These tools are educational estimates, not personalized financial advice.
         Use them to compare tradeoffs, spot repayment risk, protect emergency
         savings, and make clearer decisions before committing to tuition, loans,
-        or a major career pivot.
+        housing, study abroad, meal plans, or a major career pivot.
       </p>
     </section>
 
     <FAQSection title="College Cost FAQ" faqs={collegeFaqs} />
+
+    <div class="content-section">
+      <RelatedCalculators calculators={relatedCollegeCalculators} />
+    </div>
   </main>
+
+  <MethodologySection category="college affordability calculators" updated="June 2026" />
 </Layout>
