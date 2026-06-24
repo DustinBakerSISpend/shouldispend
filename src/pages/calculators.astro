@@ -1,6 +1,7 @@
 ---
 import Layout from "../layouts/Layout.astro";
 import CalculatorCard from "../components/CalculatorCard.astro";
+import FAQSection from "../components/FAQSection.astro";
 import { calculators } from "../data/calculators.js";
 
 const categories = [
@@ -115,22 +116,199 @@ const categorySummaries = categories.map((category) => {
     count,
   };
 });
+
+const methodologySteps = [
+  {
+    title: "Start with the real cost",
+    text:
+      "A spending decision should include the full cost, not just the headline number. Fees, taxes, interest, insurance, supplies, travel, utilities, tips, deductibles, and recurring add-ons can change the pressure.",
+  },
+  {
+    title: "Use take-home income",
+    text:
+      "ShouldISpend treats monthly income as money actually available to support the household, not gross income before taxes, payroll deductions, insurance, or retirement contributions.",
+  },
+  {
+    title: "Account for outside help",
+    text:
+      "Confirmed aid, insurance, family help, employer benefits, scholarships, grants, reimbursements, gifts, or other outside support should reduce the true uncovered cost.",
+  },
+  {
+    title: "Measure savings after the decision",
+    text:
+      "A purchase is safer when emergency savings remain intact afterward. A cost becomes riskier when it leaves no cushion for normal life surprises.",
+  },
+  {
+    title: "Check debt and monthly pressure",
+    text:
+      "Financing can make a cost possible today while creating pressure later. The calculators consider payments, debt load, and how much room remains after required bills.",
+  },
+  {
+    title: "Look for recovery room",
+    text:
+      "The best financial decisions leave a path back to stability. A cost should be judged by what happens after the money is spent, not only by whether it can be paid today.",
+  },
+];
+
+const pressureSignals = [
+  {
+    title: "Green Pressure",
+    text:
+      "The cost appears manageable because savings, take-home income, outside help, or low debt leave enough financial breathing room afterward.",
+  },
+  {
+    title: "Moderate Pressure",
+    text:
+      "The decision may be workable, but it could require tradeoffs, a slower savings rebuild, a tighter monthly budget, or a clearer plan before committing.",
+  },
+  {
+    title: "High Pressure",
+    text:
+      "The decision may create serious strain because it drains savings, adds difficult debt, crowds out essentials, or leaves little room for emergencies.",
+  },
+];
+
+const redFlags = [
+  "The decision would use nearly all emergency savings.",
+  "The cost depends on credit cards or high-interest debt.",
+  "Outside help is assumed but not confirmed.",
+  "The monthly payment fits only if nothing else goes wrong.",
+  "The calculation uses gross income instead of take-home pay.",
+  "The decision ignores taxes, fees, insurance, maintenance, supplies, or other add-ons.",
+  "A one-time cost creates recurring pressure for months or years.",
+  "The purchase delays rent stability, medical care, debt payoff, emergency savings, or other essentials.",
+];
+
+const reducePressureTips = [
+  {
+    title: "Shrink the uncovered cost",
+    text:
+      "Use confirmed aid, insurance, scholarships, family help, employer benefits, reimbursements, used items, lower-cost options, or phased spending before using savings or debt.",
+  },
+  {
+    title: "Delay optional spending",
+    text:
+      "If the decision is not urgent, waiting can protect savings, reduce borrowing, and make the final choice less stressful.",
+  },
+  {
+    title: "Separate needs from upgrades",
+    text:
+      "A necessary repair, medical bill, childcare cost, or tuition decision should be judged differently from a preference-based upgrade.",
+  },
+  {
+    title: "Run more than one calculator",
+    text:
+      "Large decisions often touch several categories. A wedding may affect travel and debt. A baby may affect groceries and medical costs. A home repair may affect emergency savings.",
+  },
+  {
+    title: "Protect the next month",
+    text:
+      "The decision should not only work today. It should still leave enough room for rent, food, transportation, insurance, debt payments, and normal bills next month.",
+  },
+  {
+    title: "Create a recovery plan",
+    text:
+      "If savings must be used, decide how quickly they can be rebuilt and what spending will be paused until the household is stable again.",
+  },
+];
+
+const assumptions = [
+  "ShouldISpend calculators are educational decision-support tools, not personalized financial, tax, legal, medical, insurance, or investment advice.",
+  "Monthly income means take-home pay available to support the person or household paying the cost.",
+  "Confirmed outside help should reduce the true uncovered cost.",
+  "No calculator should create artificial pressure when the true cost is fully covered by outside help, strong savings, or very high available income.",
+  "Urgent needs should be treated differently from optional upgrades.",
+  "A low-pressure result is not a command to spend, and a high-pressure result is not always a command to avoid the expense.",
+];
+
+const relatedGuides = [
+  {
+    href: "/budget-rule-calculators",
+    title: "Budget Rule Calculators",
+    text:
+      "Use percentage rules as starting points for rent, debt, car payments, and major spending decisions.",
+  },
+  {
+    href: "/how-much-emergency-savings-should-i-have",
+    title: "Emergency Savings Calculator",
+    text:
+      "Estimate how much cash cushion you may need before and after major expenses.",
+  },
+  {
+    href: "/how-much-debt-is-too-much",
+    title: "How Much Debt Is Too Much?",
+    text:
+      "Understand whether monthly debt pressure is limiting flexibility, savings, and stability.",
+  },
+  {
+    href: "/what-counts-as-debt",
+    title: "What Counts as Debt?",
+    text:
+      "See which obligations should be counted when evaluating monthly affordability.",
+  },
+  {
+    href: "/how-much-rent-can-i-afford",
+    title: "How Much Rent Can I Afford?",
+    text:
+      "Compare rent against take-home pay, utilities, debt, transportation, and emergency savings.",
+  },
+  {
+    href: "/how-much-house-can-i-afford",
+    title: "How Much House Can I Afford?",
+    text:
+      "Evaluate home affordability with income, debt, taxes, insurance, maintenance, and savings.",
+  },
+];
+
+const calculatorFaqs = [
+  {
+    question: "What is ShouldISpend?",
+    answer:
+      "ShouldISpend is a library of decision-focused financial calculators. The tools help compare major expenses against take-home income, savings, debt, outside help, and monthly flexibility.",
+  },
+  {
+    question: "Are these calculators financial advice?",
+    answer:
+      "No. The calculators are educational pressure tests. They can help clarify tradeoffs, but they are not personalized financial, legal, tax, medical, insurance, or investment advice.",
+  },
+  {
+    question: "Why do the calculators focus on pressure instead of only cost?",
+    answer:
+      "The same cost can be easy for one household and risky for another. Pressure depends on income, savings, debt, urgency, outside help, recurring payments, and what remains after the decision.",
+  },
+  {
+    question: "Should I use gross income or take-home income?",
+    answer:
+      "Use take-home income. That better reflects the money actually available after taxes, insurance, benefits, payroll deductions, and retirement contributions.",
+  },
+  {
+    question: "What if family help, insurance, or aid covers the cost?",
+    answer:
+      "Confirmed outside help should reduce the true uncovered cost. If the full cost is covered, the financial pressure should usually be very low or zero.",
+  },
+  {
+    question: "Can a high-pressure result still be the right decision?",
+    answer:
+      "Yes. Some costs are necessary, such as urgent medical bills, essential repairs, funeral expenses, or childcare. A high-pressure result means the decision needs a plan, not that the need is fake.",
+  },
+];
 ---
 
 <Layout
-  title="All Calculators | ShouldISpend"
-  description="Browse verdict-driven financial calculators for baby costs, college, medical bills, funerals, weddings, cars, rent, groceries, travel, debt, and emergency savings."
+  title="All Financial Calculators | ShouldISpend"
+  description="Browse financial calculators for baby costs, college, medical bills, funerals, weddings, cars, rent, groceries, travel, debt, emergency savings, and home repairs."
 >
   <style>
     .page-container {
+      width: 92%;
       max-width: 1200px;
       margin: 0 auto;
-      padding: 68px 24px 90px;
+      padding: 72px 0 94px;
     }
 
     .hero {
-      max-width: 940px;
-      margin-bottom: 42px;
+      max-width: 960px;
+      margin-bottom: 56px;
     }
 
     .eyebrow {
@@ -143,26 +321,51 @@ const categorySummaries = categories.map((category) => {
     }
 
     h1 {
-      font-size: clamp(2.7rem, 7vw, 5rem);
+      font-size: clamp(2.8rem, 7vw, 5rem);
       line-height: 0.98;
-      margin: 0 0 22px;
-      color: var(--text);
+      margin: 0 0 24px;
+      color: var(--primary);
       letter-spacing: -0.05em;
     }
 
-    .subtitle {
+    .subtitle,
+    .section p,
+    .wide-section p,
+    .verdict-bar p,
+    .note p {
       max-width: 880px;
-      font-size: 1.16rem;
+      font-size: 1.06rem;
       line-height: 1.85;
       color: var(--muted);
-      margin: 0;
+    }
+
+    .subtitle {
+      margin: 0 0 18px;
+    }
+
+    .inline-links {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-top: 28px;
+    }
+
+    .inline-links a {
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      padding: 10px 14px;
+      color: var(--primary);
+      text-decoration: none;
+      font-weight: 800;
+      font-size: 0.92rem;
+      background: white;
     }
 
     .trust-strip {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
       gap: 16px;
-      margin: 34px 0 58px;
+      margin: 34px 0 64px;
     }
 
     .trust-item {
@@ -185,43 +388,68 @@ const categorySummaries = categories.map((category) => {
       line-height: 1.55;
     }
 
+    .hub-section,
+    .section,
+    .wide-section {
+      margin-top: 78px;
+    }
+
     .hub-section {
       margin-bottom: 76px;
     }
 
-    .hub-heading {
+    .hub-heading,
+    .section-header {
       display: flex;
       align-items: flex-end;
       justify-content: space-between;
       gap: 24px;
-      margin-bottom: 22px;
+      margin-bottom: 26px;
     }
 
     .hub-heading h2,
-    .section-title {
+    .section-title,
+    .section h2,
+    .wide-section h2,
+    .verdict-bar h2,
+    .note h2 {
       font-size: clamp(1.75rem, 4vw, 2.25rem);
       line-height: 1.15;
-      margin: 0 0 10px;
+      margin: 0 0 14px;
       color: var(--text);
       letter-spacing: -0.03em;
     }
 
     .hub-heading p,
     .section-description {
-      max-width: 780px;
+      max-width: 800px;
       color: var(--muted);
       line-height: 1.75;
       margin: 0;
       font-size: 1.03rem;
     }
 
-    .hub-row {
+    .hub-row,
+    .grid,
+    .info-grid,
+    .link-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(255px, 1fr));
-      gap: 18px;
+      gap: 24px;
     }
 
-    .hub-card {
+    .hub-row {
+      grid-template-columns: repeat(auto-fit, minmax(255px, 1fr));
+    }
+
+    .grid,
+    .info-grid,
+    .link-grid {
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    }
+
+    .hub-card,
+    .info-card,
+    .link-card {
       display: block;
       background: white;
       border: 1px solid var(--border);
@@ -229,13 +457,18 @@ const categorySummaries = categories.map((category) => {
       padding: 24px;
       text-decoration: none;
       color: inherit;
+    }
+
+    .hub-card,
+    .link-card {
       transition:
         transform 0.15s ease,
         box-shadow 0.15s ease,
         border-color 0.15s ease;
     }
 
-    .hub-card:hover {
+    .hub-card:hover,
+    .link-card:hover {
       transform: translateY(-3px);
       border-color: rgba(15, 118, 110, 0.35);
       box-shadow: 0 16px 35px rgba(15, 23, 42, 0.08);
@@ -249,11 +482,14 @@ const categorySummaries = categories.map((category) => {
       margin-bottom: 8px;
     }
 
-    .hub-card strong {
+    .hub-card strong,
+    .info-card h3,
+    .link-card strong {
       display: block;
       color: var(--text);
       font-size: 1.08rem;
       line-height: 1.35;
+      margin: 0 0 10px;
     }
 
     .count-pill {
@@ -266,23 +502,14 @@ const categorySummaries = categories.map((category) => {
       padding: 5px 9px;
     }
 
-    .hub-card span {
+    .hub-card span,
+    .info-card p,
+    .link-card span {
       display: block;
       color: var(--muted);
       line-height: 1.65;
       font-size: 0.94rem;
-    }
-
-    .section {
-      margin-top: 78px;
-    }
-
-    .section-header {
-      display: flex;
-      align-items: flex-end;
-      justify-content: space-between;
-      gap: 24px;
-      margin-bottom: 26px;
+      margin: 0;
     }
 
     .hub-link {
@@ -296,50 +523,65 @@ const categorySummaries = categories.map((category) => {
       text-decoration: underline;
     }
 
-    .grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-      gap: 24px;
-    }
-
+    .verdict-bar,
     .note {
-      margin-top: 78px;
-      padding: 30px;
+      margin-top: 72px;
+      padding: 32px;
       border-radius: 24px;
       border: 1px solid var(--border);
       background: #f8fafc;
-      max-width: 960px;
+      max-width: 980px;
     }
 
-    .note h2 {
-      margin: 0 0 12px;
-      color: var(--text);
-      font-size: 1.45rem;
-      letter-spacing: -0.025em;
+    .verdict-label {
+      color: var(--primary);
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      font-size: 0.8rem;
+      font-weight: 800;
+      margin-bottom: 14px;
     }
 
-    .note p {
-      margin: 0;
+    .ordered-list,
+    .check-list,
+    .red-flag-list {
+      margin: 22px 0 0;
+      padding-left: 22px;
       color: var(--muted);
-      line-height: 1.78;
+      line-height: 1.8;
+      max-width: 900px;
+    }
+
+    .ordered-list li,
+    .check-list li,
+    .red-flag-list li {
+      margin-bottom: 12px;
+    }
+
+    .red-flag-list li::marker {
+      color: #b91c1c;
     }
 
     @media (max-width: 768px) {
       .page-container {
-        padding: 48px 18px 72px;
+        padding: 52px 0 76px;
       }
 
       h1 {
-        font-size: 2.8rem;
+        font-size: 2.75rem;
       }
 
-      .subtitle {
-        font-size: 1.04rem;
+      .subtitle,
+      .section p,
+      .wide-section p,
+      .verdict-bar p,
+      .note p {
+        font-size: 1rem;
       }
 
       .trust-strip {
         grid-template-columns: 1fr;
-        margin-bottom: 48px;
+        margin-bottom: 52px;
       }
 
       .hub-heading,
@@ -352,13 +594,18 @@ const categorySummaries = categories.map((category) => {
         margin-top: 16px;
       }
 
-      .section {
-        margin-top: 58px;
-      }
-
-      .grid {
+      .hub-row,
+      .grid,
+      .info-grid,
+      .link-grid {
         grid-template-columns: 1fr;
         gap: 18px;
+      }
+
+      .hub-section,
+      .section,
+      .wide-section {
+        margin-top: 58px;
       }
     }
   </style>
@@ -370,13 +617,23 @@ const categorySummaries = categories.map((category) => {
       <h1>Financial Calculators for Real Spending Decisions</h1>
 
       <p class="subtitle">
-        Browse verdict-driven calculators for baby costs, college, medical bills,
-        funerals, weddings, cars, rent, groceries, travel, debt, emergency
-        savings, home repairs, and other major financial decisions.
-        ShouldISpend evaluates more than the sticker price by considering income,
-        savings, debt pressure, emergency flexibility, recurring bills, and
-        long-term tradeoffs.
+        Browse decision-focused calculators for baby costs, college, medical
+        bills, funerals, weddings, cars, rent, groceries, travel, debt, emergency
+        savings, home repairs, and other major financial choices. ShouldISpend
+        evaluates more than the sticker price by considering take-home income,
+        savings, debt pressure, outside help, emergency flexibility, recurring
+        bills, and long-term tradeoffs.
       </p>
+
+      <p class="subtitle">
+        The goal is not to give a generic yes or no. The goal is to show whether
+        the decision creates low, moderate, or high financial pressure so you can
+        adjust the plan before committing.
+      </p>
+
+      <div class="inline-links">
+        {categories.map((category) => <a href={category.hub}>{category.title}</a>)}
+      </div>
     </section>
 
     <div class="trust-strip">
@@ -390,14 +647,14 @@ const categorySummaries = categories.map((category) => {
       <div class="trust-item">
         <strong>Pressure-based</strong>
         <span>
-          Calculators look at cash flow, savings cushion, debt load, and recovery time.
+          Calculators look at cash flow, savings cushion, debt load, outside help, and recovery time.
         </span>
       </div>
 
       <div class="trust-item">
         <strong>Educational only</strong>
         <span>
-          Results are estimates for decision support, not personalized financial advice.
+          Results are estimates for decision support, not personalized professional advice.
         </span>
       </div>
     </div>
@@ -408,9 +665,9 @@ const categorySummaries = categories.map((category) => {
           <h2>Browse Calculator Categories</h2>
 
           <p>
-            Start with the category closest to your decision. Each cluster is
-            built around financial pressure, practical tradeoffs, and decision
-            context.
+            Start with the category closest to your decision. Each cluster is built
+            around financial pressure, practical tradeoffs, internal linking, and
+            decision context instead of simple one-number answers.
           </p>
         </div>
       </div>
@@ -457,6 +714,122 @@ const categorySummaries = categories.map((category) => {
       </section>
     )}
 
+    <div class="verdict-bar">
+      <div class="verdict-label">How ShouldISpend Works</div>
+
+      <h2>
+        The calculators are built around pressure, not permission.
+      </h2>
+
+      <p>
+        A low-pressure result does not mean every purchase is wise. A high-pressure
+        result does not mean every expense should be avoided. Some expenses are
+        necessary, urgent, or covered by outside help. The result is meant to show
+        the tradeoff: what the cost does to cash flow, savings, debt, and recovery
+        room.
+      </p>
+    </div>
+
+    <section class="wide-section">
+      <h2>Methodology: What the Calculators Consider</h2>
+
+      <p>
+        ShouldISpend calculators use a consistent decision framework across
+        different categories. The details change by topic, but the core question is
+        the same: after this decision, is the household still financially stable?
+      </p>
+
+      <div class="info-grid">
+        {methodologySteps.map((step) => (
+          <div class="info-card">
+            <h3>{step.title}</h3>
+            <p>{step.text}</p>
+          </div>
+        ))}
+      </div>
+    </section>
+
+    <section class="wide-section">
+      <h2>What the Pressure Levels Mean</h2>
+
+      <p>
+        Pressure levels are decision signals. They are not moral judgments and they
+        are not professional advice.
+      </p>
+
+      <div class="info-grid">
+        {pressureSignals.map((signal) => (
+          <div class="info-card">
+            <h3>{signal.title}</h3>
+            <p>{signal.text}</p>
+          </div>
+        ))}
+      </div>
+    </section>
+
+    <section class="wide-section">
+      <h2>Reduce Financial Pressure Before You Spend</h2>
+
+      <p>
+        Many decisions become safer when the uncovered cost is lower, the timing is
+        better, or the household has a clearer recovery plan.
+      </p>
+
+      <div class="info-grid">
+        {reducePressureTips.map((tip) => (
+          <div class="info-card">
+            <h3>{tip.title}</h3>
+            <p>{tip.text}</p>
+          </div>
+        ))}
+      </div>
+    </section>
+
+    <section class="section">
+      <h2>Financial Red Flags</h2>
+
+      <p>
+        These signs suggest a calculator result deserves extra caution before you
+        commit to the expense.
+      </p>
+
+      <ul class="red-flag-list">
+        {redFlags.map((flag) => <li>{flag}</li>)}
+      </ul>
+    </section>
+
+    <section class="section">
+      <h2>Calculator Assumptions</h2>
+
+      <p>
+        These assumptions help keep the calculator library consistent across
+        categories.
+      </p>
+
+      <ul class="check-list">
+        {assumptions.map((assumption) => <li>{assumption}</li>)}
+      </ul>
+    </section>
+
+    <section class="wide-section">
+      <h2>Helpful Starting Guides</h2>
+
+      <p>
+        These pages support many of the calculators because most major spending
+        decisions eventually connect to savings, debt, housing, and monthly
+        affordability.
+      </p>
+
+      <div class="link-grid">
+        {relatedGuides.map((guide) => (
+          <a class="link-card" href={guide.href}>
+            <strong>{guide.title}</strong>
+            <span>{guide.text}</span>
+          </a>
+        ))}
+      </div>
+    </section>
+
     {categories.map((category) => {
       const categoryCalculators = calculators.filter(
         (calculator) => calculator.category === category.name
@@ -493,16 +866,18 @@ const categorySummaries = categories.map((category) => {
     })}
 
     <section class="note">
-      <h2>How to Use These Calculators</h2>
+      <h2>Use These Calculators as Pressure Tests</h2>
 
       <p>
-        ShouldISpend calculators are built as educational pressure tests. Use
-        them to compare spending decisions, understand tradeoffs, and identify
+        ShouldISpend calculators are built as educational decision-support tools.
+        Use them to compare spending decisions, understand tradeoffs, and identify
         financial stress points before committing to a purchase, payment, trip,
         event, recurring expense, or major life change. For decisions involving
-        taxes, legal issues, investments, loans, insurance, medical care, or
-        major household changes, consider speaking with a qualified professional.
+        taxes, legal issues, investments, loans, insurance, medical care, or major
+        household changes, consider speaking with a qualified professional.
       </p>
     </section>
+
+    <FAQSection title="ShouldISpend Calculator FAQ" faqs={calculatorFaqs} />
   </main>
 </Layout>

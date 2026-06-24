@@ -8,6 +8,39 @@ const babyCalculators = calculators.filter(
   (calculator) => calculator.category === "Baby & Parenting"
 );
 
+const babyFaqs = [
+  {
+    question: "How much does a baby cost in the first year?",
+    answer:
+      "A baby's first-year cost depends on childcare, medical bills, parental leave, diapers, formula, insurance, baby gear, housing changes, and family support. For many households, childcare and lost income matter more than cribs, strollers, or nursery decor.",
+  },
+  {
+    question: "Can we afford to have a baby?",
+    answer:
+      "A household is usually better prepared when recurring baby costs fit within take-home income, emergency savings remain intact, debt is manageable, childcare is researched early, and parental leave costs are planned before the due date.",
+  },
+  {
+    question: "Should I use savings during maternity or parental leave?",
+    answer:
+      "Using savings can make sense when the income gap is temporary and enough emergency cushion remains afterward. It becomes riskier when savings are already thin, debt is high, or the plan depends on credit cards after leave ends.",
+  },
+  {
+    question: "Is childcare usually the biggest baby expense?",
+    answer:
+      "Often, yes. Full-time daycare, nanny care, preschool, backup care, deposits, and waitlist fees can become the largest recurring baby-related cost, especially when both parents work.",
+  },
+  {
+    question: "How much emergency savings should we have before having a baby?",
+    answer:
+      "There is no single number, but many families benefit from enough savings to cover medical surprises, unpaid leave, childcare deposits, and several months of essential expenses. The less stable the income, the larger the cushion should be.",
+  },
+  {
+    question: "Should we buy all baby gear new?",
+    answer:
+      "Not usually. Safety-critical items like car seats and cribs deserve extra caution, but many clothes, toys, furniture, and accessories can be borrowed, gifted, bought used, or skipped entirely.",
+  },
+];
+
 const featuredBabyLinks = [
   {
     href: "/baby-cost-calculator",
@@ -19,13 +52,13 @@ const featuredBabyLinks = [
     href: "/can-we-afford-to-have-a-baby",
     title: "Can We Afford to Have a Baby?",
     text:
-      "Evaluate whether your income, childcare, medical costs, savings, debt, leave plan, and emergency cushion support a growing family.",
+      "Evaluate whether income, childcare, medical costs, savings, debt, leave plans, and emergency cushion support a growing family.",
   },
   {
     href: "/should-i-spend-20000-on-a-babys-first-year",
     title: "$20,000 Baby First-Year Calculator",
     text:
-      "Pressure-test first-year baby expenses including childcare, diapers, formula, medical bills, gear, savings, debt, and monthly cash flow.",
+      "Pressure-test a large first-year baby budget against childcare, diapers, formula, medical bills, gear, savings, debt, and monthly cash flow.",
   },
   {
     href: "/should-i-spend-this-much-on-childcare",
@@ -35,7 +68,126 @@ const featuredBabyLinks = [
   },
 ];
 
-const planningLinks = [
+const babyCostCategories = [
+  {
+    title: "Childcare",
+    text:
+      "Daycare, nanny care, preschool, backup care, waitlist fees, deposits, registration charges, and schedule gaps can become the largest recurring baby cost.",
+  },
+  {
+    title: "Medical and Insurance Costs",
+    text:
+      "Prenatal care, delivery bills, deductibles, prescriptions, pediatric visits, insurance changes, and out-of-pocket surprises can reshape the first-year budget.",
+  },
+  {
+    title: "Parental Leave",
+    text:
+      "Unpaid leave, partially paid leave, reduced hours, job changes, and delayed return-to-work plans can affect affordability as much as direct baby expenses.",
+  },
+  {
+    title: "Recurring Supplies",
+    text:
+      "Diapers, wipes, formula, feeding supplies, medicine, laundry, toiletries, and replacement clothing are smaller purchases that repeat every month.",
+  },
+  {
+    title: "Baby Gear",
+    text:
+      "Car seats, cribs, strollers, monitors, carriers, bassinets, bottles, high chairs, and nursery furniture can add up quickly before the baby arrives.",
+  },
+  {
+    title: "Housing and Transportation",
+    text:
+      "A larger apartment, safer car, extra bedroom, commute change, or family-friendly location can make the real cost of a baby much higher than the baby aisle suggests.",
+  },
+];
+
+const pressureFactors = [
+  {
+    title: "Take-Home Income",
+    text:
+      "Baby affordability should be judged against income actually available to the household, not gross salary before taxes and deductions.",
+  },
+  {
+    title: "Emergency Savings",
+    text:
+      "Savings matter more after a baby because surprise medical bills, childcare disruptions, and income gaps become harder to absorb.",
+  },
+  {
+    title: "Childcare Availability",
+    text:
+      "A family may be financially ready in theory but still face pressure if daycare waitlists, deposits, or nanny costs are higher than expected.",
+  },
+  {
+    title: "Debt Load",
+    text:
+      "Credit cards, car payments, student loans, medical debt, and personal loans reduce the room available for childcare and recurring baby costs.",
+  },
+  {
+    title: "Leave Plan",
+    text:
+      "The budget should account for how long each parent will be away from work, how much income will continue, and whether savings must cover the gap.",
+  },
+  {
+    title: "Family Help",
+    text:
+      "Grandparent childcare, gifts, hand-me-downs, employer benefits, paid leave, insurance support, and outside help can reduce the true uncovered cost.",
+  },
+];
+
+const redFlags = [
+  "Childcare would require credit card debt every month.",
+  "The plan depends on unpaid leave but savings are already thin.",
+  "Medical deductibles or delivery costs have not been estimated.",
+  "Baby gear spending is draining cash needed for leave, childcare, or medical bills.",
+  "The household already struggles with rent, groceries, debt, or emergency savings.",
+  "One parent may need to leave work, but the lost income has not been modeled.",
+  "The plan assumes family help that has not been confirmed.",
+  "The budget only covers the birth and ignores the first 12 months afterward.",
+];
+
+const reduceCostTips = [
+  {
+    title: "Price childcare early",
+    text:
+      "Childcare is often the budget-breaker. Research daycare, nanny care, deposits, waitlists, and backup options before focusing too much on baby gear.",
+  },
+  {
+    title: "Separate safety from preference",
+    text:
+      "Car seats, safe sleep, medical needs, and feeding essentials deserve priority. Matching nursery decor and premium accessories can wait.",
+  },
+  {
+    title: "Use hand-me-downs carefully",
+    text:
+      "Clothes, toys, books, and some furniture can often be reused. Be more cautious with car seats, cribs, mattresses, and safety-regulated items.",
+  },
+  {
+    title: "Plan parental leave like a bill",
+    text:
+      "Treat unpaid or partially paid leave as a known expense. Estimate the income gap and decide how much savings must cover it.",
+  },
+  {
+    title: "Build a recurring baby budget",
+    text:
+      "The first shopping trip is not the real cost. Model diapers, formula, childcare, insurance, prescriptions, and extra groceries as monthly expenses.",
+  },
+  {
+    title: "Protect emergency savings",
+    text:
+      "A beautiful setup is not worth leaving the household unable to handle medical surprises, car repairs, or a sudden childcare change.",
+  },
+];
+
+const assumptions = [
+  "Monthly income means take-home pay available to support the household, not gross income.",
+  "Childcare and parental leave are treated as major affordability factors, not side details.",
+  "Outside help, paid leave, employer benefits, insurance coverage, and family support should reduce the true uncovered cost.",
+  "Necessary safety and medical costs deserve more priority than cosmetic or convenience purchases.",
+  "A baby expense is less risky when emergency savings remain strong afterward.",
+  "The safest plan covers both one-time setup costs and the recurring monthly costs that continue after the baby arrives.",
+];
+
+const relatedGuides = [
   {
     href: "/should-i-use-savings-for-maternity-leave",
     title: "Should I Use Savings for Maternity Leave?",
@@ -46,283 +198,253 @@ const planningLinks = [
     href: "/should-i-spend-5000-on-baby-gear",
     title: "Should I Spend $5,000 on Baby Gear?",
     text:
-      "Evaluate cribs, strollers, car seats, nursery furniture, monitors, and baby setup costs against your overall budget.",
+      "Evaluate cribs, strollers, car seats, nursery furniture, monitors, and baby setup costs against your full household budget.",
   },
   {
     href: "/how-much-emergency-savings-should-i-have",
-    title: "Emergency Savings Guide",
+    title: "Emergency Savings Calculator",
     text:
       "Understand how much cushion may help protect your family before major baby-related expenses arrive.",
   },
   {
-    href: "/what-counts-as-debt",
-    title: "What Counts as Debt?",
+    href: "/how-much-debt-is-too-much",
+    title: "How Much Debt Is Too Much?",
     text:
-      "Learn which obligations should be included when evaluating childcare, baby costs, and parental leave decisions.",
+      "See whether existing debt payments leave enough room for childcare, leave, medical costs, and recurring baby expenses.",
+  },
+  {
+    href: "/grocery-calculators",
+    title: "Grocery Budget Calculators",
+    text:
+      "Review food and household spending pressure as family size and recurring costs change.",
+  },
+  {
+    href: "/medical-calculators",
+    title: "Medical Cost Calculators",
+    text:
+      "Compare baby planning with medical bills, deductibles, prescriptions, and healthcare pressure.",
   },
 ];
 
-const babyCostFactors = [
-  {
-    title: "Childcare",
-    text:
-      "Daycare, nanny care, waitlists, deposits, backup care, and schedule changes are often the largest ongoing baby expense.",
-  },
-  {
-    title: "Medical Costs",
-    text:
-      "Prenatal care, delivery bills, deductibles, prescriptions, pediatric visits, and insurance exposure can add significant pressure.",
-  },
-  {
-    title: "Parental Leave",
-    text:
-      "Reduced income during maternity or paternity leave can affect affordability as much as direct baby expenses.",
-  },
-  {
-    title: "Baby Gear and Supplies",
-    text:
-      "Car seats, cribs, strollers, diapers, wipes, formula, clothing, feeding supplies, and safety equipment create both one-time and recurring costs.",
-  },
-];
-
-const babyFaqs = [
-  {
-    question: "How much does a baby cost in the first year?",
-    answer:
-      "A baby's first-year cost depends on childcare, medical bills, parental leave, diapers, formula, insurance, gear, housing changes, and family support. For some households, the largest costs are childcare and income loss rather than baby gear.",
-  },
-  {
-    question: "Can we afford to have a baby?",
-    answer:
-      "A household may be better prepared for a baby when monthly income can absorb childcare and recurring baby costs, emergency savings remain intact, debt is manageable, and medical or parental leave costs are planned before the due date.",
-  },
-  {
-    question: "Should I use savings during maternity leave?",
-    answer:
-      "Using savings during maternity leave can make sense if the income gap is temporary and enough emergency cushion remains afterward. It becomes riskier when savings are already thin or the plan depends on credit cards after leave ends.",
-  },
-  {
-    question: "Is childcare usually the biggest baby expense?",
-    answer:
-      "Often, yes. Childcare can become the largest recurring baby-related cost, especially for households using full-time daycare, nanny care, or backup care while both parents work.",
-  },
-  {
-    question: "How much emergency savings should I have before having a baby?",
-    answer:
-      "There is no single number, but many families benefit from having enough savings to cover medical surprises, unpaid leave, childcare deposits, and several months of essential expenses before adding major baby-related costs.",
-  },
+const internalLinks = [
+  { href: "/baby-cost-calculator", label: "baby cost calculator" },
+  { href: "/can-we-afford-to-have-a-baby", label: "can we afford a baby" },
+  { href: "/should-i-spend-this-much-on-childcare", label: "childcare cost calculator" },
+  { href: "/should-i-use-savings-for-maternity-leave", label: "maternity leave savings" },
+  { href: "/should-i-spend-5000-on-baby-gear", label: "baby gear calculator" },
+  { href: "/how-much-emergency-savings-should-i-have", label: "emergency savings" },
+  { href: "/grocery-calculators", label: "grocery calculators" },
+  { href: "/calculators", label: "all calculators" },
 ];
 ---
 
 <Layout
-  title="Baby & Parenting Calculators | ShouldISpend"
-  description="Browse baby and parenting calculators for first-year baby costs, childcare, maternity leave, baby gear, savings, and family budget decisions."
+  title="Baby & Parenting Calculators | Baby Costs, Childcare and Family Budget"
+  description="Use baby and parenting calculators to evaluate first-year baby costs, childcare, maternity leave, baby gear, medical bills, savings, and family affordability."
 >
   <style>
     .container {
+      width: 92%;
       max-width: 1120px;
       margin: 0 auto;
-      padding: 76px 24px 90px;
+      padding: 72px 0;
     }
 
     .hero {
       max-width: 920px;
-      margin-bottom: 42px;
+      margin-bottom: 56px;
     }
 
     .eyebrow {
-      color: var(--accent);
+      color: var(--primary);
       text-transform: uppercase;
       letter-spacing: 2px;
-      font-size: 0.78rem;
+      font-size: 0.8rem;
       font-weight: 800;
       margin-bottom: 16px;
     }
 
     h1 {
-      font-size: clamp(2.8rem, 7vw, 5rem);
-      line-height: 0.98;
-      margin: 0 0 24px;
-      color: var(--text);
-      letter-spacing: -0.05em;
-      max-width: 950px;
+      font-size: clamp(2.8rem, 6vw, 5rem);
+      line-height: 1;
+      margin-bottom: 24px;
+      color: var(--primary);
     }
 
-    .intro {
-      max-width: 850px;
-      color: var(--muted);
-      font-size: 1.12rem;
+    .hero p,
+    .section p,
+    .wide-section p,
+    .verdict-bar p,
+    .callout p {
+      font-size: 1.05rem;
       line-height: 1.85;
-      margin: 0;
-    }
-
-    .trust-strip {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 16px;
-      margin: 36px 0 64px;
-    }
-
-    .trust-item {
-      background: #f8fafc;
-      border: 1px solid var(--border);
-      border-radius: 18px;
-      padding: 18px 20px;
-    }
-
-    .trust-item strong {
-      display: block;
-      color: var(--text);
-      margin-bottom: 6px;
-      font-size: 0.98rem;
-    }
-
-    .trust-item span {
       color: var(--muted);
-      line-height: 1.55;
-      font-size: 0.92rem;
+    }
+
+    .hero p {
+      max-width: 860px;
     }
 
     .grid,
-    .link-grid,
-    .info-grid {
+    .info-grid,
+    .link-grid {
       display: grid;
       gap: 24px;
     }
 
     .grid {
-      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      margin-top: 36px;
+    }
+
+    .info-grid,
+    .link-grid {
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
       margin-top: 28px;
     }
 
-    .link-grid,
-    .info-grid {
-      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-      margin-top: 28px;
+    .section {
+      margin-top: 76px;
+      max-width: 920px;
     }
 
-    .content-section {
+    .wide-section {
       margin-top: 76px;
     }
 
-    .content-section.narrow {
-      max-width: 860px;
-    }
-
-    .section-kicker {
-      color: var(--accent);
-      font-weight: 800;
-      text-transform: uppercase;
-      letter-spacing: 0.12em;
-      font-size: 0.76rem;
-      margin-bottom: 12px;
-    }
-
-    .content-section h2 {
-      font-size: clamp(1.85rem, 4vw, 2.35rem);
-      margin: 0 0 18px;
-      line-height: 1.15;
+    .section h2,
+    .wide-section h2,
+    .verdict-bar h2,
+    .callout h2 {
+      font-size: 2rem;
+      margin-bottom: 22px;
+      line-height: 1.2;
       color: var(--text);
-      letter-spacing: -0.035em;
     }
 
-    .content-section p,
-    .content-section li {
-      color: var(--muted);
-      line-height: 1.82;
-      margin-bottom: 18px;
-      font-size: 1.04rem;
+    .verdict-bar,
+    .callout {
+      margin-top: 56px;
+      background: #f8fafc;
+      border: 1px solid #dbe4ee;
+      border-radius: 24px;
+      padding: 32px;
     }
 
-    .link-card,
-    .info-card {
+    .verdict-label {
+      color: var(--primary);
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      font-size: 0.8rem;
+      font-weight: 800;
+      margin-bottom: 14px;
+    }
+
+    .info-card,
+    .link-card {
       display: block;
-      background: white;
       border: 1px solid var(--border);
+      background: white;
       border-radius: 20px;
-      padding: 24px;
+      padding: 22px;
       text-decoration: none;
       color: inherit;
     }
 
     .link-card {
-      transition:
-        transform 0.15s ease,
-        box-shadow 0.15s ease,
-        border-color 0.15s ease;
+      transition: transform 0.15s ease;
     }
 
     .link-card:hover {
-      transform: translateY(-3px);
-      border-color: rgba(15, 118, 110, 0.35);
-      box-shadow: 0 16px 35px rgba(15, 23, 42, 0.08);
+      transform: translateY(-2px);
     }
 
-    .link-card strong,
-    .info-card h3 {
+    .info-card h3,
+    .link-card strong {
       display: block;
+      margin: 0 0 10px;
       color: var(--text);
-      margin-bottom: 10px;
-      font-size: 1.05rem;
+      line-height: 1.3;
+      font-size: 1.08rem;
     }
 
-    .link-card span,
-    .info-card p {
+    .info-card p,
+    .link-card span {
       color: var(--muted);
       line-height: 1.7;
       font-size: 0.96rem;
       margin: 0;
     }
 
-    .callout {
-      margin-top: 72px;
-      padding: 30px;
-      border-radius: 24px;
-      border: 1px solid var(--border);
-      background: #f8fafc;
-      max-width: 900px;
-    }
-
-    .callout h2 {
-      margin: 0 0 14px;
-      color: var(--text);
-      font-size: 1.55rem;
-      letter-spacing: -0.02em;
-    }
-
-    .callout p {
+    .ordered-list,
+    .check-list,
+    .red-flag-list {
+      margin: 22px 0 0;
+      padding-left: 22px;
       color: var(--muted);
-      line-height: 1.78;
-      margin: 0;
+      line-height: 1.8;
     }
 
-    @media (max-width: 768px) {
+    .ordered-list li,
+    .check-list li,
+    .red-flag-list li {
+      margin-bottom: 12px;
+    }
+
+    .red-flag-list li::marker {
+      color: #b91c1c;
+    }
+
+    .inline-links {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-top: 26px;
+    }
+
+    .inline-links a {
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      padding: 10px 14px;
+      color: var(--primary);
+      text-decoration: none;
+      font-weight: 700;
+      font-size: 0.92rem;
+      background: white;
+    }
+
+    .note {
+      margin-top: 24px;
+      padding: 18px 20px;
+      border-left: 4px solid var(--primary);
+      background: #f8fafc;
+      color: var(--muted);
+      line-height: 1.75;
+      border-radius: 14px;
+    }
+
+    @media (max-width: 720px) {
       .container {
-        padding: 54px 18px 76px;
+        padding: 56px 0;
       }
 
       h1 {
-        font-size: 2.75rem;
+        font-size: 2.85rem;
       }
 
-      .intro {
-        font-size: 1.04rem;
+      .hero p,
+      .section p,
+      .wide-section p,
+      .verdict-bar p,
+      .callout p {
+        font-size: 1rem;
       }
 
-      .trust-strip {
-        grid-template-columns: 1fr;
-        margin-bottom: 50px;
-      }
-
-      .grid,
-      .link-grid,
-      .info-grid {
-        grid-template-columns: 1fr;
-        gap: 18px;
-      }
-
-      .content-section {
-        margin-top: 58px;
+      .section h2,
+      .wide-section h2,
+      .verdict-bar h2,
+      .callout h2 {
+        font-size: 1.65rem;
       }
     }
   </style>
@@ -331,74 +453,173 @@ const babyFaqs = [
     <section class="hero">
       <div class="eyebrow">Baby & Parenting Calculators</div>
 
-      <h1>Baby Cost Calculators for Real-Life Family Decisions</h1>
-
-      <p class="intro">
-        Having a baby affects far more than diapers and strollers. Childcare,
-        medical bills, parental leave, housing decisions, emergency savings,
-        insurance, gear, and monthly cash flow all play a role. These calculators
-        help pressure-test major baby and parenting expenses before they create
-        financial stress.
-      </p>
-    </section>
-
-    <div class="trust-strip">
-      <div class="trust-item">
-        <strong>Beyond baby gear</strong>
-        <span>
-          The biggest baby expenses are often childcare, medical bills, and lost income rather than strollers and cribs.
-        </span>
-      </div>
-
-      <div class="trust-item">
-        <strong>Savings-aware planning</strong>
-        <span>
-          Tools evaluate emergency savings, debt pressure, and household flexibility before major family spending decisions.
-        </span>
-      </div>
-
-      <div class="trust-item">
-        <strong>Family-focused decisions</strong>
-        <span>
-          Each calculator looks at how baby-related costs affect the broader household budget.
-        </span>
-      </div>
-    </div>
-
-    <section class="content-section">
-      <div class="section-kicker">Start Here</div>
-
-      <h2>Baby and Parenting Affordability Calculators</h2>
+      <h1>Baby and Parenting Calculators for Real Family Budget Decisions</h1>
 
       <p>
-        Use these tools to compare first-year baby costs, childcare pressure,
-        maternity leave savings decisions, baby gear budgets, and family planning
-        against your income, emergency fund, existing debt, monthly flexibility,
-        and household cash flow.
+        Having a baby changes far more than the shopping list. Childcare, medical
+        bills, parental leave, insurance, diapers, formula, emergency savings,
+        debt, housing, and monthly cash flow all matter. These calculators help
+        pressure-test baby and parenting expenses before they create long-term
+        financial stress.
       </p>
 
-      <div class="grid">
-        {babyCalculators.map((calculator) => (
-          <CalculatorCard
-            category={calculator.category}
-            title={calculator.title}
-            description={calculator.description}
-            href={calculator.href}
-          />
+      <p>
+        The goal is not to decide whether a family “should” have a baby. The goal
+        is to understand the money pressure clearly: what is one-time, what repeats
+        every month, what can be reduced, and what must be protected.
+      </p>
+
+      <div class="inline-links">
+        {internalLinks.map((link) => <a href={link.href}>{link.label}</a>)}
+      </div>
+    </section>
+
+    <div class="grid">
+      {babyCalculators.map((calculator) => (
+        <CalculatorCard
+          category={calculator.category}
+          title={calculator.title}
+          description={calculator.description}
+          href={calculator.href}
+        />
+      ))}
+    </div>
+
+    <div class="verdict-bar">
+      <div class="verdict-label">Family Budget Pressure</div>
+
+      <h2>
+        Baby costs become risky when the first-year plan looks manageable but the
+        monthly household budget cannot recover.
+      </h2>
+
+      <p>
+        Many families focus on cribs, strollers, and nursery setup because those
+        costs are visible. But the deeper pressure usually comes from childcare,
+        unpaid leave, medical bills, insurance changes, and recurring expenses
+        that continue after the baby arrives. A good plan protects both the baby
+        and the household’s financial stability.
+      </p>
+    </div>
+
+    <section class="section">
+      <h2>What Baby Affordability Really Means</h2>
+
+      <p>
+        Baby affordability is not just whether you can buy the gear before the due
+        date. It is whether the household can absorb recurring baby costs while
+        still paying rent or mortgage, groceries, transportation, debt, medical
+        bills, insurance, and emergency expenses.
+      </p>
+
+      <p>
+        A family with strong savings, paid leave, affordable childcare, and low
+        debt may have room for a larger first-year budget. A family with unstable
+        income, high debt, thin savings, and expensive childcare may feel pressure
+        even with modest baby spending.
+      </p>
+
+      <p>
+        ShouldISpend baby calculators separate necessary costs from optional
+        upgrades. Safe sleep, car seats, medical care, childcare, and feeding needs
+        deserve different treatment than premium nursery furniture, extra gadgets,
+        or convenience purchases.
+      </p>
+
+      <div class="note">
+        Monthly income means take-home pay available to support this household,
+        not gross income before taxes and deductions.
+      </div>
+    </section>
+
+    <section class="wide-section">
+      <h2>Key Cost Categories</h2>
+
+      <p>
+        Baby budgets become clearer when the costs are separated into one-time
+        setup expenses, recurring monthly expenses, income gaps, and medical
+        exposure.
+      </p>
+
+      <div class="info-grid">
+        {babyCostCategories.map((category) => (
+          <div class="info-card">
+            <h3>{category.title}</h3>
+            <p>{category.text}</p>
+          </div>
         ))}
       </div>
     </section>
 
-    <section class="content-section">
-      <div class="section-kicker">Popular Tools</div>
-
-      <h2>Compare Common Baby Spending Decisions</h2>
+    <section class="wide-section">
+      <h2>How These Baby Calculators Think</h2>
 
       <p>
-        A $20,000 first year, a high childcare bill, a maternity leave income gap,
-        and a full baby gear setup can create very different levels of pressure.
-        The safest plan accounts for both one-time costs and the recurring monthly
-        changes that remain after the baby arrives.
+        A baby calculator should not treat every expense the same. Some costs are
+        safety-related or unavoidable. Others are flexible, optional, or
+        preference-based.
+      </p>
+
+      <div class="info-grid">
+        {pressureFactors.map((factor) => (
+          <div class="info-card">
+            <h3>{factor.title}</h3>
+            <p>{factor.text}</p>
+          </div>
+        ))}
+      </div>
+    </section>
+
+    <section class="section">
+      <h2>Methodology: How We Judge Baby Budget Pressure</h2>
+
+      <p>
+        ShouldISpend baby and parenting calculators evaluate the relationship
+        between baby costs, household income, emergency savings, debt, childcare,
+        medical exposure, and parental leave. A cost is less risky when it is
+        covered by savings, family help, insurance, employer benefits, or stable
+        monthly cash flow.
+      </p>
+
+      <ol class="ordered-list">
+        <li>
+          <strong>Start with the true uncovered cost.</strong> Insurance, employer
+          benefits, paid leave, gifts, hand-me-downs, family help, or outside help
+          should reduce what the household actually has to pay.
+        </li>
+        <li>
+          <strong>Separate one-time costs from recurring costs.</strong> A stroller
+          is different from childcare. Gear may be paid once; daycare can reshape
+          the monthly budget for years.
+        </li>
+        <li>
+          <strong>Measure emergency savings after the baby costs.</strong> A plan
+          is safer when savings remain available for medical surprises, car
+          repairs, childcare disruptions, or job changes.
+        </li>
+        <li>
+          <strong>Account for parental leave.</strong> Lost or reduced income
+          during leave can create more pressure than baby supplies.
+        </li>
+        <li>
+          <strong>Check debt and monthly obligations.</strong> Existing debt
+          reduces flexibility when childcare, diapers, formula, and medical costs
+          begin.
+        </li>
+        <li>
+          <strong>Protect necessary expenses first.</strong> Safety, medical care,
+          feeding, childcare, and stable housing come before optional upgrades.
+        </li>
+      </ol>
+    </section>
+
+    <section class="wide-section">
+      <h2>Popular Baby Planning Calculators</h2>
+
+      <p>
+        These tools cover the biggest family-budget decisions: the first-year baby
+        total, whether a baby fits the household budget, childcare affordability,
+        and whether a large baby-year estimate creates too much pressure.
       </p>
 
       <div class="link-grid">
@@ -411,78 +632,104 @@ const babyFaqs = [
       </div>
     </section>
 
-    <section class="content-section narrow">
-      <div class="section-kicker">Decision Philosophy</div>
-
-      <h2>How Much Should You Spend Before and After Having a Baby?</h2>
+    <section class="wide-section">
+      <h2>Reduce Cost Tips</h2>
 
       <p>
-        There is no universal baby budget. The right amount depends on income,
-        insurance, childcare availability, parental leave, family help, medical
-        exposure, existing debt, emergency savings, and whether the new monthly
-        costs still leave enough breathing room.
+        Reducing baby costs should not mean cutting safety or medical needs. The
+        best savings usually come from planning childcare early, avoiding duplicate
+        gear, using hand-me-downs carefully, and protecting cash for leave and
+        medical bills.
       </p>
-
-      <p>
-        A baby expense that is manageable for one household may be stressful for
-        another. A safer plan usually protects emergency savings, avoids
-        high-interest debt, confirms childcare costs early, and separates
-        necessary safety purchases from optional upgrades.
-      </p>
-
-      <p>
-        The healthiest question is not “Can we buy everything before the baby
-        arrives?” It is “Will our household still feel financially stable after
-        medical bills, leave, childcare, and recurring baby costs begin?”
-      </p>
-    </section>
-
-    <section class="content-section">
-      <div class="section-kicker">Hidden Costs</div>
-
-      <h2>Baby Expenses That Quietly Change the Real Price</h2>
 
       <div class="info-grid">
-        {babyCostFactors.map((item) => (
+        {reduceCostTips.map((tip) => (
           <div class="info-card">
-            <h3>{item.title}</h3>
-            <p>{item.text}</p>
+            <h3>{tip.title}</h3>
+            <p>{tip.text}</p>
           </div>
         ))}
       </div>
     </section>
 
-    <section class="content-section">
-      <div class="section-kicker">Planning Guides</div>
-
-      <h2>Baby Planning and Financial Pressure Guides</h2>
+    <section class="section">
+      <h2>Financial Red Flags</h2>
 
       <p>
-        These guides connect baby-related spending with the bigger household
-        picture: savings, debt, emergency funds, monthly obligations, childcare,
-        medical exposure, and the tradeoff between preparing well and overextending.
+        These warning signs do not mean a family cannot move forward. They mean
+        the plan needs more detail before baby costs begin.
+      </p>
+
+      <ul class="red-flag-list">
+        {redFlags.map((flag) => <li>{flag}</li>)}
+      </ul>
+    </section>
+
+    <section class="section">
+      <h2>When Spending More on Baby Costs Makes Sense</h2>
+
+      <p>
+        Spending more can be reasonable when it protects safety, secures reliable
+        childcare, covers medical needs, reduces stress during leave, or avoids
+        repeated emergency purchases later. A higher childcare cost may be worth it
+        if it allows stable work and dependable care.
+      </p>
+
+      <p>
+        It can also make sense to spend more on items that are used constantly or
+        protect the baby directly. But spending more is harder to justify when the
+        money goes toward duplicate gear, aesthetic upgrades, or purchases made
+        because of comparison pressure.
+      </p>
+
+      <p>
+        The strongest baby plan balances preparation with flexibility. It buys what
+        matters, skips what can wait, and leaves enough cash to handle the months
+        after the baby arrives.
+      </p>
+    </section>
+
+    <section class="section">
+      <h2>Calculator Assumptions</h2>
+
+      <p>
+        These assumptions help keep baby and parenting results realistic across
+        different households.
+      </p>
+
+      <ul class="check-list">
+        {assumptions.map((assumption) => <li>{assumption}</li>)}
+      </ul>
+    </section>
+
+    <section class="wide-section">
+      <h2>Related Calculators and Guides</h2>
+
+      <p>
+        Baby planning connects to emergency savings, debt, groceries, medical
+        bills, housing, and the household’s total monthly pressure.
       </p>
 
       <div class="link-grid">
-        {planningLinks.map((link) => (
-          <a class="link-card" href={link.href}>
-            <strong>{link.title}</strong>
-            <span>{link.text}</span>
+        {relatedGuides.map((guide) => (
+          <a class="link-card" href={guide.href}>
+            <strong>{guide.title}</strong>
+            <span>{guide.text}</span>
           </a>
         ))}
       </div>
     </section>
 
-    <section class="callout">
-      <h2>The Most Expensive Part of Having a Baby Is Usually Not the Baby Gear</h2>
+    <div class="callout">
+      <h2>The most expensive baby costs are often the least exciting ones.</h2>
 
       <p>
-        Many families focus on cribs, strollers, and nursery furniture. In reality,
-        childcare costs, medical bills, parental leave income loss, and recurring
-        monthly expenses often have a much larger impact on long-term financial
-        pressure.
+        Nursery purchases are visible, but childcare, unpaid leave, medical bills,
+        insurance changes, and recurring supplies usually decide whether the budget
+        feels stable. Use the calculators to pressure-test the whole first year,
+        not just the registry.
       </p>
-    </section>
+    </div>
 
     <FAQSection title="Baby Cost FAQ" faqs={babyFaqs} />
   </main>

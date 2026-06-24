@@ -2,94 +2,260 @@
 import Layout from "../layouts/Layout.astro";
 import CalculatorCard from "../components/CalculatorCard.astro";
 import FAQSection from "../components/FAQSection.astro";
-import { calculators } from "../data/calculators";
+import { calculators } from "../data/calculators.js";
 
-const groceryCalculators = calculators.filter((calculator) =>
-  ["Groceries", "Food"].includes(calculator.category)
+const groceryCalculators = calculators.filter(
+  (calculator) => calculator.category === "Groceries"
 );
 
 const groceryFaqs = [
   {
     question: "How much should I spend on groceries each month?",
     answer:
-      "A realistic grocery budget depends on household size, take-home income, local food prices, debt, savings, and how much room is left after fixed bills.",
+      "A healthy grocery budget depends on take-home income, household size, food prices in your area, dietary needs, debt, savings, and how often you eat out. The safest budget is one that covers realistic meals without weakening rent, debt payments, emergency savings, or medical needs.",
   },
   {
-    question: "Is a high grocery bill always bad?",
+    question: "Is a high grocery bill always a problem?",
     answer:
-      "No. Groceries are essential, and a higher bill may be reasonable for a larger household, special diet, or expensive area. The concern is whether food costs crowd out savings, bills, or debt payoff.",
+      "No. A high grocery bill may be reasonable for a large household, special diets, food allergies, high-protein meals, or a family trying to avoid restaurants. It becomes a problem when it creates debt, drains savings, or leaves no room for other essentials.",
   },
   {
-    question: "Should dining out count as grocery spending?",
+    question: "Should groceries be judged differently from restaurants?",
     answer:
-      "Usually no. Groceries and dining out are both food costs, but they behave differently in a budget. Dining out is usually more flexible and should be reviewed separately.",
+      "Yes. Groceries are usually more essential than restaurants, delivery, and convenience food. A household should usually cut restaurant spending before cutting basic groceries, especially when children, health needs, or dietary restrictions are involved.",
   },
   {
-    question: "What makes a grocery budget risky?",
+    question: "Why does my grocery budget feel impossible to control?",
     answer:
-      "A grocery budget becomes risky when it leaves little room for rent, utilities, transportation, debt payments, emergency savings, or unexpected expenses.",
+      "Grocery pressure often comes from a mix of inflation, household size, convenience purchases, food waste, special diets, snacks, drinks, and weak meal planning. The problem is rarely one item. It is usually the pattern across the month.",
   },
+  {
+    question: "Should I use emergency savings for groceries?",
+    answer:
+      "Emergency savings can be appropriate if groceries are needed during a short-term income disruption. But if savings are being used for groceries every month, that usually signals a budget, income, debt, or housing-cost problem that needs a bigger fix.",
+  },
+  {
+    question: "What should I cut first if groceries are too expensive?",
+    answer:
+      "Start with food waste, delivery, convenience meals, premium snacks, drinks, duplicate ingredients, and unplanned trips. Do not start by cutting basic nutrition, children’s food, medical diets, or essential household staples.",
+  },
+];
+
+const groceryCategories = [
+  {
+    title: "Core Meal Staples",
+    text:
+      "Proteins, grains, produce, dairy alternatives, eggs, beans, pasta, rice, frozen vegetables, and basic meal ingredients usually deserve more protection than snacks or convenience items.",
+  },
+  {
+    title: "Convenience Foods",
+    text:
+      "Pre-cut produce, frozen meals, ready-made dinners, deli meals, and packaged lunches save time but can quietly raise the monthly grocery total.",
+  },
+  {
+    title: "Snacks and Drinks",
+    text:
+      "Chips, bars, soda, energy drinks, coffee drinks, desserts, and specialty beverages often create budget pressure because they are easy to buy repeatedly.",
+  },
+  {
+    title: "Special Diet Costs",
+    text:
+      "Gluten-free, dairy-free, high-protein, allergy-safe, medical, or child-specific foods may cost more and should not be judged like optional splurges.",
+  },
+  {
+    title: "Household Consumables",
+    text:
+      "Paper products, cleaning supplies, diapers, wipes, toiletries, pet food, and pharmacy items can inflate a grocery receipt even when food spending is not the main issue.",
+  },
+  {
+    title: "Eating Out Replacement",
+    text:
+      "A higher grocery bill can be financially smart if it replaces restaurants, delivery, drive-thru meals, or convenience spending.",
+  },
+];
+
+const pressureFactors = [
+  {
+    title: "Household Size",
+    text:
+      "A grocery bill that looks high for one person may be normal for a family. The number of adults, children, teenagers, and dietary needs matters.",
+  },
+  {
+    title: "Take-Home Income",
+    text:
+      "Grocery pressure should be compared against take-home pay, not gross salary. The real question is how much money is available after taxes and deductions.",
+  },
+  {
+    title: "Food Waste",
+    text:
+      "Throwing away food is one of the fastest ways to turn a reasonable grocery budget into a stressful one.",
+  },
+  {
+    title: "Restaurant Spending",
+    text:
+      "Groceries and restaurants should be viewed together. A high grocery bill may be fine if restaurant spending is low.",
+  },
+  {
+    title: "Debt and Housing Costs",
+    text:
+      "Groceries become harder to manage when rent, mortgage payments, car payments, credit cards, or medical bills already consume too much income.",
+  },
+  {
+    title: "Savings Cushion",
+    text:
+      "A grocery budget is safer when the household can buy food without using credit cards or draining emergency savings.",
+  },
+];
+
+const redFlags = [
+  "You regularly put groceries on a credit card and cannot pay it off.",
+  "You use emergency savings for normal grocery trips every month.",
+  "Restaurant spending stays high while groceries also keep rising.",
+  "You throw away a large amount of food each week.",
+  "You make several unplanned grocery trips every week.",
+  "Snacks, drinks, and convenience items are crowding out actual meals.",
+  "The grocery bill is causing missed debt payments, rent pressure, or overdrafts.",
+  "You are cutting nutrition while still spending heavily on delivery or restaurants.",
+];
+
+const reduceCostTips = [
+  {
+    title: "Plan around meals, not ingredients",
+    text:
+      "A grocery list works better when it starts with actual breakfasts, lunches, dinners, and leftovers instead of random items that may not become meals.",
+  },
+  {
+    title: "Protect cheap repeatable meals",
+    text:
+      "Every household benefits from a few reliable low-cost meals that people will actually eat. These meals reduce panic trips and delivery spending.",
+  },
+  {
+    title: "Cut waste before cutting nutrition",
+    text:
+      "Use what is already in the freezer, pantry, and fridge before buying more. Waste reduction is usually safer than cutting fruits, proteins, or necessary dietary foods.",
+  },
+  {
+    title: "Separate food from household goods",
+    text:
+      "If the receipt includes diapers, pet food, toiletries, paper products, and cleaning supplies, the food budget may not be the real problem.",
+  },
+  {
+    title: "Limit convenience premiums",
+    text:
+      "Pre-made meals, individually packaged snacks, bottled drinks, and delivery substitutes can be useful, but they should be intentional instead of automatic.",
+  },
+  {
+    title: "Use restaurant savings to fund groceries",
+    text:
+      "A larger grocery budget may be the right move if it helps the household avoid drive-thru meals, delivery fees, and expensive last-minute food choices.",
+  },
+];
+
+const assumptions = [
+  "Monthly income means take-home pay available to support the household, not gross income.",
+  "Groceries are treated as an essential expense, but the pressure score rises when the spending creates debt or weakens other essentials.",
+  "Large households, teenagers, dietary restrictions, allergies, and medical food needs can justify higher grocery spending.",
+  "Restaurants, delivery, and convenience food should be evaluated alongside groceries because they all serve the same food budget.",
+  "A high grocery bill is less concerning when emergency savings, rent, debt, and other essentials remain stable.",
+  "The best grocery budget is realistic enough to be followed, not so strict that it causes repeated failure or more restaurant spending.",
+];
+
+const relatedGuides = [
+  {
+    title: "Budget Rule Calculators",
+    href: "/budget-rule-calculators",
+    description:
+      "Compare grocery spending against take-home income, savings, debt, and other household pressure points.",
+  },
+  {
+    title: "Emergency Savings Calculator",
+    href: "/how-much-emergency-savings-should-i-have",
+    description:
+      "See how much cash cushion you may need before grocery costs become a recurring emergency.",
+  },
+  {
+    title: "How Much Debt Is Too Much?",
+    href: "/how-much-debt-is-too-much",
+    description:
+      "Understand whether debt payments are making normal food costs harder to absorb.",
+  },
+  {
+    title: "Rent Calculators",
+    href: "/rent-calculators",
+    description:
+      "Review rent pressure when housing costs leave too little money for groceries and essentials.",
+  },
+  {
+    title: "Medical Cost Calculators",
+    href: "/medical-calculators",
+    description:
+      "Compare grocery pressure with medical costs, prescriptions, and health-related expenses.",
+  },
+  {
+    title: "All Calculators",
+    href: "/calculators",
+    description:
+      "Browse every ShouldISpend calculator for household spending, debt, savings, travel, rent, college, and more.",
+  },
+];
+
+const internalLinks = [
+  { href: "/budget-rule-calculators", label: "budget rule calculators" },
+  { href: "/how-much-emergency-savings-should-i-have", label: "emergency savings" },
+  { href: "/how-much-debt-is-too-much", label: "debt pressure" },
+  { href: "/rent-calculators", label: "rent calculators" },
+  { href: "/medical-calculators", label: "medical calculators" },
+  { href: "/home-improvement-calculators", label: "home improvement calculators" },
+  { href: "/baby-parenting-calculators", label: "baby and parenting calculators" },
+  { href: "/calculators", label: "all calculators" },
 ];
 ---
 
 <Layout
-  title="Grocery Budget Calculators | Food Spending and Monthly Grocery Costs"
-  description="Use grocery budget calculators to evaluate monthly food spending, dining out, household size, income, debt, savings, and financial pressure."
+  title="Grocery Budget Calculators | Food Costs, Household Pressure and Savings"
+  description="Use grocery budget calculators to evaluate food spending, household size, take-home income, restaurant costs, savings pressure, and monthly affordability."
 >
   <style>
     .container {
       width: 92%;
-      max-width: 1100px;
+      max-width: 1120px;
       margin: 0 auto;
-      padding-bottom: 72px;
+      padding: 72px 0;
     }
 
     .hero {
-      padding: 64px 0 34px;
-      text-align: center;
+      max-width: 920px;
+      margin-bottom: 56px;
     }
 
     .eyebrow {
       color: var(--primary);
-      font-size: 0.82rem;
-      font-weight: 800;
-      letter-spacing: 2px;
       text-transform: uppercase;
+      letter-spacing: 2px;
+      font-size: 0.8rem;
+      font-weight: 800;
       margin-bottom: 16px;
     }
 
     h1 {
-      font-size: clamp(2.7rem, 6vw, 4.8rem);
+      font-size: clamp(2.8rem, 6vw, 5rem);
       line-height: 1;
-      margin: 0 0 24px;
+      margin-bottom: 24px;
       color: var(--primary);
     }
 
-    .hero p {
-      max-width: 840px;
-      margin: 0 auto;
-      font-size: 1.12rem;
+    .hero p,
+    .section p,
+    .wide-section p,
+    .verdict-bar p,
+    .callout p {
+      font-size: 1.05rem;
       line-height: 1.85;
       color: var(--muted);
     }
 
-    .section {
-      margin-top: 56px;
-    }
-
-    .section-title {
-      font-size: 2rem;
-      color: var(--primary);
-      margin-bottom: 18px;
-      line-height: 1.2;
-    }
-
-    .section-intro {
-      max-width: 840px;
-      color: var(--muted);
-      line-height: 1.8;
-      font-size: 1.05rem;
-      margin-bottom: 28px;
+    .hero p {
+      max-width: 860px;
     }
 
     .grid,
@@ -101,56 +267,64 @@ const groceryFaqs = [
 
     .grid {
       grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      margin-top: 36px;
     }
 
     .info-grid,
     .link-grid {
-      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-      margin-top: 24px;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      margin-top: 28px;
     }
 
-    .verdict-bar {
+    .section {
+      margin-top: 76px;
+      max-width: 920px;
+    }
+
+    .wide-section {
+      margin-top: 76px;
+    }
+
+    .section h2,
+    .wide-section h2,
+    .verdict-bar h2,
+    .callout h2 {
+      font-size: 2rem;
+      margin-bottom: 22px;
+      line-height: 1.2;
+      color: var(--text);
+    }
+
+    .verdict-bar,
+    .callout {
+      margin-top: 56px;
       background: #f8fafc;
-      border: 1px solid var(--border);
-      border-radius: 22px;
-      padding: 28px;
-      margin-top: 28px;
+      border: 1px solid #dbe4ee;
+      border-radius: 24px;
+      padding: 32px;
     }
 
     .verdict-label {
       color: var(--primary);
-      font-size: 0.82rem;
-      font-weight: 800;
-      letter-spacing: 1.5px;
       text-transform: uppercase;
-      margin-bottom: 12px;
-    }
-
-    .verdict-bar h2 {
-      color: var(--primary);
-      font-size: 1.65rem;
-      line-height: 1.25;
-      margin: 0 0 14px;
-    }
-
-    .verdict-bar p {
-      color: var(--muted);
-      line-height: 1.8;
-      margin: 0;
+      letter-spacing: 1.5px;
+      font-size: 0.8rem;
+      font-weight: 800;
+      margin-bottom: 14px;
     }
 
     .info-card,
     .link-card {
-      background: white;
+      display: block;
       border: 1px solid var(--border);
-      border-radius: 18px;
-      padding: 24px;
+      background: white;
+      border-radius: 20px;
+      padding: 22px;
+      text-decoration: none;
+      color: inherit;
     }
 
     .link-card {
-      display: block;
-      color: inherit;
-      text-decoration: none;
       transition: transform 0.15s ease;
     }
 
@@ -161,189 +335,362 @@ const groceryFaqs = [
     .info-card h3,
     .link-card strong {
       display: block;
-      color: var(--primary);
-      margin: 0 0 12px;
-      font-size: 1.18rem;
-      line-height: 1.25;
+      margin: 0 0 10px;
+      color: var(--text);
+      line-height: 1.3;
+      font-size: 1.08rem;
     }
 
     .info-card p,
     .link-card span {
       color: var(--muted);
-      line-height: 1.75;
+      line-height: 1.7;
+      font-size: 0.96rem;
       margin: 0;
-      font-size: 0.97rem;
     }
 
-    @media (max-width: 700px) {
-      .hero {
-        padding-top: 52px;
+    .ordered-list,
+    .check-list,
+    .red-flag-list {
+      margin: 22px 0 0;
+      padding-left: 22px;
+      color: var(--muted);
+      line-height: 1.8;
+    }
+
+    .ordered-list li,
+    .check-list li,
+    .red-flag-list li {
+      margin-bottom: 12px;
+    }
+
+    .red-flag-list li::marker {
+      color: #b91c1c;
+    }
+
+    .inline-links {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-top: 26px;
+    }
+
+    .inline-links a {
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      padding: 10px 14px;
+      color: var(--primary);
+      text-decoration: none;
+      font-weight: 700;
+      font-size: 0.92rem;
+      background: white;
+    }
+
+    .note {
+      margin-top: 24px;
+      padding: 18px 20px;
+      border-left: 4px solid var(--primary);
+      background: #f8fafc;
+      color: var(--muted);
+      line-height: 1.75;
+      border-radius: 14px;
+    }
+
+    @media (max-width: 720px) {
+      .container {
+        padding: 56px 0;
       }
 
-      .hero p {
+      h1 {
+        font-size: 2.85rem;
+      }
+
+      .hero p,
+      .section p,
+      .wide-section p,
+      .verdict-bar p,
+      .callout p {
         font-size: 1rem;
       }
 
-      .section-title {
+      .section h2,
+      .wide-section h2,
+      .verdict-bar h2,
+      .callout h2 {
         font-size: 1.65rem;
       }
     }
   </style>
 
-  <div class="container">
+  <main class="container">
     <section class="hero">
       <div class="eyebrow">Grocery Budget Calculators</div>
 
-      <h1>Grocery Budget Calculators for Real Monthly Food Costs</h1>
+      <h1>Grocery Budget Calculators for Food Costs and Household Pressure</h1>
 
       <p>
-        Grocery spending is one of the easiest monthly expenses to underestimate.
-        ShouldISpend helps you evaluate food costs using household size, income,
-        debt, emergency savings, dining habits, and the financial pressure
-        created by recurring food bills.
+        Groceries are one of the hardest expenses to judge because they are both
+        essential and flexible. A family can spend too much on snacks, drinks,
+        convenience meals, and waste, but it can also spend too little on real food
+        and end up relying on restaurants, delivery, or emergency spending later.
+        These calculators help evaluate grocery costs using take-home income,
+        household size, restaurant spending, debt pressure, savings, and monthly
+        breathing room.
       </p>
+
+      <p>
+        The goal is not to shame a high grocery bill. The goal is to figure out
+        whether food spending is supporting the household or quietly creating
+        pressure somewhere else.
+      </p>
+
+      <div class="inline-links">
+        {internalLinks.map((link) => <a href={link.href}>{link.label}</a>)}
+      </div>
     </section>
 
-    <section class="section">
-      <h2 class="section-title">Start with the Grocery and Food Calculators</h2>
+    <div class="grid">
+      {groceryCalculators.map((calculator) => (
+        <CalculatorCard
+          category={calculator.category}
+          title={calculator.title}
+          description={calculator.description}
+          href={calculator.href}
+        />
+      ))}
+    </div>
 
-      <p class="section-intro">
-        These calculators help you decide whether your grocery spending, monthly
-        food budget, or dining-out habits are reasonable for your household — or
-        whether they may be creating pressure elsewhere in your budget.
+    <div class="verdict-bar">
+      <div class="verdict-label">Grocery Pressure</div>
+
+      <h2>
+        Grocery spending becomes risky when the household is fed but the rest of
+        the budget starts breaking.
+      </h2>
+
+      <p>
+        A grocery bill can be high for good reasons: a larger family, teenagers,
+        allergies, medical diets, high-protein meals, or a deliberate choice to
+        cook at home instead of eating out. The warning sign is not the number by
+        itself. The warning sign is when groceries require credit cards, drain
+        emergency savings, crowd out rent, prevent debt payoff, or leave no room
+        for the next normal bill.
+      </p>
+    </div>
+
+    <section class="section">
+      <h2>What Grocery Affordability Really Means</h2>
+
+      <p>
+        Grocery affordability is not just about spending less. A budget that looks
+        perfect on paper can fail if it does not buy enough food, ignores dietary
+        needs, or forces the household into takeout by Wednesday. A realistic food
+        budget needs to cover normal meals, predictable snacks, school lunches,
+        household staples, and the way people actually eat.
       </p>
 
-      <div class="grid">
-        {groceryCalculators.map((calculator) => (
-          <CalculatorCard {...calculator} />
+      <p>
+        The better question is whether grocery spending fits inside the household’s
+        full financial picture. If rent, debt, car payments, medical bills, and
+        utilities are already tight, even a normal grocery bill can feel impossible.
+        If savings are strong and restaurant spending is low, a larger grocery bill
+        may be perfectly reasonable.
+      </p>
+
+      <p>
+        ShouldISpend grocery calculators are built to treat food as essential while
+        still identifying pressure from waste, convenience spending, restaurant
+        overlap, weak planning, and monthly cash-flow strain.
+      </p>
+
+      <div class="note">
+        Monthly income means take-home pay available to support the household, not
+        gross income before taxes, deductions, insurance, or retirement
+        contributions.
+      </div>
+    </section>
+
+    <section class="wide-section">
+      <h2>Key Cost Categories</h2>
+
+      <p>
+        Grocery bills often look confusing because the receipt mixes true food,
+        convenience items, household goods, and lifestyle purchases. Breaking the
+        bill into categories makes the pressure easier to understand.
+      </p>
+
+      <div class="info-grid">
+        {groceryCategories.map((category) => (
+          <div class="info-card">
+            <h3>{category.title}</h3>
+            <p>{category.text}</p>
+          </div>
+        ))}
+      </div>
+    </section>
+
+    <section class="wide-section">
+      <h2>How These Grocery Calculators Think</h2>
+
+      <p>
+        A grocery calculator should not treat food like a luxury purchase. It
+        should look at whether the household can eat normally without creating
+        debt, draining savings, or relying on restaurants to fill the gaps.
+      </p>
+
+      <div class="info-grid">
+        {pressureFactors.map((factor) => (
+          <div class="info-card">
+            <h3>{factor.title}</h3>
+            <p>{factor.text}</p>
+          </div>
         ))}
       </div>
     </section>
 
     <section class="section">
-      <div class="verdict-bar">
-        <div class="verdict-label">Grocery Spending Verdict</div>
+      <h2>Methodology: How We Judge Grocery Budget Pressure</h2>
 
-        <h2>
-          A grocery budget works only if it leaves room for savings, bills, debt,
-          and normal life.
-        </h2>
+      <p>
+        ShouldISpend grocery calculators evaluate food spending by comparing the
+        monthly grocery amount with household size, take-home income, savings,
+        debt, restaurant spending, and the household’s ability to keep paying for
+        other essentials. Food is necessary, but the surrounding budget still
+        matters.
+      </p>
 
-        <p>
-          Food is essential, but grocery spending can still become a budget
-          problem when it quietly crowds out emergency savings, debt payoff,
-          rent, utilities, childcare, transportation, or other monthly needs.
-          The best grocery budget is sustainable, realistic, repeatable, and
-          flexible enough to survive an expensive month without creating credit
-          card pressure.
-        </p>
-      </div>
+      <ol class="ordered-list">
+        <li>
+          <strong>Start with household size and food needs.</strong> A single
+          adult, a couple, a family with young children, and a family with
+          teenagers should not be judged by the same grocery number.
+        </li>
+        <li>
+          <strong>Use take-home income.</strong> Grocery pressure is measured
+          against money actually available to the household after taxes and
+          deductions.
+        </li>
+        <li>
+          <strong>Compare groceries with restaurant spending.</strong> A larger
+          grocery budget may be a win if it replaces takeout, delivery, and
+          last-minute meals.
+        </li>
+        <li>
+          <strong>Look for debt or savings damage.</strong> Grocery spending
+          becomes more concerning when it creates credit card balances, overdrafts,
+          or repeated emergency savings withdrawals.
+        </li>
+        <li>
+          <strong>Separate essential food from flexible extras.</strong> Staples,
+          children’s food, medical diets, and allergy-safe foods deserve more
+          protection than snacks, drinks, and convenience upgrades.
+        </li>
+        <li>
+          <strong>Judge whether the plan can actually work.</strong> A food budget
+          that is too strict can backfire by creating more restaurant spending,
+          stress, or wasted groceries.
+        </li>
+      </ol>
     </section>
 
-    <section class="section">
-      <h2 class="section-title">What Grocery Affordability Depends On</h2>
+    <section class="wide-section">
+      <h2>Reduce Cost Tips</h2>
 
-      <p class="section-intro">
-        Grocery affordability depends on more than household size. A monthly
-        food budget that feels manageable for one household can create stress
-        for another if debt, rent, savings, income, or family needs are different.
+      <p>
+        Grocery pressure usually improves faster when the household reduces waste,
+        convenience costs, and duplicate spending before cutting essential food.
       </p>
 
       <div class="info-grid">
-        <div class="info-card">
-          <h3>Household Size</h3>
-          <p>
-            A single adult, couple, family of four, and larger household all
-            need different grocery expectations.
-          </p>
-        </div>
-
-        <div class="info-card">
-          <h3>Take-Home Income</h3>
-          <p>
-            Grocery spending should be judged against the money actually
-            available after taxes, benefits, and payroll deductions.
-          </p>
-        </div>
-
-        <div class="info-card">
-          <h3>Debt Pressure</h3>
-          <p>
-            Credit cards, loans, and other monthly obligations can make an
-            otherwise normal grocery bill feel much heavier.
-          </p>
-        </div>
-
-        <div class="info-card">
-          <h3>Emergency Savings</h3>
-          <p>
-            A household with a thin emergency fund may need a more cautious
-            grocery target until savings become more stable.
-          </p>
-        </div>
-
-        <div class="info-card">
-          <h3>Dining Out</h3>
-          <p>
-            Restaurant spending, delivery, coffee, snacks, and convenience food
-            can hide the true size of a household food budget.
-          </p>
-        </div>
-
-        <div class="info-card">
-          <h3>Repeatability</h3>
-          <p>
-            The best food budget is one you can actually repeat month after
-            month without unrealistic restriction or financial drift.
-          </p>
-        </div>
+        {reduceCostTips.map((tip) => (
+          <div class="info-card">
+            <h3>{tip.title}</h3>
+            <p>{tip.text}</p>
+          </div>
+        ))}
       </div>
     </section>
 
     <section class="section">
-      <h2 class="section-title">Related Budget and Spending Hubs</h2>
+      <h2>Financial Red Flags</h2>
 
-      <p class="section-intro">
-        Grocery spending connects closely to rent, debt, emergency savings, and
-        general budget rules. Use these hubs to understand the larger financial
-        picture around food costs.
+      <p>
+        These warning signs suggest grocery spending is becoming part of a larger
+        household money problem.
+      </p>
+
+      <ul class="red-flag-list">
+        {redFlags.map((flag) => <li>{flag}</li>)}
+      </ul>
+    </section>
+
+    <section class="section">
+      <h2>When Spending More on Groceries Makes Sense</h2>
+
+      <p>
+        Spending more on groceries can be the right move when it reduces restaurant
+        spending, supports a medical or allergy need, feeds a larger household, or
+        makes home meals realistic. A higher grocery bill that prevents five
+        delivery orders may actually lower total food spending.
+      </p>
+
+      <p>
+        It can also make sense when better groceries improve consistency. If a
+        household buys food people will actually cook and eat, the budget may work
+        better than a cheaper plan built around meals nobody wants.
+      </p>
+
+      <p>
+        The danger is assuming every grocery purchase is essential just because it
+        came from a grocery store. Snacks, drinks, convenience meals, duplicate
+        pantry items, and household goods can make a food budget look worse than it
+        really is.
+      </p>
+    </section>
+
+    <section class="section">
+      <h2>Calculator Assumptions</h2>
+
+      <p>
+        These assumptions help keep grocery pressure results realistic across
+        different households.
+      </p>
+
+      <ul class="check-list">
+        {assumptions.map((assumption) => <li>{assumption}</li>)}
+      </ul>
+    </section>
+
+    <section class="wide-section">
+      <h2>Related Calculators and Guides</h2>
+
+      <p>
+        Grocery spending connects to the rest of the household budget. If food
+        costs feel impossible, the deeper issue may be rent, debt, medical costs,
+        emergency savings, or total monthly cash flow.
       </p>
 
       <div class="link-grid">
-        <a class="link-card" href="/budget-rule-calculators">
-          <strong>Budget Rule Calculators</strong>
-          <span>
-            Compare spending decisions against income, savings, debt, and
-            monthly flexibility.
-          </span>
-        </a>
-
-        <a class="link-card" href="/how-much-debt-is-too-much">
-          <strong>How Much Debt Is Too Much?</strong>
-          <span>
-            Understand when monthly obligations begin to reduce stability and
-            flexibility.
-          </span>
-        </a>
-
-        <a class="link-card" href="/how-much-emergency-savings-should-i-have">
-          <strong>Emergency Savings Guide</strong>
-          <span>
-            See how much cushion you may need before taking on larger spending
-            commitments.
-          </span>
-        </a>
-
-        <a class="link-card" href="/calculators">
-          <strong>All ShouldISpend Calculators</strong>
-          <span>
-            Browse calculators for groceries, rent, cars, travel, weddings,
-            debt, and major life expenses.
-          </span>
-        </a>
+        {relatedGuides.map((guide) => (
+          <a class="link-card" href={guide.href}>
+            <strong>{guide.title}</strong>
+            <span>{guide.description}</span>
+          </a>
+        ))}
       </div>
     </section>
 
-    <FAQSection title="Grocery Budget Calculator FAQ" faqs={groceryFaqs} />
-  </div>
+    <div class="callout">
+      <h2>Use grocery calculators to find pressure, not guilt.</h2>
+
+      <p>
+        Food is not optional. The goal is not to make every grocery bill look bad.
+        The goal is to identify whether the household is spending intentionally,
+        wasting money, replacing restaurant costs, or using groceries as one more
+        sign that the total budget needs repair.
+      </p>
+    </div>
+
+    <FAQSection title="Grocery Budget FAQ" faqs={groceryFaqs} />
+  </main>
 </Layout>

@@ -15,12 +15,12 @@ const budgetRuleFaqs = [
   {
     question: "What is a budget rule calculator?",
     answer:
-      "A budget rule calculator compares a monthly expense to your income, debt, savings, and other obligations so you can see whether the expense is reasonable or financially stressful.",
+      "A budget rule calculator compares an expense to your take-home income, debt, savings, and other obligations so you can see whether the expense is reasonable, tight, or financially stressful.",
   },
   {
     question: "Are percentage-based budget rules always accurate?",
     answer:
-      "No. Budget rules are useful starting points, but they should be adjusted for income, debt, savings, family size, local costs, and personal priorities.",
+      "No. Budget rules are useful starting points, but they should be adjusted for income, debt, savings, family size, local costs, risk tolerance, and personal priorities.",
   },
   {
     question: "Should I use gross income or take-home income?",
@@ -30,61 +30,235 @@ const budgetRuleFaqs = [
   {
     question: "Is the 30% rent rule still useful?",
     answer:
-      "Yes, but only as a starting point. Rent affordability should also consider debt payments, utilities, transportation, emergency savings, and local housing costs.",
+      "Yes, but only as a starting point. Rent affordability should also consider debt payments, utilities, transportation, emergency savings, insurance, groceries, and local housing costs.",
   },
   {
     question: "Why do budget percentages matter?",
     answer:
       "Percentages help show whether one expense is taking too much of your income and reducing flexibility for savings, debt payoff, emergencies, and normal life.",
   },
+  {
+    question: "Can a budget rule say yes when the decision is still risky?",
+    answer:
+      "Yes. A percentage rule can look fine while emergency savings are weak, debt is high, income is unstable, or other expenses are about to rise. The rule should start the conversation, not end it.",
+  },
+];
+
+const pressureCategories = [
+  {
+    title: "Housing Percentage",
+    text:
+      "Rent or mortgage payments become more stressful as they consume a larger share of take-home income, especially when utilities, insurance, taxes, and maintenance are counted.",
+  },
+  {
+    title: "Debt-to-Income Pressure",
+    text:
+      "Debt payments reduce flexibility after housing, transportation, groceries, medical costs, insurance, and utilities are paid.",
+  },
+  {
+    title: "Car Payment Rules",
+    text:
+      "Transportation costs can quietly strain a budget when the payment, insurance, gas, maintenance, repairs, registration, and parking are counted together.",
+  },
+  {
+    title: "Emergency Savings Cushion",
+    text:
+      "Higher spending percentages are safer when emergency savings are strong and riskier when savings are thin or income is unstable.",
+  },
+  {
+    title: "Food and Household Costs",
+    text:
+      "Groceries, restaurants, household supplies, diapers, pet food, toiletries, and cleaning supplies can make a budget feel tighter than the headline rule suggests.",
+  },
+  {
+    title: "One-Time Major Expenses",
+    text:
+      "Travel, weddings, medical bills, home repairs, college costs, and funerals should be judged by the cash left afterward, not just whether the purchase can be made today.",
+  },
+];
+
+const ruleLimitations = [
+  {
+    title: "Rules ignore local costs",
+    text:
+      "A rent percentage may be too strict in a high-cost city and too loose in a cheaper area. Local housing, childcare, insurance, and transportation costs matter.",
+  },
+  {
+    title: "Rules ignore debt history",
+    text:
+      "Two households with the same income can have very different pressure if one has credit cards, car loans, medical debt, or student loans.",
+  },
+  {
+    title: "Rules ignore savings quality",
+    text:
+      "A budget can look acceptable by percentage but still be fragile if emergency savings would not survive one normal surprise.",
+  },
+  {
+    title: "Rules ignore timing",
+    text:
+      "A purchase may be affordable later but risky right now if a job change, move, medical bill, baby, tuition bill, or home repair is coming.",
+  },
+  {
+    title: "Rules ignore household size",
+    text:
+      "A single adult, couple, family with children, and household supporting relatives should not be judged by the same leftover-dollar amount.",
+  },
+  {
+    title: "Rules ignore priorities",
+    text:
+      "A rule cannot know whether you value travel, debt freedom, housing stability, early retirement, family support, or monthly breathing room most.",
+  },
+];
+
+const redFlags = [
+  "A rule says the expense is acceptable, but you would have almost no emergency savings left.",
+  "You are using gross income even though take-home pay is much lower.",
+  "One category looks fine by percentage, but total monthly obligations are already tight.",
+  "The expense requires credit card debt or high-interest financing.",
+  "You are ignoring utilities, insurance, repairs, taxes, fees, or recurring add-ons.",
+  "The rule does not account for dependents, childcare, medical costs, or unstable income.",
+  "The purchase fits this month but creates pressure for several months afterward.",
+  "You are treating a guideline as permission instead of pressure-testing the whole budget.",
+];
+
+const reducePressureTips = [
+  {
+    title: "Use take-home pay",
+    text:
+      "Start with the money actually available after taxes, benefits, insurance, and payroll deductions. Gross income can make expenses look safer than they are.",
+  },
+  {
+    title: "Count the full category",
+    text:
+      "For cars, include insurance, gas, repairs, and registration. For housing, include utilities, insurance, taxes, fees, and maintenance.",
+  },
+  {
+    title: "Check what is left",
+    text:
+      "A percentage is useful, but leftover dollars matter. The same 30% can feel very different at different income levels.",
+  },
+  {
+    title: "Protect emergency savings",
+    text:
+      "A spending rule is less useful if the decision leaves no cushion for normal life surprises.",
+  },
+  {
+    title: "Run more than one calculator",
+    text:
+      "Large decisions usually affect debt, savings, housing, food, and monthly flexibility. One rule rarely tells the whole story.",
+  },
+  {
+    title: "Adjust for timing",
+    text:
+      "If a major expense is coming soon, a rule that looks fine today may still create pressure later.",
+  },
+];
+
+const assumptions = [
+  "Monthly income means take-home pay available to support the household, not gross income.",
+  "Budget rules are treated as starting points, not final answers.",
+  "Savings, debt, income stability, household size, and local costs can override a simple percentage guideline.",
+  "A lower percentage is not automatically safe if emergency savings are weak or debt is high.",
+  "A higher percentage is not automatically reckless if savings, income stability, and leftover cash are strong.",
+  "The strongest budget decision leaves enough flexibility for essentials, emergencies, and recovery after the expense.",
+];
+
+const relatedGuides = [
+  {
+    href: "/how-much-rent-can-i-afford",
+    title: "How Much Rent Can I Afford?",
+    text:
+      "Estimate realistic rent using take-home pay, debt, utilities, savings, and monthly pressure.",
+  },
+  {
+    href: "/how-much-house-can-i-afford",
+    title: "How Much House Can I Afford?",
+    text:
+      "Compare home affordability against income, debt, taxes, insurance, maintenance, and cash reserves.",
+  },
+  {
+    href: "/how-much-debt-is-too-much",
+    title: "How Much Debt Is Too Much?",
+    text:
+      "Understand when debt payments begin to limit flexibility, savings, and long-term stability.",
+  },
+  {
+    href: "/what-counts-as-debt",
+    title: "What Counts as Debt?",
+    text:
+      "See which obligations should be counted when evaluating monthly affordability and debt pressure.",
+  },
+  {
+    href: "/how-much-emergency-savings-should-i-have",
+    title: "Emergency Savings Calculator",
+    text:
+      "Learn how much cushion to keep before committing to major monthly expenses.",
+  },
+  {
+    href: "/calculators",
+    title: "All ShouldISpend Calculators",
+    text:
+      "Browse every calculator across rent, cars, groceries, travel, weddings, debt, college, medical, and major life expenses.",
+  },
+];
+
+const internalLinks = [
+  { href: "/how-much-rent-can-i-afford", label: "rent affordability" },
+  { href: "/rent-calculators", label: "rent calculators" },
+  { href: "/how-much-house-can-i-afford", label: "house affordability" },
+  { href: "/how-much-debt-is-too-much", label: "debt pressure" },
+  { href: "/how-much-emergency-savings-should-i-have", label: "emergency savings" },
+  { href: "/car-calculators", label: "car calculators" },
+  { href: "/grocery-calculators", label: "grocery calculators" },
+  { href: "/calculators", label: "all calculators" },
 ];
 ---
 
 <Layout
   title="Budget Rule Calculators | Income, Rent, Debt and Spending Rules"
-  description="Use budget rule calculators to compare rent, debt, car payments, groceries, travel, and major expenses against your income and financial pressure."
+  description="Use budget rule calculators to compare rent, debt, car payments, groceries, travel, housing, and major expenses against income, savings, and financial pressure."
 >
   <style>
     .container {
-      max-width: 1100px;
+      width: 92%;
+      max-width: 1120px;
       margin: 0 auto;
-      padding: 72px 24px;
+      padding: 72px 0;
+    }
+
+    .hero {
+      max-width: 920px;
+      margin-bottom: 56px;
     }
 
     .eyebrow {
-      color: #0f766e;
+      color: var(--primary);
       text-transform: uppercase;
       letter-spacing: 2px;
-      font-size: 0.75rem;
+      font-size: 0.8rem;
       font-weight: 800;
-      margin-bottom: 20px;
+      margin-bottom: 16px;
     }
 
     h1 {
-      font-size: clamp(3rem, 7vw, 5rem);
-      line-height: 0.95;
-      margin-bottom: 28px;
-      max-width: 860px;
-      color: #0f172a;
+      font-size: clamp(2.8rem, 6vw, 5rem);
+      line-height: 1;
+      margin-bottom: 24px;
+      color: var(--primary);
     }
 
-    .intro {
-      font-size: 1.1rem;
-      line-height: 1.9;
-      color: #334155;
-      max-width: 820px;
-      margin-bottom: 40px;
+    .hero p,
+    .section p,
+    .wide-section p,
+    .verdict-bar p,
+    .callout p {
+      font-size: 1.05rem;
+      line-height: 1.85;
+      color: var(--muted);
     }
 
-    .hero-note {
-      background: #f0fdfa;
-      border: 1px solid #99f6e4;
-      border-radius: 20px;
-      padding: 24px;
-      color: #134e4a;
-      line-height: 1.75;
+    .hero p {
       max-width: 860px;
-      margin-bottom: 56px;
     }
 
     .grid,
@@ -96,41 +270,58 @@ const budgetRuleFaqs = [
 
     .grid {
       grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-      margin-bottom: 72px;
+      margin-top: 36px;
     }
 
     .info-grid,
     .link-grid {
-      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
       margin-top: 28px;
     }
 
-    .content-section {
-      max-width: 860px;
-      margin-top: 72px;
+    .section {
+      margin-top: 76px;
+      max-width: 920px;
     }
 
-    .content-section h2 {
+    .wide-section {
+      margin-top: 76px;
+    }
+
+    .section h2,
+    .wide-section h2,
+    .verdict-bar h2,
+    .callout h2 {
       font-size: 2rem;
-      margin-bottom: 24px;
+      margin-bottom: 22px;
       line-height: 1.2;
-      color: #0f172a;
+      color: var(--text);
     }
 
-    .content-section p,
-    .content-section li {
-      font-size: 1.08rem;
-      line-height: 1.9;
-      color: #334155;
-      margin-bottom: 24px;
+    .verdict-bar,
+    .callout {
+      margin-top: 56px;
+      background: #f8fafc;
+      border: 1px solid #dbe4ee;
+      border-radius: 24px;
+      padding: 32px;
+    }
+
+    .verdict-label {
+      color: var(--primary);
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      font-size: 0.8rem;
+      font-weight: 800;
+      margin-bottom: 14px;
     }
 
     .info-card,
     .link-card {
       display: block;
-      background: var(--card);
       border: 1px solid var(--border);
-      border-radius: 18px;
+      background: white;
+      border-radius: 20px;
       padding: 22px;
       text-decoration: none;
       color: inherit;
@@ -147,40 +338,117 @@ const budgetRuleFaqs = [
     .info-card h3,
     .link-card strong {
       display: block;
-      color: #0f172a;
-      margin-top: 0;
-      margin-bottom: 10px;
-      line-height: 1.25;
+      margin: 0 0 10px;
+      color: var(--text);
+      line-height: 1.3;
+      font-size: 1.08rem;
     }
 
     .info-card p,
     .link-card span {
-      color: #334155;
+      color: var(--muted);
       line-height: 1.7;
       font-size: 0.96rem;
       margin: 0;
     }
+
+    .ordered-list,
+    .check-list,
+    .red-flag-list {
+      margin: 22px 0 0;
+      padding-left: 22px;
+      color: var(--muted);
+      line-height: 1.8;
+    }
+
+    .ordered-list li,
+    .check-list li,
+    .red-flag-list li {
+      margin-bottom: 12px;
+    }
+
+    .red-flag-list li::marker {
+      color: #b91c1c;
+    }
+
+    .inline-links {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-top: 26px;
+    }
+
+    .inline-links a {
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      padding: 10px 14px;
+      color: var(--primary);
+      text-decoration: none;
+      font-weight: 700;
+      font-size: 0.92rem;
+      background: white;
+    }
+
+    .note {
+      margin-top: 24px;
+      padding: 18px 20px;
+      border-left: 4px solid var(--primary);
+      background: #f8fafc;
+      color: var(--muted);
+      line-height: 1.75;
+      border-radius: 14px;
+    }
+
+    @media (max-width: 720px) {
+      .container {
+        padding: 56px 0;
+      }
+
+      h1 {
+        font-size: 2.85rem;
+      }
+
+      .hero p,
+      .section p,
+      .wide-section p,
+      .verdict-bar p,
+      .callout p {
+        font-size: 1rem;
+      }
+
+      .section h2,
+      .wide-section h2,
+      .verdict-bar h2,
+      .callout h2 {
+        font-size: 1.65rem;
+      }
+    }
   </style>
 
   <main class="container">
-    <div class="eyebrow">Budget Rule Calculators</div>
+    <section class="hero">
+      <div class="eyebrow">Budget Rule Calculators</div>
 
-    <h1>Budget Rule Calculators for Real-Life Spending Decisions</h1>
+      <h1>Budget Rule Calculators for Real-Life Spending Decisions</h1>
 
-    <p class="intro">
-      Budget rules can help you spot financial pressure before it becomes a
-      problem. These calculators compare expenses to your income, debt,
-      savings, and monthly flexibility so you can see whether a decision fits
-      your real budget.
-    </p>
+      <p>
+        Budget rules can help you spot financial pressure before it becomes a
+        problem. These calculators compare expenses to take-home income, debt,
+        savings, emergency cushion, and monthly flexibility so you can see whether
+        a decision fits your real budget.
+      </p>
 
-    <div class="hero-note">
-      ShouldISpend does not treat budget rules as one-size-fits-all answers.
-      A 30% rent rule, 20% car-payment rule, or 50/30/20 budget guideline can
-      be useful, but the real question is whether the expense leaves enough room
-      for debt payments, emergency savings, groceries, insurance, utilities, and
-      normal life.
-    </div>
+      <p>
+        ShouldISpend does not treat budget rules as one-size-fits-all verdicts. A
+        30% rent rule, car payment guideline, debt-to-income rule, or 50/30/20
+        budget can be useful, but the real question is whether the expense leaves
+        enough room for normal life.
+      </p>
+
+      <div class="inline-links">
+        {internalLinks.map((link) => <a href={link.href}>{link.label}</a>)}
+      </div>
+    </section>
 
     <div class="grid">
       {ruleCalculators.map((calculator) => (
@@ -193,119 +461,226 @@ const budgetRuleFaqs = [
       ))}
     </div>
 
-    <section class="content-section">
-      <h2>How Budget Rule Calculators Help</h2>
+    <div class="verdict-bar">
+      <div class="verdict-label">Budget Rule Pressure</div>
+
+      <h2>
+        A budget rule is helpful only when it points you back to the whole
+        household budget.
+      </h2>
 
       <p>
-        Many spending decisions look reasonable when viewed as a single monthly
-        payment. The pressure becomes clearer when that payment is compared to
-        take-home income, existing debt, savings, and recurring obligations.
+        Percentages can show when one expense is getting too large, but they do not
+        know your debt, savings, rent, dependents, medical needs, local costs, job
+        stability, or upcoming expenses. The best use of a rule is not to approve
+        a purchase automatically. It is to identify pressure and decide what else
+        needs to be checked.
+      </p>
+    </div>
+
+    <section class="section">
+      <h2>What Budget Rule Affordability Really Means</h2>
+
+      <p>
+        Budget affordability is more than whether an expense fits under a common
+        percentage. A rent payment under 30% of income can still be stressful if
+        debt is high, utilities are expensive, savings are thin, or transportation
+        costs are unavoidable.
       </p>
 
       <p>
-        A budget rule calculator helps translate a decision into a percentage
-        of your income. That percentage can show whether the expense is
-        comfortable, tight, risky, or likely to crowd out other financial goals.
+        The opposite can also be true. A household may spend above a common rule
+        and still be stable if income is high, debt is low, savings are strong, and
+        other categories are controlled.
       </p>
 
       <p>
-        These calculators are especially useful for decisions involving rent,
-        car payments, debt ratios, groceries, travel, weddings, emergency
-        savings, and other recurring or high-cost expenses.
+        That is why ShouldISpend calculators use budget rules as pressure tests,
+        not absolute answers. The percentage matters, but so does what happens
+        after the bill is paid.
       </p>
+
+      <div class="note">
+        Monthly income means take-home pay available to support the household, not
+        gross income before taxes, deductions, benefits, or retirement
+        contributions.
+      </div>
     </section>
 
-    <section class="content-section">
+    <section class="wide-section">
       <h2>Common Budget Rule Pressure Points</h2>
 
+      <p>
+        Budget rules are most useful when they expose where the monthly budget is
+        becoming fragile.
+      </p>
+
       <div class="info-grid">
-        <div class="info-card">
-          <h3>Housing Percentage</h3>
-          <p>
-            Rent or mortgage payments become more stressful as they consume a
-            larger share of take-home income.
-          </p>
-        </div>
-
-        <div class="info-card">
-          <h3>Debt-to-Income Pressure</h3>
-          <p>
-            Debt payments reduce flexibility after housing, transportation,
-            groceries, insurance, and utilities are paid.
-          </p>
-        </div>
-
-        <div class="info-card">
-          <h3>Car Payment Rules</h3>
-          <p>
-            Transportation costs can quietly strain a budget when the payment,
-            insurance, gas, maintenance, and registration are counted together.
-          </p>
-        </div>
-
-        <div class="info-card">
-          <h3>Emergency Savings Cushion</h3>
-          <p>
-            Higher spending percentages are safer when emergency savings are
-            strong and riskier when savings are thin.
-          </p>
-        </div>
+        {pressureCategories.map((category) => (
+          <div class="info-card">
+            <h3>{category.title}</h3>
+            <p>{category.text}</p>
+          </div>
+        ))}
       </div>
     </section>
 
-    <section class="content-section">
-      <h2>Helpful Budget, Debt, and Housing Guides</h2>
+    <section class="wide-section">
+      <h2>Why Budget Rules Can Mislead You</h2>
+
+      <p>
+        A simple percentage can be a good starting point, but it should not replace
+        judgment. These are the places where generic rules often break down.
+      </p>
+
+      <div class="info-grid">
+        {ruleLimitations.map((item) => (
+          <div class="info-card">
+            <h3>{item.title}</h3>
+            <p>{item.text}</p>
+          </div>
+        ))}
+      </div>
+    </section>
+
+    <section class="section">
+      <h2>Methodology: How We Judge Budget Rule Pressure</h2>
+
+      <p>
+        ShouldISpend budget rule calculators evaluate the relationship between the
+        expense, take-home income, existing obligations, savings, debt, and
+        financial recovery room. The rule provides a benchmark, but the household
+        context decides whether the benchmark is useful.
+      </p>
+
+      <ol class="ordered-list">
+        <li>
+          <strong>Start with take-home income.</strong> Gross income can make a
+          payment look safer than it is. Take-home pay shows the money actually
+          available.
+        </li>
+        <li>
+          <strong>Compare the expense to the relevant rule.</strong> Rent, debt,
+          car payments, groceries, travel, and major purchases each create
+          different types of pressure.
+        </li>
+        <li>
+          <strong>Count the full cost.</strong> Add fees, taxes, insurance,
+          utilities, maintenance, financing costs, recurring supplies, and related
+          expenses.
+        </li>
+        <li>
+          <strong>Check existing obligations.</strong> Debt, housing,
+          transportation, childcare, medical bills, and family support can make a
+          normal-looking percentage risky.
+        </li>
+        <li>
+          <strong>Measure savings after the decision.</strong> A rule is less
+          useful if the expense leaves no emergency cushion.
+        </li>
+        <li>
+          <strong>Look for recovery room.</strong> The strongest decisions leave
+          enough cash flow to keep paying bills, saving, and handling surprises.
+        </li>
+      </ol>
+    </section>
+
+    <section class="wide-section">
+      <h2>Reduce Pressure Tips</h2>
+
+      <p>
+        When a budget rule shows pressure, the answer is not always to abandon the
+        decision. Sometimes the better move is to resize it, delay it, reduce the
+        related costs, or protect cash first.
+      </p>
+
+      <div class="info-grid">
+        {reducePressureTips.map((tip) => (
+          <div class="info-card">
+            <h3>{tip.title}</h3>
+            <p>{tip.text}</p>
+          </div>
+        ))}
+      </div>
+    </section>
+
+    <section class="section">
+      <h2>Financial Red Flags</h2>
+
+      <p>
+        These warning signs mean the rule may be giving a false sense of safety.
+      </p>
+
+      <ul class="red-flag-list">
+        {redFlags.map((flag) => <li>{flag}</li>)}
+      </ul>
+    </section>
+
+    <section class="section">
+      <h2>When Breaking a Budget Rule Can Make Sense</h2>
+
+      <p>
+        Budget rules are guidelines, not laws. A household may spend above a
+        typical percentage on rent because it has no car payment, strong savings,
+        low debt, and stable income. Another household may spend more on groceries
+        because it has children, medical diets, or deliberately avoids restaurants.
+      </p>
+
+      <p>
+        The key is whether the tradeoff is intentional and sustainable. Breaking a
+        rule is less concerning when the household understands what is being given
+        up and still has enough emergency savings, debt control, and monthly
+        breathing room.
+      </p>
+
+      <p>
+        Breaking a rule is more concerning when the decision depends on credit
+        cards, ignores upcoming costs, or assumes everything will go perfectly.
+      </p>
+    </section>
+
+    <section class="section">
+      <h2>Calculator Assumptions</h2>
+
+      <p>
+        These assumptions keep budget rule calculators realistic and consistent
+        across ShouldISpend.
+      </p>
+
+      <ul class="check-list">
+        {assumptions.map((assumption) => <li>{assumption}</li>)}
+      </ul>
+    </section>
+
+    <section class="wide-section">
+      <h2>Helpful Budget, Debt and Housing Guides</h2>
+
+      <p>
+        These guides connect percentage rules with the bigger financial picture:
+        housing, debt, emergency savings, homeownership, and all major spending
+        decisions.
+      </p>
 
       <div class="link-grid">
-        <a class="link-card" href="/how-much-rent-can-i-afford">
-          <strong>How Much Rent Can I Afford?</strong>
-          <span>
-            Estimate realistic rent using take-home pay, debt, utilities,
-            savings, and monthly pressure.
-          </span>
-        </a>
-
-        <a class="link-card" href="/how-much-house-can-i-afford">
-          <strong>How Much House Can I Afford?</strong>
-          <span>
-            Compare home affordability against income, debt, taxes, insurance,
-            maintenance, and cash reserves.
-          </span>
-        </a>
-
-        <a class="link-card" href="/how-much-debt-is-too-much">
-          <strong>How Much Debt Is Too Much?</strong>
-          <span>
-            Understand when debt payments begin to limit flexibility, savings,
-            and long-term stability.
-          </span>
-        </a>
-
-        <a class="link-card" href="/what-counts-as-debt">
-          <strong>What Counts as Debt?</strong>
-          <span>
-            See which obligations should be counted when evaluating monthly
-            affordability and debt pressure.
-          </span>
-        </a>
-
-        <a class="link-card" href="/how-much-emergency-savings-should-i-have">
-          <strong>Emergency Savings Guide</strong>
-          <span>
-            Learn how much cushion to keep before committing to major monthly
-            expenses.
-          </span>
-        </a>
-
-        <a class="link-card" href="/calculators">
-          <strong>All ShouldISpend Calculators</strong>
-          <span>
-            Browse every calculator across rent, cars, groceries, travel,
-            weddings, debt, and major life expenses.
-          </span>
-        </a>
+        {relatedGuides.map((guide) => (
+          <a class="link-card" href={guide.href}>
+            <strong>{guide.title}</strong>
+            <span>{guide.text}</span>
+          </a>
+        ))}
       </div>
     </section>
+
+    <div class="callout">
+      <h2>Use rules to spot pressure, not to outsource the decision.</h2>
+
+      <p>
+        A budget rule can tell you when an expense is large compared with income.
+        It cannot know whether your savings are strong, your debt is manageable,
+        your income is stable, or your next big expense is already coming. Use the
+        rule as a warning light, then check the full household budget.
+      </p>
+    </div>
 
     <FAQSection title="Budget Rule Calculator FAQ" faqs={budgetRuleFaqs} />
   </main>
