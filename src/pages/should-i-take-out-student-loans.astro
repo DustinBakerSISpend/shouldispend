@@ -11,18 +11,93 @@ const studentLoanFaqs = [
   {
     question: "Should I take out student loans?",
     answer:
-      "Student loans may make sense when the program has a clear career payoff, the loan payment fits future income, and borrowing does not stack on top of already stressful debt.",
+      "Student loans may make sense when the program has a clear career payoff, the loan payment fits future take-home income, and borrowing does not stack on top of already stressful debt.",
   },
   {
     question: "How much student loan debt is too much?",
     answer:
-      "Student loan debt becomes riskier when expected monthly payments crowd out rent, groceries, emergency savings, transportation, childcare, or other essential bills after graduation.",
+      "Student loan debt becomes riskier when expected payments crowd out rent, groceries, emergency savings, transportation, childcare, medical bills, or other essential costs after graduation.",
   },
   {
     question: "Is it better to use savings or student loans?",
     answer:
-      "Using savings can reduce debt, but draining your emergency fund can also create risk. A balanced approach may preserve emergency savings while limiting unnecessary borrowing.",
+      "Using savings can reduce debt, but draining your emergency fund can create risk. A balanced approach may preserve emergency savings while limiting unnecessary borrowing.",
   },
+  {
+    question: "What if I do not know my future student loan payment?",
+    answer:
+      "You can estimate it, but do not ignore it. The monthly payment is one of the most important numbers because it determines whether the loan fits your post-school budget.",
+  },
+  {
+    question: "When should I avoid student loans?",
+    answer:
+      "Avoid or reduce student loans when the program payoff is unclear, the payment would be too large for expected income, you already have heavy debt, or cheaper paths are available.",
+  },
+];
+
+const keyCostCategories = [
+  {
+    title: "Tuition and fees",
+    body:
+      "The loan amount should include tuition, mandatory fees, lab fees, technology fees, program charges, and any costs that must be paid to stay enrolled.",
+  },
+  {
+    title: "Housing and living costs",
+    body:
+      "Borrowing becomes riskier when loans are used to cover rent, food, transportation, or lifestyle costs that continue after graduation.",
+  },
+  {
+    title: "Books, supplies, and equipment",
+    body:
+      "Laptops, books, uniforms, tools, testing fees, software, and certification materials can add thousands beyond tuition.",
+  },
+  {
+    title: "Interest and repayment term",
+    body:
+      "The amount borrowed is not the full cost. Interest, fees, deferment, repayment length, and payment plan choices affect the real burden.",
+  },
+  {
+    title: "Income interruption",
+    body:
+      "School may reduce work hours. Lost income during enrollment should be considered alongside the loan balance.",
+  },
+  {
+    title: "Program payoff",
+    body:
+      "Borrowing is safer when the credential leads to a specific job, license, promotion, career switch, or income gain.",
+  },
+];
+
+const reduceCostTips = [
+  "Apply for grants, scholarships, employer tuition help, and state aid before borrowing.",
+  "Compare community college, transfer paths, in-state options, online programs, and part-time enrollment.",
+  "Borrow only what is needed for the program, not extra lifestyle spending.",
+  "Estimate the monthly loan payment before accepting the loan.",
+  "Compare the expected payment with realistic take-home income after graduation.",
+  "Avoid borrowing heavily for a program with unclear completion or job outcomes.",
+  "Use savings carefully, but do not drain the emergency fund just to avoid every dollar of debt.",
+  "Consider working part-time, delaying enrollment, or reducing course load if it prevents high-risk borrowing.",
+];
+
+const financialRedFlags = [
+  "The expected student loan payment would be hard to afford on realistic take-home income.",
+  "The program does not have a clear job, promotion, license, or income path.",
+  "You are borrowing mainly for living costs without a plan to control expenses.",
+  "You already have high monthly debt payments before adding student loans.",
+  "The loan depends on an income increase that is hopeful, not realistic.",
+  "You have not compared lower-cost schools, transfer credits, grants, or employer help.",
+  "The program may take longer than expected, increasing debt and delaying income.",
+  "The loan would prevent emergency savings, rent stability, transportation, or childcare after graduation.",
+];
+
+const assumptions = [
+  "Monthly income means expected take-home pay after school, not gross salary.",
+  "Other debt means monthly debt payments expected after school, including car loans, credit cards, medical debt, and personal loans.",
+  "Expected income gain means the extra monthly take-home income you reasonably expect because of the program.",
+  "If no monthly loan payment is entered, the calculator estimates one as 1.2% of the expected loan balance.",
+  "Program confidence is a judgment input based on job path, degree value, completion odds, and income visibility.",
+  "The calculator estimates pressure, not whether education is personally meaningful.",
+  "A pressure score of 0 is allowed when income, savings, debt, payment, and payoff numbers make the loan essentially harmless.",
 ];
 
 const relatedCalculators = calculators
@@ -39,45 +114,49 @@ const relatedCalculators = calculators
   description="Evaluate whether student loans fit your future income, expected payment, current debt, savings cushion, career payoff, and long-term financial pressure."
 >
   <style>
-    .container {
-      max-width: 900px;
-      margin: auto;
-    }
-
+    .container { max-width: 980px; margin: auto; }
     .calculator {
       background: white;
       padding: 40px;
       border-radius: 24px;
       box-shadow: 0 10px 25px rgba(0, 0, 0, 0.06);
     }
-
-    .calculator h2 {
+    .calculator h2,
+    .content-section h2 {
       margin-top: 0;
       font-size: 2rem;
       margin-bottom: 18px;
       color: #0f172a;
+      line-height: 1.2;
     }
-
-    .calculator-intro {
+    .calculator-intro,
+    .content-section p,
+    .content-section li {
       color: #334155;
-      line-height: 1.8;
-      margin-bottom: 30px;
-      font-size: 1.05rem;
+      line-height: 1.9;
+      font-size: 1.06rem;
     }
-
-    .grid {
+    .calculator-intro { margin-bottom: 30px; }
+    .grid,
+    .info-grid,
+    .link-grid,
+    .mini-grid {
       display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 24px;
+      gap: 20px;
     }
-
+    .grid { grid-template-columns: 1fr 1fr; gap: 24px; }
+    .info-grid,
+    .link-grid,
+    .mini-grid {
+      grid-template-columns: repeat(auto-fit, minmax(245px, 1fr));
+      margin-top: 28px;
+    }
     .field label {
       display: block;
       font-weight: 800;
       margin-bottom: 10px;
       color: #0f172a;
     }
-
     .field input,
     .field select {
       width: 100%;
@@ -88,26 +167,22 @@ const relatedCalculators = calculators
       box-sizing: border-box;
       background: white;
     }
-
     .helper-link {
       margin-top: 10px;
       font-size: 0.92rem;
       line-height: 1.5;
       color: #475569;
     }
-
     .helper-link a,
-    .content-link {
+    .content-link,
+    a {
       color: #0f766e;
-      font-weight: 700;
+      font-weight: 800;
       text-decoration: none;
     }
-
     .helper-link a:hover,
-    .content-link:hover {
-      text-decoration: underline;
-    }
-
+    .content-link:hover,
+    a:hover { text-decoration: underline; }
     button {
       margin-top: 30px;
       background: #0f766e;
@@ -120,11 +195,7 @@ const relatedCalculators = calculators
       cursor: pointer;
       transition: opacity 0.2s ease;
     }
-
-    button:hover {
-      opacity: 0.92;
-    }
-
+    button:hover { opacity: 0.92; }
     .results {
       margin-top: 36px;
       background: #f8fafc;
@@ -134,11 +205,7 @@ const relatedCalculators = calculators
       box-shadow: 0 10px 24px rgba(15, 23, 42, 0.04);
       display: none;
     }
-
-    .results.visible {
-      display: block;
-    }
-
+    .results.visible { display: block; }
     .score {
       font-size: clamp(2rem, 4vw, 2.7rem);
       font-weight: 900;
@@ -146,7 +213,6 @@ const relatedCalculators = calculators
       margin-bottom: 22px;
       line-height: 1.15;
     }
-
     .bar {
       width: 100%;
       height: 16px;
@@ -155,36 +221,21 @@ const relatedCalculators = calculators
       overflow: hidden;
       margin-bottom: 24px;
     }
-
     .fill {
       height: 100%;
       width: 0%;
       border-radius: 999px;
       transition: width 0.45s ease;
     }
-
-    .fill.safe {
-      background: linear-gradient(90deg, #0f766e 0%, #14b8a6 100%);
-    }
-
-    .fill.caution {
-      background: linear-gradient(90deg, #ca8a04 0%, #facc15 100%);
-    }
-
-    .fill.danger {
-      background: linear-gradient(90deg, #dc2626 0%, #f97316 100%);
-    }
-
+    .fill.safe { background: linear-gradient(90deg, #0f766e 0%, #14b8a6 100%); }
+    .fill.caution { background: linear-gradient(90deg, #ca8a04 0%, #facc15 100%); }
+    .fill.danger { background: linear-gradient(90deg, #dc2626 0%, #f97316 100%); }
     .result-details {
       color: #334155;
       line-height: 1.9;
       font-size: 1.02rem;
     }
-
-    .result-details p {
-      margin: 0 0 12px;
-    }
-
+    .result-details p { margin: 0 0 12px; }
     .guidance {
       margin-top: 22px;
       padding-top: 20px;
@@ -193,75 +244,135 @@ const relatedCalculators = calculators
       line-height: 1.85;
       color: #1e293b;
     }
-
     .disclaimer {
       margin-top: 24px;
       font-size: 0.9rem;
       color: #64748b;
     }
-
-    .content-section {
-      margin-top: 60px;
-    }
-
-    .content-section h2 {
-      font-size: 2rem;
-      margin-bottom: 20px;
+    .content-section { margin-top: 68px; }
+    .content-section h3 {
       color: #0f172a;
+      line-height: 1.3;
+      margin: 0 0 10px;
+      font-size: 1.2rem;
     }
-
-    .content-section p,
-    .content-section li {
-      font-size: 1.1rem;
-      line-height: 1.9;
-      color: #334155;
-    }
-
-    .pillar-card {
+    .pillar-card,
+    .info-card,
+    .link-card,
+    .mini-card,
+    .callout,
+    .table-wrap {
       display: block;
       background: #f8fafc;
       border: 1px solid #dbe4ee;
       border-radius: 20px;
       padding: 24px;
-      margin-top: 28px;
       text-decoration: none;
-      transition: transform 0.15s ease;
+      transition: transform 0.15s ease, box-shadow 0.15s ease;
     }
-
-    .pillar-card:hover {
+    .pillar-card { margin-top: 20px; }
+    .pillar-card:hover,
+    .link-card:hover {
       transform: translateY(-2px);
+      box-shadow: 0 12px 28px rgba(15, 23, 42, 0.06);
     }
-
-    .pillar-card strong {
+    .pillar-card strong,
+    .link-card strong {
       display: block;
       margin-bottom: 10px;
       color: #0f172a;
-      font-size: 1.08rem;
+      font-size: 1.05rem;
     }
-
-    .pillar-card span {
+    .pillar-card span,
+    .link-card span,
+    .info-card p,
+    .mini-card p {
       color: #334155;
       line-height: 1.7;
-      font-size: 0.98rem;
+      font-size: 0.96rem;
+      margin: 0;
     }
-
+    .numbered-card { position: relative; padding-top: 48px; }
+    .numbered-card .number {
+      position: absolute;
+      top: 20px;
+      left: 22px;
+      width: 28px;
+      height: 28px;
+      border-radius: 999px;
+      background: #ccfbf1;
+      color: #115e59;
+      font-weight: 950;
+      display: grid;
+      place-items: center;
+      font-size: 0.86rem;
+    }
+    .callout { background: #f8fafc; margin-top: 28px; }
+    .callout p { margin: 0; color: #0f172a; font-size: 1.08rem; }
+    .warning-box { border-left: 5px solid #dc2626; }
+    .decision-box { border-left: 5px solid #0f766e; }
+    .table-wrap { overflow-x: auto; padding: 0; margin-top: 26px; }
+    table { width: 100%; border-collapse: collapse; min-width: 720px; }
+    th,
+    td {
+      text-align: left;
+      padding: 16px;
+      border-bottom: 1px solid #e2e8f0;
+      vertical-align: top;
+      color: #334155;
+      line-height: 1.55;
+    }
+    th {
+      color: #0f172a;
+      background: #f8fafc;
+      font-size: 0.92rem;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+    tr:last-child td { border-bottom: none; }
+    .check-list,
+    .red-list {
+      list-style: none;
+      padding-left: 0;
+      display: grid;
+      gap: 10px;
+    }
+    .check-list li,
+    .red-list li {
+      position: relative;
+      padding-left: 30px;
+      margin-bottom: 0;
+    }
+    .check-list li::before {
+      content: "✓";
+      position: absolute;
+      left: 0;
+      top: 0;
+      color: #0f766e;
+      font-weight: 950;
+    }
+    .red-list li::before {
+      content: "!";
+      position: absolute;
+      left: 0;
+      top: 5px;
+      width: 18px;
+      height: 18px;
+      border-radius: 999px;
+      display: grid;
+      place-items: center;
+      background: #fee2e2;
+      color: #b91c1c;
+      font-weight: 950;
+      font-size: 0.8rem;
+      line-height: 1;
+    }
     @media (max-width: 768px) {
-      .calculator {
-        padding: 24px;
-      }
-
-      .grid {
-        grid-template-columns: 1fr;
-      }
-
+      .calculator { padding: 24px; }
+      .grid { grid-template-columns: 1fr; }
       .calculator h2,
-      .content-section h2 {
-        font-size: 1.7rem;
-      }
-
-      .results {
-        padding: 24px;
-      }
+      .content-section h2 { font-size: 1.7rem; }
+      .results { padding: 24px; }
     }
   </style>
 
@@ -269,16 +380,16 @@ const relatedCalculators = calculators
     <CalculatorPageShell
       eyebrow="Student Loan Calculator"
       title="Should I Take Out Student Loans?"
-      description="Pressure-test student loan borrowing against future income, monthly payment, existing debt, emergency savings, and career payoff."
+      description="Pressure-test student loan borrowing against future income, monthly payment, existing debt, emergency savings, career payoff, and the risk of starting repayment with too little flexibility."
     >
       <div class="calculator">
         <h2>Student Loan Pressure Verdict</h2>
 
         <p class="calculator-intro">
           Enter your expected loan amount, monthly take-home income after school,
-          savings, current debt payments, and expected income gain. This calculator
-          estimates whether student loans look manageable, worth caution, or too
-          stressful for your future budget.
+          savings, current debt payments, and expected income gain. This
+          calculator estimates whether student loans look manageable, worth
+          caution, or too stressful for your future budget.
         </p>
 
         <div class="grid">
@@ -350,19 +461,218 @@ const relatedCalculators = calculators
           <div class="guidance" id="guidance"></div>
 
           <div class="disclaimer">
-            This is a general educational estimate, not financial advice.
+            This is a general educational estimate, not financial, legal, tax, or student-aid advice.
           </div>
         </div>
       </div>
 
       <section class="content-section">
-        <h2>Start With the Full College Cost Calculator</h2>
+        <h2>Student loans are not just tuition help. They are a future bill.</h2>
 
         <p>
-          Student loans should be judged against the full education decision,
-          not just the borrowed amount. Tuition, fees, housing, books, time away
-          from work, repayment timing, and income upside all affect whether
-          borrowing is financially durable.
+          Student loans can be useful when they buy access to a credential with a
+          clear payoff. They can also become a long-term drag when the program
+          outcome is uncertain, the loan payment is too high, or the borrower
+          graduates into a budget that already has rent, groceries,
+          transportation, insurance, childcare, medical costs, and other debt.
+        </p>
+
+        <p>
+          The right question is not only “Can I get approved?” It is “Will the
+          payment fit the life I expect to have after school?” A manageable loan
+          should support a stronger future, not make every future decision tighter.
+        </p>
+
+        <div class="callout decision-box">
+          <p>
+            Student loan debt is most defensible when the path from borrowing to
+            income is clear, specific, and realistic.
+          </p>
+        </div>
+      </section>
+
+      <section class="content-section" id="MethodologySection">
+        <h2>How this student loan calculator works</h2>
+
+        <p>
+          The calculator estimates a pressure score from 0 to 100. It compares
+          the expected loan balance, estimated monthly payment, other debt,
+          expected take-home income, current savings, program length, program
+          confidence, and expected income gain.
+        </p>
+
+        <div class="mini-grid">
+          <div class="mini-card numbered-card">
+            <div class="number">1</div>
+            <h3>Estimate the payment</h3>
+            <p>If no payment is entered, the calculator estimates one as 1.2% of the expected loan balance.</p>
+          </div>
+
+          <div class="mini-card numbered-card">
+            <div class="number">2</div>
+            <h3>Compare debt to income</h3>
+            <p>The payment is compared with expected monthly take-home income and total monthly debt after school.</p>
+          </div>
+
+          <div class="mini-card numbered-card">
+            <div class="number">3</div>
+            <h3>Check savings cushion</h3>
+            <p>Savings matter because repayment is less stressful when you are not starting from zero after graduation.</p>
+          </div>
+
+          <div class="mini-card numbered-card">
+            <div class="number">4</div>
+            <h3>Judge payoff strength</h3>
+            <p>The calculator compares the payment with expected income gain and adjusts for program confidence.</p>
+          </div>
+        </div>
+
+        <p>
+          There is no artificial minimum pressure. If future income, savings,
+          payment size, total debt, and program payoff make the loan essentially
+          harmless, the score can fall to 0.
+        </p>
+      </section>
+
+      <WhenSpendingMakesSense
+        title="When Student Loans Can Make Sense"
+        items={[
+          "The program has a clear job, license, promotion, or income path.",
+          "The expected monthly payment fits your future take-home income.",
+          "You have compared grants, scholarships, employer help, and lower-cost schools.",
+          "You are not using loans to cover avoidable lifestyle inflation.",
+          "The borrowing creates a realistic path to stronger long-term stability.",
+          "You understand the repayment timeline before accepting the loan.",
+          "The loan does not force you to pause emergency savings for years after graduation.",
+        ]}
+      />
+
+      <section class="content-section" id="KeyCostCategories">
+        <h2>Key costs to include before borrowing</h2>
+
+        <p>
+          Student loans should be judged against the full education decision, not
+          just the tuition line. The real cost includes what you borrow, what you
+          stop earning, and what repayment does to your future budget.
+        </p>
+
+        <div class="info-grid">
+          {keyCostCategories.map((category) => (
+            <div class="info-card">
+              <h3>{category.title}</h3>
+              <p>{category.body}</p>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      <section class="content-section">
+        <h2>Student loan decision table</h2>
+
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Situation</th>
+                <th>Borrowing may be reasonable when</th>
+                <th>Borrowing becomes risky when</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Career payoff</td>
+                <td>The program leads to a specific credential, license, promotion, or job path.</td>
+                <td>The payoff is vague, speculative, or mostly based on hope.</td>
+              </tr>
+              <tr>
+                <td>Monthly payment</td>
+                <td>The payment is small relative to future take-home income.</td>
+                <td>The payment crowds out rent, groceries, transportation, or savings.</td>
+              </tr>
+              <tr>
+                <td>Other debt</td>
+                <td>Existing debt is low enough that the student loan does not overload the budget.</td>
+                <td>Credit cards, car loans, or other payments are already stressful.</td>
+              </tr>
+              <tr>
+                <td>Savings</td>
+                <td>You keep enough cash to handle emergencies during and after school.</td>
+                <td>You graduate with debt and no cushion for normal life disruptions.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section class="content-section" id="ReduceCostTips">
+        <h2>Ways to reduce student loan borrowing before you commit</h2>
+
+        <p>
+          A lower loan amount can change the entire verdict. Before accepting the
+          maximum amount offered, look for ways to reduce the balance and protect
+          your future monthly budget.
+        </p>
+
+        <ul class="check-list">
+          {reduceCostTips.map((tip) => <li>{tip}</li>)}
+        </ul>
+      </section>
+
+      <section class="content-section" id="FinancialRedFlags">
+        <h2>Financial red flags before taking out student loans</h2>
+
+        <p>
+          These warning signs do not always mean school is a bad idea. They mean
+          the borrowing plan needs more aid, lower costs, clearer payoff, or a
+          different timeline.
+        </p>
+
+        <ul class="red-list">
+          {financialRedFlags.map((flag) => <li>{flag}</li>)}
+        </ul>
+
+        <div class="callout warning-box">
+          <p>
+            Be especially careful when the degree sounds valuable but the income
+            path is unclear. Student loans are easiest to justify when the payoff
+            is specific, not just hopeful.
+          </p>
+        </div>
+      </section>
+
+      <section class="content-section">
+        <h2>When you should wait, borrow less, or choose a cheaper path</h2>
+
+        <p>
+          Waiting may be smart if the program payoff is unclear, you already have
+          stressful debt, or the future payment would make rent, groceries,
+          transportation, medical bills, childcare, or emergency savings hard to
+          maintain.
+        </p>
+
+        <p>
+          That does not mean giving up on school. It may mean applying for more
+          aid, choosing a lower-cost school, transferring credits, starting
+          part-time, working while enrolled, or building a stronger cash cushion
+          before borrowing.
+        </p>
+
+        <p>
+          If the payment would strain
+          <a class="content-link" href="/how-much-rent-can-i-afford">housing</a>,
+          <a class="content-link" href="/should-i-spend-this-much-on-groceries-per-month">groceries</a>,
+          transportation, or existing debt, the loan amount may need to come down
+          before enrollment.
+        </p>
+      </section>
+
+      <section class="content-section">
+        <h2>Start with the full college cost picture</h2>
+
+        <p>
+          Student loans should be judged against the full education decision.
+          Tuition, fees, housing, books, time away from work, repayment timing,
+          and income upside all affect whether borrowing is financially durable.
         </p>
 
         <a class="pillar-card" href="/college-cost-calculator">
@@ -381,6 +691,14 @@ const relatedCalculators = calculators
           </span>
         </a>
 
+        <a class="pillar-card" href="/should-i-use-savings-for-college">
+          <strong>Should I Use Savings for College?</strong>
+          <span>
+            Compare using cash versus borrowing while protecting emergency
+            reserves.
+          </span>
+        </a>
+
         <a class="pillar-card" href="/how-much-debt-is-too-much">
           <strong>Debt Pressure Calculator</strong>
           <span>
@@ -390,129 +708,49 @@ const relatedCalculators = calculators
         </a>
       </section>
 
-      <section class="content-section">
-        <h2>What Student Loan Borrowing Really Includes</h2>
+      <section class="content-section" id="CalculatorAssumptions">
+        <h2>Calculator assumptions</h2>
 
-        <p>
-          A student loan is not only a way to cover tuition. It is a future
-          monthly obligation that may follow you into rent decisions, car choices,
-          emergency savings, family planning, career changes, and debt payoff.
-        </p>
-
-        <p>
-          Borrowing can still be reasonable when the degree or credential has a
-          clear payoff. The risk grows when the program outcome is uncertain,
-          the borrowed amount is high, or the expected payment leaves little
-          room for normal monthly life after school.
-        </p>
-      </section>
-
-      <WhenSpendingMakesSense
-        title="When Student Loans Can Make Sense"
-        items={[
-          "The program has a clear job, license, promotion, or income path.",
-          "The expected monthly payment fits your future take-home income.",
-          "You have compared grants, scholarships, employer help, and lower-cost schools.",
-          "You are not using loans to cover avoidable lifestyle inflation.",
-          "The borrowing creates a realistic path to stronger long-term stability.",
-        ]}
-      />
-
-      <section class="content-section">
-        <h2>When You Should Wait</h2>
-
-        <p>
-          Student loans deserve caution if the program payoff is unclear, you
-          already have stressful debt, or the future payment would make rent,
-          groceries, transportation, medical bills, childcare, or emergency
-          savings difficult to maintain.
-        </p>
-
-        <p>
-          Waiting may mean applying for more aid, choosing a lower-cost school,
-          starting part-time, transferring credits, working while enrolled, or
-          building a stronger cash cushion before borrowing.
-        </p>
-
-        <p>
-          If the payment would strain
-          <a class="content-link" href="/how-much-rent-can-i-afford">
-            housing
-          </a>,
-          <a class="content-link" href="/should-i-spend-this-much-on-groceries-per-month">
-            groceries
-          </a>,
-          transportation, or existing debt, the loan amount may need to come
-          down before enrollment.
-        </p>
+        <ul>
+          {assumptions.map((assumption) => <li>{assumption}</li>)}
+        </ul>
       </section>
 
       <section class="content-section">
-        <h2>Key Costs to Consider Before Borrowing</h2>
+        <h2>What your student loan verdict actually means</h2>
 
         <p>
-          Before taking out student loans, estimate the payment, repayment term,
-          total borrowed amount, other monthly debt, income after school, and
-          the cost of finishing the program. A loan that looks small today can
-          feel larger once rent, insurance, groceries, and transportation return
-          to the monthly budget.
-        </p>
-
-        <p>
-          Also consider whether the loan pays for a credential with strong labor
-          market value or merely keeps you enrolled without a clear finish line.
-          Borrowing is safer when the program is specific, practical, and likely
-          to improve your options.
-        </p>
-
-        <p>
-          You can compare this decision with the broader
-          <a class="content-link" href="/college-calculators">
-            college calculator hub
-          </a>
-          before choosing a loan amount or school.
-        </p>
-      </section>
-
-      <section class="content-section">
-        <h2>Signs Student Loans Are Creating Financial Pressure</h2>
-
-        <p>
-          Be careful if the loan payment would push total debt too high, delay
-          emergency savings, require credit cards for normal expenses, or depend
-          on an income increase that is not likely.
-        </p>
-
-        <p>
-          A weaker verdict does not mean school is off the table. It means the
-          borrowing plan may need more aid, lower tuition, a smaller loan, a
-          clearer payoff, or a different timeline.
-        </p>
-      </section>
-
-      <section class="content-section">
-        <h2>What Your Student Loan Verdict Actually Means</h2>
-
-        <p>
-          A student loan verdict is not a judgment on whether education is worth
-          it. It estimates whether the borrowing plan creates manageable or
+          A student loan verdict is not a judgment on whether education matters.
+          It estimates whether the borrowing plan creates manageable or
           stressful pressure based on future income, debt load, savings, and
           expected career payoff.
         </p>
 
-        <p>
-          A stronger verdict means the loan is less likely to crowd out basic
-          financial flexibility after school. A weaker verdict means the degree
-          may still be worthwhile, but the repayment plan deserves more caution.
-        </p>
+        <div class="info-grid">
+          <div class="info-card">
+            <h3>Low pressure</h3>
+            <p>The loan looks manageable. Still confirm the program payoff, avoid extra borrowing, and keep emergency savings intact.</p>
+          </div>
+
+          <div class="info-card">
+            <h3>Moderate pressure</h3>
+            <p>The loan may work, but compare cheaper schools, more aid, employer help, part-time options, and smaller loan amounts.</p>
+          </div>
+
+          <div class="info-card">
+            <h3>High pressure</h3>
+            <p>The current borrowing plan could strain your future budget. Reduce the loan, delay enrollment, or choose a clearer payoff path.</p>
+          </div>
+        </div>
+      </section>
+
+      <section class="content-section" id="RelatedCalculators">
+        <h2>Related college calculators</h2>
+        <RelatedCalculators calculators={relatedCalculators} />
       </section>
 
       <div class="content-section">
-        <FAQSection faqs={studentLoanFaqs} />
-      </div>
-
-      <div class="content-section">
-        <RelatedCalculators calculators={relatedCalculators} />
+        <FAQSection title="Student Loan FAQ" faqs={studentLoanFaqs} />
       </div>
     </CalculatorPageShell>
 
@@ -649,12 +887,12 @@ const relatedCalculators = calculators
       pressureScore += timeRisk;
 
       if (savingsMonths < 1) {
-  pressureScore += futureIncome >= estimatedLoanPayment * 75 ? 3 : 18;
-} else if (savingsMonths < 3) {
-  pressureScore += futureIncome >= estimatedLoanPayment * 50 ? 2 : 10;
-} else if (savingsMonths >= 6) {
-  pressureScore -= 8;
-}
+        pressureScore += futureIncome >= estimatedLoanPayment * 75 ? 3 : 18;
+      } else if (savingsMonths < 3) {
+        pressureScore += futureIncome >= estimatedLoanPayment * 50 ? 2 : 10;
+      } else if (savingsMonths >= 6) {
+        pressureScore -= 8;
+      }
 
       if (estimatedLoanPayment > 0 && incomeGain <= 0) {
         pressureScore += 18;
