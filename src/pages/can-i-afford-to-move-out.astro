@@ -1,0 +1,488 @@
+---
+import Layout from "../layouts/Layout.astro";
+import FAQSection from "../components/FAQSection.astro";
+
+const faqs = [
+  {
+    question: "Can I afford to move out if I can pay the first month of rent?",
+    answer:
+      "Not necessarily. The first month of rent is only one part of the move. Deposits, utilities, furniture, groceries, transportation, debt payments, and emergency savings all matter.",
+  },
+  {
+    question: "How much should I save before moving out?",
+    answer:
+      "A safer plan leaves an emergency cushion after paying move-in costs. The exact amount depends on rent, job stability, debt, transportation, household size, and whether outside help is confirmed.",
+  },
+  {
+    question: "Should family help count in this calculator?",
+    answer:
+      "Yes, but only if it is confirmed. Help with deposits, rent, furniture, moving labor, or utilities should reduce the uncovered cost. Vague or uncertain help should not be counted as guaranteed.",
+  },
+  {
+    question: "Can the pressure score be zero?",
+    answer:
+      "Yes. If outside help covers the full move, savings remain strong, or the move barely affects monthly flexibility, the pressure score can be zero. There is no artificial minimum pressure.",
+  },
+  {
+    question: "Is moving out a bad idea if the score is high?",
+    answer:
+      "Not always. Some moves are necessary for work, school, family, safety, or independence. A high-pressure result means the move needs a stronger plan, not that the reason is invalid.",
+  },
+];
+
+const related = [
+  {
+    href: "/moving-calculators",
+    title: "Moving and First Apartment Calculators",
+    text: "Browse move-out, first apartment, deposit, and moving budget tools.",
+  },
+  {
+    href: "/how-much-rent-can-i-afford",
+    title: "How Much Rent Can I Afford?",
+    text: "Estimate a safer rent range using take-home income, debt, utilities, and savings.",
+  },
+  {
+    href: "/should-i-spend-30-percent-income-on-rent",
+    title: "Should I Spend 30% of My Income on Rent?",
+    text: "Check whether a common rent rule leaves enough room for the rest of life.",
+  },
+  {
+    href: "/how-much-emergency-savings-should-i-have",
+    title: "Emergency Savings Calculator",
+    text: "Estimate how much cushion you may need before and after moving.",
+  },
+  {
+    href: "/what-counts-as-debt",
+    title: "What Counts as Debt?",
+    text: "Review which monthly obligations should be counted before moving out.",
+  },
+  {
+    href: "/grocery-calculators",
+    title: "Grocery Budget Calculators",
+    text: "Estimate food costs that may change after living independently.",
+  },
+];
+---
+
+<Layout
+  title="Can I Afford to Move Out? | Moving Out Calculator"
+  description="Use this moving out calculator to estimate whether rent, deposits, utilities, furniture, moving costs, savings, debt, outside help, and monthly bills make moving realistic."
+>
+  <style>
+    .container { max-width: 1100px; margin: 0 auto; padding: 76px 24px 96px; }
+    .eyebrow { color: var(--primary); text-transform: uppercase; letter-spacing: 2px; font-size: 0.8rem; font-weight: 800; margin-bottom: 16px; }
+    h1 { font-size: clamp(2.7rem, 7vw, 4.7rem); line-height: 1; margin: 0 0 22px; max-width: 920px; color: var(--text); letter-spacing: -0.045em; }
+    .intro { max-width: 850px; color: var(--muted); font-size: 1.08rem; line-height: 1.85; margin-bottom: 42px; }
+    .calculator-card, .result-card, .content-section, .info-card, .related-card { background: var(--card); border: 1px solid var(--border); border-radius: 20px; }
+    .calculator-card, .result-card, .content-section { padding: 28px; margin-top: 28px; }
+    .calculator-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 18px; }
+    label { display: block; font-weight: 800; color: var(--text); margin-bottom: 8px; font-size: 0.94rem; }
+    input, select { width: 100%; padding: 12px 13px; border: 1px solid var(--border); border-radius: 12px; font-size: 1rem; color: var(--text); background: white; }
+    .help { display: block; margin-top: 6px; color: var(--muted); font-size: 0.86rem; line-height: 1.45; }
+    button { margin-top: 22px; border: 0; border-radius: 999px; padding: 14px 20px; background: var(--button); color: white; font-weight: 900; font-size: 1rem; cursor: pointer; }
+    .result-card { display: none; border-left: 7px solid var(--primary); }
+    .result-card.active { display: block; }
+    .verdict { font-size: 1.55rem; font-weight: 900; color: var(--text); margin: 0 0 10px; }
+    .score-wrap { margin: 18px 0; }
+    .score-label { display: flex; justify-content: space-between; gap: 16px; color: var(--muted); font-weight: 800; margin-bottom: 8px; }
+    .score-track { height: 16px; border-radius: 999px; overflow: hidden; background: #e2e8f0; }
+    .score-fill { height: 100%; width: 0%; background: #0f766e; transition: width 0.25s ease; }
+    .result-grid, .info-grid, .related-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 18px; margin-top: 22px; }
+    .metric { background: #f8fafc; border: 1px solid var(--border); border-radius: 16px; padding: 18px; }
+    .metric strong, .related-card strong { display: block; color: var(--text); margin-bottom: 6px; }
+    .metric span, .content-section p, .content-section li, .related-card span, .info-card p { color: var(--muted); line-height: 1.75; }
+    .content-section { margin-top: 70px; max-width: 940px; }
+    .content-section h2 { font-size: clamp(1.8rem, 4vw, 2.25rem); line-height: 1.15; color: var(--text); margin: 0 0 18px; letter-spacing: -0.03em; }
+    .content-section h3 { margin: 0 0 10px; color: var(--text); }
+    .info-card, .related-card { padding: 20px; }
+    .related-card { display: block; text-decoration: none; color: inherit; }
+    ul { padding-left: 22px; }
+    li { margin-bottom: 10px; }
+    .red-list li::marker { color: #b91c1c; }
+    .note { background: #f8fafc; border: 1px solid var(--border); border-radius: 16px; padding: 18px; color: var(--muted); line-height: 1.7; margin-top: 20px; }
+  </style>
+
+  <main class="container">
+    <div class="eyebrow">Moving Out Calculator</div>
+
+    <h1>Can I Afford to Move Out?</h1>
+
+    <p class="intro">
+      Moving out is not just a rent decision. This calculator estimates whether
+      the full move is realistic after upfront costs, monthly rent, utilities,
+      groceries, transportation, existing debt, emergency savings, and confirmed
+      outside help are included.
+    </p>
+
+    <section class="calculator-card" aria-label="Moving out affordability calculator">
+      <div class="calculator-grid">
+        <div>
+          <label for="monthlyIncome">Monthly take-home income</label>
+          <input id="monthlyIncome" type="number" min="0" value="3500" />
+          <span class="help">Use after-tax monthly income, not gross pay.</span>
+        </div>
+
+        <div>
+          <label for="rent">Expected monthly rent</label>
+          <input id="rent" type="number" min="0" value="1200" />
+          <span class="help">Your share after roommates, if any.</span>
+        </div>
+
+        <div>
+          <label for="utilities">Utilities and internet</label>
+          <input id="utilities" type="number" min="0" value="220" />
+          <span class="help">Electric, gas, water, trash, internet, phone changes.</span>
+        </div>
+
+        <div>
+          <label for="groceries">Monthly groceries</label>
+          <input id="groceries" type="number" min="0" value="450" />
+          <span class="help">Use your expected independent food budget.</span>
+        </div>
+
+        <div>
+          <label for="transportation">Transportation costs</label>
+          <input id="transportation" type="number" min="0" value="350" />
+          <span class="help">Car payment, insurance, gas, transit, parking, rideshare.</span>
+        </div>
+
+        <div>
+          <label for="otherBills">Other monthly bills</label>
+          <input id="otherBills" type="number" min="0" value="350" />
+          <span class="help">Subscriptions, insurance, personal spending, minimum essentials.</span>
+        </div>
+
+        <div>
+          <label for="monthlyDebt">Monthly debt payments</label>
+          <input id="monthlyDebt" type="number" min="0" value="250" />
+          <span class="help">Credit cards, student loans, personal loans, or other required debt.</span>
+        </div>
+
+        <div>
+          <label for="savings">Current savings</label>
+          <input id="savings" type="number" min="0" value="7000" />
+          <span class="help">Cash available before the move.</span>
+        </div>
+
+        <div>
+          <label for="upfrontCosts">Upfront moving costs</label>
+          <input id="upfrontCosts" type="number" min="0" value="3200" />
+          <span class="help">Deposit, first rent, movers, truck, fees, utility setup.</span>
+        </div>
+
+        <div>
+          <label for="setupCosts">Furniture and setup costs</label>
+          <input id="setupCosts" type="number" min="0" value="1500" />
+          <span class="help">Bed, cookware, basic furniture, cleaning supplies, tools.</span>
+        </div>
+
+        <div>
+          <label for="outsideHelp">Confirmed outside help</label>
+          <input id="outsideHelp" type="number" min="0" value="0" />
+          <span class="help">Family help, gifts, employer relocation, roommate reimbursements.</span>
+        </div>
+
+        <div>
+          <label for="urgency">Move urgency</label>
+          <select id="urgency">
+            <option value="optional">Optional / flexible timing</option>
+            <option value="important" selected>Important but adjustable</option>
+            <option value="urgent">Urgent need</option>
+          </select>
+          <span class="help">Urgent moves are judged with more context, not just preference.</span>
+        </div>
+      </div>
+
+      <button id="calculateBtn" type="button">Calculate Moving Pressure</button>
+    </section>
+
+    <section id="result" class="result-card" aria-live="polite">
+      <div class="verdict" id="verdictText">Enter your numbers to see the result.</div>
+      <p id="summaryText"></p>
+
+      <div class="score-wrap">
+        <div class="score-label">
+          <span>Moving pressure score</span>
+          <span id="scoreText">0 / 100</span>
+        </div>
+        <div class="score-track">
+          <div id="scoreFill" class="score-fill"></div>
+        </div>
+      </div>
+
+      <div class="result-grid">
+        <div class="metric">
+          <strong>Uncovered upfront cost</strong>
+          <span id="uncoveredCost">$0</span>
+        </div>
+
+        <div class="metric">
+          <strong>Savings after move</strong>
+          <span id="savingsAfter">$0</span>
+        </div>
+
+        <div class="metric">
+          <strong>Monthly housing share</strong>
+          <span id="housingShare">0%</span>
+        </div>
+
+        <div class="metric">
+          <strong>Monthly room left</strong>
+          <span id="monthlyRoom">$0</span>
+        </div>
+      </div>
+
+      <p class="note" id="nextStep"></p>
+    </section>
+
+    <section id="KeyCostCategories" class="content-section">
+      <h2>Key Costs to Include Before Moving Out</h2>
+
+      <div class="info-grid">
+        <div class="info-card">
+          <h3>Move-in cash</h3>
+          <p>
+            First month of rent, security deposit, application fees, pet fees,
+            utility deposits, renter setup costs, and renters insurance can hit
+            before the first normal month begins.
+          </p>
+        </div>
+
+        <div class="info-card">
+          <h3>Setup basics</h3>
+          <p>
+            Furniture, cookware, bedding, tools, cleaning supplies, internet
+            equipment, and basic household items can quietly add thousands.
+          </p>
+        </div>
+
+        <div class="info-card">
+          <h3>New monthly bills</h3>
+          <p>
+            Rent must fit beside utilities, groceries, transportation, debt
+            payments, insurance, phone, subscriptions, and savings.
+          </p>
+        </div>
+
+        <div class="info-card">
+          <h3>Emergency cushion</h3>
+          <p>
+            Moving is safer when savings remain available afterward for repairs,
+            job interruption, medical bills, or a bad first month.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <section id="FinancialRedFlags" class="content-section">
+      <h2>Move-Out Red Flags</h2>
+
+      <ul class="red-list">
+        <li>The move requires credit card debt for deposits, furniture, or basic supplies.</li>
+        <li>Rent only fits before utilities, groceries, transportation, and debt are included.</li>
+        <li>Savings would fall near zero immediately after moving.</li>
+        <li>The plan depends on a roommate, raise, family help, or side income that is not confirmed.</li>
+        <li>There is no plan for replacing furniture slowly or delaying optional setup purchases.</li>
+      </ul>
+    </section>
+
+    <section id="ReduceCostTips" class="content-section">
+      <h2>How to Reduce Moving Pressure</h2>
+
+      <ul>
+        <li>Find a roommate or lower-rent option before signing a lease.</li>
+        <li>Use confirmed help for specific costs instead of treating it as general backup money.</li>
+        <li>Buy only the essentials first and delay furniture upgrades.</li>
+        <li>Compare utility setup costs, internet plans, renters insurance, and moving-truck prices.</li>
+        <li>Wait until savings survives the move instead of only reaching the move-in minimum.</li>
+      </ul>
+    </section>
+
+    <section id="CalculatorAssumptions" class="content-section">
+      <h2>Calculator Assumptions</h2>
+
+      <p>
+        This calculator treats monthly income as take-home pay. Confirmed outside
+        help reduces the uncovered cost. There is no artificial pressure floor:
+        when the true uncovered cost is zero, when savings remain strong, or when
+        the monthly budget has clear room after the move, pressure can fall to zero.
+      </p>
+
+      <p>
+        The result is an educational pressure estimate, not personalized
+        financial, legal, housing, tax, or professional advice. Rent rules,
+        lease terms, utility prices, local costs, and household needs vary.
+      </p>
+    </section>
+
+    <section id="MethodologySection" class="content-section">
+      <h2>How the Moving Pressure Score Works</h2>
+
+      <p>
+        The score combines upfront pressure, savings impact, housing share of
+        take-home income, remaining monthly cash flow, debt load, and urgency.
+        The calculator is designed to let pressure fall to zero when the move is
+        fully covered by outside help, when uncovered costs are tiny, or when
+        savings and income leave strong flexibility afterward.
+      </p>
+
+      <p>
+        Optional moves are treated more cautiously when they drain cash or add
+        debt. Urgent moves still show pressure, but the result focuses on planning
+        risk rather than judging whether the need is legitimate.
+      </p>
+    </section>
+
+    <section id="RelatedCalculators" class="content-section">
+      <h2>Related Calculators</h2>
+
+      <div class="related-grid">
+        {related.map((item) => (
+          <a class="related-card" href={item.href}>
+            <strong>{item.title}</strong>
+            <span>{item.text}</span>
+          </a>
+        ))}
+      </div>
+    </section>
+
+    <FAQSection id="FAQSection" faqs={faqs} />
+  </main>
+
+  <script>
+    const money = (value) =>
+      new Intl.NumberFormat("en-US", {
+        style: "currency",
+        currency: "USD",
+        maximumFractionDigits: 0,
+      }).format(Number.isFinite(value) ? value : 0);
+
+    const clamp = (value, min, max) => Math.min(max, Math.max(min, value));
+
+    function numberValue(id) {
+      const value = Number(document.getElementById(id).value);
+      return Number.isFinite(value) ? Math.max(0, value) : 0;
+    }
+
+    function calculate() {
+      const monthlyIncome = numberValue("monthlyIncome");
+      const rent = numberValue("rent");
+      const utilities = numberValue("utilities");
+      const groceries = numberValue("groceries");
+      const transportation = numberValue("transportation");
+      const otherBills = numberValue("otherBills");
+      const monthlyDebt = numberValue("monthlyDebt");
+      const savings = numberValue("savings");
+      const upfrontCosts = numberValue("upfrontCosts");
+      const setupCosts = numberValue("setupCosts");
+      const outsideHelp = numberValue("outsideHelp");
+      const urgency = document.getElementById("urgency").value;
+
+      const grossMoveCost = upfrontCosts + setupCosts;
+      const uncoveredCost = Math.max(0, grossMoveCost - outsideHelp);
+      const savingsAfter = Math.max(0, savings - uncoveredCost);
+      const monthlyHousing = rent + utilities;
+      const monthlyObligations =
+        rent + utilities + groceries + transportation + otherBills + monthlyDebt;
+      const monthlyRoom = monthlyIncome - monthlyObligations;
+
+      const housingRatio = monthlyIncome > 0 ? monthlyHousing / monthlyIncome : 1;
+      const obligationRatio =
+        monthlyIncome > 0 ? monthlyObligations / monthlyIncome : 1;
+      const savingsImpact =
+        savings > 0 ? uncoveredCost / savings : uncoveredCost > 0 ? 1 : 0;
+      const emergencyMonths =
+        monthlyObligations > 0
+          ? savingsAfter / monthlyObligations
+          : savingsAfter > 0
+            ? 12
+            : 0;
+      const debtRatio =
+        monthlyIncome > 0 ? monthlyDebt / monthlyIncome : monthlyDebt > 0 ? 1 : 0;
+
+      let score = 0;
+
+      score += clamp(savingsImpact * 42, 0, 42);
+      score += clamp((housingRatio - 0.25) * 120, 0, 28);
+      score += clamp((obligationRatio - 0.72) * 140, 0, 30);
+      score += monthlyRoom < 0 ? 28 : monthlyRoom < 250 ? 18 : monthlyRoom < 500 ? 10 : 0;
+      score += emergencyMonths < 0.5 ? 24 : emergencyMonths < 1 ? 17 : emergencyMonths < 2 ? 10 : emergencyMonths < 3 ? 5 : 0;
+      score += debtRatio > 0.2 ? 12 : debtRatio > 0.12 ? 7 : debtRatio > 0.07 ? 3 : 0;
+
+      if (urgency === "optional") score += 6;
+      if (urgency === "urgent") score -= 5;
+
+      if (uncoveredCost === 0 && monthlyRoom >= 0) {
+        score = Math.min(score, emergencyMonths >= 1 ? 0 : 8);
+      }
+
+      if (
+        uncoveredCost <= Math.max(100, monthlyIncome * 0.03) &&
+        monthlyRoom > Math.max(500, monthlyIncome * 0.08)
+      ) {
+        score = 0;
+      } else if (
+        uncoveredCost <= Math.max(100, monthlyIncome * 0.03) &&
+        monthlyRoom > 500
+      ) {
+        score = Math.min(score, 5);
+      }
+
+      if (savingsAfter >= monthlyObligations * 6 && monthlyRoom > monthlyIncome * 0.12) {
+        score = Math.min(score, 12);
+      }
+
+      if (monthlyIncome >= 10000 && monthlyRoom > 1500 && emergencyMonths >= 3) {
+        score = Math.min(score, 10);
+      }
+
+      score = Math.round(clamp(score, 0, 100));
+
+      let verdict = "Move-out pressure looks manageable";
+      let summary =
+        "The move appears workable based on the numbers provided, but confirm the lease terms, utility costs, and savings cushion before committing.";
+      let next =
+        "Next step: confirm the full move-in cash requirement and keep optional setup purchases separate from true essentials.";
+      let color = "#0f766e";
+
+      if (score >= 70) {
+        verdict = "This move looks high pressure";
+        summary =
+          "The move may create serious strain because upfront costs, monthly bills, savings impact, debt, or limited cash flow leave little room for surprises.";
+        next =
+          "Next step: lower the rent target, add a roommate, delay the move, confirm outside help, or reduce setup costs before signing.";
+        color = "#b91c1c";
+      } else if (score >= 40) {
+        verdict = "This move needs a stronger plan";
+        summary =
+          "The move may be possible, but the budget looks tight enough that deposits, utilities, groceries, furniture, debt, or savings recovery deserve more planning.";
+        next =
+          "Next step: trim upfront costs, protect at least one to three months of basic expenses, and verify the monthly budget after rent.";
+        color = "#b45309";
+      } else if (score <= 5) {
+        verdict = "This move has very low financial pressure";
+        summary =
+          "The true uncovered cost is low or well-covered, and the move leaves enough room in savings or monthly cash flow based on the numbers provided.";
+        next =
+          "Next step: still confirm lease terms, utilities, renter insurance, and the exact move-in cash due before signing.";
+        color = "#0f766e";
+      }
+
+      document.getElementById("verdictText").textContent = verdict;
+      document.getElementById("summaryText").textContent = summary;
+      document.getElementById("scoreText").textContent = `${score} / 100`;
+      document.getElementById("scoreFill").style.width = `${score}%`;
+      document.getElementById("scoreFill").style.background = color;
+      document.getElementById("uncoveredCost").textContent = money(uncoveredCost);
+      document.getElementById("savingsAfter").textContent = money(savingsAfter);
+      document.getElementById("housingShare").textContent =
+        monthlyIncome > 0 ? `${Math.round(housingRatio * 100)}%` : "N/A";
+      document.getElementById("monthlyRoom").textContent = money(monthlyRoom);
+      document.getElementById("nextStep").textContent = next;
+      document.getElementById("result").classList.add("active");
+    }
+
+    document.getElementById("calculateBtn").addEventListener("click", calculate);
+    calculate();
+  </script>
+</Layout>

@@ -1,0 +1,201 @@
+---
+import Layout from "../layouts/Layout.astro";
+import CalculatorCard from "../components/CalculatorCard.astro";
+import FAQSection from "../components/FAQSection.astro";
+import { calculators } from "../data/calculators.js";
+
+const movingCalculators = calculators.filter(
+  (calculator) => calculator.category === "Moving"
+);
+
+const movingFaqs = [
+  {
+    question: "What moving costs should I include?",
+    answer:
+      "Include first month of rent, security deposit, application fees, utility deposits, movers, truck rental, basic furniture, groceries, renters insurance, transportation changes, and emergency savings after the move.",
+  },
+  {
+    question: "Is rent the biggest part of moving out?",
+    answer:
+      "Rent is usually the biggest recurring cost, but move-in cash and setup costs can create pressure before the first normal month even begins.",
+  },
+  {
+    question: "Should I count family help?",
+    answer:
+      "Confirmed family help, employer relocation help, gifts, or roommate reimbursements should reduce the uncovered cost. Unconfirmed help should not be treated as guaranteed.",
+  },
+  {
+    question: "Can moving pressure be zero?",
+    answer:
+      "Yes. If outside help covers the move, savings remain strong, and the monthly budget still has room after rent and utilities, the pressure can be zero. There is no artificial minimum pressure.",
+  },
+  {
+    question: "Is moving out always bad if the score is high?",
+    answer:
+      "No. Some moves are necessary for work, school, family, safety, or independence. A high-pressure result means the plan needs more protection, not that the need is fake.",
+  },
+];
+---
+
+<Layout
+  title="Moving and First Apartment Calculators | ShouldISpend"
+  description="Use moving and first apartment calculators to estimate move-out costs, deposits, utilities, furniture, savings cushion, debt risk, and monthly flexibility."
+>
+  <style>
+    .container { max-width: 1100px; margin: 0 auto; padding: 80px 24px 96px; }
+    .eyebrow { color: var(--primary); text-transform: uppercase; letter-spacing: 2px; font-size: 0.8rem; font-weight: 800; margin-bottom: 16px; }
+    h1 { font-size: clamp(2.7rem, 7vw, 4.8rem); line-height: 1; margin: 0 0 24px; max-width: 920px; color: var(--text); letter-spacing: -0.045em; }
+    .intro, .content-section p, .content-section li { color: var(--muted); line-height: 1.8; font-size: 1.05rem; }
+    .intro { max-width: 850px; margin-bottom: 54px; }
+    .grid, .link-grid, .info-grid { display: grid; gap: 24px; }
+    .grid { grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); margin-top: 32px; }
+    .link-grid, .info-grid { grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); margin-top: 26px; }
+    .content-section { max-width: 900px; margin-top: 76px; }
+    .content-section h2 { font-size: clamp(1.8rem, 4vw, 2.25rem); line-height: 1.15; margin: 0 0 18px; color: var(--text); letter-spacing: -0.03em; }
+    .content-section h3 { margin: 0 0 10px; color: var(--text); }
+    .link-card, .info-card, .pillar-card { display: block; background: var(--card); border: 1px solid var(--border); border-radius: 18px; padding: 22px; text-decoration: none; color: inherit; }
+    .pillar-card { background: #f8fafc; border-color: #cbd5e1; margin-top: 26px; }
+    .link-card strong, .pillar-card strong { display: block; color: var(--text); margin-bottom: 10px; font-size: 1.02rem; }
+    .link-card span, .pillar-card span, .info-card p { display: block; color: var(--muted); line-height: 1.7; font-size: 0.96rem; margin: 0; }
+    ul { padding-left: 22px; }
+    li { margin-bottom: 10px; }
+    .red-list li::marker { color: #b91c1c; }
+  </style>
+
+  <main class="container">
+    <div class="eyebrow">Moving Calculators</div>
+
+    <h1>Moving and First Apartment Calculators</h1>
+
+    <p class="intro">
+      Moving out can look affordable when the focus is only on rent, but the
+      real decision includes deposits, utility setup, furniture, movers, basic
+      supplies, groceries, transportation, debt payments, emergency savings, and
+      monthly breathing room after the lease begins.
+    </p>
+
+    <div class="grid">
+      {movingCalculators.map((calculator) => (
+        <CalculatorCard
+          category={calculator.category}
+          title={calculator.title}
+          description={calculator.description}
+          href={calculator.href}
+        />
+      ))}
+    </div>
+
+    <section class="content-section">
+      <h2>Start With the Move-Out Calculator</h2>
+
+      <p>
+        The anchor calculator for this cluster estimates whether moving out is
+        realistic after upfront move-in costs, the new monthly budget, savings
+        left afterward, debt load, and confirmed outside help are included.
+      </p>
+
+      <a class="pillar-card" href="/can-i-afford-to-move-out">
+        <strong>Can I Afford to Move Out?</strong>
+        <span>
+          Compare rent, deposits, utilities, furniture, moving costs, take-home
+          income, savings, debt, outside help, and emergency cushion before
+          signing a lease.
+        </span>
+      </a>
+    </section>
+
+    <section id="KeyCostCategories" class="content-section">
+      <h2>Moving Costs People Often Underestimate</h2>
+
+      <div class="info-grid">
+        <div class="info-card">
+          <h3>Move-in cash</h3>
+          <p>First month of rent, security deposit, application fees, pet fees, utility deposits, and renters insurance can hit before the first normal month.</p>
+        </div>
+
+        <div class="info-card">
+          <h3>Basic setup costs</h3>
+          <p>A first apartment may require furniture, cookware, bedding, cleaning supplies, tools, internet equipment, and other essentials.</p>
+        </div>
+
+        <div class="info-card">
+          <h3>Monthly bills</h3>
+          <p>Rent must fit beside utilities, groceries, transportation, subscriptions, debt payments, insurance, and savings.</p>
+        </div>
+
+        <div class="info-card">
+          <h3>Emergency cushion</h3>
+          <p>The move is safer when money remains afterward for car repairs, job disruption, medical bills, higher utilities, or lease surprises.</p>
+        </div>
+      </div>
+    </section>
+
+    <section id="FinancialRedFlags" class="content-section">
+      <h2>Moving Red Flags</h2>
+
+      <ul class="red-list">
+        <li>The move requires credit card debt for deposits, furniture, or basic supplies.</li>
+        <li>Emergency savings would be drained immediately after moving.</li>
+        <li>Rent fits only before utilities, groceries, transportation, and debt are included.</li>
+        <li>Outside help is assumed but not confirmed.</li>
+        <li>The move depends on a future raise, roommate, or side income that is not guaranteed.</li>
+      </ul>
+    </section>
+
+    <section id="ReduceCostTips" class="content-section">
+      <h2>Ways to Lower Moving Pressure</h2>
+
+      <ul>
+        <li>Choose a lower-rent place, roommate, or shorter move before using debt.</li>
+        <li>Buy only essential furniture first and delay upgrades.</li>
+        <li>Compare utility setup fees, internet plans, and renters insurance before move-in.</li>
+        <li>Ask for confirmed help with specific costs instead of assuming open-ended support.</li>
+        <li>Delay the move until emergency savings survives the upfront costs.</li>
+      </ul>
+    </section>
+
+    <section id="CalculatorAssumptions" class="content-section">
+      <h2>Moving Calculator Assumptions</h2>
+
+      <p>
+        These calculators use take-home income, current savings, monthly debt
+        payments, upfront moving costs, expected rent, utilities, groceries,
+        transportation, and confirmed outside help. The goal is to estimate
+        pressure after the move, not simply whether the first payment can be made.
+      </p>
+    </section>
+
+    <section id="MethodologySection" class="content-section">
+      <h2>How ShouldISpend Evaluates Moving Affordability</h2>
+
+      <p>
+        ShouldISpend treats moving as both a one-time cost and a recurring
+        monthly commitment. A move becomes lower pressure when confirmed help,
+        strong savings, low debt, and manageable rent leave breathing room after
+        the lease starts.
+      </p>
+
+      <p>
+        A low-pressure result is not a command to move, and a high-pressure
+        result does not mean moving is impossible. The score is a planning signal
+        that helps identify whether the move needs a smaller budget, more savings,
+        a roommate, or a delay.
+      </p>
+    </section>
+
+    <section id="RelatedCalculators" class="content-section">
+      <h2>Related Calculators</h2>
+
+      <div class="link-grid">
+        <a class="link-card" href="/can-i-afford-to-move-out"><strong>Can I Afford to Move Out?</strong><span>Pressure-test the full move-out decision before signing a lease.</span></a>
+        <a class="link-card" href="/how-much-rent-can-i-afford"><strong>How Much Rent Can I Afford?</strong><span>Estimate a realistic rent range using income, debt, utilities, and savings.</span></a>
+        <a class="link-card" href="/should-i-spend-30-percent-income-on-rent"><strong>30% Rent Rule Calculator</strong><span>Check whether the classic rent rule works for your full budget.</span></a>
+        <a class="link-card" href="/how-much-emergency-savings-should-i-have"><strong>Emergency Savings Calculator</strong><span>Estimate how much cushion to keep before and after moving.</span></a>
+        <a class="link-card" href="/what-counts-as-debt"><strong>What Counts as Debt?</strong><span>Know which obligations should be included in affordability decisions.</span></a>
+        <a class="link-card" href="/calculators"><strong>All ShouldISpend Calculators</strong><span>Browse calculators for rent, debt, groceries, cars, travel, and major life costs.</span></a>
+      </div>
+    </section>
+
+    <FAQSection id="FAQSection" faqs={movingFaqs} />
+  </main>
+</Layout>

@@ -1,5 +1,14 @@
 export const calculators = [
   {
+    id: "move-out-affordability",
+    category: "Moving",
+    title: "Can I Afford to Move Out?",
+    description:
+      "Estimate whether moving out is financially realistic using rent, deposits, utilities, furniture, moving costs, savings, debt, outside help, and monthly flexibility.",
+    href: "/can-i-afford-to-move-out",
+  },
+
+  {
   id: "wedding-planner",
   category: "Weddings",
   title: "Should I Hire a Wedding Planner?",
