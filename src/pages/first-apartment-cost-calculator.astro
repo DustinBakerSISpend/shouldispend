@@ -1,0 +1,747 @@
+---
+import Layout from "../layouts/Layout.astro";
+import CalculatorPageShell from "../components/CalculatorPageShell.astro";
+import FAQSection from "../components/FAQSection.astro";
+import RelatedCalculators from "../components/RelatedCalculators.astro";
+import MethodologySection from "../components/MethodologySection.astro";
+import CalculatorAssumptions from "../components/CalculatorAssumptions.astro";
+import KeyCostCategories from "../components/KeyCostCategories.astro";
+import ReduceCostTips from "../components/ReduceCostTips.astro";
+import { calculators } from "../data/calculators.js";
+
+const firstApartmentFaqs = [
+  {
+    question: "How much does a first apartment usually cost upfront?",
+    answer:
+      "The upfront cost depends on rent, deposit rules, application fees, utility setup, moving costs, furniture, groceries, and basic household supplies. Many people underestimate the total because they only count the first rent payment and security deposit.",
+  },
+  {
+    question: "What should I include in a first apartment budget?",
+    answer:
+      "Include the first rent or mortgage payment, security deposit, application or admin fees, utility deposits, renters insurance, moving costs, basic furniture, kitchen supplies, bathroom basics, cleaning supplies, groceries, pet fees, parking, storage, and emergency cash.",
+  },
+  {
+    question: "Is this calculator for renters only?",
+    answer:
+      "It is built mainly for first apartments and rental moves, but the main housing field can also be used for a mortgage or housing payment. Homeowners should add extra costs separately, including closing costs, repairs, maintenance, taxes, HOA fees, and insurance differences.",
+  },
+  {
+    question: "Should furniture be part of first apartment cost?",
+    answer:
+      "Yes, but separate essentials from upgrades. A bed, basic seating, cookware, towels, shower items, cleaning supplies, and a place to eat may matter immediately. Decor, a full living room set, guest items, and premium furniture can usually wait.",
+  },
+  {
+    question: "Why does the calculator show a low, typical, and high estimate?",
+    answer:
+      "First apartment costs vary because people make different choices after getting the keys. The low estimate assumes a bare-bones setup, the typical estimate uses your entered plan, and the high estimate adds a cushion for better furniture, extra supplies, higher setup costs, or missed items.",
+  },
+];
+
+const relatedCalculators = calculators
+  .filter((calculator) =>
+    [
+      "/can-i-afford-to-move-out",
+      "/how-much-should-i-save-before-moving-out",
+      "/how-much-rent-can-i-afford",
+      "/should-i-spend-30-percent-income-on-rent",
+      "/how-much-emergency-savings-should-i-have",
+      "/what-counts-as-debt",
+    ].includes(calculator.href)
+  )
+  .filter((calculator) => calculator.href !== "/first-apartment-cost-calculator")
+  .slice(0, 6);
+---
+
+<Layout
+  title="First Apartment Cost Calculator | ShouldISpend"
+  description="Estimate first apartment startup costs, including rent, deposit, utilities, furniture, moving costs, groceries, insurance, setup supplies, and move-in fees."
+>
+  <style>
+    .container {
+      max-width: 940px;
+      margin: auto;
+    }
+
+    .calculator {
+      background: white;
+      padding: 40px;
+      border-radius: 24px;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.06);
+    }
+
+    .calculator h2 {
+      margin-top: 0;
+      font-size: 2rem;
+      margin-bottom: 18px;
+      color: #0f172a;
+    }
+
+    .calculator-intro {
+      color: #334155;
+      line-height: 1.8;
+      margin-bottom: 30px;
+      font-size: 1.05rem;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+    }
+
+    .field label {
+      display: block;
+      font-weight: 800;
+      margin-bottom: 10px;
+      color: #0f172a;
+    }
+
+    .field input,
+    .field select {
+      width: 100%;
+      padding: 16px;
+      border-radius: 12px;
+      border: 1px solid #cbd5e1;
+      font-size: 1rem;
+      box-sizing: border-box;
+      background: white;
+    }
+
+    .field small {
+      display: block;
+      margin-top: 8px;
+      color: #64748b;
+      line-height: 1.5;
+    }
+
+    button {
+      margin-top: 30px;
+      background: #0f766e;
+      color: white;
+      border: none;
+      padding: 18px 32px;
+      border-radius: 999px;
+      font-size: 1.05rem;
+      font-weight: 800;
+      cursor: pointer;
+      transition: opacity 0.2s ease;
+    }
+
+    button:hover {
+      opacity: 0.92;
+    }
+
+    .results {
+      margin-top: 36px;
+      background: #f8fafc;
+      padding: 32px;
+      border-radius: 24px;
+      border: 1px solid var(--border);
+      box-shadow: 0 10px 24px rgba(15, 23, 42, 0.04);
+      display: none;
+    }
+
+    .results.visible {
+      display: block;
+    }
+
+    .result-kicker {
+      font-size: 0.82rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: #0f766e;
+      font-weight: 900;
+      margin-bottom: 10px;
+    }
+
+    .total-price {
+      font-size: clamp(2.4rem, 6vw, 4rem);
+      font-weight: 900;
+      color: #0f172a;
+      line-height: 1.05;
+      margin-bottom: 16px;
+    }
+
+    .result-details {
+      color: #334155;
+      line-height: 1.9;
+      font-size: 1.02rem;
+    }
+
+    .result-details p {
+      margin: 0 0 12px;
+    }
+
+    .result-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 16px;
+      margin: 26px 0;
+    }
+
+    .result-card {
+      background: white;
+      border: 1px solid #dbe4ee;
+      border-radius: 18px;
+      padding: 20px;
+    }
+
+    .result-card span {
+      display: block;
+      color: #64748b;
+      font-size: 0.9rem;
+      margin-bottom: 8px;
+      font-weight: 700;
+    }
+
+    .result-card strong {
+      display: block;
+      color: #0f172a;
+      font-size: 1.55rem;
+      line-height: 1.2;
+    }
+
+    .verdict-box {
+      margin-top: 24px;
+      padding: 22px;
+      border-radius: 18px;
+      background: white;
+      border: 1px solid #dbe4ee;
+      color: #334155;
+      line-height: 1.8;
+    }
+
+    .verdict-box strong {
+      color: #0f172a;
+    }
+
+    .warning-list {
+      margin: 18px 0 0;
+      padding-left: 22px;
+      color: #334155;
+      line-height: 1.8;
+    }
+
+    .disclaimer {
+      margin-top: 24px;
+      font-size: 0.9rem;
+      color: #64748b;
+    }
+
+    .content-section {
+      margin-top: 60px;
+    }
+
+    .content-section h2 {
+      font-size: 2rem;
+      margin-bottom: 20px;
+      color: #0f172a;
+    }
+
+    .content-section p,
+    .content-section li {
+      font-size: 1.1rem;
+      line-height: 1.9;
+      color: #334155;
+    }
+
+    .content-link {
+      color: #0f766e;
+      font-weight: 700;
+      text-decoration: none;
+    }
+
+    .content-link:hover {
+      text-decoration: underline;
+    }
+
+    @media (max-width: 768px) {
+      .calculator {
+        padding: 24px;
+      }
+
+      .grid,
+      .result-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .calculator h2,
+      .content-section h2 {
+        font-size: 1.7rem;
+      }
+
+      .results {
+        padding: 24px;
+      }
+    }
+  </style>
+
+  <div class="container">
+    <CalculatorPageShell
+      eyebrow="First Apartment Cost Calculator"
+      title="First Apartment Cost Calculator"
+      description="Estimate the total cash needed for a first apartment, including rent or mortgage payment, deposits, utilities, moving costs, furniture, groceries, insurance, and setup supplies."
+    >
+      <div class="calculator">
+        <h2>First Apartment Startup Cost Calculator</h2>
+
+        <p class="calculator-intro">
+          A first apartment can look affordable when the focus is only on the
+          monthly payment. The real startup cost includes the money due before
+          move-in, the basics needed after getting the keys, and the cushion
+          needed for items people usually forget.
+        </p>
+
+        <div class="grid">
+          <div class="field">
+            <label for="monthlyHousing">Monthly Rent or Mortgage</label>
+            <input id="monthlyHousing" type="number" placeholder="Example: 1250" />
+            <small>Use your rent share, or your monthly mortgage/housing payment if you are not renting.</small>
+          </div>
+
+          <div class="field">
+            <label for="securityDeposit">Security Deposit</label>
+            <input id="securityDeposit" type="number" placeholder="Example: 1250" />
+            <small>Include the full refundable deposit or your expected share.</small>
+          </div>
+
+          <div class="field">
+            <label for="applicationFees">Application, Admin, or Lease Fees</label>
+            <input id="applicationFees" type="number" placeholder="Example: 250" />
+            <small>Application fees, admin fees, holding fees, background checks, or lease signing fees.</small>
+          </div>
+
+          <div class="field">
+            <label for="utilitySetup">Utility and Internet Setup</label>
+            <input id="utilitySetup" type="number" placeholder="Example: 300" />
+            <small>Deposits, installation charges, activation fees, router costs, and connection fees.</small>
+          </div>
+
+          <div class="field">
+            <label for="insuranceUpfront">Renters or Home Insurance Upfront</label>
+            <input id="insuranceUpfront" type="number" placeholder="Example: 180" />
+            <small>Use any upfront premium due before or near move-in.</small>
+          </div>
+
+          <div class="field">
+            <label for="movingCost">Moving Costs</label>
+            <input id="movingCost" type="number" placeholder="Example: 700" />
+            <small>Truck rental, movers, boxes, storage, fuel, tips, mileage, or short-term help.</small>
+          </div>
+
+          <div class="field">
+            <label for="furnitureEssentials">Furniture Essentials</label>
+            <input id="furnitureEssentials" type="number" placeholder="Example: 1800" />
+            <small>Mattress, bed frame, seating, table, lamps, shelves, desk, or basic living items.</small>
+          </div>
+
+          <div class="field">
+            <label for="kitchenBathBasics">Kitchen and Bathroom Basics</label>
+            <input id="kitchenBathBasics" type="number" placeholder="Example: 500" />
+            <small>Cookware, dishes, utensils, towels, shower curtain, bath mat, and basic tools.</small>
+          </div>
+
+          <div class="field">
+            <label for="firstGroceries">First Grocery and Pantry Stock</label>
+            <input id="firstGroceries" type="number" placeholder="Example: 350" />
+            <small>First grocery run, spices, paper products, toiletries, and household basics.</small>
+          </div>
+
+          <div class="field">
+            <label for="cleaningSupplies">Cleaning Supplies and Small Tools</label>
+            <input id="cleaningSupplies" type="number" placeholder="Example: 250" />
+            <small>Vacuum, mop, trash cans, detergent, basic repair items, batteries, and cleaning supplies.</small>
+          </div>
+
+          <div class="field">
+            <label for="petParkingStorage">Pet, Parking, or Storage Fees</label>
+            <input id="petParkingStorage" type="number" placeholder="Example: 300" />
+            <small>Pet fees, parking pass, storage unit, building deposits, keys, or move-in elevator fees.</small>
+          </div>
+
+          <div class="field">
+            <label for="otherCosts">Other First Apartment Costs</label>
+            <input id="otherCosts" type="number" placeholder="Example: 400" />
+            <small>Anything specific to your lease, building, city, commute, or living situation.</small>
+          </div>
+
+          <div class="field">
+            <label for="confirmedHelp">Confirmed Outside Help</label>
+            <input id="confirmedHelp" type="number" placeholder="Example: 1000" />
+            <small>Only count confirmed family help, employer money, gifts, roommate reimbursements, or credits.</small>
+          </div>
+
+          <div class="field">
+            <label for="setupStyle">Setup Style</label>
+            <select id="setupStyle">
+              <option value="bare">Bare essentials only</option>
+              <option value="practical" selected>Practical starter apartment</option>
+              <option value="comfortable">Comfortable setup</option>
+            </select>
+            <small>This affects the suggested cushion around your entered costs.</small>
+          </div>
+        </div>
+
+        <button id="apartmentCostButton" type="button">Calculate First Apartment Cost</button>
+
+        <div class="results" id="results" aria-live="polite">
+          <div class="result-kicker">Typical First Apartment Cost</div>
+
+          <div class="total-price" id="typicalCost"></div>
+
+          <div class="result-details" id="resultDetails"></div>
+
+          <div class="result-grid">
+            <div class="result-card">
+              <span>Bare-minimum estimate</span>
+              <strong id="lowEstimate"></strong>
+            </div>
+
+            <div class="result-card">
+              <span>Comfortable estimate</span>
+              <strong id="highEstimate"></strong>
+            </div>
+
+            <div class="result-card">
+              <span>Cash due before keys</span>
+              <strong id="beforeKeys"></strong>
+            </div>
+
+            <div class="result-card">
+              <span>Setup after move-in</span>
+              <strong id="afterKeys"></strong>
+            </div>
+          </div>
+
+          <div class="verdict-box" id="costNote"></div>
+
+          <ul class="warning-list" id="warningList"></ul>
+
+          <div class="disclaimer">
+            This calculator estimates first apartment startup costs from the
+            numbers entered. It is not financial, legal, housing, tax, insurance,
+            or professional advice.
+          </div>
+        </div>
+      </div>
+
+      <section class="content-section">
+        <h2>What Counts as First Apartment Cost?</h2>
+
+        <p>
+          First apartment cost includes more than the first rent or mortgage
+          payment. The real number usually has two parts: cash due before you get
+          the keys and cash needed shortly after move-in. A plan can feel fine at
+          lease signing and then become stressful once furniture, groceries,
+          utility deposits, cleaning supplies, and moving costs arrive together.
+        </p>
+
+        <p>
+          This calculator separates the estimate into a bare-minimum scenario, a
+          typical scenario based on your entries, and a comfortable scenario with
+          more room for missed items. That range is more useful than a single
+          number because apartment setup costs depend heavily on what you already
+          own, what your building requires, and how much you can delay.
+        </p>
+
+        <p>
+          For the savings target behind the move, compare this result with
+          <a class="content-link" href="/how-much-should-i-save-before-moving-out">
+            how much you should save before moving out
+          </a>.
+          For the broader monthly decision, use the
+          <a class="content-link" href="/can-i-afford-to-move-out">
+            move-out affordability calculator
+          </a>.
+        </p>
+      </section>
+
+      <div id="KeyCostCategories" class="content-section">
+        <KeyCostCategories
+          items={[
+            {
+              title: "Cash due before keys",
+              description:
+                "First rent or mortgage payment, security deposit, application fees, admin fees, utility setup, insurance, pet fees, parking, and building fees can all arrive before move-in.",
+            },
+            {
+              title: "Moving and delivery costs",
+              description:
+                "Truck rental, movers, boxes, storage, mileage, tips, furniture delivery, elevator fees, and temporary lodging can change the total quickly.",
+            },
+            {
+              title: "Furniture and setup",
+              description:
+                "A first apartment may need a mattress, seating, kitchen basics, towels, shower items, cleaning supplies, lamps, trash cans, tools, and basic storage.",
+            },
+            {
+              title: "First-month living costs",
+              description:
+                "Groceries, pantry items, toiletries, household supplies, transportation changes, and utility surprises should be planned before leftover cash is treated as free money.",
+            },
+          ]}
+        />
+      </div>
+
+      <div id="ReduceCostTips" class="content-section">
+        <ReduceCostTips
+          items={[
+            "Separate move-in cash from apartment setup money so deposits do not eat the furniture and grocery budget.",
+            "Buy the bed, kitchen basics, towels, cleaning supplies, and safety items before decor or upgraded furniture.",
+            "Ask the landlord or property manager for a written list of every fee due before keys are released.",
+            "Use free or used furniture carefully, but do not skip mattresses, safety items, basic cookware, or cleaning supplies.",
+            "Delay nonessential upgrades until the first utility bills and grocery costs are known.",
+            "Count confirmed help only when someone has committed to a specific bill or dollar amount.",
+          ]}
+        />
+      </div>
+
+      <div id="CalculatorAssumptions" class="content-section">
+        <CalculatorAssumptions
+          items={[
+            "The typical estimate starts with the first rent or mortgage payment, deposit, fees, utilities, insurance, moving costs, furniture, supplies, groceries, and other costs entered by the user.",
+            "Confirmed outside help reduces the displayed totals because it lowers the amount the user must cover.",
+            "The bare-minimum estimate assumes some setup costs can be reduced or delayed, but it does not remove fixed move-in costs.",
+            "The comfortable estimate adds a cushion for missed items, delivery charges, better furniture, extra supplies, or higher-than-expected building costs.",
+            "Blank fields are treated as zero, which can make the estimate too low if major costs are skipped.",
+            "This is a startup cost calculator, not a full rent affordability, mortgage qualification, or long-term housing budget calculator.",
+          ]}
+        />
+      </div>
+
+      <section id="FinancialRedFlags" class="content-section">
+        <h2>First Apartment Cost Red Flags</h2>
+
+        <p>
+          The biggest first-apartment mistake is treating the first payment and
+          deposit as the whole cost. The move deserves extra caution when the
+          startup cost depends on credit cards, uncertain help, or skipping
+          essentials that will have to be bought immediately after move-in.
+        </p>
+
+        <ul>
+          <li>The plan covers the first payment and deposit but leaves no money for furniture, groceries, or utilities.</li>
+          <li>Application, admin, pet, parking, storage, or utility setup fees are unknown.</li>
+          <li>Furniture is budgeted as zero even though the apartment does not have a bed, table, cookware, or basic seating.</li>
+          <li>The plan requires credit card debt for normal move-in costs or household basics.</li>
+          <li>Outside help is assumed but not confirmed as a specific amount.</li>
+          <li>The monthly housing payment is affordable only before utilities, groceries, transportation, and debt are counted.</li>
+        </ul>
+      </section>
+
+      <section class="content-section">
+        <h2>How to Use the First Apartment Estimate</h2>
+
+        <p>
+          Use the typical estimate as the working number. The bare-minimum
+          estimate can help if you are stripping the move down to essentials, but
+          it should not become an excuse to ignore unavoidable costs. The
+          comfortable estimate is useful when the apartment is unfurnished, the
+          building has several fees, you are moving farther away, or you do not
+          already own the basics.
+        </p>
+
+        <p>
+          The result is not saying you must buy everything at once. In fact, a
+          lower-pressure first apartment plan usually delays upgrades. What
+          matters is knowing which costs are immediate, which costs are flexible,
+          and which costs are being left out because they are genuinely
+          unnecessary rather than merely inconvenient.
+        </p>
+      </section>
+
+      <div id="FAQSection" class="content-section">
+        <FAQSection
+          title="First Apartment Cost Calculator FAQ"
+          faqs={firstApartmentFaqs}
+        />
+      </div>
+
+      <div id="RelatedCalculators" class="content-section">
+        <RelatedCalculators calculators={relatedCalculators} />
+      </div>
+
+      <div id="MethodologySection" class="content-section">
+        <MethodologySection category="first apartment startup cost estimates" updated="June 2026" />
+      </div>
+    </CalculatorPageShell>
+  </div>
+
+  <script is:inline>
+    const getNumber = (id) => {
+      const rawValue = document.getElementById(id)?.value;
+      const value = Number(rawValue);
+      return Number.isFinite(value) && value >= 0 ? value : 0;
+    };
+
+    const formatMoney = (value) =>
+      value.toLocaleString(undefined, {
+        style: "currency",
+        currency: "USD",
+        maximumFractionDigits: 0,
+      });
+
+    function calculateFirstApartmentCost() {
+      const monthlyHousing = getNumber("monthlyHousing");
+      const securityDeposit = getNumber("securityDeposit");
+      const applicationFees = getNumber("applicationFees");
+      const utilitySetup = getNumber("utilitySetup");
+      const insuranceUpfront = getNumber("insuranceUpfront");
+      const movingCost = getNumber("movingCost");
+      const furnitureEssentials = getNumber("furnitureEssentials");
+      const kitchenBathBasics = getNumber("kitchenBathBasics");
+      const firstGroceries = getNumber("firstGroceries");
+      const cleaningSupplies = getNumber("cleaningSupplies");
+      const petParkingStorage = getNumber("petParkingStorage");
+      const otherCosts = getNumber("otherCosts");
+      const confirmedHelp = getNumber("confirmedHelp");
+      const setupStyle = document.getElementById("setupStyle")?.value || "practical";
+
+      const results = document.getElementById("results");
+      const typicalCost = document.getElementById("typicalCost");
+      const lowEstimate = document.getElementById("lowEstimate");
+      const highEstimate = document.getElementById("highEstimate");
+      const beforeKeys = document.getElementById("beforeKeys");
+      const afterKeys = document.getElementById("afterKeys");
+      const resultDetails = document.getElementById("resultDetails");
+      const costNote = document.getElementById("costNote");
+      const warningList = document.getElementById("warningList");
+
+      results.classList.add("visible");
+
+      const cashBeforeKeys =
+        monthlyHousing +
+        securityDeposit +
+        applicationFees +
+        utilitySetup +
+        insuranceUpfront +
+        petParkingStorage;
+
+      const setupAfterKeys =
+        movingCost +
+        furnitureEssentials +
+        kitchenBathBasics +
+        firstGroceries +
+        cleaningSupplies +
+        otherCosts;
+
+      const grossTypical = cashBeforeKeys + setupAfterKeys;
+      const uncoveredTypical = Math.max(0, grossTypical - confirmedHelp);
+
+      if (monthlyHousing <= 0 && securityDeposit <= 0 && setupAfterKeys <= 0) {
+        typicalCost.textContent = "$0";
+        lowEstimate.textContent = "$0";
+        highEstimate.textContent = "$0";
+        beforeKeys.textContent = "$0";
+        afterKeys.textContent = "$0";
+        resultDetails.innerHTML =
+          "<p>Enter rent or mortgage, deposit, setup costs, moving costs, and basic supplies to estimate first apartment startup cost.</p>";
+        costNote.innerHTML =
+          "<strong>Not enough information yet.</strong> Add the costs you know, even if some are estimates. Blank fields are treated as zero.";
+        warningList.innerHTML = "";
+        return;
+      }
+
+      let lowSetupMultiplier = 0.75;
+      let highSetupMultiplier = 1.35;
+      let highFixedBuffer = 0.1;
+
+      if (setupStyle === "bare") {
+        lowSetupMultiplier = 0.65;
+        highSetupMultiplier = 1.15;
+        highFixedBuffer = 0.05;
+      }
+
+      if (setupStyle === "comfortable") {
+        lowSetupMultiplier = 0.85;
+        highSetupMultiplier = 1.55;
+        highFixedBuffer = 0.15;
+      }
+
+      const lowTotal = Math.max(
+        0,
+        cashBeforeKeys + setupAfterKeys * lowSetupMultiplier - confirmedHelp
+      );
+
+      const highTotal = Math.max(
+        0,
+        cashBeforeKeys +
+          setupAfterKeys * highSetupMultiplier +
+          monthlyHousing * highFixedBuffer -
+          confirmedHelp
+      );
+
+      const helpText =
+        confirmedHelp > 0
+          ? ` after subtracting ${formatMoney(confirmedHelp)} in confirmed outside help`
+          : "";
+
+      typicalCost.textContent = formatMoney(uncoveredTypical);
+      lowEstimate.textContent = formatMoney(lowTotal);
+      highEstimate.textContent = formatMoney(highTotal);
+      beforeKeys.textContent = formatMoney(Math.max(0, cashBeforeKeys - confirmedHelp));
+      afterKeys.textContent = formatMoney(setupAfterKeys);
+
+      resultDetails.innerHTML = `
+        <p><strong>Gross first apartment cost:</strong> ${formatMoney(grossTypical)} before confirmed help.</p>
+        <p><strong>Cash due before or near getting the keys:</strong> ${formatMoney(cashBeforeKeys)}.</p>
+        <p><strong>Setup costs after move-in:</strong> ${formatMoney(setupAfterKeys)}.</p>
+        <p><strong>Typical uncovered cost:</strong> ${formatMoney(uncoveredTypical)}${helpText}.</p>
+      `;
+
+      const warnings = [];
+
+      if (securityDeposit === 0) {
+        warnings.push("Security deposit is blank. That may be correct, but many first apartments require one.");
+      }
+
+      if (utilitySetup === 0) {
+        warnings.push("Utility and internet setup is blank. Deposits or activation fees may still apply.");
+      }
+
+      if (furnitureEssentials === 0) {
+        warnings.push("Furniture essentials are blank. The estimate may be too low if you need a bed, table, seating, or storage.");
+      }
+
+      if (firstGroceries === 0 || cleaningSupplies === 0) {
+        warnings.push("Groceries or cleaning supplies are blank. First apartment basics usually cost more than expected.");
+      }
+
+      if (confirmedHelp > grossTypical && grossTypical > 0) {
+        warnings.push("Confirmed help is greater than the listed costs. That can make the uncovered total zero, but monthly bills still need a separate plan.");
+      }
+
+      if (setupAfterKeys > cashBeforeKeys && setupStyle === "comfortable") {
+        warnings.push("Setup costs are larger than move-in cash. Consider delaying furniture upgrades until the first bills are known.");
+      }
+
+      let noteTitle = "Use the typical estimate as your working number.";
+      let noteBody =
+        "The bare-minimum estimate shows what the move might cost if you delay upgrades. The comfortable estimate gives more room for missed items, furniture gaps, delivery costs, and first-month surprises.";
+
+      if (uncoveredTypical === 0 && grossTypical > 0) {
+        noteTitle = "Confirmed help covers the listed startup costs.";
+        noteBody =
+          "That lowers the uncovered apartment cost to zero, but it does not replace the need to check monthly housing, utilities, groceries, debt, and emergency savings.";
+      } else if (setupAfterKeys === 0) {
+        noteTitle = "The estimate may be missing apartment setup costs.";
+        noteBody =
+          "If furniture, groceries, kitchen items, bathroom basics, and cleaning supplies are not already owned, add them before relying on this total.";
+      } else if (highTotal - uncoveredTypical > Math.max(750, uncoveredTypical * 0.2)) {
+        noteTitle = "Plan with a cushion.";
+        noteBody =
+          "The comfortable estimate is meaningfully higher than the typical estimate, which means missed items or setup upgrades could change the move-in budget quickly.";
+      }
+
+      costNote.innerHTML = `<strong>${noteTitle}</strong> ${noteBody}`;
+
+      warningList.innerHTML = warnings
+        .map((warning) => `<li>${warning}</li>`)
+        .join("");
+    }
+
+    document
+      .getElementById("apartmentCostButton")
+      .addEventListener("click", calculateFirstApartmentCost);
+  </script>
+</Layout>

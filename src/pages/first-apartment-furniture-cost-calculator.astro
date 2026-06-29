@@ -1,0 +1,840 @@
+---
+import Layout from "../layouts/Layout.astro";
+import CalculatorPageShell from "../components/CalculatorPageShell.astro";
+import FAQSection from "../components/FAQSection.astro";
+import RelatedCalculators from "../components/RelatedCalculators.astro";
+import MethodologySection from "../components/MethodologySection.astro";
+import CalculatorAssumptions from "../components/CalculatorAssumptions.astro";
+import KeyCostCategories from "../components/KeyCostCategories.astro";
+import ReduceCostTips from "../components/ReduceCostTips.astro";
+import { calculators } from "../data/calculators.js";
+
+const furnitureFaqs = [
+  {
+    question: "How much does first apartment furniture cost?",
+    answer:
+      "First apartment furniture cost depends on what you already own, whether the apartment is furnished, how many rooms need setup, and whether you buy used, budget, practical, or higher-end items. This calculator estimates furniture and setup costs only, not rent, deposits, movers, or utilities.",
+  },
+  {
+    question: "What furniture do I need for a first apartment?",
+    answer:
+      "Start with sleep, safety, cooking, cleaning, and basic daily living. A mattress, bed frame, basic seating, table, cookware, towels, shower items, trash cans, lamps, and cleaning supplies usually matter before decor, guest furniture, or upgraded pieces.",
+  },
+  {
+    question: "Should I buy everything before moving in?",
+    answer:
+      "Usually no. Buy essentials first and delay upgrades until you know how the apartment works, how much space you really have, and what your first utility and grocery bills look like.",
+  },
+  {
+    question: "Is used furniture a good idea for a first apartment?",
+    answer:
+      "Used furniture can lower the cost, especially for tables, shelves, desks, chairs, and dressers. Be more careful with mattresses, upholstered items, electronics, and anything that could bring pests, smells, or safety problems into the apartment.",
+  },
+  {
+    question: "How is this different from the first apartment cost calculator?",
+    answer:
+      "The first apartment cost calculator estimates the full startup cost, including rent or mortgage, deposits, utilities, moving costs, groceries, fees, and furniture. This page focuses only on furniture, household basics, and apartment setup items.",
+  },
+];
+
+const relatedCalculators = calculators
+  .filter((calculator) =>
+    [
+      "/first-apartment-cost-calculator",
+      "/moving-cost-calculator",
+      "/security-deposit-and-move-in-cost-calculator",
+      "/how-much-should-i-save-before-moving-out",
+      "/can-i-afford-to-move-out",
+      "/moving-calculators",
+    ].includes(calculator.href)
+  )
+  .filter((calculator) => calculator.href !== "/first-apartment-furniture-cost-calculator")
+  .slice(0, 6);
+---
+
+<Layout
+  title="First Apartment Furniture Cost Calculator | ShouldISpend"
+  description="Estimate first apartment furniture and setup costs by room, including bedroom, living room, kitchen, bathroom, cleaning supplies, storage, decor, delivery, and confirmed help."
+>
+  <style>
+    .container {
+      max-width: 960px;
+      margin: auto;
+    }
+
+    .calculator {
+      background: white;
+      padding: 40px;
+      border-radius: 24px;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.06);
+    }
+
+    .calculator h2 {
+      margin-top: 0;
+      font-size: 2rem;
+      margin-bottom: 18px;
+      color: #0f172a;
+    }
+
+    .calculator-intro {
+      color: #334155;
+      line-height: 1.8;
+      margin-bottom: 30px;
+      font-size: 1.05rem;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+    }
+
+    .field label {
+      display: block;
+      font-weight: 800;
+      margin-bottom: 10px;
+      color: #0f172a;
+    }
+
+    .field input,
+    .field select {
+      width: 100%;
+      padding: 16px;
+      border-radius: 12px;
+      border: 1px solid #cbd5e1;
+      font-size: 1rem;
+      box-sizing: border-box;
+      background: white;
+    }
+
+    .field small {
+      display: block;
+      margin-top: 8px;
+      color: #64748b;
+      line-height: 1.5;
+    }
+
+    button {
+      margin-top: 30px;
+      background: #0f766e;
+      color: white;
+      border: none;
+      padding: 18px 32px;
+      border-radius: 999px;
+      font-size: 1.05rem;
+      font-weight: 800;
+      cursor: pointer;
+      transition: opacity 0.2s ease;
+    }
+
+    button:hover {
+      opacity: 0.92;
+    }
+
+    .results {
+      margin-top: 36px;
+      background: #f8fafc;
+      padding: 32px;
+      border-radius: 24px;
+      border: 1px solid var(--border);
+      box-shadow: 0 10px 24px rgba(15, 23, 42, 0.04);
+      display: none;
+    }
+
+    .results.visible {
+      display: block;
+    }
+
+    .result-kicker {
+      font-size: 0.82rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: #0f766e;
+      font-weight: 900;
+      margin-bottom: 10px;
+    }
+
+    .total-price {
+      font-size: clamp(2.4rem, 6vw, 4rem);
+      font-weight: 900;
+      color: #0f172a;
+      line-height: 1.05;
+      margin-bottom: 16px;
+    }
+
+    .result-details {
+      color: #334155;
+      line-height: 1.9;
+      font-size: 1.02rem;
+    }
+
+    .result-details p {
+      margin: 0 0 12px;
+    }
+
+    .result-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 16px;
+      margin: 26px 0;
+    }
+
+    .result-card {
+      background: white;
+      border: 1px solid #dbe4ee;
+      border-radius: 18px;
+      padding: 20px;
+    }
+
+    .result-card span {
+      display: block;
+      color: #64748b;
+      font-size: 0.9rem;
+      margin-bottom: 8px;
+      font-weight: 700;
+    }
+
+    .result-card strong {
+      display: block;
+      color: #0f172a;
+      font-size: 1.55rem;
+      line-height: 1.2;
+    }
+
+    .room-breakdown {
+      margin-top: 26px;
+      border-radius: 18px;
+      overflow: hidden;
+      border: 1px solid #dbe4ee;
+      background: white;
+    }
+
+    .room-row {
+      display: grid;
+      grid-template-columns: 1.2fr 0.8fr 1.2fr;
+      gap: 16px;
+      padding: 16px 20px;
+      border-bottom: 1px solid #e2e8f0;
+      color: #334155;
+    }
+
+    .room-row:last-child {
+      border-bottom: 0;
+    }
+
+    .room-row strong {
+      color: #0f172a;
+    }
+
+    .verdict-box {
+      margin-top: 24px;
+      padding: 22px;
+      border-radius: 18px;
+      background: white;
+      border: 1px solid #dbe4ee;
+      color: #334155;
+      line-height: 1.8;
+    }
+
+    .verdict-box strong {
+      color: #0f172a;
+    }
+
+    .warning-list {
+      margin: 18px 0 0;
+      padding-left: 22px;
+      color: #334155;
+      line-height: 1.8;
+    }
+
+    .disclaimer {
+      margin-top: 24px;
+      font-size: 0.9rem;
+      color: #64748b;
+    }
+
+    .content-section {
+      margin-top: 60px;
+    }
+
+    .content-section h2 {
+      font-size: 2rem;
+      margin-bottom: 20px;
+      color: #0f172a;
+    }
+
+    .content-section p,
+    .content-section li {
+      font-size: 1.1rem;
+      line-height: 1.9;
+      color: #334155;
+    }
+
+    .content-link {
+      color: #0f766e;
+      font-weight: 700;
+      text-decoration: none;
+    }
+
+    .content-link:hover {
+      text-decoration: underline;
+    }
+
+    @media (max-width: 768px) {
+      .calculator {
+        padding: 24px;
+      }
+
+      .grid,
+      .result-grid,
+      .room-row {
+        grid-template-columns: 1fr;
+      }
+
+      .calculator h2,
+      .content-section h2 {
+        font-size: 1.7rem;
+      }
+
+      .results {
+        padding: 24px;
+      }
+    }
+  </style>
+
+  <div class="container">
+    <CalculatorPageShell
+      eyebrow="Furniture Cost Calculator"
+      title="First Apartment Furniture Cost Calculator"
+      description="Estimate how much it costs to furnish and set up a first apartment, including bedroom, living room, kitchen, bathroom, storage, cleaning supplies, delivery, assembly, and confirmed help."
+    >
+      <div class="calculator">
+        <h2>How Much Will Furniture Cost for a First Apartment?</h2>
+
+        <p class="calculator-intro">
+          This calculator estimates the cost of furnishing and setting up a first
+          apartment. It focuses on the items you bring into the home after the
+          lease or housing payment is handled: bedroom, living room, kitchen,
+          bathroom, cleaning supplies, storage, delivery, and assembly.
+        </p>
+
+        <div class="grid">
+          <div class="field">
+            <label for="apartmentSize">Apartment Size</label>
+            <select id="apartmentSize">
+              <option value="room">Room / shared space</option>
+              <option value="studio">Studio</option>
+              <option value="one" selected>1 bedroom</option>
+              <option value="two">2 bedrooms</option>
+              <option value="three">3+ bedrooms</option>
+            </select>
+            <small>This helps estimate missing room costs when fields are left blank.</small>
+          </div>
+
+          <div class="field">
+            <label for="furnitureStyle">Furniture Setup Style</label>
+            <select id="furnitureStyle">
+              <option value="bare">Bare minimum</option>
+              <option value="practical" selected>Practical starter setup</option>
+              <option value="comfortable">Comfortable setup</option>
+            </select>
+            <small>This controls the range around your entered costs.</small>
+          </div>
+
+          <div class="field">
+            <label for="bedroomFurniture">Bedroom Furniture</label>
+            <input id="bedroomFurniture" type="number" placeholder="Example: 1200" />
+            <small>Mattress, bed frame, dresser, nightstand, lamp, hangers, and bedding.</small>
+          </div>
+
+          <div class="field">
+            <label for="livingRoomFurniture">Living Room Furniture</label>
+            <input id="livingRoomFurniture" type="number" placeholder="Example: 900" />
+            <small>Sofa, chairs, coffee table, TV stand, lamps, rug, or basic seating.</small>
+          </div>
+
+          <div class="field">
+            <label for="kitchenDining">Kitchen and Dining Setup</label>
+            <input id="kitchenDining" type="number" placeholder="Example: 650" />
+            <small>Cookware, dishes, utensils, table, chairs, microwave, small appliances, and pantry basics.</small>
+          </div>
+
+          <div class="field">
+            <label for="bathroomLaundry">Bathroom and Laundry Basics</label>
+            <input id="bathroomLaundry" type="number" placeholder="Example: 300" />
+            <small>Towels, shower curtain, bath mat, hamper, laundry basket, detergent, and bathroom storage.</small>
+          </div>
+
+          <div class="field">
+            <label for="workStorage">Desk, Storage, and Organization</label>
+            <input id="workStorage" type="number" placeholder="Example: 450" />
+            <small>Desk, chair, shelves, closet storage, bins, hooks, and entryway organization.</small>
+          </div>
+
+          <div class="field">
+            <label for="cleaningSafety">Cleaning, Tools, and Safety Items</label>
+            <input id="cleaningSafety" type="number" placeholder="Example: 275" />
+            <small>Vacuum, mop, trash cans, basic tools, batteries, extension cords, first aid, and cleaning supplies.</small>
+          </div>
+
+          <div class="field">
+            <label for="decorComfort">Decor and Comfort Items</label>
+            <input id="decorComfort" type="number" placeholder="Example: 350" />
+            <small>Curtains, rugs, wall items, extra lighting, pillows, plants, and nonessential comfort upgrades.</small>
+          </div>
+
+          <div class="field">
+            <label for="deliveryAssembly">Delivery and Assembly</label>
+            <input id="deliveryAssembly" type="number" placeholder="Example: 250" />
+            <small>Delivery fees, assembly help, hardware, pickup truck rental, or furniture transport.</small>
+          </div>
+
+          <div class="field">
+            <label for="itemsAlreadyOwned">Value of Items Already Owned</label>
+            <input id="itemsAlreadyOwned" type="number" placeholder="Example: 800" />
+            <small>Estimate the cost you avoid because you already own usable furniture or supplies.</small>
+          </div>
+
+          <div class="field">
+            <label for="confirmedHelp">Confirmed Help, Gifts, or Credits</label>
+            <input id="confirmedHelp" type="number" placeholder="Example: 500" />
+            <small>Only count confirmed family help, gift cards, employer money, roommate repayment, or store credits.</small>
+          </div>
+        </div>
+
+        <button id="furnitureCostButton" type="button">Calculate Furniture Cost</button>
+
+        <div class="results" id="results" aria-live="polite">
+          <div class="result-kicker">Estimated Furniture and Setup Cost</div>
+
+          <div class="total-price" id="mainEstimate"></div>
+
+          <div class="result-details" id="resultDetails"></div>
+
+          <div class="result-grid">
+            <div class="result-card">
+              <span>Bare-minimum setup</span>
+              <strong id="bareEstimate"></strong>
+            </div>
+
+            <div class="result-card">
+              <span>Practical setup</span>
+              <strong id="practicalEstimate"></strong>
+            </div>
+
+            <div class="result-card">
+              <span>Comfortable setup</span>
+              <strong id="comfortableEstimate"></strong>
+            </div>
+
+            <div class="result-card">
+              <span>Out-of-pocket after help</span>
+              <strong id="outOfPocket"></strong>
+            </div>
+          </div>
+
+          <div class="room-breakdown" id="roomBreakdown"></div>
+
+          <div class="verdict-box" id="furnitureNote"></div>
+
+          <ul class="warning-list" id="warningList"></ul>
+
+          <div class="disclaimer">
+            This calculator estimates first apartment furniture and setup costs
+            from the numbers entered and planning assumptions when optional
+            fields are blank. It is not financial, housing, tax, insurance, or
+            professional advice.
+          </div>
+        </div>
+      </div>
+
+      <section class="content-section">
+        <h2>What This Furniture Cost Calculator Includes</h2>
+
+        <p>
+          This page estimates furniture and household setup costs only. It is not
+          a rent calculator, move-in ledger, or full first apartment startup
+          budget. That matters because furniture can be flexible. A mattress,
+          cookware, towels, cleaning supplies, and basic seating may be urgent,
+          while decor, guest items, upgraded tables, and extra storage can often
+          wait.
+        </p>
+
+        <p>
+          The calculator separates the estimate into bare-minimum, practical, and
+          comfortable setup levels. The goal is not to push a bigger shopping
+          list. The goal is to show what the apartment may cost to make livable,
+          what can be delayed, and how much current furniture, gifts, credits, or
+          confirmed help reduce the out-of-pocket amount.
+        </p>
+
+        <p>
+          For the full apartment startup number, use the
+          <a class="content-link" href="/first-apartment-cost-calculator">
+            first apartment cost calculator
+          </a>.
+          For the physical move itself, use the
+          <a class="content-link" href="/moving-cost-calculator">
+            moving cost calculator
+          </a>.
+        </p>
+      </section>
+
+      <div id="KeyCostCategories" class="content-section">
+        <KeyCostCategories
+          items={[
+            {
+              title: "Bedroom essentials",
+              description:
+                "A mattress, bed frame, bedding, dresser, hangers, and basic lighting often matter before decor or upgraded living room furniture.",
+            },
+            {
+              title: "Kitchen and dining setup",
+              description:
+                "Cookware, dishes, utensils, food storage, basic appliances, a small table, and chairs can make the apartment usable without relying on takeout.",
+            },
+            {
+              title: "Bathroom, cleaning, and safety",
+              description:
+                "Towels, shower items, trash cans, vacuum, mop, cleaning supplies, basic tools, batteries, and first-aid items are easy to overlook until move-in day.",
+            },
+            {
+              title: "Delivery, assembly, and duplicates",
+              description:
+                "Furniture delivery, assembly help, hardware, replacement parts, duplicate purchases, and transport fees can raise the real setup cost.",
+            },
+          ]}
+        />
+      </div>
+
+      <div id="ReduceCostTips" class="content-section">
+        <ReduceCostTips
+          items={[
+            "Buy sleep, cooking, cleaning, and safety items before decor or upgraded furniture.",
+            "Use secondhand tables, shelves, desks, and chairs carefully, but be cautious with used mattresses and upholstered items.",
+            "Measure rooms, elevators, doors, and stairways before ordering large furniture.",
+            "Delay guest furniture, extra decor, and duplicate appliances until the first month of bills is known.",
+            "Ask family or roommates for specific items instead of vague help so you do not overbuy.",
+            "Compare delivery fees and assembly costs before deciding whether a cheaper item is actually cheaper.",
+          ]}
+        />
+      </div>
+
+      <div id="CalculatorAssumptions" class="content-section">
+        <CalculatorAssumptions
+          items={[
+            "The calculator estimates furniture and setup costs by room and category.",
+            "Blank category fields use planning assumptions based on apartment size and setup style.",
+            "Items already owned reduce the gross setup cost because they represent costs the user does not need to repeat.",
+            "Confirmed help, gifts, credits, or reimbursements reduce the out-of-pocket estimate.",
+            "The bare-minimum estimate assumes more used items, delayed upgrades, and fewer decor purchases.",
+            "The comfortable estimate adds a cushion for delivery, better furniture, extra storage, decor, duplicates, and missed household items.",
+            "This calculator does not include rent, mortgage, security deposits, application fees, movers, truck rental, utilities, groceries, or long-term monthly bills.",
+          ]}
+        />
+      </div>
+
+      <section id="FinancialRedFlags" class="content-section">
+        <h2>First Apartment Furniture Cost Red Flags</h2>
+
+        <p>
+          Furniture spending can create pressure when the apartment setup is
+          treated like one big shopping trip. The safer plan separates essential
+          items from upgrades and protects cash for rent, utilities, groceries,
+          transportation, and emergency savings.
+        </p>
+
+        <ul>
+          <li>The plan requires credit card debt for normal furniture, decor, or household basics.</li>
+          <li>The bedroom or kitchen budget is blank even though you do not already own those essentials.</li>
+          <li>Delivery, assembly, tools, cleaning supplies, and small household items are not included.</li>
+          <li>You are buying decor, guest furniture, or upgrades before a mattress, cookware, towels, and basic cleaning items.</li>
+          <li>The setup plan assumes vague family help or gifts that are not confirmed.</li>
+          <li>The furniture budget would drain the cash needed for rent, utilities, groceries, or emergency savings.</li>
+        </ul>
+      </section>
+
+      <section class="content-section">
+        <h2>How to Use the Furniture Cost Result</h2>
+
+        <p>
+          Use the practical estimate as the main planning number. The bare-minimum
+          estimate can guide an essentials-only move, especially if cash is tight.
+          The comfortable estimate is useful when the apartment is empty, the
+          move is long-term, or you need delivery, storage, or better-quality
+          items that will last.
+        </p>
+
+        <p>
+          A lower furniture budget is not automatically better if it creates new
+          problems. Skipping a mattress, cookware, lighting, cleaning supplies, or
+          basic tools can make the apartment harder to live in and lead to
+          expensive last-minute purchases. The best plan usually buys the right
+          essentials first and delays everything else.
+        </p>
+      </section>
+
+      <div id="FAQSection" class="content-section">
+        <FAQSection
+          title="First Apartment Furniture Cost Calculator FAQ"
+          faqs={furnitureFaqs}
+        />
+      </div>
+
+      <div id="RelatedCalculators" class="content-section">
+        <RelatedCalculators calculators={relatedCalculators} />
+      </div>
+
+      <div id="MethodologySection" class="content-section">
+        <MethodologySection category="first apartment furniture and setup cost estimates" updated="June 2026" />
+      </div>
+    </CalculatorPageShell>
+  </div>
+
+  <script is:inline>
+    const getNumber = (id) => {
+      const rawValue = document.getElementById(id)?.value;
+      const value = Number(rawValue);
+      return Number.isFinite(value) && value >= 0 ? value : 0;
+    };
+
+    const formatMoney = (value) =>
+      value.toLocaleString(undefined, {
+        style: "currency",
+        currency: "USD",
+        maximumFractionDigits: 0,
+      });
+
+    const apartmentProfiles = {
+      room: {
+        label: "room or shared space",
+        bedroom: 650,
+        living: 150,
+        kitchen: 250,
+        bath: 150,
+        storage: 150,
+        cleaning: 175,
+        decor: 75,
+        delivery: 75,
+      },
+      studio: {
+        label: "studio apartment",
+        bedroom: 900,
+        living: 450,
+        kitchen: 425,
+        bath: 225,
+        storage: 275,
+        cleaning: 225,
+        decor: 175,
+        delivery: 150,
+      },
+      one: {
+        label: "1-bedroom apartment",
+        bedroom: 1200,
+        living: 850,
+        kitchen: 600,
+        bath: 275,
+        storage: 375,
+        cleaning: 250,
+        decor: 250,
+        delivery: 225,
+      },
+      two: {
+        label: "2-bedroom apartment",
+        bedroom: 1800,
+        living: 1100,
+        kitchen: 750,
+        bath: 350,
+        storage: 525,
+        cleaning: 325,
+        decor: 375,
+        delivery: 325,
+      },
+      three: {
+        label: "3+ bedroom apartment",
+        bedroom: 2600,
+        living: 1500,
+        kitchen: 950,
+        bath: 500,
+        storage: 750,
+        cleaning: 425,
+        decor: 550,
+        delivery: 475,
+      },
+    };
+
+    const styleMultipliers = {
+      bare: {
+        low: 0.72,
+        practical: 0.85,
+        comfortable: 1.05,
+      },
+      practical: {
+        low: 0.8,
+        practical: 1,
+        comfortable: 1.28,
+      },
+      comfortable: {
+        low: 0.9,
+        practical: 1.18,
+        comfortable: 1.55,
+      },
+    };
+
+    function pickEnteredOrEstimate(entered, estimate) {
+      return entered > 0 ? entered : estimate;
+    }
+
+    function calculateFurnitureCost() {
+      const apartmentSize = document.getElementById("apartmentSize")?.value || "one";
+      const furnitureStyle = document.getElementById("furnitureStyle")?.value || "practical";
+      const profile = apartmentProfiles[apartmentSize] || apartmentProfiles.one;
+      const multipliers = styleMultipliers[furnitureStyle] || styleMultipliers.practical;
+
+      const bedroomFurnitureInput = getNumber("bedroomFurniture");
+      const livingRoomFurnitureInput = getNumber("livingRoomFurniture");
+      const kitchenDiningInput = getNumber("kitchenDining");
+      const bathroomLaundryInput = getNumber("bathroomLaundry");
+      const workStorageInput = getNumber("workStorage");
+      const cleaningSafetyInput = getNumber("cleaningSafety");
+      const decorComfortInput = getNumber("decorComfort");
+      const deliveryAssemblyInput = getNumber("deliveryAssembly");
+      const itemsAlreadyOwned = getNumber("itemsAlreadyOwned");
+      const confirmedHelp = getNumber("confirmedHelp");
+
+      const results = document.getElementById("results");
+      const mainEstimate = document.getElementById("mainEstimate");
+      const bareEstimate = document.getElementById("bareEstimate");
+      const practicalEstimate = document.getElementById("practicalEstimate");
+      const comfortableEstimate = document.getElementById("comfortableEstimate");
+      const outOfPocket = document.getElementById("outOfPocket");
+      const resultDetails = document.getElementById("resultDetails");
+      const roomBreakdown = document.getElementById("roomBreakdown");
+      const furnitureNote = document.getElementById("furnitureNote");
+      const warningList = document.getElementById("warningList");
+
+      results.classList.add("visible");
+
+      const bedroomFurniture = pickEnteredOrEstimate(bedroomFurnitureInput, profile.bedroom);
+      const livingRoomFurniture = pickEnteredOrEstimate(livingRoomFurnitureInput, profile.living);
+      const kitchenDining = pickEnteredOrEstimate(kitchenDiningInput, profile.kitchen);
+      const bathroomLaundry = pickEnteredOrEstimate(bathroomLaundryInput, profile.bath);
+      const workStorage = pickEnteredOrEstimate(workStorageInput, profile.storage);
+      const cleaningSafety = pickEnteredOrEstimate(cleaningSafetyInput, profile.cleaning);
+      const decorComfort = pickEnteredOrEstimate(decorComfortInput, profile.decor);
+      const deliveryAssembly = pickEnteredOrEstimate(deliveryAssemblyInput, profile.delivery);
+
+      const grossBase =
+        bedroomFurniture +
+        livingRoomFurniture +
+        kitchenDining +
+        bathroomLaundry +
+        workStorage +
+        cleaningSafety +
+        decorComfort +
+        deliveryAssembly;
+
+      if (grossBase <= 0) {
+        mainEstimate.textContent = "$0";
+        bareEstimate.textContent = "$0";
+        practicalEstimate.textContent = "$0";
+        comfortableEstimate.textContent = "$0";
+        outOfPocket.textContent = "$0";
+        resultDetails.innerHTML =
+          "<p>Enter furniture and setup costs, or choose an apartment size and setup style to estimate a first apartment furniture budget.</p>";
+        roomBreakdown.innerHTML = "";
+        furnitureNote.innerHTML =
+          "<strong>Not enough information yet.</strong> Add the furniture categories you know, then use the estimate as a room-by-room planning number.";
+        warningList.innerHTML = "";
+        return;
+      }
+
+      const bareGross = grossBase * multipliers.low;
+      const practicalGross = grossBase * multipliers.practical;
+      const comfortableGross = grossBase * multipliers.comfortable;
+
+      const practicalNet = Math.max(0, practicalGross - itemsAlreadyOwned - confirmedHelp);
+      const bareNet = Math.max(0, bareGross - itemsAlreadyOwned - confirmedHelp);
+      const comfortableNet = Math.max(0, comfortableGross - itemsAlreadyOwned - confirmedHelp);
+
+      mainEstimate.textContent = formatMoney(practicalNet);
+      bareEstimate.textContent = formatMoney(bareNet);
+      practicalEstimate.textContent = formatMoney(practicalNet);
+      comfortableEstimate.textContent = formatMoney(comfortableNet);
+      outOfPocket.textContent = formatMoney(practicalNet);
+
+      resultDetails.innerHTML = `
+        <p><strong>Apartment size used:</strong> ${profile.label}.</p>
+        <p><strong>Gross practical furniture and setup estimate:</strong> ${formatMoney(practicalGross)} before owned items and confirmed help.</p>
+        <p><strong>Items already owned counted:</strong> ${formatMoney(itemsAlreadyOwned)}.</p>
+        <p><strong>Confirmed help, gifts, or credits counted:</strong> ${formatMoney(confirmedHelp)}.</p>
+        <p><strong>Estimated out-of-pocket furniture cost:</strong> ${formatMoney(practicalNet)}.</p>
+      `;
+
+      roomBreakdown.innerHTML = `
+        <div class="room-row"><strong>Bedroom</strong><span>${formatMoney(bedroomFurniture)}</span><span>Mattress, bed frame, bedding, dresser, lamps, hangers, and sleep basics.</span></div>
+        <div class="room-row"><strong>Living room</strong><span>${formatMoney(livingRoomFurniture)}</span><span>Seating, tables, lamps, TV stand, rug, shelves, or shared living items.</span></div>
+        <div class="room-row"><strong>Kitchen and dining</strong><span>${formatMoney(kitchenDining)}</span><span>Cookware, dishes, utensils, small appliances, table, chairs, and pantry setup.</span></div>
+        <div class="room-row"><strong>Bathroom and laundry</strong><span>${formatMoney(bathroomLaundry)}</span><span>Towels, shower items, hamper, detergent, bath storage, and bathroom basics.</span></div>
+        <div class="room-row"><strong>Storage and organization</strong><span>${formatMoney(workStorage)}</span><span>Desk, chair, shelves, closet storage, bins, hooks, and entryway setup.</span></div>
+        <div class="room-row"><strong>Cleaning and safety</strong><span>${formatMoney(cleaningSafety)}</span><span>Vacuum, mop, trash cans, tools, batteries, first aid, and cleaning supplies.</span></div>
+        <div class="room-row"><strong>Decor and comfort</strong><span>${formatMoney(decorComfort)}</span><span>Curtains, rugs, pillows, wall items, plants, and comfort upgrades.</span></div>
+        <div class="room-row"><strong>Delivery and assembly</strong><span>${formatMoney(deliveryAssembly)}</span><span>Delivery fees, assembly help, hardware, pickup rental, or furniture transport.</span></div>
+      `;
+
+      const warnings = [];
+
+      if (bedroomFurnitureInput === 0) {
+        warnings.push("Bedroom furniture was blank, so the calculator used an apartment-size estimate. Replace it with your real mattress and bedroom plan when possible.");
+      }
+
+      if (kitchenDiningInput === 0) {
+        warnings.push("Kitchen and dining setup was blank, so the estimate may miss cookware, dishes, utensils, or a table if you already own some items.");
+      }
+
+      if (cleaningSafetyInput === 0) {
+        warnings.push("Cleaning, tools, and safety items were blank. These small items are often missed until move-in day.");
+      }
+
+      if (deliveryAssemblyInput === 0) {
+        warnings.push("Delivery and assembly was blank, so the estimate may be low if furniture cannot fit in your vehicle or needs paid assembly.");
+      }
+
+      if (decorComfortInput > bedroomFurniture + kitchenDining) {
+        warnings.push("Decor and comfort spending is higher than key essentials. Consider buying essentials first and delaying upgrades.");
+      }
+
+      if (itemsAlreadyOwned + confirmedHelp > practicalGross) {
+        warnings.push("Owned items and confirmed help exceed the practical estimate. Out-of-pocket cost can be zero, but rent, utilities, deposits, and moving costs still need separate planning.");
+      }
+
+      let noteTitle = "Use the practical setup as your main furniture number.";
+      let noteBody =
+        "The bare-minimum estimate can guide an essentials-only move. The comfortable estimate shows what the setup could cost if you buy more new items, pay for delivery, or add storage and decor.";
+
+      if (practicalNet === 0) {
+        noteTitle = "Owned items and confirmed help cover the practical setup.";
+        noteBody =
+          "That can make furniture out-of-pocket cost zero, but this does not cover rent, deposits, utilities, groceries, or the physical move.";
+      } else if (bareNet > 0 && comfortableNet - practicalNet > Math.max(750, practicalNet * 0.25)) {
+        noteTitle = "Furniture choices can swing the total quickly.";
+        noteBody =
+          "The comfortable estimate is meaningfully higher than the practical estimate. Delay decor, guest items, and upgrades until essentials and first bills are covered.";
+      } else if (furnitureStyle === "bare") {
+        noteTitle = "Bare minimum can work if essentials are covered.";
+        noteBody =
+          "Make sure the lower number still includes sleep, cooking, bathroom, cleaning, lighting, and basic safety items before spending on optional decor.";
+      }
+
+      furnitureNote.innerHTML = `<strong>${noteTitle}</strong> ${noteBody}`;
+
+      warningList.innerHTML = warnings
+        .map((warning) => `<li>${warning}</li>`)
+        .join("");
+    }
+
+    document
+      .getElementById("furnitureCostButton")
+      .addEventListener("click", calculateFurnitureCost);
+  </script>
+</Layout>

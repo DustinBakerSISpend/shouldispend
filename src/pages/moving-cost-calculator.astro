@@ -1,0 +1,876 @@
+﻿---
+import Layout from "../layouts/Layout.astro";
+import CalculatorPageShell from "../components/CalculatorPageShell.astro";
+import FAQSection from "../components/FAQSection.astro";
+import RelatedCalculators from "../components/RelatedCalculators.astro";
+import MethodologySection from "../components/MethodologySection.astro";
+import CalculatorAssumptions from "../components/CalculatorAssumptions.astro";
+import KeyCostCategories from "../components/KeyCostCategories.astro";
+import ReduceCostTips from "../components/ReduceCostTips.astro";
+import { calculators } from "../data/calculators.js";
+
+const movingCostFaqs = [
+  {
+    question: "How much does it cost to move?",
+    answer:
+      "Moving cost depends on distance, home size, how much labor you hire, truck or mover costs, fuel, supplies, storage, stairs, elevator access, insurance, tips, cleaning, and last-minute extras. This calculator estimates the physical move itself, not apartment deposits, furniture purchases, or long-term housing costs.",
+  },
+  {
+    question: "What is the cheapest way to move?",
+    answer:
+      "The cheapest move is usually a DIY move with a rented truck, borrowed help, limited supplies, and a short distance. It can become more expensive if the move takes longer, requires extra trips, needs storage, damages items, or forces you to buy equipment at the last minute.",
+  },
+  {
+    question: "What is a hybrid move?",
+    answer:
+      "A hybrid move usually means you handle part of the move yourself but pay for help with the hardest parts, such as loading, unloading, large furniture, stairs, or a long carry. It often costs more than DIY but less than full-service movers.",
+  },
+  {
+    question: "Does this include security deposits or first month of rent?",
+    answer:
+      "No. This calculator focuses on moving costs such as truck rental, movers, fuel, boxes, packing supplies, storage, access fees, insurance, tips, and cleanup. Use the security deposit and move-in cost calculator for cash due before keys.",
+  },
+  {
+    question: "Why does the result show DIY, hybrid, and full-service estimates?",
+    answer:
+      "Moving costs change dramatically based on how much labor you hire. Showing DIY, hybrid, and full-service estimates helps compare the tradeoff between saving cash and saving time, effort, injury risk, and stress.",
+  },
+];
+
+const relatedCalculators = calculators
+  .filter((calculator) =>
+    [
+      "/first-apartment-cost-calculator",
+      "/security-deposit-and-move-in-cost-calculator",
+      "/how-much-should-i-save-before-moving-out",
+      "/can-i-afford-to-move-out",
+      "/how-much-rent-can-i-afford",
+      "/moving-calculators",
+    ].includes(calculator.href)
+  )
+  .filter((calculator) => calculator.href !== "/moving-cost-calculator")
+  .slice(0, 6);
+---
+
+<Layout
+  title="Moving Cost Calculator | ShouldISpend"
+  description="Estimate how much it costs to move with DIY, hybrid, and full-service moving options, including movers, truck rental, mileage, fuel, supplies, storage, tips, and fees."
+>
+  <style>
+    .container {
+      max-width: 960px;
+      margin: auto;
+    }
+
+    .calculator {
+      background: white;
+      padding: 40px;
+      border-radius: 24px;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.06);
+    }
+
+    .calculator h2 {
+      margin-top: 0;
+      font-size: 2rem;
+      margin-bottom: 18px;
+      color: #0f172a;
+    }
+
+    .calculator-intro {
+      color: #334155;
+      line-height: 1.8;
+      margin-bottom: 30px;
+      font-size: 1.05rem;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+    }
+
+    .field label {
+      display: block;
+      font-weight: 800;
+      margin-bottom: 10px;
+      color: #0f172a;
+    }
+
+    .field input,
+    .field select {
+      width: 100%;
+      padding: 16px;
+      border-radius: 12px;
+      border: 1px solid #cbd5e1;
+      font-size: 1rem;
+      box-sizing: border-box;
+      background: white;
+    }
+
+    .field small {
+      display: block;
+      margin-top: 8px;
+      color: #64748b;
+      line-height: 1.5;
+    }
+
+    button {
+      margin-top: 30px;
+      background: #0f766e;
+      color: white;
+      border: none;
+      padding: 18px 32px;
+      border-radius: 999px;
+      font-size: 1.05rem;
+      font-weight: 800;
+      cursor: pointer;
+      transition: opacity 0.2s ease;
+    }
+
+    button:hover {
+      opacity: 0.92;
+    }
+
+    .results {
+      margin-top: 36px;
+      background: #f8fafc;
+      padding: 32px;
+      border-radius: 24px;
+      border: 1px solid var(--border);
+      box-shadow: 0 10px 24px rgba(15, 23, 42, 0.04);
+      display: none;
+    }
+
+    .results.visible {
+      display: block;
+    }
+
+    .result-kicker {
+      font-size: 0.82rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: #0f766e;
+      font-weight: 900;
+      margin-bottom: 10px;
+    }
+
+    .total-price {
+      font-size: clamp(2.4rem, 6vw, 4rem);
+      font-weight: 900;
+      color: #0f172a;
+      line-height: 1.05;
+      margin-bottom: 16px;
+    }
+
+    .result-details {
+      color: #334155;
+      line-height: 1.9;
+      font-size: 1.02rem;
+    }
+
+    .result-details p {
+      margin: 0 0 12px;
+    }
+
+    .result-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 16px;
+      margin: 26px 0;
+    }
+
+    .result-card {
+      background: white;
+      border: 1px solid #dbe4ee;
+      border-radius: 18px;
+      padding: 20px;
+    }
+
+    .result-card span {
+      display: block;
+      color: #64748b;
+      font-size: 0.9rem;
+      margin-bottom: 8px;
+      font-weight: 700;
+    }
+
+    .result-card strong {
+      display: block;
+      color: #0f172a;
+      font-size: 1.55rem;
+      line-height: 1.2;
+    }
+
+    .comparison {
+      margin-top: 26px;
+      border-radius: 18px;
+      overflow: hidden;
+      border: 1px solid #dbe4ee;
+      background: white;
+    }
+
+    .comparison-row {
+      display: grid;
+      grid-template-columns: 1.1fr 0.8fr 1.4fr;
+      gap: 16px;
+      padding: 16px 20px;
+      border-bottom: 1px solid #e2e8f0;
+      color: #334155;
+    }
+
+    .comparison-row:last-child {
+      border-bottom: 0;
+    }
+
+    .comparison-row strong {
+      color: #0f172a;
+    }
+
+    .verdict-box {
+      margin-top: 24px;
+      padding: 22px;
+      border-radius: 18px;
+      background: white;
+      border: 1px solid #dbe4ee;
+      color: #334155;
+      line-height: 1.8;
+    }
+
+    .verdict-box strong {
+      color: #0f172a;
+    }
+
+    .warning-list {
+      margin: 18px 0 0;
+      padding-left: 22px;
+      color: #334155;
+      line-height: 1.8;
+    }
+
+    .disclaimer {
+      margin-top: 24px;
+      font-size: 0.9rem;
+      color: #64748b;
+    }
+
+    .content-section {
+      margin-top: 60px;
+    }
+
+    .content-section h2 {
+      font-size: 2rem;
+      margin-bottom: 20px;
+      color: #0f172a;
+    }
+
+    .content-section p,
+    .content-section li {
+      font-size: 1.1rem;
+      line-height: 1.9;
+      color: #334155;
+    }
+
+    .content-link {
+      color: #0f766e;
+      font-weight: 700;
+      text-decoration: none;
+    }
+
+    .content-link:hover {
+      text-decoration: underline;
+    }
+
+    @media (max-width: 768px) {
+      .calculator {
+        padding: 24px;
+      }
+
+      .grid,
+      .result-grid,
+      .comparison-row {
+        grid-template-columns: 1fr;
+      }
+
+      .calculator h2,
+      .content-section h2 {
+        font-size: 1.7rem;
+      }
+
+      .results {
+        padding: 24px;
+      }
+    }
+  </style>
+
+  <div class="container">
+    <CalculatorPageShell
+      eyebrow="Moving Cost Calculator"
+      title="Moving Cost Calculator"
+      description="Estimate how much your move could cost as a DIY move, hybrid move, or full-service move using distance, home size, truck rental, movers, fuel, supplies, storage, access fees, tips, and confirmed help."
+    >
+      <div class="calculator">
+        <h2>How Much Will It Cost to Move?</h2>
+
+        <p class="calculator-intro">
+          This calculator estimates the cost of the physical move itself,
+          including movers, truck rental, fuel, boxes, packing supplies, storage,
+          access fees, insurance, tips, and cleanup — not rent, deposits, or
+          furniture costs.
+        </p>
+
+        <div class="grid">
+          <div class="field">
+            <label for="moveType">Move Type You Are Considering</label>
+            <select id="moveType">
+              <option value="diy">DIY truck rental</option>
+              <option value="hybrid" selected>Hybrid move with paid help</option>
+              <option value="full">Full-service movers</option>
+            </select>
+            <small>The selected option controls the main estimate shown at the top.</small>
+          </div>
+
+          <div class="field">
+            <label for="homeSize">Home Size</label>
+            <select id="homeSize">
+              <option value="studio">Studio / room</option>
+              <option value="one" selected>1 bedroom</option>
+              <option value="two">2 bedrooms</option>
+              <option value="three">3 bedrooms</option>
+              <option value="four">4+ bedrooms</option>
+            </select>
+            <small>This helps estimate labor hours, supplies, and truck size if fields are left blank.</small>
+          </div>
+
+          <div class="field">
+            <label for="movingMiles">Total Moving Miles</label>
+            <input id="movingMiles" type="number" placeholder="Example: 35" />
+            <small>Use expected truck or mover miles, including extra local trips if known.</small>
+          </div>
+
+          <div class="field">
+            <label for="truckRental">Truck Rental or Trailer Cost</label>
+            <input id="truckRental" type="number" placeholder="Example: 180" />
+            <small>Leave blank if you want the calculator to estimate a basic truck cost from home size and miles.</small>
+          </div>
+
+          <div class="field">
+            <label for="gasPrice">Gas Price per Gallon</label>
+            <input id="gasPrice" type="number" step="0.01" placeholder="Example: 3.50" />
+            <small>Used for truck fuel. If blank, the calculator uses a planning assumption.</small>
+          </div>
+
+          <div class="field">
+            <label for="truckMpg">Truck MPG</label>
+            <input id="truckMpg" type="number" step="0.1" placeholder="Example: 10" />
+            <small>Rental trucks often use far more fuel than a normal car.</small>
+          </div>
+
+          <div class="field">
+            <label for="moverHourlyRate">Mover Hourly Rate per Person</label>
+            <input id="moverHourlyRate" type="number" placeholder="Example: 65" />
+            <small>Use the hourly rate for each mover if hiring loading, unloading, or full-service help.</small>
+          </div>
+
+          <div class="field">
+            <label for="moverCount">Number of Paid Movers</label>
+            <input id="moverCount" type="number" placeholder="Example: 2" />
+            <small>Leave blank to use a home-size estimate.</small>
+          </div>
+
+          <div class="field">
+            <label for="moverHours">Estimated Mover Hours</label>
+            <input id="moverHours" type="number" step="0.5" placeholder="Example: 4" />
+            <small>Include loading, unloading, travel time, stairs, and long carries if billed.</small>
+          </div>
+
+          <div class="field">
+            <label for="professionalQuote">Professional Mover Quote</label>
+            <input id="professionalQuote" type="number" placeholder="Example: 1800" />
+            <small>Optional. If entered, this anchors the full-service estimate.</small>
+          </div>
+
+          <div class="field">
+            <label for="packingSupplies">Boxes and Packing Supplies</label>
+            <input id="packingSupplies" type="number" placeholder="Example: 225" />
+            <small>Boxes, tape, bubble wrap, labels, mattress bags, and protective materials.</small>
+          </div>
+
+          <div class="field">
+            <label for="equipmentRental">Equipment Rental</label>
+            <input id="equipmentRental" type="number" placeholder="Example: 75" />
+            <small>Dolly, straps, blankets, pads, ramps, hand truck, or specialty equipment.</small>
+          </div>
+
+          <div class="field">
+            <label for="storageCost">Storage or Overnight Hold</label>
+            <input id="storageCost" type="number" placeholder="Example: 0" />
+            <small>Storage unit, container hold, overnight truck fee, or delayed delivery charge.</small>
+          </div>
+
+          <div class="field">
+            <label for="accessFees">Parking, Elevator, Stair, or Long-Carry Fees</label>
+            <input id="accessFees" type="number" placeholder="Example: 150" />
+            <small>Building fees, parking permits, elevator reservation, stairs, or long-distance carrying.</small>
+          </div>
+
+          <div class="field">
+            <label for="insuranceCoverage">Moving Insurance or Damage Coverage</label>
+            <input id="insuranceCoverage" type="number" placeholder="Example: 100" />
+            <small>Optional protection, valuation coverage, rental truck coverage, or damage waiver.</small>
+          </div>
+
+          <div class="field">
+            <label for="tipsFood">Tips, Food, or Drinks for Helpers</label>
+            <input id="tipsFood" type="number" placeholder="Example: 120" />
+            <small>Tips for movers, pizza for friends, water, snacks, or helper costs.</small>
+          </div>
+
+          <div class="field">
+            <label for="cleaningJunk">Cleaning, Junk Removal, or Disposal</label>
+            <input id="cleaningJunk" type="number" placeholder="Example: 200" />
+            <small>Move-out cleaning, dump fees, junk removal, donation pickup, or disposal.</small>
+          </div>
+
+          <div class="field">
+            <label for="otherCosts">Other Moving Costs</label>
+            <input id="otherCosts" type="number" placeholder="Example: 150" />
+            <small>Anything specific to your building, city, weather, timing, pets, or route.</small>
+          </div>
+
+          <div class="field">
+            <label for="confirmedHelp">Confirmed Help, Credit, or Reimbursement</label>
+            <input id="confirmedHelp" type="number" placeholder="Example: 300" />
+            <small>Only count confirmed employer reimbursement, family help, gift money, or roommate repayment.</small>
+          </div>
+        </div>
+
+        <button id="movingCostButton" type="button">Calculate Moving Cost</button>
+
+        <div class="results" id="results" aria-live="polite">
+          <div class="result-kicker">Estimated Moving Cost</div>
+
+          <div class="total-price" id="selectedMoveCost"></div>
+
+          <div class="result-details" id="resultDetails"></div>
+
+          <div class="result-grid">
+            <div class="result-card">
+              <span>DIY moving estimate</span>
+              <strong id="diyEstimate"></strong>
+            </div>
+
+            <div class="result-card">
+              <span>Hybrid moving estimate</span>
+              <strong id="hybridEstimate"></strong>
+            </div>
+
+            <div class="result-card">
+              <span>Full-service movers estimate</span>
+              <strong id="fullServiceEstimate"></strong>
+            </div>
+
+            <div class="result-card">
+              <span>Out-of-pocket after help</span>
+              <strong id="outOfPocket"></strong>
+            </div>
+          </div>
+
+          <div class="comparison" id="comparisonTable"></div>
+
+          <div class="verdict-box" id="moveCostNote"></div>
+
+          <ul class="warning-list" id="warningList"></ul>
+
+          <div class="disclaimer">
+            This calculator estimates moving costs from the numbers entered and
+            planning assumptions when optional fields are blank. It is not a
+            binding quote from a mover, truck rental company, storage provider,
+            landlord, or insurer.
+          </div>
+        </div>
+      </div>
+
+      <section class="content-section">
+        <h2>What This Moving Cost Calculator Includes</h2>
+
+        <p>
+          This page estimates the cost of moving your belongings from one place
+          to another. That makes it different from a move-in cost calculator,
+          which focuses on security deposits, fees, and prepaid housing. It is
+          also different from a first apartment cost calculator, which includes
+          furniture, groceries, kitchen basics, and household setup.
+        </p>
+
+        <p>
+          The calculator compares three ways to move. A DIY move usually relies
+          on a truck or trailer, fuel, supplies, and unpaid help. A hybrid move
+          adds paid labor for loading, unloading, stairs, or heavy items. A
+          full-service move shifts more of the work to professional movers, which
+          usually costs more but can reduce time, injury risk, and logistics.
+        </p>
+
+        <p>
+          For deposits and money due before keys, use the
+          <a class="content-link" href="/security-deposit-and-move-in-cost-calculator">
+            security deposit and move-in cost calculator
+          </a>.
+          For the full first-apartment startup budget, use the
+          <a class="content-link" href="/first-apartment-cost-calculator">
+            first apartment cost calculator
+          </a>.
+        </p>
+      </section>
+
+      <div id="KeyCostCategories" class="content-section">
+        <KeyCostCategories
+          items={[
+            {
+              title: "Truck, mileage, and fuel",
+              description:
+                "DIY moves can include a truck rental, trailer, mileage charges, fuel, tolls, parking, and extra trips. Rental truck fuel cost can be much higher than normal car fuel cost.",
+            },
+            {
+              title: "Labor",
+              description:
+                "Hybrid and full-service moves may charge by the mover, hour, minimum booking, travel time, stairs, long carry, heavy items, or specialty handling.",
+            },
+            {
+              title: "Supplies and equipment",
+              description:
+                "Boxes, tape, padding, blankets, dollies, straps, mattress covers, labels, and equipment rental can add meaningful cost even when labor is cheap.",
+            },
+            {
+              title: "Access and timing issues",
+              description:
+                "Elevator reservations, parking permits, storage, overnight holds, stairs, building fees, weather, and tight move-in windows can change the final moving bill.",
+            },
+          ]}
+        />
+      </div>
+
+      <div id="ReduceCostTips" class="content-section">
+        <ReduceCostTips
+          items={[
+            "Compare DIY, hybrid, and full-service costs before assuming the cheapest option is worth the time and injury risk.",
+            "Use paid help only for the hardest part of the move, such as loading heavy furniture or handling stairs.",
+            "Reduce boxes by donating, selling, or throwing away items before renting a truck or paying movers.",
+            "Ask movers whether travel time, stairs, long carries, heavy items, parking, and fuel are included in the quote.",
+            "Reserve elevators, parking, and loading areas early to avoid delay fees or extra labor hours.",
+            "Borrow supplies where possible, but do not skip mattress covers, straps, padding, or protection for fragile items.",
+          ]}
+        />
+      </div>
+
+      <div id="CalculatorAssumptions" class="content-section">
+        <CalculatorAssumptions
+          items={[
+            "The calculator estimates DIY, hybrid, and full-service moving costs separately.",
+            "Blank optional fields use planning assumptions based on home size and moving distance when a cost is needed for the estimate.",
+            "DIY cost includes truck or trailer cost, estimated fuel, supplies, equipment, storage, access fees, insurance, tips, cleaning, junk removal, and other moving costs.",
+            "Hybrid cost starts with the DIY estimate and adds paid labor for loading, unloading, stairs, heavy items, or partial moving help.",
+            "Full-service cost uses the professional mover quote if entered; otherwise it estimates full-service cost from home size, distance, labor, and service complexity.",
+            "Confirmed help, credits, or reimbursements reduce the out-of-pocket estimate but do not lower the gross moving cost.",
+            "This page estimates the physical move and does not include security deposits, first rent or mortgage payment, furniture purchases, groceries, or long-term housing bills.",
+          ]}
+        />
+      </div>
+
+      <section id="FinancialRedFlags" class="content-section">
+        <h2>Moving Cost Red Flags</h2>
+
+        <p>
+          Moving can become expensive when the quote only covers the obvious
+          part of the job. A cheap truck or hourly rate can still turn into a
+          larger bill if the move needs extra trips, more hours, building access,
+          stairs, storage, supplies, or last-minute disposal.
+        </p>
+
+        <ul>
+          <li>The mover quote does not say whether travel time, stairs, long carries, fuel, or minimum hours are included.</li>
+          <li>The DIY plan depends on unpaid helpers who are not confirmed.</li>
+          <li>The move requires credit card debt for truck rental, movers, storage, supplies, or cleanup.</li>
+          <li>Truck mileage, fuel, tolls, parking, or extra trips are not included in the estimate.</li>
+          <li>Building rules require elevator reservations, insurance certificates, parking permits, or move-in fees that are still unknown.</li>
+          <li>Storage, junk removal, cleaning, or damage protection is being ignored even though the move is tight or complicated.</li>
+        </ul>
+      </section>
+
+      <section class="content-section">
+        <h2>How to Use the Moving Cost Result</h2>
+
+        <p>
+          Use the selected estimate as the main number for the move type you are
+          considering, then compare it with the other options. If the DIY and
+          hybrid estimates are close, paying for a few hours of help may be worth
+          it. If full-service movers are far higher, the tradeoff is usually time,
+          effort, safety, and convenience rather than pure savings.
+        </p>
+
+        <p>
+          The result should be treated as a planning estimate, not a guaranteed
+          quote. Before booking, ask for a written quote that explains what is
+          included, what can change the price, how minimum hours work, what
+          happens if the move runs long, and whether there are extra charges for
+          stairs, long carries, heavy items, parking, fuel, or travel time.
+        </p>
+      </section>
+
+      <div id="FAQSection" class="content-section">
+        <FAQSection
+          title="Moving Cost Calculator FAQ"
+          faqs={movingCostFaqs}
+        />
+      </div>
+
+      <div id="RelatedCalculators" class="content-section">
+        <RelatedCalculators calculators={relatedCalculators} />
+      </div>
+
+      <div id="MethodologySection" class="content-section">
+        <MethodologySection category="moving cost estimates" updated="June 2026" />
+      </div>
+    </CalculatorPageShell>
+  </div>
+
+  <script is:inline>
+    const getNumber = (id) => {
+      const rawValue = document.getElementById(id)?.value;
+      const value = Number(rawValue);
+      return Number.isFinite(value) && value >= 0 ? value : 0;
+    };
+
+    const formatMoney = (value) =>
+      value.toLocaleString(undefined, {
+        style: "currency",
+        currency: "USD",
+        maximumFractionDigits: 0,
+      });
+
+    const sizeProfiles = {
+      studio: {
+        label: "studio or room",
+        estimatedHours: 3,
+        estimatedMovers: 2,
+        estimatedTruck: 110,
+        estimatedSupplies: 120,
+        fullServiceBase: 650,
+      },
+      one: {
+        label: "1-bedroom move",
+        estimatedHours: 4,
+        estimatedMovers: 2,
+        estimatedTruck: 150,
+        estimatedSupplies: 180,
+        fullServiceBase: 900,
+      },
+      two: {
+        label: "2-bedroom move",
+        estimatedHours: 6,
+        estimatedMovers: 3,
+        estimatedTruck: 210,
+        estimatedSupplies: 280,
+        fullServiceBase: 1400,
+      },
+      three: {
+        label: "3-bedroom move",
+        estimatedHours: 8,
+        estimatedMovers: 3,
+        estimatedTruck: 280,
+        estimatedSupplies: 420,
+        fullServiceBase: 2100,
+      },
+      four: {
+        label: "4+ bedroom move",
+        estimatedHours: 10,
+        estimatedMovers: 4,
+        estimatedTruck: 380,
+        estimatedSupplies: 600,
+        fullServiceBase: 3200,
+      },
+    };
+
+    function calculateMovingCost() {
+      const moveType = document.getElementById("moveType")?.value || "hybrid";
+      const homeSize = document.getElementById("homeSize")?.value || "one";
+      const profile = sizeProfiles[homeSize] || sizeProfiles.one;
+
+      const movingMiles = getNumber("movingMiles");
+      const truckRentalInput = getNumber("truckRental");
+      const gasPriceInput = getNumber("gasPrice");
+      const truckMpgInput = getNumber("truckMpg");
+      const moverHourlyRateInput = getNumber("moverHourlyRate");
+      const moverCountInput = getNumber("moverCount");
+      const moverHoursInput = getNumber("moverHours");
+      const professionalQuote = getNumber("professionalQuote");
+      const packingSuppliesInput = getNumber("packingSupplies");
+      const equipmentRental = getNumber("equipmentRental");
+      const storageCost = getNumber("storageCost");
+      const accessFees = getNumber("accessFees");
+      const insuranceCoverage = getNumber("insuranceCoverage");
+      const tipsFood = getNumber("tipsFood");
+      const cleaningJunk = getNumber("cleaningJunk");
+      const otherCosts = getNumber("otherCosts");
+      const confirmedHelp = getNumber("confirmedHelp");
+
+      const results = document.getElementById("results");
+      const selectedMoveCost = document.getElementById("selectedMoveCost");
+      const diyEstimate = document.getElementById("diyEstimate");
+      const hybridEstimate = document.getElementById("hybridEstimate");
+      const fullServiceEstimate = document.getElementById("fullServiceEstimate");
+      const outOfPocket = document.getElementById("outOfPocket");
+      const resultDetails = document.getElementById("resultDetails");
+      const comparisonTable = document.getElementById("comparisonTable");
+      const moveCostNote = document.getElementById("moveCostNote");
+      const warningList = document.getElementById("warningList");
+
+      results.classList.add("visible");
+
+      if (movingMiles <= 0) {
+        selectedMoveCost.textContent = "$0";
+        diyEstimate.textContent = "$0";
+        hybridEstimate.textContent = "$0";
+        fullServiceEstimate.textContent = "$0";
+        outOfPocket.textContent = "$0";
+        resultDetails.innerHTML =
+          "<p>Enter total moving miles to estimate DIY, hybrid, and full-service moving costs.</p>";
+        comparisonTable.innerHTML = "";
+        moveCostNote.innerHTML =
+          "<strong>Not enough information yet.</strong> Add the moving distance, home size, and any known truck, mover, supply, storage, or access costs.";
+        warningList.innerHTML = "";
+        return;
+      }
+
+      const gasPrice = gasPriceInput > 0 ? gasPriceInput : 3.75;
+      const truckMpg = truckMpgInput > 0 ? truckMpgInput : 10;
+      const estimatedTruck =
+        truckRentalInput > 0
+          ? truckRentalInput
+          : profile.estimatedTruck + movingMiles * (movingMiles > 75 ? 1.05 : 0.65);
+
+      const estimatedFuel = (movingMiles / truckMpg) * gasPrice;
+      const packingSupplies =
+        packingSuppliesInput > 0 ? packingSuppliesInput : profile.estimatedSupplies;
+
+      const commonCosts =
+        packingSupplies +
+        equipmentRental +
+        storageCost +
+        accessFees +
+        insuranceCoverage +
+        tipsFood +
+        cleaningJunk +
+        otherCosts;
+
+      const diyGross = estimatedTruck + estimatedFuel + commonCosts;
+
+      const moverHourlyRate = moverHourlyRateInput > 0 ? moverHourlyRateInput : 65;
+      const moverCount = moverCountInput > 0 ? moverCountInput : profile.estimatedMovers;
+      const moverHours = moverHoursInput > 0 ? moverHoursInput : profile.estimatedHours;
+      const laborCost = moverHourlyRate * moverCount * moverHours;
+
+      const hybridGross = diyGross + laborCost;
+
+      const distanceComplexity =
+        movingMiles <= 50
+          ? movingMiles * 3
+          : 150 + movingMiles * 2.25;
+
+      const fullServiceGross =
+        professionalQuote > 0
+          ? professionalQuote + commonCosts * 0.35 + accessFees
+          : profile.fullServiceBase + distanceComplexity + commonCosts * 0.55 + accessFees;
+
+      const selectedGross =
+        moveType === "diy"
+          ? diyGross
+          : moveType === "full"
+            ? fullServiceGross
+            : hybridGross;
+
+      const selectedNet = Math.max(0, selectedGross - confirmedHelp);
+      const lowRange = Math.max(0, selectedGross * 0.85 - confirmedHelp);
+      const highRange = Math.max(0, selectedGross * 1.25 - confirmedHelp);
+
+      selectedMoveCost.textContent = formatMoney(selectedNet);
+      diyEstimate.textContent = formatMoney(Math.max(0, diyGross - confirmedHelp));
+      hybridEstimate.textContent = formatMoney(Math.max(0, hybridGross - confirmedHelp));
+      fullServiceEstimate.textContent = formatMoney(Math.max(0, fullServiceGross - confirmedHelp));
+      outOfPocket.textContent = formatMoney(selectedNet);
+
+      const selectedLabel =
+        moveType === "diy"
+          ? "DIY truck rental"
+          : moveType === "full"
+            ? "full-service movers"
+            : "hybrid move with paid help";
+
+      resultDetails.innerHTML = `
+        <p><strong>Selected move type:</strong> ${selectedLabel} for a ${profile.label}.</p>
+        <p><strong>Estimated range after confirmed help:</strong> ${formatMoney(lowRange)} to ${formatMoney(highRange)}.</p>
+        <p><strong>Estimated truck or trailer cost:</strong> ${formatMoney(estimatedTruck)}.</p>
+        <p><strong>Estimated truck fuel:</strong> ${formatMoney(estimatedFuel)} using ${movingMiles.toLocaleString()} miles, ${truckMpg.toFixed(1)} MPG, and ${formatMoney(gasPrice)} per gallon.</p>
+        <p><strong>Estimated paid labor:</strong> ${formatMoney(laborCost)} using ${moverCount.toFixed(0)} movers for ${moverHours.toFixed(1)} hours at ${formatMoney(moverHourlyRate)} per mover-hour.</p>
+      `;
+
+      comparisonTable.innerHTML = `
+        <div class="comparison-row"><strong>DIY move</strong><span>${formatMoney(Math.max(0, diyGross - confirmedHelp))}</span><span>Truck, fuel, supplies, equipment, access costs, storage, insurance, tips, cleaning, and other moving costs.</span></div>
+        <div class="comparison-row"><strong>Hybrid move</strong><span>${formatMoney(Math.max(0, hybridGross - confirmedHelp))}</span><span>DIY costs plus paid loading, unloading, stairs, heavy-item, or partial moving help.</span></div>
+        <div class="comparison-row"><strong>Full-service move</strong><span>${formatMoney(Math.max(0, fullServiceGross - confirmedHelp))}</span><span>Professional mover quote or estimate, plus selected access, supply, storage, insurance, and cleanup assumptions.</span></div>
+      `;
+
+      const warnings = [];
+
+      if (truckRentalInput === 0 && moveType !== "full") {
+        warnings.push("Truck rental is blank, so the calculator used a home-size and mileage estimate.");
+      }
+
+      if (packingSuppliesInput === 0) {
+        warnings.push("Packing supplies are blank, so the calculator used a home-size planning estimate.");
+      }
+
+      if (moveType !== "diy" && moverHourlyRateInput === 0) {
+        warnings.push("Mover hourly rate is blank, so the calculator used a planning rate. Replace it with an actual quote when possible.");
+      }
+
+      if (professionalQuote === 0 && moveType === "full") {
+        warnings.push("Professional mover quote is blank, so the full-service estimate is only a planning estimate.");
+      }
+
+      if (accessFees === 0) {
+        warnings.push("Access fees are blank. Confirm parking, elevator, stairs, long carry, and building rules before booking.");
+      }
+
+      if (confirmedHelp > selectedGross) {
+        warnings.push("Confirmed help exceeds the selected moving cost. That can reduce out-of-pocket moving cost to zero, but deposits and setup costs may still remain.");
+      }
+
+      let noteTitle = "Use this as your moving-cost planning number.";
+      let noteBody =
+        "The estimate focuses on the physical move, not deposits, first rent or mortgage payment, furniture, groceries, or ongoing housing bills.";
+
+      if (moveType === "diy" && hybridGross - diyGross < Math.max(300, diyGross * 0.35)) {
+        noteTitle = "Hybrid help may be worth pricing.";
+        noteBody =
+          "The hybrid estimate is not dramatically higher than DIY. Paying for loading or unloading help may reduce time, injury risk, and failed-helper risk.";
+      } else if (moveType === "full" && professionalQuote === 0) {
+        noteTitle = "Get a written mover quote before relying on this number.";
+        noteBody =
+          "Full-service moves depend heavily on weight, distance, access, labor minimums, and mover rules. Replace the estimate with an actual quote when possible.";
+      } else if (selectedNet === 0) {
+        noteTitle = "Confirmed help covers the selected moving estimate.";
+        noteBody =
+          "That lowers out-of-pocket moving cost to zero based on the numbers entered, but move-in cash and apartment setup costs should be checked separately.";
+      }
+
+      moveCostNote.innerHTML = `<strong>${noteTitle}</strong> ${noteBody}`;
+
+      warningList.innerHTML = warnings
+        .map((warning) => `<li>${warning}</li>`)
+        .join("");
+    }
+
+    document
+      .getElementById("movingCostButton")
+      .addEventListener("click", calculateMovingCost);
+  </script>
+</Layout>

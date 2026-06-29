@@ -1,0 +1,758 @@
+---
+import Layout from "../layouts/Layout.astro";
+import CalculatorPageShell from "../components/CalculatorPageShell.astro";
+import FAQSection from "../components/FAQSection.astro";
+import RelatedCalculators from "../components/RelatedCalculators.astro";
+import MethodologySection from "../components/MethodologySection.astro";
+import CalculatorAssumptions from "../components/CalculatorAssumptions.astro";
+import KeyCostCategories from "../components/KeyCostCategories.astro";
+import ReduceCostTips from "../components/ReduceCostTips.astro";
+import { calculators } from "../data/calculators.js";
+
+const moveInCostFaqs = [
+  {
+    question: "What is included in move-in cost?",
+    answer:
+      "Move-in cost usually includes the first rent or mortgage payment, security deposit, application fees, admin fees, utility deposits, pet deposits, pet fees, renters or home insurance, parking fees, storage fees, key fees, elevator fees, and any other amount due before you get access to the home.",
+  },
+  {
+    question: "Is a security deposit refundable?",
+    answer:
+      "A security deposit is often refundable if lease terms are met and the unit is returned in acceptable condition, but rules vary by state, landlord, lease, and damage claims. This calculator separates refundable deposits from non-refundable fees so you can see how much cash is truly gone versus temporarily tied up.",
+  },
+  {
+    question: "Is first month of rent refundable?",
+    answer:
+      "No. First month of rent is usually prepaid housing, not a refundable deposit. It may reduce what you owe for the first month, but it should not be treated like money you will get back later.",
+  },
+  {
+    question: "Should I count family help, employer relocation money, or credits?",
+    answer:
+      "Yes, but only when the help is confirmed. A specific landlord credit, employer relocation payment, family gift, or roommate reimbursement can reduce the cash you must cover. Uncertain help should not be counted as guaranteed.",
+  },
+  {
+    question: "Why is this different from a first apartment cost calculator?",
+    answer:
+      "This calculator focuses on money due before or near move-in and separates refundable deposits from non-refundable fees. A full first apartment budget should also include furniture, groceries, cleaning supplies, tools, cookware, and other setup costs after you get the keys.",
+  },
+];
+
+const relatedCalculators = calculators
+  .filter((calculator) =>
+    [
+      "/first-apartment-cost-calculator",
+      "/how-much-should-i-save-before-moving-out",
+      "/can-i-afford-to-move-out",
+      "/how-much-rent-can-i-afford",
+      "/should-i-spend-30-percent-income-on-rent",
+      "/how-much-emergency-savings-should-i-have",
+    ].includes(calculator.href)
+  )
+  .filter((calculator) => calculator.href !== "/security-deposit-and-move-in-cost-calculator")
+  .slice(0, 6);
+---
+
+<Layout
+  title="Security Deposit and Move-In Cost Calculator | ShouldISpend"
+  description="Estimate cash needed before move-in, including security deposit, first rent or mortgage payment, fees, utility deposits, pet costs, insurance, credits, and refundable versus non-refundable costs."
+>
+  <style>
+    .container {
+      max-width: 960px;
+      margin: auto;
+    }
+
+    .calculator {
+      background: white;
+      padding: 40px;
+      border-radius: 24px;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.06);
+    }
+
+    .calculator h2 {
+      margin-top: 0;
+      font-size: 2rem;
+      margin-bottom: 18px;
+      color: #0f172a;
+    }
+
+    .calculator-intro {
+      color: #334155;
+      line-height: 1.8;
+      margin-bottom: 30px;
+      font-size: 1.05rem;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+    }
+
+    .field label {
+      display: block;
+      font-weight: 800;
+      margin-bottom: 10px;
+      color: #0f172a;
+    }
+
+    .field input,
+    .field select {
+      width: 100%;
+      padding: 16px;
+      border-radius: 12px;
+      border: 1px solid #cbd5e1;
+      font-size: 1rem;
+      box-sizing: border-box;
+      background: white;
+    }
+
+    .field small {
+      display: block;
+      margin-top: 8px;
+      color: #64748b;
+      line-height: 1.5;
+    }
+
+    button {
+      margin-top: 30px;
+      background: #0f766e;
+      color: white;
+      border: none;
+      padding: 18px 32px;
+      border-radius: 999px;
+      font-size: 1.05rem;
+      font-weight: 800;
+      cursor: pointer;
+      transition: opacity 0.2s ease;
+    }
+
+    button:hover {
+      opacity: 0.92;
+    }
+
+    .results {
+      margin-top: 36px;
+      background: #f8fafc;
+      padding: 32px;
+      border-radius: 24px;
+      border: 1px solid var(--border);
+      box-shadow: 0 10px 24px rgba(15, 23, 42, 0.04);
+      display: none;
+    }
+
+    .results.visible {
+      display: block;
+    }
+
+    .result-kicker {
+      font-size: 0.82rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: #0f766e;
+      font-weight: 900;
+      margin-bottom: 10px;
+    }
+
+    .total-price {
+      font-size: clamp(2.4rem, 6vw, 4rem);
+      font-weight: 900;
+      color: #0f172a;
+      line-height: 1.05;
+      margin-bottom: 16px;
+    }
+
+    .result-details {
+      color: #334155;
+      line-height: 1.9;
+      font-size: 1.02rem;
+    }
+
+    .result-details p {
+      margin: 0 0 12px;
+    }
+
+    .result-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 16px;
+      margin: 26px 0;
+    }
+
+    .result-card {
+      background: white;
+      border: 1px solid #dbe4ee;
+      border-radius: 18px;
+      padding: 20px;
+    }
+
+    .result-card span {
+      display: block;
+      color: #64748b;
+      font-size: 0.9rem;
+      margin-bottom: 8px;
+      font-weight: 700;
+    }
+
+    .result-card strong {
+      display: block;
+      color: #0f172a;
+      font-size: 1.55rem;
+      line-height: 1.2;
+    }
+
+    .ledger {
+      margin-top: 26px;
+      border-radius: 18px;
+      overflow: hidden;
+      border: 1px solid #dbe4ee;
+      background: white;
+    }
+
+    .ledger-row {
+      display: grid;
+      grid-template-columns: 1.5fr 1fr;
+      gap: 16px;
+      padding: 16px 20px;
+      border-bottom: 1px solid #e2e8f0;
+      color: #334155;
+    }
+
+    .ledger-row:last-child {
+      border-bottom: 0;
+    }
+
+    .ledger-row strong {
+      color: #0f172a;
+    }
+
+    .verdict-box {
+      margin-top: 24px;
+      padding: 22px;
+      border-radius: 18px;
+      background: white;
+      border: 1px solid #dbe4ee;
+      color: #334155;
+      line-height: 1.8;
+    }
+
+    .verdict-box strong {
+      color: #0f172a;
+    }
+
+    .warning-list {
+      margin: 18px 0 0;
+      padding-left: 22px;
+      color: #334155;
+      line-height: 1.8;
+    }
+
+    .disclaimer {
+      margin-top: 24px;
+      font-size: 0.9rem;
+      color: #64748b;
+    }
+
+    .content-section {
+      margin-top: 60px;
+    }
+
+    .content-section h2 {
+      font-size: 2rem;
+      margin-bottom: 20px;
+      color: #0f172a;
+    }
+
+    .content-section p,
+    .content-section li {
+      font-size: 1.1rem;
+      line-height: 1.9;
+      color: #334155;
+    }
+
+    .content-link {
+      color: #0f766e;
+      font-weight: 700;
+      text-decoration: none;
+    }
+
+    .content-link:hover {
+      text-decoration: underline;
+    }
+
+    @media (max-width: 768px) {
+      .calculator {
+        padding: 24px;
+      }
+
+      .grid,
+      .result-grid,
+      .ledger-row {
+        grid-template-columns: 1fr;
+      }
+
+      .calculator h2,
+      .content-section h2 {
+        font-size: 1.7rem;
+      }
+
+      .results {
+        padding: 24px;
+      }
+    }
+  </style>
+
+  <div class="container">
+    <CalculatorPageShell
+      eyebrow="Move-In Cost Calculator"
+      title="Security Deposit and Move-In Cost Calculator"
+      description="Estimate the cash due before move-in and separate refundable deposits from non-refundable fees, prepaid housing costs, utility deposits, insurance, and confirmed credits or help."
+    >
+      <div class="calculator">
+        <h2>Move-In Cash Due Calculator</h2>
+
+        <p class="calculator-intro">
+          Move-in cost is not the same as total apartment setup cost. This
+          calculator focuses on the money due before or near getting the keys:
+          deposits, first rent or mortgage payment, application fees, utility
+          deposits, insurance, pet costs, parking, storage, and credits.
+        </p>
+
+        <div class="grid">
+          <div class="field">
+            <label for="firstHousingPayment">First Rent or Mortgage Payment Due</label>
+            <input id="firstHousingPayment" type="number" placeholder="Example: 1250" />
+            <small>Use the amount due before or at move-in, not your long-term monthly budget.</small>
+          </div>
+
+          <div class="field">
+            <label for="securityDeposit">Refundable Security Deposit</label>
+            <input id="securityDeposit" type="number" placeholder="Example: 1250" />
+            <small>Use the refundable deposit amount listed by the landlord, lease, or property manager.</small>
+          </div>
+
+          <div class="field">
+            <label for="lastMonthRent">Prepaid Last Month Rent</label>
+            <input id="lastMonthRent" type="number" placeholder="Example: 0" />
+            <small>Some leases require last month of rent upfront. This is prepaid housing, not a normal refundable deposit.</small>
+          </div>
+
+          <div class="field">
+            <label for="petDeposit">Refundable Pet Deposit</label>
+            <input id="petDeposit" type="number" placeholder="Example: 300" />
+            <small>Use only the refundable portion. Put non-refundable pet fees in the next field.</small>
+          </div>
+
+          <div class="field">
+            <label for="utilityDeposits">Refundable Utility Deposits</label>
+            <input id="utilityDeposits" type="number" placeholder="Example: 250" />
+            <small>Electric, gas, water, internet, or other utility deposits that may be returned later.</small>
+          </div>
+
+          <div class="field">
+            <label for="applicationFees">Application and Screening Fees</label>
+            <input id="applicationFees" type="number" placeholder="Example: 150" />
+            <small>Application fees, background checks, credit checks, and screening fees.</small>
+          </div>
+
+          <div class="field">
+            <label for="adminFees">Admin, Holding, or Lease Fees</label>
+            <input id="adminFees" type="number" placeholder="Example: 250" />
+            <small>Non-refundable building or lease fees due before the move.</small>
+          </div>
+
+          <div class="field">
+            <label for="petFees">Non-Refundable Pet Fees</label>
+            <input id="petFees" type="number" placeholder="Example: 250" />
+            <small>One-time pet fees that are not expected to be returned.</small>
+          </div>
+
+          <div class="field">
+            <label for="insuranceUpfront">Renters or Home Insurance Upfront</label>
+            <input id="insuranceUpfront" type="number" placeholder="Example: 180" />
+            <small>Any upfront premium required before or near move-in.</small>
+          </div>
+
+          <div class="field">
+            <label for="parkingStorageKeys">Parking, Storage, Keys, or Access Fees</label>
+            <input id="parkingStorageKeys" type="number" placeholder="Example: 200" />
+            <small>Parking pass, storage unit, fobs, keys, garage remote, mailbox key, or access card costs.</small>
+          </div>
+
+          <div class="field">
+            <label for="elevatorMoveFees">Elevator, Building, or Move-In Fees</label>
+            <input id="elevatorMoveFees" type="number" placeholder="Example: 150" />
+            <small>Building move-in fee, elevator reservation, loading dock fee, or required move-in charge.</small>
+          </div>
+
+          <div class="field">
+            <label for="otherDueBeforeMove">Other Amount Due Before Move-In</label>
+            <input id="otherDueBeforeMove" type="number" placeholder="Example: 300" />
+            <small>Any other required amount due before keys are released.</small>
+          </div>
+
+          <div class="field">
+            <label for="confirmedCredits">Confirmed Credits, Reimbursements, or Help</label>
+            <input id="confirmedCredits" type="number" placeholder="Example: 500" />
+            <small>Only count confirmed landlord credits, family help, employer money, roommate reimbursements, or gift money.</small>
+          </div>
+
+          <div class="field">
+            <label for="refundConfidence">Deposit Refund Confidence</label>
+            <select id="refundConfidence">
+              <option value="standard" selected>Standard lease / normal condition risk</option>
+              <option value="strict">Strict landlord, pets, old building, or high damage risk</option>
+              <option value="strong">Strong documentation and low damage risk</option>
+            </select>
+            <small>This changes the caution note, not the cash due before move-in.</small>
+          </div>
+        </div>
+
+        <button id="moveInCostButton" type="button">Calculate Move-In Cost</button>
+
+        <div class="results" id="results" aria-live="polite">
+          <div class="result-kicker">Cash Needed Before Move-In</div>
+
+          <div class="total-price" id="cashNeeded"></div>
+
+          <div class="result-details" id="resultDetails"></div>
+
+          <div class="result-grid">
+            <div class="result-card">
+              <span>Refundable deposits</span>
+              <strong id="refundableTotal"></strong>
+            </div>
+
+            <div class="result-card">
+              <span>Non-refundable fees</span>
+              <strong id="nonRefundableTotal"></strong>
+            </div>
+
+            <div class="result-card">
+              <span>Prepaid housing</span>
+              <strong id="prepaidHousingTotal"></strong>
+            </div>
+
+            <div class="result-card">
+              <span>Credits or help counted</span>
+              <strong id="creditsCounted"></strong>
+            </div>
+          </div>
+
+          <div class="ledger" id="ledgerBreakdown"></div>
+
+          <div class="verdict-box" id="moveInNote"></div>
+
+          <ul class="warning-list" id="warningList"></ul>
+
+          <div class="disclaimer">
+            This calculator separates move-in cash categories for planning. It
+            does not determine whether a charge is legally refundable or whether
+            a landlord can keep a deposit under your lease or local law.
+          </div>
+        </div>
+      </div>
+
+      <section class="content-section">
+        <h2>Why Move-In Cost Needs Its Own Calculator</h2>
+
+        <p>
+          Move-in cost is narrower than a full first apartment budget. Furniture,
+          groceries, cookware, cleaning supplies, and moving trucks matter, but
+          this calculator is focused on the cash that may be due before the keys
+          are released or shortly before occupancy begins.
+        </p>
+
+        <p>
+          That distinction matters because not every dollar has the same meaning.
+          A refundable security deposit ties up cash but may come back later. A
+          non-refundable admin fee is gone. First rent or mortgage is prepaid
+          housing. A utility deposit may be returned later, while an activation
+          fee usually is not. Grouping all of those into one number can hide how
+          much money is truly spent versus temporarily locked up.
+        </p>
+
+        <p>
+          For the broader apartment setup estimate, use the
+          <a class="content-link" href="/first-apartment-cost-calculator">
+            first apartment cost calculator
+          </a>.
+          For savings planning before the move, compare this result with
+          <a class="content-link" href="/how-much-should-i-save-before-moving-out">
+            how much to save before moving out
+          </a>.
+        </p>
+      </section>
+
+      <div id="KeyCostCategories" class="content-section">
+        <KeyCostCategories
+          items={[
+            {
+              title: "Refundable deposits",
+              description:
+                "Security deposits, pet deposits, and utility deposits may be returned later, but they still require cash upfront and can be withheld depending on lease terms, bills, or damage claims.",
+            },
+            {
+              title: "Non-refundable move-in fees",
+              description:
+                "Application fees, admin fees, screening fees, pet fees, building fees, access fees, and move-in fees usually represent money that should not be expected back.",
+            },
+            {
+              title: "Prepaid housing",
+              description:
+                "First rent or mortgage payment and prepaid last month rent reduce future housing owed but should not be treated like refundable savings.",
+            },
+            {
+              title: "Credits and confirmed help",
+              description:
+                "A confirmed landlord credit, employer relocation payment, family gift, or roommate reimbursement can lower the uncovered cash due before move-in.",
+            },
+          ]}
+        />
+      </div>
+
+      <div id="ReduceCostTips" class="content-section">
+        <ReduceCostTips
+          items={[
+            "Ask for a written move-in ledger that separates refundable deposits, non-refundable fees, prepaid rent, and utility setup charges.",
+            "Clarify which pet costs are refundable deposits and which are non-refundable fees.",
+            "Get utility deposit estimates before move-in instead of assuming activation will be free.",
+            "Photograph the unit at move-in and document existing damage to protect refundable deposits.",
+            "Ask whether admin, holding, elevator, parking, or access fees can be reduced, waived, or credited.",
+            "Do not spend refundable deposits mentally; treat them as tied-up cash until they are actually returned.",
+          ]}
+        />
+      </div>
+
+      <div id="CalculatorAssumptions" class="content-section">
+        <CalculatorAssumptions
+          items={[
+            "Cash needed before move-in equals refundable deposits, non-refundable fees, prepaid housing, insurance, utility deposits, and other required amounts minus confirmed credits or help.",
+            "Security deposit, pet deposit, and utility deposits are treated as refundable categories, but actual refund outcomes depend on lease terms, bills, local rules, and property condition.",
+            "Application fees, admin fees, pet fees, building fees, key fees, access fees, and move-in fees are treated as non-refundable unless the user knows otherwise.",
+            "First rent or mortgage payment and prepaid last month rent are treated as prepaid housing, not refundable deposits.",
+            "Confirmed credits and outside help reduce the displayed cash still needed before move-in.",
+            "Blank fields are treated as zero, which can make the estimate too low if required charges are skipped.",
+          ]}
+        />
+      </div>
+
+      <section id="FinancialRedFlags" class="content-section">
+        <h2>Security Deposit and Move-In Cost Red Flags</h2>
+
+        <p>
+          Move-in cash can be risky when the required amount is unclear or when
+          refundable and non-refundable costs are mixed together. The same total
+          can mean very different things depending on how much is prepaid housing,
+          how much is tied up as a deposit, and how much is gone permanently.
+        </p>
+
+        <ul>
+          <li>The landlord or property manager cannot provide a written list of all charges due before keys.</li>
+          <li>Non-refundable fees are high compared with the monthly housing payment.</li>
+          <li>Pet fees, parking fees, storage fees, or utility deposits are still unknown close to move-in.</li>
+          <li>Credits, roommate reimbursements, or family help are assumed but not confirmed.</li>
+          <li>You need credit card debt to cover the required move-in ledger.</li>
+          <li>You are counting on getting a deposit back immediately even though refunds can take time or be disputed.</li>
+        </ul>
+      </section>
+
+      <section class="content-section">
+        <h2>How to Use the Move-In Cost Result</h2>
+
+        <p>
+          Use the cash-needed number as the amount that must be available before
+          move-in after confirmed credits or help. Then look at the breakdown.
+          Refundable deposits are not the same as non-refundable fees, and
+          prepaid housing is not the same as emergency savings. A move with a
+          high refundable deposit may be very different from a move with the same
+          total made mostly of non-refundable fees.
+        </p>
+
+        <p>
+          This page intentionally does not estimate your full apartment setup
+          cost. After you understand what is due before keys, you still need to
+          budget for movers, groceries, furniture, tools, cleaning supplies,
+          cookware, towels, and the first normal month of bills.
+        </p>
+      </section>
+
+      <div id="FAQSection" class="content-section">
+        <FAQSection
+          title="Security Deposit and Move-In Cost Calculator FAQ"
+          faqs={moveInCostFaqs}
+        />
+      </div>
+
+      <div id="RelatedCalculators" class="content-section">
+        <RelatedCalculators calculators={relatedCalculators} />
+      </div>
+
+      <div id="MethodologySection" class="content-section">
+        <MethodologySection category="security deposit and move-in cash estimates" updated="June 2026" />
+      </div>
+    </CalculatorPageShell>
+  </div>
+
+  <script is:inline>
+    const getNumber = (id) => {
+      const rawValue = document.getElementById(id)?.value;
+      const value = Number(rawValue);
+      return Number.isFinite(value) && value >= 0 ? value : 0;
+    };
+
+    const formatMoney = (value) =>
+      value.toLocaleString(undefined, {
+        style: "currency",
+        currency: "USD",
+        maximumFractionDigits: 0,
+      });
+
+    function calculateMoveInCost() {
+      const firstHousingPayment = getNumber("firstHousingPayment");
+      const securityDeposit = getNumber("securityDeposit");
+      const lastMonthRent = getNumber("lastMonthRent");
+      const petDeposit = getNumber("petDeposit");
+      const utilityDeposits = getNumber("utilityDeposits");
+      const applicationFees = getNumber("applicationFees");
+      const adminFees = getNumber("adminFees");
+      const petFees = getNumber("petFees");
+      const insuranceUpfront = getNumber("insuranceUpfront");
+      const parkingStorageKeys = getNumber("parkingStorageKeys");
+      const elevatorMoveFees = getNumber("elevatorMoveFees");
+      const otherDueBeforeMove = getNumber("otherDueBeforeMove");
+      const confirmedCredits = getNumber("confirmedCredits");
+      const refundConfidence = document.getElementById("refundConfidence")?.value || "standard";
+
+      const results = document.getElementById("results");
+      const cashNeeded = document.getElementById("cashNeeded");
+      const refundableTotal = document.getElementById("refundableTotal");
+      const nonRefundableTotal = document.getElementById("nonRefundableTotal");
+      const prepaidHousingTotal = document.getElementById("prepaidHousingTotal");
+      const creditsCounted = document.getElementById("creditsCounted");
+      const resultDetails = document.getElementById("resultDetails");
+      const ledgerBreakdown = document.getElementById("ledgerBreakdown");
+      const moveInNote = document.getElementById("moveInNote");
+      const warningList = document.getElementById("warningList");
+
+      results.classList.add("visible");
+
+      const refundable =
+        securityDeposit +
+        petDeposit +
+        utilityDeposits;
+
+      const nonRefundable =
+        applicationFees +
+        adminFees +
+        petFees +
+        insuranceUpfront +
+        parkingStorageKeys +
+        elevatorMoveFees +
+        otherDueBeforeMove;
+
+      const prepaidHousing =
+        firstHousingPayment +
+        lastMonthRent;
+
+      const grossDue =
+        refundable +
+        nonRefundable +
+        prepaidHousing;
+
+      const netDue = Math.max(0, grossDue - confirmedCredits);
+      const refundableShare = grossDue > 0 ? refundable / grossDue : 0;
+      const nonRefundableShare = grossDue > 0 ? nonRefundable / grossDue : 0;
+
+      if (grossDue <= 0) {
+        cashNeeded.textContent = "$0";
+        refundableTotal.textContent = "$0";
+        nonRefundableTotal.textContent = "$0";
+        prepaidHousingTotal.textContent = "$0";
+        creditsCounted.textContent = "$0";
+        resultDetails.innerHTML =
+          "<p>Enter the amounts due before move-in to separate refundable deposits, non-refundable fees, prepaid housing, and confirmed credits.</p>";
+        ledgerBreakdown.innerHTML = "";
+        moveInNote.innerHTML =
+          "<strong>Not enough information yet.</strong> Add the payment, deposit, fees, utility deposits, insurance, and credits listed in your move-in paperwork.";
+        warningList.innerHTML = "";
+        return;
+      }
+
+      cashNeeded.textContent = formatMoney(netDue);
+      refundableTotal.textContent = formatMoney(refundable);
+      nonRefundableTotal.textContent = formatMoney(nonRefundable);
+      prepaidHousingTotal.textContent = formatMoney(prepaidHousing);
+      creditsCounted.textContent = formatMoney(confirmedCredits);
+
+      resultDetails.innerHTML = `
+        <p><strong>Gross amount due before move-in:</strong> ${formatMoney(grossDue)}.</p>
+        <p><strong>Cash still needed after confirmed credits or help:</strong> ${formatMoney(netDue)}.</p>
+        <p><strong>Refundable share of the gross move-in amount:</strong> ${Math.round(refundableShare * 100)}%.</p>
+        <p><strong>Non-refundable share of the gross move-in amount:</strong> ${Math.round(nonRefundableShare * 100)}%.</p>
+      `;
+
+      ledgerBreakdown.innerHTML = `
+        <div class="ledger-row"><strong>Refundable deposits</strong><span>${formatMoney(refundable)}</span></div>
+        <div class="ledger-row"><strong>Non-refundable fees and upfront charges</strong><span>${formatMoney(nonRefundable)}</span></div>
+        <div class="ledger-row"><strong>Prepaid housing</strong><span>${formatMoney(prepaidHousing)}</span></div>
+        <div class="ledger-row"><strong>Confirmed credits, reimbursements, or help</strong><span>-${formatMoney(Math.min(confirmedCredits, grossDue))}</span></div>
+        <div class="ledger-row"><strong>Estimated cash still needed before keys</strong><span>${formatMoney(netDue)}</span></div>
+      `;
+
+      const warnings = [];
+
+      if (firstHousingPayment === 0) {
+        warnings.push("First rent or mortgage payment is blank. That may be correct, but many moves require a payment before keys.");
+      }
+
+      if (securityDeposit === 0) {
+        warnings.push("Security deposit is blank. Confirm whether there is truly no deposit or whether it has been bundled into another fee.");
+      }
+
+      if (nonRefundable > firstHousingPayment && firstHousingPayment > 0) {
+        warnings.push("Non-refundable fees are higher than the first housing payment. Review whether any fees can be waived or credited.");
+      }
+
+      if (confirmedCredits > grossDue) {
+        warnings.push("Confirmed credits or help exceed the listed move-in amount. That can make cash due zero, but other moving and setup costs may still remain.");
+      }
+
+      if (utilityDeposits === 0) {
+        warnings.push("Utility deposits are blank. Confirm electric, gas, water, and internet setup before assuming no deposit is required.");
+      }
+
+      if (refundConfidence === "strict" && refundable > 0) {
+        warnings.push("Deposit refund risk is marked strict. Photograph the unit, document existing damage, and keep move-in records.");
+      }
+
+      let noteTitle = "Separate tied-up cash from money that is gone.";
+      let noteBody =
+        "Refundable deposits may come back later, but they still reduce cash available today. Non-refundable fees and prepaid housing should be treated as spent or already committed.";
+
+      if (netDue === 0) {
+        noteTitle = "Confirmed help or credits cover the listed move-in ledger.";
+        noteBody =
+          "That is a strong move-in cash result, but this calculator does not include furniture, groceries, movers, cleaning supplies, or your first normal month of bills.";
+      } else if (nonRefundableShare >= 0.45) {
+        noteTitle = "A large share of this move-in cost is non-refundable.";
+        noteBody =
+          "That means more of the cash is gone rather than temporarily tied up. Review the fee list carefully before committing.";
+      } else if (refundableShare >= 0.5) {
+        noteTitle = "Much of this move-in cost is refundable, but still tied up.";
+        noteBody =
+          "The cash may return later, but it is unavailable during the move and can be delayed, reduced, or disputed depending on the lease and property condition.";
+      }
+
+      moveInNote.innerHTML = `<strong>${noteTitle}</strong> ${noteBody}`;
+
+      warningList.innerHTML = warnings
+        .map((warning) => `<li>${warning}</li>`)
+        .join("");
+    }
+
+    document
+      .getElementById("moveInCostButton")
+      .addEventListener("click", calculateMoveInCost);
+  </script>
+</Layout>

@@ -1,0 +1,770 @@
+﻿---
+import Layout from "../layouts/Layout.astro";
+import FAQSection from "../components/FAQSection.astro";
+import { calculators } from "../data/calculators.js";
+
+const roommateFaqs = [
+  {
+    question: "Is it cheaper to live with a roommate?",
+    answer:
+      "Living with a roommate is usually cheaper because rent, utilities, internet, parking, storage, and some household basics can be shared. The savings depend on the actual rent split, whether utilities are truly shared, and whether roommate risk creates extra cost.",
+  },
+  {
+    question: "What costs should I compare before living alone?",
+    answer:
+      "Compare monthly rent or mortgage, utilities, internet, insurance, parking, storage, household supplies, groceries, commute changes, upfront deposits, furniture, and any roommate risk buffer. Do not compare rent alone.",
+  },
+  {
+    question: "Can living alone ever be cheaper than having a roommate?",
+    answer:
+      "Yes. Living alone can be cheaper if the roommate option is in a more expensive building, adds parking or commute costs, requires larger shared space, or creates reliability problems. The calculator compares total monthly and first-year cost instead of assuming roommates always save money.",
+  },
+  {
+    question: "Should I include groceries in the roommate comparison?",
+    answer:
+      "Include groceries only if your food cost changes because of the living arrangement. Many people keep groceries separate, but shared household supplies, bulk purchases, paper products, and waste can still change the monthly total.",
+  },
+  {
+    question: "What is a roommate risk buffer?",
+    answer:
+      "A roommate risk buffer is optional money added to the roommate scenario for missed payments, lease gaps, replacement roommates, shared-item disputes, cleaning issues, or uneven use of utilities and supplies. It is not a prediction. It is a planning cushion.",
+  },
+];
+
+const costCategories = [
+  {
+    title: "Housing payment",
+    body:
+      "The largest difference is usually rent or mortgage share. Compare your full living-alone payment against your actual roommate share, not the total unit rent.",
+  },
+  {
+    title: "Utilities and internet",
+    body:
+      "Electric, gas, water, trash, and internet may be cheaper with roommates, but high usage, uneven splits, or late payments can reduce the savings.",
+  },
+  {
+    title: "Parking, storage, and fees",
+    body:
+      "Pet fees, parking, storage, package lockers, amenity fees, and renter or home insurance can change the real comparison.",
+  },
+  {
+    title: "Household basics",
+    body:
+      "Toilet paper, cleaning supplies, trash bags, small tools, kitchen basics, and shared household items can be split or duplicated depending on the arrangement.",
+  },
+  {
+    title: "Groceries and commuting",
+    body:
+      "Groceries may stay separate, but apartment location and roommate choice can change commute, gas, transit, parking, and convenience costs.",
+  },
+  {
+    title: "Upfront cost difference",
+    body:
+      "Living alone may require more furniture, a larger deposit, higher move-in cash, or more setup spending. A roommate option may reduce those first-year costs.",
+  },
+];
+
+const reduceCostTips = [
+  "Compare total monthly cost, not just rent.",
+  "Write down exactly how rent, utilities, internet, parking, storage, and supplies will be split.",
+  "Ask whether the roommate option requires a larger apartment that erases part of the savings.",
+  "Include a small roommate risk buffer if the person, lease, or income situation is uncertain.",
+  "Price the first-year cost, including deposits, furniture, and setup, before choosing privacy over savings.",
+  "Delay living alone if the monthly difference would prevent emergency savings or debt progress.",
+  "Do not assume groceries are shared unless the household has a clear plan.",
+  "Use separate bills, written agreements, or payment apps when possible to reduce roommate disputes.",
+];
+
+const redFlags = [
+  "The roommate option only looks cheaper because utilities, internet, parking, or fees were left out.",
+  "The roommate has unstable income, unclear lease responsibility, or a history of late payments.",
+  "Living alone requires draining emergency savings just to get privacy.",
+  "The cheaper option creates a much worse commute or higher transportation cost.",
+  "One roommate would be responsible for collecting money from everyone else.",
+  "Furniture, deposits, and setup costs are ignored in the first-year comparison.",
+  "The lease makes you responsible for the full amount if a roommate leaves.",
+  "The plan depends on a future roommate who has not committed.",
+];
+
+const assumptions = [
+  "Living-alone monthly cost equals the housing payment, utilities, internet, insurance, parking, storage, household basics, groceries, commute change, and other costs entered for living alone.",
+  "Roommate monthly cost equals the user's share of rent, utilities, internet, insurance, parking, storage, household basics, groceries, commute change, other costs, and any roommate risk buffer.",
+  "First-year cost equals 12 months of monthly cost plus the upfront cost entered for that option.",
+  "The calculator compares cost only. It does not assign a dollar value to privacy, noise, conflict, safety, or lifestyle preference.",
+  "Blank fields are treated as zero, which can make either option look cheaper than it really is.",
+  "The roommate risk buffer is optional and should be used only when the user wants to plan for reliability risk or shared-expense uncertainty.",
+  "This is a comparison calculator, not a full rent affordability, lease, legal, or roommate-screening tool.",
+];
+
+const relatedCalculators = calculators
+  .filter((calculator) =>
+    [
+      "/can-i-afford-to-move-out",
+      "/how-much-should-i-save-before-moving-out",
+      "/first-apartment-cost-calculator",
+      "/security-deposit-and-move-in-cost-calculator",
+      "/moving-cost-calculator",
+      "/first-apartment-furniture-cost-calculator",
+    ].includes(calculator.href)
+  )
+  .filter((calculator) => calculator.href !== "/roommate-vs-living-alone-calculator")
+  .slice(0, 6);
+---
+
+<Layout
+  title="Roommate vs. Living Alone Calculator | ShouldISpend"
+  description="Compare the monthly, annual, and first-year cost of living alone versus having a roommate, including rent, utilities, internet, fees, groceries, commute, upfront costs, and roommate risk."
+>
+  <style>
+    .container { max-width:1060px; margin:0 auto; padding:80px 24px; }
+    .eyebrow { color:#0f766e; text-transform:uppercase; letter-spacing:2px; font-size:.8rem; font-weight:900; margin-bottom:18px; }
+    h1 { font-size:clamp(2.65rem,7vw,4.8rem); line-height:.95; margin:0 0 24px; color:#0f172a; max-width:940px; }
+    h2 { font-size:clamp(1.8rem,4vw,2.45rem); line-height:1.12; margin:0 0 18px; color:#0f172a; }
+    h3 { color:#0f172a; line-height:1.25; margin:0 0 10px; }
+    p, li { color:#334155; line-height:1.85; font-size:1.06rem; }
+    a { color:#0f766e; font-weight:800; }
+    .intro { max-width:860px; font-size:1.14rem; margin-bottom:32px; }
+    .hero-grid, .info-grid, .link-grid, .mini-grid { display:grid; gap:20px; }
+    .hero-grid { grid-template-columns:minmax(0,1.4fr) minmax(280px,.7fr); margin:34px 0 56px; }
+    .info-grid, .link-grid, .mini-grid { grid-template-columns:repeat(auto-fit,minmax(245px,1fr)); margin-top:28px; }
+    .summary-card, .calculator-box, .info-card, .link-card, .callout, .mini-card, .table-wrap {
+      border:1px solid #dbe4ee; background:#fff; border-radius:24px; box-shadow:0 12px 28px rgba(15,23,42,.04);
+    }
+    .summary-card, .info-card, .mini-card, .link-card, .callout { padding:24px; }
+    .summary-card { background:linear-gradient(180deg,#f8fafc 0%,#fff 100%); }
+    .summary-card strong { display:block; color:#0f172a; font-size:1.1rem; margin-bottom:10px; }
+    .summary-list { margin:0; padding-left:20px; }
+    .summary-list li { margin-bottom:10px; font-size:.98rem; }
+    .calculator-box { padding:30px; margin-bottom:64px; }
+    .form-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(230px,1fr)); gap:18px; margin-top:24px; }
+    label { display:block; font-weight:900; color:#0f172a; margin-bottom:8px; font-size:.95rem; }
+    .hint { display:block; color:#64748b; font-size:.83rem; line-height:1.45; margin-top:5px; }
+    input, select { width:100%; border:1px solid #cbd5e1; border-radius:13px; padding:13px; font-size:1rem; box-sizing:border-box; color:#0f172a; background:#fff; }
+    button { margin-top:24px; border:none; border-radius:999px; padding:15px 24px; background:#0f766e; color:#fff; font-weight:900; font-size:1rem; cursor:pointer; }
+    button:hover { opacity:.92; }
+    .result { margin-top:32px; background:#f8fafc; border:1px solid #dbe4ee; border-radius:24px; padding:30px; display:none; }
+    .result.visible { display:block; }
+    .score { font-size:clamp(2rem,4vw,2.75rem); font-weight:950; color:#0f172a; margin-bottom:16px; line-height:1.12; }
+    .result-details { display:grid; grid-template-columns:repeat(auto-fit,minmax(230px,1fr)); gap:14px; margin-top:20px; }
+    .result-metric { background:#fff; border:1px solid #e2e8f0; border-radius:18px; padding:16px; }
+    .result-metric strong { display:block; color:#0f172a; margin-bottom:6px; }
+    .result-metric span { color:#334155; line-height:1.55; font-size:.96rem; }
+    .guidance { margin-top:22px; padding-top:20px; border-top:1px solid #dbe4ee; color:#0f172a; font-size:1.08rem; line-height:1.8; }
+    .fine-print { color:#64748b; font-size:.9rem; margin-top:18px; line-height:1.6; }
+    .content-section { margin-top:76px; }
+    .content-section > p { max-width:900px; }
+    .numbered-card { position:relative; padding-top:48px; }
+    .numbered-card .number { position:absolute; top:20px; left:22px; width:28px; height:28px; border-radius:999px; background:#ccfbf1; color:#115e59; font-weight:950; display:grid; place-items:center; font-size:.86rem; }
+    .callout { background:#f8fafc; margin-top:28px; }
+    .callout p { margin:0; color:#0f172a; font-size:1.08rem; }
+    .warning-box { border-left:5px solid #dc2626; }
+    .decision-box { border-left:5px solid #0f766e; }
+    .table-wrap { overflow-x:auto; margin-top:26px; padding:0; }
+    table { width:100%; border-collapse:collapse; min-width:720px; }
+    th, td { text-align:left; padding:16px; border-bottom:1px solid #e2e8f0; vertical-align:top; color:#334155; line-height:1.55; }
+    th { color:#0f172a; background:#f8fafc; font-size:.92rem; text-transform:uppercase; letter-spacing:.04em; }
+    tr:last-child td { border-bottom:none; }
+    .link-card { display:block; text-decoration:none; color:inherit; transition:transform .15s ease, box-shadow .15s ease; }
+    .link-card:hover { transform:translateY(-2px); box-shadow:0 16px 34px rgba(15,23,42,.08); }
+    .link-card strong { display:block; color:#0f172a; margin-bottom:8px; line-height:1.3; font-size:1.03rem; }
+    .link-card span, .info-card p, .mini-card p { display:block; margin:0; color:#334155; line-height:1.7; font-size:.96rem; }
+    .check-list, .red-list { list-style:none; padding-left:0; }
+    .check-list li, .red-list li { position:relative; padding-left:30px; margin-bottom:10px; }
+    .check-list li::before { content:"+"; position:absolute; left:0; top:0; color:#0f766e; font-weight:950; }
+    .red-list li::before { content:"!"; position:absolute; left:0; top:2px; width:18px; height:18px; border-radius:999px; display:grid; place-items:center; background:#fee2e2; color:#b91c1c; font-weight:950; font-size:.8rem; }
+    @media (max-width:760px) {
+      .container { padding:54px 18px; }
+      .hero-grid { grid-template-columns:1fr; }
+      .calculator-box { padding:22px; }
+    }
+  </style>
+
+  <main class="container">
+    <div class="eyebrow">Roommate vs. Living Alone Calculator</div>
+
+    <h1>Roommate vs. Living Alone Calculator</h1>
+
+    <p class="intro">
+      Living alone can be worth paying more for privacy, control, and stability.
+      But the cost difference should be clear before signing a lease. This
+      calculator compares monthly cost, annual cost, first-year cost, upfront
+      cost, and roommate risk so the tradeoff is measured in dollars.
+    </p>
+
+    <div class="hero-grid">
+      <div class="summary-card">
+        <strong>Fast answer</strong>
+        <p>
+          A roommate usually saves money when rent, utilities, internet, and
+          household costs are truly shared. Living alone becomes easier to justify
+          when the monthly premium is small, upfront costs are manageable, or the
+          roommate option carries real reliability risk.
+        </p>
+      </div>
+
+      <div class="summary-card">
+        <strong>This page compares:</strong>
+        <ul class="summary-list">
+          <li>living-alone monthly cost</li>
+          <li>roommate monthly cost</li>
+          <li>annual and first-year difference</li>
+          <li>upfront cost and roommate risk buffer</li>
+        </ul>
+      </div>
+    </div>
+
+    <section class="calculator-box">
+      <h2>Compare Living Alone and Having a Roommate</h2>
+
+      <p>
+        Enter the monthly costs for each option. Use your share only for the
+        roommate column. Add upfront costs if deposits, furniture, or setup costs
+        differ between the two options.
+      </p>
+
+      <div class="form-grid">
+        <div>
+          <label for="aloneRent">Living-alone rent or mortgage</label>
+          <input id="aloneRent" type="number" placeholder="Example: 1600" min="0" inputmode="decimal" />
+          <span class="hint">Use the full housing payment you would cover alone.</span>
+        </div>
+
+        <div>
+          <label for="roommateRent">Your rent share with roommate</label>
+          <input id="roommateRent" type="number" placeholder="Example: 950" min="0" inputmode="decimal" />
+          <span class="hint">Use only your share, not the total rent for the unit.</span>
+        </div>
+
+
+        <div>
+          <label for="aloneUtilities">Living-alone utilities</label>
+          <input id="aloneUtilities" type="number" placeholder="Example: 275" min="0" inputmode="decimal" />
+          <span class="hint">Electric, gas, water, trash, and similar bills.</span>
+        </div>
+
+        <div>
+          <label for="roommateUtilities">Your utility share with roommate</label>
+          <input id="roommateUtilities" type="number" placeholder="Example: 175" min="0" inputmode="decimal" />
+          <span class="hint">Use the part you expect to pay after splitting utilities.</span>
+        </div>
+
+        <div>
+          <label for="aloneInternet">Living-alone internet</label>
+          <input id="aloneInternet" type="number" placeholder="Example: 80" min="0" inputmode="decimal" />
+          <span class="hint">Internet, router rental, streaming bundle, or required tech fees.</span>
+        </div>
+
+        <div>
+          <label for="roommateInternet">Your internet share with roommate</label>
+          <input id="roommateInternet" type="number" placeholder="Example: 40" min="0" inputmode="decimal" />
+          <span class="hint">Your expected share of internet and shared tech costs.</span>
+        </div>
+
+        <div>
+          <label for="aloneInsurance">Living-alone insurance</label>
+          <input id="aloneInsurance" type="number" placeholder="Example: 25" min="0" inputmode="decimal" />
+          <span class="hint">Renters or home insurance for the living-alone option.</span>
+        </div>
+
+        <div>
+          <label for="roommateInsurance">Insurance with roommate</label>
+          <input id="roommateInsurance" type="number" placeholder="Example: 20" min="0" inputmode="decimal" />
+          <span class="hint">Use your policy cost or share of any required coverage.</span>
+        </div>
+
+        <div>
+          <label for="aloneFees">Living-alone parking, pet, or storage fees</label>
+          <input id="aloneFees" type="number" placeholder="Example: 150" min="0" inputmode="decimal" />
+          <span class="hint">Parking, pet rent, storage, amenities, or other recurring fees.</span>
+        </div>
+
+        <div>
+          <label for="roommateFees">Roommate parking, pet, or storage share</label>
+          <input id="roommateFees" type="number" placeholder="Example: 75" min="0" inputmode="decimal" />
+          <span class="hint">Your share of recurring fees in the roommate option.</span>
+        </div>
+
+        <div>
+          <label for="aloneHousehold">Living-alone household basics</label>
+          <input id="aloneHousehold" type="number" placeholder="Example: 120" min="0" inputmode="decimal" />
+          <span class="hint">Cleaning supplies, paper products, tools, trash bags, and shared basics you would buy alone.</span>
+        </div>
+
+        <div>
+          <label for="roommateHousehold">Roommate household basics share</label>
+          <input id="roommateHousehold" type="number" placeholder="Example: 70" min="0" inputmode="decimal" />
+          <span class="hint">Your expected share of household basics.</span>
+        </div>
+
+        <div>
+          <label for="aloneGroceries">Living-alone groceries</label>
+          <input id="aloneGroceries" type="number" placeholder="Example: 450" min="0" inputmode="decimal" />
+          <span class="hint">Include only if groceries change between options.</span>
+        </div>
+
+        <div>
+          <label for="roommateGroceries">Groceries with roommate</label>
+          <input id="roommateGroceries" type="number" placeholder="Example: 425" min="0" inputmode="decimal" />
+          <span class="hint">Use your expected grocery cost with roommates.</span>
+        </div>
+
+        <div>
+          <label for="aloneCommute">Living-alone commute difference</label>
+          <input id="aloneCommute" type="number" placeholder="Example: 80" min="0" inputmode="decimal" />
+          <span class="hint">Extra gas, transit, parking, tolls, or rideshare costs for the living-alone option.</span>
+        </div>
+
+        <div>
+          <label for="roommateCommute">Roommate commute difference</label>
+          <input id="roommateCommute" type="number" placeholder="Example: 40" min="0" inputmode="decimal" />
+          <span class="hint">Extra transportation cost for the roommate option.</span>
+        </div>
+
+        <div>
+          <label for="aloneOther">Other living-alone monthly costs</label>
+          <input id="aloneOther" type="number" placeholder="Example: 100" min="0" inputmode="decimal" />
+          <span class="hint">Anything specific to privacy, location, building, pets, or lifestyle.</span>
+        </div>
+
+        <div>
+          <label for="roommateOther">Other roommate monthly costs</label>
+          <input id="roommateOther" type="number" placeholder="Example: 75" min="0" inputmode="decimal" />
+          <span class="hint">Anything specific to the roommate option.</span>
+        </div>
+
+        <div>
+          <label for="aloneUpfront">Living-alone upfront costs</label>
+          <input id="aloneUpfront" type="number" placeholder="Example: 4200" min="0" inputmode="decimal" />
+          <span class="hint">Deposit, move-in fees, furniture, setup, or extra moving cost for living alone.</span>
+        </div>
+
+        <div>
+          <label for="roommateUpfront">Roommate upfront costs</label>
+          <input id="roommateUpfront" type="number" placeholder="Example: 2600" min="0" inputmode="decimal" />
+          <span class="hint">Your share of deposit, fees, furniture, setup, or moving cost with a roommate.</span>
+        </div>
+
+        <div>
+          <label for="roommateRiskBuffer">Roommate risk buffer</label>
+          <input id="roommateRiskBuffer" type="number" placeholder="Example: 100" min="0" inputmode="decimal" />
+          <span class="hint">Optional monthly cushion for missed payments, lease gaps, disputes, or shared-cost uncertainty.</span>
+        </div>
+
+        <div>
+          <label for="takeHomeIncome">Monthly take-home income</label>
+          <input id="takeHomeIncome" type="number" placeholder="Example: 4200" min="0" inputmode="decimal" />
+          <span class="hint">Optional. Used only to show how large each option is versus income.</span>
+        </div>
+      </div>
+
+      <button id="calculateButton" type="button">Compare Housing Options</button>
+
+      <div class="result" id="result">
+        <div class="score" id="scoreText"></div>
+        <div class="result-details" id="resultDetails"></div>
+        <div class="guidance" id="guidance"></div>
+        <div class="fine-print">This calculator compares cost only. It is educational and is not financial, legal, housing, lease, roommate-screening, tax, insurance, or professional advice.</div>
+      </div>
+    </section>
+
+    <section class="content-section">
+      <h2>Roommate versus living alone is more than a rent comparison</h2>
+
+      <p>
+        The rent gap is only the starting point. Utilities, internet, fees,
+        household basics, groceries, transportation, furniture, deposits, and
+        roommate reliability can change the real dollar difference. A roommate
+        may save hundreds per month, or the savings may shrink once the full
+        living situation is counted.
+      </p>
+
+      <p>
+        Living alone can still be the right choice when the premium is affordable
+        and the privacy, stability, sleep, work setup, or safety benefits matter.
+        But it should be chosen with the full first-year cost in view, not just
+        the monthly rent shown on the listing.
+      </p>
+
+      <div class="callout decision-box">
+        <p>
+          Use the monthly difference as the main tradeoff and the first-year
+          difference as the reality check. Privacy has value, but the dollars
+          should be visible before the lease is signed.
+        </p>
+      </div>
+    </section>
+
+    <section class="content-section" id="MethodologySection">
+      <h2>How this roommate vs. living alone calculator works</h2>
+
+      <p>
+        The calculator builds a monthly cost for living alone and a monthly cost
+        for having a roommate. It then compares annual cost and first-year cost,
+        including upfront costs. The roommate risk buffer is optional and is
+        added only to the roommate scenario.
+      </p>
+
+      <div class="mini-grid">
+        <div class="mini-card numbered-card">
+          <div class="number">1</div>
+          <h3>Build each monthly cost</h3>
+          <p>Rent, utilities, internet, insurance, fees, household basics, groceries, commute changes, and other costs are added for each option.</p>
+        </div>
+
+        <div class="mini-card numbered-card">
+          <div class="number">2</div>
+          <h3>Add roommate risk</h3>
+          <p>The optional roommate risk buffer accounts for shared-cost uncertainty, missed payments, or lease-gap risk.</p>
+        </div>
+
+        <div class="mini-card numbered-card">
+          <div class="number">3</div>
+          <h3>Compare annual cost</h3>
+          <p>The monthly difference is multiplied by 12 to show the yearly cost gap.</p>
+        </div>
+
+        <div class="mini-card numbered-card">
+          <div class="number">4</div>
+          <h3>Check first-year cost</h3>
+          <p>Upfront costs are added to show whether deposits, furniture, or setup costs change the first-year decision.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="content-section" id="KeyCostCategories">
+      <h2>Key cost categories when comparing roommates and living alone</h2>
+
+      <p>
+        A good roommate comparison includes recurring costs and first-year costs.
+        Leaving out small categories can make one option look cheaper than it
+        really is.
+      </p>
+
+      <div class="info-grid">
+        {costCategories.map((category) => (
+          <div class="info-card">
+            <h3>{category.title}</h3>
+            <p>{category.body}</p>
+          </div>
+        ))}
+      </div>
+    </section>
+
+    <section class="content-section">
+      <h2>Living alone vs. roommate cost comparison</h2>
+
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Category</th>
+              <th>Living alone</th>
+              <th>With a roommate</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Rent or mortgage</td>
+              <td>You usually cover the full payment.</td>
+              <td>You cover only your share, but may need a larger unit.</td>
+            </tr>
+            <tr>
+              <td>Utilities and internet</td>
+              <td>You control usage but pay the whole bill.</td>
+              <td>Costs are shared, but usage and payment reliability can vary.</td>
+            </tr>
+            <tr>
+              <td>Furniture and setup</td>
+              <td>You may need more furniture and household basics.</td>
+              <td>Some items may be shared, duplicated, or already owned by someone else.</td>
+            </tr>
+            <tr>
+              <td>Risk and flexibility</td>
+              <td>More privacy and control, but less cost sharing.</td>
+              <td>Lower cost can come with conflict, lease, cleaning, guest, or payment risk.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="content-section" id="ReduceCostTips">
+      <h2>Ways to reduce housing cost before deciding</h2>
+
+      <p>
+        If living alone is much more expensive, the choice is not automatically
+        impossible. The next step is to look for ways to shrink the premium or
+        make the roommate option safer.
+      </p>
+
+      <ul class="check-list">
+        {reduceCostTips.map((tip) => <li>{tip}</li>)}
+      </ul>
+    </section>
+
+    <section class="content-section" id="FinancialRedFlags">
+      <h2>Financial red flags in a roommate decision</h2>
+
+      <p>
+        These warning signs mean the cheaper-looking option may not be as safe
+        as it appears, or the living-alone option may be creating too much
+        pressure.
+      </p>
+
+      <ul class="red-list">
+        {redFlags.map((flag) => <li>{flag}</li>)}
+      </ul>
+
+      <div class="callout warning-box">
+        <p>
+          Be careful when one person signs for the whole lease while the plan
+          depends on informal roommate payments. Legal responsibility and verbal
+          cost sharing are not the same thing.
+        </p>
+      </div>
+    </section>
+
+    <section class="content-section" id="CalculatorAssumptions">
+      <h2>Calculator assumptions</h2>
+
+      <ul>
+        {assumptions.map((assumption) => <li>{assumption}</li>)}
+      </ul>
+    </section>
+
+    <section class="content-section">
+      <h2>Decision guide: what to do with your result</h2>
+
+      <div class="info-grid">
+        <div class="info-card">
+          <h3>Roommate is much cheaper</h3>
+          <p>The savings may be worth it, especially if the roommate is reliable and the lease risk is clear.</p>
+        </div>
+
+        <div class="info-card">
+          <h3>Costs are close</h3>
+          <p>Privacy, sleep, work setup, safety, commute, pets, and lifestyle may matter more than the small dollar gap.</p>
+        </div>
+
+        <div class="info-card">
+          <h3>Living alone is much more expensive</h3>
+          <p>Check whether the privacy premium delays emergency savings, debt payoff, or the ability to handle surprise bills.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="content-section" id="RelatedCalculators">
+      <h2>Related moving calculators</h2>
+
+      <div class="link-grid">
+        {relatedCalculators.map((calculator) => (
+          <a class="link-card" href={calculator.href}>
+            <strong>{calculator.title}</strong>
+            <span>{calculator.description}</span>
+          </a>
+        ))}
+      </div>
+    </section>
+
+    <section class="content-section" id="FAQSection">
+      <FAQSection title="Roommate vs. Living Alone Calculator FAQ" faqs={roommateFaqs} />
+    </section>
+  </main>
+
+  <script>
+    const formatCurrency = (value) => {
+      const safeValue = Number.isFinite(value) ? value : 0;
+      return safeValue.toLocaleString(undefined, {
+        style: "currency",
+        currency: "USD",
+        maximumFractionDigits: 0,
+      });
+    };
+
+    const getNumber = (id) => {
+      const rawValue = document.getElementById(id)?.value;
+      const value = Number(rawValue);
+      return Number.isFinite(value) && value >= 0 ? value : 0;
+    };
+
+    const button = document.getElementById("calculateButton");
+    const result = document.getElementById("result");
+    const scoreText = document.getElementById("scoreText");
+    const resultDetails = document.getElementById("resultDetails");
+    const guidance = document.getElementById("guidance");
+
+    function formatSignedCost(value) {
+      const absValue = Math.abs(value);
+      return value >= 0 ? formatCurrency(absValue) : `-${formatCurrency(absValue)}`;
+    }
+
+    button?.addEventListener("click", () => {
+      const aloneRent = getNumber("aloneRent");
+      const roommateRent = getNumber("roommateRent");
+      const aloneUtilities = getNumber("aloneUtilities");
+      const roommateUtilities = getNumber("roommateUtilities");
+      const aloneInternet = getNumber("aloneInternet");
+      const roommateInternet = getNumber("roommateInternet");
+      const aloneInsurance = getNumber("aloneInsurance");
+      const roommateInsurance = getNumber("roommateInsurance");
+      const aloneFees = getNumber("aloneFees");
+      const roommateFees = getNumber("roommateFees");
+      const aloneHousehold = getNumber("aloneHousehold");
+      const roommateHousehold = getNumber("roommateHousehold");
+      const aloneGroceries = getNumber("aloneGroceries");
+      const roommateGroceries = getNumber("roommateGroceries");
+      const aloneCommute = getNumber("aloneCommute");
+      const roommateCommute = getNumber("roommateCommute");
+      const aloneOther = getNumber("aloneOther");
+      const roommateOther = getNumber("roommateOther");
+      const aloneUpfront = getNumber("aloneUpfront");
+      const roommateUpfront = getNumber("roommateUpfront");
+      const roommateRiskBuffer = getNumber("roommateRiskBuffer");
+      const takeHomeIncome = getNumber("takeHomeIncome");
+
+      result?.classList.add("visible");
+
+      const aloneMonthly =
+        aloneRent +
+        aloneUtilities +
+        aloneInternet +
+        aloneInsurance +
+        aloneFees +
+        aloneHousehold +
+        aloneGroceries +
+        aloneCommute +
+        aloneOther;
+
+      const roommateMonthly =
+        roommateRent +
+        roommateUtilities +
+        roommateInternet +
+        roommateInsurance +
+        roommateFees +
+        roommateHousehold +
+        roommateGroceries +
+        roommateCommute +
+        roommateOther +
+        roommateRiskBuffer;
+
+      if (aloneMonthly <= 0 && roommateMonthly <= 0) {
+        scoreText.textContent = "Add both housing options first";
+        resultDetails.innerHTML = `
+          <div class="result-metric">
+            <strong>Missing comparison</strong>
+            <span>Enter living-alone costs and roommate costs so the calculator can compare monthly, annual, and first-year difference.</span>
+          </div>
+        `;
+        guidance.textContent = "";
+        return;
+      }
+
+      const monthlyDifference = aloneMonthly - roommateMonthly;
+      const annualDifference = monthlyDifference * 12;
+      const aloneFirstYear = aloneMonthly * 12 + aloneUpfront;
+      const roommateFirstYear = roommateMonthly * 12 + roommateUpfront;
+      const firstYearDifference = aloneFirstYear - roommateFirstYear;
+      const aloneIncomeShare = takeHomeIncome > 0 ? (aloneMonthly / takeHomeIncome) * 100 : 0;
+      const roommateIncomeShare = takeHomeIncome > 0 ? (roommateMonthly / takeHomeIncome) * 100 : 0;
+
+      let headline = "Costs are close";
+      let headlineDetail = "The monthly cost difference is small enough that lifestyle may matter more than the dollar gap.";
+
+      if (monthlyDifference > 0) {
+        headline = `Living alone costs ${formatCurrency(monthlyDifference)} more per month`;
+        headlineDetail = `That is ${formatCurrency(annualDifference)} more per year before any first-year upfront difference.`;
+      } else if (monthlyDifference < 0) {
+        headline = `Living alone costs ${formatCurrency(Math.abs(monthlyDifference))} less per month`;
+        headlineDetail = `That is ${formatCurrency(Math.abs(annualDifference))} less per year before any first-year upfront difference.`;
+      }
+
+      scoreText.textContent = headline;
+
+      const cheaperMonthly =
+        monthlyDifference > 0
+          ? "Roommate option"
+          : monthlyDifference < 0
+            ? "Living alone"
+            : "About even";
+
+      const cheaperFirstYear =
+        firstYearDifference > 0
+          ? "Roommate option"
+          : firstYearDifference < 0
+            ? "Living alone"
+            : "About even";
+
+      resultDetails.innerHTML = `
+        <div class="result-metric"><strong>Living-alone monthly cost</strong><span>${formatCurrency(aloneMonthly)}</span></div>
+        <div class="result-metric"><strong>Roommate monthly cost</strong><span>${formatCurrency(roommateMonthly)}</span></div>
+        <div class="result-metric"><strong>Monthly difference</strong><span>${formatSignedCost(monthlyDifference)}. Positive means living alone costs more.</span></div>
+        <div class="result-metric"><strong>Annual difference</strong><span>${formatSignedCost(annualDifference)} over 12 months.</span></div>
+        <div class="result-metric"><strong>Living-alone first-year cost</strong><span>${formatCurrency(aloneFirstYear)} including upfront costs.</span></div>
+        <div class="result-metric"><strong>Roommate first-year cost</strong><span>${formatCurrency(roommateFirstYear)} including upfront costs and risk buffer.</span></div>
+        <div class="result-metric"><strong>First-year difference</strong><span>${formatSignedCost(firstYearDifference)}. Positive means living alone costs more in year one.</span></div>
+        <div class="result-metric"><strong>Cheaper monthly option</strong><span>${cheaperMonthly}.</span></div>
+        <div class="result-metric"><strong>Cheaper first-year option</strong><span>${cheaperFirstYear}.</span></div>
+        <div class="result-metric"><strong>Income comparison</strong><span>${takeHomeIncome > 0 ? `Living alone uses ${aloneIncomeShare.toFixed(1)}% of take-home income. Roommate option uses ${roommateIncomeShare.toFixed(1)}%.` : "Enter take-home income to compare both options against income."}</span></div>
+      `;
+
+      const warnings = [];
+
+      if (aloneRent === 0) {
+        warnings.push("Living-alone rent or mortgage is blank.");
+      }
+
+      if (roommateRent === 0) {
+        warnings.push("Roommate rent share is blank.");
+      }
+
+      if (aloneUtilities === 0 || roommateUtilities === 0) {
+        warnings.push("One or both utility fields are blank. The comparison may be too low if utilities are not included.");
+      }
+
+      if (aloneUpfront === 0 || roommateUpfront === 0) {
+        warnings.push("One or both upfront cost fields are blank. First-year cost may miss deposits, furniture, or setup costs.");
+      }
+
+      if (roommateRiskBuffer === 0) {
+        warnings.push("No roommate risk buffer was added. That may be fine, but it assumes shared costs and payments go as planned.");
+      }
+
+      if (takeHomeIncome > 0 && aloneIncomeShare > 50) {
+        warnings.push("Living-alone monthly cost is more than half of take-home income.");
+      }
+
+      if (takeHomeIncome > 0 && roommateIncomeShare > 50) {
+        warnings.push("Roommate monthly cost is more than half of take-home income.");
+      }
+
+      let guidanceText = `${headlineDetail} `;
+
+      if (monthlyDifference > 500) {
+        guidanceText +=
+          "The roommate option creates large monthly savings. Living alone may still be worth it for privacy or stability, but the premium is big enough to compare against emergency savings, debt payoff, and first-year setup costs.";
+      } else if (monthlyDifference > 150) {
+        guidanceText +=
+          "Living alone costs meaningfully more, but the difference may be manageable if income, savings, and emergency cushion are strong.";
+      } else if (monthlyDifference >= -100 && monthlyDifference <= 100) {
+        guidanceText +=
+          "The costs are close. The decision may come down to privacy, sleep, work setup, safety, commute, pets, noise, and roommate reliability.";
+      } else if (monthlyDifference < -100) {
+        guidanceText +=
+          "Based on the numbers entered, living alone is actually cheaper monthly. Confirm that deposits, utilities, and furniture needs are not being understated.";
+      } else {
+        guidanceText +=
+          "The dollar gap is modest. Check first-year cost and lifestyle fit before deciding.";
+      }
+
+      if (firstYearDifference > 2500) {
+        guidanceText += " The first-year gap is also large, so upfront costs should be part of the decision.";
+      }
+
+      if (warnings.length > 0) {
+        guidanceText += ` Watch-outs: ${warnings.join(" ")}`;
+      }
+
+      guidance.textContent = guidanceText;
+    });
+  </script>
+</Layout>

@@ -18,6 +18,51 @@ export const calculators = [
   },
 
   {
+    id: "first-apartment-cost",
+    category: "Moving",
+    title: "First Apartment Cost Calculator",
+    description:
+      "Estimate first apartment startup costs, including rent or mortgage, security deposit, application fees, utilities, moving costs, furniture, groceries, insurance, setup supplies, outside help, and move-in cash.",
+    href: "/first-apartment-cost-calculator",
+  },
+
+  {
+    id: "security-deposit-move-in-cost",
+    category: "Moving",
+    title: "Security Deposit and Move-In Cost Calculator",
+    description:
+      "Estimate cash due before move-in and separate refundable deposits, non-refundable fees, prepaid rent or mortgage, utility deposits, insurance, credits, and confirmed outside help.",
+    href: "/security-deposit-and-move-in-cost-calculator",
+  },
+
+  {
+    id: "moving-cost",
+    category: "Moving",
+    title: "Moving Cost Calculator",
+    description:
+      "Estimate how much it costs to move with DIY, hybrid, and full-service options, including truck rental, movers, mileage, fuel, packing supplies, storage, access fees, tips, insurance, and confirmed help.",
+    href: "/moving-cost-calculator",
+  },
+
+  {
+    id: "first-apartment-furniture-cost",
+    category: "Moving",
+    title: "First Apartment Furniture Cost Calculator",
+    description:
+      "Estimate how much it costs to furnish and set up a first apartment by room, including bedroom, living room, kitchen, bathroom, storage, cleaning supplies, decor, delivery, assembly, owned items, and confirmed help.",
+    href: "/first-apartment-furniture-cost-calculator",
+  },
+
+  {
+    id: "roommate-vs-living-alone",
+    category: "Moving",
+    title: "Roommate vs. Living Alone Calculator",
+    description:
+      "Compare the monthly, annual, and first-year cost of living alone versus having a roommate, including rent, utilities, internet, fees, groceries, commute, upfront costs, and roommate risk.",
+    href: "/roommate-vs-living-alone-calculator",
+  },
+
+  {
   id: "wedding-planner",
   category: "Weddings",
   title: "Should I Hire a Wedding Planner?",
