@@ -9,6 +9,15 @@ export const calculators = [
   },
 
   {
+    id: "moving-out-savings-target",
+    category: "Moving",
+    title: "How Much Should I Save Before Moving Out?",
+    description:
+      "Estimate a realistic moving-out savings target using rent, utilities, move-in costs, furniture, moving costs, debt, take-home income, emergency cushion, outside help, and current savings.",
+    href: "/how-much-should-i-save-before-moving-out",
+  },
+
+  {
   id: "wedding-planner",
   category: "Weddings",
   title: "Should I Hire a Wedding Planner?",

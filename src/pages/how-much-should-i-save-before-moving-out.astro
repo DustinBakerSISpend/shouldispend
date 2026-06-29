@@ -1,0 +1,723 @@
+---
+import Layout from "../layouts/Layout.astro";
+import CalculatorPageShell from "../components/CalculatorPageShell.astro";
+import FAQSection from "../components/FAQSection.astro";
+import RelatedCalculators from "../components/RelatedCalculators.astro";
+import MethodologySection from "../components/MethodologySection.astro";
+import CalculatorAssumptions from "../components/CalculatorAssumptions.astro";
+import KeyCostCategories from "../components/KeyCostCategories.astro";
+import ReduceCostTips from "../components/ReduceCostTips.astro";
+import { calculators } from "../data/calculators.js";
+
+const saveBeforeMovingFaqs = [
+  {
+    question: "How much money should I save before moving out?",
+    answer:
+      "A good starting target is enough to cover move-in cash, basic setup costs, moving costs, and at least a few months of essential expenses after the move. The safer number depends on your rent, utilities, debt, take-home income, savings, and whether any outside help is confirmed.",
+  },
+  {
+    question: "Is first month of rent and a security deposit enough?",
+    answer:
+      "Usually not. First month of rent and a security deposit may get you through the lease signing, but they do not cover utility deposits, groceries, renters insurance, furniture, cleaning supplies, transportation changes, emergency savings, or a bad first month after moving.",
+  },
+  {
+    question: "Should I include furniture in my moving-out savings target?",
+    answer:
+      "Yes, but separate essentials from upgrades. A mattress, basic kitchen items, towels, cleaning supplies, and a small table may matter immediately. A full living room set, decor, and nonessential upgrades can usually wait.",
+  },
+  {
+    question: "Should I count help from family, roommates, or an employer?",
+    answer:
+      "Count confirmed help only. If someone has clearly agreed to pay a specific amount toward deposits, rent, furniture, or moving costs, it can reduce your uncovered target. Vague or hoped-for help should not be treated as guaranteed.",
+  },
+  {
+    question: "Can I move out with less than the recommended target?",
+    answer:
+      "Sometimes, especially if the move is necessary or you have stable income and a very low-cost plan. But moving with only the bare minimum leaves less room for job disruption, utility surprises, car repairs, medical costs, or a roommate problem.",
+  },
+];
+
+const relatedCalculators = calculators
+  .filter((calculator) =>
+    [
+      "/can-i-afford-to-move-out",
+      "/how-much-rent-can-i-afford",
+      "/should-i-spend-30-percent-income-on-rent",
+      "/how-much-emergency-savings-should-i-have",
+      "/what-counts-as-debt",
+      "/moving-calculators",
+    ].includes(calculator.href)
+  )
+  .filter((calculator) => calculator.href !== "/how-much-should-i-save-before-moving-out")
+  .slice(0, 6);
+---
+
+<Layout
+  title="How Much Should I Save Before Moving Out? | ShouldISpend"
+  description="Estimate how much to save before moving out using rent, utilities, move-in costs, furniture, moving costs, debt, take-home income, and emergency cushion."
+>
+  <style>
+    .container {
+      max-width: 940px;
+      margin: auto;
+    }
+
+    .calculator {
+      background: white;
+      padding: 40px;
+      border-radius: 24px;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.06);
+    }
+
+    .calculator h2 {
+      margin-top: 0;
+      font-size: 2rem;
+      margin-bottom: 18px;
+      color: #0f172a;
+    }
+
+    .calculator-intro {
+      color: #334155;
+      line-height: 1.8;
+      margin-bottom: 30px;
+      font-size: 1.05rem;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+    }
+
+    .field label {
+      display: block;
+      font-weight: 800;
+      margin-bottom: 10px;
+      color: #0f172a;
+    }
+
+    .field input,
+    .field select {
+      width: 100%;
+      padding: 16px;
+      border-radius: 12px;
+      border: 1px solid #cbd5e1;
+      font-size: 1rem;
+      box-sizing: border-box;
+      background: white;
+    }
+
+    .field small {
+      display: block;
+      margin-top: 8px;
+      color: #64748b;
+      line-height: 1.5;
+    }
+
+    button {
+      margin-top: 30px;
+      background: #0f766e;
+      color: white;
+      border: none;
+      padding: 18px 32px;
+      border-radius: 999px;
+      font-size: 1.05rem;
+      font-weight: 800;
+      cursor: pointer;
+      transition: opacity 0.2s ease;
+    }
+
+    button:hover {
+      opacity: 0.92;
+    }
+
+    .results {
+      margin-top: 36px;
+      background: #f8fafc;
+      padding: 32px;
+      border-radius: 24px;
+      border: 1px solid var(--border);
+      box-shadow: 0 10px 24px rgba(15, 23, 42, 0.04);
+      display: none;
+    }
+
+    .results.visible {
+      display: block;
+    }
+
+    .result-kicker {
+      font-size: 0.82rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: #0f766e;
+      font-weight: 900;
+      margin-bottom: 10px;
+    }
+
+    .target-price {
+      font-size: clamp(2.4rem, 6vw, 4rem);
+      font-weight: 900;
+      color: #0f172a;
+      line-height: 1.05;
+      margin-bottom: 16px;
+    }
+
+    .result-details {
+      color: #334155;
+      line-height: 1.9;
+      font-size: 1.02rem;
+    }
+
+    .result-details p {
+      margin: 0 0 12px;
+    }
+
+    .result-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 16px;
+      margin: 26px 0;
+    }
+
+    .result-card {
+      background: white;
+      border: 1px solid #dbe4ee;
+      border-radius: 18px;
+      padding: 20px;
+    }
+
+    .result-card span {
+      display: block;
+      color: #64748b;
+      font-size: 0.9rem;
+      margin-bottom: 8px;
+      font-weight: 700;
+    }
+
+    .result-card strong {
+      display: block;
+      color: #0f172a;
+      font-size: 1.55rem;
+      line-height: 1.2;
+    }
+
+    .verdict-box {
+      margin-top: 24px;
+      padding: 22px;
+      border-radius: 18px;
+      background: white;
+      border: 1px solid #dbe4ee;
+      color: #334155;
+      line-height: 1.8;
+    }
+
+    .verdict-box strong {
+      color: #0f172a;
+    }
+
+    .warning-list {
+      margin: 18px 0 0;
+      padding-left: 22px;
+      color: #334155;
+      line-height: 1.8;
+    }
+
+    .disclaimer {
+      margin-top: 24px;
+      font-size: 0.9rem;
+      color: #64748b;
+    }
+
+    .content-section {
+      margin-top: 60px;
+    }
+
+    .content-section h2 {
+      font-size: 2rem;
+      margin-bottom: 20px;
+      color: #0f172a;
+    }
+
+    .content-section p,
+    .content-section li {
+      font-size: 1.1rem;
+      line-height: 1.9;
+      color: #334155;
+    }
+
+    .content-link {
+      color: #0f766e;
+      font-weight: 700;
+      text-decoration: none;
+    }
+
+    .content-link:hover {
+      text-decoration: underline;
+    }
+
+    @media (max-width: 768px) {
+      .calculator {
+        padding: 24px;
+      }
+
+      .grid,
+      .result-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .calculator h2,
+      .content-section h2 {
+        font-size: 1.7rem;
+      }
+
+      .results {
+        padding: 24px;
+      }
+    }
+  </style>
+
+  <div class="container">
+    <CalculatorPageShell
+      eyebrow="Moving Savings Calculator"
+      title="How Much Should I Save Before Moving Out?"
+      description="Estimate a realistic savings target before moving out, including move-in cash, furniture, moving costs, monthly bills, debt, take-home income, outside help, and emergency cushion."
+    >
+      <div class="calculator">
+        <h2>Moving-Out Savings Target Calculator</h2>
+
+        <p class="calculator-intro">
+          Moving out is not only about having enough cash for the first rent
+          payment. Use this calculator to estimate a bare-minimum target, a more
+          practical savings target, and a comfortable cushion before signing a
+          lease or setting a move date.
+        </p>
+
+        <div class="grid">
+          <div class="field">
+            <label for="monthlyRent">Monthly Rent</label>
+            <input id="monthlyRent" type="number" placeholder="Example: 1200" />
+            <small>Use your expected share if you will have roommates.</small>
+          </div>
+
+          <div class="field">
+            <label for="utilities">Monthly Utilities and Internet</label>
+            <input id="utilities" type="number" placeholder="Example: 225" />
+            <small>Include electric, gas, water, trash, internet, and other regular utility bills.</small>
+          </div>
+
+          <div class="field">
+            <label for="groceries">Monthly Groceries and Household Basics</label>
+            <input id="groceries" type="number" placeholder="Example: 450" />
+            <small>Include groceries, toiletries, cleaning supplies, and basic home items.</small>
+          </div>
+
+          <div class="field">
+            <label for="transportation">Monthly Transportation</label>
+            <input id="transportation" type="number" placeholder="Example: 300" />
+            <small>Include gas, transit, parking, insurance changes, or commuting costs.</small>
+          </div>
+
+          <div class="field">
+            <label for="otherBills">Other Monthly Bills</label>
+            <input id="otherBills" type="number" placeholder="Example: 250" />
+            <small>Phone, subscriptions, renters insurance, pet costs, medical basics, and other recurring bills.</small>
+          </div>
+
+          <div class="field">
+            <label for="monthlyDebt">Current Monthly Debt Payments</label>
+            <input id="monthlyDebt" type="number" placeholder="Example: 275" />
+            <small>Student loans, car payment, credit cards, personal loans, or other required payments.</small>
+          </div>
+
+          <div class="field">
+            <label for="takeHomeIncome">Monthly Take-Home Income</label>
+            <input id="takeHomeIncome" type="number" placeholder="Example: 4200" />
+            <small>Use after-tax income, not gross income.</small>
+          </div>
+
+          <div class="field">
+            <label for="currentSavings">Current Savings Available for Moving</label>
+            <input id="currentSavings" type="number" placeholder="Example: 6500" />
+            <small>Use money you can actually use without raiding retirement or bill money.</small>
+          </div>
+
+          <div class="field">
+            <label for="moveInCosts">Move-In Cash Needed</label>
+            <input id="moveInCosts" type="number" placeholder="Example: 2600" />
+            <small>First month, deposit, application fees, pet fees, utility deposits, and renter setup costs.</small>
+          </div>
+
+          <div class="field">
+            <label for="furnitureSetup">Furniture and Apartment Setup</label>
+            <input id="furnitureSetup" type="number" placeholder="Example: 1500" />
+            <small>Mattress, kitchen basics, towels, cleaning supplies, small furniture, and essentials.</small>
+          </div>
+
+          <div class="field">
+            <label for="movingCosts">Moving Costs</label>
+            <input id="movingCosts" type="number" placeholder="Example: 600" />
+            <small>Truck rental, movers, boxes, storage, fuel, deposits, or short-term lodging.</small>
+          </div>
+
+          <div class="field">
+            <label for="confirmedHelp">Confirmed Outside Help</label>
+            <input id="confirmedHelp" type="number" placeholder="Example: 1000" />
+            <small>Only count confirmed family help, employer relocation money, gifts, or roommate reimbursements.</small>
+          </div>
+
+          <div class="field">
+            <label for="cushionMonths">Emergency Cushion Goal</label>
+            <select id="cushionMonths">
+              <option value="2">2 months of essential costs</option>
+              <option value="3" selected>3 months of essential costs</option>
+              <option value="4">4 months of essential costs</option>
+              <option value="6">6 months of essential costs</option>
+            </select>
+            <small>This controls the practical target. Comfortable target still shows a larger buffer.</small>
+          </div>
+        </div>
+
+        <button id="savingsButton" type="button">Calculate Savings Target</button>
+
+        <div class="results" id="results" aria-live="polite">
+          <div class="result-kicker">Practical Savings Target</div>
+
+          <div class="target-price" id="practicalTarget"></div>
+
+          <div class="result-details" id="resultDetails"></div>
+
+          <div class="result-grid">
+            <div class="result-card">
+              <span>Bare minimum target</span>
+              <strong id="bareMinimumTarget"></strong>
+            </div>
+
+            <div class="result-card">
+              <span>Comfortable target</span>
+              <strong id="comfortableTarget"></strong>
+            </div>
+
+            <div class="result-card">
+              <span>Your savings gap</span>
+              <strong id="savingsGap"></strong>
+            </div>
+
+            <div class="result-card">
+              <span>Monthly room after essentials</span>
+              <strong id="monthlyRoom"></strong>
+            </div>
+          </div>
+
+          <div class="verdict-box" id="readinessNote"></div>
+
+          <ul class="warning-list" id="warningList"></ul>
+
+          <div class="disclaimer">
+            This calculator is for planning, not financial advice. It estimates
+            savings targets using the numbers entered and does not know your full
+            credit, lease, health, job, family, or local housing situation.
+          </div>
+        </div>
+      </div>
+
+      <section class="content-section">
+        <h2>What This Moving-Out Savings Target Includes</h2>
+
+        <p>
+          A serious moving-out savings target should include both the cash needed
+          before move-in and the cushion needed after the lease starts. Rent may
+          be the biggest monthly bill, but deposits, utility setup, furniture,
+          food, transportation, and emergency savings can decide whether the move
+          feels stable or stressful.
+        </p>
+
+        <p>
+          This calculator separates the target into three levels. The bare
+          minimum is the amount that may get the move started. The practical
+          target gives you a better chance of handling normal first-apartment
+          surprises. The comfortable target gives more protection if income,
+          roommates, utilities, or transportation costs do not go as planned.
+        </p>
+
+        <p>
+          For the broader affordability decision, use the
+          <a class="content-link" href="/can-i-afford-to-move-out">
+            Can I Afford to Move Out?
+          </a>
+          calculator. For rent-specific planning, compare this number with the
+          <a class="content-link" href="/how-much-rent-can-i-afford">
+            rent affordability calculator
+          </a>.
+        </p>
+      </section>
+
+      <div id="KeyCostCategories" class="content-section">
+        <KeyCostCategories
+          items={[
+            {
+              title: "Move-in cash",
+              description:
+                "First month of rent, security deposit, application fees, pet fees, renters insurance, and utility deposits can be due before the first normal month begins.",
+            },
+            {
+              title: "Apartment setup",
+              description:
+                "Furniture, a mattress, kitchen basics, towels, cleaning supplies, trash cans, tools, and household basics can quietly add hundreds or thousands of dollars.",
+            },
+            {
+              title: "Monthly essentials",
+              description:
+                "Rent, utilities, groceries, transportation, insurance, phone, debt payments, and other recurring bills determine whether the move works after the lease starts.",
+            },
+            {
+              title: "Emergency cushion",
+              description:
+                "Savings left after moving matter because early apartment life can include utility surprises, car repairs, medical costs, work changes, or roommate problems.",
+            },
+          ]}
+        />
+      </div>
+
+      <div id="ReduceCostTips" class="content-section">
+        <ReduceCostTips
+          items={[
+            "Price the apartment with utilities, groceries, transportation, and debt before deciding the savings target is enough.",
+            "Buy essential furniture first and delay decor, upgrades, guest-room items, and duplicate appliances.",
+            "Ask landlords for the exact move-in cash required before assuming one month of rent and a deposit is the full amount.",
+            "Count confirmed outside help only when someone has agreed to a specific amount or specific bill.",
+            "Use a roommate, cheaper neighborhood, shorter move, or delayed move date before draining emergency savings.",
+            "Keep a separate emergency cushion after paying deposits and setup costs instead of treating leftover cash as spending money.",
+          ]}
+        />
+      </div>
+
+      <div id="CalculatorAssumptions" class="content-section">
+        <CalculatorAssumptions
+          items={[
+            "Monthly costs are estimated from rent, utilities, groceries, transportation, other recurring bills, and debt payments entered by the user.",
+            "Move-in cash, furniture/setup, and moving costs are treated as upfront costs.",
+            "Confirmed outside help reduces upfront uncovered costs but does not erase the need for monthly breathing room.",
+            "The bare-minimum target includes upfront uncovered costs plus one month of essential costs.",
+            "The practical target includes upfront uncovered costs plus the selected emergency cushion.",
+            "The comfortable target uses a larger cushion, generally at least six months of essential costs.",
+            "The calculator uses take-home income when monthly flexibility is evaluated.",
+          ]}
+        />
+      </div>
+
+      <section id="FinancialRedFlags" class="content-section">
+        <h2>Moving-Out Savings Red Flags</h2>
+
+        <p>
+          A savings target can look large, but the bigger danger is often moving
+          with no cushion after deposits, furniture, and first-month costs are
+          paid. The move deserves caution when the plan depends on debt, uncertain
+          help, or a monthly budget that only works in a perfect month.
+        </p>
+
+        <ul>
+          <li>The move requires credit card debt for deposits, furniture, movers, or basic supplies.</li>
+          <li>Current savings cover move-in cash but leave little or nothing afterward.</li>
+          <li>Rent and utilities consume too much take-home income before groceries, transportation, and debt are included.</li>
+          <li>Outside help is assumed but not confirmed as a specific dollar amount.</li>
+          <li>The plan depends on a future raise, second job, roommate, or bonus that is not guaranteed.</li>
+          <li>The budget ignores insurance, groceries, household basics, parking, pet costs, or transportation changes.</li>
+        </ul>
+      </section>
+
+      <section class="content-section">
+        <h2>How to Use the Result</h2>
+
+        <p>
+          Treat the practical target as the main planning number. If your current
+          savings are below the bare minimum, the move is probably underfunded
+          unless the move is urgent or outside help is truly confirmed. If you
+          are between the bare minimum and the practical target, the move may be
+          possible but fragile. If you are at or above the comfortable target,
+          the next question is whether the monthly budget still leaves room after
+          rent, utilities, groceries, debt, and transportation.
+        </p>
+
+        <p>
+          A higher income helps, but it does not automatically make the move safe.
+          A high rent, heavy debt payments, or expensive transportation can erase
+          monthly flexibility. That is why this calculator looks at savings and
+          take-home income together instead of treating one number as the whole
+          answer.
+        </p>
+      </section>
+
+      <div id="FAQSection" class="content-section">
+        <FAQSection
+          title="How Much Should I Save Before Moving Out FAQ"
+          faqs={saveBeforeMovingFaqs}
+        />
+      </div>
+
+      <div id="RelatedCalculators" class="content-section">
+        <RelatedCalculators calculators={relatedCalculators} />
+      </div>
+
+      <div id="MethodologySection" class="content-section">
+        <MethodologySection category="moving-out savings target planning" updated="June 2026" />
+      </div>
+    </CalculatorPageShell>
+  </div>
+
+  <script is:inline>
+    const getNumber = (id) => {
+      const rawValue = document.getElementById(id)?.value;
+      const value = Number(rawValue);
+      return Number.isFinite(value) && value >= 0 ? value : 0;
+    };
+
+    const formatMoney = (value) =>
+      value.toLocaleString(undefined, {
+        style: "currency",
+        currency: "USD",
+        maximumFractionDigits: 0,
+      });
+
+    function calculateSavingsTarget() {
+      const monthlyRent = getNumber("monthlyRent");
+      const utilities = getNumber("utilities");
+      const groceries = getNumber("groceries");
+      const transportation = getNumber("transportation");
+      const otherBills = getNumber("otherBills");
+      const monthlyDebt = getNumber("monthlyDebt");
+      const takeHomeIncome = getNumber("takeHomeIncome");
+      const currentSavings = getNumber("currentSavings");
+      const moveInCosts = getNumber("moveInCosts");
+      const furnitureSetup = getNumber("furnitureSetup");
+      const movingCosts = getNumber("movingCosts");
+      const confirmedHelp = getNumber("confirmedHelp");
+      const cushionMonths = Number(document.getElementById("cushionMonths")?.value || 3);
+
+      const results = document.getElementById("results");
+      const practicalTarget = document.getElementById("practicalTarget");
+      const bareMinimumTarget = document.getElementById("bareMinimumTarget");
+      const comfortableTarget = document.getElementById("comfortableTarget");
+      const savingsGap = document.getElementById("savingsGap");
+      const monthlyRoom = document.getElementById("monthlyRoom");
+      const resultDetails = document.getElementById("resultDetails");
+      const readinessNote = document.getElementById("readinessNote");
+      const warningList = document.getElementById("warningList");
+
+      results.classList.add("visible");
+
+      const upfrontCosts = moveInCosts + furnitureSetup + movingCosts;
+      const uncoveredUpfrontCosts = Math.max(0, upfrontCosts - confirmedHelp);
+      const monthlyEssentials =
+        monthlyRent +
+        utilities +
+        groceries +
+        transportation +
+        otherBills +
+        monthlyDebt;
+
+      if (monthlyRent <= 0 || monthlyEssentials <= 0) {
+        practicalTarget.textContent = "$0";
+        bareMinimumTarget.textContent = "$0";
+        comfortableTarget.textContent = "$0";
+        savingsGap.textContent = "$0";
+        monthlyRoom.textContent = "$0";
+        resultDetails.innerHTML =
+          "<p>Enter expected rent and monthly costs to estimate how much you should save before moving out.</p>";
+        readinessNote.innerHTML =
+          "<strong>Not enough information yet.</strong> Add rent, utilities, groceries, transportation, debt, move-in costs, and current savings for a useful target.";
+        warningList.innerHTML = "";
+        return;
+      }
+
+      const bareMinimum = uncoveredUpfrontCosts + monthlyEssentials;
+      const practical = uncoveredUpfrontCosts + monthlyEssentials * cushionMonths;
+      const comfortable =
+        uncoveredUpfrontCosts + monthlyEssentials * Math.max(6, cushionMonths + 3);
+      const gap = Math.max(0, practical - currentSavings);
+      const monthlyFlex = takeHomeIncome > 0 ? takeHomeIncome - monthlyEssentials : 0;
+      const savingsAfterPracticalMove = currentSavings - uncoveredUpfrontCosts;
+      const housingShare =
+        takeHomeIncome > 0 ? (monthlyRent + utilities) / takeHomeIncome : 0;
+      const debtShare = takeHomeIncome > 0 ? monthlyDebt / takeHomeIncome : 0;
+
+      practicalTarget.textContent = formatMoney(practical);
+      bareMinimumTarget.textContent = formatMoney(bareMinimum);
+      comfortableTarget.textContent = formatMoney(comfortable);
+      savingsGap.textContent = gap > 0 ? formatMoney(gap) : "$0";
+      monthlyRoom.textContent =
+        takeHomeIncome > 0 ? formatMoney(monthlyFlex) : "Add income";
+
+      resultDetails.innerHTML = `
+        <p><strong>Estimated upfront costs:</strong> ${formatMoney(upfrontCosts)} before confirmed help.</p>
+        <p><strong>Confirmed help counted:</strong> ${formatMoney(confirmedHelp)}.</p>
+        <p><strong>Uncovered upfront costs:</strong> ${formatMoney(uncoveredUpfrontCosts)}.</p>
+        <p><strong>Estimated monthly essentials after moving:</strong> ${formatMoney(monthlyEssentials)}.</p>
+        <p><strong>Savings left after upfront move costs:</strong> ${formatMoney(savingsAfterPracticalMove)}.</p>
+      `;
+
+      const warnings = [];
+
+      if (currentSavings < bareMinimum) {
+        warnings.push("Current savings are below the bare-minimum target.");
+      } else if (currentSavings < practical) {
+        warnings.push("Current savings are above the bare minimum but below the practical target.");
+      }
+
+      if (takeHomeIncome > 0 && monthlyFlex < Math.max(250, takeHomeIncome * 0.08)) {
+        warnings.push("Monthly room after essentials looks tight.");
+      }
+
+      if (takeHomeIncome > 0 && housingShare > 0.4) {
+        warnings.push("Rent plus utilities may take more than 40% of take-home income.");
+      }
+
+      if (takeHomeIncome > 0 && debtShare > 0.2) {
+        warnings.push("Debt payments may be too heavy for a fresh move-out budget.");
+      }
+
+      if (confirmedHelp > 0 && confirmedHelp >= upfrontCosts) {
+        warnings.push("Outside help covers the listed upfront costs, but monthly breathing room still matters.");
+      }
+
+      if (movingCosts === 0 || furnitureSetup === 0) {
+        warnings.push("The estimate may be low if moving costs or furniture/setup costs were left blank.");
+      }
+
+      let verdictTitle = "Build more savings before moving.";
+      let verdictBody =
+        "The plan is under the practical target. A smaller apartment, roommate, lower setup budget, confirmed help, or delayed move date would make the move less fragile.";
+
+      if (
+        currentSavings >= comfortable &&
+        (takeHomeIncome === 0 || monthlyFlex >= Math.max(500, takeHomeIncome * 0.15)) &&
+        (takeHomeIncome === 0 || housingShare <= 0.35) &&
+        (takeHomeIncome === 0 || debtShare <= 0.15)
+      ) {
+        verdictTitle = "Strong savings position.";
+        verdictBody =
+          "Your savings appear to cover a comfortable moving target based on the numbers entered. Still confirm lease costs, utility deposits, and the monthly budget before committing.";
+      } else if (
+        currentSavings >= practical &&
+        (takeHomeIncome === 0 || monthlyFlex >= Math.max(300, takeHomeIncome * 0.1))
+      ) {
+        verdictTitle = "Practical target is covered.";
+        verdictBody =
+          "Your current savings cover the practical target. The next step is checking that monthly rent, utilities, debt, groceries, and transportation leave enough breathing room.";
+      } else if (currentSavings >= bareMinimum) {
+        verdictTitle = "Bare-minimum move is possible, but fragile.";
+        verdictBody =
+          "You may have enough to start the move, but the cushion is thin. This is where surprise bills, furniture gaps, or a rough first month can create pressure.";
+      }
+
+      readinessNote.innerHTML = `<strong>${verdictTitle}</strong> ${verdictBody}`;
+
+      warningList.innerHTML = warnings
+        .map((warning) => `<li>${warning}</li>`)
+        .join("");
+    }
+
+    document
+      .getElementById("savingsButton")
+      .addEventListener("click", calculateSavingsTarget);
+  </script>
+</Layout>
