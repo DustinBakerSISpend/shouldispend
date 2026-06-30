@@ -1360,6 +1360,42 @@ export const calculators = [
     "Estimate baby affordability using first-year costs, childcare, medical bills, parental leave, savings, debt, and monthly flexibility.",
   href: "/baby-cost-calculator",
 },
+  {
+    title: "Diaper Cost Calculator",
+    href: "/diaper-cost-calculator",
+    description: "Estimate monthly diaper and wipes costs, first-year diaper costs, and disposable versus cloth diaper savings.",
+    category: "Baby & Parenting",
+  },
+  {
+    title: "Formula Cost Calculator",
+    href: "/formula-cost-calculator",
+    description: "Estimate monthly baby formula costs, first-year formula costs, WIC or help coverage, and powder versus ready-to-feed savings.",
+    category: "Baby & Parenting",
+  },
+  {
+    title: "Nursery Cost Calculator",
+    href: "/nursery-cost-calculator",
+    description: "Estimate total nursery setup cost, bare/practical/comfortable ranges, gifts covered, and parent out-of-pocket gap.",
+    category: "Baby & Parenting",
+  },
+  {
+    title: "Hospital Birth Cost Calculator",
+    href: "/hospital-birth-cost-calculator",
+    description: "Estimate out-of-pocket birth costs after insurance, deductible, coinsurance, newborn charges, HSA funds, and help.",
+    category: "Baby & Parenting",
+  },
+  {
+    title: "Parental Leave Paycheck Calculator",
+    href: "/parental-leave-paycheck-calculator",
+    description: "Estimate income shortfall, unpaid leave gap, savings needed, and monthly cash pressure during parental leave.",
+    category: "Baby & Parenting",
+  },
+  {
+    title: "Baby Registry Budget Calculator",
+    href: "/baby-registry-budget-calculator",
+    description: "Estimate registry essentials, optional baby items, gifts covered, discounts, and parent out-of-pocket gap.",
+    category: "Baby & Parenting",
+  },
 
 {
   id: "afford-baby",

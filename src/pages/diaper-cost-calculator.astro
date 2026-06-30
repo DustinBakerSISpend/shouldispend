@@ -1,0 +1,632 @@
+---
+import Layout from "../layouts/Layout.astro";
+import CalculatorPageShell from "../components/CalculatorPageShell.astro";
+import FAQSection from "../components/FAQSection.astro";
+import RelatedCalculators from "../components/RelatedCalculators.astro";
+import MethodologySection from "../components/MethodologySection.astro";
+import CalculatorAssumptions from "../components/CalculatorAssumptions.astro";
+import KeyCostCategories from "../components/KeyCostCategories.astro";
+import ReduceCostTips from "../components/ReduceCostTips.astro";
+import { calculators } from "../data/calculators.js";
+
+const diaperCostFaqs = [
+  {
+    question: "How much do diapers cost per month?",
+    answer:
+      "Many families spend roughly $50 to $120 per month on disposable diapers and wipes, but the real number depends on diaper size, changes per day, brand, bulk discounts, wipes usage, and whether the baby needs specialty products.",
+  },
+  {
+    question: "How many diapers does a baby use per day?",
+    answer:
+      "Newborns often use 8 to 12 diapers per day. Older babies may use 5 to 8 per day. Toddlers may use fewer, but larger diaper sizes usually cost more per diaper.",
+  },
+  {
+    question: "Does this calculator include wipes?",
+    answer:
+      "Yes. This calculator includes diapers, wipes, diaper cream, diaper pail refills, delivery or subscription costs, and any monthly help from gifts, family, or a diaper bank.",
+  },
+  {
+    question: "Is cloth diapering cheaper than disposable diapers?",
+    answer:
+      "Cloth diapering can be cheaper over time, especially if the startup cost is low and laundry costs are manageable. The break-even point depends on cloth diaper supplies, water, detergent, electricity, and how many disposable diapers you still use as backup.",
+  },
+  {
+    question: "Should I budget diapers weekly, monthly, or yearly?",
+    answer:
+      "Monthly is usually the easiest way to plan. A first-year estimate is useful, but diaper use changes quickly as babies grow, so a monthly estimate is easier to adjust.",
+  },
+];
+
+const relatedCalculators = calculators
+  .filter((calculator) => {
+    const category = (calculator.category || "").toLowerCase();
+    const href = calculator.href || "";
+
+    return (
+      href !== "/diaper-cost-calculator" &&
+      (
+        category.includes("baby") ||
+        category.includes("parent") ||
+        category.includes("family") ||
+        href.includes("baby") ||
+        href.includes("childcare") ||
+        href.includes("daycare") ||
+        href.includes("nanny") ||
+        href.includes("maternity") ||
+        href.includes("adoption")
+      )
+    );
+  })
+  .slice(0, 4);
+---
+
+<Layout
+  title="Diaper Cost Calculator"
+  description="Use this diaper cost calculator to estimate monthly diaper and wipes costs, first-year diaper costs, and disposable versus cloth diaper savings."
+>
+  <style>
+    .container {
+      max-width: 900px;
+      margin: auto;
+    }
+
+    .calculator {
+      background: white;
+      padding: 40px;
+      border-radius: 24px;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.06);
+    }
+
+    .calculator h2 {
+      margin-top: 0;
+      font-size: 2rem;
+      margin-bottom: 18px;
+      color: #0f172a;
+    }
+
+    .calculator-intro {
+      color: #334155;
+      line-height: 1.8;
+      margin-bottom: 30px;
+      font-size: 1.05rem;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+    }
+
+    .field label {
+      display: block;
+      font-weight: 800;
+      margin-bottom: 10px;
+      color: #0f172a;
+    }
+
+    .field input,
+    .field select {
+      width: 100%;
+      padding: 16px;
+      border-radius: 12px;
+      border: 1px solid #cbd5e1;
+      font-size: 1rem;
+      box-sizing: border-box;
+      background: white;
+    }
+
+    button {
+      margin-top: 30px;
+      background: #0f766e;
+      color: white;
+      border: none;
+      padding: 18px 32px;
+      border-radius: 999px;
+      font-size: 1.05rem;
+      font-weight: 800;
+      cursor: pointer;
+      transition: opacity 0.2s ease;
+    }
+
+    button:hover {
+      opacity: 0.92;
+    }
+
+    .results {
+      margin-top: 36px;
+      background: #f8fafc;
+      padding: 32px;
+      border-radius: 24px;
+      border: 1px solid var(--border);
+      box-shadow: 0 10px 24px rgba(15, 23, 42, 0.04);
+      display: none;
+    }
+
+    .results.visible {
+      display: block;
+    }
+
+    .total-price {
+      font-size: clamp(2.5rem, 6vw, 4rem);
+      font-weight: 900;
+      color: #0f172a;
+      line-height: 1.05;
+      margin-bottom: 12px;
+    }
+
+    .result-label {
+      font-size: 1.15rem;
+      font-weight: 800;
+      color: #0f766e;
+      margin-bottom: 24px;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+    }
+
+    .result-details {
+      color: #334155;
+      line-height: 1.9;
+      font-size: 1.02rem;
+    }
+
+    .result-details p {
+      margin: 0 0 12px;
+    }
+
+    .mini-summary {
+      margin-top: 24px;
+      padding: 20px;
+      border-radius: 18px;
+      background: white;
+      border: 1px solid #dbe4ee;
+      color: #334155;
+      line-height: 1.8;
+    }
+
+    .disclaimer {
+      margin-top: 24px;
+      font-size: 0.9rem;
+      color: #64748b;
+    }
+
+    .content-section {
+      margin-top: 60px;
+    }
+
+    .content-section h2 {
+      font-size: 2rem;
+      margin-bottom: 20px;
+      color: #0f172a;
+    }
+
+    .content-section p,
+    .content-section li {
+      font-size: 1.1rem;
+      line-height: 1.9;
+      color: #334155;
+    }
+
+    .content-link {
+      color: #0f766e;
+      font-weight: 700;
+      text-decoration: none;
+    }
+
+    .content-link:hover {
+      text-decoration: underline;
+    }
+
+    @media (max-width: 768px) {
+      .calculator {
+        padding: 24px;
+      }
+
+      .grid {
+        grid-template-columns: 1fr;
+      }
+
+      .calculator h2,
+      .content-section h2 {
+        font-size: 1.7rem;
+      }
+
+      .results {
+        padding: 24px;
+      }
+    }
+  </style>
+
+  <div class="container">
+    <CalculatorPageShell
+      eyebrow="Diaper Cost Calculator"
+      title="Diaper Cost Calculator"
+      description="Estimate monthly diaper and wipes costs, first-year diaper costs, and the out-of-pocket gap after gifts, help, or diaper-bank support."
+    >
+      <div class="calculator">
+        <h2>Monthly Diaper and Wipes Cost Calculator</h2>
+
+        <p class="calculator-intro">
+          Enter diaper usage, pack prices, wipes, diaper supplies, and any help
+          you expect to receive. This calculator estimates monthly diaper costs,
+          first-year costs, and an optional cloth diaper comparison.
+        </p>
+
+        <div class="grid">
+          <div class="field">
+            <label for="babyStage">Baby Stage</label>
+            <select id="babyStage">
+              <option value="newborn">Newborn or heavy use</option>
+              <option value="infant" selected>Infant</option>
+              <option value="olderBaby">Older baby</option>
+              <option value="toddler">Toddler</option>
+              <option value="custom">Custom diaper use</option>
+            </select>
+          </div>
+
+          <div class="field">
+            <label for="diapersPerDay">Diapers per Day</label>
+            <input id="diapersPerDay" type="number" placeholder="Example: 8" />
+          </div>
+
+          <div class="field">
+            <label for="diapersPerPack">Diapers per Pack or Box</label>
+            <input id="diapersPerPack" type="number" placeholder="Example: 168" />
+          </div>
+
+          <div class="field">
+            <label for="diaperPackCost">Diaper Pack or Box Cost</label>
+            <input id="diaperPackCost" type="number" step="0.01" placeholder="Example: 44.99" />
+          </div>
+
+          <div class="field">
+            <label for="wipesPerDay">Wipes per Day</label>
+            <input id="wipesPerDay" type="number" placeholder="Example: 18" />
+          </div>
+
+          <div class="field">
+            <label for="wipesPerPack">Wipes per Pack or Box</label>
+            <input id="wipesPerPack" type="number" placeholder="Example: 800" />
+          </div>
+
+          <div class="field">
+            <label for="wipesPackCost">Wipes Pack or Box Cost</label>
+            <input id="wipesPackCost" type="number" step="0.01" placeholder="Example: 24.99" />
+          </div>
+
+          <div class="field">
+            <label for="extraMonthlySupplies">Diaper Cream, Pail Bags, Extras</label>
+            <input id="extraMonthlySupplies" type="number" step="0.01" placeholder="Example: 18" />
+          </div>
+
+          <div class="field">
+            <label for="monthlyHelp">Monthly Gifts, Family Help, or Diaper Bank Support</label>
+            <input id="monthlyHelp" type="number" step="0.01" placeholder="Example: 25" />
+          </div>
+
+          <div class="field">
+            <label for="monthsToEstimate">Months to Estimate</label>
+            <input id="monthsToEstimate" type="number" placeholder="Example: 12" />
+          </div>
+
+          <div class="field">
+            <label for="wasteBuffer">Waste, Travel, or Size-Change Buffer (%)</label>
+            <input id="wasteBuffer" type="number" placeholder="Example: 10" />
+          </div>
+
+          <div class="field">
+            <label for="clothMode">Cloth Diaper Comparison</label>
+            <select id="clothMode">
+              <option value="no" selected>Disposable diapers only</option>
+              <option value="yes">Compare with cloth diapers</option>
+            </select>
+          </div>
+
+          <div class="field">
+            <label for="clothStartupCost">Cloth Diaper Startup Cost</label>
+            <input id="clothStartupCost" type="number" step="0.01" placeholder="Example: 450" />
+          </div>
+
+          <div class="field">
+            <label for="clothMonthlyCost">Cloth Laundry and Supplies per Month</label>
+            <input id="clothMonthlyCost" type="number" step="0.01" placeholder="Example: 25" />
+          </div>
+        </div>
+
+        <button id="diaperButton" type="button">Calculate Diaper Cost</button>
+
+        <div class="results" id="results">
+          <div class="result-label">Estimated Monthly Out-of-Pocket Cost</div>
+
+          <div class="total-price" id="totalPrice"></div>
+
+          <div class="result-details" id="resultDetails"></div>
+
+          <div class="mini-summary" id="diaperSummary"></div>
+
+          <div class="disclaimer">
+            This estimate is for planning only. Real diaper costs can change by
+            brand, diaper size, sales, subscriptions, allergies, blowouts,
+            daycare rules, and how quickly your baby changes sizes.
+          </div>
+        </div>
+      </div>
+
+      <section class="content-section">
+        <h2>How This Diaper Cost Calculator Works</h2>
+
+        <p>
+          The calculator estimates how many diapers and wipes your baby uses in
+          an average month, converts that usage into pack or box costs, adds
+          common diapering extras, and subtracts any monthly help you expect to
+          receive.
+        </p>
+
+        <p>
+          Diaper costs are not flat all year. Newborns usually need more diaper
+          changes, while older babies may use fewer diapers but wear larger
+          sizes that can cost more per diaper. That is why this calculator lets
+          you use either a baby stage estimate or your own custom diaper count.
+        </p>
+
+        <p>
+          For broader baby planning, compare this estimate with the
+          <a class="content-link" href="/baby-parenting-calculators">
+            baby and parenting calculators hub
+          </a>
+          and the
+          <a class="content-link" href="/baby-cost-calculator">
+            baby cost calculator
+          </a>.
+        </p>
+      </section>
+
+      <KeyCostCategories
+        items={[
+          {
+            title: "Disposable diapers",
+            description:
+              "The calculator estimates diaper cost from diapers per day, diapers per pack, and the pack or box price.",
+          },
+          {
+            title: "Wipes",
+            description:
+              "Wipes are estimated separately because families use them at different rates and often buy them in bulk.",
+          },
+          {
+            title: "Diapering extras",
+            description:
+              "Diaper cream, pail bags, changing pads, travel packs, and delivery fees can quietly raise the monthly total.",
+          },
+          {
+            title: "Help or gift coverage",
+            description:
+              "Monthly gifts, family help, registry leftovers, or diaper-bank support reduce the parent out-of-pocket estimate.",
+          },
+          {
+            title: "Cloth comparison",
+            description:
+              "The optional cloth estimate compares disposable costs with cloth startup costs plus monthly laundry and supplies.",
+          },
+        ]}
+      />
+
+      <ReduceCostTips
+        items={[
+          "Compare cost per diaper instead of only looking at the box price.",
+          "Avoid overbuying one size because babies can move up a size quickly.",
+          "Use registry gifts or baby shower money for diapers, wipes, and cream before buying optional gear.",
+          "Try a small pack before committing to a bulk box if your baby has sensitive skin.",
+          "Use subscriptions carefully. They can save money, but only if the size and delivery schedule still match your baby.",
+          "Ask daycare whether it requires labeled disposable diapers, wipes, or cream before assuming cloth will work there.",
+        ]}
+      />
+
+      <CalculatorAssumptions
+        items={[
+          "Monthly usage is based on a 30.4-day average month.",
+          "Diaper and wipe costs are calculated from daily use, pack quantity, and pack price.",
+          "The waste buffer is applied to diapers, wipes, and monthly diapering extras.",
+          "Monthly help is subtracted after the estimated monthly cost is calculated.",
+          "Out-of-pocket cost cannot fall below zero.",
+          "The first-year estimate annualizes the current monthly estimate and does not adjust for each future diaper size.",
+          "The cloth comparison assumes cloth startup cost plus monthly laundry and supply costs.",
+        ]}
+      />
+
+      <section class="content-section">
+        <h2>Why Diaper Costs Change So Much</h2>
+
+        <p>
+          A newborn can go through diapers quickly, but older babies may move
+          into bigger sizes where each diaper costs more. Brand choice also
+          matters. Store brands, warehouse boxes, subscriptions, and coupons can
+          lower the cost, while sensitive-skin diapers or overnight diapers can
+          raise it.
+        </p>
+
+        <p>
+          The safest way to budget is to estimate the monthly cost, add a small
+          buffer, and keep diaper money separate from optional baby spending. If
+          the diaper budget is tight, delay nonessential nursery upgrades before
+          cutting back on diapers, wipes, cream, or medical needs.
+        </p>
+      </section>
+
+      <div class="content-section">
+        <FAQSection title="Diaper Cost Calculator FAQ" faqs={diaperCostFaqs} />
+      </div>
+
+      <div class="content-section">
+        <RelatedCalculators calculators={relatedCalculators} />
+      </div>
+    </CalculatorPageShell>
+
+    <section id="FinancialRedFlags" class="content-section">
+      <h2>Diaper Budget Red Flags</h2>
+
+      <p>
+        Diapers are a recurring need, not a one-time baby purchase. A diaper
+        budget deserves extra caution if the monthly cost only works when every
+        sale, gift card, or family contribution comes through perfectly.
+      </p>
+
+      <ul>
+        <li>The diaper budget depends on credit card debt every month.</li>
+        <li>There is no cushion for bigger sizes, overnight diapers, or sensitive-skin products.</li>
+        <li>Bulk boxes are being bought before confirming the size and brand work for the baby.</li>
+        <li>Diaper money is being squeezed by optional nursery, toy, or clothing purchases.</li>
+        <li>Childcare rules require disposable diapers, but the plan assumes full-time cloth diapering.</li>
+      </ul>
+    </section>
+
+    <MethodologySection category="diaper and wipes cost estimates" updated="June 2026" />
+  </div>
+
+  <script is:inline>
+    const getNumber = (id) => {
+      const rawValue = document.getElementById(id)?.value;
+      const value = Number(rawValue);
+      return Number.isFinite(value) && value >= 0 ? value : 0;
+    };
+
+    const getValue = (id) => document.getElementById(id)?.value || "";
+
+    function formatMoney(value) {
+      return value.toLocaleString(undefined, {
+        style: "currency",
+        currency: "USD",
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2,
+      });
+    }
+
+    function getStageDiapersPerDay(stage) {
+      if (stage === "newborn") return 10;
+      if (stage === "infant") return 8;
+      if (stage === "olderBaby") return 6;
+      if (stage === "toddler") return 5;
+      return 0;
+    }
+
+    function calculateDiaperCost() {
+      const babyStage = getValue("babyStage");
+      const customDiapersPerDay = getNumber("diapersPerDay");
+      const diapersPerDay =
+        customDiapersPerDay > 0 ? customDiapersPerDay : getStageDiapersPerDay(babyStage);
+
+      const diapersPerPack = getNumber("diapersPerPack");
+      const diaperPackCost = getNumber("diaperPackCost");
+      const wipesPerDay = getNumber("wipesPerDay");
+      const wipesPerPack = getNumber("wipesPerPack");
+      const wipesPackCost = getNumber("wipesPackCost");
+      const extraMonthlySupplies = getNumber("extraMonthlySupplies");
+      const monthlyHelp = getNumber("monthlyHelp");
+      const monthsToEstimate = Math.max(getNumber("monthsToEstimate"), 12);
+      const wasteBuffer = getNumber("wasteBuffer") / 100;
+      const clothMode = getValue("clothMode");
+      const clothStartupCost = getNumber("clothStartupCost");
+      const clothMonthlyCost = getNumber("clothMonthlyCost");
+
+      const results = document.getElementById("results");
+      const totalPrice = document.getElementById("totalPrice");
+      const resultDetails = document.getElementById("resultDetails");
+      const diaperSummary = document.getElementById("diaperSummary");
+
+      results.classList.add("visible");
+
+      if (diapersPerDay <= 0 || diapersPerPack <= 0 || diaperPackCost <= 0) {
+        totalPrice.textContent = "$0.00";
+        resultDetails.innerHTML =
+          "<p>Enter diapers per day, diapers per pack, and diaper pack cost to estimate your monthly diaper budget.</p>";
+        diaperSummary.textContent = "";
+        return;
+      }
+
+      const daysPerMonth = 30.4;
+      const monthlyDiapers = diapersPerDay * daysPerMonth;
+      const diaperCostPerUnit = diaperPackCost / diapersPerPack;
+      const monthlyDiaperCost = monthlyDiapers * diaperCostPerUnit;
+
+      const monthlyWipes =
+        wipesPerDay > 0 && wipesPerPack > 0 && wipesPackCost > 0
+          ? wipesPerDay * daysPerMonth
+          : 0;
+      const wipeCostPerUnit =
+        wipesPerPack > 0 && wipesPackCost > 0 ? wipesPackCost / wipesPerPack : 0;
+      const monthlyWipesCost = monthlyWipes * wipeCostPerUnit;
+
+      const subtotalBeforeBuffer =
+        monthlyDiaperCost + monthlyWipesCost + extraMonthlySupplies;
+      const bufferAmount = subtotalBeforeBuffer * wasteBuffer;
+      const monthlyGrossCost = subtotalBeforeBuffer + bufferAmount;
+      const monthlyOutOfPocket = Math.max(monthlyGrossCost - monthlyHelp, 0);
+
+      const firstYearGross = monthlyGrossCost * 12;
+      const firstYearOutOfPocket = monthlyOutOfPocket * 12;
+      const selectedPeriodOutOfPocket = monthlyOutOfPocket * monthsToEstimate;
+
+      const monthlyPacks = monthlyDiapers / diapersPerPack;
+      const monthlyWipePacks = wipesPerPack > 0 ? monthlyWipes / wipesPerPack : 0;
+
+      totalPrice.textContent = formatMoney(monthlyOutOfPocket);
+
+      let details = `
+        <p><strong>Estimated diapers per month:</strong> ${monthlyDiapers.toFixed(0)} diapers.</p>
+
+        <p><strong>Estimated diaper packs per month:</strong> ${monthlyPacks.toFixed(1)} packs or boxes.</p>
+
+        <p><strong>Monthly diaper cost:</strong> ${formatMoney(monthlyDiaperCost)}.</p>
+
+        <p><strong>Monthly wipes cost:</strong> ${formatMoney(monthlyWipesCost)}${monthlyWipePacks > 0 ? ` from about ${monthlyWipePacks.toFixed(1)} wipe packs or boxes.` : "."}</p>
+
+        <p><strong>Monthly extras:</strong> ${formatMoney(extraMonthlySupplies)} for diaper cream, pail bags, travel packs, delivery, or other supplies.</p>
+
+        <p><strong>Waste and size-change buffer:</strong> ${formatMoney(bufferAmount)}.</p>
+
+        <p><strong>Monthly help subtracted:</strong> ${formatMoney(monthlyHelp)}.</p>
+
+        <p><strong>Estimated first-year out-of-pocket cost:</strong> ${formatMoney(firstYearOutOfPocket)}.</p>
+
+        <p><strong>Estimated ${monthsToEstimate.toFixed(0)}-month out-of-pocket cost:</strong> ${formatMoney(selectedPeriodOutOfPocket)}.</p>
+      `;
+
+      if (clothMode === "yes") {
+        const clothTotalForPeriod = clothStartupCost + clothMonthlyCost * monthsToEstimate;
+        const disposableGrossForPeriod = monthlyGrossCost * monthsToEstimate;
+        const clothDifference = disposableGrossForPeriod - clothTotalForPeriod;
+        const monthlySavingsBeforeHelp = Math.max(monthlyGrossCost - clothMonthlyCost, 0);
+        const breakEvenMonths =
+          monthlySavingsBeforeHelp > 0
+            ? clothStartupCost / monthlySavingsBeforeHelp
+            : 0;
+
+        details += `
+          <p><strong>Estimated cloth cost for ${monthsToEstimate.toFixed(0)} months:</strong> ${formatMoney(clothTotalForPeriod)}.</p>
+
+          <p><strong>Disposable minus cloth difference:</strong> ${formatMoney(clothDifference)}.</p>
+
+          <p><strong>Estimated cloth break-even point:</strong> ${
+            breakEvenMonths > 0 && Number.isFinite(breakEvenMonths)
+              ? `${breakEvenMonths.toFixed(1)} months`
+              : "not enough monthly savings to calculate a useful break-even point"
+          }.</p>
+        `;
+      }
+
+      resultDetails.innerHTML = details;
+
+      diaperSummary.innerHTML = `
+        Based on <strong>${diapersPerDay.toFixed(1)} diapers per day</strong>,
+        your estimated diapering cost is <strong>${formatMoney(monthlyGrossCost)}</strong>
+        per month before help and <strong>${formatMoney(monthlyOutOfPocket)}</strong>
+        per month after help. Annualized over the first year, that is about
+        <strong>${formatMoney(firstYearGross)}</strong> before help and
+        <strong>${formatMoney(firstYearOutOfPocket)}</strong> out of pocket.
+      `;
+    }
+
+    document
+      .getElementById("diaperButton")
+      .addEventListener("click", calculateDiaperCost);
+  </script>
+</Layout>

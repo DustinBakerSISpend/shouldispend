@@ -1,0 +1,667 @@
+---
+import Layout from "../layouts/Layout.astro";
+import CalculatorPageShell from "../components/CalculatorPageShell.astro";
+import FAQSection from "../components/FAQSection.astro";
+import RelatedCalculators from "../components/RelatedCalculators.astro";
+import MethodologySection from "../components/MethodologySection.astro";
+import CalculatorAssumptions from "../components/CalculatorAssumptions.astro";
+import KeyCostCategories from "../components/KeyCostCategories.astro";
+import ReduceCostTips from "../components/ReduceCostTips.astro";
+import { calculators } from "../data/calculators.js";
+
+const hospitalBirthCostFaqs = [
+  {
+    question: "How much does a hospital birth cost out of pocket?",
+    answer:
+      "The out-of-pocket cost depends on your insurance plan, deductible remaining, coinsurance, out-of-pocket maximum, hospital charges, OB or midwife charges, anesthesia, newborn charges, and any non-covered services. This calculator estimates the parent gap after insurance, HSA funds, and help.",
+  },
+  {
+    question: "Does this calculator estimate the full hospital bill or my share?",
+    answer:
+      "It focuses on your estimated out-of-pocket share. You can enter the expected allowed hospital charges, deductible remaining, coinsurance, copays, out-of-pocket maximum remaining, HSA funds, and family help to estimate the amount you may need to cover.",
+  },
+  {
+    question: "Should I use billed charges or allowed charges?",
+    answer:
+      "If possible, use the insurance allowed amount or a hospital estimate from your insurer or provider. Billed charges can be much higher than the negotiated amount used by insurance.",
+  },
+  {
+    question: "Does the baby get a separate bill?",
+    answer:
+      "Often yes. Newborn charges, pediatric care, nursery care, labs, and NICU-related costs may appear separately. This calculator includes a newborn charges field so the estimate does not only focus on the delivering parent.",
+  },
+  {
+    question: "Does this replace an estimate from my hospital or insurer?",
+    answer:
+      "No. This is a planning calculator. Hospital billing, insurance coverage, Medicaid, HSA rules, FSA rules, complications, anesthesia, network status, and newborn charges can all change the final bill. Use your insurer or hospital estimate when available.",
+  },
+];
+
+const relatedCalculators = calculators
+  .filter((calculator) => {
+    const category = (calculator.category || "").toLowerCase();
+    const href = calculator.href || "";
+
+    return (
+      href !== "/hospital-birth-cost-calculator" &&
+      (
+        category.includes("baby") ||
+        category.includes("parent") ||
+        category.includes("family") ||
+        href.includes("baby") ||
+        href.includes("diaper") ||
+        href.includes("formula") ||
+        href.includes("nursery") ||
+        href.includes("childcare") ||
+        href.includes("daycare") ||
+        href.includes("nanny") ||
+        href.includes("maternity") ||
+        href.includes("adoption")
+      )
+    );
+  })
+  .slice(0, 4);
+---
+
+<Layout
+  title="Hospital Birth Cost Calculator"
+  description="Use this hospital birth cost calculator to estimate out-of-pocket birth costs after insurance, deductible, coinsurance, HSA funds, and help."
+>
+  <style>
+    .container {
+      max-width: 900px;
+      margin: auto;
+    }
+
+    .calculator {
+      background: white;
+      padding: 40px;
+      border-radius: 24px;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.06);
+    }
+
+    .calculator h2 {
+      margin-top: 0;
+      font-size: 2rem;
+      margin-bottom: 18px;
+      color: #0f172a;
+    }
+
+    .calculator-intro {
+      color: #334155;
+      line-height: 1.8;
+      margin-bottom: 30px;
+      font-size: 1.05rem;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+    }
+
+    .field label {
+      display: block;
+      font-weight: 800;
+      margin-bottom: 10px;
+      color: #0f172a;
+    }
+
+    .field input,
+    .field select {
+      width: 100%;
+      padding: 16px;
+      border-radius: 12px;
+      border: 1px solid #cbd5e1;
+      font-size: 1rem;
+      box-sizing: border-box;
+      background: white;
+    }
+
+    button {
+      margin-top: 30px;
+      background: #0f766e;
+      color: white;
+      border: none;
+      padding: 18px 32px;
+      border-radius: 999px;
+      font-size: 1.05rem;
+      font-weight: 800;
+      cursor: pointer;
+      transition: opacity 0.2s ease;
+    }
+
+    button:hover {
+      opacity: 0.92;
+    }
+
+    .results {
+      margin-top: 36px;
+      background: #f8fafc;
+      padding: 32px;
+      border-radius: 24px;
+      border: 1px solid var(--border);
+      box-shadow: 0 10px 24px rgba(15, 23, 42, 0.04);
+      display: none;
+    }
+
+    .results.visible {
+      display: block;
+    }
+
+    .total-price {
+      font-size: clamp(2.5rem, 6vw, 4rem);
+      font-weight: 900;
+      color: #0f172a;
+      line-height: 1.05;
+      margin-bottom: 12px;
+    }
+
+    .result-label {
+      font-size: 1.15rem;
+      font-weight: 800;
+      color: #0f766e;
+      margin-bottom: 24px;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+    }
+
+    .result-details {
+      color: #334155;
+      line-height: 1.9;
+      font-size: 1.02rem;
+    }
+
+    .result-details p {
+      margin: 0 0 12px;
+    }
+
+    .mini-summary {
+      margin-top: 24px;
+      padding: 20px;
+      border-radius: 18px;
+      background: white;
+      border: 1px solid #dbe4ee;
+      color: #334155;
+      line-height: 1.8;
+    }
+
+    .disclaimer {
+      margin-top: 24px;
+      font-size: 0.9rem;
+      color: #64748b;
+    }
+
+    .content-section {
+      margin-top: 60px;
+    }
+
+    .content-section h2 {
+      font-size: 2rem;
+      margin-bottom: 20px;
+      color: #0f172a;
+    }
+
+    .content-section p,
+    .content-section li {
+      font-size: 1.1rem;
+      line-height: 1.9;
+      color: #334155;
+    }
+
+    .content-link {
+      color: #0f766e;
+      font-weight: 700;
+      text-decoration: none;
+    }
+
+    .content-link:hover {
+      text-decoration: underline;
+    }
+
+    @media (max-width: 768px) {
+      .calculator {
+        padding: 24px;
+      }
+
+      .grid {
+        grid-template-columns: 1fr;
+      }
+
+      .calculator h2,
+      .content-section h2 {
+        font-size: 1.7rem;
+      }
+
+      .results {
+        padding: 24px;
+      }
+    }
+  </style>
+
+  <div class="container">
+    <CalculatorPageShell
+      eyebrow="Hospital Birth Cost Calculator"
+      title="Hospital Birth Cost Calculator"
+      description="Estimate out-of-pocket hospital birth costs after deductible, coinsurance, copays, newborn charges, HSA funds, and family help."
+    >
+      <div class="calculator">
+        <h2>Out-of-Pocket Hospital Birth Cost Calculator</h2>
+
+        <p class="calculator-intro">
+          Enter your expected hospital charges, insurance cost-sharing, newborn
+          charges, non-covered costs, HSA funds, and help. This calculator
+          estimates the birth-cost gap you may need to cover out of pocket.
+        </p>
+
+        <div class="grid">
+          <div class="field">
+            <label for="deliveryType">Delivery Type</label>
+            <select id="deliveryType">
+              <option value="vaginal" selected>Vaginal delivery planning estimate</option>
+              <option value="csection">C-section planning estimate</option>
+              <option value="custom">Custom hospital estimate</option>
+            </select>
+          </div>
+
+          <div class="field">
+            <label for="allowedBirthCharges">Hospital Allowed Charges</label>
+            <input id="allowedBirthCharges" type="number" step="0.01" placeholder="Example: 18000" />
+          </div>
+
+          <div class="field">
+            <label for="deductibleRemaining">Deductible Remaining</label>
+            <input id="deductibleRemaining" type="number" step="0.01" placeholder="Example: 2500" />
+          </div>
+
+          <div class="field">
+            <label for="coinsurancePercent">Coinsurance After Deductible (%)</label>
+            <input id="coinsurancePercent" type="number" placeholder="Example: 20" />
+          </div>
+
+          <div class="field">
+            <label for="oopMaxRemaining">Out-of-Pocket Max Remaining</label>
+            <input id="oopMaxRemaining" type="number" step="0.01" placeholder="Example: 5000" />
+          </div>
+
+          <div class="field">
+            <label for="copays">Copays or Admission Fees</label>
+            <input id="copays" type="number" step="0.01" placeholder="Example: 500" />
+          </div>
+
+          <div class="field">
+            <label for="obMidwifeCharges">OB, Midwife, or Provider Charges</label>
+            <input id="obMidwifeCharges" type="number" step="0.01" placeholder="Example: 2200" />
+          </div>
+
+          <div class="field">
+            <label for="anesthesiaCharges">Anesthesia or Epidural Charges</label>
+            <input id="anesthesiaCharges" type="number" step="0.01" placeholder="Example: 1500" />
+          </div>
+
+          <div class="field">
+            <label for="newbornCharges">Newborn Hospital Charges</label>
+            <input id="newbornCharges" type="number" step="0.01" placeholder="Example: 1800" />
+          </div>
+
+          <div class="field">
+            <label for="labsImagingCharges">Labs, Imaging, Tests, or Monitoring</label>
+            <input id="labsImagingCharges" type="number" step="0.01" placeholder="Example: 750" />
+          </div>
+
+          <div class="field">
+            <label for="extraMedicalCharges">Complications or Extra Medical Charges</label>
+            <input id="extraMedicalCharges" type="number" step="0.01" placeholder="Example: 2000" />
+          </div>
+
+          <div class="field">
+            <label for="nonCoveredCosts">Non-Covered or Out-of-Network Costs</label>
+            <input id="nonCoveredCosts" type="number" step="0.01" placeholder="Example: 600" />
+          </div>
+
+          <div class="field">
+            <label for="postBirthCosts">Post-Birth Follow-Up or Recovery Costs</label>
+            <input id="postBirthCosts" type="number" step="0.01" placeholder="Example: 300" />
+          </div>
+
+          <div class="field">
+            <label for="hsaFunds">HSA, FSA, or Medical Savings Available</label>
+            <input id="hsaFunds" type="number" step="0.01" placeholder="Example: 1500" />
+          </div>
+
+          <div class="field">
+            <label for="familyHelp">Family Help, Gifts, or Reimbursement</label>
+            <input id="familyHelp" type="number" step="0.01" placeholder="Example: 1000" />
+          </div>
+
+          <div class="field">
+            <label for="emergencySavings">Emergency Savings Available</label>
+            <input id="emergencySavings" type="number" step="0.01" placeholder="Example: 6000" />
+          </div>
+
+          <div class="field">
+            <label for="paymentPlanMonths">Payment Plan Months</label>
+            <input id="paymentPlanMonths" type="number" placeholder="Example: 12" />
+          </div>
+
+          <div class="field">
+            <label for="bufferPercent">Billing Surprise Buffer (%)</label>
+            <input id="bufferPercent" type="number" placeholder="Example: 15" />
+          </div>
+        </div>
+
+        <button id="hospitalBirthButton" type="button">Calculate Birth Cost</button>
+
+        <div class="results" id="results">
+          <div class="result-label">Estimated Parent Out-of-Pocket Gap</div>
+
+          <div class="total-price" id="totalPrice"></div>
+
+          <div class="result-details" id="resultDetails"></div>
+
+          <div class="mini-summary" id="birthSummary"></div>
+
+          <div class="disclaimer">
+            This is a planning estimate, not medical, insurance, tax, or legal
+            advice. Confirm benefits, network status, newborn coverage,
+            anesthesia billing, HSA/FSA eligibility, and hospital estimates with
+            your insurer, provider, and hospital.
+          </div>
+        </div>
+      </div>
+
+      <section class="content-section">
+        <h2>How This Hospital Birth Cost Calculator Works</h2>
+
+        <p>
+          The calculator starts with expected allowed birth-related charges,
+          including the hospital stay, provider charges, anesthesia, newborn
+          charges, labs, imaging, and extra medical costs. It then estimates the
+          insurance cost share using deductible remaining, coinsurance, copays,
+          and out-of-pocket maximum remaining.
+        </p>
+
+        <p>
+          After that, the calculator adds non-covered costs and a billing
+          surprise buffer, then subtracts HSA, FSA, medical savings, gifts, or
+          family help. The result is the estimated parent out-of-pocket gap, plus
+          a payment-plan estimate and emergency-fund impact.
+        </p>
+
+        <p>
+          For broader baby planning, compare this estimate with the
+          <a class="content-link" href="/baby-parenting-calculators">
+            baby and parenting calculators hub
+          </a>,
+          the
+          <a class="content-link" href="/baby-cost-calculator">
+            baby cost calculator
+          </a>,
+          the
+          <a class="content-link" href="/nursery-cost-calculator">
+            nursery cost calculator
+          </a>,
+          and the
+          <a class="content-link" href="/should-i-use-savings-for-maternity-leave">
+            maternity leave savings calculator
+          </a>.
+        </p>
+      </section>
+
+      <KeyCostCategories
+        items={[
+          {
+            title: "Hospital and provider charges",
+            description:
+              "Birth costs can include hospital charges, OB or midwife charges, anesthesia, labs, imaging, and monitoring.",
+          },
+          {
+            title: "Newborn charges",
+            description:
+              "The baby may generate separate hospital, pediatric, nursery, lab, or NICU-related charges.",
+          },
+          {
+            title: "Insurance cost sharing",
+            description:
+              "Deductible remaining, coinsurance, copays, and out-of-pocket maximum remaining determine much of the parent bill.",
+          },
+          {
+            title: "Non-covered costs",
+            description:
+              "Out-of-network providers, excluded services, and certain add-ons may not count toward normal insurance estimates.",
+          },
+          {
+            title: "Savings and help",
+            description:
+              "HSA, FSA, medical savings, gifts, reimbursements, and family help reduce the remaining cash gap.",
+          },
+        ]}
+      />
+
+      <ReduceCostTips
+        items={[
+          "Ask the hospital and insurer for an estimate using your plan, network, and expected delivery location.",
+          "Confirm whether the delivering provider, hospital, anesthesiology group, and newborn providers are in network.",
+          "Ask how the baby will be covered after birth and whether newborn charges use a separate deductible.",
+          "Use allowed charges from an insurer estimate when possible instead of billed charges.",
+          "Set aside money for anesthesia, newborn charges, labs, and follow-up care instead of budgeting only for the hospital stay.",
+          "Ask about hospital payment plans before using high-interest credit card debt for the full bill.",
+        ]}
+      />
+
+      <CalculatorAssumptions
+        items={[
+          "Preset delivery estimates are planning placeholders only and should be replaced with insurer or hospital estimates when available.",
+          "Allowed medical charges are reduced by deductible remaining and coinsurance, then limited by out-of-pocket maximum remaining when that field is entered.",
+          "Copays are included in the insurance cost-share estimate.",
+          "Non-covered and out-of-network costs are added outside the out-of-pocket maximum estimate.",
+          "Post-birth costs are treated as extra cash costs outside the main hospital estimate.",
+          "The billing surprise buffer is applied to the estimated parent cost before HSA, FSA, savings, gifts, or family help are subtracted.",
+          "The final parent gap cannot fall below zero.",
+        ]}
+      />
+
+      <section class="content-section">
+        <h2>Why Birth Cost Estimates Need a Gap Number</h2>
+
+        <p>
+          A hospital birth estimate can be confusing because the largest number
+          on paper is not always the amount the family pays. The useful planning
+          number is the gap after insurance, deductible, coinsurance, copays,
+          newborn charges, non-covered costs, HSA funds, and help.
+        </p>
+
+        <p>
+          The best next step is to replace the placeholders with actual plan
+          numbers. Call the insurer, ask the hospital for an estimate, verify
+          network status, and ask whether newborn charges are billed separately.
+          Then use this calculator to decide how much cash should be set aside
+          before the due date.
+        </p>
+      </section>
+
+      <div class="content-section">
+        <FAQSection title="Hospital Birth Cost Calculator FAQ" faqs={hospitalBirthCostFaqs} />
+      </div>
+
+      <div class="content-section">
+        <RelatedCalculators calculators={relatedCalculators} />
+      </div>
+    </CalculatorPageShell>
+
+    <section id="FinancialRedFlags" class="content-section">
+      <h2>Hospital Birth Cost Red Flags</h2>
+
+      <p>
+        A hospital birth budget deserves extra caution when the plan only works
+        if every charge is in network, every estimate is exact, and no newborn
+        or anesthesia bill appears separately. Birth billing can create several
+        bills from different providers.
+      </p>
+
+      <ul>
+        <li>The estimate ignores newborn charges or assumes the baby has no separate bill.</li>
+        <li>The plan uses billed charges but not the insurer allowed amount or cost-share estimate.</li>
+        <li>There is no room for anesthesia, labs, imaging, emergency care, or follow-up visits.</li>
+        <li>The birth cost would drain the emergency fund with no plan to rebuild it.</li>
+        <li>The family plans to use a credit card before asking about a hospital payment plan.</li>
+      </ul>
+    </section>
+
+    <MethodologySection category="hospital birth out-of-pocket cost estimates" updated="June 2026" />
+  </div>
+
+  <script is:inline>
+    const getNumber = (id) => {
+      const rawValue = document.getElementById(id)?.value;
+      const value = Number(rawValue);
+      return Number.isFinite(value) && value >= 0 ? value : 0;
+    };
+
+    const getValue = (id) => document.getElementById(id)?.value || "";
+
+    function formatMoney(value) {
+      return value.toLocaleString(undefined, {
+        style: "currency",
+        currency: "USD",
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2,
+      });
+    }
+
+    function getDeliveryPreset(type) {
+      if (type === "csection") return 22000;
+      if (type === "vaginal") return 14000;
+      return 0;
+    }
+
+    function calculatePlanShare(allowedCharges, deductibleRemaining, coinsurancePercent, oopMaxRemaining, copays) {
+      const deductibleApplied = Math.min(allowedCharges, deductibleRemaining);
+      const remainingAfterDeductible = Math.max(allowedCharges - deductibleApplied, 0);
+      const coinsuranceAmount = remainingAfterDeductible * (coinsurancePercent / 100);
+      const planShareBeforeCap = deductibleApplied + coinsuranceAmount + copays;
+
+      if (oopMaxRemaining > 0) {
+        return Math.min(planShareBeforeCap, oopMaxRemaining);
+      }
+
+      return planShareBeforeCap;
+    }
+
+    function calculateHospitalBirthCost() {
+      const deliveryType = getValue("deliveryType");
+      const customAllowedCharges = getNumber("allowedBirthCharges");
+      const baseAllowedCharges =
+        customAllowedCharges > 0 ? customAllowedCharges : getDeliveryPreset(deliveryType);
+
+      const deductibleRemaining = getNumber("deductibleRemaining");
+      const coinsurancePercent = getNumber("coinsurancePercent");
+      const oopMaxRemaining = getNumber("oopMaxRemaining");
+      const copays = getNumber("copays");
+
+      const obMidwifeCharges = getNumber("obMidwifeCharges");
+      const anesthesiaCharges = getNumber("anesthesiaCharges");
+      const newbornCharges = getNumber("newbornCharges");
+      const labsImagingCharges = getNumber("labsImagingCharges");
+      const extraMedicalCharges = getNumber("extraMedicalCharges");
+      const nonCoveredCosts = getNumber("nonCoveredCosts");
+      const postBirthCosts = getNumber("postBirthCosts");
+
+      const hsaFunds = getNumber("hsaFunds");
+      const familyHelp = getNumber("familyHelp");
+      const emergencySavings = getNumber("emergencySavings");
+      const paymentPlanMonths = Math.max(getNumber("paymentPlanMonths"), 1);
+      const bufferPercent = getNumber("bufferPercent") / 100;
+
+      const results = document.getElementById("results");
+      const totalPrice = document.getElementById("totalPrice");
+      const resultDetails = document.getElementById("resultDetails");
+      const birthSummary = document.getElementById("birthSummary");
+
+      results.classList.add("visible");
+
+      if (baseAllowedCharges <= 0 && obMidwifeCharges <= 0 && newbornCharges <= 0) {
+        totalPrice.textContent = "$0.00";
+        resultDetails.innerHTML =
+          "<p>Enter hospital allowed charges, provider charges, or newborn charges to estimate your hospital birth cost.</p>";
+        birthSummary.textContent = "";
+        return;
+      }
+
+      const coveredAllowedCharges =
+        baseAllowedCharges +
+        obMidwifeCharges +
+        anesthesiaCharges +
+        newbornCharges +
+        labsImagingCharges +
+        extraMedicalCharges;
+
+      const estimatedInsuranceOutOfPocket = calculatePlanShare(
+        coveredAllowedCharges,
+        deductibleRemaining,
+        coinsurancePercent,
+        oopMaxRemaining,
+        copays
+      );
+
+      const extraCashCosts = nonCoveredCosts + postBirthCosts;
+      const subtotalBeforeBuffer = estimatedInsuranceOutOfPocket + extraCashCosts;
+      const bufferAmount = subtotalBeforeBuffer * bufferPercent;
+      const estimatedCostBeforeHelp = subtotalBeforeBuffer + bufferAmount;
+      const totalHelp = hsaFunds + familyHelp;
+      const parentGap = Math.max(estimatedCostBeforeHelp - totalHelp, 0);
+
+      const monthlyPayment = parentGap / paymentPlanMonths;
+      const emergencySavingsAfterBirth = Math.max(emergencySavings - parentGap, 0);
+      const emergencySavingsUsed = Math.min(parentGap, emergencySavings);
+      const uncoveredByEmergencySavings = Math.max(parentGap - emergencySavings, 0);
+
+      totalPrice.textContent = formatMoney(parentGap);
+
+      resultDetails.innerHTML = `
+        <p><strong>Delivery planning type:</strong> ${deliveryType === "csection" ? "C-section planning estimate" : deliveryType === "custom" ? "custom hospital estimate" : "vaginal delivery planning estimate"}.</p>
+
+        <p><strong>Covered allowed charges used:</strong> ${formatMoney(coveredAllowedCharges)}.</p>
+
+        <p><strong>Deductible remaining:</strong> ${formatMoney(deductibleRemaining)}.</p>
+
+        <p><strong>Coinsurance after deductible:</strong> ${coinsurancePercent.toFixed(0)} percent.</p>
+
+        <p><strong>Out-of-pocket maximum remaining:</strong> ${oopMaxRemaining > 0 ? formatMoney(oopMaxRemaining) : "not entered"}.</p>
+
+        <p><strong>Estimated insurance cost share:</strong> ${formatMoney(estimatedInsuranceOutOfPocket)}.</p>
+
+        <p><strong>Non-covered and post-birth cash costs:</strong> ${formatMoney(extraCashCosts)}.</p>
+
+        <p><strong>Billing surprise buffer:</strong> ${formatMoney(bufferAmount)}.</p>
+
+        <p><strong>Estimated cost before HSA, savings, gifts, or help:</strong> ${formatMoney(estimatedCostBeforeHelp)}.</p>
+
+        <p><strong>HSA, FSA, medical savings, gifts, or family help:</strong> ${formatMoney(totalHelp)}.</p>
+
+        <p><strong>Estimated parent out-of-pocket gap:</strong> ${formatMoney(parentGap)}.</p>
+
+        <p><strong>Estimated payment plan:</strong> ${formatMoney(monthlyPayment)} per month for ${paymentPlanMonths.toFixed(0)} months.</p>
+
+        <p><strong>Emergency savings used if paid in cash:</strong> ${formatMoney(emergencySavingsUsed)}.</p>
+
+        <p><strong>Emergency savings remaining after birth cost:</strong> ${formatMoney(emergencySavingsAfterBirth)}.</p>
+
+        <p><strong>Gap not covered by emergency savings:</strong> ${formatMoney(uncoveredByEmergencySavings)}.</p>
+      `;
+
+      birthSummary.innerHTML = `
+        Based on <strong>${formatMoney(coveredAllowedCharges)}</strong> of covered
+        allowed charges, the estimated insurance cost share is
+        <strong>${formatMoney(estimatedInsuranceOutOfPocket)}</strong>. After adding
+        non-covered costs and a buffer, then subtracting
+        <strong>${formatMoney(totalHelp)}</strong> of HSA, savings, gifts, or help,
+        the estimated parent gap is <strong>${formatMoney(parentGap)}</strong>.
+      `;
+    }
+
+    document
+      .getElementById("hospitalBirthButton")
+      .addEventListener("click", calculateHospitalBirthCost);
+  </script>
+</Layout>

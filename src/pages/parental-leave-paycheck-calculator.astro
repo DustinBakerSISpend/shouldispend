@@ -1,0 +1,679 @@
+---
+import Layout from "../layouts/Layout.astro";
+import CalculatorPageShell from "../components/CalculatorPageShell.astro";
+import FAQSection from "../components/FAQSection.astro";
+import RelatedCalculators from "../components/RelatedCalculators.astro";
+import MethodologySection from "../components/MethodologySection.astro";
+import CalculatorAssumptions from "../components/CalculatorAssumptions.astro";
+import KeyCostCategories from "../components/KeyCostCategories.astro";
+import ReduceCostTips from "../components/ReduceCostTips.astro";
+import { calculators } from "../data/calculators.js";
+
+const parentalLeavePaycheckFaqs = [
+  {
+    question: "How do I calculate the paycheck gap during parental leave?",
+    answer:
+      "Compare normal take-home income during the leave period with expected paid leave, PTO, short-term disability, partner income, savings, and help. The difference is the paycheck gap that must be covered by savings, a payment plan, reduced expenses, or other support.",
+  },
+  {
+    question: "Does paid parental leave usually replace full pay?",
+    answer:
+      "Sometimes, but not always. Some employers offer full pay for a limited number of weeks, some offer partial pay, and some offer no paid parental leave. Short-term disability may replace only a percentage of pay and may have waiting periods or limits.",
+  },
+  {
+    question: "Should I include partner income?",
+    answer:
+      "Yes, if the partner income will still be available during leave. This calculator separates the leave-taking parent's paycheck replacement from partner income so the household cash gap is easier to see.",
+  },
+  {
+    question: "Does this calculator include new baby costs?",
+    answer:
+      "Yes. You can add estimated monthly baby costs such as diapers, formula, medical copays, household supplies, transportation, or other early baby expenses during the leave period.",
+  },
+  {
+    question: "Is this calculator legal or benefits advice?",
+    answer:
+      "No. This is a planning calculator. Confirm employer leave rules, FMLA eligibility, state paid leave, short-term disability, payroll timing, taxes, insurance premiums, and benefit deductions with your employer, benefits administrator, or payroll team.",
+  },
+];
+
+const relatedCalculators = calculators
+  .filter((calculator) => {
+    const category = (calculator.category || "").toLowerCase();
+    const href = calculator.href || "";
+
+    return (
+      href !== "/parental-leave-paycheck-calculator" &&
+      (
+        category.includes("baby") ||
+        category.includes("parent") ||
+        category.includes("family") ||
+        href.includes("baby") ||
+        href.includes("diaper") ||
+        href.includes("formula") ||
+        href.includes("nursery") ||
+        href.includes("birth") ||
+        href.includes("childcare") ||
+        href.includes("daycare") ||
+        href.includes("nanny") ||
+        href.includes("maternity") ||
+        href.includes("adoption")
+      )
+    );
+  })
+  .slice(0, 4);
+---
+
+<Layout
+  title="Parental Leave Paycheck Calculator"
+  description="Use this parental leave paycheck calculator to estimate income shortfall, unpaid leave gap, savings needed, and monthly cash pressure during leave."
+>
+  <style>
+    .container {
+      max-width: 900px;
+      margin: auto;
+    }
+
+    .calculator {
+      background: white;
+      padding: 40px;
+      border-radius: 24px;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.06);
+    }
+
+    .calculator h2 {
+      margin-top: 0;
+      font-size: 2rem;
+      margin-bottom: 18px;
+      color: #0f172a;
+    }
+
+    .calculator-intro {
+      color: #334155;
+      line-height: 1.8;
+      margin-bottom: 30px;
+      font-size: 1.05rem;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+    }
+
+    .field label {
+      display: block;
+      font-weight: 800;
+      margin-bottom: 10px;
+      color: #0f172a;
+    }
+
+    .field input,
+    .field select {
+      width: 100%;
+      padding: 16px;
+      border-radius: 12px;
+      border: 1px solid #cbd5e1;
+      font-size: 1rem;
+      box-sizing: border-box;
+      background: white;
+    }
+
+    button {
+      margin-top: 30px;
+      background: #0f766e;
+      color: white;
+      border: none;
+      padding: 18px 32px;
+      border-radius: 999px;
+      font-size: 1.05rem;
+      font-weight: 800;
+      cursor: pointer;
+      transition: opacity 0.2s ease;
+    }
+
+    button:hover {
+      opacity: 0.92;
+    }
+
+    .results {
+      margin-top: 36px;
+      background: #f8fafc;
+      padding: 32px;
+      border-radius: 24px;
+      border: 1px solid var(--border);
+      box-shadow: 0 10px 24px rgba(15, 23, 42, 0.04);
+      display: none;
+    }
+
+    .results.visible {
+      display: block;
+    }
+
+    .total-price {
+      font-size: clamp(2.5rem, 6vw, 4rem);
+      font-weight: 900;
+      color: #0f172a;
+      line-height: 1.05;
+      margin-bottom: 12px;
+    }
+
+    .result-label {
+      font-size: 1.15rem;
+      font-weight: 800;
+      color: #0f766e;
+      margin-bottom: 24px;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+    }
+
+    .result-details {
+      color: #334155;
+      line-height: 1.9;
+      font-size: 1.02rem;
+    }
+
+    .result-details p {
+      margin: 0 0 12px;
+    }
+
+    .mini-summary {
+      margin-top: 24px;
+      padding: 20px;
+      border-radius: 18px;
+      background: white;
+      border: 1px solid #dbe4ee;
+      color: #334155;
+      line-height: 1.8;
+    }
+
+    .disclaimer {
+      margin-top: 24px;
+      font-size: 0.9rem;
+      color: #64748b;
+    }
+
+    .content-section {
+      margin-top: 60px;
+    }
+
+    .content-section h2 {
+      font-size: 2rem;
+      margin-bottom: 20px;
+      color: #0f172a;
+    }
+
+    .content-section p,
+    .content-section li {
+      font-size: 1.1rem;
+      line-height: 1.9;
+      color: #334155;
+    }
+
+    .content-link {
+      color: #0f766e;
+      font-weight: 700;
+      text-decoration: none;
+    }
+
+    .content-link:hover {
+      text-decoration: underline;
+    }
+
+    @media (max-width: 768px) {
+      .calculator {
+        padding: 24px;
+      }
+
+      .grid {
+        grid-template-columns: 1fr;
+      }
+
+      .calculator h2,
+      .content-section h2 {
+        font-size: 1.7rem;
+      }
+
+      .results {
+        padding: 24px;
+      }
+    }
+  </style>
+
+  <div class="container">
+    <CalculatorPageShell
+      eyebrow="Parental Leave Paycheck Calculator"
+      title="Parental Leave Paycheck Calculator"
+      description="Estimate the income shortfall during parental leave, the savings needed to cover unpaid weeks, and the household cash gap after bills and baby costs."
+    >
+      <div class="calculator">
+        <h2>Parental Leave Income Shortfall Calculator</h2>
+
+        <p class="calculator-intro">
+          Enter normal take-home pay, paid leave, PTO, short-term disability,
+          unpaid weeks, partner income, bills, baby costs, savings, and help.
+          This calculator estimates the leave paycheck gap and the savings
+          needed to cover the leave period.
+        </p>
+
+        <div class="grid">
+          <div class="field">
+            <label for="normalWeeklyTakeHome">Normal Weekly Take-Home Pay</label>
+            <input id="normalWeeklyTakeHome" type="number" step="0.01" placeholder="Example: 950" />
+          </div>
+
+          <div class="field">
+            <label for="leaveWeeks">Total Leave Weeks</label>
+            <input id="leaveWeeks" type="number" placeholder="Example: 12" />
+          </div>
+
+          <div class="field">
+            <label for="paidLeaveWeeks">Employer Paid Leave Weeks</label>
+            <input id="paidLeaveWeeks" type="number" placeholder="Example: 4" />
+          </div>
+
+          <div class="field">
+            <label for="paidLeavePercent">Employer Paid Leave Percent</label>
+            <input id="paidLeavePercent" type="number" placeholder="Example: 100" />
+          </div>
+
+          <div class="field">
+            <label for="ptoWeeks">PTO or Vacation Weeks Used</label>
+            <input id="ptoWeeks" type="number" placeholder="Example: 2" />
+          </div>
+
+          <div class="field">
+            <label for="disabilityWeeks">Short-Term Disability Weeks</label>
+            <input id="disabilityWeeks" type="number" placeholder="Example: 6" />
+          </div>
+
+          <div class="field">
+            <label for="disabilityPercent">Short-Term Disability Pay Percent</label>
+            <input id="disabilityPercent" type="number" placeholder="Example: 60" />
+          </div>
+
+          <div class="field">
+            <label for="statePaidLeaveMonthly">State Paid Leave or Other Monthly Benefit</label>
+            <input id="statePaidLeaveMonthly" type="number" step="0.01" placeholder="Example: 800" />
+          </div>
+
+          <div class="field">
+            <label for="partnerMonthlyTakeHome">Partner Monthly Take-Home Income</label>
+            <input id="partnerMonthlyTakeHome" type="number" step="0.01" placeholder="Example: 3500" />
+          </div>
+
+          <div class="field">
+            <label for="monthlyBills">Monthly Household Bills During Leave</label>
+            <input id="monthlyBills" type="number" step="0.01" placeholder="Example: 5200" />
+          </div>
+
+          <div class="field">
+            <label for="monthlyBabyCosts">New Baby Costs During Leave</label>
+            <input id="monthlyBabyCosts" type="number" step="0.01" placeholder="Example: 450" />
+          </div>
+
+          <div class="field">
+            <label for="monthlyInsurancePremiums">Insurance Premiums or Benefit Deductions</label>
+            <input id="monthlyInsurancePremiums" type="number" step="0.01" placeholder="Example: 300" />
+          </div>
+
+          <div class="field">
+            <label for="oneTimeBirthCosts">One-Time Birth or Recovery Costs</label>
+            <input id="oneTimeBirthCosts" type="number" step="0.01" placeholder="Example: 1800" />
+          </div>
+
+          <div class="field">
+            <label for="leaveSavings">Savings Set Aside for Leave</label>
+            <input id="leaveSavings" type="number" step="0.01" placeholder="Example: 6000" />
+          </div>
+
+          <div class="field">
+            <label for="familyHelp">Family Help, Gifts, or Reimbursements</label>
+            <input id="familyHelp" type="number" step="0.01" placeholder="Example: 1000" />
+          </div>
+
+          <div class="field">
+            <label for="targetCushion">Emergency Cushion to Keep After Leave</label>
+            <input id="targetCushion" type="number" step="0.01" placeholder="Example: 3000" />
+          </div>
+
+          <div class="field">
+            <label for="currentEmergencySavings">Current Emergency Savings</label>
+            <input id="currentEmergencySavings" type="number" step="0.01" placeholder="Example: 10000" />
+          </div>
+
+          <div class="field">
+            <label for="bufferPercent">Leave Cost Buffer (%)</label>
+            <input id="bufferPercent" type="number" placeholder="Example: 10" />
+          </div>
+        </div>
+
+        <button id="parentalLeaveButton" type="button">Calculate Leave Paycheck Gap</button>
+
+        <div class="results" id="results">
+          <div class="result-label">Estimated Savings Needed</div>
+
+          <div class="total-price" id="totalPrice"></div>
+
+          <div class="result-details" id="resultDetails"></div>
+
+          <div class="mini-summary" id="leaveSummary"></div>
+
+          <div class="disclaimer">
+            This estimate is for planning only. Confirm employer leave rules,
+            state paid leave, short-term disability, FMLA eligibility, payroll
+            timing, taxes, benefit deductions, and insurance premium handling
+            with your employer or benefits administrator.
+          </div>
+        </div>
+      </div>
+
+      <section class="content-section">
+        <h2>How This Parental Leave Paycheck Calculator Works</h2>
+
+        <p>
+          The calculator compares normal take-home income during the leave
+          period with expected income from employer-paid leave, PTO, short-term
+          disability, state paid leave, partner income, savings, gifts, and
+          other help. It then compares that income with household bills, baby
+          costs, insurance deductions, one-time birth costs, and a buffer.
+        </p>
+
+        <p>
+          The useful number is not just how many weeks are unpaid. It is the
+          total cash gap after normal bills keep coming, new baby costs start,
+          and some paychecks may be reduced or delayed.
+        </p>
+
+        <p>
+          For broader baby planning, compare this estimate with the
+          <a class="content-link" href="/baby-parenting-calculators">
+            baby and parenting calculators hub
+          </a>,
+          the
+          <a class="content-link" href="/hospital-birth-cost-calculator">
+            hospital birth cost calculator
+          </a>,
+          the
+          <a class="content-link" href="/diaper-cost-calculator">
+            diaper cost calculator
+          </a>,
+          and the
+          <a class="content-link" href="/formula-cost-calculator">
+            formula cost calculator
+          </a>.
+        </p>
+      </section>
+
+      <KeyCostCategories
+        items={[
+          {
+            title: "Normal paycheck",
+            description:
+              "Normal weekly take-home pay sets the baseline for the income that would arrive without leave.",
+          },
+          {
+            title: "Paid leave and PTO",
+            description:
+              "Employer-paid leave and PTO reduce the income shortfall if they replace full or partial pay.",
+          },
+          {
+            title: "Short-term disability and state benefits",
+            description:
+              "Disability pay and state paid leave may replace only part of income and may not cover every week.",
+          },
+          {
+            title: "Household bills and baby costs",
+            description:
+              "Rent or mortgage, utilities, debt payments, food, insurance, diapers, formula, and other baby costs keep the cash need high during leave.",
+          },
+          {
+            title: "Savings and emergency cushion",
+            description:
+              "Savings, family help, gifts, and reimbursements reduce the gap, but the calculator also shows whether the target cushion remains intact.",
+          },
+        ]}
+      />
+
+      <ReduceCostTips
+        items={[
+          "Ask payroll for the exact timing of paid leave, PTO, disability, and any unpaid weeks.",
+          "Confirm whether health insurance premiums or benefit deductions change during unpaid leave.",
+          "Build the leave budget around take-home pay, not gross salary.",
+          "Set aside recurring baby costs separately so diapers, formula, and medical copays do not surprise the household budget.",
+          "Use gifts or family help for recurring needs before spending it on optional baby upgrades.",
+          "Ask about hospital payment plans before using leave savings for the entire birth bill at once.",
+        ]}
+      />
+
+      <CalculatorAssumptions
+        items={[
+          "A month is estimated as 4.345 weeks.",
+          "Normal income is calculated from weekly take-home pay multiplied by total leave weeks.",
+          "PTO is treated as full-pay replacement.",
+          "Employer paid leave and short-term disability are calculated using the entered replacement percentages.",
+          "State paid leave or other monthly benefits are prorated across the leave period.",
+          "Partner income is included only during the leave months estimated by the calculator.",
+          "Savings needed is the cash gap after leave income, partner income, savings, gifts, and help are applied.",
+          "The target emergency cushion is used to show whether savings after leave remain above the cushion goal.",
+        ]}
+      />
+
+      <section class="content-section">
+        <h2>Why Parental Leave Needs a Cash Gap Plan</h2>
+
+        <p>
+          A parental leave plan can look fine when it is described in weeks but
+          still fail in dollars. Four paid weeks, two PTO weeks, and six unpaid
+          weeks do not explain whether rent, groceries, insurance premiums,
+          diapers, formula, and medical bills are covered.
+        </p>
+
+        <p>
+          The safer approach is to turn every leave benefit into expected
+          take-home dollars, compare that against bills and baby costs, and
+          decide how much savings should be protected before the leave begins.
+        </p>
+      </section>
+
+      <div class="content-section">
+        <FAQSection title="Parental Leave Paycheck Calculator FAQ" faqs={parentalLeavePaycheckFaqs} />
+      </div>
+
+      <div class="content-section">
+        <RelatedCalculators calculators={relatedCalculators} />
+      </div>
+    </CalculatorPageShell>
+
+    <section id="FinancialRedFlags" class="content-section">
+      <h2>Parental Leave Budget Red Flags</h2>
+
+      <p>
+        A parental leave budget deserves caution when the plan sounds covered in
+        weeks but not in dollars. Reduced pay, delayed benefits, unpaid weeks,
+        insurance deductions, and new baby costs can create a gap even when some
+        leave is technically paid.
+      </p>
+
+      <ul>
+        <li>The plan counts gross pay instead of take-home pay.</li>
+        <li>Unpaid weeks are included, but no cash reserve is assigned to cover them.</li>
+        <li>Health insurance premiums or benefit deductions are ignored during leave.</li>
+        <li>The budget assumes short-term disability replaces full pay when it only replaces part of pay.</li>
+        <li>Birth bills, diapers, formula, and baby supplies are missing from the leave budget.</li>
+      </ul>
+    </section>
+
+    <MethodologySection category="parental leave paycheck gap estimates" updated="June 2026" />
+  </div>
+
+  <script is:inline>
+    const getNumber = (id) => {
+      const rawValue = document.getElementById(id)?.value;
+      const value = Number(rawValue);
+      return Number.isFinite(value) && value >= 0 ? value : 0;
+    };
+
+    function formatMoney(value) {
+      return value.toLocaleString(undefined, {
+        style: "currency",
+        currency: "USD",
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2,
+      });
+    }
+
+    function calculateParentalLeaveGap() {
+      const normalWeeklyTakeHome = getNumber("normalWeeklyTakeHome");
+      const leaveWeeks = getNumber("leaveWeeks");
+      const paidLeaveWeeks = getNumber("paidLeaveWeeks");
+      const paidLeavePercent = getNumber("paidLeavePercent");
+      const ptoWeeks = getNumber("ptoWeeks");
+      const disabilityWeeks = getNumber("disabilityWeeks");
+      const disabilityPercent = getNumber("disabilityPercent");
+      const statePaidLeaveMonthly = getNumber("statePaidLeaveMonthly");
+      const partnerMonthlyTakeHome = getNumber("partnerMonthlyTakeHome");
+      const monthlyBills = getNumber("monthlyBills");
+      const monthlyBabyCosts = getNumber("monthlyBabyCosts");
+      const monthlyInsurancePremiums = getNumber("monthlyInsurancePremiums");
+      const oneTimeBirthCosts = getNumber("oneTimeBirthCosts");
+      const leaveSavings = getNumber("leaveSavings");
+      const familyHelp = getNumber("familyHelp");
+      const targetCushion = getNumber("targetCushion");
+      const currentEmergencySavings = getNumber("currentEmergencySavings");
+      const bufferPercent = getNumber("bufferPercent") / 100;
+
+      const results = document.getElementById("results");
+      const totalPrice = document.getElementById("totalPrice");
+      const resultDetails = document.getElementById("resultDetails");
+      const leaveSummary = document.getElementById("leaveSummary");
+
+      results.classList.add("visible");
+
+      if (normalWeeklyTakeHome <= 0 || leaveWeeks <= 0) {
+        totalPrice.textContent = "$0.00";
+        resultDetails.innerHTML =
+          "<p>Enter normal weekly take-home pay and total leave weeks to estimate your parental leave paycheck gap.</p>";
+        leaveSummary.textContent = "";
+        return;
+      }
+
+      const weeksPerMonth = 4.345;
+      const leaveMonths = leaveWeeks / weeksPerMonth;
+
+      const normalIncomeDuringLeave = normalWeeklyTakeHome * leaveWeeks;
+
+      const paidLeaveIncome =
+        normalWeeklyTakeHome * paidLeaveWeeks * (Math.min(paidLeavePercent, 100) / 100);
+      const ptoIncome = normalWeeklyTakeHome * ptoWeeks;
+      const disabilityIncome =
+        normalWeeklyTakeHome * disabilityWeeks * (Math.min(disabilityPercent, 100) / 100);
+      const statePaidLeaveIncome = statePaidLeaveMonthly * leaveMonths;
+
+      const totalLeaveParentIncome =
+        paidLeaveIncome + ptoIncome + disabilityIncome + statePaidLeaveIncome;
+
+      const directIncomeShortfall = Math.max(
+        normalIncomeDuringLeave - totalLeaveParentIncome,
+        0
+      );
+
+      const partnerIncomeDuringLeave = partnerMonthlyTakeHome * leaveMonths;
+      const recurringExpensesDuringLeave =
+        (monthlyBills + monthlyBabyCosts + monthlyInsurancePremiums) * leaveMonths;
+      const subtotalExpenses = recurringExpensesDuringLeave + oneTimeBirthCosts;
+      const bufferAmount = subtotalExpenses * bufferPercent;
+      const totalCashNeed = subtotalExpenses + bufferAmount;
+
+      const incomeAvailableDuringLeave =
+        totalLeaveParentIncome + partnerIncomeDuringLeave;
+      const householdCashGapBeforeSavings = Math.max(
+        totalCashNeed - incomeAvailableDuringLeave,
+        0
+      );
+
+      const savingsAndHelp = leaveSavings + familyHelp;
+      const additionalSavingsNeeded = Math.max(
+        householdCashGapBeforeSavings - savingsAndHelp,
+        0
+      );
+
+      const emergencySavingsAfterPlannedUse = Math.max(
+        currentEmergencySavings + leaveSavings + familyHelp - householdCashGapBeforeSavings,
+        0
+      );
+
+      const cushionGapAfterLeave = Math.max(
+        targetCushion - emergencySavingsAfterPlannedUse,
+        0
+      );
+
+      const totalSavingsNeededIncludingCushion =
+        additionalSavingsNeeded + cushionGapAfterLeave;
+
+      const unpaidWeeks = Math.max(
+        leaveWeeks - paidLeaveWeeks - ptoWeeks - disabilityWeeks,
+        0
+      );
+
+      const averageMonthlyGapBeforeSavings =
+        leaveMonths > 0 ? householdCashGapBeforeSavings / leaveMonths : 0;
+
+      const weeklySavingsNeededBeforeLeave =
+        leaveWeeks > 0 ? totalSavingsNeededIncludingCushion / leaveWeeks : 0;
+
+      totalPrice.textContent = formatMoney(totalSavingsNeededIncludingCushion);
+
+      resultDetails.innerHTML = `
+        <p><strong>Total leave length:</strong> ${leaveWeeks.toFixed(1)} weeks, or about ${leaveMonths.toFixed(1)} months.</p>
+
+        <p><strong>Normal income during leave period:</strong> ${formatMoney(normalIncomeDuringLeave)}.</p>
+
+        <p><strong>Expected parent leave income:</strong> ${formatMoney(totalLeaveParentIncome)} from paid leave, PTO, disability, and state benefits.</p>
+
+        <p><strong>Direct paycheck shortfall:</strong> ${formatMoney(directIncomeShortfall)} compared with normal take-home pay.</p>
+
+        <p><strong>Estimated unpaid weeks:</strong> ${unpaidWeeks.toFixed(1)} weeks.</p>
+
+        <p><strong>Partner income during leave:</strong> ${formatMoney(partnerIncomeDuringLeave)}.</p>
+
+        <p><strong>Recurring bills, baby costs, and insurance during leave:</strong> ${formatMoney(recurringExpensesDuringLeave)}.</p>
+
+        <p><strong>One-time birth or recovery costs:</strong> ${formatMoney(oneTimeBirthCosts)}.</p>
+
+        <p><strong>Leave cost buffer:</strong> ${formatMoney(bufferAmount)}.</p>
+
+        <p><strong>Total cash need during leave:</strong> ${formatMoney(totalCashNeed)}.</p>
+
+        <p><strong>Household cash gap before savings and help:</strong> ${formatMoney(householdCashGapBeforeSavings)}.</p>
+
+        <p><strong>Leave savings and family help available:</strong> ${formatMoney(savingsAndHelp)}.</p>
+
+        <p><strong>Additional savings needed before cushion:</strong> ${formatMoney(additionalSavingsNeeded)}.</p>
+
+        <p><strong>Emergency savings after planned leave gap:</strong> ${formatMoney(emergencySavingsAfterPlannedUse)}.</p>
+
+        <p><strong>Emergency cushion gap after leave:</strong> ${formatMoney(cushionGapAfterLeave)}.</p>
+
+        <p><strong>Average monthly gap before savings:</strong> ${formatMoney(averageMonthlyGapBeforeSavings)}.</p>
+
+        <p><strong>Planning target per leave week:</strong> ${formatMoney(weeklySavingsNeededBeforeLeave)} of savings needed per week of leave.</p>
+      `;
+
+      leaveSummary.innerHTML = `
+        Your normal take-home income during leave would be about
+        <strong>${formatMoney(normalIncomeDuringLeave)}</strong>. Expected leave
+        income from paid leave, PTO, disability, and state benefits is about
+        <strong>${formatMoney(totalLeaveParentIncome)}</strong>, creating a
+        direct paycheck shortfall of <strong>${formatMoney(directIncomeShortfall)}</strong>.
+        After household bills, baby costs, partner income, savings, help, and
+        the target cushion, the estimated savings still needed is
+        <strong>${formatMoney(totalSavingsNeededIncludingCushion)}</strong>.
+      `;
+    }
+
+    document
+      .getElementById("parentalLeaveButton")
+      .addEventListener("click", calculateParentalLeaveGap);
+  </script>
+</Layout>

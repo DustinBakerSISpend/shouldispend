@@ -1,0 +1,705 @@
+---
+import Layout from "../layouts/Layout.astro";
+import CalculatorPageShell from "../components/CalculatorPageShell.astro";
+import FAQSection from "../components/FAQSection.astro";
+import RelatedCalculators from "../components/RelatedCalculators.astro";
+import MethodologySection from "../components/MethodologySection.astro";
+import CalculatorAssumptions from "../components/CalculatorAssumptions.astro";
+import KeyCostCategories from "../components/KeyCostCategories.astro";
+import ReduceCostTips from "../components/ReduceCostTips.astro";
+import { calculators } from "../data/calculators.js";
+
+const nurseryCostFaqs = [
+  {
+    question: "How much does it cost to set up a nursery?",
+    answer:
+      "A basic nursery may cost a few hundred dollars if you reuse furniture and keep the setup minimal. A practical new setup often lands around $1,000 to $2,500, while a higher-end nursery with new furniture, decor, a glider, monitor, storage, and delivery costs can climb much higher.",
+  },
+  {
+    question: "What should be included in a nursery budget?",
+    answer:
+      "A nursery budget should include the crib, crib mattress, dresser, changing area, monitor, chair or glider, curtains, storage, lighting, decor, safety items, bedding, delivery, assembly, and any room-prep costs such as paint or minor repairs.",
+  },
+  {
+    question: "What nursery items can wait until later?",
+    answer:
+      "Decor, wall art, upgraded chairs, themed storage, extra shelves, premium monitors, and matching furniture sets can often wait. The safer priority is a sleep space, mattress, sheets, diapers, wipes, feeding supplies, and basic storage.",
+  },
+  {
+    question: "Is a changing table necessary?",
+    answer:
+      "Not always. Many families use a dresser with a changing pad, a portable changing mat, or another safe flat surface. A separate changing table is convenient but not required for every nursery.",
+  },
+  {
+    question: "Does this calculator include gifts or registry help?",
+    answer:
+      "Yes. You can enter expected gifts, registry coverage, hand-me-down value, store credit, or family help. The calculator subtracts that help from the total setup cost to estimate the parent out-of-pocket gap.",
+  },
+];
+
+const relatedCalculators = calculators
+  .filter((calculator) => {
+    const category = (calculator.category || "").toLowerCase();
+    const href = calculator.href || "";
+
+    return (
+      href !== "/nursery-cost-calculator" &&
+      (
+        category.includes("baby") ||
+        category.includes("parent") ||
+        category.includes("family") ||
+        href.includes("baby") ||
+        href.includes("diaper") ||
+        href.includes("formula") ||
+        href.includes("childcare") ||
+        href.includes("daycare") ||
+        href.includes("nanny") ||
+        href.includes("maternity") ||
+        href.includes("adoption")
+      )
+    );
+  })
+  .slice(0, 4);
+---
+
+<Layout
+  title="Nursery Cost Calculator"
+  description="Use this nursery cost calculator to estimate total nursery setup cost, bare/practical/comfortable ranges, gifts covered, and parent out-of-pocket gap."
+>
+  <style>
+    .container {
+      max-width: 900px;
+      margin: auto;
+    }
+
+    .calculator {
+      background: white;
+      padding: 40px;
+      border-radius: 24px;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.06);
+    }
+
+    .calculator h2 {
+      margin-top: 0;
+      font-size: 2rem;
+      margin-bottom: 18px;
+      color: #0f172a;
+    }
+
+    .calculator-intro {
+      color: #334155;
+      line-height: 1.8;
+      margin-bottom: 30px;
+      font-size: 1.05rem;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+    }
+
+    .field label {
+      display: block;
+      font-weight: 800;
+      margin-bottom: 10px;
+      color: #0f172a;
+    }
+
+    .field input,
+    .field select {
+      width: 100%;
+      padding: 16px;
+      border-radius: 12px;
+      border: 1px solid #cbd5e1;
+      font-size: 1rem;
+      box-sizing: border-box;
+      background: white;
+    }
+
+    button {
+      margin-top: 30px;
+      background: #0f766e;
+      color: white;
+      border: none;
+      padding: 18px 32px;
+      border-radius: 999px;
+      font-size: 1.05rem;
+      font-weight: 800;
+      cursor: pointer;
+      transition: opacity 0.2s ease;
+    }
+
+    button:hover {
+      opacity: 0.92;
+    }
+
+    .results {
+      margin-top: 36px;
+      background: #f8fafc;
+      padding: 32px;
+      border-radius: 24px;
+      border: 1px solid var(--border);
+      box-shadow: 0 10px 24px rgba(15, 23, 42, 0.04);
+      display: none;
+    }
+
+    .results.visible {
+      display: block;
+    }
+
+    .total-price {
+      font-size: clamp(2.5rem, 6vw, 4rem);
+      font-weight: 900;
+      color: #0f172a;
+      line-height: 1.05;
+      margin-bottom: 12px;
+    }
+
+    .result-label {
+      font-size: 1.15rem;
+      font-weight: 800;
+      color: #0f766e;
+      margin-bottom: 24px;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+    }
+
+    .result-details {
+      color: #334155;
+      line-height: 1.9;
+      font-size: 1.02rem;
+    }
+
+    .result-details p {
+      margin: 0 0 12px;
+    }
+
+    .mini-summary {
+      margin-top: 24px;
+      padding: 20px;
+      border-radius: 18px;
+      background: white;
+      border: 1px solid #dbe4ee;
+      color: #334155;
+      line-height: 1.8;
+    }
+
+    .disclaimer {
+      margin-top: 24px;
+      font-size: 0.9rem;
+      color: #64748b;
+    }
+
+    .content-section {
+      margin-top: 60px;
+    }
+
+    .content-section h2 {
+      font-size: 2rem;
+      margin-bottom: 20px;
+      color: #0f172a;
+    }
+
+    .content-section p,
+    .content-section li {
+      font-size: 1.1rem;
+      line-height: 1.9;
+      color: #334155;
+    }
+
+    .content-link {
+      color: #0f766e;
+      font-weight: 700;
+      text-decoration: none;
+    }
+
+    .content-link:hover {
+      text-decoration: underline;
+    }
+
+    @media (max-width: 768px) {
+      .calculator {
+        padding: 24px;
+      }
+
+      .grid {
+        grid-template-columns: 1fr;
+      }
+
+      .calculator h2,
+      .content-section h2 {
+        font-size: 1.7rem;
+      }
+
+      .results {
+        padding: 24px;
+      }
+    }
+  </style>
+
+  <div class="container">
+    <CalculatorPageShell
+      eyebrow="Nursery Cost Calculator"
+      title="Nursery Cost Calculator"
+      description="Estimate the total cost to set up a nursery, compare bare/practical/comfortable budgets, and see the parent out-of-pocket gap after gifts or hand-me-downs."
+    >
+      <div class="calculator">
+        <h2>Baby Nursery Setup Cost Calculator</h2>
+
+        <p class="calculator-intro">
+          Enter nursery furniture, room setup, safety items, decor, delivery,
+          gifts, and hand-me-downs. This calculator estimates your total nursery
+          setup cost, a realistic budget range, and the remaining parent
+          out-of-pocket gap.
+        </p>
+
+        <div class="grid">
+          <div class="field">
+            <label for="setupLevel">Nursery Setup Level</label>
+            <select id="setupLevel">
+              <option value="bare">Bare essentials</option>
+              <option value="practical" selected>Practical setup</option>
+              <option value="comfortable">Comfortable setup</option>
+              <option value="custom">Custom itemized setup</option>
+            </select>
+          </div>
+
+          <div class="field">
+            <label for="cribCost">Crib Cost</label>
+            <input id="cribCost" type="number" step="0.01" placeholder="Example: 280" />
+          </div>
+
+          <div class="field">
+            <label for="mattressCost">Crib Mattress Cost</label>
+            <input id="mattressCost" type="number" step="0.01" placeholder="Example: 140" />
+          </div>
+
+          <div class="field">
+            <label for="dresserCost">Dresser or Clothing Storage</label>
+            <input id="dresserCost" type="number" step="0.01" placeholder="Example: 350" />
+          </div>
+
+          <div class="field">
+            <label for="changingCost">Changing Station or Changing Pad</label>
+            <input id="changingCost" type="number" step="0.01" placeholder="Example: 90" />
+          </div>
+
+          <div class="field">
+            <label for="monitorCost">Baby Monitor</label>
+            <input id="monitorCost" type="number" step="0.01" placeholder="Example: 160" />
+          </div>
+
+          <div class="field">
+            <label for="chairCost">Chair, Rocker, or Glider</label>
+            <input id="chairCost" type="number" step="0.01" placeholder="Example: 320" />
+          </div>
+
+          <div class="field">
+            <label for="curtainsCost">Curtains or Blackout Shades</label>
+            <input id="curtainsCost" type="number" step="0.01" placeholder="Example: 80" />
+          </div>
+
+          <div class="field">
+            <label for="storageCost">Storage Bins, Shelves, or Closet Items</label>
+            <input id="storageCost" type="number" step="0.01" placeholder="Example: 120" />
+          </div>
+
+          <div class="field">
+            <label for="decorCost">Decor, Rug, Wall Art, or Theme Items</label>
+            <input id="decorCost" type="number" step="0.01" placeholder="Example: 175" />
+          </div>
+
+          <div class="field">
+            <label for="safetyCost">Safety Items</label>
+            <input id="safetyCost" type="number" step="0.01" placeholder="Example: 85" />
+          </div>
+
+          <div class="field">
+            <label for="beddingCost">Sheets, Mattress Pads, and Sleep Supplies</label>
+            <input id="beddingCost" type="number" step="0.01" placeholder="Example: 110" />
+          </div>
+
+          <div class="field">
+            <label for="roomPrepCost">Paint, Repairs, Lighting, or Room Prep</label>
+            <input id="roomPrepCost" type="number" step="0.01" placeholder="Example: 150" />
+          </div>
+
+          <div class="field">
+            <label for="deliveryCost">Delivery, Assembly, or Hauling</label>
+            <input id="deliveryCost" type="number" step="0.01" placeholder="Example: 95" />
+          </div>
+
+          <div class="field">
+            <label for="giftHelp">Gifts, Registry Coverage, or Family Help</label>
+            <input id="giftHelp" type="number" step="0.01" placeholder="Example: 500" />
+          </div>
+
+          <div class="field">
+            <label for="handMeDownValue">Hand-Me-Down or Reused Item Value</label>
+            <input id="handMeDownValue" type="number" step="0.01" placeholder="Example: 300" />
+          </div>
+
+          <div class="field">
+            <label for="delayAmount">Items You Can Delay Until Later</label>
+            <input id="delayAmount" type="number" step="0.01" placeholder="Example: 250" />
+          </div>
+
+          <div class="field">
+            <label for="bufferPercent">Tax, Shipping, and Price Buffer (%)</label>
+            <input id="bufferPercent" type="number" placeholder="Example: 10" />
+          </div>
+        </div>
+
+        <button id="nurseryButton" type="button">Calculate Nursery Cost</button>
+
+        <div class="results" id="results">
+          <div class="result-label">Estimated Parent Out-of-Pocket Cost</div>
+
+          <div class="total-price" id="totalPrice"></div>
+
+          <div class="result-details" id="resultDetails"></div>
+
+          <div class="mini-summary" id="nurserySummary"></div>
+
+          <div class="disclaimer">
+            This estimate is for planning only. Actual nursery costs can change
+            based on local prices, sales, registry gifts, furniture availability,
+            safety recalls, delivery fees, taxes, and whether you reuse items.
+          </div>
+        </div>
+      </div>
+
+      <section class="content-section">
+        <h2>How This Nursery Cost Calculator Works</h2>
+
+        <p>
+          The calculator adds the major pieces of a nursery setup, including
+          furniture, sleep items, room prep, decor, storage, monitor, safety
+          items, delivery, and assembly. It then applies a tax and shipping
+          buffer, subtracts gifts and hand-me-down value, and separates items
+          you may be able to delay.
+        </p>
+
+        <p>
+          This matters because nursery spending can look reasonable one item at
+          a time but get expensive when the full room is bought at once. A crib,
+          mattress, dresser, chair, monitor, shades, shelves, rug, decor, and
+          safety items can turn into a four-figure project quickly.
+        </p>
+
+        <p>
+          For broader baby planning, compare this estimate with the
+          <a class="content-link" href="/baby-parenting-calculators">
+            baby and parenting calculators hub
+          </a>,
+          the
+          <a class="content-link" href="/baby-cost-calculator">
+            baby cost calculator
+          </a>,
+          the
+          <a class="content-link" href="/diaper-cost-calculator">
+            diaper cost calculator
+          </a>,
+          and the
+          <a class="content-link" href="/formula-cost-calculator">
+            formula cost calculator
+          </a>.
+        </p>
+      </section>
+
+      <KeyCostCategories
+        items={[
+          {
+            title: "Sleep setup",
+            description:
+              "Crib, mattress, sheets, mattress pads, and safe sleep supplies form the core nursery cost.",
+          },
+          {
+            title: "Furniture and storage",
+            description:
+              "Dressers, changing stations, shelves, bins, closet systems, and seating can drive the total higher than expected.",
+          },
+          {
+            title: "Room prep",
+            description:
+              "Paint, curtains, blackout shades, lighting, repairs, delivery, and assembly are easy to forget until checkout.",
+          },
+          {
+            title: "Decor and comfort upgrades",
+            description:
+              "Rugs, wall art, themes, upgraded gliders, and matching sets are optional costs that can often wait.",
+          },
+          {
+            title: "Help and reused items",
+            description:
+              "Registry gifts, family help, store credit, and safe hand-me-downs reduce the parent out-of-pocket gap.",
+          },
+        ]}
+      />
+
+      <ReduceCostTips
+        items={[
+          "Price the crib, mattress, and safe sleep items first before buying decor.",
+          "Use a dresser plus changing pad instead of buying a separate changing table if space or budget is tight.",
+          "Delay wall art, rugs, premium storage, and matching furniture sets until after essentials are covered.",
+          "Check registry completion discounts before buying major nursery items.",
+          "Accept hand-me-downs carefully, but verify safety standards and recalls before using cribs, mattresses, or sleep products.",
+          "Measure the room before buying furniture so delivery and return costs do not become part of the mistake.",
+        ]}
+      />
+
+      <CalculatorAssumptions
+        items={[
+          "Preset nursery levels use built-in estimates when itemized fields are left blank.",
+          "Custom item costs override preset estimates for those categories.",
+          "The tax, shipping, and price buffer is applied after item costs are added.",
+          "Gifts, registry coverage, family help, and hand-me-down value reduce the parent out-of-pocket estimate.",
+          "Delayed items are shown separately so parents can distinguish the full nursery plan from the must-buy-now gap.",
+          "Out-of-pocket cost cannot fall below zero.",
+          "This calculator does not verify product safety, recalls, medical recommendations, or safe sleep compliance.",
+        ]}
+      />
+
+      <section class="content-section">
+        <h2>What to Buy First for a Nursery</h2>
+
+        <p>
+          The first priority is a safe sleep setup, not a finished theme. A crib
+          or approved sleep space, firm mattress, fitted sheets, diapers, wipes,
+          feeding supplies, and basic clothing matter more than wall art,
+          matching furniture, or decorative storage.
+        </p>
+
+        <p>
+          A practical nursery can still feel complete without buying every
+          upgrade before the baby arrives. If the total is getting uncomfortable,
+          move optional decor, rugs, extra shelving, and premium seating into a
+          later phase instead of cutting the safety or sleep budget.
+        </p>
+      </section>
+
+      <div class="content-section">
+        <FAQSection title="Nursery Cost Calculator FAQ" faqs={nurseryCostFaqs} />
+      </div>
+
+      <div class="content-section">
+        <RelatedCalculators calculators={relatedCalculators} />
+      </div>
+    </CalculatorPageShell>
+
+    <section id="FinancialRedFlags" class="content-section">
+      <h2>Nursery Budget Red Flags</h2>
+
+      <p>
+        A nursery budget deserves caution when the room looks good online but
+        the purchase plan crowds out recurring baby costs. Diapers, formula,
+        childcare, medical bills, and leave income gaps matter more than a
+        perfectly finished room.
+      </p>
+
+      <ul>
+        <li>The nursery requires credit card debt before the baby arrives.</li>
+        <li>Decor, rugs, or matching furniture are being prioritized over safe sleep basics.</li>
+        <li>The plan assumes registry gifts will cover essentials, but there is no backup cash plan.</li>
+        <li>Large furniture is being bought without measuring the room or checking return costs.</li>
+        <li>The nursery budget leaves no room for diapers, formula, medical bills, or parental leave costs.</li>
+      </ul>
+    </section>
+
+    <MethodologySection category="nursery setup cost estimates" updated="June 2026" />
+  </div>
+
+  <script is:inline>
+    const getNumber = (id) => {
+      const rawValue = document.getElementById(id)?.value;
+      const value = Number(rawValue);
+      return Number.isFinite(value) && value >= 0 ? value : 0;
+    };
+
+    const getValue = (id) => document.getElementById(id)?.value || "";
+
+    function formatMoney(value) {
+      return value.toLocaleString(undefined, {
+        style: "currency",
+        currency: "USD",
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2,
+      });
+    }
+
+    function getPresetCosts(level) {
+      if (level === "bare") {
+        return {
+          cribCost: 180,
+          mattressCost: 90,
+          dresserCost: 0,
+          changingCost: 35,
+          monitorCost: 40,
+          chairCost: 0,
+          curtainsCost: 30,
+          storageCost: 35,
+          decorCost: 25,
+          safetyCost: 40,
+          beddingCost: 55,
+          roomPrepCost: 30,
+          deliveryCost: 0,
+        };
+      }
+
+      if (level === "comfortable") {
+        return {
+          cribCost: 500,
+          mattressCost: 220,
+          dresserCost: 650,
+          changingCost: 180,
+          monitorCost: 300,
+          chairCost: 650,
+          curtainsCost: 180,
+          storageCost: 250,
+          decorCost: 450,
+          safetyCost: 150,
+          beddingCost: 180,
+          roomPrepCost: 350,
+          deliveryCost: 250,
+        };
+      }
+
+      if (level === "custom") {
+        return {
+          cribCost: 0,
+          mattressCost: 0,
+          dresserCost: 0,
+          changingCost: 0,
+          monitorCost: 0,
+          chairCost: 0,
+          curtainsCost: 0,
+          storageCost: 0,
+          decorCost: 0,
+          safetyCost: 0,
+          beddingCost: 0,
+          roomPrepCost: 0,
+          deliveryCost: 0,
+        };
+      }
+
+      return {
+        cribCost: 300,
+        mattressCost: 140,
+        dresserCost: 350,
+        changingCost: 90,
+        monitorCost: 160,
+        chairCost: 320,
+        curtainsCost: 80,
+        storageCost: 120,
+        decorCost: 175,
+        safetyCost: 85,
+        beddingCost: 110,
+        roomPrepCost: 150,
+        deliveryCost: 95,
+      };
+    }
+
+    function valueOrPreset(id, preset) {
+      const value = getNumber(id);
+      return value > 0 ? value : preset[id] || 0;
+    }
+
+    function calculateNurseryCost() {
+      const setupLevel = getValue("setupLevel");
+      const preset = getPresetCosts(setupLevel);
+
+      const cribCost = valueOrPreset("cribCost", preset);
+      const mattressCost = valueOrPreset("mattressCost", preset);
+      const dresserCost = valueOrPreset("dresserCost", preset);
+      const changingCost = valueOrPreset("changingCost", preset);
+      const monitorCost = valueOrPreset("monitorCost", preset);
+      const chairCost = valueOrPreset("chairCost", preset);
+      const curtainsCost = valueOrPreset("curtainsCost", preset);
+      const storageCost = valueOrPreset("storageCost", preset);
+      const decorCost = valueOrPreset("decorCost", preset);
+      const safetyCost = valueOrPreset("safetyCost", preset);
+      const beddingCost = valueOrPreset("beddingCost", preset);
+      const roomPrepCost = valueOrPreset("roomPrepCost", preset);
+      const deliveryCost = valueOrPreset("deliveryCost", preset);
+
+      const giftHelp = getNumber("giftHelp");
+      const handMeDownValue = getNumber("handMeDownValue");
+      const delayAmount = getNumber("delayAmount");
+      const bufferPercent = getNumber("bufferPercent") / 100;
+
+      const results = document.getElementById("results");
+      const totalPrice = document.getElementById("totalPrice");
+      const resultDetails = document.getElementById("resultDetails");
+      const nurserySummary = document.getElementById("nurserySummary");
+
+      results.classList.add("visible");
+
+      const sleepSetup = cribCost + mattressCost + beddingCost;
+      const furnitureStorage = dresserCost + changingCost + chairCost + storageCost;
+      const roomSetup = curtainsCost + roomPrepCost + deliveryCost;
+      const decorComfort = decorCost + monitorCost;
+      const safetyTotal = safetyCost;
+
+      const subtotalBeforeBuffer =
+        sleepSetup + furnitureStorage + roomSetup + decorComfort + safetyTotal;
+      const bufferAmount = subtotalBeforeBuffer * bufferPercent;
+      const totalSetupCost = subtotalBeforeBuffer + bufferAmount;
+
+      const totalHelp = giftHelp + handMeDownValue;
+      const parentOutOfPocket = Math.max(totalSetupCost - totalHelp, 0);
+      const mustBuyNowGap = Math.max(parentOutOfPocket - delayAmount, 0);
+
+      const bareRangeLow = 400;
+      const bareRangeHigh = 900;
+      const practicalRangeLow = 1000;
+      const practicalRangeHigh = 2500;
+      const comfortableRangeLow = 2500;
+      const comfortableRangeHigh = 5000;
+
+      totalPrice.textContent = formatMoney(parentOutOfPocket);
+
+      resultDetails.innerHTML = `
+        <p><strong>Nursery setup level:</strong> ${setupLevel === "bare" ? "bare essentials" : setupLevel === "comfortable" ? "comfortable setup" : setupLevel === "custom" ? "custom itemized setup" : "practical setup"}.</p>
+
+        <p><strong>Sleep setup:</strong> ${formatMoney(sleepSetup)} for crib, mattress, sheets, pads, and safe sleep supplies.</p>
+
+        <p><strong>Furniture and storage:</strong> ${formatMoney(furnitureStorage)} for dresser, changing area, chair, and storage.</p>
+
+        <p><strong>Room setup:</strong> ${formatMoney(roomSetup)} for curtains, room prep, delivery, assembly, or hauling.</p>
+
+        <p><strong>Monitor and decor:</strong> ${formatMoney(decorComfort)}.</p>
+
+        <p><strong>Safety items:</strong> ${formatMoney(safetyTotal)}.</p>
+
+        <p><strong>Tax, shipping, and price buffer:</strong> ${formatMoney(bufferAmount)}.</p>
+
+        <p><strong>Total nursery setup cost before help:</strong> ${formatMoney(totalSetupCost)}.</p>
+
+        <p><strong>Gifts, registry coverage, and hand-me-down value:</strong> ${formatMoney(totalHelp)}.</p>
+
+        <p><strong>Parent out-of-pocket gap:</strong> ${formatMoney(parentOutOfPocket)}.</p>
+
+        <p><strong>Possible delayed items:</strong> ${formatMoney(delayAmount)}.</p>
+
+        <p><strong>Must-buy-now gap after delayed items:</strong> ${formatMoney(mustBuyNowGap)}.</p>
+
+        <p><strong>Common planning ranges:</strong> bare essentials ${formatMoney(bareRangeLow)} to ${formatMoney(bareRangeHigh)}, practical setup ${formatMoney(practicalRangeLow)} to ${formatMoney(practicalRangeHigh)}, comfortable setup ${formatMoney(comfortableRangeLow)} to ${formatMoney(comfortableRangeHigh)} or more.</p>
+      `;
+
+      nurserySummary.innerHTML = `
+        Your estimated nursery setup is <strong>${formatMoney(totalSetupCost)}</strong>
+        before gifts, hand-me-downs, or registry help. After subtracting
+        <strong>${formatMoney(totalHelp)}</strong> of help, the parent
+        out-of-pocket estimate is <strong>${formatMoney(parentOutOfPocket)}</strong>.
+        If you delay <strong>${formatMoney(delayAmount)}</strong> of optional
+        items, the must-buy-now gap falls to
+        <strong>${formatMoney(mustBuyNowGap)}</strong>.
+      `;
+    }
+
+    document
+      .getElementById("nurseryButton")
+      .addEventListener("click", calculateNurseryCost);
+  </script>
+</Layout>

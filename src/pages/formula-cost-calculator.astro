@@ -1,0 +1,649 @@
+---
+import Layout from "../layouts/Layout.astro";
+import CalculatorPageShell from "../components/CalculatorPageShell.astro";
+import FAQSection from "../components/FAQSection.astro";
+import RelatedCalculators from "../components/RelatedCalculators.astro";
+import MethodologySection from "../components/MethodologySection.astro";
+import CalculatorAssumptions from "../components/CalculatorAssumptions.astro";
+import KeyCostCategories from "../components/KeyCostCategories.astro";
+import ReduceCostTips from "../components/ReduceCostTips.astro";
+import { calculators } from "../data/calculators.js";
+
+const formulaCostFaqs = [
+  {
+    question: "How much does baby formula cost per month?",
+    answer:
+      "Many families spend roughly $100 to $300 per month on formula, but the actual cost can be lower or much higher depending on ounces per day, powder versus ready-to-feed formula, specialty formula needs, waste, coupons, WIC benefits, and whether the baby is combo fed.",
+  },
+  {
+    question: "Is powder formula cheaper than ready-to-feed formula?",
+    answer:
+      "Powder formula is usually cheaper per prepared ounce than ready-to-feed formula. Ready-to-feed can be convenient, but it often costs more and may increase the monthly formula budget quickly.",
+  },
+  {
+    question: "How do I calculate formula cost?",
+    answer:
+      "Estimate prepared ounces per day, multiply by the average days per month, then multiply by the cost per prepared ounce. This calculator also adjusts for combo feeding, waste, specialty markup, monthly extras, and help such as WIC or family support.",
+  },
+  {
+    question: "Does this calculator include WIC or family help?",
+    answer:
+      "Yes. You can enter monthly WIC benefits, family help, gift cards, or other support. The calculator subtracts that help from the estimated monthly formula cost to show the likely parent out-of-pocket amount.",
+  },
+  {
+    question: "Can this calculator compare powder and ready-to-feed formula?",
+    answer:
+      "Yes. If you enter costs for both powder and liquid formula, the calculator estimates the monthly difference and the first-year difference between the two options.",
+  },
+];
+
+const relatedCalculators = calculators
+  .filter((calculator) => {
+    const category = (calculator.category || "").toLowerCase();
+    const href = calculator.href || "";
+
+    return (
+      href !== "/formula-cost-calculator" &&
+      (
+        category.includes("baby") ||
+        category.includes("parent") ||
+        category.includes("family") ||
+        href.includes("baby") ||
+        href.includes("diaper") ||
+        href.includes("childcare") ||
+        href.includes("daycare") ||
+        href.includes("nanny") ||
+        href.includes("maternity") ||
+        href.includes("adoption")
+      )
+    );
+  })
+  .slice(0, 4);
+---
+
+<Layout
+  title="Formula Cost Calculator"
+  description="Use this formula cost calculator to estimate monthly baby formula costs, first-year formula costs, WIC or help coverage, and powder versus ready-to-feed savings."
+>
+  <style>
+    .container {
+      max-width: 900px;
+      margin: auto;
+    }
+
+    .calculator {
+      background: white;
+      padding: 40px;
+      border-radius: 24px;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.06);
+    }
+
+    .calculator h2 {
+      margin-top: 0;
+      font-size: 2rem;
+      margin-bottom: 18px;
+      color: #0f172a;
+    }
+
+    .calculator-intro {
+      color: #334155;
+      line-height: 1.8;
+      margin-bottom: 30px;
+      font-size: 1.05rem;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+    }
+
+    .field label {
+      display: block;
+      font-weight: 800;
+      margin-bottom: 10px;
+      color: #0f172a;
+    }
+
+    .field input,
+    .field select {
+      width: 100%;
+      padding: 16px;
+      border-radius: 12px;
+      border: 1px solid #cbd5e1;
+      font-size: 1rem;
+      box-sizing: border-box;
+      background: white;
+    }
+
+    button {
+      margin-top: 30px;
+      background: #0f766e;
+      color: white;
+      border: none;
+      padding: 18px 32px;
+      border-radius: 999px;
+      font-size: 1.05rem;
+      font-weight: 800;
+      cursor: pointer;
+      transition: opacity 0.2s ease;
+    }
+
+    button:hover {
+      opacity: 0.92;
+    }
+
+    .results {
+      margin-top: 36px;
+      background: #f8fafc;
+      padding: 32px;
+      border-radius: 24px;
+      border: 1px solid var(--border);
+      box-shadow: 0 10px 24px rgba(15, 23, 42, 0.04);
+      display: none;
+    }
+
+    .results.visible {
+      display: block;
+    }
+
+    .total-price {
+      font-size: clamp(2.5rem, 6vw, 4rem);
+      font-weight: 900;
+      color: #0f172a;
+      line-height: 1.05;
+      margin-bottom: 12px;
+    }
+
+    .result-label {
+      font-size: 1.15rem;
+      font-weight: 800;
+      color: #0f766e;
+      margin-bottom: 24px;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+    }
+
+    .result-details {
+      color: #334155;
+      line-height: 1.9;
+      font-size: 1.02rem;
+    }
+
+    .result-details p {
+      margin: 0 0 12px;
+    }
+
+    .mini-summary {
+      margin-top: 24px;
+      padding: 20px;
+      border-radius: 18px;
+      background: white;
+      border: 1px solid #dbe4ee;
+      color: #334155;
+      line-height: 1.8;
+    }
+
+    .disclaimer {
+      margin-top: 24px;
+      font-size: 0.9rem;
+      color: #64748b;
+    }
+
+    .content-section {
+      margin-top: 60px;
+    }
+
+    .content-section h2 {
+      font-size: 2rem;
+      margin-bottom: 20px;
+      color: #0f172a;
+    }
+
+    .content-section p,
+    .content-section li {
+      font-size: 1.1rem;
+      line-height: 1.9;
+      color: #334155;
+    }
+
+    .content-link {
+      color: #0f766e;
+      font-weight: 700;
+      text-decoration: none;
+    }
+
+    .content-link:hover {
+      text-decoration: underline;
+    }
+
+    @media (max-width: 768px) {
+      .calculator {
+        padding: 24px;
+      }
+
+      .grid {
+        grid-template-columns: 1fr;
+      }
+
+      .calculator h2,
+      .content-section h2 {
+        font-size: 1.7rem;
+      }
+
+      .results {
+        padding: 24px;
+      }
+    }
+  </style>
+
+  <div class="container">
+    <CalculatorPageShell
+      eyebrow="Formula Cost Calculator"
+      title="Formula Cost Calculator"
+      description="Estimate monthly formula cost, first-year formula cost, and the out-of-pocket gap after WIC, gifts, coupons, or family help."
+    >
+      <div class="calculator">
+        <h2>Monthly Baby Formula Cost Calculator</h2>
+
+        <p class="calculator-intro">
+          Enter your baby's formula use, container costs, feeding type, and any
+          monthly help you expect. This calculator estimates monthly formula
+          cost, first-year cost, and the cost difference between powder and
+          ready-to-feed formula when both prices are entered.
+        </p>
+
+        <div class="grid">
+          <div class="field">
+            <label for="babyStage">Baby Stage</label>
+            <select id="babyStage">
+              <option value="newborn">Newborn or lower intake</option>
+              <option value="infant" selected>Infant</option>
+              <option value="olderBaby">Older baby</option>
+              <option value="custom">Custom ounces per day</option>
+            </select>
+          </div>
+
+          <div class="field">
+            <label for="ouncesPerDay">Prepared Formula Ounces per Day</label>
+            <input id="ouncesPerDay" type="number" placeholder="Example: 28" />
+          </div>
+
+          <div class="field">
+            <label for="formulaPercent">Percent of Feedings Using Formula</label>
+            <input id="formulaPercent" type="number" placeholder="Example: 100" />
+          </div>
+
+          <div class="field">
+            <label for="formulaType">Primary Formula Type</label>
+            <select id="formulaType">
+              <option value="powder" selected>Powder formula</option>
+              <option value="liquid">Ready-to-feed or liquid concentrate</option>
+              <option value="compare">Compare powder and liquid</option>
+            </select>
+          </div>
+
+          <div class="field">
+            <label for="powderPreparedOunces">Powder Prepared Ounces per Can</label>
+            <input id="powderPreparedOunces" type="number" placeholder="Example: 240" />
+          </div>
+
+          <div class="field">
+            <label for="powderCanCost">Powder Can Cost</label>
+            <input id="powderCanCost" type="number" step="0.01" placeholder="Example: 34.99" />
+          </div>
+
+          <div class="field">
+            <label for="liquidPreparedOunces">Liquid Prepared Ounces per Case</label>
+            <input id="liquidPreparedOunces" type="number" placeholder="Example: 192" />
+          </div>
+
+          <div class="field">
+            <label for="liquidCaseCost">Liquid Case Cost</label>
+            <input id="liquidCaseCost" type="number" step="0.01" placeholder="Example: 52.99" />
+          </div>
+
+          <div class="field">
+            <label for="specialtyMarkup">Specialty or Premium Formula Markup (%)</label>
+            <input id="specialtyMarkup" type="number" placeholder="Example: 20" />
+          </div>
+
+          <div class="field">
+            <label for="monthlyExtras">Monthly Extras or Delivery Fees</label>
+            <input id="monthlyExtras" type="number" step="0.01" placeholder="Example: 12" />
+          </div>
+
+          <div class="field">
+            <label for="monthlyHelp">Monthly WIC, Coupons, Gifts, or Family Help</label>
+            <input id="monthlyHelp" type="number" step="0.01" placeholder="Example: 75" />
+          </div>
+
+          <div class="field">
+            <label for="wasteBuffer">Waste, Spills, or Schedule Buffer (%)</label>
+            <input id="wasteBuffer" type="number" placeholder="Example: 10" />
+          </div>
+
+          <div class="field">
+            <label for="monthsToEstimate">Months to Estimate</label>
+            <input id="monthsToEstimate" type="number" placeholder="Example: 12" />
+          </div>
+        </div>
+
+        <button id="formulaButton" type="button">Calculate Formula Cost</button>
+
+        <div class="results" id="results">
+          <div class="result-label">Estimated Monthly Out-of-Pocket Cost</div>
+
+          <div class="total-price" id="totalPrice"></div>
+
+          <div class="result-details" id="resultDetails"></div>
+
+          <div class="mini-summary" id="formulaSummary"></div>
+
+          <div class="disclaimer">
+            This estimate is for planning only. Formula needs can change based
+            on age, feeding schedule, medical guidance, formula tolerance,
+            recalls, store availability, and WIC-approved product rules.
+          </div>
+        </div>
+      </div>
+
+      <section class="content-section">
+        <h2>How This Formula Cost Calculator Works</h2>
+
+        <p>
+          The calculator estimates monthly prepared formula ounces, converts the
+          formula price into cost per prepared ounce, adds waste and monthly
+          extras, then subtracts WIC, coupons, gifts, or family help to show the
+          estimated parent out-of-pocket cost.
+        </p>
+
+        <p>
+          Formula costs can swing quickly because babies do not all drink the
+          same amount, powder and ready-to-feed prices are very different, and
+          specialty formulas can cost much more than standard store-brand or
+          national-brand powder.
+        </p>
+
+        <p>
+          For a broader baby budget, compare this estimate with the
+          <a class="content-link" href="/baby-parenting-calculators">
+            baby and parenting calculators hub
+          </a>,
+          the
+          <a class="content-link" href="/baby-cost-calculator">
+            baby cost calculator
+          </a>,
+          and the
+          <a class="content-link" href="/diaper-cost-calculator">
+            diaper cost calculator
+          </a>.
+        </p>
+      </section>
+
+      <KeyCostCategories
+        items={[
+          {
+            title: "Formula intake",
+            description:
+              "Prepared ounces per day drive the estimate. Combo feeding lowers the formula portion of the monthly total.",
+          },
+          {
+            title: "Powder formula",
+            description:
+              "Powder cost is estimated from prepared ounces per can and the cost of each can.",
+          },
+          {
+            title: "Ready-to-feed or liquid formula",
+            description:
+              "Liquid formula is estimated from prepared ounces per case and the case price, which often produces a higher cost per ounce.",
+          },
+          {
+            title: "Specialty formula",
+            description:
+              "Hypoallergenic, sensitive, organic, or specialty formulas can raise the monthly estimate through the markup field.",
+          },
+          {
+            title: "Help and benefits",
+            description:
+              "WIC benefits, coupons, gift cards, and family help reduce the estimated parent out-of-pocket gap.",
+          },
+        ]}
+      />
+
+      <ReduceCostTips
+        items={[
+          "Compare formula by cost per prepared ounce, not just by can or case price.",
+          "Do not bulk-buy a formula until you know the baby tolerates it and your pediatrician is comfortable with it.",
+          "Check whether WIC, coupons, store rewards, or manufacturer programs apply to the exact formula you use.",
+          "Use ready-to-feed formula for convenience when needed, but price out the monthly difference before making it the default.",
+          "Build a small waste buffer for unfinished bottles, travel, spills, and feeding schedule changes.",
+          "Keep formula spending separate from optional baby gear so recurring feeding costs do not get squeezed.",
+        ]}
+      />
+
+      <CalculatorAssumptions
+        items={[
+          "Monthly usage is based on a 30.4-day average month.",
+          "Formula percentage defaults to 100 percent if the field is left blank.",
+          "If prepared ounces per day is left blank, the calculator uses the selected baby stage estimate.",
+          "Powder and liquid formula costs are calculated from prepared ounces per container and container price.",
+          "Specialty markup is applied to formula cost before monthly extras and help are included.",
+          "Waste buffer is applied to formula cost and monthly extras.",
+          "Monthly help is subtracted after formula cost, extras, markup, and buffer are calculated.",
+          "Out-of-pocket cost cannot fall below zero.",
+        ]}
+      />
+
+      <section class="content-section">
+        <h2>Why Formula Budgets Need a Real Monthly Number</h2>
+
+        <p>
+          Formula is not a one-time registry item. It is a recurring grocery
+          cost that can last for months, and the monthly number can rise if a
+          baby needs a specific brand, a sensitive formula, or ready-to-feed
+          bottles for convenience or medical reasons.
+        </p>
+
+        <p>
+          A realistic formula budget should separate the gross cost from the
+          out-of-pocket cost. WIC, coupons, gifts, and family help can reduce the
+          parent gap, but they should not hide the full monthly feeding cost.
+        </p>
+      </section>
+
+      <div class="content-section">
+        <FAQSection title="Formula Cost Calculator FAQ" faqs={formulaCostFaqs} />
+      </div>
+
+      <div class="content-section">
+        <RelatedCalculators calculators={relatedCalculators} />
+      </div>
+    </CalculatorPageShell>
+
+    <section id="FinancialRedFlags" class="content-section">
+      <h2>Formula Budget Red Flags</h2>
+
+      <p>
+        Formula spending deserves caution when the monthly plan only works if
+        every coupon, benefit, sale, or gift arrives exactly as expected. A baby
+        feeding budget should still work if the family has to switch brands,
+        sizes, or formula type.
+      </p>
+
+      <ul>
+        <li>The formula budget depends on credit card debt every month.</li>
+        <li>There is no backup plan if the baby needs a more expensive specialty formula.</li>
+        <li>The estimate assumes WIC or coupons cover everything, with no cash gap planned.</li>
+        <li>Ready-to-feed formula is being used full time without checking the monthly price difference.</li>
+        <li>Optional baby purchases are crowding out recurring feeding costs.</li>
+      </ul>
+    </section>
+
+    <MethodologySection category="baby formula cost estimates" updated="June 2026" />
+  </div>
+
+  <script is:inline>
+    const getNumber = (id) => {
+      const rawValue = document.getElementById(id)?.value;
+      const value = Number(rawValue);
+      return Number.isFinite(value) && value >= 0 ? value : 0;
+    };
+
+    const getValue = (id) => document.getElementById(id)?.value || "";
+
+    function formatMoney(value) {
+      return value.toLocaleString(undefined, {
+        style: "currency",
+        currency: "USD",
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2,
+      });
+    }
+
+    function getStageOuncesPerDay(stage) {
+      if (stage === "newborn") return 18;
+      if (stage === "infant") return 28;
+      if (stage === "olderBaby") return 24;
+      return 0;
+    }
+
+    function getCostPerOunce(preparedOunces, containerCost) {
+      if (preparedOunces <= 0 || containerCost <= 0) return 0;
+      return containerCost / preparedOunces;
+    }
+
+    function calculateFormulaCost() {
+      const babyStage = getValue("babyStage");
+      const customOuncesPerDay = getNumber("ouncesPerDay");
+      const ouncesPerDay =
+        customOuncesPerDay > 0 ? customOuncesPerDay : getStageOuncesPerDay(babyStage);
+
+      const rawFormulaPercent = getNumber("formulaPercent");
+      const formulaPercent = rawFormulaPercent > 0 ? Math.min(rawFormulaPercent, 100) : 100;
+      const formulaShare = formulaPercent / 100;
+
+      const formulaType = getValue("formulaType");
+
+      const powderPreparedOunces = getNumber("powderPreparedOunces");
+      const powderCanCost = getNumber("powderCanCost");
+      const liquidPreparedOunces = getNumber("liquidPreparedOunces");
+      const liquidCaseCost = getNumber("liquidCaseCost");
+
+      const specialtyMarkup = getNumber("specialtyMarkup") / 100;
+      const monthlyExtras = getNumber("monthlyExtras");
+      const monthlyHelp = getNumber("monthlyHelp");
+      const wasteBuffer = getNumber("wasteBuffer") / 100;
+      const monthsToEstimate = Math.max(getNumber("monthsToEstimate"), 12);
+
+      const results = document.getElementById("results");
+      const totalPrice = document.getElementById("totalPrice");
+      const resultDetails = document.getElementById("resultDetails");
+      const formulaSummary = document.getElementById("formulaSummary");
+
+      results.classList.add("visible");
+
+      const powderCostPerOunce = getCostPerOunce(powderPreparedOunces, powderCanCost);
+      const liquidCostPerOunce = getCostPerOunce(liquidPreparedOunces, liquidCaseCost);
+
+      let primaryCostPerOunce = 0;
+      let primaryLabel = "formula";
+
+      if (formulaType === "liquid") {
+        primaryCostPerOunce = liquidCostPerOunce;
+        primaryLabel = "ready-to-feed or liquid formula";
+      } else {
+        primaryCostPerOunce = powderCostPerOunce;
+        primaryLabel = "powder formula";
+      }
+
+      if (ouncesPerDay <= 0 || primaryCostPerOunce <= 0) {
+        totalPrice.textContent = "$0.00";
+        resultDetails.innerHTML =
+          "<p>Enter prepared formula ounces per day and the cost details for your primary formula type to estimate monthly formula cost.</p>";
+        formulaSummary.textContent = "";
+        return;
+      }
+
+      const daysPerMonth = 30.4;
+      const monthlyPreparedOunces = ouncesPerDay * daysPerMonth * formulaShare;
+      const baseMonthlyFormulaCost = monthlyPreparedOunces * primaryCostPerOunce;
+      const specialtyAmount = baseMonthlyFormulaCost * specialtyMarkup;
+      const subtotalBeforeBuffer = baseMonthlyFormulaCost + specialtyAmount + monthlyExtras;
+      const bufferAmount = subtotalBeforeBuffer * wasteBuffer;
+      const monthlyGrossCost = subtotalBeforeBuffer + bufferAmount;
+      const monthlyOutOfPocket = Math.max(monthlyGrossCost - monthlyHelp, 0);
+
+      const firstYearGross = monthlyGrossCost * 12;
+      const firstYearOutOfPocket = monthlyOutOfPocket * 12;
+      const selectedPeriodOutOfPocket = monthlyOutOfPocket * monthsToEstimate;
+
+      const powderMonthlyCost =
+        powderCostPerOunce > 0
+          ? monthlyPreparedOunces * powderCostPerOunce * (1 + specialtyMarkup)
+          : 0;
+      const liquidMonthlyCost =
+        liquidCostPerOunce > 0
+          ? monthlyPreparedOunces * liquidCostPerOunce * (1 + specialtyMarkup)
+          : 0;
+      const liquidMinusPowder = liquidMonthlyCost - powderMonthlyCost;
+
+      totalPrice.textContent = formatMoney(monthlyOutOfPocket);
+
+      let details = `
+        <p><strong>Formula used for estimate:</strong> ${primaryLabel}.</p>
+
+        <p><strong>Estimated prepared formula per month:</strong> ${monthlyPreparedOunces.toFixed(0)} ounces.</p>
+
+        <p><strong>Formula feeding share:</strong> ${formulaPercent.toFixed(0)} percent.</p>
+
+        <p><strong>Primary formula cost per prepared ounce:</strong> ${formatMoney(primaryCostPerOunce)}.</p>
+
+        <p><strong>Base monthly formula cost:</strong> ${formatMoney(baseMonthlyFormulaCost)}.</p>
+
+        <p><strong>Specialty or premium formula adjustment:</strong> ${formatMoney(specialtyAmount)}.</p>
+
+        <p><strong>Monthly extras:</strong> ${formatMoney(monthlyExtras)} for delivery, bottle waste, travel bottles, or other feeding costs.</p>
+
+        <p><strong>Waste and schedule buffer:</strong> ${formatMoney(bufferAmount)}.</p>
+
+        <p><strong>Monthly help subtracted:</strong> ${formatMoney(monthlyHelp)}.</p>
+
+        <p><strong>Estimated first-year out-of-pocket cost:</strong> ${formatMoney(firstYearOutOfPocket)}.</p>
+
+        <p><strong>Estimated ${monthsToEstimate.toFixed(0)}-month out-of-pocket cost:</strong> ${formatMoney(selectedPeriodOutOfPocket)}.</p>
+      `;
+
+      if (
+        (formulaType === "compare" || powderCostPerOunce > 0 || liquidCostPerOunce > 0) &&
+        powderCostPerOunce > 0 &&
+        liquidCostPerOunce > 0
+      ) {
+        details += `
+          <p><strong>Powder monthly formula cost before extras and help:</strong> ${formatMoney(powderMonthlyCost)}.</p>
+
+          <p><strong>Liquid monthly formula cost before extras and help:</strong> ${formatMoney(liquidMonthlyCost)}.</p>
+
+          <p><strong>Liquid minus powder difference:</strong> ${formatMoney(liquidMinusPowder)} per month and ${formatMoney(liquidMinusPowder * 12)} over a year.</p>
+        `;
+      }
+
+      resultDetails.innerHTML = details;
+
+      formulaSummary.innerHTML = `
+        Based on <strong>${ouncesPerDay.toFixed(1)} prepared ounces per day</strong>
+        and formula covering <strong>${formulaPercent.toFixed(0)} percent</strong>
+        of feedings, your estimated formula cost is
+        <strong>${formatMoney(monthlyGrossCost)}</strong> per month before help
+        and <strong>${formatMoney(monthlyOutOfPocket)}</strong> per month after
+        help. Annualized over the first year, that is about
+        <strong>${formatMoney(firstYearGross)}</strong> before help and
+        <strong>${formatMoney(firstYearOutOfPocket)}</strong> out of pocket.
+      `;
+    }
+
+    document
+      .getElementById("formulaButton")
+      .addEventListener("click", calculateFormulaCost);
+  </script>
+</Layout>

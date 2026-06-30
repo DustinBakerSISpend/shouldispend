@@ -1,0 +1,714 @@
+---
+import Layout from "../layouts/Layout.astro";
+import CalculatorPageShell from "../components/CalculatorPageShell.astro";
+import FAQSection from "../components/FAQSection.astro";
+import RelatedCalculators from "../components/RelatedCalculators.astro";
+import MethodologySection from "../components/MethodologySection.astro";
+import CalculatorAssumptions from "../components/CalculatorAssumptions.astro";
+import KeyCostCategories from "../components/KeyCostCategories.astro";
+import ReduceCostTips from "../components/ReduceCostTips.astro";
+import { calculators } from "../data/calculators.js";
+
+const babyRegistryBudgetFaqs = [
+  {
+    question: "How much should I budget for a baby registry?",
+    answer:
+      "A practical baby registry can range from a few hundred dollars to several thousand dollars depending on what you already have, what gifts cover, whether you buy new or used, and how many optional items you include. The most useful number is the parent out-of-pocket gap after gifts, hand-me-downs, returns, and discounts.",
+  },
+  {
+    question: "What should go on a baby registry first?",
+    answer:
+      "Prioritize essentials first: safe sleep items, diapers, wipes, feeding supplies, health and safety items, basic clothing, bathing supplies, and transportation needs. Optional decor, extra toys, upgraded gadgets, and duplicate convenience items can usually wait.",
+  },
+  {
+    question: "Does this calculator include gifts and hand-me-downs?",
+    answer:
+      "Yes. You can enter expected gifts, gift cards, hand-me-down value, duplicate returns, and family help. The calculator subtracts those from the registry cost to estimate the parent out-of-pocket gap.",
+  },
+  {
+    question: "Should I include optional baby items?",
+    answer:
+      "Yes, but separate them from essentials. This calculator shows total registry cost, essential cost, optional cost, and how much can be delayed so parents can avoid treating every registry item as equally urgent.",
+  },
+  {
+    question: "Does a registry completion discount change the budget?",
+    answer:
+      "It can. A completion discount may lower the cost of eligible unpurchased items, but not every item qualifies. This calculator uses the discount as a planning estimate only.",
+  },
+];
+
+const relatedCalculators = calculators
+  .filter((calculator) => {
+    const category = (calculator.category || "").toLowerCase();
+    const href = calculator.href || "";
+
+    return (
+      href !== "/baby-registry-budget-calculator" &&
+      (
+        category.includes("baby") ||
+        category.includes("parent") ||
+        category.includes("family") ||
+        href.includes("baby") ||
+        href.includes("diaper") ||
+        href.includes("formula") ||
+        href.includes("nursery") ||
+        href.includes("birth") ||
+        href.includes("parental-leave") ||
+        href.includes("childcare") ||
+        href.includes("daycare") ||
+        href.includes("nanny") ||
+        href.includes("maternity") ||
+        href.includes("adoption")
+      )
+    );
+  })
+  .slice(0, 4);
+---
+
+<Layout
+  title="Baby Registry Budget Calculator"
+  description="Use this baby registry budget calculator to estimate registry essentials, optional items, gifts covered, discounts, and parent out-of-pocket gap."
+>
+  <style>
+    .container {
+      max-width: 900px;
+      margin: auto;
+    }
+
+    .calculator {
+      background: white;
+      padding: 40px;
+      border-radius: 24px;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.06);
+    }
+
+    .calculator h2 {
+      margin-top: 0;
+      font-size: 2rem;
+      margin-bottom: 18px;
+      color: #0f172a;
+    }
+
+    .calculator-intro {
+      color: #334155;
+      line-height: 1.8;
+      margin-bottom: 30px;
+      font-size: 1.05rem;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+    }
+
+    .field label {
+      display: block;
+      font-weight: 800;
+      margin-bottom: 10px;
+      color: #0f172a;
+    }
+
+    .field input,
+    .field select {
+      width: 100%;
+      padding: 16px;
+      border-radius: 12px;
+      border: 1px solid #cbd5e1;
+      font-size: 1rem;
+      box-sizing: border-box;
+      background: white;
+    }
+
+    button {
+      margin-top: 30px;
+      background: #0f766e;
+      color: white;
+      border: none;
+      padding: 18px 32px;
+      border-radius: 999px;
+      font-size: 1.05rem;
+      font-weight: 800;
+      cursor: pointer;
+      transition: opacity 0.2s ease;
+    }
+
+    button:hover {
+      opacity: 0.92;
+    }
+
+    .results {
+      margin-top: 36px;
+      background: #f8fafc;
+      padding: 32px;
+      border-radius: 24px;
+      border: 1px solid var(--border);
+      box-shadow: 0 10px 24px rgba(15, 23, 42, 0.04);
+      display: none;
+    }
+
+    .results.visible {
+      display: block;
+    }
+
+    .total-price {
+      font-size: clamp(2.5rem, 6vw, 4rem);
+      font-weight: 900;
+      color: #0f172a;
+      line-height: 1.05;
+      margin-bottom: 12px;
+    }
+
+    .result-label {
+      font-size: 1.15rem;
+      font-weight: 800;
+      color: #0f766e;
+      margin-bottom: 24px;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+    }
+
+    .result-details {
+      color: #334155;
+      line-height: 1.9;
+      font-size: 1.02rem;
+    }
+
+    .result-details p {
+      margin: 0 0 12px;
+    }
+
+    .mini-summary {
+      margin-top: 24px;
+      padding: 20px;
+      border-radius: 18px;
+      background: white;
+      border: 1px solid #dbe4ee;
+      color: #334155;
+      line-height: 1.8;
+    }
+
+    .disclaimer {
+      margin-top: 24px;
+      font-size: 0.9rem;
+      color: #64748b;
+    }
+
+    .content-section {
+      margin-top: 60px;
+    }
+
+    .content-section h2 {
+      font-size: 2rem;
+      margin-bottom: 20px;
+      color: #0f172a;
+    }
+
+    .content-section p,
+    .content-section li {
+      font-size: 1.1rem;
+      line-height: 1.9;
+      color: #334155;
+    }
+
+    .content-link {
+      color: #0f766e;
+      font-weight: 700;
+      text-decoration: none;
+    }
+
+    .content-link:hover {
+      text-decoration: underline;
+    }
+
+    @media (max-width: 768px) {
+      .calculator {
+        padding: 24px;
+      }
+
+      .grid {
+        grid-template-columns: 1fr;
+      }
+
+      .calculator h2,
+      .content-section h2 {
+        font-size: 1.7rem;
+      }
+
+      .results {
+        padding: 24px;
+      }
+    }
+  </style>
+
+  <div class="container">
+    <CalculatorPageShell
+      eyebrow="Baby Registry Budget Calculator"
+      title="Baby Registry Budget Calculator"
+      description="Estimate registry essentials, optional baby items, gifts covered, completion discounts, duplicate returns, and the parent out-of-pocket gap."
+    >
+      <div class="calculator">
+        <h2>Baby Registry Out-of-Pocket Calculator</h2>
+
+        <p class="calculator-intro">
+          Enter essential registry items, optional items, expected gifts,
+          hand-me-downs, duplicate returns, discounts, and delayed purchases.
+          This calculator estimates the total registry cost and the parent
+          out-of-pocket gap after help.
+        </p>
+
+        <div class="grid">
+          <div class="field">
+            <label for="registryLevel">Registry Planning Level</label>
+            <select id="registryLevel">
+              <option value="essentials">Essentials-first registry</option>
+              <option value="practical" selected>Practical registry</option>
+              <option value="full">Full registry with extras</option>
+              <option value="custom">Custom itemized registry</option>
+            </select>
+          </div>
+
+          <div class="field">
+            <label for="sleepItems">Safe Sleep Items</label>
+            <input id="sleepItems" type="number" step="0.01" placeholder="Example: 350" />
+          </div>
+
+          <div class="field">
+            <label for="diapersWipes">Diapers, Wipes, and Changing Supplies</label>
+            <input id="diapersWipes" type="number" step="0.01" placeholder="Example: 300" />
+          </div>
+
+          <div class="field">
+            <label for="feedingSupplies">Feeding Supplies</label>
+            <input id="feedingSupplies" type="number" step="0.01" placeholder="Example: 225" />
+          </div>
+
+          <div class="field">
+            <label for="healthSafety">Health and Safety Items</label>
+            <input id="healthSafety" type="number" step="0.01" placeholder="Example: 150" />
+          </div>
+
+          <div class="field">
+            <label for="clothingBasics">Clothing Basics</label>
+            <input id="clothingBasics" type="number" step="0.01" placeholder="Example: 250" />
+          </div>
+
+          <div class="field">
+            <label for="bathingCare">Bathing and Baby Care</label>
+            <input id="bathingCare" type="number" step="0.01" placeholder="Example: 125" />
+          </div>
+
+          <div class="field">
+            <label for="travelGear">Car Seat, Stroller, and Travel Gear</label>
+            <input id="travelGear" type="number" step="0.01" placeholder="Example: 700" />
+          </div>
+
+          <div class="field">
+            <label for="nurseryGear">Nursery Furniture or Room Gear</label>
+            <input id="nurseryGear" type="number" step="0.01" placeholder="Example: 650" />
+          </div>
+
+          <div class="field">
+            <label for="parentRecovery">Parent Recovery and Postpartum Items</label>
+            <input id="parentRecovery" type="number" step="0.01" placeholder="Example: 175" />
+          </div>
+
+          <div class="field">
+            <label for="optionalGear">Optional Gadgets or Convenience Items</label>
+            <input id="optionalGear" type="number" step="0.01" placeholder="Example: 400" />
+          </div>
+
+          <div class="field">
+            <label for="toysBooksDecor">Toys, Books, Decor, and Extras</label>
+            <input id="toysBooksDecor" type="number" step="0.01" placeholder="Example: 250" />
+          </div>
+
+          <div class="field">
+            <label for="expectedGifts">Expected Gifts Purchased by Others</label>
+            <input id="expectedGifts" type="number" step="0.01" placeholder="Example: 1200" />
+          </div>
+
+          <div class="field">
+            <label for="giftCards">Gift Cards or Registry Credit</label>
+            <input id="giftCards" type="number" step="0.01" placeholder="Example: 300" />
+          </div>
+
+          <div class="field">
+            <label for="handMeDownValue">Safe Hand-Me-Down Value</label>
+            <input id="handMeDownValue" type="number" step="0.01" placeholder="Example: 500" />
+          </div>
+
+          <div class="field">
+            <label for="duplicateReturns">Duplicate Gift Returns or Exchanges</label>
+            <input id="duplicateReturns" type="number" step="0.01" placeholder="Example: 150" />
+          </div>
+
+          <div class="field">
+            <label for="completionDiscount">Registry Completion Discount (%)</label>
+            <input id="completionDiscount" type="number" placeholder="Example: 15" />
+          </div>
+
+          <div class="field">
+            <label for="delayOptionalAmount">Optional Items to Delay Until Later</label>
+            <input id="delayOptionalAmount" type="number" step="0.01" placeholder="Example: 350" />
+          </div>
+
+          <div class="field">
+            <label for="taxShippingPercent">Tax, Shipping, and Price Buffer (%)</label>
+            <input id="taxShippingPercent" type="number" placeholder="Example: 10" />
+          </div>
+        </div>
+
+        <button id="registryButton" type="button">Calculate Registry Budget</button>
+
+        <div class="results" id="results">
+          <div class="result-label">Estimated Parent Out-of-Pocket Gap</div>
+
+          <div class="total-price" id="totalPrice"></div>
+
+          <div class="result-details" id="resultDetails"></div>
+
+          <div class="mini-summary" id="registrySummary"></div>
+
+          <div class="disclaimer">
+            This estimate is for planning only. Registry prices, gift coverage,
+            completion discounts, shipping fees, return rules, recalls, and
+            product availability can change.
+          </div>
+        </div>
+      </div>
+
+      <section class="content-section">
+        <h2>How This Baby Registry Budget Calculator Works</h2>
+
+        <p>
+          The calculator separates essential registry categories from optional
+          items, then applies tax, shipping, and price buffers. It subtracts
+          expected gifts, gift cards, safe hand-me-downs, duplicate returns, and
+          completion discounts to estimate the parent out-of-pocket gap.
+        </p>
+
+        <p>
+          This matters because a registry can look manageable when friends and
+          family are buying gifts, but parents still need a cash plan for
+          unpurchased essentials. The safest approach is to fund diapers, wipes,
+          feeding supplies, safe sleep, health items, and transportation before
+          buying optional gadgets, decor, or duplicate convenience items.
+        </p>
+
+        <p>
+          For broader baby planning, compare this estimate with the
+          <a class="content-link" href="/baby-parenting-calculators">
+            baby and parenting calculators hub
+          </a>,
+          the
+          <a class="content-link" href="/diaper-cost-calculator">
+            diaper cost calculator
+          </a>,
+          the
+          <a class="content-link" href="/formula-cost-calculator">
+            formula cost calculator
+          </a>,
+          and the
+          <a class="content-link" href="/nursery-cost-calculator">
+            nursery cost calculator
+          </a>.
+        </p>
+      </section>
+
+      <KeyCostCategories
+        items={[
+          {
+            title: "Registry essentials",
+            description:
+              "Safe sleep, diapers, wipes, feeding, health, safety, clothing, bathing, travel, and parent recovery items form the essential registry base.",
+          },
+          {
+            title: "Optional registry items",
+            description:
+              "Convenience gadgets, extra decor, toys, books, and upgraded items can make the registry larger but are often easier to delay.",
+          },
+          {
+            title: "Gift coverage",
+            description:
+              "Expected gifts, gift cards, registry credits, family help, and safe hand-me-downs reduce the parent out-of-pocket gap.",
+          },
+          {
+            title: "Duplicate returns",
+            description:
+              "Duplicate gifts and exchanges can help cover unpurchased essentials if return rules and timing work.",
+          },
+          {
+            title: "Completion discount",
+            description:
+              "A registry completion discount may reduce the remaining purchase cost, but the calculator treats it as an estimate.",
+          },
+        ]}
+      />
+
+      <ReduceCostTips
+        items={[
+          "Build the registry in essentials-first order before adding decor, toys, or upgraded gadgets.",
+          "Use gift cards and duplicate returns for diapers, wipes, feeding supplies, and safety items before optional purchases.",
+          "Do not assume every registry item will be purchased by someone else.",
+          "Check return windows, duplicate policies, and completion discount rules before relying on registry credit.",
+          "Accept hand-me-downs carefully and check safety standards before using sleep products, car seats, or older gear.",
+          "Delay optional items until after the baby arrives if the essentials gap is still large.",
+        ]}
+      />
+
+      <CalculatorAssumptions
+        items={[
+          "Preset registry levels provide planning estimates when itemized fields are left blank.",
+          "Custom item entries override preset estimates for those categories.",
+          "Essential cost includes sleep, diapers and wipes, feeding, health and safety, clothing basics, bathing, travel gear, nursery gear, and parent recovery items.",
+          "Optional cost includes convenience gear, gadgets, toys, books, decor, and extras.",
+          "Tax, shipping, and price buffer is applied to the full registry subtotal.",
+          "Expected gifts, gift cards, hand-me-down value, duplicate returns, and completion discount reduce the parent out-of-pocket estimate.",
+          "Delayed optional items are shown separately to estimate the must-buy-now gap.",
+          "Out-of-pocket cost cannot fall below zero.",
+        ]}
+      />
+
+      <section class="content-section">
+        <h2>Why Registry Budgets Should Separate Essentials from Extras</h2>
+
+        <p>
+          A baby registry is not just a wish list. It can become the family's
+          early baby budget. If gifts do not cover the essentials, parents still
+          need cash for safe sleep, diapers, wipes, feeding supplies, health
+          items, transportation, and recovery supplies.
+        </p>
+
+        <p>
+          Optional items are not bad, but they should not hide the real gap. A
+          monitor upgrade, matching decor, toy bundle, extra swing, or duplicate
+          convenience item can wait if the essential list is still underfunded.
+        </p>
+      </section>
+
+      <div class="content-section">
+        <FAQSection title="Baby Registry Budget Calculator FAQ" faqs={babyRegistryBudgetFaqs} />
+      </div>
+
+      <div class="content-section">
+        <RelatedCalculators calculators={relatedCalculators} />
+      </div>
+    </CalculatorPageShell>
+
+    <section id="FinancialRedFlags" class="content-section">
+      <h2>Baby Registry Budget Red Flags</h2>
+
+      <p>
+        A registry budget deserves caution when it assumes other people will
+        cover every essential item. Gifts help, but diapers, wipes, feeding
+        supplies, safe sleep, medical basics, and transportation still need a
+        parent backup plan.
+      </p>
+
+      <ul>
+        <li>The registry is heavy on optional gear while essentials are still uncovered.</li>
+        <li>The parent budget assumes every large item will be bought as a gift.</li>
+        <li>Duplicate returns are counted, but return windows or store policies are unknown.</li>
+        <li>Completion discounts are treated as guaranteed savings on every item.</li>
+        <li>Registry spending leaves no cash for diapers, formula, birth bills, or parental leave gaps.</li>
+      </ul>
+    </section>
+
+    <MethodologySection category="baby registry budget estimates" updated="June 2026" />
+  </div>
+
+  <script is:inline>
+    const getNumber = (id) => {
+      const rawValue = document.getElementById(id)?.value;
+      const value = Number(rawValue);
+      return Number.isFinite(value) && value >= 0 ? value : 0;
+    };
+
+    const getValue = (id) => document.getElementById(id)?.value || "";
+
+    function formatMoney(value) {
+      return value.toLocaleString(undefined, {
+        style: "currency",
+        currency: "USD",
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2,
+      });
+    }
+
+    function getPresetCosts(level) {
+      if (level === "essentials") {
+        return {
+          sleepItems: 250,
+          diapersWipes: 250,
+          feedingSupplies: 150,
+          healthSafety: 100,
+          clothingBasics: 150,
+          bathingCare: 75,
+          travelGear: 450,
+          nurseryGear: 250,
+          parentRecovery: 100,
+          optionalGear: 0,
+          toysBooksDecor: 50,
+        };
+      }
+
+      if (level === "full") {
+        return {
+          sleepItems: 650,
+          diapersWipes: 500,
+          feedingSupplies: 400,
+          healthSafety: 250,
+          clothingBasics: 500,
+          bathingCare: 225,
+          travelGear: 1200,
+          nurseryGear: 1400,
+          parentRecovery: 300,
+          optionalGear: 900,
+          toysBooksDecor: 500,
+        };
+      }
+
+      if (level === "custom") {
+        return {
+          sleepItems: 0,
+          diapersWipes: 0,
+          feedingSupplies: 0,
+          healthSafety: 0,
+          clothingBasics: 0,
+          bathingCare: 0,
+          travelGear: 0,
+          nurseryGear: 0,
+          parentRecovery: 0,
+          optionalGear: 0,
+          toysBooksDecor: 0,
+        };
+      }
+
+      return {
+        sleepItems: 400,
+        diapersWipes: 350,
+        feedingSupplies: 250,
+        healthSafety: 150,
+        clothingBasics: 300,
+        bathingCare: 125,
+        travelGear: 750,
+        nurseryGear: 700,
+        parentRecovery: 175,
+        optionalGear: 400,
+        toysBooksDecor: 250,
+      };
+    }
+
+    function valueOrPreset(id, preset) {
+      const value = getNumber(id);
+      return value > 0 ? value : preset[id] || 0;
+    }
+
+    function calculateRegistryBudget() {
+      const registryLevel = getValue("registryLevel");
+      const preset = getPresetCosts(registryLevel);
+
+      const sleepItems = valueOrPreset("sleepItems", preset);
+      const diapersWipes = valueOrPreset("diapersWipes", preset);
+      const feedingSupplies = valueOrPreset("feedingSupplies", preset);
+      const healthSafety = valueOrPreset("healthSafety", preset);
+      const clothingBasics = valueOrPreset("clothingBasics", preset);
+      const bathingCare = valueOrPreset("bathingCare", preset);
+      const travelGear = valueOrPreset("travelGear", preset);
+      const nurseryGear = valueOrPreset("nurseryGear", preset);
+      const parentRecovery = valueOrPreset("parentRecovery", preset);
+      const optionalGear = valueOrPreset("optionalGear", preset);
+      const toysBooksDecor = valueOrPreset("toysBooksDecor", preset);
+
+      const expectedGifts = getNumber("expectedGifts");
+      const giftCards = getNumber("giftCards");
+      const handMeDownValue = getNumber("handMeDownValue");
+      const duplicateReturns = getNumber("duplicateReturns");
+      const completionDiscount = Math.min(getNumber("completionDiscount"), 100) / 100;
+      const delayOptionalAmount = getNumber("delayOptionalAmount");
+      const taxShippingPercent = getNumber("taxShippingPercent") / 100;
+
+      const results = document.getElementById("results");
+      const totalPrice = document.getElementById("totalPrice");
+      const resultDetails = document.getElementById("resultDetails");
+      const registrySummary = document.getElementById("registrySummary");
+
+      results.classList.add("visible");
+
+      const essentialsTotal =
+        sleepItems +
+        diapersWipes +
+        feedingSupplies +
+        healthSafety +
+        clothingBasics +
+        bathingCare +
+        travelGear +
+        nurseryGear +
+        parentRecovery;
+
+      const optionalTotal = optionalGear + toysBooksDecor;
+      const registrySubtotal = essentialsTotal + optionalTotal;
+      const taxShippingBuffer = registrySubtotal * taxShippingPercent;
+      const registryTotalBeforeHelp = registrySubtotal + taxShippingBuffer;
+
+      const giftCoverage = expectedGifts + giftCards + handMeDownValue + duplicateReturns;
+      const remainingAfterGifts = Math.max(registryTotalBeforeHelp - giftCoverage, 0);
+      const completionDiscountSavings = remainingAfterGifts * completionDiscount;
+      const parentOutOfPocket = Math.max(remainingAfterGifts - completionDiscountSavings, 0);
+
+      const optionalDelay = Math.min(delayOptionalAmount, optionalTotal);
+      const mustBuyNowGap = Math.max(parentOutOfPocket - optionalDelay, 0);
+
+      const essentialsCoverageGap = Math.max(essentialsTotal - giftCoverage, 0);
+      const optionalShare =
+        registrySubtotal > 0 ? optionalTotal / registrySubtotal : 0;
+
+      totalPrice.textContent = formatMoney(parentOutOfPocket);
+
+      resultDetails.innerHTML = `
+        <p><strong>Registry planning level:</strong> ${registryLevel === "essentials" ? "essentials-first registry" : registryLevel === "full" ? "full registry with extras" : registryLevel === "custom" ? "custom itemized registry" : "practical registry"}.</p>
+
+        <p><strong>Essential registry cost:</strong> ${formatMoney(essentialsTotal)}.</p>
+
+        <p><strong>Optional registry cost:</strong> ${formatMoney(optionalTotal)}.</p>
+
+        <p><strong>Total registry subtotal:</strong> ${formatMoney(registrySubtotal)}.</p>
+
+        <p><strong>Tax, shipping, and price buffer:</strong> ${formatMoney(taxShippingBuffer)}.</p>
+
+        <p><strong>Total registry cost before help:</strong> ${formatMoney(registryTotalBeforeHelp)}.</p>
+
+        <p><strong>Gifts, gift cards, hand-me-downs, and duplicate returns:</strong> ${formatMoney(giftCoverage)}.</p>
+
+        <p><strong>Remaining after gifts and help:</strong> ${formatMoney(remainingAfterGifts)}.</p>
+
+        <p><strong>Estimated completion discount savings:</strong> ${formatMoney(completionDiscountSavings)}.</p>
+
+        <p><strong>Parent out-of-pocket gap:</strong> ${formatMoney(parentOutOfPocket)}.</p>
+
+        <p><strong>Optional items that can be delayed:</strong> ${formatMoney(optionalDelay)}.</p>
+
+        <p><strong>Must-buy-now gap after delaying optional items:</strong> ${formatMoney(mustBuyNowGap)}.</p>
+
+        <p><strong>Essentials coverage gap before discounts:</strong> ${formatMoney(essentialsCoverageGap)}.</p>
+
+        <p><strong>Optional share of the registry:</strong> ${(optionalShare * 100).toFixed(0)} percent.</p>
+      `;
+
+      registrySummary.innerHTML = `
+        Your estimated registry total is <strong>${formatMoney(registryTotalBeforeHelp)}</strong>
+        before help. Gifts, credits, hand-me-downs, and duplicate returns cover
+        about <strong>${formatMoney(giftCoverage)}</strong>. After the estimated
+        completion discount, the parent out-of-pocket gap is
+        <strong>${formatMoney(parentOutOfPocket)}</strong>. If you delay
+        <strong>${formatMoney(optionalDelay)}</strong> of optional items, the
+        must-buy-now gap falls to <strong>${formatMoney(mustBuyNowGap)}</strong>.
+      `;
+    }
+
+    document
+      .getElementById("registryButton")
+      .addEventListener("click", calculateRegistryBudget);
+  </script>
+</Layout>
