@@ -1,0 +1,827 @@
+---
+import Layout from "../layouts/Layout.astro";
+import CalculatorPageShell from "../components/CalculatorPageShell.astro";
+import FAQSection from "../components/FAQSection.astro";
+import RelatedCalculators from "../components/RelatedCalculators.astro";
+import MethodologySection from "../components/MethodologySection.astro";
+import CalculatorAssumptions from "../components/CalculatorAssumptions.astro";
+import KeyCostCategories from "../components/KeyCostCategories.astro";
+import ReduceCostTips from "../components/ReduceCostTips.astro";
+import { calculators } from "../data/calculators.js";
+
+const leaseBreakFaqs = [
+  {
+    question: "How much does it cost to break a lease?",
+    answer:
+      "The cost can range from a small administrative fee to several months of rent. It depends on the lease-break fee, notice period, rent due until a replacement tenant starts, reletting fees, lost deposit risk, unpaid charges, move timing, and whether the new place lowers your monthly rent.",
+  },
+  {
+    question: "Is the lease-break fee the only cost?",
+    answer:
+      "Usually no. A lease-break fee may be only one part of the cost. You may also owe notice-period rent, rent until the unit is re-rented, reletting or advertising fees, cleaning and repair charges, lost deposit money, and rent overlap with the new place.",
+  },
+  {
+    question: "What does rent until replaced mean?",
+    answer:
+      "It means you may owe rent until a new tenant takes over or the landlord re-rents the unit, depending on your lease and local rules. This calculator lets you estimate that exposure by entering the expected months until replacement.",
+  },
+  {
+    question: "Does this calculator replace legal advice?",
+    answer:
+      "No. Lease rules depend on the signed lease, landlord policy, state or local law, military orders, habitability issues, domestic violence protections, and whether the landlord must mitigate damages. Use this as a planning estimate, then verify the lease language.",
+  },
+  {
+    question: "Should I break a lease if the new rent is cheaper?",
+    answer:
+      "Maybe. A cheaper new rent can offset part of the lease-break cost over time, but it does not always solve the upfront cash problem. Compare the immediate cash needed with the monthly savings and the number of months it takes to break even.",
+  },
+];
+
+const relatedCalculators = calculators
+  .filter((calculator) =>
+    [
+      "/moving-calculators",
+      "/should-i-move-calculator",
+      "/security-deposit-and-move-in-cost-calculator",
+      "/moving-cost-calculator",
+      "/professional-movers-cost-calculator",
+      "/moving-truck-rental-cost-calculator",
+      "/how-much-should-i-save-before-moving-out",
+      "/first-apartment-cost-calculator",
+      "/roommate-vs-living-alone-calculator",
+    ].includes(calculator.href)
+  )
+  .filter((calculator) => calculator.href !== "/lease-break-cost-calculator")
+  .slice(0, 6);
+---
+
+<Layout
+  title="Lease Break Cost Calculator | ShouldISpend"
+  description="Estimate the cost to break a lease, including rent remaining, lease-break fees, notice rent, security deposit risk, reletting fees, rent until replaced, rent overlap, and new rent savings."
+>
+  <style>
+    .container {
+      max-width: 960px;
+      margin: auto;
+    }
+
+    .calculator {
+      background: white;
+      padding: 40px;
+      border-radius: 24px;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.06);
+    }
+
+    .calculator h2 {
+      margin-top: 0;
+      font-size: 2rem;
+      margin-bottom: 18px;
+      color: #0f172a;
+    }
+
+    .calculator-intro {
+      color: #334155;
+      line-height: 1.8;
+      margin-bottom: 30px;
+      font-size: 1.05rem;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+    }
+
+    .section-label {
+      grid-column: 1 / -1;
+      border-top: 1px solid #dbe4ee;
+      padding-top: 22px;
+      margin-top: 6px;
+      color: #0f172a;
+      font-size: 1.05rem;
+      font-weight: 900;
+    }
+
+    .field label {
+      display: block;
+      font-weight: 800;
+      margin-bottom: 10px;
+      color: #0f172a;
+    }
+
+    .field input,
+    .field select {
+      width: 100%;
+      padding: 16px;
+      border-radius: 12px;
+      border: 1px solid #cbd5e1;
+      font-size: 1rem;
+      box-sizing: border-box;
+      background: white;
+    }
+
+    .field small {
+      display: block;
+      margin-top: 8px;
+      color: #64748b;
+      line-height: 1.5;
+    }
+
+    button {
+      margin-top: 30px;
+      background: #0f766e;
+      color: white;
+      border: none;
+      padding: 18px 32px;
+      border-radius: 999px;
+      font-size: 1.05rem;
+      font-weight: 800;
+      cursor: pointer;
+      transition: opacity 0.2s ease;
+    }
+
+    button:hover {
+      opacity: 0.92;
+    }
+
+    .results {
+      margin-top: 36px;
+      background: #f8fafc;
+      padding: 32px;
+      border-radius: 24px;
+      border: 1px solid var(--border);
+      box-shadow: 0 10px 24px rgba(15, 23, 42, 0.04);
+      display: none;
+    }
+
+    .results.visible {
+      display: block;
+    }
+
+    .result-kicker {
+      font-size: 0.82rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: #0f766e;
+      font-weight: 900;
+      margin-bottom: 10px;
+    }
+
+    .total-price {
+      font-size: clamp(2.4rem, 6vw, 4rem);
+      font-weight: 900;
+      color: #0f172a;
+      line-height: 1.05;
+      margin-bottom: 16px;
+    }
+
+    .result-details {
+      color: #334155;
+      line-height: 1.9;
+      font-size: 1.02rem;
+    }
+
+    .result-details p {
+      margin: 0 0 12px;
+    }
+
+    .result-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 16px;
+      margin: 26px 0;
+    }
+
+    .result-card {
+      background: white;
+      border: 1px solid #dbe4ee;
+      border-radius: 18px;
+      padding: 20px;
+    }
+
+    .result-card span {
+      display: block;
+      color: #64748b;
+      font-size: 0.9rem;
+      margin-bottom: 8px;
+      font-weight: 700;
+    }
+
+    .result-card strong {
+      display: block;
+      color: #0f172a;
+      font-size: 1.55rem;
+      line-height: 1.2;
+    }
+
+    .breakdown {
+      margin-top: 26px;
+      border-radius: 18px;
+      overflow: hidden;
+      border: 1px solid #dbe4ee;
+      background: white;
+    }
+
+    .breakdown-row {
+      display: grid;
+      grid-template-columns: 1.1fr 0.7fr 1.6fr;
+      gap: 16px;
+      padding: 16px 20px;
+      border-bottom: 1px solid #e2e8f0;
+      color: #334155;
+    }
+
+    .breakdown-row:last-child {
+      border-bottom: 0;
+    }
+
+    .breakdown-row strong {
+      color: #0f172a;
+    }
+
+    .verdict-box {
+      margin-top: 24px;
+      padding: 22px;
+      border-radius: 18px;
+      background: white;
+      border: 1px solid #dbe4ee;
+      color: #334155;
+      line-height: 1.8;
+    }
+
+    .verdict-box strong {
+      color: #0f172a;
+    }
+
+    .warning-list {
+      margin: 18px 0 0;
+      padding-left: 22px;
+      color: #334155;
+      line-height: 1.8;
+    }
+
+    .disclaimer {
+      margin-top: 24px;
+      font-size: 0.9rem;
+      color: #64748b;
+    }
+
+    .content-section {
+      margin-top: 60px;
+    }
+
+    .content-section h2 {
+      font-size: 2rem;
+      margin-bottom: 20px;
+      color: #0f172a;
+    }
+
+    .content-section p,
+    .content-section li {
+      font-size: 1.1rem;
+      line-height: 1.9;
+      color: #334155;
+    }
+
+    .content-link {
+      color: #0f766e;
+      font-weight: 700;
+      text-decoration: none;
+    }
+
+    .content-link:hover {
+      text-decoration: underline;
+    }
+
+    @media (max-width: 768px) {
+      .calculator {
+        padding: 24px;
+      }
+
+      .grid,
+      .result-grid,
+      .breakdown-row {
+        grid-template-columns: 1fr;
+      }
+
+      .calculator h2,
+      .content-section h2 {
+        font-size: 1.7rem;
+      }
+
+      .results {
+        padding: 24px;
+      }
+    }
+  </style>
+
+  <div class="container">
+    <CalculatorPageShell
+      eyebrow="Lease Break Cost Calculator"
+      title="Lease Break Cost Calculator"
+      description="Estimate the cost to break a lease using rent, months remaining, lease-break fees, notice-period rent, deposit risk, reletting fees, rent until replacement, rent overlap, and new rent savings."
+    >
+      <div class="calculator">
+        <h2>How Much Will It Cost to Break My Lease?</h2>
+
+        <p class="calculator-intro">
+          This calculator estimates the lease-break cost and the possible gap
+          between the cash due now and any rent savings later. It includes
+          lease-break fees, notice-period rent, rent until the unit is replaced,
+          security deposit risk, reletting fees, overlap rent, unpaid charges,
+          and new-rent savings.
+        </p>
+
+        <div class="grid">
+          <div class="field">
+            <label for="monthlyRent">Current Monthly Rent</label>
+            <input id="monthlyRent" type="number" min="0" step="25" placeholder="1800" />
+            <small>Your current rent before utilities, unless your lease charges utilities as rent.</small>
+          </div>
+
+          <div class="field">
+            <label for="monthsRemaining">Months Remaining on Lease</label>
+            <input id="monthsRemaining" type="number" min="0" step="0.5" placeholder="7" />
+            <small>Use the number of months left after your planned move-out date.</small>
+          </div>
+
+          <div class="section-label">Lease-break charges</div>
+
+          <div class="field">
+            <label for="leaseBreakFee">Lease Break Fee</label>
+            <input id="leaseBreakFee" type="number" min="0" step="50" placeholder="3600" />
+            <small>Flat fee or months-of-rent penalty required to terminate early.</small>
+          </div>
+
+          <div class="field">
+            <label for="noticeDays">Required Notice Days</label>
+            <input id="noticeDays" type="number" min="0" step="1" placeholder="60" />
+            <small>Notice period that must be paid even if you leave earlier.</small>
+          </div>
+
+          <div class="field">
+            <label for="noticeAlreadyPaid">Notice Rent Already Covered</label>
+            <input id="noticeAlreadyPaid" type="number" min="0" step="50" placeholder="0" />
+            <small>Rent already paid that applies to the required notice period.</small>
+          </div>
+
+          <div class="field">
+            <label for="relettingFee">Reletting or Admin Fee</label>
+            <input id="relettingFee" type="number" min="0" step="25" placeholder="500" />
+            <small>Reletting fee, advertising fee, admin fee, turnover fee, or paperwork fee.</small>
+          </div>
+
+          <div class="field">
+            <label for="securityDepositRisk">Security Deposit at Risk</label>
+            <input id="securityDepositRisk" type="number" min="0" step="50" placeholder="1200" />
+            <small>Amount of deposit you realistically may lose because of lease break, damages, cleaning, or unpaid charges.</small>
+          </div>
+
+          <div class="field">
+            <label for="unpaidCharges">Unpaid Fees or Final Charges</label>
+            <input id="unpaidCharges" type="number" min="0" step="25" placeholder="150" />
+            <small>Utilities, pet fees, cleaning, repair, key fees, trash, parking, or final account balance.</small>
+          </div>
+
+          <div class="section-label">Rent until replaced and overlap</div>
+
+          <div class="field">
+            <label for="replacementMonths">Expected Months Until Replaced</label>
+            <input id="replacementMonths" type="number" min="0" step="0.5" placeholder="2" />
+            <small>How long you expect to owe rent before a replacement tenant starts.</small>
+          </div>
+
+          <div class="field">
+            <label for="replacementProbability">Replacement Confidence</label>
+            <select id="replacementProbability">
+              <option value="0.25">Low confidence</option>
+              <option value="0.5" selected>Moderate confidence</option>
+              <option value="0.75">High confidence</option>
+              <option value="1">Already approved or signed</option>
+            </select>
+            <small>Used to show a likely exposure versus the maximum remaining rent exposure.</small>
+          </div>
+
+          <div class="field">
+            <label for="overlapMonths">New Place Overlap Months</label>
+            <input id="overlapMonths" type="number" min="0" step="0.5" placeholder="1" />
+            <small>Months when you may owe old rent and new rent at the same time.</small>
+          </div>
+
+          <div class="field">
+            <label for="newMonthlyRent">New Monthly Rent</label>
+            <input id="newMonthlyRent" type="number" min="0" step="25" placeholder="1600" />
+            <small>Use this to calculate monthly rent savings or increase after the move.</small>
+          </div>
+
+          <div class="section-label">Savings, credits, and timing</div>
+
+          <div class="field">
+            <label for="monthsToCompare">Months to Compare New Rent Savings</label>
+            <input id="monthsToCompare" type="number" min="0" step="1" placeholder="12" />
+            <small>Use 12 months for a normal first-pass break-even check.</small>
+          </div>
+
+          <div class="field">
+            <label for="confirmedCredit">Confirmed Credit or Help</label>
+            <input id="confirmedCredit" type="number" min="0" step="50" placeholder="500" />
+            <small>Employer relocation money, landlord concession, roommate reimbursement, or confirmed family help.</small>
+          </div>
+
+          <div class="field">
+            <label for="moveTiming">Move Timing</label>
+            <select id="moveTiming">
+              <option value="urgent">Urgent move</option>
+              <option value="soon" selected>Moving soon</option>
+              <option value="flexible">Flexible timing</option>
+              <option value="lease-end">Can wait until lease end</option>
+            </select>
+            <small>Used for planning notes only, not for the dollar estimate.</small>
+          </div>
+
+          <div class="field">
+            <label for="otherCosts">Other Lease-Break Costs</label>
+            <input id="otherCosts" type="number" min="0" step="25" placeholder="250" />
+            <small>Attorney review, certified mail, application overlap, storage caused by timing, or another known cost.</small>
+          </div>
+        </div>
+
+        <button id="leaseBreakButton" type="button">Calculate Lease Break Cost</button>
+
+        <div class="results" id="results" aria-live="polite">
+          <div class="result-kicker">Estimated Lease Break Cost</div>
+
+          <div class="total-price" id="totalCost"></div>
+
+          <div class="result-details" id="resultDetails"></div>
+
+          <div class="result-grid">
+            <div class="result-card">
+              <span>Likely cash due</span>
+              <strong id="likelyCashDue"></strong>
+            </div>
+
+            <div class="result-card">
+              <span>Maximum exposure</span>
+              <strong id="maximumExposure"></strong>
+            </div>
+
+            <div class="result-card">
+              <span>Rent savings over comparison period</span>
+              <strong id="rentSavings"></strong>
+            </div>
+
+            <div class="result-card">
+              <span>Net cost after savings</span>
+              <strong id="netCostAfterSavings"></strong>
+            </div>
+          </div>
+
+          <div class="breakdown" id="breakdownTable"></div>
+
+          <div class="verdict-box" id="leaseNote"></div>
+
+          <ul class="warning-list" id="warningList"></ul>
+
+          <div class="disclaimer">
+            This calculator is a planning estimate, not legal advice. Lease-break
+            rules depend on your signed lease, landlord policy, state or local
+            law, replacement tenant timing, and whether the landlord must mitigate
+            damages.
+          </div>
+        </div>
+      </div>
+
+      <section class="content-section">
+        <h2>What This Lease Break Cost Calculator Includes</h2>
+
+        <p>
+          This calculator estimates the cost of leaving a rental before the lease
+          ends. It separates fixed lease-break charges from uncertain exposure
+          such as rent until a replacement tenant begins. That matters because
+          the headline fee is not always the full cost, and the maximum exposure
+          can be much higher than the likely cost.
+        </p>
+
+        <p>
+          Use this page before deciding whether to move early, wait for the lease
+          to end, negotiate with the landlord, or search for a replacement tenant.
+          For the cost of actually moving your belongings, use the
+          <a class="content-link" href="/moving-cost-calculator">
+            moving cost calculator
+          </a>.
+          For deposits and cash due before keys at the next place, use the
+          <a class="content-link" href="/security-deposit-and-move-in-cost-calculator">
+            security deposit and move-in cost calculator
+          </a>.
+        </p>
+      </section>
+
+      <div id="KeyCostCategories" class="content-section">
+        <KeyCostCategories
+          items={[
+            {
+              title: "Fixed lease-break charges",
+              description:
+                "A lease-break fee, reletting fee, admin fee, advertising fee, paperwork fee, and final account charges can be due even if a replacement tenant is found quickly.",
+            },
+            {
+              title: "Notice-period rent",
+              description:
+                "Many leases require 30, 60, or more days of notice. You may owe that rent even if you physically move out before the notice period ends.",
+            },
+            {
+              title: "Rent until replacement",
+              description:
+                "Depending on the lease and local rules, you may owe rent until the unit is re-rented or until the lease ends. This is the most uncertain part of many lease-break estimates.",
+            },
+            {
+              title: "Deposit and overlap risk",
+              description:
+                "Lost deposit money, cleaning, damage claims, unpaid charges, and overlap between old rent and new rent can raise the cash needed before the move feels complete.",
+            },
+          ]}
+        />
+      </div>
+
+      <div id="ReduceCostTips" class="content-section">
+        <ReduceCostTips
+          items={[
+            "Read the early termination, notice, reletting, mitigation, sublease, and assignment sections before relying on a verbal answer.",
+            "Ask for the lease-break amount in writing, including notice rent, fees, deposit treatment, and rent until replacement.",
+            "Offer to help find a qualified replacement tenant if your lease and local rules allow it.",
+            "Move closer to the lease end if one extra month can avoid a much larger penalty.",
+            "Get move-out inspection expectations in writing so cleaning, damage, and deposit deductions are not a surprise.",
+            "Compare the upfront lease-break cost with the monthly savings from the new place before assuming cheaper rent makes the move worthwhile.",
+          ]}
+        />
+      </div>
+
+      <div id="CalculatorAssumptions" class="content-section">
+        <CalculatorAssumptions
+          items={[
+            "Notice-period rent is estimated from monthly rent and required notice days, minus any notice rent already covered.",
+            "Rent until replacement is estimated from monthly rent and expected months until a replacement tenant starts, capped by months remaining on the lease.",
+            "Likely replacement exposure is adjusted by the selected replacement confidence. Maximum exposure shows the larger remaining-rent risk if replacement takes longer.",
+            "Overlap cost is calculated from new monthly rent and the number of overlap months entered.",
+            "Rent savings compare current rent with new rent over the selected comparison period. If new rent is higher, the calculator treats that as a rent increase, not a savings.",
+            "Confirmed credits reduce likely out-of-pocket cost but do not reduce the gross lease-break exposure.",
+            "This page estimates lease-break costs and does not include the physical move, new furniture, groceries, utility setup, or legal advice.",
+          ]}
+        />
+      </div>
+
+      <section id="FinancialRedFlags" class="content-section">
+        <h2>Lease Break Red Flags</h2>
+
+        <p>
+          Breaking a lease is risky when the numbers depend on assumptions that
+          are not in writing. The biggest problems usually come from unclear
+          notice rules, vague reletting fees, uncertain replacement timing,
+          deposit deductions, and assuming the landlord will stop charging rent
+          before a replacement tenant actually starts.
+        </p>
+
+        <ul>
+          <li>The lease-break fee is known, but notice rent, reletting fees, and deposit treatment are still unclear.</li>
+          <li>The plan assumes a replacement tenant without written approval from the landlord.</li>
+          <li>The lease says rent may continue until the unit is re-rented, but no one knows how long that will take.</li>
+          <li>The new place starts before the old lease exposure ends, creating rent overlap.</li>
+          <li>The security deposit is being counted as available cash before move-out deductions are known.</li>
+          <li>The move only works if the landlord waives fees that are not already confirmed in writing.</li>
+        </ul>
+      </section>
+
+      <section class="content-section">
+        <h2>How to Use the Lease Break Estimate</h2>
+
+        <p>
+          Start with likely cash due. That number estimates what you may need to
+          pay or absorb based on the lease-break fee, notice rent, replacement
+          timing, deposit risk, reletting fees, overlap, and credits. Then look at
+          maximum exposure. If the maximum exposure would wreck your budget, do
+          not rely on best-case replacement timing.
+        </p>
+
+        <p>
+          The rent-savings result helps show whether a cheaper new place can
+          eventually offset the lease-break cost. It does not mean the move is
+          safe today. A move can break even later and still create a cash crunch
+          now if the lease-break bill comes due before the savings arrive.
+        </p>
+      </section>
+
+      <div id="FAQSection" class="content-section">
+        <FAQSection
+          title="Lease Break Cost Calculator FAQ"
+          faqs={leaseBreakFaqs}
+        />
+      </div>
+
+      <div id="RelatedCalculators" class="content-section">
+        <RelatedCalculators calculators={relatedCalculators} />
+      </div>
+
+      <div id="MethodologySection" class="content-section">
+        <MethodologySection category="lease break cost estimates" updated="June 2026" />
+      </div>
+    </CalculatorPageShell>
+  </div>
+
+  <script is:inline>
+    const getNumber = (id) => {
+      const rawValue = document.getElementById(id)?.value;
+      const value = Number(rawValue);
+      return Number.isFinite(value) && value >= 0 ? value : 0;
+    };
+
+    const formatMoney = (value) =>
+      value.toLocaleString(undefined, {
+        style: "currency",
+        currency: "USD",
+        maximumFractionDigits: 0,
+      });
+
+    function calculateLeaseBreakCost() {
+      const monthlyRent = getNumber("monthlyRent");
+      const monthsRemaining = getNumber("monthsRemaining");
+      const leaseBreakFee = getNumber("leaseBreakFee");
+      const noticeDays = getNumber("noticeDays");
+      const noticeAlreadyPaid = getNumber("noticeAlreadyPaid");
+      const relettingFee = getNumber("relettingFee");
+      const securityDepositRisk = getNumber("securityDepositRisk");
+      const unpaidCharges = getNumber("unpaidCharges");
+      const replacementMonthsInput = getNumber("replacementMonths");
+      const replacementProbability = Number(document.getElementById("replacementProbability")?.value || 0.5);
+      const overlapMonths = getNumber("overlapMonths");
+      const newMonthlyRent = getNumber("newMonthlyRent");
+      const monthsToCompareInput = getNumber("monthsToCompare");
+      const confirmedCredit = getNumber("confirmedCredit");
+      const moveTiming = document.getElementById("moveTiming")?.value || "soon";
+      const otherCosts = getNumber("otherCosts");
+
+      const monthlyRentDay = monthlyRent / 30;
+      const noticeRentGross = noticeDays * monthlyRentDay;
+      const noticeRentDue = Math.max(0, noticeRentGross - noticeAlreadyPaid);
+
+      const cappedReplacementMonths = Math.min(replacementMonthsInput, monthsRemaining);
+      const rentUntilReplacementGross = monthlyRent * cappedReplacementMonths;
+      const likelyReplacementExposure =
+        rentUntilReplacementGross * Math.max(0, Math.min(1, 1 - replacementProbability + 0.25));
+
+      const maximumRemainingRentExposure = monthlyRent * monthsRemaining;
+      const overlapCost = newMonthlyRent * overlapMonths;
+
+      const fixedCharges =
+        leaseBreakFee +
+        relettingFee +
+        securityDepositRisk +
+        unpaidCharges +
+        otherCosts;
+
+      const likelyGrossCost =
+        fixedCharges +
+        noticeRentDue +
+        likelyReplacementExposure +
+        overlapCost;
+
+      const maximumExposure =
+        fixedCharges +
+        Math.max(noticeRentDue, 0) +
+        maximumRemainingRentExposure +
+        overlapCost;
+
+      const likelyCashDue = Math.max(0, likelyGrossCost - confirmedCredit);
+
+      const monthsToCompare = monthsToCompareInput > 0 ? monthsToCompareInput : 12;
+      const monthlyRentSavings = monthlyRent > 0 && newMonthlyRent > 0 ? monthlyRent - newMonthlyRent : 0;
+      const rentSavingsOverPeriod = monthlyRentSavings * monthsToCompare;
+      const netCostAfterSavings = likelyCashDue - rentSavingsOverPeriod;
+
+      const breakEvenMonths =
+        monthlyRentSavings > 0 ? likelyCashDue / monthlyRentSavings : 0;
+
+      const results = document.getElementById("results");
+      const totalCost = document.getElementById("totalCost");
+      const likelyCashDueEl = document.getElementById("likelyCashDue");
+      const maximumExposureEl = document.getElementById("maximumExposure");
+      const rentSavingsEl = document.getElementById("rentSavings");
+      const netCostAfterSavingsEl = document.getElementById("netCostAfterSavings");
+      const resultDetails = document.getElementById("resultDetails");
+      const breakdownTable = document.getElementById("breakdownTable");
+      const leaseNote = document.getElementById("leaseNote");
+      const warningList = document.getElementById("warningList");
+
+      results.classList.add("visible");
+
+      totalCost.textContent = formatMoney(likelyCashDue);
+      likelyCashDueEl.textContent = formatMoney(likelyCashDue);
+      maximumExposureEl.textContent = formatMoney(maximumExposure);
+      rentSavingsEl.textContent = formatMoney(rentSavingsOverPeriod);
+      netCostAfterSavingsEl.textContent = formatMoney(netCostAfterSavings);
+
+      const replacementLabel =
+        replacementProbability >= 1
+          ? "already approved or signed"
+          : replacementProbability >= 0.75
+            ? "high confidence"
+            : replacementProbability >= 0.5
+              ? "moderate confidence"
+              : "low confidence";
+
+      resultDetails.innerHTML = `
+        <p><strong>Estimated likely cash due:</strong> ${formatMoney(likelyCashDue)} after confirmed credits.</p>
+        <p><strong>Maximum remaining-rent exposure:</strong> ${formatMoney(maximumExposure)} if replacement timing goes badly.</p>
+        <p><strong>Replacement assumption:</strong> ${cappedReplacementMonths.toFixed(1)} month(s) until replacement with ${replacementLabel}.</p>
+        <p><strong>Rent comparison:</strong> ${formatMoney(monthlyRentSavings)} per month difference for ${monthsToCompare.toFixed(0)} month(s).</p>
+      `;
+
+      breakdownTable.innerHTML = `
+        <div class="breakdown-row"><strong>Lease-break fee</strong><span>${formatMoney(leaseBreakFee)}</span><span>Flat early termination penalty or fee entered from the lease or landlord quote.</span></div>
+        <div class="breakdown-row"><strong>Notice rent</strong><span>${formatMoney(noticeRentDue)}</span><span>${noticeDays.toFixed(0)} required notice day(s), minus notice rent already covered.</span></div>
+        <div class="breakdown-row"><strong>Rent until replacement</strong><span>${formatMoney(likelyReplacementExposure)}</span><span>Likely exposure from expected replacement timing and selected confidence level.</span></div>
+        <div class="breakdown-row"><strong>Fees and deposit risk</strong><span>${formatMoney(relettingFee + securityDepositRisk + unpaidCharges + otherCosts)}</span><span>Reletting, admin, security deposit risk, unpaid charges, and other known lease-break costs.</span></div>
+        <div class="breakdown-row"><strong>New-place overlap</strong><span>${formatMoney(overlapCost)}</span><span>New rent owed during months when the old lease may still cost money.</span></div>
+        <div class="breakdown-row"><strong>Confirmed credits</strong><span>-${formatMoney(confirmedCredit)}</span><span>Employer relocation money, landlord concession, roommate repayment, family help, or other confirmed credit.</span></div>
+      `;
+
+      const warnings = [];
+
+      if (monthlyRent === 0) {
+        warnings.push("Current monthly rent is blank. Add rent before relying on the estimate.");
+      }
+
+      if (monthsRemaining === 0 && moveTiming !== "lease-end") {
+        warnings.push("Months remaining is blank or zero. Add the remaining lease term to estimate maximum exposure.");
+      }
+
+      if (leaseBreakFee === 0) {
+        warnings.push("Lease-break fee is blank. Confirm whether the lease charges a flat fee, a months-of-rent fee, or no specific termination fee.");
+      }
+
+      if (noticeDays === 0) {
+        warnings.push("Notice days are blank. Many leases require written notice even when a lease-break fee is paid.");
+      }
+
+      if (replacementMonthsInput === 0 && monthsRemaining > 0) {
+        warnings.push("Replacement timing is blank. If you owe rent until the unit is re-rented, this is a major unknown.");
+      }
+
+      if (securityDepositRisk === 0) {
+        warnings.push("Security deposit risk is blank. Do not count the deposit as available cash until deductions are known.");
+      }
+
+      if (overlapMonths > 0 && newMonthlyRent === 0) {
+        warnings.push("Overlap months were entered, but new rent is blank. Add new rent to estimate overlap cost.");
+      }
+
+      if (maximumExposure > likelyCashDue * 2 && maximumExposure > 1000) {
+        warnings.push("Maximum exposure is much higher than likely cash due. Do not rely only on best-case replacement timing.");
+      }
+
+      if (confirmedCredit > likelyGrossCost) {
+        warnings.push("Confirmed credits exceed the likely lease-break cost. That can reduce out-of-pocket cost to zero, but moving and setup costs may still remain.");
+      }
+
+      let noteTitle = "Use this as your lease-break planning number.";
+      let noteBody =
+        "The estimate separates likely cash due from maximum exposure because replacement timing and lease language can change the final cost.";
+
+      if (monthlyRent === 0) {
+        noteTitle = "Add current rent before using the result.";
+        noteBody =
+          "Rent drives notice-period cost, rent-until-replaced exposure, and maximum remaining-rent exposure.";
+      } else if (moveTiming === "lease-end") {
+        noteTitle = "Waiting until lease end may avoid most lease-break exposure.";
+        noteBody =
+          "If you can wait until the lease ends, compare the cost of waiting with the penalties and overlap created by leaving early.";
+      } else if (monthlyRentSavings > 0 && breakEvenMonths > 0 && breakEvenMonths <= monthsToCompare) {
+        noteTitle = "The cheaper new rent may eventually offset the lease break.";
+        noteBody =
+          `At the rent savings entered, the estimated break-even point is about ${breakEvenMonths.toFixed(1)} month(s). Make sure the upfront cash due is still manageable.`;
+      } else if (monthlyRentSavings < 0) {
+        noteTitle = "The new rent is higher, so there is no rent-savings offset.";
+        noteBody =
+          "The lease-break cost is being added on top of a higher monthly rent. Check whether the move is necessary before paying both.";
+      } else if (maximumExposure > likelyCashDue * 2 && maximumExposure > 1000) {
+        noteTitle = "Replacement timing is the main risk.";
+        noteBody =
+          "Your likely cost depends heavily on the unit being re-rented. Get the landlord's replacement process and fee treatment in writing.";
+      } else if (likelyCashDue === 0) {
+        noteTitle = "Confirmed credits cover the likely lease-break estimate.";
+        noteBody =
+          "The entered credits cover the likely lease-break cost. Confirm timing, caps, paperwork, and whether any deposit or final charges remain.";
+      }
+
+      leaseNote.innerHTML = `<strong>${noteTitle}</strong> ${noteBody}`;
+
+      warningList.innerHTML = warnings
+        .map((warning) => `<li>${warning}</li>`)
+        .join("");
+    }
+
+    document
+      .getElementById("leaseBreakButton")
+      .addEventListener("click", calculateLeaseBreakCost);
+  </script>
+</Layout>

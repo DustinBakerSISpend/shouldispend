@@ -1,0 +1,865 @@
+---
+import Layout from "../layouts/Layout.astro";
+import CalculatorPageShell from "../components/CalculatorPageShell.astro";
+import FAQSection from "../components/FAQSection.astro";
+import RelatedCalculators from "../components/RelatedCalculators.astro";
+import MethodologySection from "../components/MethodologySection.astro";
+import CalculatorAssumptions from "../components/CalculatorAssumptions.astro";
+import KeyCostCategories from "../components/KeyCostCategories.astro";
+import ReduceCostTips from "../components/ReduceCostTips.astro";
+import { calculators } from "../data/calculators.js";
+
+const movingStorageFaqs = [
+  {
+    question: "How much does moving storage cost?",
+    answer:
+      "Moving storage cost depends on the monthly unit or container price, number of units, months needed, move-in fees, admin fees, lock costs, insurance, climate control, pickup and delivery fees, extra truck trips, labor, taxes, and late-return risk.",
+  },
+  {
+    question: "Is temporary storage cheaper than keeping a larger moving truck longer?",
+    answer:
+      "Sometimes. Storage can be cheaper if it prevents rushed move-out timing, hotel stays, or a larger moving truck. It can become expensive when storage lasts longer than expected, requires extra truck trips, or adds pickup and delivery fees.",
+  },
+  {
+    question: "Does this calculator work for storage units and portable containers?",
+    answer:
+      "Yes. It can estimate self-storage units, portable moving containers, or warehouse-style storage by combining monthly storage cost, months needed, fees, pickup or delivery charges, insurance, climate control, and extra trips.",
+  },
+  {
+    question: "Should I pay for climate-controlled storage?",
+    answer:
+      "Climate control may be worth it for wood furniture, electronics, artwork, documents, instruments, photos, clothing, mattresses, or anything vulnerable to heat, cold, or humidity. It is less important for short storage of durable items.",
+  },
+  {
+    question: "Does this include the full cost of moving?",
+    answer:
+      "No. This page estimates temporary storage during a move. It does not include the full mover bill, truck rental cost, security deposit, lease break cost, furniture, groceries, or utility setup.",
+  },
+];
+
+const relatedCalculators = calculators
+  .filter((calculator) =>
+    [
+      "/moving-calculators",
+      "/moving-cost-calculator",
+      "/moving-truck-rental-cost-calculator",
+      "/professional-movers-cost-calculator",
+      "/lease-break-cost-calculator",
+      "/should-i-move-calculator",
+      "/moving-boxes-and-packing-supplies-cost-calculator",
+      "/security-deposit-and-move-in-cost-calculator",
+      "/first-apartment-cost-calculator",
+      "/how-much-should-i-save-before-moving-out",
+    ].includes(calculator.href)
+  )
+  .filter((calculator) => calculator.href !== "/moving-storage-cost-calculator")
+  .slice(0, 6);
+---
+
+<Layout
+  title="Moving Storage Cost Calculator | ShouldISpend"
+  description="Estimate temporary moving storage costs, including monthly unit or container cost, months needed, move-in fees, admin fees, lock fees, insurance, climate control, pickup and delivery, extra truck trips, labor, and taxes."
+>
+  <style>
+    .container {
+      max-width: 960px;
+      margin: auto;
+    }
+
+    .calculator {
+      background: white;
+      padding: 40px;
+      border-radius: 24px;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.06);
+    }
+
+    .calculator h2 {
+      margin-top: 0;
+      font-size: 2rem;
+      margin-bottom: 18px;
+      color: #0f172a;
+    }
+
+    .calculator-intro {
+      color: #334155;
+      line-height: 1.8;
+      margin-bottom: 30px;
+      font-size: 1.05rem;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+    }
+
+    .section-label {
+      grid-column: 1 / -1;
+      border-top: 1px solid #dbe4ee;
+      padding-top: 22px;
+      margin-top: 6px;
+      color: #0f172a;
+      font-size: 1.05rem;
+      font-weight: 900;
+    }
+
+    .field label {
+      display: block;
+      font-weight: 800;
+      margin-bottom: 10px;
+      color: #0f172a;
+    }
+
+    .field input,
+    .field select {
+      width: 100%;
+      padding: 16px;
+      border-radius: 12px;
+      border: 1px solid #cbd5e1;
+      font-size: 1rem;
+      box-sizing: border-box;
+      background: white;
+    }
+
+    .field small {
+      display: block;
+      margin-top: 8px;
+      color: #64748b;
+      line-height: 1.5;
+    }
+
+    button {
+      margin-top: 30px;
+      background: #0f766e;
+      color: white;
+      border: none;
+      padding: 18px 32px;
+      border-radius: 999px;
+      font-size: 1.05rem;
+      font-weight: 800;
+      cursor: pointer;
+      transition: opacity 0.2s ease;
+    }
+
+    button:hover {
+      opacity: 0.92;
+    }
+
+    .results {
+      margin-top: 36px;
+      background: #f8fafc;
+      padding: 32px;
+      border-radius: 24px;
+      border: 1px solid var(--border);
+      box-shadow: 0 10px 24px rgba(15, 23, 42, 0.04);
+      display: none;
+    }
+
+    .results.visible {
+      display: block;
+    }
+
+    .result-kicker {
+      font-size: 0.82rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: #0f766e;
+      font-weight: 900;
+      margin-bottom: 10px;
+    }
+
+    .total-price {
+      font-size: clamp(2.4rem, 6vw, 4rem);
+      font-weight: 900;
+      color: #0f172a;
+      line-height: 1.05;
+      margin-bottom: 16px;
+    }
+
+    .result-details {
+      color: #334155;
+      line-height: 1.9;
+      font-size: 1.02rem;
+    }
+
+    .result-details p {
+      margin: 0 0 12px;
+    }
+
+    .result-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 16px;
+      margin: 26px 0;
+    }
+
+    .result-card {
+      background: white;
+      border: 1px solid #dbe4ee;
+      border-radius: 18px;
+      padding: 20px;
+    }
+
+    .result-card span {
+      display: block;
+      color: #64748b;
+      font-size: 0.9rem;
+      margin-bottom: 8px;
+      font-weight: 700;
+    }
+
+    .result-card strong {
+      display: block;
+      color: #0f172a;
+      font-size: 1.55rem;
+      line-height: 1.2;
+    }
+
+    .breakdown {
+      margin-top: 26px;
+      border-radius: 18px;
+      overflow: hidden;
+      border: 1px solid #dbe4ee;
+      background: white;
+    }
+
+    .breakdown-row {
+      display: grid;
+      grid-template-columns: 1.1fr 0.7fr 1.6fr;
+      gap: 16px;
+      padding: 16px 20px;
+      border-bottom: 1px solid #e2e8f0;
+      color: #334155;
+    }
+
+    .breakdown-row:last-child {
+      border-bottom: 0;
+    }
+
+    .breakdown-row strong {
+      color: #0f172a;
+    }
+
+    .verdict-box {
+      margin-top: 24px;
+      padding: 22px;
+      border-radius: 18px;
+      background: white;
+      border: 1px solid #dbe4ee;
+      color: #334155;
+      line-height: 1.8;
+    }
+
+    .verdict-box strong {
+      color: #0f172a;
+    }
+
+    .warning-list {
+      margin: 18px 0 0;
+      padding-left: 22px;
+      color: #334155;
+      line-height: 1.8;
+    }
+
+    .disclaimer {
+      margin-top: 24px;
+      font-size: 0.9rem;
+      color: #64748b;
+    }
+
+    .content-section {
+      margin-top: 60px;
+    }
+
+    .content-section h2 {
+      font-size: 2rem;
+      margin-bottom: 20px;
+      color: #0f172a;
+    }
+
+    .content-section p,
+    .content-section li {
+      font-size: 1.1rem;
+      line-height: 1.9;
+      color: #334155;
+    }
+
+    .content-link {
+      color: #0f766e;
+      font-weight: 700;
+      text-decoration: none;
+    }
+
+    .content-link:hover {
+      text-decoration: underline;
+    }
+
+    @media (max-width: 768px) {
+      .calculator {
+        padding: 24px;
+      }
+
+      .grid,
+      .result-grid,
+      .breakdown-row {
+        grid-template-columns: 1fr;
+      }
+
+      .calculator h2,
+      .content-section h2 {
+        font-size: 1.7rem;
+      }
+
+      .results {
+        padding: 24px;
+      }
+    }
+  </style>
+
+  <div class="container">
+    <CalculatorPageShell
+      eyebrow="Moving Storage Cost Calculator"
+      title="Moving Storage Cost Calculator"
+      description="Estimate the temporary storage cost during a move, including monthly unit or container charges, months needed, move-in fees, lock and admin fees, insurance, climate control, pickup and delivery, extra trips, labor, and taxes."
+    >
+      <div class="calculator">
+        <h2>How Much Will Moving Storage Cost?</h2>
+
+        <p class="calculator-intro">
+          Temporary storage can solve a timing problem, but it is easy to
+          underestimate. This calculator estimates the full storage bill during a
+          move, including monthly unit or container charges, fees, insurance,
+          climate control, pickup and delivery, extra truck trips, labor, and
+          taxes.
+        </p>
+
+        <div class="grid">
+          <div class="field">
+            <label for="storageType">Storage Type</label>
+            <select id="storageType">
+              <option value="unit" selected>Self-storage unit</option>
+              <option value="container">Portable moving container</option>
+              <option value="warehouse">Mover warehouse storage</option>
+            </select>
+            <small>Used for planning notes and default assumptions if some fields are blank.</small>
+          </div>
+
+          <div class="field">
+            <label for="storageSize">Storage Size</label>
+            <select id="storageSize">
+              <option value="small">Small unit or partial load</option>
+              <option value="medium" selected>Medium unit or 1-bedroom load</option>
+              <option value="large">Large unit or 2-bedroom load</option>
+              <option value="xlarge">Extra-large unit or 3+ bedroom load</option>
+            </select>
+            <small>Used only for default planning assumptions and result notes.</small>
+          </div>
+
+          <div class="section-label">Monthly storage charges</div>
+
+          <div class="field">
+            <label for="monthlyStorageCost">Monthly Unit or Container Cost</label>
+            <input id="monthlyStorageCost" type="number" min="0" step="10" placeholder="175" />
+            <small>Base monthly price for one storage unit, container, or warehouse storage account.</small>
+          </div>
+
+          <div class="field">
+            <label for="unitCount">Number of Units or Containers</label>
+            <input id="unitCount" type="number" min="0" step="1" placeholder="1" />
+            <small>Use 2 or more if you need multiple units, containers, or storage vaults.</small>
+          </div>
+
+          <div class="field">
+            <label for="monthsNeeded">Months Needed</label>
+            <input id="monthsNeeded" type="number" min="0" step="0.5" placeholder="3" />
+            <small>Use the realistic number of months, not only the planned minimum.</small>
+          </div>
+
+          <div class="field">
+            <label for="promoDiscount">Confirmed Promo or Discount</label>
+            <input id="promoDiscount" type="number" min="0" step="10" placeholder="100" />
+            <small>Only count confirmed discounts, free-month credits, or coupons.</small>
+          </div>
+
+          <div class="section-label">Fees, protection, and upgrades</div>
+
+          <div class="field">
+            <label for="moveInFee">Move-In or Setup Fee</label>
+            <input id="moveInFee" type="number" min="0" step="10" placeholder="35" />
+            <small>Move-in fee, account setup, reservation fee, or first-day charge.</small>
+          </div>
+
+          <div class="field">
+            <label for="adminFee">Admin, Lock, or Key Fees</label>
+            <input id="adminFee" type="number" min="0" step="10" placeholder="45" />
+            <small>Administrative fee, lock purchase, key fee, access card, or required account charge.</small>
+          </div>
+
+          <div class="field">
+            <label for="monthlyInsurance">Monthly Storage Insurance</label>
+            <input id="monthlyInsurance" type="number" min="0" step="5" placeholder="18" />
+            <small>Storage protection plan, tenant insurance, container coverage, or required insurance.</small>
+          </div>
+
+          <div class="field">
+            <label for="climateControlMonthly">Climate Control Monthly Upcharge</label>
+            <input id="climateControlMonthly" type="number" min="0" step="10" placeholder="45" />
+            <small>Extra monthly cost for climate-controlled storage.</small>
+          </div>
+
+          <div class="field">
+            <label for="securityDeposit">Refundable Deposit at Risk</label>
+            <input id="securityDeposit" type="number" min="0" step="10" placeholder="0" />
+            <small>Use only the amount you may lose or have tied up during the move.</small>
+          </div>
+
+          <div class="field">
+            <label for="lateFeeRisk">Late Fee or Extra Month Risk</label>
+            <input id="lateFeeRisk" type="number" min="0" step="10" placeholder="0" />
+            <small>Use this if timing could slip into another billing period or late fee.</small>
+          </div>
+
+          <div class="section-label">Pickup, delivery, trips, and labor</div>
+
+          <div class="field">
+            <label for="pickupDeliveryFee">Pickup, Delivery, or Drop-Off Fees</label>
+            <input id="pickupDeliveryFee" type="number" min="0" step="25" placeholder="250" />
+            <small>Portable container delivery, pickup, redelivery, warehouse handling, or drop-off fee.</small>
+          </div>
+
+          <div class="field">
+            <label for="extraTruckTrips">Extra Truck Trips</label>
+            <input id="extraTruckTrips" type="number" min="0" step="1" placeholder="2" />
+            <small>Extra trips caused by storing items separately from the main move.</small>
+          </div>
+
+          <div class="field">
+            <label for="costPerTruckTrip">Cost per Extra Truck Trip</label>
+            <input id="costPerTruckTrip" type="number" min="0" step="10" placeholder="85" />
+            <small>Truck mileage, fuel, extra rental time, parking, tolls, or route cost per trip.</small>
+          </div>
+
+          <div class="field">
+            <label for="storageLaborCost">Storage Loading or Handling Labor</label>
+            <input id="storageLaborCost" type="number" min="0" step="25" placeholder="300" />
+            <small>Paid help for loading, unloading, warehouse handling, stairs, elevators, or long carries.</small>
+          </div>
+
+          <div class="field">
+            <label for="movingSupplyCost">Storage Supplies</label>
+            <input id="movingSupplyCost" type="number" min="0" step="10" placeholder="120" />
+            <small>Plastic bins, mattress bags, pallets, covers, shelving, labels, moisture absorbers, or locks not counted above.</small>
+          </div>
+
+          <div class="field">
+            <label for="taxesFees">Taxes and Other Facility Fees</label>
+            <input id="taxesFees" type="number" min="0" step="10" placeholder="60" />
+            <small>Taxes, facility fees, access fees, after-hours fees, or required service charges.</small>
+          </div>
+
+          <div class="section-label">Credits and unknowns</div>
+
+          <div class="field">
+            <label for="confirmedCredit">Confirmed Credit or Reimbursement</label>
+            <input id="confirmedCredit" type="number" min="0" step="25" placeholder="150" />
+            <small>Employer relocation money, landlord credit, family help, roommate repayment, or confirmed reimbursement.</small>
+          </div>
+
+          <div class="field">
+            <label for="otherCosts">Other Storage Costs</label>
+            <input id="otherCosts" type="number" min="0" step="10" placeholder="100" />
+            <small>Cleaning, pest prevention, access equipment, parking, cancellation fee, or another storage-specific cost.</small>
+          </div>
+        </div>
+
+        <button id="storageButton" type="button">Calculate Storage Cost</button>
+
+        <div class="results" id="results" aria-live="polite">
+          <div class="result-kicker">Estimated Moving Storage Cost</div>
+
+          <div class="total-price" id="totalCost"></div>
+
+          <div class="result-details" id="resultDetails"></div>
+
+          <div class="result-grid">
+            <div class="result-card">
+              <span>Monthly storage total</span>
+              <strong id="monthlyStorageTotal"></strong>
+            </div>
+
+            <div class="result-card">
+              <span>One-time fees and setup</span>
+              <strong id="oneTimeFees"></strong>
+            </div>
+
+            <div class="result-card">
+              <span>Trips, delivery, and labor</span>
+              <strong id="tripLaborTotal"></strong>
+            </div>
+
+            <div class="result-card">
+              <span>Out-of-pocket after credits</span>
+              <strong id="outOfPocket"></strong>
+            </div>
+          </div>
+
+          <div class="breakdown" id="breakdownTable"></div>
+
+          <div class="verdict-box" id="storageNote"></div>
+
+          <ul class="warning-list" id="warningList"></ul>
+
+          <div class="disclaimer">
+            This calculator estimates temporary moving storage costs from the
+            numbers entered and planning assumptions when fields are blank. It is
+            not a binding quote from a storage facility, portable container
+            company, mover, insurer, landlord, or truck rental company.
+          </div>
+        </div>
+      </div>
+
+      <section class="content-section">
+        <h2>What This Moving Storage Cost Calculator Includes</h2>
+
+        <p>
+          This page estimates temporary storage created by a move. That could be
+          a self-storage unit, portable moving container, mover warehouse storage,
+          or a short-term storage gap between move-out and move-in. It includes
+          monthly charges, fees, insurance, climate control, delivery, extra
+          trips, labor, supplies, taxes, and credits.
+        </p>
+
+        <p>
+          Storage is often a timing solution, not a permanent housing cost. Use
+          this estimate alongside the
+          <a class="content-link" href="/moving-cost-calculator">
+            moving cost calculator
+          </a>
+          and the
+          <a class="content-link" href="/moving-truck-rental-cost-calculator">
+            moving truck rental cost calculator
+          </a>
+          so the extra trips and truck time do not get counted too low.
+        </p>
+      </section>
+
+      <div id="KeyCostCategories" class="content-section">
+        <KeyCostCategories
+          items={[
+            {
+              title: "Monthly unit or container cost",
+              description:
+                "The base storage price depends on size, location, container type, facility type, and how many units or containers are needed.",
+            },
+            {
+              title: "Fees and protection",
+              description:
+                "Move-in fees, admin fees, locks, insurance, climate control, deposits, late fees, and facility charges can make the first bill larger than the monthly rate.",
+            },
+            {
+              title: "Pickup, delivery, and trips",
+              description:
+                "Portable container delivery, pickup, redelivery, warehouse handling, or extra truck trips can turn storage into a larger moving expense.",
+            },
+            {
+              title: "Labor and supplies",
+              description:
+                "Loading, unloading, stacking, stairs, elevator delays, mattress bags, covers, bins, shelving, labels, and moisture protection may be needed to store items safely.",
+            },
+          ]}
+        />
+      </div>
+
+      <div id="ReduceCostTips" class="content-section">
+        <ReduceCostTips
+          items={[
+            "Price the total storage period, not just the first-month promo rate.",
+            "Avoid renting more unit space than you need by measuring large furniture and stacking boxes safely.",
+            "Compare self-storage with portable containers when extra truck trips would be expensive.",
+            "Ask whether insurance, locks, admin fees, climate control, pickup, delivery, and redelivery are required or optional.",
+            "Set a firm move-out date from storage so a short gap does not turn into another billing cycle.",
+            "Sell, donate, or discard bulky low-value items before paying to store and move them twice.",
+          ]}
+        />
+      </div>
+
+      <div id="CalculatorAssumptions" class="content-section">
+        <CalculatorAssumptions
+          items={[
+            "Monthly storage total is calculated from monthly unit or container cost, unit count, months needed, monthly insurance, and climate-control upcharges.",
+            "One-time fees include move-in fees, admin fees, lock fees, taxes, facility charges, deposit risk, late-fee risk, other costs, and storage supplies.",
+            "Trip and labor costs include pickup or delivery fees, extra truck trips, cost per extra trip, and storage loading or handling labor.",
+            "Confirmed credits and discounts reduce the out-of-pocket estimate but do not reduce the gross storage bill.",
+            "Blank monthly storage cost can use a planning estimate based on storage type and size, but real quotes should replace it before booking.",
+            "This page estimates temporary storage during a move and does not include rent, deposits, lease penalties, furniture, groceries, or full mover charges.",
+          ]}
+        />
+      </div>
+
+      <section id="FinancialRedFlags" class="content-section">
+        <h2>Moving Storage Red Flags</h2>
+
+        <p>
+          Storage can look cheap when the quote only shows one monthly rate. The
+          risk appears when the move needs multiple units, a longer stay,
+          climate control, extra truck trips, pickup and delivery, labor, or
+          another billing cycle because the move-in date slips.
+        </p>
+
+        <ul>
+          <li>The storage quote only shows the monthly rate and ignores admin fees, locks, insurance, taxes, and move-in charges.</li>
+          <li>The plan depends on one storage month even though the move-in date is uncertain.</li>
+          <li>Extra truck trips, pickup fees, redelivery, parking, tolls, or labor are not included.</li>
+          <li>Climate-sensitive items are being stored without climate control or protection.</li>
+          <li>The storage unit is being used to keep low-value items that cost more to store than replace.</li>
+          <li>A promo rate hides the real monthly cost after the first billing cycle.</li>
+        </ul>
+      </section>
+
+      <section class="content-section">
+        <h2>How to Use the Moving Storage Estimate</h2>
+
+        <p>
+          Use the out-of-pocket estimate as the temporary storage number for the
+          move. Then compare the storage cost with alternatives: waiting to move,
+          paying for a different mover date, using a larger truck, changing the
+          lease timing, or reducing inventory before moving day.
+        </p>
+
+        <p>
+          The most important test is the extra-month test. If one more month of
+          storage would hurt the move budget, do not rely on optimistic timing.
+          Get the move-in date, delivery window, billing cycle, cancellation
+          rules, and access fees in writing before storing your belongings.
+        </p>
+      </section>
+
+      <div id="FAQSection" class="content-section">
+        <FAQSection
+          title="Moving Storage Cost Calculator FAQ"
+          faqs={movingStorageFaqs}
+        />
+      </div>
+
+      <div id="RelatedCalculators" class="content-section">
+        <RelatedCalculators calculators={relatedCalculators} />
+      </div>
+
+      <div id="MethodologySection" class="content-section">
+        <MethodologySection category="moving storage cost estimates" updated="June 2026" />
+      </div>
+    </CalculatorPageShell>
+  </div>
+
+  <script is:inline>
+    const getNumber = (id) => {
+      const rawValue = document.getElementById(id)?.value;
+      const value = Number(rawValue);
+      return Number.isFinite(value) && value >= 0 ? value : 0;
+    };
+
+    const formatMoney = (value) =>
+      value.toLocaleString(undefined, {
+        style: "currency",
+        currency: "USD",
+        maximumFractionDigits: 0,
+      });
+
+    const storageProfiles = {
+      unit: {
+        label: "self-storage unit",
+        small: 95,
+        medium: 155,
+        large: 230,
+        xlarge: 340,
+      },
+      container: {
+        label: "portable moving container",
+        small: 180,
+        medium: 260,
+        large: 360,
+        xlarge: 520,
+      },
+      warehouse: {
+        label: "mover warehouse storage",
+        small: 210,
+        medium: 325,
+        large: 475,
+        xlarge: 700,
+      },
+    };
+
+    function calculateStorageCost() {
+      const storageType = document.getElementById("storageType")?.value || "unit";
+      const storageSize = document.getElementById("storageSize")?.value || "medium";
+      const profile = storageProfiles[storageType] || storageProfiles.unit;
+
+      const monthlyStorageCostInput = getNumber("monthlyStorageCost");
+      const unitCountInput = getNumber("unitCount");
+      const monthsNeededInput = getNumber("monthsNeeded");
+      const promoDiscount = getNumber("promoDiscount");
+      const moveInFee = getNumber("moveInFee");
+      const adminFee = getNumber("adminFee");
+      const monthlyInsurance = getNumber("monthlyInsurance");
+      const climateControlMonthly = getNumber("climateControlMonthly");
+      const securityDeposit = getNumber("securityDeposit");
+      const lateFeeRisk = getNumber("lateFeeRisk");
+      const pickupDeliveryFee = getNumber("pickupDeliveryFee");
+      const extraTruckTrips = getNumber("extraTruckTrips");
+      const costPerTruckTrip = getNumber("costPerTruckTrip");
+      const storageLaborCost = getNumber("storageLaborCost");
+      const movingSupplyCost = getNumber("movingSupplyCost");
+      const taxesFees = getNumber("taxesFees");
+      const confirmedCredit = getNumber("confirmedCredit");
+      const otherCosts = getNumber("otherCosts");
+
+      const unitCount = unitCountInput > 0 ? unitCountInput : 1;
+      const monthsNeeded = monthsNeededInput > 0 ? monthsNeededInput : 1;
+      const monthlyStorageCost =
+        monthlyStorageCostInput > 0
+          ? monthlyStorageCostInput
+          : profile[storageSize] || profile.medium;
+
+      const baseStorageTotal = monthlyStorageCost * unitCount * monthsNeeded;
+      const insuranceTotal = monthlyInsurance * unitCount * monthsNeeded;
+      const climateTotal = climateControlMonthly * unitCount * monthsNeeded;
+      const monthlyStorageTotal = baseStorageTotal + insuranceTotal + climateTotal;
+
+      const oneTimeFees =
+        moveInFee +
+        adminFee +
+        securityDeposit +
+        lateFeeRisk +
+        movingSupplyCost +
+        taxesFees +
+        otherCosts;
+
+      const tripCost = extraTruckTrips * costPerTruckTrip;
+      const tripLaborTotal = pickupDeliveryFee + tripCost + storageLaborCost;
+
+      const grossCost =
+        monthlyStorageTotal +
+        oneTimeFees +
+        tripLaborTotal;
+
+      const totalDiscounts = promoDiscount + confirmedCredit;
+      const outOfPocketCost = Math.max(0, grossCost - totalDiscounts);
+      const lowRange = Math.max(0, grossCost * 0.9 - totalDiscounts);
+      const highRange = Math.max(0, grossCost * 1.25 - totalDiscounts);
+      const extraMonthCost = monthlyStorageCost * unitCount + monthlyInsurance * unitCount + climateControlMonthly * unitCount;
+
+      const results = document.getElementById("results");
+      const totalCost = document.getElementById("totalCost");
+      const monthlyStorageTotalEl = document.getElementById("monthlyStorageTotal");
+      const oneTimeFeesEl = document.getElementById("oneTimeFees");
+      const tripLaborTotalEl = document.getElementById("tripLaborTotal");
+      const outOfPocket = document.getElementById("outOfPocket");
+      const resultDetails = document.getElementById("resultDetails");
+      const breakdownTable = document.getElementById("breakdownTable");
+      const storageNote = document.getElementById("storageNote");
+      const warningList = document.getElementById("warningList");
+
+      results.classList.add("visible");
+
+      totalCost.textContent = formatMoney(outOfPocketCost);
+      monthlyStorageTotalEl.textContent = formatMoney(monthlyStorageTotal);
+      oneTimeFeesEl.textContent = formatMoney(oneTimeFees);
+      tripLaborTotalEl.textContent = formatMoney(tripLaborTotal);
+      outOfPocket.textContent = formatMoney(outOfPocketCost);
+
+      resultDetails.innerHTML = `
+        <p><strong>Selected estimate:</strong> ${unitCount.toFixed(0)} ${profile.label}(s) for ${monthsNeeded.toFixed(1)} month(s).</p>
+        <p><strong>Estimated range after discounts and credits:</strong> ${formatMoney(lowRange)} to ${formatMoney(highRange)}.</p>
+        <p><strong>Monthly storage calculation:</strong> ${formatMoney(monthlyStorageCost)} x ${unitCount.toFixed(0)} unit/container(s) x ${monthsNeeded.toFixed(1)} month(s), plus insurance and climate control.</p>
+        <p><strong>One extra month would add about:</strong> ${formatMoney(extraMonthCost)} before new fees, labor, or delivery charges.</p>
+      `;
+
+      breakdownTable.innerHTML = `
+        <div class="breakdown-row"><strong>Base storage</strong><span>${formatMoney(baseStorageTotal)}</span><span>Monthly unit or container cost multiplied by unit count and months needed.</span></div>
+        <div class="breakdown-row"><strong>Insurance and climate control</strong><span>${formatMoney(insuranceTotal + climateTotal)}</span><span>Monthly storage insurance and climate-control upcharges across the storage period.</span></div>
+        <div class="breakdown-row"><strong>Move-in and facility fees</strong><span>${formatMoney(moveInFee + adminFee + taxesFees)}</span><span>Move-in fee, account setup, admin charge, lock or key fee, taxes, and facility fees.</span></div>
+        <div class="breakdown-row"><strong>Trips, delivery, and labor</strong><span>${formatMoney(tripLaborTotal)}</span><span>Pickup, delivery, redelivery, extra truck trips, storage loading, unloading, or warehouse handling.</span></div>
+        <div class="breakdown-row"><strong>Supplies and risk costs</strong><span>${formatMoney(securityDeposit + lateFeeRisk + movingSupplyCost + otherCosts)}</span><span>Deposit at risk, late fee or extra month risk, storage supplies, and other storage-specific costs.</span></div>
+        <div class="breakdown-row"><strong>Discounts and credits</strong><span>-${formatMoney(totalDiscounts)}</span><span>Confirmed promo discount, employer reimbursement, family help, roommate repayment, or other confirmed credit.</span></div>
+      `;
+
+      const warnings = [];
+
+      if (monthlyStorageCostInput === 0) {
+        warnings.push("Monthly storage cost is blank, so the calculator used a planning estimate based on storage type and size.");
+      }
+
+      if (monthsNeededInput === 0) {
+        warnings.push("Months needed is blank, so the calculator used one month. Add realistic timing before relying on the estimate.");
+      }
+
+      if (unitCountInput === 0) {
+        warnings.push("Unit or container count is blank, so the calculator assumed one unit or container.");
+      }
+
+      if (monthlyInsurance === 0) {
+        warnings.push("Storage insurance is blank. Confirm whether insurance is required and whether your current policy covers stored belongings.");
+      }
+
+      if (storageType === "container" && pickupDeliveryFee === 0) {
+        warnings.push("Pickup or delivery fees are blank. Portable containers often charge for delivery, pickup, redelivery, or storage movement.");
+      }
+
+      if (climateControlMonthly === 0) {
+        warnings.push("Climate control is blank. Confirm whether stored items can handle heat, cold, and humidity.");
+      }
+
+      if (extraTruckTrips > 0 && costPerTruckTrip === 0) {
+        warnings.push("Extra truck trips were entered, but cost per trip is blank. Add truck, fuel, mileage, toll, and parking cost per trip.");
+      }
+
+      if (lateFeeRisk === 0 && monthsNeeded <= 1) {
+        warnings.push("Late fee or extra month risk is blank. Short storage windows can become another billing cycle if timing slips.");
+      }
+
+      if (totalDiscounts > grossCost) {
+        warnings.push("Discounts and credits exceed the storage estimate. That can reduce out-of-pocket storage cost to zero, but moving and setup costs may still remain.");
+      }
+
+      let noteTitle = "Use this as your temporary storage planning number.";
+      let noteBody =
+        "The estimate covers storage during the move, not rent, deposits, lease penalties, furniture, groceries, or full mover charges.";
+
+      if (monthsNeededInput === 0) {
+        noteTitle = "Add the storage timeline before relying on this number.";
+        noteBody =
+          "Storage cost is time-sensitive. One extra billing cycle can change the move budget quickly.";
+      } else if (extraMonthCost > outOfPocketCost * 0.4 && outOfPocketCost > 0) {
+        noteTitle = "One extra month would materially change the estimate.";
+        noteBody =
+          "Get the move-in date, delivery window, billing cycle, and cancellation deadline in writing before booking storage.";
+      } else if (tripLaborTotal > monthlyStorageTotal) {
+        noteTitle = "Trips and labor are driving the storage cost.";
+        noteBody =
+          "Compare storage with a different move date, a portable container, or a larger truck if extra trips are the expensive part.";
+      } else if (storageType === "container" && pickupDeliveryFee === 0) {
+        noteTitle = "Confirm container delivery and pickup charges.";
+        noteBody =
+          "Portable container pricing can depend on delivery, pickup, redelivery, storage location, and distance.";
+      } else if (outOfPocketCost === 0) {
+        noteTitle = "Confirmed discounts and credits cover the storage estimate.";
+        noteBody =
+          "The entered discounts and credits cover the estimated storage cost. Confirm timing, caps, and whether any refundable deposit is tied up.";
+      } else if (monthlyStorageTotal > oneTimeFees + tripLaborTotal) {
+        noteTitle = "Monthly storage is the main cost.";
+        noteBody =
+          "The fastest way to cut this estimate is to reduce the storage period, unit size, unit count, or climate-control need.";
+      }
+
+      storageNote.innerHTML = `<strong>${noteTitle}</strong> ${noteBody}`;
+
+      warningList.innerHTML = warnings
+        .map((warning) => `<li>${warning}</li>`)
+        .join("");
+    }
+
+    document
+      .getElementById("storageButton")
+      .addEventListener("click", calculateStorageCost);
+  </script>
+</Layout>

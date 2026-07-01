@@ -1,0 +1,894 @@
+---
+import Layout from "../layouts/Layout.astro";
+import CalculatorPageShell from "../components/CalculatorPageShell.astro";
+import FAQSection from "../components/FAQSection.astro";
+import RelatedCalculators from "../components/RelatedCalculators.astro";
+import MethodologySection from "../components/MethodologySection.astro";
+import CalculatorAssumptions from "../components/CalculatorAssumptions.astro";
+import KeyCostCategories from "../components/KeyCostCategories.astro";
+import ReduceCostTips from "../components/ReduceCostTips.astro";
+import { calculators } from "../data/calculators.js";
+
+const truckRentalFaqs = [
+  {
+    question: "How much does it cost to rent a moving truck?",
+    answer:
+      "A moving truck rental can cost far more than the advertised daily rate. The real cost can include rental days, mileage fees, fuel, insurance, equipment, taxes, environmental fees, tolls, parking, hotels, extra trips, and paid helper labor.",
+  },
+  {
+    question: "Why is the truck rental base rate not enough?",
+    answer:
+      "The base rate usually covers the truck reservation, not the full move. Mileage charges, fuel, insurance, late return fees, extra days, equipment, tolls, parking, and labor can make the real out-of-pocket cost much higher than the starting price.",
+  },
+  {
+    question: "Does this calculator include gas?",
+    answer:
+      "Yes. The calculator estimates fuel from miles, truck MPG, and gas price. Rental trucks often get much lower MPG than normal cars, so fuel can be a major cost on a longer move.",
+  },
+  {
+    question: "Does this calculator include movers?",
+    answer:
+      "It includes optional helper labor for loading and unloading. If you are hiring a full professional moving company instead of renting a truck, use the professional movers cost calculator.",
+  },
+  {
+    question: "Is this for local or long-distance truck rentals?",
+    answer:
+      "It can estimate either. Local moves usually depend more on mileage, extra trips, and helper time. Long-distance truck rentals can add hotel costs, tolls, fuel, parking, and extra rental days.",
+  },
+];
+
+const relatedCalculators = calculators
+  .filter((calculator) =>
+    [
+      "/moving-calculators",
+      "/moving-cost-calculator",
+      "/professional-movers-cost-calculator",
+      "/should-i-move-calculator",
+      "/moving-storage-cost-calculator",
+      "/moving-boxes-and-packing-supplies-cost-calculator",
+      "/first-apartment-cost-calculator",
+      "/security-deposit-and-move-in-cost-calculator",
+      "/how-much-should-i-save-before-moving-out",
+    ].includes(calculator.href)
+  )
+  .filter((calculator) => calculator.href !== "/moving-truck-rental-cost-calculator")
+  .slice(0, 6);
+---
+
+<Layout
+  title="Moving Truck Rental Cost Calculator | ShouldISpend"
+  description="Estimate DIY moving truck rental costs, including base rate, rental days, mileage fees, fuel, insurance, equipment, tolls, parking, hotel costs, helper labor, and extra fees."
+>
+  <style>
+    .container {
+      max-width: 960px;
+      margin: auto;
+    }
+
+    .calculator {
+      background: white;
+      padding: 40px;
+      border-radius: 24px;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.06);
+    }
+
+    .calculator h2 {
+      margin-top: 0;
+      font-size: 2rem;
+      margin-bottom: 18px;
+      color: #0f172a;
+    }
+
+    .calculator-intro {
+      color: #334155;
+      line-height: 1.8;
+      margin-bottom: 30px;
+      font-size: 1.05rem;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+    }
+
+    .section-label {
+      grid-column: 1 / -1;
+      border-top: 1px solid #dbe4ee;
+      padding-top: 22px;
+      margin-top: 6px;
+      color: #0f172a;
+      font-size: 1.05rem;
+      font-weight: 900;
+    }
+
+    .field label {
+      display: block;
+      font-weight: 800;
+      margin-bottom: 10px;
+      color: #0f172a;
+    }
+
+    .field input,
+    .field select {
+      width: 100%;
+      padding: 16px;
+      border-radius: 12px;
+      border: 1px solid #cbd5e1;
+      font-size: 1rem;
+      box-sizing: border-box;
+      background: white;
+    }
+
+    .field small {
+      display: block;
+      margin-top: 8px;
+      color: #64748b;
+      line-height: 1.5;
+    }
+
+    button {
+      margin-top: 30px;
+      background: #0f766e;
+      color: white;
+      border: none;
+      padding: 18px 32px;
+      border-radius: 999px;
+      font-size: 1.05rem;
+      font-weight: 800;
+      cursor: pointer;
+      transition: opacity 0.2s ease;
+    }
+
+    button:hover {
+      opacity: 0.92;
+    }
+
+    .results {
+      margin-top: 36px;
+      background: #f8fafc;
+      padding: 32px;
+      border-radius: 24px;
+      border: 1px solid var(--border);
+      box-shadow: 0 10px 24px rgba(15, 23, 42, 0.04);
+      display: none;
+    }
+
+    .results.visible {
+      display: block;
+    }
+
+    .result-kicker {
+      font-size: 0.82rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: #0f766e;
+      font-weight: 900;
+      margin-bottom: 10px;
+    }
+
+    .total-price {
+      font-size: clamp(2.4rem, 6vw, 4rem);
+      font-weight: 900;
+      color: #0f172a;
+      line-height: 1.05;
+      margin-bottom: 16px;
+    }
+
+    .result-details {
+      color: #334155;
+      line-height: 1.9;
+      font-size: 1.02rem;
+    }
+
+    .result-details p {
+      margin: 0 0 12px;
+    }
+
+    .result-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 16px;
+      margin: 26px 0;
+    }
+
+    .result-card {
+      background: white;
+      border: 1px solid #dbe4ee;
+      border-radius: 18px;
+      padding: 20px;
+    }
+
+    .result-card span {
+      display: block;
+      color: #64748b;
+      font-size: 0.9rem;
+      margin-bottom: 8px;
+      font-weight: 700;
+    }
+
+    .result-card strong {
+      display: block;
+      color: #0f172a;
+      font-size: 1.55rem;
+      line-height: 1.2;
+    }
+
+    .breakdown {
+      margin-top: 26px;
+      border-radius: 18px;
+      overflow: hidden;
+      border: 1px solid #dbe4ee;
+      background: white;
+    }
+
+    .breakdown-row {
+      display: grid;
+      grid-template-columns: 1.1fr 0.7fr 1.6fr;
+      gap: 16px;
+      padding: 16px 20px;
+      border-bottom: 1px solid #e2e8f0;
+      color: #334155;
+    }
+
+    .breakdown-row:last-child {
+      border-bottom: 0;
+    }
+
+    .breakdown-row strong {
+      color: #0f172a;
+    }
+
+    .verdict-box {
+      margin-top: 24px;
+      padding: 22px;
+      border-radius: 18px;
+      background: white;
+      border: 1px solid #dbe4ee;
+      color: #334155;
+      line-height: 1.8;
+    }
+
+    .verdict-box strong {
+      color: #0f172a;
+    }
+
+    .warning-list {
+      margin: 18px 0 0;
+      padding-left: 22px;
+      color: #334155;
+      line-height: 1.8;
+    }
+
+    .disclaimer {
+      margin-top: 24px;
+      font-size: 0.9rem;
+      color: #64748b;
+    }
+
+    .content-section {
+      margin-top: 60px;
+    }
+
+    .content-section h2 {
+      font-size: 2rem;
+      margin-bottom: 20px;
+      color: #0f172a;
+    }
+
+    .content-section p,
+    .content-section li {
+      font-size: 1.1rem;
+      line-height: 1.9;
+      color: #334155;
+    }
+
+    .content-link {
+      color: #0f766e;
+      font-weight: 700;
+      text-decoration: none;
+    }
+
+    .content-link:hover {
+      text-decoration: underline;
+    }
+
+    @media (max-width: 768px) {
+      .calculator {
+        padding: 24px;
+      }
+
+      .grid,
+      .result-grid,
+      .breakdown-row {
+        grid-template-columns: 1fr;
+      }
+
+      .calculator h2,
+      .content-section h2 {
+        font-size: 1.7rem;
+      }
+
+      .results {
+        padding: 24px;
+      }
+    }
+  </style>
+
+  <div class="container">
+    <CalculatorPageShell
+      eyebrow="Moving Truck Rental Cost Calculator"
+      title="Moving Truck Rental Cost Calculator"
+      description="Estimate the real cost of a DIY moving truck rental, including base rate, rental days, mileage charges, fuel, insurance, equipment, tolls, parking, hotel costs, helper labor, and extra fees."
+    >
+      <div class="calculator">
+        <h2>How Much Will a Moving Truck Rental Cost?</h2>
+
+        <p class="calculator-intro">
+          This calculator estimates the full DIY truck-rental cost, not just the
+          advertised daily rate. It includes truck days, mileage, fuel, insurance,
+          equipment, tolls, parking, hotels, helper labor, taxes, fees, and a
+          cushion for extra trips or a late return.
+        </p>
+
+        <div class="grid">
+          <div class="field">
+            <label for="moveType">Move Type</label>
+            <select id="moveType">
+              <option value="local" selected>Local DIY truck rental</option>
+              <option value="long">Long-distance truck rental</option>
+            </select>
+            <small>Local moves usually depend on mileage and time. Long-distance moves often add hotels, tolls, and extra rental days.</small>
+          </div>
+
+          <div class="field">
+            <label for="truckSize">Truck Size</label>
+            <select id="truckSize">
+              <option value="cargo">Cargo van or pickup</option>
+              <option value="small">10 to 12 foot truck</option>
+              <option value="medium" selected>15 to 17 foot truck</option>
+              <option value="large">20 to 22 foot truck</option>
+              <option value="xlarge">26 foot truck</option>
+            </select>
+            <small>Used only for planning notes and default MPG if you leave MPG blank.</small>
+          </div>
+
+          <div class="section-label">Truck rental and mileage</div>
+
+          <div class="field">
+            <label for="baseRate">Truck Base Rate per Day</label>
+            <input id="baseRate" type="number" min="0" step="5" placeholder="79" />
+            <small>The advertised daily truck rate or reserved daily rate.</small>
+          </div>
+
+          <div class="field">
+            <label for="rentalDays">Rental Days</label>
+            <input id="rentalDays" type="number" min="0" step="1" placeholder="2" />
+            <small>Count pickup day, loading day, driving days, unloading day, and buffer days if needed.</small>
+          </div>
+
+          <div class="field">
+            <label for="mileageFee">Mileage Fee per Mile</label>
+            <input id="mileageFee" type="number" min="0" step="0.01" placeholder="0.99" />
+            <small>Local rentals often charge per mile. Long-distance rentals may include miles or charge for extra miles.</small>
+          </div>
+
+          <div class="field">
+            <label for="totalMiles">Total Miles Driven</label>
+            <input id="totalMiles" type="number" min="0" step="5" placeholder="120" />
+            <small>Include pickup, loading, unloading, fuel stops, return trip, and extra trips.</small>
+          </div>
+
+          <div class="field">
+            <label for="includedMiles">Included Miles</label>
+            <input id="includedMiles" type="number" min="0" step="5" placeholder="0" />
+            <small>Use this if your quote includes a mileage allowance. Extra miles are charged after this amount.</small>
+          </div>
+
+          <div class="field">
+            <label for="extraDayFee">Extra Day or Late Return Fee</label>
+            <input id="extraDayFee" type="number" min="0" step="10" placeholder="0" />
+            <small>Use this for planned extra days, late return risk, or a separate late fee.</small>
+          </div>
+
+          <div class="section-label">Fuel and route costs</div>
+
+          <div class="field">
+            <label for="truckMpg">Truck MPG</label>
+            <input id="truckMpg" type="number" min="0" step="0.1" placeholder="10" />
+            <small>Leave blank to use a planning MPG based on truck size.</small>
+          </div>
+
+          <div class="field">
+            <label for="gasPrice">Gas Price per Gallon</label>
+            <input id="gasPrice" type="number" min="0" step="0.01" placeholder="3.75" />
+            <small>Use expected gas price along the route, not just your local price.</small>
+          </div>
+
+          <div class="field">
+            <label for="tolls">Tolls</label>
+            <input id="tolls" type="number" min="0" step="5" placeholder="45" />
+            <small>Include toll roads, bridges, tunnels, and route fees.</small>
+          </div>
+
+          <div class="field">
+            <label for="parking">Parking or Permits</label>
+            <input id="parking" type="number" min="0" step="5" placeholder="60" />
+            <small>Street permits, loading-zone permits, garage fees, overnight parking, or tickets risk.</small>
+          </div>
+
+          <div class="field">
+            <label for="hotelCost">Hotel Cost</label>
+            <input id="hotelCost" type="number" min="0" step="25" placeholder="0" />
+            <small>For long-distance moves, include hotels needed while driving the truck.</small>
+          </div>
+
+          <div class="field">
+            <label for="mealsRoadCost">Road Meals or Driver Costs</label>
+            <input id="mealsRoadCost" type="number" min="0" step="10" placeholder="80" />
+            <small>Optional travel food, extra driver costs, or route expenses caused by renting the truck.</small>
+          </div>
+
+          <div class="section-label">Insurance, equipment, and labor</div>
+
+          <div class="field">
+            <label for="insurance">Truck Insurance or Damage Waiver</label>
+            <input id="insurance" type="number" min="0" step="10" placeholder="120" />
+            <small>Rental coverage, damage waiver, cargo protection, roadside coverage, or liability add-on.</small>
+          </div>
+
+          <div class="field">
+            <label for="equipment">Equipment Rental</label>
+            <input id="equipment" type="number" min="0" step="10" placeholder="85" />
+            <small>Dolly, appliance dolly, furniture pads, straps, ramps, moving blankets, or hand truck.</small>
+          </div>
+
+          <div class="field">
+            <label for="helperHourlyRate">Helper Hourly Rate</label>
+            <input id="helperHourlyRate" type="number" min="0" step="5" placeholder="35" />
+            <small>Paid loading or unloading help per helper-hour.</small>
+          </div>
+
+          <div class="field">
+            <label for="helperCount">Number of Paid Helpers</label>
+            <input id="helperCount" type="number" min="0" step="1" placeholder="2" />
+            <small>Leave blank if you are not paying helpers.</small>
+          </div>
+
+          <div class="field">
+            <label for="helperHours">Paid Helper Hours</label>
+            <input id="helperHours" type="number" min="0" step="0.5" placeholder="4" />
+            <small>Include loading, unloading, stairs, long carries, and heavy furniture time.</small>
+          </div>
+
+          <div class="field">
+            <label for="tipsFood">Tips, Food, or Drinks for Helpers</label>
+            <input id="tipsFood" type="number" min="0" step="10" placeholder="100" />
+            <small>Tips for hired helpers or food and drinks for friends helping with the move.</small>
+          </div>
+
+          <div class="section-label">Other costs and credits</div>
+
+          <div class="field">
+            <label for="taxesFees">Taxes and Rental Fees</label>
+            <input id="taxesFees" type="number" min="0" step="10" placeholder="65" />
+            <small>Environmental fee, facility fee, taxes, recovery fee, or other rental-company charges.</small>
+          </div>
+
+          <div class="field">
+            <label for="cleaningRefuelFee">Cleaning or Refuel Fee Risk</label>
+            <input id="cleaningRefuelFee" type="number" min="0" step="10" placeholder="0" />
+            <small>Use this if you may return the truck dirty, late, short on fuel, or with extra charges.</small>
+          </div>
+
+          <div class="field">
+            <label for="otherCosts">Other DIY Truck Costs</label>
+            <input id="otherCosts" type="number" min="0" step="10" placeholder="100" />
+            <small>Extra stop fee, storage delay, roadside supplies, lock, tie-downs, or route-specific cost.</small>
+          </div>
+
+          <div class="field">
+            <label for="confirmedCredit">Confirmed Credit or Reimbursement</label>
+            <input id="confirmedCredit" type="number" min="0" step="25" placeholder="200" />
+            <small>Employer reimbursement, family help, roommate repayment, or confirmed credit.</small>
+          </div>
+        </div>
+
+        <button id="truckRentalButton" type="button">Calculate Truck Rental Cost</button>
+
+        <div class="results" id="results" aria-live="polite">
+          <div class="result-kicker">Estimated Moving Truck Rental Cost</div>
+
+          <div class="total-price" id="totalCost"></div>
+
+          <div class="result-details" id="resultDetails"></div>
+
+          <div class="result-grid">
+            <div class="result-card">
+              <span>Truck and mileage</span>
+              <strong id="truckMileageCost"></strong>
+            </div>
+
+            <div class="result-card">
+              <span>Fuel and route costs</span>
+              <strong id="fuelRouteCost"></strong>
+            </div>
+
+            <div class="result-card">
+              <span>Insurance, equipment, labor</span>
+              <strong id="laborProtectionCost"></strong>
+            </div>
+
+            <div class="result-card">
+              <span>Out-of-pocket after credits</span>
+              <strong id="outOfPocket"></strong>
+            </div>
+          </div>
+
+          <div class="breakdown" id="breakdownTable"></div>
+
+          <div class="verdict-box" id="truckNote"></div>
+
+          <ul class="warning-list" id="warningList"></ul>
+
+          <div class="disclaimer">
+            This calculator estimates DIY moving truck rental costs from the
+            numbers entered and planning assumptions when fields are blank. It is
+            not a binding quote from a truck rental company, insurer, hotel,
+            toll authority, parking office, or labor provider.
+          </div>
+        </div>
+      </div>
+
+      <section class="content-section">
+        <h2>What This Moving Truck Rental Cost Calculator Includes</h2>
+
+        <p>
+          This page estimates the real cost of renting a moving truck for a DIY
+          move. The truck's daily rate is only one part of the bill. Mileage,
+          fuel, insurance, equipment, tolls, parking, hotels, taxes, fees, and
+          helper labor can turn a cheap reservation into a much larger cash need.
+        </p>
+
+        <p>
+          Use this calculator when you are deciding whether to move yourself or
+          pay for movers. To compare DIY, hybrid, and full-service options, use
+          the
+          <a class="content-link" href="/moving-cost-calculator">
+            moving cost calculator
+          </a>.
+          If you are pricing a professional moving company, use the
+          <a class="content-link" href="/professional-movers-cost-calculator">
+            professional movers cost calculator
+          </a>.
+        </p>
+      </section>
+
+      <div id="KeyCostCategories" class="content-section">
+        <KeyCostCategories
+          items={[
+            {
+              title: "Truck rental charges",
+              description:
+                "The base truck rate, rental days, extra days, taxes, facility fees, environmental fees, late-return fees, and mileage charges form the core truck rental bill.",
+            },
+            {
+              title: "Fuel and route costs",
+              description:
+                "Truck MPG, gas price, miles driven, tolls, parking, permits, hotels, and road meals can matter more on long-distance moves than the advertised rental rate.",
+            },
+            {
+              title: "Insurance and equipment",
+              description:
+                "Damage waiver, cargo protection, roadside coverage, dollies, straps, furniture pads, ramps, and blankets can be worth paying for but should not be ignored.",
+            },
+            {
+              title: "Helper labor",
+              description:
+                "Paid loading or unloading help can keep a DIY move from becoming unsafe, slow, or impossible, especially with stairs, heavy furniture, and long carries.",
+            },
+          ]}
+        />
+      </div>
+
+      <div id="ReduceCostTips" class="content-section">
+        <ReduceCostTips
+          items={[
+            "Compare the total truck rental cost against a hybrid move before assuming DIY is automatically cheaper.",
+            "Estimate all miles, including pickup, return, fuel stops, extra trips, and wrong-turn buffer.",
+            "Use the smallest truck that safely fits your items because larger trucks often cost more and use more fuel.",
+            "Reserve parking, loading zones, or elevators early so the truck does not sit while helpers are on the clock.",
+            "Borrow equipment where possible, but do not skip straps, pads, dollies, and mattress protection for heavy or fragile items.",
+            "Build in a time cushion if the truck must be returned by a strict deadline or the next-day fee is expensive.",
+          ]}
+        />
+      </div>
+
+      <div id="CalculatorAssumptions" class="content-section">
+        <CalculatorAssumptions
+          items={[
+            "Truck rental cost is calculated from base daily rate, rental days, mileage charges after included miles, extra day fees, taxes, and rental fees.",
+            "Fuel cost is estimated from total miles, truck MPG, and gas price. If MPG is blank, the calculator uses a planning MPG based on truck size.",
+            "Helper labor is calculated from helper hourly rate, number of helpers, and helper hours.",
+            "Insurance, equipment, tolls, parking, hotels, road meals, cleaning or refuel risk, tips, and other costs are added as entered.",
+            "Confirmed credits reduce the out-of-pocket estimate but do not reduce the gross truck rental and DIY moving cost.",
+            "This page estimates DIY truck rental costs and does not include rent, deposits, lease penalties, furniture, groceries, utility setup, or long-term housing bills.",
+          ]}
+        />
+      </div>
+
+      <section id="FinancialRedFlags" class="content-section">
+        <h2>Moving Truck Rental Red Flags</h2>
+
+        <p>
+          A DIY truck move can look cheap until the hidden parts of the plan show
+          up. The biggest risks are undercounted miles, poor fuel estimates,
+          unconfirmed helpers, late return fees, building access problems, and
+          paying for equipment or coverage at the counter because it was not
+          planned ahead.
+        </p>
+
+        <ul>
+          <li>The estimate uses the advertised daily rate but ignores mileage, fuel, insurance, equipment, taxes, and fees.</li>
+          <li>The move depends on unpaid helpers who have not clearly committed to the loading and unloading window.</li>
+          <li>The truck route includes tolls, parking restrictions, low-clearance roads, or a long return trip that is not priced.</li>
+          <li>The rental window is too tight and could trigger an extra day, late return fee, or rushed loading.</li>
+          <li>No one has planned for stairs, elevators, long carries, heavy furniture, mattress protection, or damage risk.</li>
+          <li>The DIY move is cheaper only because injury risk, lost time, hotels, meals, and helper costs are being ignored.</li>
+        </ul>
+      </section>
+
+      <section class="content-section">
+        <h2>How to Use the Truck Rental Estimate</h2>
+
+        <p>
+          Use the out-of-pocket estimate as the cash number for the DIY truck
+          plan. Then compare it with the cost of hiring movers or using a hybrid
+          move. A truck rental may still be the right choice, but the real
+          comparison should include fuel, mileage, equipment, insurance, hotels,
+          helper labor, and the value of your time.
+        </p>
+
+        <p>
+          If the estimate is close to a professional mover quote, the cheaper
+          option is not always the better option. A truck rental shifts more work,
+          risk, driving, lifting, scheduling, and damage responsibility onto you.
+          That tradeoff can be worth it, but it should be deliberate.
+        </p>
+      </section>
+
+      <div id="FAQSection" class="content-section">
+        <FAQSection
+          title="Moving Truck Rental Cost Calculator FAQ"
+          faqs={truckRentalFaqs}
+        />
+      </div>
+
+      <div id="RelatedCalculators" class="content-section">
+        <RelatedCalculators calculators={relatedCalculators} />
+      </div>
+
+      <div id="MethodologySection" class="content-section">
+        <MethodologySection category="moving truck rental cost estimates" updated="June 2026" />
+      </div>
+    </CalculatorPageShell>
+  </div>
+
+  <script is:inline>
+    const getNumber = (id) => {
+      const rawValue = document.getElementById(id)?.value;
+      const value = Number(rawValue);
+      return Number.isFinite(value) && value >= 0 ? value : 0;
+    };
+
+    const formatMoney = (value) =>
+      value.toLocaleString(undefined, {
+        style: "currency",
+        currency: "USD",
+        maximumFractionDigits: 0,
+      });
+
+    const truckProfiles = {
+      cargo: {
+        label: "cargo van or pickup",
+        mpg: 15,
+        defaultBaseRate: 49,
+      },
+      small: {
+        label: "10 to 12 foot truck",
+        mpg: 12,
+        defaultBaseRate: 69,
+      },
+      medium: {
+        label: "15 to 17 foot truck",
+        mpg: 10,
+        defaultBaseRate: 89,
+      },
+      large: {
+        label: "20 to 22 foot truck",
+        mpg: 8,
+        defaultBaseRate: 119,
+      },
+      xlarge: {
+        label: "26 foot truck",
+        mpg: 7,
+        defaultBaseRate: 149,
+      },
+    };
+
+    function calculateTruckRentalCost() {
+      const moveType = document.getElementById("moveType")?.value || "local";
+      const truckSize = document.getElementById("truckSize")?.value || "medium";
+      const profile = truckProfiles[truckSize] || truckProfiles.medium;
+
+      const baseRateInput = getNumber("baseRate");
+      const rentalDaysInput = getNumber("rentalDays");
+      const mileageFee = getNumber("mileageFee");
+      const totalMiles = getNumber("totalMiles");
+      const includedMiles = getNumber("includedMiles");
+      const extraDayFee = getNumber("extraDayFee");
+      const truckMpgInput = getNumber("truckMpg");
+      const gasPriceInput = getNumber("gasPrice");
+      const tolls = getNumber("tolls");
+      const parking = getNumber("parking");
+      const hotelCost = getNumber("hotelCost");
+      const mealsRoadCost = getNumber("mealsRoadCost");
+      const insurance = getNumber("insurance");
+      const equipment = getNumber("equipment");
+      const helperHourlyRate = getNumber("helperHourlyRate");
+      const helperCount = getNumber("helperCount");
+      const helperHours = getNumber("helperHours");
+      const tipsFood = getNumber("tipsFood");
+      const taxesFees = getNumber("taxesFees");
+      const cleaningRefuelFee = getNumber("cleaningRefuelFee");
+      const otherCosts = getNumber("otherCosts");
+      const confirmedCredit = getNumber("confirmedCredit");
+
+      const baseRate = baseRateInput > 0 ? baseRateInput : profile.defaultBaseRate;
+      const rentalDays = rentalDaysInput > 0 ? rentalDaysInput : moveType === "long" ? 3 : 1;
+      const chargedMiles = Math.max(0, totalMiles - includedMiles);
+      const truckMpg = truckMpgInput > 0 ? truckMpgInput : profile.mpg;
+      const gasPrice = gasPriceInput > 0 ? gasPriceInput : 3.75;
+
+      const baseRentalCost = baseRate * rentalDays;
+      const mileageCost = chargedMiles * mileageFee;
+      const fuelCost = truckMpg > 0 ? (totalMiles / truckMpg) * gasPrice : 0;
+      const routeCost = fuelCost + tolls + parking + hotelCost + mealsRoadCost;
+      const helperLaborCost = helperHourlyRate * helperCount * helperHours;
+      const laborProtectionCost =
+        insurance + equipment + helperLaborCost + tipsFood;
+
+      const truckMileageCost =
+        baseRentalCost + mileageCost + extraDayFee + taxesFees + cleaningRefuelFee;
+
+      const grossCost =
+        truckMileageCost +
+        routeCost +
+        laborProtectionCost +
+        otherCosts;
+
+      const outOfPocketCost = Math.max(0, grossCost - confirmedCredit);
+      const lowRange = Math.max(0, grossCost * 0.9 - confirmedCredit);
+      const highRange = Math.max(0, grossCost * 1.25 - confirmedCredit);
+
+      const results = document.getElementById("results");
+      const totalCost = document.getElementById("totalCost");
+      const truckMileageCostEl = document.getElementById("truckMileageCost");
+      const fuelRouteCost = document.getElementById("fuelRouteCost");
+      const laborProtectionCostEl = document.getElementById("laborProtectionCost");
+      const outOfPocket = document.getElementById("outOfPocket");
+      const resultDetails = document.getElementById("resultDetails");
+      const breakdownTable = document.getElementById("breakdownTable");
+      const truckNote = document.getElementById("truckNote");
+      const warningList = document.getElementById("warningList");
+
+      results.classList.add("visible");
+
+      totalCost.textContent = formatMoney(outOfPocketCost);
+      truckMileageCostEl.textContent = formatMoney(truckMileageCost);
+      fuelRouteCost.textContent = formatMoney(routeCost);
+      laborProtectionCostEl.textContent = formatMoney(laborProtectionCost);
+      outOfPocket.textContent = formatMoney(outOfPocketCost);
+
+      const moveLabel =
+        moveType === "long"
+          ? "long-distance DIY truck rental"
+          : "local DIY truck rental";
+
+      resultDetails.innerHTML = `
+        <p><strong>Selected estimate:</strong> ${moveLabel} using a ${profile.label}.</p>
+        <p><strong>Estimated range after confirmed credits:</strong> ${formatMoney(lowRange)} to ${formatMoney(highRange)}.</p>
+        <p><strong>Truck rental calculation:</strong> ${formatMoney(baseRate)} per day x ${rentalDays.toFixed(0)} rental day(s), plus ${chargedMiles.toLocaleString()} charged miles.</p>
+        <p><strong>Fuel estimate:</strong> ${formatMoney(fuelCost)} using ${totalMiles.toLocaleString()} miles, ${truckMpg.toFixed(1)} MPG, and ${formatMoney(gasPrice)} per gallon.</p>
+      `;
+
+      breakdownTable.innerHTML = `
+        <div class="breakdown-row"><strong>Base rental</strong><span>${formatMoney(baseRentalCost)}</span><span>Daily truck rate multiplied by rental days.</span></div>
+        <div class="breakdown-row"><strong>Mileage</strong><span>${formatMoney(mileageCost)}</span><span>Total miles after included miles, multiplied by the mileage fee.</span></div>
+        <div class="breakdown-row"><strong>Fuel and route</strong><span>${formatMoney(routeCost)}</span><span>Gas, tolls, parking, permits, hotels, and road meals or driver costs.</span></div>
+        <div class="breakdown-row"><strong>Coverage and equipment</strong><span>${formatMoney(insurance + equipment)}</span><span>Damage waiver, cargo protection, roadside coverage, dollies, straps, pads, and moving blankets.</span></div>
+        <div class="breakdown-row"><strong>Helper labor</strong><span>${formatMoney(helperLaborCost + tipsFood)}</span><span>Paid helpers plus tips, food, or drinks for people helping with the move.</span></div>
+        <div class="breakdown-row"><strong>Taxes, fees, and other</strong><span>${formatMoney(taxesFees + extraDayFee + cleaningRefuelFee + otherCosts)}</span><span>Rental fees, extra day risk, cleaning or refuel risk, late return risk, and other DIY truck costs.</span></div>
+        <div class="breakdown-row"><strong>Confirmed credits</strong><span>-${formatMoney(confirmedCredit)}</span><span>Employer reimbursement, family help, roommate repayment, or confirmed credit.</span></div>
+      `;
+
+      const warnings = [];
+
+      if (baseRateInput === 0) {
+        warnings.push("Truck base rate is blank, so the calculator used a planning rate based on truck size.");
+      }
+
+      if (rentalDaysInput === 0) {
+        warnings.push("Rental days are blank, so the calculator used a basic planning assumption.");
+      }
+
+      if (totalMiles === 0) {
+        warnings.push("Total miles are blank. Add pickup, return, fuel stops, extra trips, and driving distance for a better estimate.");
+      }
+
+      if (mileageFee === 0 && moveType === "local") {
+        warnings.push("Mileage fee is blank. Many local truck rentals charge per mile.");
+      }
+
+      if (truckMpgInput === 0) {
+        warnings.push("Truck MPG is blank, so the calculator used a planning MPG based on truck size.");
+      }
+
+      if (insurance === 0) {
+        warnings.push("Insurance or damage waiver is blank. Confirm what your auto policy and credit card actually cover before declining rental coverage.");
+      }
+
+      if (equipment === 0) {
+        warnings.push("Equipment rental is blank. Dollies, straps, blankets, and pads can prevent damage and injuries.");
+      }
+
+      if (helperCount === 0 && helperHours === 0) {
+        warnings.push("Helper labor is blank. Confirm who will load and unload before relying on a DIY plan.");
+      }
+
+      if (moveType === "long" && hotelCost === 0 && totalMiles > 400) {
+        warnings.push("Hotel cost is blank for a longer move. Add lodging if the drive cannot be completed safely in one day.");
+      }
+
+      if (confirmedCredit > grossCost) {
+        warnings.push("Confirmed credits exceed the truck-rental estimate. That can reduce out-of-pocket cost to zero, but deposits and setup costs may still remain.");
+      }
+
+      let noteTitle = "Use this as your DIY truck-rental planning number.";
+      let noteBody =
+        "The estimate covers the truck move itself, not rent, deposits, lease penalties, furniture, groceries, or utility setup.";
+
+      if (totalMiles === 0) {
+        noteTitle = "Add miles before relying on the estimate.";
+        noteBody =
+          "Mileage and fuel are major truck-rental costs. Enter expected miles to make the estimate useful.";
+      } else if (moveType === "local" && mileageCost > baseRentalCost) {
+        noteTitle = "Mileage is driving this estimate.";
+        noteBody =
+          "The per-mile charge is larger than the base rental cost. Confirm included miles, return distance, and extra trips before booking.";
+      } else if (fuelCost > baseRentalCost) {
+        noteTitle = "Fuel is a major part of this truck rental.";
+        noteBody =
+          "Rental trucks can get low MPG. Check route distance and gas price before assuming the truck is the cheapest option.";
+      } else if (helperLaborCost > baseRentalCost) {
+        noteTitle = "Helper labor is the biggest tradeoff.";
+        noteBody =
+          "Paid help can still be cheaper than full-service movers, but compare this estimate with a hybrid or professional moving quote.";
+      } else if (outOfPocketCost === 0) {
+        noteTitle = "Confirmed credits cover the truck-rental estimate.";
+        noteBody =
+          "The entered credit covers the estimated truck-rental cost. Confirm when reimbursement arrives and whether it is capped.";
+      }
+
+      truckNote.innerHTML = `<strong>${noteTitle}</strong> ${noteBody}`;
+
+      warningList.innerHTML = warnings
+        .map((warning) => `<li>${warning}</li>`)
+        .join("");
+    }
+
+    document
+      .getElementById("truckRentalButton")
+      .addEventListener("click", calculateTruckRentalCost);
+  </script>
+</Layout>

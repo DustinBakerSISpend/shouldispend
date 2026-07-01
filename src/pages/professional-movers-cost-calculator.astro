@@ -1,0 +1,859 @@
+---
+import Layout from "../layouts/Layout.astro";
+import CalculatorPageShell from "../components/CalculatorPageShell.astro";
+import FAQSection from "../components/FAQSection.astro";
+import RelatedCalculators from "../components/RelatedCalculators.astro";
+import MethodologySection from "../components/MethodologySection.astro";
+import CalculatorAssumptions from "../components/CalculatorAssumptions.astro";
+import KeyCostCategories from "../components/KeyCostCategories.astro";
+import ReduceCostTips from "../components/ReduceCostTips.astro";
+import { calculators } from "../data/calculators.js";
+
+const professionalMoversFaqs = [
+  {
+    question: "How much do professional movers cost?",
+    answer:
+      "Professional movers can cost a few hundred dollars for a small local labor-only move or several thousand dollars for a full-service or long-distance move. The final price depends on crew size, hourly rate, minimum hours, travel fees, packing, stairs, elevators, heavy items, specialty handling, insurance, tips, and shipment distance.",
+  },
+  {
+    question: "Is this calculator for local movers or long-distance movers?",
+    answer:
+      "It handles both. Local moves are usually estimated from crew size, hourly rate, billable hours, minimum hours, and travel fees. Long-distance moves can use a written shipment quote if you have one, or a planning estimate from miles and home size if you are still comparing options.",
+  },
+  {
+    question: "Should I use the mover quote or the calculator estimate?",
+    answer:
+      "Use the written mover quote when you have one. The calculator is best for planning before quotes arrive or checking whether a quote is missing common add-ons such as travel time, stairs, long carries, packing, heavy items, valuation coverage, or tips.",
+  },
+  {
+    question: "Does this include apartment deposits or move-in fees?",
+    answer:
+      "No. This page estimates the cost of professional moving labor and mover-related charges. It does not include security deposits, first month of rent, lease break fees, furniture, groceries, or utility deposits.",
+  },
+  {
+    question: "Why can a professional mover quote change?",
+    answer:
+      "Mover costs can change when inventory is larger than expected, access is harder, stairs or elevators take longer, heavy items need special handling, the truck cannot park close, packing is added, or the move exceeds the minimum or quoted hours.",
+  },
+];
+
+const relatedCalculators = calculators
+  .filter((calculator) =>
+    [
+      "/moving-calculators",
+      "/moving-cost-calculator",
+      "/should-i-move-calculator",
+      "/moving-truck-rental-cost-calculator",
+      "/security-deposit-and-move-in-cost-calculator",
+      "/first-apartment-cost-calculator",
+      "/how-much-should-i-save-before-moving-out",
+      "/roommate-vs-living-alone-calculator",
+    ].includes(calculator.href)
+  )
+  .filter((calculator) => calculator.href !== "/professional-movers-cost-calculator")
+  .slice(0, 6);
+---
+
+<Layout
+  title="Professional Movers Cost Calculator | ShouldISpend"
+  description="Estimate professional mover costs for local or long-distance moves, including crew labor, hourly rates, travel fees, packing, stairs, heavy items, insurance, tips, and shipment charges."
+>
+  <style>
+    .container {
+      max-width: 960px;
+      margin: auto;
+    }
+
+    .calculator {
+      background: white;
+      padding: 40px;
+      border-radius: 24px;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.06);
+    }
+
+    .calculator h2 {
+      margin-top: 0;
+      font-size: 2rem;
+      margin-bottom: 18px;
+      color: #0f172a;
+    }
+
+    .calculator-intro {
+      color: #334155;
+      line-height: 1.8;
+      margin-bottom: 30px;
+      font-size: 1.05rem;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+    }
+
+    .section-label {
+      grid-column: 1 / -1;
+      border-top: 1px solid #dbe4ee;
+      padding-top: 22px;
+      margin-top: 6px;
+      color: #0f172a;
+      font-size: 1.05rem;
+      font-weight: 900;
+    }
+
+    .field label {
+      display: block;
+      font-weight: 800;
+      margin-bottom: 10px;
+      color: #0f172a;
+    }
+
+    .field input,
+    .field select {
+      width: 100%;
+      padding: 16px;
+      border-radius: 12px;
+      border: 1px solid #cbd5e1;
+      font-size: 1rem;
+      box-sizing: border-box;
+      background: white;
+    }
+
+    .field small {
+      display: block;
+      margin-top: 8px;
+      color: #64748b;
+      line-height: 1.5;
+    }
+
+    button {
+      margin-top: 30px;
+      background: #0f766e;
+      color: white;
+      border: none;
+      padding: 18px 32px;
+      border-radius: 999px;
+      font-size: 1.05rem;
+      font-weight: 800;
+      cursor: pointer;
+      transition: opacity 0.2s ease;
+    }
+
+    button:hover {
+      opacity: 0.92;
+    }
+
+    .results {
+      margin-top: 36px;
+      background: #f8fafc;
+      padding: 32px;
+      border-radius: 24px;
+      border: 1px solid var(--border);
+      box-shadow: 0 10px 24px rgba(15, 23, 42, 0.04);
+      display: none;
+    }
+
+    .results.visible {
+      display: block;
+    }
+
+    .result-kicker {
+      font-size: 0.82rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: #0f766e;
+      font-weight: 900;
+      margin-bottom: 10px;
+    }
+
+    .total-price {
+      font-size: clamp(2.4rem, 6vw, 4rem);
+      font-weight: 900;
+      color: #0f172a;
+      line-height: 1.05;
+      margin-bottom: 16px;
+    }
+
+    .result-details {
+      color: #334155;
+      line-height: 1.9;
+      font-size: 1.02rem;
+    }
+
+    .result-details p {
+      margin: 0 0 12px;
+    }
+
+    .result-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 16px;
+      margin: 26px 0;
+    }
+
+    .result-card {
+      background: white;
+      border: 1px solid #dbe4ee;
+      border-radius: 18px;
+      padding: 20px;
+    }
+
+    .result-card span {
+      display: block;
+      color: #64748b;
+      font-size: 0.9rem;
+      margin-bottom: 8px;
+      font-weight: 700;
+    }
+
+    .result-card strong {
+      display: block;
+      color: #0f172a;
+      font-size: 1.55rem;
+      line-height: 1.2;
+    }
+
+    .breakdown {
+      margin-top: 26px;
+      border-radius: 18px;
+      overflow: hidden;
+      border: 1px solid #dbe4ee;
+      background: white;
+    }
+
+    .breakdown-row {
+      display: grid;
+      grid-template-columns: 1.1fr 0.7fr 1.6fr;
+      gap: 16px;
+      padding: 16px 20px;
+      border-bottom: 1px solid #e2e8f0;
+      color: #334155;
+    }
+
+    .breakdown-row:last-child {
+      border-bottom: 0;
+    }
+
+    .breakdown-row strong {
+      color: #0f172a;
+    }
+
+    .verdict-box {
+      margin-top: 24px;
+      padding: 22px;
+      border-radius: 18px;
+      background: white;
+      border: 1px solid #dbe4ee;
+      color: #334155;
+      line-height: 1.8;
+    }
+
+    .verdict-box strong {
+      color: #0f172a;
+    }
+
+    .warning-list {
+      margin: 18px 0 0;
+      padding-left: 22px;
+      color: #334155;
+      line-height: 1.8;
+    }
+
+    .disclaimer {
+      margin-top: 24px;
+      font-size: 0.9rem;
+      color: #64748b;
+    }
+
+    .content-section {
+      margin-top: 60px;
+    }
+
+    .content-section h2 {
+      font-size: 2rem;
+      margin-bottom: 20px;
+      color: #0f172a;
+    }
+
+    .content-section p,
+    .content-section li {
+      font-size: 1.1rem;
+      line-height: 1.9;
+      color: #334155;
+    }
+
+    .content-link {
+      color: #0f766e;
+      font-weight: 700;
+      text-decoration: none;
+    }
+
+    .content-link:hover {
+      text-decoration: underline;
+    }
+
+    @media (max-width: 768px) {
+      .calculator {
+        padding: 24px;
+      }
+
+      .grid,
+      .result-grid,
+      .breakdown-row {
+        grid-template-columns: 1fr;
+      }
+
+      .calculator h2,
+      .content-section h2 {
+        font-size: 1.7rem;
+      }
+
+      .results {
+        padding: 24px;
+      }
+    }
+  </style>
+
+  <div class="container">
+    <CalculatorPageShell
+      eyebrow="Professional Movers Cost Calculator"
+      title="Professional Movers Cost Calculator"
+      description="Estimate the cost of hiring professional movers for a local or long-distance move, including labor, hourly rates, minimums, travel fees, packing, stairs, heavy items, specialty handling, insurance, tips, and shipment charges."
+    >
+      <div class="calculator">
+        <h2>How Much Will Professional Movers Cost?</h2>
+
+        <p class="calculator-intro">
+          This calculator estimates the mover bill itself. It focuses on labor,
+          travel, packing, access fees, heavy items, specialty handling,
+          insurance, tips, and long-distance shipment charges. It does not
+          include deposits, first rent, furniture, groceries, or utility setup.
+        </p>
+
+        <div class="grid">
+          <div class="field">
+            <label for="moveDistanceType">Move Type</label>
+            <select id="moveDistanceType">
+              <option value="local" selected>Local move</option>
+              <option value="long">Long-distance move</option>
+            </select>
+            <small>Local moves are usually hourly. Long-distance moves often use a shipment or line-haul charge.</small>
+          </div>
+
+          <div class="field">
+            <label for="homeSize">Home Size</label>
+            <select id="homeSize">
+              <option value="studio">Studio / room</option>
+              <option value="one" selected>1 bedroom</option>
+              <option value="two">2 bedrooms</option>
+              <option value="three">3 bedrooms</option>
+              <option value="four">4+ bedrooms</option>
+            </select>
+            <small>Used for planning assumptions when crew, hours, or long-distance quote fields are blank.</small>
+          </div>
+
+          <div class="section-label">Local hourly mover estimate</div>
+
+          <div class="field">
+            <label for="crewSize">Crew Size</label>
+            <input id="crewSize" type="number" min="0" step="1" placeholder="3" />
+            <small>Number of movers on the crew. Leave blank to use a home-size estimate.</small>
+          </div>
+
+          <div class="field">
+            <label for="hourlyRate">Hourly Rate per Mover</label>
+            <input id="hourlyRate" type="number" min="0" step="5" placeholder="75" />
+            <small>Use the rate per mover-hour if quoted. A 3-person crew at $75 is $225 per hour.</small>
+          </div>
+
+          <div class="field">
+            <label for="billableHours">Estimated Billable Hours</label>
+            <input id="billableHours" type="number" min="0" step="0.5" placeholder="5.5" />
+            <small>Include loading, unloading, travel time if billed, stairs, elevator delays, and long carries.</small>
+          </div>
+
+          <div class="field">
+            <label for="minimumHours">Mover Minimum Hours</label>
+            <input id="minimumHours" type="number" min="0" step="0.5" placeholder="3" />
+            <small>If the mover has a minimum, the calculator uses the larger of estimated hours or minimum hours.</small>
+          </div>
+
+          <div class="field">
+            <label for="travelFee">Travel Fee or Trip Charge</label>
+            <input id="travelFee" type="number" min="0" step="25" placeholder="175" />
+            <small>Truck fee, dispatch fee, fuel fee, travel time charge, or flat trip charge.</small>
+          </div>
+
+          <div class="field">
+            <label for="packingCost">Packing Labor and Materials</label>
+            <input id="packingCost" type="number" min="0" step="25" placeholder="450" />
+            <small>Optional packing service, boxes supplied by mover, dish packs, wardrobe boxes, or labor.</small>
+          </div>
+
+          <div class="section-label">Access, item, and protection charges</div>
+
+          <div class="field">
+            <label for="stairsFee">Stairs, Elevator, or Long-Carry Fees</label>
+            <input id="stairsFee" type="number" min="0" step="25" placeholder="200" />
+            <small>Use this for stairs, elevator reservation delays, long carries, parking distance, or building charges.</small>
+          </div>
+
+          <div class="field">
+            <label for="heavyItemCount">Heavy Items</label>
+            <input id="heavyItemCount" type="number" min="0" step="1" placeholder="2" />
+            <small>Pianos, safes, treadmills, large sectionals, appliances, or unusually heavy furniture.</small>
+          </div>
+
+          <div class="field">
+            <label for="heavyItemFee">Fee per Heavy Item</label>
+            <input id="heavyItemFee" type="number" min="0" step="25" placeholder="150" />
+            <small>Leave blank if heavy-item fees are included in the quote.</small>
+          </div>
+
+          <div class="field">
+            <label for="specialtyFees">Specialty Item Fees</label>
+            <input id="specialtyFees" type="number" min="0" step="25" placeholder="300" />
+            <small>Crating, artwork, antiques, pool table service, TV mounting, disassembly, or special handling.</small>
+          </div>
+
+          <div class="field">
+            <label for="insuranceCost">Insurance or Valuation Coverage</label>
+            <input id="insuranceCost" type="number" min="0" step="25" placeholder="125" />
+            <small>Optional valuation coverage, third-party insurance, or extra damage protection.</small>
+          </div>
+
+          <div class="field">
+            <label for="tipPercent">Tip Percent</label>
+            <input id="tipPercent" type="number" min="0" step="1" placeholder="15" />
+            <small>Optional. Applies to labor plus travel and access charges, not long-distance shipment quotes.</small>
+          </div>
+
+          <div class="section-label">Optional long-distance logic</div>
+
+          <div class="field">
+            <label for="movingMiles">Moving Distance in Miles</label>
+            <input id="movingMiles" type="number" min="0" step="5" placeholder="850" />
+            <small>Used for long-distance planning when no written shipment estimate is entered.</small>
+          </div>
+
+          <div class="field">
+            <label for="shipmentEstimate">Long-Distance Shipment Estimate</label>
+            <input id="shipmentEstimate" type="number" min="0" step="100" placeholder="4200" />
+            <small>Use the mover's line-haul, weight-based, container, or shipment quote if you have it.</small>
+          </div>
+
+          <div class="field">
+            <label for="otherMoverCosts">Other Mover Costs</label>
+            <input id="otherMoverCosts" type="number" min="0" step="25" placeholder="250" />
+            <small>Shuttle truck, storage-in-transit, certificate of insurance, cancellation fee, weekend fee, or extra stop.</small>
+          </div>
+
+          <div class="field">
+            <label for="confirmedCredit">Confirmed Credit or Reimbursement</label>
+            <input id="confirmedCredit" type="number" min="0" step="50" placeholder="500" />
+            <small>Employer relocation money, landlord credit, family help, or confirmed reimbursement.</small>
+          </div>
+        </div>
+
+        <button id="professionalMoversButton" type="button">Calculate Professional Movers Cost</button>
+
+        <div class="results" id="results" aria-live="polite">
+          <div class="result-kicker">Estimated Professional Movers Cost</div>
+
+          <div class="total-price" id="totalCost"></div>
+
+          <div class="result-details" id="resultDetails"></div>
+
+          <div class="result-grid">
+            <div class="result-card">
+              <span>Local labor estimate</span>
+              <strong id="laborEstimate"></strong>
+            </div>
+
+            <div class="result-card">
+              <span>Long-distance shipment</span>
+              <strong id="shipmentCost"></strong>
+            </div>
+
+            <div class="result-card">
+              <span>Add-ons and protection</span>
+              <strong id="addonCost"></strong>
+            </div>
+
+            <div class="result-card">
+              <span>Out-of-pocket after credits</span>
+              <strong id="outOfPocket"></strong>
+            </div>
+          </div>
+
+          <div class="breakdown" id="breakdownTable"></div>
+
+          <div class="verdict-box" id="moverNote"></div>
+
+          <ul class="warning-list" id="warningList"></ul>
+
+          <div class="disclaimer">
+            This calculator is a planning estimate, not a binding quote. Written
+            mover quotes can change based on inventory, weight, access, distance,
+            weather, parking, stairs, delays, valuation coverage, and service rules.
+          </div>
+        </div>
+      </div>
+
+      <section class="content-section">
+        <h2>What This Professional Movers Cost Calculator Includes</h2>
+
+        <p>
+          This page is for estimating the cost of hiring movers, not the entire
+          cost of moving into a new home. It focuses on the line items that make
+          a professional mover bill rise: crew size, hourly rate, minimum hours,
+          travel fees, packing, stairs, long carries, heavy items, specialty
+          handling, insurance, tips, and long-distance shipment charges.
+        </p>
+
+        <p>
+          Use this page when you are comparing a local hourly mover, a full-service
+          moving company, or a long-distance mover quote. If you are comparing a
+          professional mover against a rental truck, use the
+          <a class="content-link" href="/moving-cost-calculator">
+            moving cost calculator
+          </a>
+          first. If you need deposits and cash due before keys, use the
+          <a class="content-link" href="/security-deposit-and-move-in-cost-calculator">
+            security deposit and move-in cost calculator
+          </a>.
+        </p>
+      </section>
+
+      <div id="KeyCostCategories" class="content-section">
+        <KeyCostCategories
+          items={[
+            {
+              title: "Crew labor",
+              description:
+                "Local movers often price the job from crew size, hourly rate, billable hours, and minimum hours. Travel time may be included, billed separately, or charged as a flat trip fee.",
+            },
+            {
+              title: "Packing and materials",
+              description:
+                "Packing service, boxes supplied by the mover, dish packs, wardrobe boxes, tape, paper, and fragile-item packing can add a separate charge from the move itself.",
+            },
+            {
+              title: "Access and building issues",
+              description:
+                "Stairs, elevator reservations, long carries, parking distance, building insurance requirements, and shuttle trucks can raise the final bill even when the hourly rate looks fair.",
+            },
+            {
+              title: "Long-distance shipment",
+              description:
+                "Long-distance mover pricing can depend on shipment weight, distance, container size, delivery window, storage-in-transit, fuel, and whether the quote is binding or non-binding.",
+            },
+          ]}
+        />
+      </div>
+
+      <div id="ReduceCostTips" class="content-section">
+        <ReduceCostTips
+          items={[
+            "Get at least two written quotes that separate labor, travel, packing, valuation coverage, access fees, and long-distance shipment charges.",
+            "Ask whether minimum hours, fuel, truck fee, stairs, long carries, elevator delays, and parking distance are included.",
+            "Pack ordinary items yourself and pay movers only for fragile, heavy, or high-risk items if full packing is too expensive.",
+            "Reduce inventory before quote day because weight, volume, stairs, truck space, and labor time all rise with extra belongings.",
+            "Reserve elevators, parking, and loading docks before moving day to avoid extra labor time and delay charges.",
+            "Ask whether the quote is binding, non-binding, not-to-exceed, hourly, weight-based, or subject to inventory changes.",
+          ]}
+        />
+      </div>
+
+      <div id="CalculatorAssumptions" class="content-section">
+        <CalculatorAssumptions
+          items={[
+            "Blank crew size, hourly rate, billable hours, and minimum hours use home-size planning assumptions.",
+            "Local labor cost is calculated from crew size, hourly rate per mover, and the larger of billable hours or minimum hours.",
+            "Long-distance shipment cost uses the entered shipment estimate when provided. If the move is marked long-distance and no shipment estimate is entered, the calculator uses a planning estimate from home size and miles.",
+            "Tips are estimated from labor, travel, stairs, elevator, and long-carry charges, not from long-distance shipment quotes.",
+            "Confirmed credits and reimbursements reduce the out-of-pocket estimate but do not reduce the gross mover bill.",
+            "This page estimates professional mover charges and does not include rent, deposits, lease penalties, utility deposits, furniture, groceries, or household setup.",
+          ]}
+        />
+      </div>
+
+      <section id="FinancialRedFlags" class="content-section">
+        <h2>Professional Mover Red Flags</h2>
+
+        <p>
+          A mover quote can look low when it leaves out the charges most likely
+          to appear on moving day. The riskiest quotes are vague about minimum
+          hours, travel time, inventory, packing, long carries, stairs, insurance,
+          delivery windows, and what happens if the job runs long.
+        </p>
+
+        <ul>
+          <li>The quote does not state whether the hourly rate is per mover, per crew, or subject to a minimum.</li>
+          <li>Travel time, fuel, truck fee, stairs, elevator use, long carries, parking, or shuttle service are unclear.</li>
+          <li>The mover has not seen an inventory list but is giving a very low full-service or long-distance estimate.</li>
+          <li>Heavy items, fragile items, crating, disassembly, or specialty handling are not priced separately.</li>
+          <li>The quote does not explain valuation coverage, damage claims, cancellation rules, or delivery windows.</li>
+          <li>The plan depends on a non-binding estimate with no cushion for weight, access, or timing changes.</li>
+        </ul>
+      </section>
+
+      <section class="content-section">
+        <h2>How to Use the Professional Movers Estimate</h2>
+
+        <p>
+          Start with the out-of-pocket estimate, then compare the gross mover bill
+          before credits. The gross number matters because reimbursements can be
+          delayed, capped, taxable, or dependent on paperwork. A move that looks
+          affordable after reimbursement can still create short-term cash strain
+          if the bill is due before the credit arrives.
+        </p>
+
+        <p>
+          For local moves, test the estimate with one extra hour of labor. For
+          long-distance moves, test the estimate with a higher shipment number or
+          a larger inventory. If those changes break the budget, get a more
+          detailed quote before booking.
+        </p>
+      </section>
+
+      <div id="FAQSection" class="content-section">
+        <FAQSection
+          title="Professional Movers Cost Calculator FAQ"
+          faqs={professionalMoversFaqs}
+        />
+      </div>
+
+      <div id="RelatedCalculators" class="content-section">
+        <RelatedCalculators calculators={relatedCalculators} />
+      </div>
+
+      <div id="MethodologySection" class="content-section">
+        <MethodologySection category="professional moving cost estimates" updated="June 2026" />
+      </div>
+    </CalculatorPageShell>
+  </div>
+
+  <script is:inline>
+    const getNumber = (id) => {
+      const rawValue = document.getElementById(id)?.value;
+      const value = Number(rawValue);
+      return Number.isFinite(value) && value >= 0 ? value : 0;
+    };
+
+    const formatMoney = (value) =>
+      value.toLocaleString(undefined, {
+        style: "currency",
+        currency: "USD",
+        maximumFractionDigits: 0,
+      });
+
+    const homeProfiles = {
+      studio: {
+        label: "studio or room",
+        crew: 2,
+        hours: 3,
+        minimumHours: 2,
+        longDistanceBase: 1400,
+        distanceRate: 1.15,
+      },
+      one: {
+        label: "1-bedroom home",
+        crew: 2,
+        hours: 4,
+        minimumHours: 3,
+        longDistanceBase: 1900,
+        distanceRate: 1.35,
+      },
+      two: {
+        label: "2-bedroom home",
+        crew: 3,
+        hours: 6,
+        minimumHours: 4,
+        longDistanceBase: 2800,
+        distanceRate: 1.65,
+      },
+      three: {
+        label: "3-bedroom home",
+        crew: 3,
+        hours: 8,
+        minimumHours: 5,
+        longDistanceBase: 3900,
+        distanceRate: 2.05,
+      },
+      four: {
+        label: "4+ bedroom home",
+        crew: 4,
+        hours: 10,
+        minimumHours: 6,
+        longDistanceBase: 5600,
+        distanceRate: 2.65,
+      },
+    };
+
+    function calculateProfessionalMoversCost() {
+      const moveDistanceType = document.getElementById("moveDistanceType")?.value || "local";
+      const homeSize = document.getElementById("homeSize")?.value || "one";
+      const profile = homeProfiles[homeSize] || homeProfiles.one;
+
+      const crewSizeInput = getNumber("crewSize");
+      const hourlyRateInput = getNumber("hourlyRate");
+      const billableHoursInput = getNumber("billableHours");
+      const minimumHoursInput = getNumber("minimumHours");
+      const travelFee = getNumber("travelFee");
+      const packingCost = getNumber("packingCost");
+      const stairsFee = getNumber("stairsFee");
+      const heavyItemCount = getNumber("heavyItemCount");
+      const heavyItemFee = getNumber("heavyItemFee");
+      const specialtyFees = getNumber("specialtyFees");
+      const insuranceCost = getNumber("insuranceCost");
+      const tipPercent = getNumber("tipPercent");
+      const movingMiles = getNumber("movingMiles");
+      const shipmentEstimate = getNumber("shipmentEstimate");
+      const otherMoverCosts = getNumber("otherMoverCosts");
+      const confirmedCredit = getNumber("confirmedCredit");
+
+      const crewSize = crewSizeInput > 0 ? crewSizeInput : profile.crew;
+      const hourlyRate = hourlyRateInput > 0 ? hourlyRateInput : 75;
+      const billableHours = billableHoursInput > 0 ? billableHoursInput : profile.hours;
+      const minimumHours = minimumHoursInput > 0 ? minimumHoursInput : profile.minimumHours;
+      const chargedHours = Math.max(billableHours, minimumHours);
+
+      const laborCost = crewSize * hourlyRate * chargedHours;
+      const heavyItemCost = heavyItemCount * heavyItemFee;
+
+      const tipBase = laborCost + travelFee + stairsFee;
+      const tipCost = tipPercent > 0 ? tipBase * (tipPercent / 100) : 0;
+
+      let longDistanceCost = 0;
+
+      if (moveDistanceType === "long") {
+        if (shipmentEstimate > 0) {
+          longDistanceCost = shipmentEstimate;
+        } else if (movingMiles > 0) {
+          longDistanceCost = profile.longDistanceBase + movingMiles * profile.distanceRate;
+        } else {
+          longDistanceCost = profile.longDistanceBase;
+        }
+      }
+
+      const addonCost =
+        packingCost +
+        travelFee +
+        stairsFee +
+        heavyItemCost +
+        specialtyFees +
+        insuranceCost +
+        tipCost +
+        otherMoverCosts;
+
+      const grossCost = laborCost + longDistanceCost + addonCost;
+      const outOfPocketCost = Math.max(0, grossCost - confirmedCredit);
+      const lowRange = Math.max(0, grossCost * 0.85 - confirmedCredit);
+      const highRange = Math.max(0, grossCost * 1.25 - confirmedCredit);
+
+      const results = document.getElementById("results");
+      const totalCost = document.getElementById("totalCost");
+      const laborEstimate = document.getElementById("laborEstimate");
+      const shipmentCost = document.getElementById("shipmentCost");
+      const addonCostEl = document.getElementById("addonCost");
+      const outOfPocket = document.getElementById("outOfPocket");
+      const resultDetails = document.getElementById("resultDetails");
+      const breakdownTable = document.getElementById("breakdownTable");
+      const moverNote = document.getElementById("moverNote");
+      const warningList = document.getElementById("warningList");
+
+      results.classList.add("visible");
+
+      totalCost.textContent = formatMoney(outOfPocketCost);
+      laborEstimate.textContent = formatMoney(laborCost);
+      shipmentCost.textContent = formatMoney(longDistanceCost);
+      addonCostEl.textContent = formatMoney(addonCost);
+      outOfPocket.textContent = formatMoney(outOfPocketCost);
+
+      const moveLabel = moveDistanceType === "long" ? "long-distance professional move" : "local professional move";
+
+      resultDetails.innerHTML = `
+        <p><strong>Selected estimate:</strong> ${moveLabel} for a ${profile.label}.</p>
+        <p><strong>Estimated range after confirmed credits:</strong> ${formatMoney(lowRange)} to ${formatMoney(highRange)}.</p>
+        <p><strong>Local labor calculation:</strong> ${crewSize.toFixed(0)} movers x ${formatMoney(hourlyRate)} per mover-hour x ${chargedHours.toFixed(1)} charged hours.</p>
+        <p><strong>Gross mover bill before credits:</strong> ${formatMoney(grossCost)}.</p>
+      `;
+
+      breakdownTable.innerHTML = `
+        <div class="breakdown-row"><strong>Labor</strong><span>${formatMoney(laborCost)}</span><span>Crew size, hourly rate, billable hours, and mover minimum hours.</span></div>
+        <div class="breakdown-row"><strong>Travel and access</strong><span>${formatMoney(travelFee + stairsFee)}</span><span>Trip charge, fuel, stairs, elevator issues, parking distance, long carries, or building access.</span></div>
+        <div class="breakdown-row"><strong>Packing and specialty</strong><span>${formatMoney(packingCost + heavyItemCost + specialtyFees)}</span><span>Packing service, heavy items, crating, fragile items, special handling, or unusual inventory.</span></div>
+        <div class="breakdown-row"><strong>Long-distance shipment</strong><span>${formatMoney(longDistanceCost)}</span><span>Entered shipment estimate or planning estimate from home size and miles.</span></div>
+        <div class="breakdown-row"><strong>Insurance, tips, and other</strong><span>${formatMoney(insuranceCost + tipCost + otherMoverCosts)}</span><span>Valuation coverage, tip estimate, shuttle service, storage-in-transit, weekend fee, or extra stop.</span></div>
+        <div class="breakdown-row"><strong>Confirmed credits</strong><span>-${formatMoney(confirmedCredit)}</span><span>Employer relocation money, family help, landlord credit, or reimbursement.</span></div>
+      `;
+
+      const warnings = [];
+
+      if (crewSizeInput === 0) {
+        warnings.push("Crew size is blank, so the calculator used a home-size planning assumption.");
+      }
+
+      if (hourlyRateInput === 0) {
+        warnings.push("Hourly rate is blank, so the calculator used a planning rate. Replace it with a real mover quote.");
+      }
+
+      if (billableHoursInput === 0) {
+        warnings.push("Billable hours are blank, so the calculator used a home-size estimate. Stairs, elevators, and packing can increase hours.");
+      }
+
+      if (moveDistanceType === "long" && shipmentEstimate === 0) {
+        warnings.push("Long-distance shipment estimate is blank, so the calculator used a planning estimate rather than a written mover quote.");
+      }
+
+      if (travelFee === 0) {
+        warnings.push("Travel fee is blank. Confirm whether truck fee, dispatch, travel time, fuel, and mileage are included.");
+      }
+
+      if (stairsFee === 0) {
+        warnings.push("Access fees are blank. Confirm stairs, elevator reservations, long carries, parking distance, and building requirements.");
+      }
+
+      if (tipPercent === 0) {
+        warnings.push("Tip percent is blank. Tips are optional, but they are often part of the real cash needed on moving day.");
+      }
+
+      if (confirmedCredit > grossCost) {
+        warnings.push("Confirmed credits exceed the mover estimate. That can reduce out-of-pocket mover cost to zero, but deposits and setup costs may still remain.");
+      }
+
+      let noteTitle = "Use this as a mover-cost planning estimate.";
+      let noteBody =
+        "The estimate covers professional mover charges, not rent, deposits, lease penalties, furniture, groceries, or utility setup.";
+
+      if (moveDistanceType === "local" && chargedHours > billableHours) {
+        noteTitle = "The mover minimum is driving part of the estimate.";
+        noteBody =
+          "The calculator used the mover minimum because it is higher than the billable hours entered. Ask the mover how minimum hours and travel time are billed.";
+      } else if (moveDistanceType === "long" && shipmentEstimate === 0) {
+        noteTitle = "Get a written long-distance quote before booking.";
+        noteBody =
+          "Long-distance moves depend on inventory, weight, distance, delivery window, storage, and quote type. Replace the planning estimate with a written shipment quote.";
+      } else if (outOfPocketCost === 0) {
+        noteTitle = "Confirmed credits cover the mover estimate.";
+        noteBody =
+          "The entered credit covers the estimated mover bill. Confirm whether reimbursement is paid before or after the move and whether it is capped.";
+      } else if (packingCost > laborCost * 0.4) {
+        noteTitle = "Packing is a major part of this estimate.";
+        noteBody =
+          "Professional packing can be worth it for fragile or high-value items, but packing ordinary items yourself may lower the mover bill.";
+      }
+
+      moverNote.innerHTML = `<strong>${noteTitle}</strong> ${noteBody}`;
+
+      warningList.innerHTML = warnings
+        .map((warning) => `<li>${warning}</li>`)
+        .join("");
+    }
+
+    document
+      .getElementById("professionalMoversButton")
+      .addEventListener("click", calculateProfessionalMoversCost);
+  </script>
+</Layout>

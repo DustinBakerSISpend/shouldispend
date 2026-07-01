@@ -1,0 +1,967 @@
+---
+import Layout from "../layouts/Layout.astro";
+import CalculatorPageShell from "../components/CalculatorPageShell.astro";
+import FAQSection from "../components/FAQSection.astro";
+import RelatedCalculators from "../components/RelatedCalculators.astro";
+import MethodologySection from "../components/MethodologySection.astro";
+import CalculatorAssumptions from "../components/CalculatorAssumptions.astro";
+import KeyCostCategories from "../components/KeyCostCategories.astro";
+import ReduceCostTips from "../components/ReduceCostTips.astro";
+import { calculators } from "../data/calculators.js";
+
+const packingSuppliesFaqs = [
+  {
+    question: "How much do moving boxes and packing supplies cost?",
+    answer:
+      "Packing supplies can cost under $100 for a small move with free boxes, but a larger move can easily run several hundred dollars once you include boxes, tape, packing paper, bubble wrap, mattress bags, labels, furniture pads, specialty boxes, and reusable bins.",
+  },
+  {
+    question: "Why do packing supplies cost more than expected?",
+    answer:
+      "Most estimates count only boxes. The real cost often includes tape, paper, bubble wrap, dish protection, wardrobe boxes, mattress bags, stretch wrap, markers, labels, furniture pads, reusable bins, and replacement supplies bought during the move.",
+  },
+  {
+    question: "Should I buy boxes or use free boxes?",
+    answer:
+      "Free boxes can lower the cost, but they should be clean, sturdy, and the right size. Buying some specialty boxes can still be worth it for dishes, wardrobes, TVs, mirrors, books, and fragile items.",
+  },
+  {
+    question: "Are reusable moving bins worth it?",
+    answer:
+      "Reusable bins can be worth it for a local move, a short storage period, or a move where durability matters. They can cost more than cardboard if you need extra rental days, delivery, pickup, deposits, or a long move timeline.",
+  },
+  {
+    question: "Does this calculator include movers or truck rental?",
+    answer:
+      "No. This page estimates boxes and packing supplies only. Use the moving truck rental cost calculator for DIY truck costs or the professional movers cost calculator for hired mover costs.",
+  },
+];
+
+const relatedCalculators = calculators
+  .filter((calculator) =>
+    [
+      "/moving-calculators",
+      "/moving-cost-calculator",
+      "/moving-truck-rental-cost-calculator",
+      "/professional-movers-cost-calculator",
+      "/moving-storage-cost-calculator",
+      "/lease-break-cost-calculator",
+      "/should-i-move-calculator",
+      "/first-apartment-furniture-cost-calculator",
+      "/first-apartment-cost-calculator",
+      "/security-deposit-and-move-in-cost-calculator",
+    ].includes(calculator.href)
+  )
+  .filter((calculator) => calculator.href !== "/moving-boxes-and-packing-supplies-cost-calculator")
+  .slice(0, 6);
+---
+
+<Layout
+  title="Moving Boxes and Packing Supplies Cost Calculator | ShouldISpend"
+  description="Estimate moving boxes and packing supplies costs, including small, medium, large, wardrobe, and specialty boxes, tape, paper, bubble wrap, mattress bags, labels, furniture pads, reusable bins, and free supplies."
+>
+  <style>
+    .container {
+      max-width: 960px;
+      margin: auto;
+    }
+
+    .calculator {
+      background: white;
+      padding: 40px;
+      border-radius: 24px;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.06);
+    }
+
+    .calculator h2 {
+      margin-top: 0;
+      font-size: 2rem;
+      margin-bottom: 18px;
+      color: #0f172a;
+    }
+
+    .calculator-intro {
+      color: #334155;
+      line-height: 1.8;
+      margin-bottom: 30px;
+      font-size: 1.05rem;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+    }
+
+    .section-label {
+      grid-column: 1 / -1;
+      border-top: 1px solid #dbe4ee;
+      padding-top: 22px;
+      margin-top: 6px;
+      color: #0f172a;
+      font-size: 1.05rem;
+      font-weight: 900;
+    }
+
+    .field label {
+      display: block;
+      font-weight: 800;
+      margin-bottom: 10px;
+      color: #0f172a;
+    }
+
+    .field input,
+    .field select {
+      width: 100%;
+      padding: 16px;
+      border-radius: 12px;
+      border: 1px solid #cbd5e1;
+      font-size: 1rem;
+      box-sizing: border-box;
+      background: white;
+    }
+
+    .field small {
+      display: block;
+      margin-top: 8px;
+      color: #64748b;
+      line-height: 1.5;
+    }
+
+    button {
+      margin-top: 30px;
+      background: #0f766e;
+      color: white;
+      border: none;
+      padding: 18px 32px;
+      border-radius: 999px;
+      font-size: 1.05rem;
+      font-weight: 800;
+      cursor: pointer;
+      transition: opacity 0.2s ease;
+    }
+
+    button:hover {
+      opacity: 0.92;
+    }
+
+    .results {
+      margin-top: 36px;
+      background: #f8fafc;
+      padding: 32px;
+      border-radius: 24px;
+      border: 1px solid var(--border);
+      box-shadow: 0 10px 24px rgba(15, 23, 42, 0.04);
+      display: none;
+    }
+
+    .results.visible {
+      display: block;
+    }
+
+    .result-kicker {
+      font-size: 0.82rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: #0f766e;
+      font-weight: 900;
+      margin-bottom: 10px;
+    }
+
+    .total-price {
+      font-size: clamp(2.4rem, 6vw, 4rem);
+      font-weight: 900;
+      color: #0f172a;
+      line-height: 1.05;
+      margin-bottom: 16px;
+    }
+
+    .result-details {
+      color: #334155;
+      line-height: 1.9;
+      font-size: 1.02rem;
+    }
+
+    .result-details p {
+      margin: 0 0 12px;
+    }
+
+    .result-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 16px;
+      margin: 26px 0;
+    }
+
+    .result-card {
+      background: white;
+      border: 1px solid #dbe4ee;
+      border-radius: 18px;
+      padding: 20px;
+    }
+
+    .result-card span {
+      display: block;
+      color: #64748b;
+      font-size: 0.9rem;
+      margin-bottom: 8px;
+      font-weight: 700;
+    }
+
+    .result-card strong {
+      display: block;
+      color: #0f172a;
+      font-size: 1.55rem;
+      line-height: 1.2;
+    }
+
+    .breakdown {
+      margin-top: 26px;
+      border-radius: 18px;
+      overflow: hidden;
+      border: 1px solid #dbe4ee;
+      background: white;
+    }
+
+    .breakdown-row {
+      display: grid;
+      grid-template-columns: 1.1fr 0.7fr 1.6fr;
+      gap: 16px;
+      padding: 16px 20px;
+      border-bottom: 1px solid #e2e8f0;
+      color: #334155;
+    }
+
+    .breakdown-row:last-child {
+      border-bottom: 0;
+    }
+
+    .breakdown-row strong {
+      color: #0f172a;
+    }
+
+    .verdict-box {
+      margin-top: 24px;
+      padding: 22px;
+      border-radius: 18px;
+      background: white;
+      border: 1px solid #dbe4ee;
+      color: #334155;
+      line-height: 1.8;
+    }
+
+    .verdict-box strong {
+      color: #0f172a;
+    }
+
+    .warning-list {
+      margin: 18px 0 0;
+      padding-left: 22px;
+      color: #334155;
+      line-height: 1.8;
+    }
+
+    .disclaimer {
+      margin-top: 24px;
+      font-size: 0.9rem;
+      color: #64748b;
+    }
+
+    .content-section {
+      margin-top: 60px;
+    }
+
+    .content-section h2 {
+      font-size: 2rem;
+      margin-bottom: 20px;
+      color: #0f172a;
+    }
+
+    .content-section p,
+    .content-section li {
+      font-size: 1.1rem;
+      line-height: 1.9;
+      color: #334155;
+    }
+
+    .content-link {
+      color: #0f766e;
+      font-weight: 700;
+      text-decoration: none;
+    }
+
+    .content-link:hover {
+      text-decoration: underline;
+    }
+
+    @media (max-width: 768px) {
+      .calculator {
+        padding: 24px;
+      }
+
+      .grid,
+      .result-grid,
+      .breakdown-row {
+        grid-template-columns: 1fr;
+      }
+
+      .calculator h2,
+      .content-section h2 {
+        font-size: 1.7rem;
+      }
+
+      .results {
+        padding: 24px;
+      }
+    }
+  </style>
+
+  <div class="container">
+    <CalculatorPageShell
+      eyebrow="Moving Boxes and Packing Supplies Cost Calculator"
+      title="Moving Boxes and Packing Supplies Cost Calculator"
+      description="Estimate the real cost of moving boxes and packing supplies, including box counts, tape, paper, bubble wrap, mattress bags, labels, furniture pads, reusable bins, specialty boxes, and free supplies."
+    >
+      <div class="calculator">
+        <h2>How Much Will Moving Boxes and Packing Supplies Cost?</h2>
+
+        <p class="calculator-intro">
+          Boxes are only the start. This calculator estimates the packing budget
+          for a move, including small, medium, large, wardrobe, and specialty
+          boxes, tape, paper, bubble wrap, mattress bags, labels, furniture pads,
+          reusable bins, free supplies, and a replacement cushion for last-minute
+          purchases.
+        </p>
+
+        <div class="grid">
+          <div class="field">
+            <label for="rooms">Rooms Being Packed</label>
+            <input id="rooms" type="number" min="0" step="1" placeholder="4" />
+            <small>Used to estimate missing box quantities if you leave counts blank.</small>
+          </div>
+
+          <div class="field">
+            <label for="packingStyle">Packing Style</label>
+            <select id="packingStyle">
+              <option value="lean">Lean / mostly free boxes</option>
+              <option value="standard" selected>Standard move</option>
+              <option value="protective">Protective / fragile-heavy move</option>
+            </select>
+            <small>Adjusts default box counts, protective materials, and cushion when fields are blank.</small>
+          </div>
+
+          <div class="section-label">Cardboard boxes</div>
+
+          <div class="field">
+            <label for="smallBoxes">Small Boxes</label>
+            <input id="smallBoxes" type="number" min="0" step="1" placeholder="12" />
+            <small>Books, pantry items, tools, office supplies, fragile small items, and heavy items.</small>
+          </div>
+
+          <div class="field">
+            <label for="smallBoxPrice">Price per Small Box</label>
+            <input id="smallBoxPrice" type="number" min="0" step="0.25" placeholder="1.75" />
+            <small>Leave blank to use a planning price.</small>
+          </div>
+
+          <div class="field">
+            <label for="mediumBoxes">Medium Boxes</label>
+            <input id="mediumBoxes" type="number" min="0" step="1" placeholder="18" />
+            <small>General household items, toys, linens, small appliances, and mixed packing.</small>
+          </div>
+
+          <div class="field">
+            <label for="mediumBoxPrice">Price per Medium Box</label>
+            <input id="mediumBoxPrice" type="number" min="0" step="0.25" placeholder="2.75" />
+            <small>Leave blank to use a planning price.</small>
+          </div>
+
+          <div class="field">
+            <label for="largeBoxes">Large Boxes</label>
+            <input id="largeBoxes" type="number" min="0" step="1" placeholder="8" />
+            <small>Bedding, pillows, lightweight clothing, towels, and bulky light items.</small>
+          </div>
+
+          <div class="field">
+            <label for="largeBoxPrice">Price per Large Box</label>
+            <input id="largeBoxPrice" type="number" min="0" step="0.25" placeholder="3.75" />
+            <small>Large boxes are useful, but overusing them can make boxes too heavy.</small>
+          </div>
+
+          <div class="section-label">Specialty boxes and protection</div>
+
+          <div class="field">
+            <label for="wardrobeBoxes">Wardrobe Boxes</label>
+            <input id="wardrobeBoxes" type="number" min="0" step="1" placeholder="3" />
+            <small>Hanging clothes, coats, dresses, suits, and closet items.</small>
+          </div>
+
+          <div class="field">
+            <label for="wardrobeBoxPrice">Price per Wardrobe Box</label>
+            <input id="wardrobeBoxPrice" type="number" min="0" step="0.5" placeholder="14" />
+            <small>Wardrobe boxes are expensive but can save time and reduce wrinkling.</small>
+          </div>
+
+          <div class="field">
+            <label for="specialtyBoxes">Specialty Boxes</label>
+            <input id="specialtyBoxes" type="number" min="0" step="1" placeholder="4" />
+            <small>Dish packs, TV boxes, mirror boxes, picture boxes, file boxes, lamp boxes, or glassware kits.</small>
+          </div>
+
+          <div class="field">
+            <label for="specialtyBoxPrice">Average Specialty Box Price</label>
+            <input id="specialtyBoxPrice" type="number" min="0" step="0.5" placeholder="18" />
+            <small>Use an average if specialty boxes have different prices.</small>
+          </div>
+
+          <div class="field">
+            <label for="mattressBags">Mattress Bags</label>
+            <input id="mattressBags" type="number" min="0" step="1" placeholder="2" />
+            <small>Mattress, box spring, crib mattress, or guest bed protection.</small>
+          </div>
+
+          <div class="field">
+            <label for="mattressBagPrice">Price per Mattress Bag</label>
+            <input id="mattressBagPrice" type="number" min="0" step="0.5" placeholder="12" />
+            <small>Include bed-size-specific bags if they cost more.</small>
+          </div>
+
+          <div class="section-label">Supplies and reusable bins</div>
+
+          <div class="field">
+            <label for="tapeRolls">Tape Rolls</label>
+            <input id="tapeRolls" type="number" min="0" step="1" placeholder="6" />
+            <small>Packing tape, shipping tape, or reinforced tape.</small>
+          </div>
+
+          <div class="field">
+            <label for="tapeRollPrice">Price per Tape Roll</label>
+            <input id="tapeRollPrice" type="number" min="0" step="0.25" placeholder="4" />
+            <small>Include dispenser tape if that is what you will buy.</small>
+          </div>
+
+          <div class="field">
+            <label for="packingPaperCost">Packing Paper Cost</label>
+            <input id="packingPaperCost" type="number" min="0" step="5" placeholder="45" />
+            <small>Paper sheets, newsprint, dish paper, or void fill.</small>
+          </div>
+
+          <div class="field">
+            <label for="bubbleWrapCost">Bubble Wrap or Foam Cost</label>
+            <input id="bubbleWrapCost" type="number" min="0" step="5" placeholder="35" />
+            <small>Bubble wrap, foam pouches, glass dividers, edge guards, or fragile-item protection.</small>
+          </div>
+
+          <div class="field">
+            <label for="labelsMarkersCost">Labels, Markers, and Tape Extras</label>
+            <input id="labelsMarkersCost" type="number" min="0" step="5" placeholder="18" />
+            <small>Labels, markers, color stickers, fragile stickers, zip bags, and room tags.</small>
+          </div>
+
+          <div class="field">
+            <label for="furniturePads">Furniture Pads or Blankets</label>
+            <input id="furniturePads" type="number" min="0" step="1" placeholder="8" />
+            <small>Reusable pads, rented pads, or blankets bought for furniture protection.</small>
+          </div>
+
+          <div class="field">
+            <label for="furniturePadPrice">Price per Furniture Pad</label>
+            <input id="furniturePadPrice" type="number" min="0" step="0.5" placeholder="8" />
+            <small>Use the rental or purchase price per pad.</small>
+          </div>
+
+          <div class="field">
+            <label for="reusableBins">Reusable Bins</label>
+            <input id="reusableBins" type="number" min="0" step="1" placeholder="10" />
+            <small>Plastic totes, rented bins, crates, or lidded storage bins.</small>
+          </div>
+
+          <div class="field">
+            <label for="reusableBinPrice">Price per Reusable Bin</label>
+            <input id="reusableBinPrice" type="number" min="0" step="0.5" placeholder="6" />
+            <small>Use rental price per bin or purchase price per tote.</small>
+          </div>
+
+          <div class="section-label">Credits, free supplies, and cushion</div>
+
+          <div class="field">
+            <label for="freeBoxesValue">Free Boxes or Supplies Value</label>
+            <input id="freeBoxesValue" type="number" min="0" step="5" placeholder="75" />
+            <small>Only count supplies you already have confirmed.</small>
+          </div>
+
+          <div class="field">
+            <label for="freeHelpValue">Free Help or Borrowed Equipment Value</label>
+            <input id="freeHelpValue" type="number" min="0" step="5" placeholder="40" />
+            <small>Borrowed dollies, blankets, bins, tape dispensers, or packing help that avoids a real purchase.</small>
+          </div>
+
+          <div class="field">
+            <label for="lastMinuteCushionPercent">Last-Minute Cushion Percent</label>
+            <input id="lastMinuteCushionPercent" type="number" min="0" step="1" placeholder="15" />
+            <small>Extra supplies bought during packing when boxes, tape, or padding run short.</small>
+          </div>
+
+          <div class="field">
+            <label for="otherSupplyCosts">Other Packing Supply Costs</label>
+            <input id="otherSupplyCosts" type="number" min="0" step="5" placeholder="25" />
+            <small>Stretch wrap, zip bags, trash bags, box cutters, gloves, moisture absorbers, or specialty protection.</small>
+          </div>
+        </div>
+
+        <button id="packingSuppliesButton" type="button">Calculate Packing Supplies Cost</button>
+
+        <div class="results" id="results" aria-live="polite">
+          <div class="result-kicker">Estimated Boxes and Packing Supplies Cost</div>
+
+          <div class="total-price" id="totalCost"></div>
+
+          <div class="result-details" id="resultDetails"></div>
+
+          <div class="result-grid">
+            <div class="result-card">
+              <span>Box cost</span>
+              <strong id="boxCost"></strong>
+            </div>
+
+            <div class="result-card">
+              <span>Protection and supplies</span>
+              <strong id="protectionCost"></strong>
+            </div>
+
+            <div class="result-card">
+              <span>Reusable bins and furniture pads</span>
+              <strong id="reusableCost"></strong>
+            </div>
+
+            <div class="result-card">
+              <span>Out-of-pocket after free supplies</span>
+              <strong id="outOfPocket"></strong>
+            </div>
+          </div>
+
+          <div class="breakdown" id="breakdownTable"></div>
+
+          <div class="verdict-box" id="packingNote"></div>
+
+          <ul class="warning-list" id="warningList"></ul>
+
+          <div class="disclaimer">
+            This calculator estimates boxes and packing supply costs from the
+            numbers entered and planning assumptions when fields are blank. It is
+            not a binding quote from a retailer, mover, rental bin company, truck
+            rental company, or storage provider.
+          </div>
+        </div>
+      </div>
+
+      <section class="content-section">
+        <h2>What This Boxes and Packing Supplies Calculator Includes</h2>
+
+        <p>
+          This page estimates packing supplies, not the full move. It includes
+          cardboard boxes, specialty boxes, wardrobe boxes, tape, paper, bubble
+          wrap, foam, mattress bags, labels, furniture pads, reusable bins, free
+          supplies, borrowed equipment, and a last-minute cushion.
+        </p>
+
+        <p>
+          Use this estimate with the
+          <a class="content-link" href="/moving-truck-rental-cost-calculator">
+            moving truck rental cost calculator
+          </a>
+          if you are doing a DIY move. If you are hiring movers, use the
+          <a class="content-link" href="/professional-movers-cost-calculator">
+            professional movers cost calculator
+          </a>
+          so packing supplies are not confused with labor, travel, access, or
+          insurance charges.
+        </p>
+      </section>
+
+      <div id="KeyCostCategories" class="content-section">
+        <KeyCostCategories
+          items={[
+            {
+              title: "Everyday boxes",
+              description:
+                "Small, medium, and large boxes cover most household packing. The right mix matters because too many large boxes can become heavy, unstable, or easy to damage.",
+            },
+            {
+              title: "Specialty protection",
+              description:
+                "Wardrobe boxes, dish packs, TV boxes, mirror boxes, mattress bags, bubble wrap, foam, and packing paper protect items that are expensive or annoying to replace.",
+            },
+            {
+              title: "Reusable bins and pads",
+              description:
+                "Plastic bins, rented crates, furniture pads, and moving blankets can reduce damage but may add rental fees, deposits, pickup rules, or return deadlines.",
+            },
+            {
+              title: "Free supplies and last-minute costs",
+              description:
+                "Free boxes and borrowed equipment can cut the bill, but packing usually needs a cushion for extra tape, padding, labels, bags, or boxes bought late.",
+            },
+          ]}
+        />
+      </div>
+
+      <div id="ReduceCostTips" class="content-section">
+        <ReduceCostTips
+          items={[
+            "Use free boxes for sturdy, non-fragile items, but buy specialty boxes for dishes, TVs, mirrors, and wardrobes when damage would be expensive.",
+            "Avoid overbuying large boxes because heavy boxes can break, slow the move, and increase injury risk.",
+            "Ask friends, work, stores, or neighbors for clean boxes early instead of scrambling during moving week.",
+            "Use towels, blankets, and clothing as padding where it is safe, but still protect mattresses, glass, electronics, and fragile items properly.",
+            "Label boxes by room and priority so unpacking does not create duplicate purchases after the move.",
+            "Buy tape, paper, and mattress bags before moving day because convenience-store replacement supplies are often overpriced.",
+          ]}
+        />
+      </div>
+
+      <div id="CalculatorAssumptions" class="content-section">
+        <CalculatorAssumptions
+          items={[
+            "If room count is entered and box counts are blank, the calculator estimates box quantities from the number of rooms and selected packing style.",
+            "If unit prices are blank, the calculator uses planning prices for small, medium, large, wardrobe, specialty, and mattress boxes.",
+            "Protection and supply cost includes packing paper, bubble wrap or foam, labels, markers, tape, mattress bags, and other packing supply costs.",
+            "Reusable bin and furniture pad cost is calculated from quantity multiplied by the entered or assumed per-unit cost.",
+            "Free boxes, free supplies, borrowed equipment, and confirmed help reduce out-of-pocket cost but do not reduce the gross supply value.",
+            "The last-minute cushion is applied before free supplies and credits because it estimates extra purchases caused by undercounting supplies.",
+            "This page estimates boxes and packing supplies only. It does not include movers, truck rental, storage, deposits, lease penalties, furniture, groceries, or utility setup.",
+          ]}
+        />
+      </div>
+
+      <section id="FinancialRedFlags" class="content-section">
+        <h2>Boxes and Packing Supplies Red Flags</h2>
+
+        <p>
+          Packing supplies become a problem when the estimate only counts boxes.
+          Tape, padding, mattress protection, labels, specialty boxes, bins, and
+          last-minute replacement supplies can add up quickly, especially when
+          packing starts late or fragile items are being moved without a plan.
+        </p>
+
+        <ul>
+          <li>The box estimate ignores tape, padding, mattress bags, labels, furniture pads, and fragile-item protection.</li>
+          <li>The move depends on free boxes that are not clean, sturdy, or already confirmed.</li>
+          <li>Large boxes are being used for books, dishes, tools, or other heavy items.</li>
+          <li>TVs, mirrors, dishes, artwork, and glassware have no specialty box or protection plan.</li>
+          <li>Reusable bins are rented without checking pickup, return, deposit, or extra-day rules.</li>
+          <li>No cushion exists for extra supplies bought during the final packing push.</li>
+        </ul>
+      </section>
+
+      <section class="content-section">
+        <h2>How to Use the Packing Supplies Estimate</h2>
+
+        <p>
+          Use the out-of-pocket estimate as the packing supply number for the
+          move, then compare it with the value of the items being protected. It
+          usually makes sense to spend more on protection for mattresses,
+          electronics, dishes, glass, artwork, and furniture that would be costly
+          to repair or replace.
+        </p>
+
+        <p>
+          The result also helps decide whether free boxes are enough. Free boxes
+          can lower the bill, but a move still needs tape, labels, padding,
+          mattress protection, and a plan for fragile items. A low supply budget
+          is not a win if it causes damage, delays, or duplicate purchases after
+          the move.
+        </p>
+      </section>
+
+      <div id="FAQSection" class="content-section">
+        <FAQSection
+          title="Moving Boxes and Packing Supplies Cost Calculator FAQ"
+          faqs={packingSuppliesFaqs}
+        />
+      </div>
+
+      <div id="RelatedCalculators" class="content-section">
+        <RelatedCalculators calculators={relatedCalculators} />
+      </div>
+
+      <div id="MethodologySection" class="content-section">
+        <MethodologySection category="moving boxes and packing supplies cost estimates" updated="June 2026" />
+      </div>
+    </CalculatorPageShell>
+  </div>
+
+  <script is:inline>
+    const getNumber = (id) => {
+      const rawValue = document.getElementById(id)?.value;
+      const value = Number(rawValue);
+      return Number.isFinite(value) && value >= 0 ? value : 0;
+    };
+
+    const formatMoney = (value) =>
+      value.toLocaleString(undefined, {
+        style: "currency",
+        currency: "USD",
+        maximumFractionDigits: 0,
+      });
+
+    const styleProfiles = {
+      lean: {
+        label: "lean packing plan",
+        smallPerRoom: 2,
+        mediumPerRoom: 3,
+        largePerRoom: 1,
+        wardrobePerRoom: 0.25,
+        specialtyPerRoom: 0.5,
+        tapePerRoom: 0.75,
+        cushion: 8,
+        paperPerRoom: 8,
+        bubblePerRoom: 5,
+      },
+      standard: {
+        label: "standard packing plan",
+        smallPerRoom: 3,
+        mediumPerRoom: 4,
+        largePerRoom: 1.5,
+        wardrobePerRoom: 0.5,
+        specialtyPerRoom: 0.75,
+        tapePerRoom: 1,
+        cushion: 15,
+        paperPerRoom: 12,
+        bubblePerRoom: 8,
+      },
+      protective: {
+        label: "protective packing plan",
+        smallPerRoom: 4,
+        mediumPerRoom: 5,
+        largePerRoom: 2,
+        wardrobePerRoom: 0.75,
+        specialtyPerRoom: 1.25,
+        tapePerRoom: 1.25,
+        cushion: 22,
+        paperPerRoom: 18,
+        bubblePerRoom: 14,
+      },
+    };
+
+    function estimateCount(inputValue, rooms, perRoom) {
+      if (inputValue > 0) return inputValue;
+      if (rooms <= 0) return 0;
+      return Math.ceil(rooms * perRoom);
+    }
+
+    function priceOrDefault(inputValue, defaultValue) {
+      return inputValue > 0 ? inputValue : defaultValue;
+    }
+
+    function calculatePackingSuppliesCost() {
+      const rooms = getNumber("rooms");
+      const packingStyle = document.getElementById("packingStyle")?.value || "standard";
+      const profile = styleProfiles[packingStyle] || styleProfiles.standard;
+
+      const smallBoxesInput = getNumber("smallBoxes");
+      const smallBoxPriceInput = getNumber("smallBoxPrice");
+      const mediumBoxesInput = getNumber("mediumBoxes");
+      const mediumBoxPriceInput = getNumber("mediumBoxPrice");
+      const largeBoxesInput = getNumber("largeBoxes");
+      const largeBoxPriceInput = getNumber("largeBoxPrice");
+      const wardrobeBoxesInput = getNumber("wardrobeBoxes");
+      const wardrobeBoxPriceInput = getNumber("wardrobeBoxPrice");
+      const specialtyBoxesInput = getNumber("specialtyBoxes");
+      const specialtyBoxPriceInput = getNumber("specialtyBoxPrice");
+      const mattressBagsInput = getNumber("mattressBags");
+      const mattressBagPriceInput = getNumber("mattressBagPrice");
+      const tapeRollsInput = getNumber("tapeRolls");
+      const tapeRollPriceInput = getNumber("tapeRollPrice");
+      const packingPaperCostInput = getNumber("packingPaperCost");
+      const bubbleWrapCostInput = getNumber("bubbleWrapCost");
+      const labelsMarkersCost = getNumber("labelsMarkersCost");
+      const furniturePadsInput = getNumber("furniturePads");
+      const furniturePadPriceInput = getNumber("furniturePadPrice");
+      const reusableBinsInput = getNumber("reusableBins");
+      const reusableBinPriceInput = getNumber("reusableBinPrice");
+      const freeBoxesValue = getNumber("freeBoxesValue");
+      const freeHelpValue = getNumber("freeHelpValue");
+      const lastMinuteCushionPercentInput = getNumber("lastMinuteCushionPercent");
+      const otherSupplyCosts = getNumber("otherSupplyCosts");
+
+      const smallBoxes = estimateCount(smallBoxesInput, rooms, profile.smallPerRoom);
+      const mediumBoxes = estimateCount(mediumBoxesInput, rooms, profile.mediumPerRoom);
+      const largeBoxes = estimateCount(largeBoxesInput, rooms, profile.largePerRoom);
+      const wardrobeBoxes = estimateCount(wardrobeBoxesInput, rooms, profile.wardrobePerRoom);
+      const specialtyBoxes = estimateCount(specialtyBoxesInput, rooms, profile.specialtyPerRoom);
+      const mattressBags = mattressBagsInput > 0 ? mattressBagsInput : rooms > 0 ? Math.max(1, Math.ceil(rooms / 3)) : 0;
+      const tapeRolls = estimateCount(tapeRollsInput, rooms, profile.tapePerRoom);
+
+      const smallBoxPrice = priceOrDefault(smallBoxPriceInput, 1.75);
+      const mediumBoxPrice = priceOrDefault(mediumBoxPriceInput, 2.75);
+      const largeBoxPrice = priceOrDefault(largeBoxPriceInput, 3.75);
+      const wardrobeBoxPrice = priceOrDefault(wardrobeBoxPriceInput, 14);
+      const specialtyBoxPrice = priceOrDefault(specialtyBoxPriceInput, 18);
+      const mattressBagPrice = priceOrDefault(mattressBagPriceInput, 12);
+      const tapeRollPrice = priceOrDefault(tapeRollPriceInput, 4);
+      const furniturePadPrice = priceOrDefault(furniturePadPriceInput, 8);
+      const reusableBinPrice = priceOrDefault(reusableBinPriceInput, 6);
+
+      const packingPaperCost = packingPaperCostInput > 0 ? packingPaperCostInput : rooms * profile.paperPerRoom;
+      const bubbleWrapCost = bubbleWrapCostInput > 0 ? bubbleWrapCostInput : rooms * profile.bubblePerRoom;
+
+      const standardBoxCost =
+        smallBoxes * smallBoxPrice +
+        mediumBoxes * mediumBoxPrice +
+        largeBoxes * largeBoxPrice;
+
+      const specialtyBoxCost =
+        wardrobeBoxes * wardrobeBoxPrice +
+        specialtyBoxes * specialtyBoxPrice +
+        mattressBags * mattressBagPrice;
+
+      const tapeCost = tapeRolls * tapeRollPrice;
+      const protectionCost =
+        packingPaperCost +
+        bubbleWrapCost +
+        labelsMarkersCost +
+        tapeCost +
+        otherSupplyCosts;
+
+      const reusableCost =
+        furniturePadsInput * furniturePadPrice +
+        reusableBinsInput * reusableBinPrice;
+
+      const grossBeforeCushion =
+        standardBoxCost +
+        specialtyBoxCost +
+        protectionCost +
+        reusableCost;
+
+      const cushionPercent =
+        lastMinuteCushionPercentInput > 0
+          ? lastMinuteCushionPercentInput
+          : profile.cushion;
+
+      const cushionCost = grossBeforeCushion * (cushionPercent / 100);
+      const grossCost = grossBeforeCushion + cushionCost;
+      const freeSupplyValue = freeBoxesValue + freeHelpValue;
+      const outOfPocketCost = Math.max(0, grossCost - freeSupplyValue);
+
+      const lowRange = Math.max(0, grossCost * 0.9 - freeSupplyValue);
+      const highRange = Math.max(0, grossCost * 1.25 - freeSupplyValue);
+
+      const totalBoxCount =
+        smallBoxes +
+        mediumBoxes +
+        largeBoxes +
+        wardrobeBoxes +
+        specialtyBoxes;
+
+      const results = document.getElementById("results");
+      const totalCost = document.getElementById("totalCost");
+      const boxCostEl = document.getElementById("boxCost");
+      const protectionCostEl = document.getElementById("protectionCost");
+      const reusableCostEl = document.getElementById("reusableCost");
+      const outOfPocket = document.getElementById("outOfPocket");
+      const resultDetails = document.getElementById("resultDetails");
+      const breakdownTable = document.getElementById("breakdownTable");
+      const packingNote = document.getElementById("packingNote");
+      const warningList = document.getElementById("warningList");
+
+      results.classList.add("visible");
+
+      totalCost.textContent = formatMoney(outOfPocketCost);
+      boxCostEl.textContent = formatMoney(standardBoxCost + specialtyBoxCost);
+      protectionCostEl.textContent = formatMoney(protectionCost);
+      reusableCostEl.textContent = formatMoney(reusableCost);
+      outOfPocket.textContent = formatMoney(outOfPocketCost);
+
+      resultDetails.innerHTML = `
+        <p><strong>Selected estimate:</strong> ${profile.label} for ${rooms.toFixed(0)} room(s).</p>
+        <p><strong>Estimated range after free supplies and borrowed equipment:</strong> ${formatMoney(lowRange)} to ${formatMoney(highRange)}.</p>
+        <p><strong>Estimated box count:</strong> ${totalBoxCount.toFixed(0)} cardboard boxes, including ${wardrobeBoxes.toFixed(0)} wardrobe box(es) and ${specialtyBoxes.toFixed(0)} specialty box(es).</p>
+        <p><strong>Last-minute cushion:</strong> ${formatMoney(cushionCost)} using a ${cushionPercent.toFixed(0)}% cushion.</p>
+      `;
+
+      breakdownTable.innerHTML = `
+        <div class="breakdown-row"><strong>Small boxes</strong><span>${formatMoney(smallBoxes * smallBoxPrice)}</span><span>${smallBoxes.toFixed(0)} small box(es) at ${formatMoney(smallBoxPrice)} each.</span></div>
+        <div class="breakdown-row"><strong>Medium boxes</strong><span>${formatMoney(mediumBoxes * mediumBoxPrice)}</span><span>${mediumBoxes.toFixed(0)} medium box(es) at ${formatMoney(mediumBoxPrice)} each.</span></div>
+        <div class="breakdown-row"><strong>Large boxes</strong><span>${formatMoney(largeBoxes * largeBoxPrice)}</span><span>${largeBoxes.toFixed(0)} large box(es) at ${formatMoney(largeBoxPrice)} each.</span></div>
+        <div class="breakdown-row"><strong>Specialty protection</strong><span>${formatMoney(specialtyBoxCost)}</span><span>Wardrobe boxes, specialty boxes, dish packs, TV or mirror boxes, and mattress bags.</span></div>
+        <div class="breakdown-row"><strong>Tape, paper, and padding</strong><span>${formatMoney(protectionCost)}</span><span>Tape, packing paper, bubble wrap, foam, labels, markers, and other packing supplies.</span></div>
+        <div class="breakdown-row"><strong>Bins, pads, and cushion</strong><span>${formatMoney(reusableCost + cushionCost)}</span><span>Reusable bins, furniture pads, moving blankets, and last-minute extra-supply cushion.</span></div>
+        <div class="breakdown-row"><strong>Free supplies and borrowed equipment</strong><span>-${formatMoney(freeSupplyValue)}</span><span>Confirmed free boxes, supplies, borrowed equipment, or free packing help.</span></div>
+      `;
+
+      const warnings = [];
+
+      if (rooms === 0) {
+        warnings.push("Rooms being packed is blank. Add room count or enter box quantities to make the estimate more useful.");
+      }
+
+      if (smallBoxesInput === 0 && mediumBoxesInput === 0 && largeBoxesInput === 0 && rooms > 0) {
+        warnings.push("Box counts are blank, so the calculator estimated them from room count and packing style.");
+      }
+
+      if (smallBoxPriceInput === 0 || mediumBoxPriceInput === 0 || largeBoxPriceInput === 0) {
+        warnings.push("One or more box prices are blank, so the calculator used planning prices.");
+      }
+
+      if (tapeRollsInput === 0 && rooms > 0) {
+        warnings.push("Tape rolls are blank, so the calculator estimated tape from room count.");
+      }
+
+      if (packingPaperCostInput === 0 && rooms > 0) {
+        warnings.push("Packing paper cost is blank, so the calculator used a planning estimate from room count.");
+      }
+
+      if (bubbleWrapCostInput === 0 && packingStyle !== "lean" && rooms > 0) {
+        warnings.push("Bubble wrap or foam cost is blank, so the calculator used a planning estimate for protective packing.");
+      }
+
+      if (freeBoxesValue > grossCost * 0.75) {
+        warnings.push("Free supplies cover most of the estimate. Confirm the boxes are clean, sturdy, and available before relying on that savings.");
+      }
+
+      if (reusableBinsInput > 0 && reusableBinPriceInput === 0) {
+        warnings.push("Reusable bins were entered, but bin price is blank. The calculator used a planning price.");
+      }
+
+      if (lastMinuteCushionPercentInput === 0) {
+        warnings.push("Last-minute cushion is blank, so the calculator used a cushion based on packing style.");
+      }
+
+      let noteTitle = "Use this as your packing-supplies planning number.";
+      let noteBody =
+        "The estimate covers boxes and packing supplies, not movers, truck rental, storage, deposits, furniture, groceries, or utility setup.";
+
+      if (rooms === 0 && totalBoxCount === 0) {
+        noteTitle = "Add room count or box quantities before relying on the estimate.";
+        noteBody =
+          "The calculator needs either room count or specific box counts to estimate the real packing supply budget.";
+      } else if (specialtyBoxCost > standardBoxCost) {
+        noteTitle = "Specialty protection is driving this estimate.";
+        noteBody =
+          "That may be reasonable if you have TVs, dishes, mirrors, artwork, fragile items, or mattresses that would be expensive to damage.";
+      } else if (protectionCost > standardBoxCost) {
+        noteTitle = "Tape, padding, and protection are the main cost.";
+        noteBody =
+          "Look for bundles or use towels and linens safely where possible, but do not under-protect fragile or high-value items.";
+      } else if (freeSupplyValue > 0 && outOfPocketCost === 0) {
+        noteTitle = "Free supplies cover the estimated packing budget.";
+        noteBody =
+          "The entered free supplies and borrowed equipment cover the estimate. Confirm quality, quantity, and pickup timing before moving week.";
+      } else if (cushionCost > grossBeforeCushion * 0.2) {
+        noteTitle = "The cushion is a meaningful part of this estimate.";
+        noteBody =
+          "A larger cushion can be smart for a rushed or fragile-heavy move, but reduce it if you already have exact counts and prices.";
+      }
+
+      packingNote.innerHTML = `<strong>${noteTitle}</strong> ${noteBody}`;
+
+      warningList.innerHTML = warnings
+        .map((warning) => `<li>${warning}</li>`)
+        .join("");
+    }
+
+    document
+      .getElementById("packingSuppliesButton")
+      .addEventListener("click", calculatePackingSuppliesCost);
+  </script>
+</Layout>

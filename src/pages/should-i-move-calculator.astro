@@ -1,0 +1,1004 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Should I Move Calculator | ShouldISpend.com</title>
+    <meta
+      name="description"
+      content="Use this moving decision calculator to score whether moving makes financial sense based on cash needed, savings, rent change, lease timing, debt, commute, and reasons to move."
+    />
+    <link rel="canonical" href="https://shouldispend.com/should-i-move-calculator/" />
+    <style>
+      :root {
+        color-scheme: light;
+        --sis-bg: #f7f8fb;
+        --sis-card: #ffffff;
+        --sis-text: #18202f;
+        --sis-muted: #5a6577;
+        --sis-border: #dfe5ee;
+        --sis-soft: #eef3f8;
+        --sis-blue: #2457c5;
+        --sis-green: #16834a;
+        --sis-amber: #b56a00;
+        --sis-red: #b3261e;
+        --sis-shadow: 0 14px 38px rgba(20, 30, 50, 0.08);
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+        background: var(--sis-bg);
+        color: var(--sis-text);
+        line-height: 1.55;
+      }
+
+      a {
+        color: var(--sis-blue);
+      }
+
+      .sis-shell {
+        width: min(1120px, calc(100% - 32px));
+        margin: 0 auto;
+      }
+
+      .topbar {
+        padding: 18px 0;
+        border-bottom: 1px solid var(--sis-border);
+        background: #ffffff;
+      }
+
+      .topbar a {
+        font-weight: 800;
+        text-decoration: none;
+        color: var(--sis-text);
+      }
+
+      .hero {
+        padding: 46px 0 28px;
+      }
+
+      .eyebrow {
+        margin: 0 0 10px;
+        color: var(--sis-blue);
+        font-size: 0.82rem;
+        font-weight: 800;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+      }
+
+      h1 {
+        margin: 0;
+        max-width: 820px;
+        font-size: clamp(2.1rem, 4vw, 4rem);
+        line-height: 1.04;
+        letter-spacing: -0.055em;
+      }
+
+      .hero-copy {
+        max-width: 760px;
+        margin: 18px 0 0;
+        color: var(--sis-muted);
+        font-size: 1.1rem;
+      }
+
+      .layout {
+        display: grid;
+        grid-template-columns: minmax(0, 1.1fr) minmax(300px, 0.6fr);
+        gap: 24px;
+        align-items: start;
+        padding-bottom: 34px;
+      }
+
+      .card,
+      .trust-section {
+        background: var(--sis-card);
+        border: 1px solid var(--sis-border);
+        border-radius: 22px;
+        box-shadow: var(--sis-shadow);
+      }
+
+      .card {
+        padding: 24px;
+      }
+
+      .form-grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 16px;
+      }
+
+      .field {
+        display: grid;
+        gap: 7px;
+      }
+
+      .field.full {
+        grid-column: 1 / -1;
+      }
+
+      label {
+        font-weight: 750;
+      }
+
+      .hint {
+        color: var(--sis-muted);
+        font-size: 0.9rem;
+      }
+
+      input,
+      select {
+        width: 100%;
+        border: 1px solid var(--sis-border);
+        border-radius: 14px;
+        padding: 13px 14px;
+        font: inherit;
+        background: #ffffff;
+        color: var(--sis-text);
+      }
+
+      input::placeholder {
+        color: #9aa4b2;
+      }
+
+      .form-section-title {
+        grid-column: 1 / -1;
+        margin: 12px 0 0;
+        padding-top: 12px;
+        border-top: 1px solid var(--sis-border);
+        font-size: 1rem;
+      }
+
+      .actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 12px;
+        margin-top: 20px;
+      }
+
+      button {
+        border: 0;
+        border-radius: 999px;
+        padding: 13px 18px;
+        font: inherit;
+        font-weight: 800;
+        cursor: pointer;
+      }
+
+      .primary-btn {
+        background: var(--sis-blue);
+        color: #ffffff;
+      }
+
+      .secondary-btn {
+        background: var(--sis-soft);
+        color: var(--sis-text);
+      }
+
+      .side-card {
+        position: sticky;
+        top: 18px;
+      }
+
+      .side-card h2,
+      .card h2,
+      .trust-section h2 {
+        margin-top: 0;
+        letter-spacing: -0.025em;
+      }
+
+      .mini-list {
+        margin: 0;
+        padding-left: 20px;
+        color: var(--sis-muted);
+      }
+
+      .result-panel {
+        margin-top: 24px;
+        padding: 22px;
+        border: 1px solid var(--sis-border);
+        border-radius: 20px;
+        background: #fbfcff;
+      }
+
+      .result-panel[hidden] {
+        display: none !important;
+      }
+
+      .verdict {
+        display: inline-flex;
+        align-items: center;
+        padding: 8px 12px;
+        border-radius: 999px;
+        font-weight: 900;
+        background: var(--sis-soft);
+      }
+
+      .score-row {
+        display: flex;
+        align-items: end;
+        justify-content: space-between;
+        gap: 16px;
+        margin: 18px 0 8px;
+      }
+
+      .score-number {
+        font-size: 2.4rem;
+        font-weight: 950;
+        letter-spacing: -0.05em;
+      }
+
+      .pressure-track {
+        height: 16px;
+        overflow: hidden;
+        border-radius: 999px;
+        background: linear-gradient(90deg, #dff3e8 0%, #fff2cc 55%, #f8d7da 100%);
+        border: 1px solid var(--sis-border);
+      }
+
+      .pressure-fill {
+        width: 0%;
+        height: 100%;
+        border-radius: 999px;
+        background: rgba(24, 32, 47, 0.82);
+        transition: width 180ms ease;
+      }
+
+      .result-grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 12px;
+        margin-top: 18px;
+      }
+
+      .metric {
+        padding: 16px;
+        border: 1px solid var(--sis-border);
+        border-radius: 16px;
+        background: #ffffff;
+      }
+
+      .metric span {
+        display: block;
+        color: var(--sis-muted);
+        font-size: 0.88rem;
+        font-weight: 750;
+      }
+
+      .metric strong {
+        display: block;
+        margin-top: 4px;
+        font-size: 1.35rem;
+        letter-spacing: -0.03em;
+      }
+
+      .red-flags {
+        margin-top: 18px;
+        padding: 16px;
+        border-radius: 16px;
+        background: #fff7f7;
+        border: 1px solid #f1c8c8;
+      }
+
+      .red-flags h3 {
+        margin-top: 0;
+      }
+
+      .red-flags ul {
+        margin-bottom: 0;
+        padding-left: 20px;
+      }
+
+      .content-stack {
+        display: grid;
+        gap: 18px;
+        padding-bottom: 60px;
+      }
+
+      .trust-section {
+        padding: 24px;
+      }
+
+      .trust-section p,
+      .trust-section li {
+        color: var(--sis-muted);
+      }
+
+      .two-col {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 18px;
+      }
+
+      .related-grid {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 14px;
+      }
+
+      .related-card {
+        display: block;
+        padding: 16px;
+        border: 1px solid var(--sis-border);
+        border-radius: 16px;
+        text-decoration: none;
+        background: #ffffff;
+      }
+
+      .related-card strong {
+        display: block;
+        color: var(--sis-text);
+      }
+
+      .related-card span {
+        display: block;
+        margin-top: 6px;
+        color: var(--sis-muted);
+        font-size: 0.92rem;
+      }
+
+      @media (max-width: 860px) {
+        .layout,
+        .two-col,
+        .related-grid {
+          grid-template-columns: 1fr;
+        }
+
+        .side-card {
+          position: static;
+        }
+
+        .form-grid,
+        .result-grid {
+          grid-template-columns: 1fr;
+        }
+      }
+    </style>
+  </head>
+
+  <body>
+    <header class="topbar">
+      <div class="sis-shell">
+        <a href="/">ShouldISpend.com</a>
+      </div>
+    </header>
+
+    <main>
+      <section class="hero">
+        <div class="sis-shell">
+          <p class="eyebrow">Moving calculator</p>
+          <h1>Should I move?</h1>
+          <p class="hero-copy">
+            Moving can fix a bad commute, a safety problem, a cramped home, or a job issue. It can also drain savings,
+            raise monthly bills, and create lease penalties. This calculator scores the move instead of treating every
+            move as either smart or reckless.
+          </p>
+        </div>
+      </section>
+
+      <section class="sis-shell layout">
+        <article class="card">
+          <h2>Should I move calculator</h2>
+          <p class="hint">
+            Leave anything unknown blank. The calculator will stay hidden until you press calculate.
+          </p>
+
+          <form id="moveForm" novalidate>
+            <div class="form-grid">
+              <h3 class="form-section-title">Cash needed to move</h3>
+
+              <div class="field">
+                <label for="moveCost">Upfront moving and move-in cost</label>
+                <input id="moveCost" type="number" inputmode="decimal" min="0" step="50" placeholder="4500" />
+                <span class="hint">Deposits, movers, truck, boxes, setup fees, utility deposits, and first rent gap.</span>
+              </div>
+
+              <div class="field">
+                <label for="leaseBreakCost">Lease break or overlap cost</label>
+                <input id="leaseBreakCost" type="number" inputmode="decimal" min="0" step="50" placeholder="1800" />
+                <span class="hint">Penalty, notice period, rent overlap, reletting fee, or lost deposit risk.</span>
+              </div>
+
+              <div class="field">
+                <label for="outsideHelp">Confirmed outside help</label>
+                <input id="outsideHelp" type="number" inputmode="decimal" min="0" step="50" placeholder="1000" />
+                <span class="hint">Employer relocation money, family help, roommate contribution, or reimbursements.</span>
+              </div>
+
+              <div class="field">
+                <label for="emergencySavings">Emergency savings available</label>
+                <input id="emergencySavings" type="number" inputmode="decimal" min="0" step="100" placeholder="9000" />
+                <span class="hint">Cash you could use without touching retirement or high-interest debt.</span>
+              </div>
+
+              <h3 class="form-section-title">Monthly budget impact</h3>
+
+              <div class="field">
+                <label for="takeHomeIncome">Monthly take-home income</label>
+                <input id="takeHomeIncome" type="number" inputmode="decimal" min="0" step="50" placeholder="5200" />
+                <span class="hint">After taxes, payroll deductions, and regular withholding.</span>
+              </div>
+
+              <div class="field">
+                <label for="debtPayments">Monthly debt payments</label>
+                <input id="debtPayments" type="number" inputmode="decimal" min="0" step="25" placeholder="650" />
+                <span class="hint">Credit cards, student loans, auto loans, personal loans, and minimum payments.</span>
+              </div>
+
+              <div class="field">
+                <label for="currentHousing">Current rent or mortgage</label>
+                <input id="currentHousing" type="number" inputmode="decimal" min="0" step="25" placeholder="1500" />
+                <span class="hint">Your current monthly housing payment.</span>
+              </div>
+
+              <div class="field">
+                <label for="newHousing">New rent or mortgage</label>
+                <input id="newHousing" type="number" inputmode="decimal" min="0" step="25" placeholder="1850" />
+                <span class="hint">Expected new monthly housing payment.</span>
+              </div>
+
+              <div class="field">
+                <label for="commuteChange">Monthly commute change</label>
+                <input id="commuteChange" type="number" inputmode="decimal" step="25" placeholder="-125" />
+                <span class="hint">Use a negative number if the move saves money.</span>
+              </div>
+
+              <div class="field">
+                <label for="monthlyFlexibility">Current monthly flexibility</label>
+                <input id="monthlyFlexibility" type="number" inputmode="decimal" min="0" step="25" placeholder="900" />
+                <span class="hint">What is left after normal bills, food, debt, and planned savings.</span>
+              </div>
+
+              <h3 class="form-section-title">Timing and reason quality</h3>
+
+              <div class="field">
+                <label for="leaseTiming">Lease timing</label>
+                <select id="leaseTiming">
+                  <option value="">Choose one</option>
+                  <option value="0">No lease issue or lease ends now</option>
+                  <option value="1">1 month or less remaining</option>
+                  <option value="2">2 to 3 months remaining</option>
+                  <option value="4">4 to 6 months remaining</option>
+                  <option value="7">7+ months remaining</option>
+                </select>
+              </div>
+
+              <div class="field">
+                <label for="jobReason">Job or income reason</label>
+                <select id="jobReason">
+                  <option value="">Choose one</option>
+                  <option value="0">No job/income benefit</option>
+                  <option value="1">Some commute or job stability benefit</option>
+                  <option value="2">Major job, income, or career benefit</option>
+                </select>
+              </div>
+
+              <div class="field">
+                <label for="safetyReason">Safety or household stress reason</label>
+                <select id="safetyReason">
+                  <option value="">Choose one</option>
+                  <option value="0">No safety or stress issue</option>
+                  <option value="1">Moderate quality-of-life issue</option>
+                  <option value="2">Serious safety, health, or household issue</option>
+                </select>
+              </div>
+
+              <div class="field">
+                <label for="spaceReason">Space or family need</label>
+                <select id="spaceReason">
+                  <option value="">Choose one</option>
+                  <option value="0">Mostly preference</option>
+                  <option value="1">Real but manageable need</option>
+                  <option value="2">Strong space, school, family, or caregiving need</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="actions">
+              <button class="primary-btn" type="submit">Calculate move pressure</button>
+              <button class="secondary-btn" type="button" id="resetButton">Reset</button>
+            </div>
+          </form>
+
+          <section id="resultPanel" class="result-panel" aria-live="polite" hidden>
+            <div id="verdict" class="verdict">Verdict</div>
+
+            <div class="score-row">
+              <div>
+                <span class="hint">Move pressure score</span>
+                <div><span id="pressureScore" class="score-number">0</span><strong>/100</strong></div>
+              </div>
+              <p id="scoreCopy" class="hint"></p>
+            </div>
+
+            <div class="pressure-track" aria-label="Move pressure bar">
+              <div id="pressureFill" class="pressure-fill"></div>
+            </div>
+
+            <div class="result-grid">
+              <div class="metric">
+                <span>Cash needed after outside help</span>
+                <strong id="cashNeeded">$0</strong>
+              </div>
+              <div class="metric">
+                <span>Emergency savings after move</span>
+                <strong id="savingsAfter">$0</strong>
+              </div>
+              <div class="metric">
+                <span>Monthly budget impact</span>
+                <strong id="monthlyImpact">$0</strong>
+              </div>
+              <div class="metric">
+                <span>Monthly flexibility after move</span>
+                <strong id="flexAfter">$0</strong>
+              </div>
+            </div>
+
+            <div class="red-flags">
+              <h3>Red flags found</h3>
+              <ul id="redFlagList"></ul>
+            </div>
+          </section>
+        </article>
+
+        <aside class="card side-card">
+          <h2>How to read the score</h2>
+          <ul class="mini-list">
+            <li><strong>0-29:</strong> the move looks financially controlled.</li>
+            <li><strong>30-54:</strong> the move can work, but needs guardrails.</li>
+            <li><strong>55-74:</strong> delay, reduce cost, or improve cash first.</li>
+            <li><strong>75-100:</strong> the move is putting too much pressure on savings or cash flow.</li>
+          </ul>
+          <p class="hint">
+            A high score does not mean you can never move. It means the current version of the move needs a safer plan.
+          </p>
+        </aside>
+      </section>
+
+      <div class="sis-shell content-stack">
+        <!-- FAQSection -->
+        <section class="trust-section" data-section="FAQSection">
+          <h2>FAQ</h2>
+          <div class="two-col">
+            <div>
+              <h3>What is a good move pressure score?</h3>
+              <p>
+                A score under 30 usually means the move is not putting unusual pressure on savings or monthly cash flow.
+                A score above 55 means the move deserves a second look before you sign anything.
+              </p>
+            </div>
+            <div>
+              <h3>Should I move if rent goes up?</h3>
+              <p>
+                Maybe, but only if the reason is strong and the rest of the budget can absorb it. A rent increase paired
+                with lease penalties and thin savings is the classic danger zone.
+              </p>
+            </div>
+            <div>
+              <h3>Does this calculator count non-financial reasons?</h3>
+              <p>
+                Yes. Safety, job stability, family needs, and major commute changes can reduce pressure. Preference-only
+                moves do not get the same benefit.
+              </p>
+            </div>
+            <div>
+              <h3>What if outside help covers the move?</h3>
+              <p>
+                Confirmed help lowers the cash pressure. It does not erase a higher monthly rent problem, because that
+                cost remains after move-in day.
+              </p>
+            </div>
+          </div>
+        </section>
+
+        <!-- MethodologySection -->
+        <section class="trust-section" data-section="MethodologySection">
+          <h2>Methodology</h2>
+          <p>
+            The calculator starts with the cash required to move, then subtracts confirmed outside help. It estimates
+            the savings left after the move, the monthly housing and commute change, the share of take-home income going
+            to housing and debt, and the remaining monthly flexibility after the move.
+          </p>
+          <p>
+            The pressure score rises when the move consumes emergency savings, creates a large monthly increase, pushes
+            housing above a safer share of take-home income, leaves little budget flexibility, or happens with bad lease
+            timing. The score falls when the move saves monthly money or solves a serious job, safety, health, or family
+            problem.
+          </p>
+        </section>
+
+        <!-- FinancialRedFlags -->
+        <section class="trust-section" data-section="FinancialRedFlags">
+          <h2>Financial red flags</h2>
+          <ul>
+            <li>The move costs more cash than you have available.</li>
+            <li>You would finish the move with less than one month of basic emergency cushion.</li>
+            <li>The new rent or mortgage would take more than 35% of monthly take-home pay.</li>
+            <li>The move raises monthly costs while debt payments are already heavy.</li>
+            <li>The reason for moving is mostly preference, but the financial pressure is high.</li>
+          </ul>
+        </section>
+
+        <!-- ReduceCostTips -->
+        <section class="trust-section" data-section="ReduceCostTips">
+          <h2>Ways to reduce the pressure before moving</h2>
+          <ul>
+            <li>Move at the lease end instead of paying overlap, notice penalties, or a lease-break fee.</li>
+            <li>Get written quotes for movers, truck rental, packing supplies, storage, and deposits before deciding.</li>
+            <li>Ask whether an employer, roommate, family member, or landlord concession can cover part of the upfront cost.</li>
+            <li>Use a smaller place, a different neighborhood, or a delayed move date if the monthly increase is the main problem.</li>
+            <li>Sell or donate heavy furniture if it raises mover, truck, storage, or stair fees.</li>
+          </ul>
+        </section>
+
+        <!-- KeyCostCategories -->
+        <section class="trust-section" data-section="KeyCostCategories">
+          <h2>Key cost categories</h2>
+          <div class="two-col">
+            <div>
+              <h3>One-time costs</h3>
+              <p>
+                Deposits, application fees, movers, rental trucks, packing supplies, utility setup, cleaning, overlap
+                rent, lease-break costs, storage, and first grocery or household restock.
+              </p>
+            </div>
+            <div>
+              <h3>Monthly costs</h3>
+              <p>
+                Rent or mortgage change, utilities, parking, commuting, insurance, pet rent, HOA fees, storage, longer
+                drives, and the amount of cash left after bills.
+              </p>
+            </div>
+          </div>
+        </section>
+
+        <!-- CalculatorAssumptions -->
+        <section class="trust-section" data-section="CalculatorAssumptions">
+          <h2>Calculator assumptions</h2>
+          <ul>
+            <li>Take-home income means after-tax monthly income.</li>
+            <li>Emergency savings means cash that can be used without new debt.</li>
+            <li>Outside help only counts if it is confirmed, not hoped for.</li>
+            <li>A negative commute change means the move saves money each month.</li>
+            <li>The calculator is a planning tool, not legal, tax, mortgage, or lease advice.</li>
+          </ul>
+        </section>
+
+        <!-- RelatedCalculators -->
+        <section class="trust-section" data-section="RelatedCalculators">
+          <h2>Related moving calculators</h2>
+          <div class="related-grid">
+            <a class="related-card" href="/moving-cost-calculator/">
+              <strong>Moving Cost Calculator</strong>
+              <span>Estimate the total cost of a move before choosing a mover or truck.</span>
+            </a>
+            <a class="related-card" href="/how-much-should-i-save-before-moving-out/">
+              <strong>How Much Should I Save Before Moving Out?</strong>
+              <span>Estimate the savings cushion needed before leaving home or changing housing.</span>
+            </a>
+            <a class="related-card" href="/first-apartment-cost-calculator/">
+              <strong>First Apartment Cost Calculator</strong>
+              <span>Price the real first-month cost of getting into a new apartment.</span>
+            </a>
+            <a class="related-card" href="/security-deposit-and-move-in-cost-calculator/">
+              <strong>Security Deposit and Move-In Cost Calculator</strong>
+              <span>Break down deposits, fees, first rent, and move-in cash.</span>
+            </a>
+            <a class="related-card" href="/first-apartment-furniture-cost-calculator/">
+              <strong>First Apartment Furniture Cost Calculator</strong>
+              <span>Plan furniture and household setup without draining the move budget.</span>
+            </a>
+            <a class="related-card" href="/roommate-vs-living-alone-calculator/">
+              <strong>Roommate vs. Living Alone Calculator</strong>
+              <span>Compare privacy, savings, and monthly housing pressure.</span>
+            </a>
+          </div>
+        </section>
+      </div>
+    </main>
+
+    <script>
+      const form = document.getElementById("moveForm");
+      const resultPanel = document.getElementById("resultPanel");
+      const resetButton = document.getElementById("resetButton");
+      const money = new Intl.NumberFormat("en-US", { style: "currency", currency: "USD", maximumFractionDigits: 0 });
+
+      function getNumber(id) {
+        const raw = document.getElementById(id).value;
+        if (raw === "" || raw === null) return 0;
+        const parsed = Number(raw);
+        return Number.isFinite(parsed) ? parsed : 0;
+      }
+
+      function getSelectNumber(id) {
+        const raw = document.getElementById(id).value;
+        if (raw === "" || raw === null) return 0;
+        const parsed = Number(raw);
+        return Number.isFinite(parsed) ? parsed : 0;
+      }
+
+      function clamp(value, min, max) {
+        return Math.min(Math.max(value, min), max);
+      }
+
+      function formatSignedMoney(value) {
+        if (value > 0) return "+" + money.format(value);
+        if (value < 0) return "-" + money.format(Math.abs(value));
+        return money.format(0);
+      }
+
+      form.addEventListener("submit", function (event) {
+        event.preventDefault();
+
+        const moveCost = getNumber("moveCost");
+        const leaseBreakCost = getNumber("leaseBreakCost");
+        const outsideHelp = getNumber("outsideHelp");
+        const emergencySavings = getNumber("emergencySavings");
+        const takeHomeIncome = getNumber("takeHomeIncome");
+        const debtPayments = getNumber("debtPayments");
+        const currentHousing = getNumber("currentHousing");
+        const newHousing = getNumber("newHousing");
+        const commuteChange = getNumber("commuteChange");
+        const monthlyFlexibility = getNumber("monthlyFlexibility");
+        const leaseTiming = getSelectNumber("leaseTiming");
+        const jobReason = getSelectNumber("jobReason");
+        const safetyReason = getSelectNumber("safetyReason");
+        const spaceReason = getSelectNumber("spaceReason");
+
+        const totalUpfront = moveCost + leaseBreakCost;
+        const cashNeeded = Math.max(0, totalUpfront - outsideHelp);
+        const savingsAfter = emergencySavings - cashNeeded;
+        const monthlyImpact = (newHousing - currentHousing) + commuteChange;
+        const flexAfter = monthlyFlexibility - monthlyImpact;
+
+        const housingShare = takeHomeIncome > 0 ? newHousing / takeHomeIncome : 0;
+        const debtShare = takeHomeIncome > 0 ? debtPayments / takeHomeIncome : 0;
+        const monthlyImpactShare = takeHomeIncome > 0 ? monthlyImpact / takeHomeIncome : 0;
+        /*
+          Emergency floor:
+          Use housing + debt + a basic living-cost allowance. Do not use 50% of take-home income
+          as the emergency floor, because that punishes high-income households even when the move
+          is tiny compared with savings and cash flow.
+        */
+        const basicMonthlyFloor = Math.max(newHousing + debtPayments + 1800, 1000);
+        const emergencyTarget = basicMonthlyFloor * 3;
+
+        let score = 32;
+
+        if (takeHomeIncome <= 0) score += 12;
+
+        if (cashNeeded > emergencySavings) score += 30;
+        else if (emergencySavings > 0 && cashNeeded > emergencySavings * 0.75) score += 22;
+        else if (emergencySavings > 0 && cashNeeded > emergencySavings * 0.5) score += 14;
+        else if (cashNeeded === 0 && totalUpfront > 0) score -= 12;
+
+        if (savingsAfter < 0) score += 18;
+        else if (savingsAfter < 1000) score += 15;
+        else if (savingsAfter < emergencyTarget * 0.5) score += 10;
+        else if (savingsAfter >= emergencyTarget) score -= 8;
+
+        if (monthlyImpactShare > 0.15) score += 20;
+        else if (monthlyImpactShare > 0.1) score += 15;
+        else if (monthlyImpactShare > 0.05) score += 8;
+        else if (monthlyImpact < 0) score -= 10;
+
+        if (housingShare > 0.45) score += 20;
+        else if (housingShare > 0.35) score += 12;
+        else if (takeHomeIncome > 0 && housingShare < 0.28) score -= 4;
+
+        if (debtShare > 0.25) score += 12;
+        else if (debtShare > 0.15) score += 7;
+
+        if (flexAfter < 0) score += 18;
+        else if (flexAfter < 250) score += 13;
+        else if (flexAfter < 500) score += 8;
+        else if (flexAfter > 1000) score -= 5;
+
+        if (leaseTiming >= 7) score += 14;
+        else if (leaseTiming >= 4) score += 9;
+        else if (leaseTiming >= 2) score += 5;
+
+        if (jobReason === 2) score -= 9;
+        else if (jobReason === 1) score -= 4;
+
+        if (safetyReason === 2) score -= 10;
+        else if (safetyReason === 1) score -= 4;
+
+        if (spaceReason === 2) score -= 5;
+        else if (spaceReason === 0 && jobReason === 0 && safetyReason === 0 && monthlyImpact > 0) score += 6;
+
+        const annualizedIncome = takeHomeIncome * 12;
+        const cashNeededShareOfSavings = emergencySavings > 0 ? cashNeeded / emergencySavings : 1;
+        const cashNeededShareOfMonthlyIncome = takeHomeIncome > 0 ? cashNeeded / takeHomeIncome : 1;
+        const monthsOfSavingsAfterMove = basicMonthlyFloor > 0 ? savingsAfter / basicMonthlyFloor : 0;
+        const monthlyImpactAbsShare = takeHomeIncome > 0 ? Math.abs(monthlyImpact) / takeHomeIncome : 1;
+
+        /*
+          Rich-person / high-reserve logic:
+          The calculator should not treat a $5k-$10k move as dangerous when the user has
+          very high liquid savings, very high take-home income, low housing share, and tiny
+          monthly impact. Absolute dollars matter less than proportional strain.
+        */
+        if (
+          takeHomeIncome >= 25000 &&
+          emergencySavings >= 100000 &&
+          cashNeededShareOfSavings <= 0.03 &&
+          cashNeededShareOfMonthlyIncome <= 0.5 &&
+          housingShare <= 0.2 &&
+          debtShare <= 0.1 &&
+          monthlyImpactAbsShare <= 0.05 &&
+          flexAfter >= 0 &&
+          monthsOfSavingsAfterMove >= 12
+        ) {
+          score = Math.min(score, 8);
+        } else if (
+          takeHomeIncome >= 12000 &&
+          emergencySavings >= 50000 &&
+          cashNeededShareOfSavings <= 0.06 &&
+          cashNeededShareOfMonthlyIncome <= 0.75 &&
+          housingShare <= 0.25 &&
+          debtShare <= 0.15 &&
+          monthlyImpactAbsShare <= 0.08 &&
+          flexAfter >= 0 &&
+          monthsOfSavingsAfterMove >= 6
+        ) {
+          score = Math.min(score, 18);
+        } else if (
+          emergencySavings >= 25000 &&
+          cashNeededShareOfSavings <= 0.08 &&
+          cashNeededShareOfMonthlyIncome <= 1 &&
+          housingShare <= 0.3 &&
+          debtShare <= 0.18 &&
+          flexAfter >= 500 &&
+          monthsOfSavingsAfterMove >= 4
+        ) {
+          score = Math.min(score, 28);
+        }
+
+        /*
+          Outside-help override:
+          If confirmed help fully covers the upfront move cost and the new monthly budget
+          remains healthy, the move should not carry artificial cash pressure.
+        */
+        if (
+          totalUpfront > 0 &&
+          outsideHelp >= totalUpfront &&
+          housingShare <= 0.3 &&
+          debtShare <= 0.18 &&
+          flexAfter >= 500 &&
+          monthlyImpactAbsShare <= 0.08
+        ) {
+          score = Math.min(score, 10);
+        }
+
+        /*
+          Final household-scale override:
+          Some moves are objectively tiny compared with the household's income or liquid savings.
+          In those cases, additive pressure rules like lease timing, housing ratio, or preference-only reason
+          should not create a scary verdict.
+        */
+        const positiveMonthlyImpact = Math.max(0, monthlyImpact);
+        const strongIncomeTinyMove =
+          takeHomeIncome >= 15000 &&
+          cashNeeded <= takeHomeIncome * 0.15 &&
+          positiveMonthlyImpact <= takeHomeIncome * 0.04 &&
+          newHousing <= takeHomeIncome * 0.18 &&
+          debtPayments <= takeHomeIncome * 0.15 &&
+          savingsAfter >= cashNeeded * 5;
+
+        const strongSavingsTinyMove =
+          emergencySavings >= 100000 &&
+          cashNeeded <= emergencySavings * 0.06 &&
+          savingsAfter >= basicMonthlyFloor * 6 &&
+          positiveMonthlyImpact <= Math.max(takeHomeIncome * 0.05, 1500);
+
+        const ultraHighReserveMove =
+          emergencySavings >= 1000000 &&
+          cashNeeded <= emergencySavings * 0.08 &&
+          positiveMonthlyImpact <= Math.max(takeHomeIncome * 0.06, 2500);
+
+        const householdScaleOverride =
+          strongIncomeTinyMove ||
+          strongSavingsTinyMove ||
+          ultraHighReserveMove;
+
+        if (householdScaleOverride) {
+          score = 0;
+        }
+score = Math.round(clamp(score, 0, 100));
+
+        let verdict = "";
+        let scoreCopy = "";
+
+        if (score <= 29) {
+          verdict = "Move looks financially reasonable";
+          scoreCopy = "The move has manageable pressure based on the numbers entered.";
+        } else if (score <= 54) {
+          verdict = "Move can work with guardrails";
+          scoreCopy = "The move may be reasonable, but the cash plan and monthly budget need discipline.";
+        } else if (score <= 74) {
+          verdict = "Delay or reduce the move cost";
+          scoreCopy = "The current version of the move creates real pressure. Improve cash, timing, or monthly cost.";
+        } else {
+          verdict = "Do not move yet unless it is urgent";
+          scoreCopy = "The move is putting heavy pressure on savings, monthly flexibility, or lease timing.";
+        }
+
+        const flags = [];
+
+        if (cashNeeded > emergencySavings) {
+          flags.push("The upfront cash needed is higher than the emergency savings entered.");
+        }
+        if (savingsAfter < 1000) {
+          flags.push("Savings after the move would be below a basic emergency cushion.");
+        }
+        if (takeHomeIncome > 0 && housingShare > 0.35) {
+          flags.push("New housing cost is above 35% of monthly take-home income.");
+        }
+        if (monthlyImpact > 0 && takeHomeIncome > 0 && monthlyImpactShare > 0.1) {
+          flags.push("The move raises monthly costs by more than 10% of take-home income.");
+        }
+        if (flexAfter < 0) {
+          flags.push("The move appears to create negative monthly flexibility.");
+        }
+        if (debtShare > 0.2) {
+          flags.push("Debt payments are already taking a large share of take-home income.");
+        }
+        if (leaseTiming >= 4 && leaseBreakCost === 0) {
+          flags.push("Lease timing looks risky. Confirm penalties, notice rules, reletting fees, and rent overlap.");
+        }
+        if (jobReason === 0 && safetyReason === 0 && spaceReason === 0 && score > 54) {
+          flags.push("The reason for moving appears preference-based while the financial pressure is high.");
+        }
+        if (
+          score <= 10 &&
+          cashNeededShareOfSavings <= 0.03 &&
+          monthsOfSavingsAfterMove >= 12 &&
+          housingShare <= 0.2 &&
+          monthlyImpactAbsShare <= 0.05
+        ) {
+          flags.length = 0;
+          flags.push("No major financial red flags. The move cost is very small compared with the income and savings entered.");
+        }
+
+        if (householdScaleOverride) {
+          flags.length = 0;
+          flags.push("No major financial red flags. The move cost and monthly increase are tiny compared with the income or liquid savings entered.");
+        }
+
+        if (flags.length === 0) {
+          flags.push("No major red flags based on the numbers entered. Still confirm lease terms and moving quotes before committing.");
+        }
+
+        document.getElementById("verdict").textContent = verdict;
+        document.getElementById("pressureScore").textContent = String(score);
+        document.getElementById("pressureFill").style.width = score + "%";
+        document.getElementById("scoreCopy").textContent = scoreCopy;
+        document.getElementById("cashNeeded").textContent = money.format(cashNeeded);
+        document.getElementById("savingsAfter").textContent = money.format(savingsAfter);
+        document.getElementById("monthlyImpact").textContent = formatSignedMoney(monthlyImpact);
+        document.getElementById("flexAfter").textContent = money.format(flexAfter);
+
+        const flagList = document.getElementById("redFlagList");
+        flagList.innerHTML = "";
+        flags.forEach(function (flag) {
+          const li = document.createElement("li");
+          li.textContent = flag;
+          flagList.appendChild(li);
+        });
+
+        resultPanel.hidden = false;
+      });
+
+      resetButton.addEventListener("click", function () {
+        form.reset();
+        resultPanel.hidden = true;
+        document.getElementById("pressureFill").style.width = "0%";
+      });
+    </script>
+  </body>
+</html>
