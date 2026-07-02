@@ -1,0 +1,767 @@
+﻿---
+import Layout from "../layouts/Layout.astro";
+import CalculatorPageShell from "../components/CalculatorPageShell.astro";
+import FAQSection from "../components/FAQSection.astro";
+import RelatedCalculators from "../components/RelatedCalculators.astro";
+import MethodologySection from "../components/MethodologySection.astro";
+import CalculatorAssumptions from "../components/CalculatorAssumptions.astro";
+import KeyCostCategories from "../components/KeyCostCategories.astro";
+import ReduceCostTips from "../components/ReduceCostTips.astro";
+import { calculators } from "../data/calculators.js";
+
+const casketFaqs = [
+  {
+    question: "What does a casket cost calculator include?",
+    answer:
+      "This calculator estimates casket and container costs, including a basic casket, selected casket, rental casket, cremation container, sealed or gasketed upgrade, interior or material upgrade, delivery, sales tax, funeral-home handling, third-party purchase savings, and confirmed help or credits.",
+  },
+  {
+    question: "Is a more expensive casket required?",
+    answer:
+      "No calculator can tell a family what they should choose emotionally or culturally, but a more expensive casket is not automatically required for every service. Families should ask which casket, rental casket, cremation container, or lower-cost container options are allowed for the type of service being planned.",
+  },
+  {
+    question: "Can I buy a casket from a third party?",
+    answer:
+      "Many families compare funeral-home casket pricing with third-party casket pricing. This calculator includes a field for confirmed third-party savings, but families should confirm delivery timing, handling rules, cemetery or funeral-home requirements, and written acceptance before relying on outside pricing.",
+  },
+  {
+    question: "What is the difference between a casket and a cremation container?",
+    answer:
+      "A casket is commonly used for burial or viewing. A cremation container may be a simpler container used for cremation. A rental casket may be used for a viewing before cremation in some cases. Rules, availability, and pricing vary by provider.",
+  },
+  {
+    question: "Is this legal, insurance, estate, medical, or funeral-director advice?",
+    answer:
+      "No. This is a planning estimate only. It is not legal, estate, tax, insurance, medical, or funeral-director advice. Confirm casket, container, rental, delivery, tax, handling, and third-party purchase details in writing with the funeral home, cemetery, crematory, casket seller, or paying family member.",
+  },
+];
+
+const relatedCalculators = calculators
+  .filter(
+    (calculator) =>
+      calculator.category === "Funeral Costs" &&
+      calculator.href !== "/casket-cost-calculator"
+  )
+  .slice(0, 6);
+---
+
+<Layout
+  title="Casket Cost Calculator"
+  description="Estimate casket, rental casket, cremation container, delivery, sales tax, handling, upgrade costs, third-party savings, and out-of-pocket casket cost."
+>
+  <style>
+    .container {
+      max-width: 900px;
+      margin: auto;
+    }
+
+    .calculator {
+      background: white;
+      padding: 40px;
+      border-radius: 24px;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.06);
+    }
+
+    .calculator h2 {
+      margin-top: 0;
+      font-size: 2rem;
+      margin-bottom: 18px;
+      color: #0f172a;
+    }
+
+    .calculator-intro {
+      color: #334155;
+      line-height: 1.8;
+      margin-bottom: 30px;
+      font-size: 1.05rem;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+    }
+
+    .field label {
+      display: block;
+      font-weight: 800;
+      margin-bottom: 10px;
+      color: #0f172a;
+    }
+
+    .field input,
+    .field select {
+      width: 100%;
+      padding: 16px;
+      border-radius: 12px;
+      border: 1px solid #cbd5e1;
+      font-size: 1rem;
+      box-sizing: border-box;
+      background: white;
+    }
+
+    button {
+      margin-top: 30px;
+      background: #0f766e;
+      color: white;
+      border: none;
+      padding: 18px 32px;
+      border-radius: 999px;
+      font-size: 1.05rem;
+      font-weight: 800;
+      cursor: pointer;
+      transition: opacity 0.2s ease;
+    }
+
+    button:hover {
+      opacity: 0.92;
+    }
+
+    .results {
+      margin-top: 36px;
+      background: #f8fafc;
+      padding: 32px;
+      border-radius: 24px;
+      border: 1px solid var(--border);
+      box-shadow: 0 10px 24px rgba(15, 23, 42, 0.04);
+      display: none;
+    }
+
+    .results.visible {
+      display: block;
+    }
+
+    .result-label {
+      font-size: 1.15rem;
+      font-weight: 800;
+      color: #0f766e;
+      margin-bottom: 24px;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+    }
+
+    .total-price {
+      font-size: clamp(2.5rem, 6vw, 4rem);
+      font-weight: 900;
+      color: #0f172a;
+      line-height: 1.05;
+      margin-bottom: 12px;
+    }
+
+    .range-line {
+      color: #334155;
+      font-size: 1.1rem;
+      line-height: 1.8;
+      margin-bottom: 24px;
+    }
+
+    .summary-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+      margin: 24px 0;
+    }
+
+    .summary-card {
+      background: white;
+      border: 1px solid #dbe4ee;
+      border-radius: 18px;
+      padding: 18px;
+    }
+
+    .summary-card span {
+      display: block;
+      color: #64748b;
+      font-size: 0.88rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      margin-bottom: 8px;
+      line-height: 1.35;
+    }
+
+    .summary-card strong {
+      display: block;
+      color: #0f172a;
+      font-size: 1.35rem;
+      line-height: 1.2;
+    }
+
+    .breakdown-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 16px;
+      margin-top: 24px;
+    }
+
+    .warning-box,
+    .result-note,
+    .disclaimer {
+      margin-top: 24px;
+      padding: 20px;
+      border-radius: 18px;
+      line-height: 1.8;
+    }
+
+    .warning-box {
+      background: #fff7ed;
+      border: 1px solid #fed7aa;
+      color: #7c2d12;
+    }
+
+    .warning-box h3,
+    .result-note h3 {
+      margin-top: 0;
+      color: #0f172a;
+    }
+
+    .warning-box ul {
+      margin-bottom: 0;
+      padding-left: 22px;
+    }
+
+    .result-note {
+      background: white;
+      border: 1px solid #dbe4ee;
+      color: #334155;
+    }
+
+    .disclaimer {
+      background: #f1f5f9;
+      border: 1px solid #dbe4ee;
+      color: #475569;
+      font-size: 0.94rem;
+    }
+
+    .content-section {
+      margin-top: 60px;
+    }
+
+    .content-section h2 {
+      font-size: 2rem;
+      margin-bottom: 20px;
+      color: #0f172a;
+    }
+
+    .content-section h3 {
+      color: #0f172a;
+      margin-top: 28px;
+      margin-bottom: 10px;
+    }
+
+    .content-section p,
+    .content-section li {
+      font-size: 1.1rem;
+      line-height: 1.9;
+      color: #334155;
+    }
+
+    .content-link {
+      color: #0f766e;
+      font-weight: 700;
+      text-decoration: none;
+    }
+
+    .content-link:hover {
+      text-decoration: underline;
+    }
+
+    :global(.breakdown-card) {
+      background: white;
+      border: 1px solid #dbe4ee;
+      border-radius: 18px;
+      padding: 18px;
+      box-sizing: border-box;
+    }
+
+    :global(.breakdown-card span) {
+      display: block;
+      color: #64748b;
+      font-size: 0.82rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      margin-bottom: 8px;
+      line-height: 1.35;
+    }
+
+    :global(.breakdown-card strong) {
+      display: block;
+      color: #0f172a;
+      font-size: 1.25rem;
+      line-height: 1.2;
+    }
+
+    @media (max-width: 768px) {
+      .calculator {
+        padding: 24px;
+      }
+
+      .grid,
+      .summary-grid,
+      .breakdown-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .calculator h2,
+      .content-section h2 {
+        font-size: 1.7rem;
+      }
+
+      .results {
+        padding: 24px;
+      }
+    }
+  </style>
+
+  <div class="container">
+    <CalculatorPageShell
+      eyebrow="Funeral Cost Calculator"
+      title="Casket Cost Calculator"
+      description="Estimate the casket or container part of a funeral plan, including basic options, selected upgrades, rental caskets, cremation containers, delivery, tax, handling, third-party savings, and confirmed credits."
+    >
+      <div class="calculator">
+        <h2>Estimate Casket and Container Costs</h2>
+
+        <p class="calculator-intro">
+          Use this calculator to isolate the casket or container decision from
+          the rest of the funeral bill. Compare the selected casket against a
+          basic casket, rental casket, or cremation container, then account for
+          upgrades, delivery, tax, handling, third-party savings, and confirmed
+          help.
+        </p>
+
+        <div class="grid">
+          <div class="field">
+            <label for="funeralBudget">Total Funeral Budget or Quote</label>
+            <input id="funeralBudget" type="number" placeholder="Example: 10000" />
+          </div>
+
+          <div class="field">
+            <label for="basicCasket">Basic Casket Option</label>
+            <input id="basicCasket" type="number" placeholder="Example: 1200" />
+          </div>
+
+          <div class="field">
+            <label for="selectedCasket">Selected Casket Price</label>
+            <input id="selectedCasket" type="number" placeholder="Example: 3800" />
+          </div>
+
+          <div class="field">
+            <label for="rentalCasket">Rental Casket Option</label>
+            <input id="rentalCasket" type="number" placeholder="Example: 900" />
+          </div>
+
+          <div class="field">
+            <label for="cremationContainer">Cremation Container Option</label>
+            <input id="cremationContainer" type="number" placeholder="Example: 250" />
+          </div>
+
+          <div class="field">
+            <label for="sealedUpgrade">Gasketed or Sealed Upgrade</label>
+            <input id="sealedUpgrade" type="number" placeholder="Example: 600" />
+          </div>
+
+          <div class="field">
+            <label for="materialUpgrade">Material or Interior Upgrade</label>
+            <input id="materialUpgrade" type="number" placeholder="Example: 850" />
+          </div>
+
+          <div class="field">
+            <label for="deliveryCost">Delivery or Freight</label>
+            <input id="deliveryCost" type="number" placeholder="Example: 250" />
+          </div>
+
+          <div class="field">
+            <label for="salesTax">Sales Tax</label>
+            <input id="salesTax" type="number" placeholder="Example: 280" />
+          </div>
+
+          <div class="field">
+            <label for="handlingFee">Funeral-Home Handling Fee</label>
+            <input id="handlingFee" type="number" placeholder="Example: 150" />
+          </div>
+
+          <div class="field">
+            <label for="thirdPartySavings">Confirmed Third-Party Savings</label>
+            <input id="thirdPartySavings" type="number" placeholder="Example: 700" />
+          </div>
+
+          <div class="field">
+            <label for="confirmedCredits">Confirmed Help or Credits</label>
+            <input id="confirmedCredits" type="number" placeholder="Example: 500" />
+          </div>
+        </div>
+
+        <button id="casketButton" type="button">
+          Calculate Casket Cost
+        </button>
+
+        <div class="results" id="results">
+          <div class="result-label">Estimated Casket / Container Cost</div>
+
+          <div class="total-price" id="totalPrice"></div>
+
+          <div class="range-line" id="rangeLine"></div>
+
+          <div class="summary-grid">
+            <div class="summary-card">
+              <span>Out-of-pocket after confirmed help</span>
+              <strong id="outOfPocket"></strong>
+            </div>
+
+            <div class="summary-card">
+              <span>Upgrade over basic casket</span>
+              <strong id="upgradeCost"></strong>
+            </div>
+
+            <div class="summary-card">
+              <span>Casket share of funeral budget</span>
+              <strong id="budgetShare"></strong>
+            </div>
+          </div>
+
+          <div class="breakdown-grid" id="breakdownGrid"></div>
+
+          <div class="warning-box">
+            <h3>Casket-Specific Warnings</h3>
+            <ul id="warningList"></ul>
+          </div>
+
+          <div class="result-note">
+            <h3>Casket Choice Result Note</h3>
+            <p id="resultNote"></p>
+          </div>
+
+          <div class="disclaimer">
+            This is a planning estimate only. It is not legal, estate, tax,
+            insurance, medical, or funeral-director advice. Confirm casket,
+            container, rental, delivery, tax, handling, outside-purchase,
+            benefit, and payment details in writing with the funeral home,
+            cemetery, crematory, casket seller, estate representative, or family
+            contributor before relying on the estimate.
+          </div>
+        </div>
+      </div>
+
+      <section class="content-section">
+        <h2>Why Casket Costs Need Their Own Estimate</h2>
+
+        <p>
+          The casket decision can feel like a small part of funeral planning,
+          but it can move the final bill by thousands of dollars. A family may
+          be choosing between a basic casket, upgraded casket, rental casket,
+          cremation container, or third-party casket while also dealing with
+          grief, urgency, and family expectations.
+        </p>
+
+        <p>
+          This calculator is narrower than a full funeral price estimate. It
+          focuses on the casket or container choice itself: what the selected
+          option costs, how much it adds over a simpler option, whether outside
+          savings are confirmed, and whether the casket cost is becoming too
+          large compared with the total funeral budget.
+        </p>
+
+        <p>
+          For the broader plan, compare this result with the <a class="content-link" href="/funeral-price-calculator">funeral price calculator</a>, the <a class="content-link" href="/burial-cost-calculator">burial cost calculator</a>, or the <a class="content-link" href="/funeral-calculators">funeral calculators hub</a>.
+        </p>
+      </section>
+
+      <KeyCostCategories
+        items={[
+          {
+            title: "Selected casket",
+            description:
+              "The chosen casket price is the core input, but it should be compared with the basic option, rental option, or cremation container when those choices are relevant.",
+          },
+          {
+            title: "Basic casket comparison",
+            description:
+              "The upgrade over a basic casket shows how much of the cost is driven by the product choice rather than the required funeral service.",
+          },
+          {
+            title: "Rental casket or cremation container",
+            description:
+              "Some services allow a rental casket for viewing or a simpler cremation container. Availability and rules must be confirmed with the provider.",
+          },
+          {
+            title: "Sealed, gasketed, material, or interior upgrades",
+            description:
+              "These upgrades can increase cost quickly. Families should ask what each upgrade changes and whether it matters for the actual plan.",
+          },
+          {
+            title: "Delivery, tax, and handling",
+            description:
+              "Outside casket purchases may still involve delivery timing, sales tax, acceptance rules, or handling charges.",
+          },
+          {
+            title: "Confirmed savings and help",
+            description:
+              "Only subtract third-party savings, family contributions, insurance help, or prepaid credits when the amount is confirmed and usable for this cost.",
+          },
+        ]}
+      />
+
+      <ReduceCostTips
+        items={[
+          "Ask to see the written casket price list before choosing an option.",
+          "Compare the selected casket against the lowest suitable casket, rental casket, or cremation container allowed for the service.",
+          "Ask what the sealed, gasketed, material, or interior upgrade actually changes before paying for it.",
+          "Confirm whether a third-party casket can be delivered on time and accepted without unexpected handling problems.",
+          "Do not count third-party savings until delivery, taxes, fees, and provider rules are clear.",
+          "Choose a simpler casket or container when the upgrade would force borrowing or reduce money needed for cemetery, travel, reception, or household costs.",
+          "Use confirmed help only. A vague family promise should not be treated like cash already available.",
+        ]}
+      />
+
+      <CalculatorAssumptions
+        items={[
+          "This calculator estimates casket and container costs only, not the full funeral-home, cemetery, travel, reception, or obituary bill.",
+          "The selected casket is treated as the main casket/container cost before upgrades, tax, delivery, handling, third-party savings, and confirmed credits.",
+          "The low-high range uses a planning buffer because delivery, taxes, handling, provider rules, and final selections can change the total.",
+          "Third-party savings are subtracted only when the family has a realistic confirmed savings amount after delivery and related costs.",
+          "The casket share of the funeral budget is calculated only when a total funeral budget or quote is entered.",
+          "This page is educational and is not legal, estate, tax, insurance, medical, or funeral-director advice.",
+        ]}
+      />
+
+      <section id="FinancialRedFlags" class="content-section">
+        <h2>Casket Cost Red Flags</h2>
+
+        <p>
+          Casket spending deserves extra caution when the decision is being made
+          quickly, emotionally, or without a clear comparison between basic,
+          rental, cremation-container, and third-party options.
+        </p>
+
+        <ul>
+          <li>The selected casket costs much more than the basic option, but no one can explain why the upgrade matters to the family.</li>
+          <li>The casket is being chosen out of guilt rather than preference, faith, culture, or a clearly stated wish.</li>
+          <li>The casket cost is a large share of the total funeral budget while cemetery, travel, reception, or household costs are still unfunded.</li>
+          <li>A sealed or gasketed upgrade is added without a plain explanation of what it does and does not do.</li>
+          <li>Third-party savings are assumed before delivery timing, taxes, provider acceptance, and handling rules are confirmed.</li>
+          <li>One person is being pressured to approve the expensive option because other family members do not want to discuss lower-cost alternatives.</li>
+        </ul>
+      </section>
+
+      <section class="content-section">
+        <h2>What Makes This Different From a Full Funeral Calculator</h2>
+
+        <p>
+          A full funeral calculator estimates the entire plan. This casket cost
+          calculator answers a narrower question: how much of the bill is tied
+          to the casket or container choice, and how much extra is being paid
+          compared with a basic, rental, cremation-container, or third-party
+          alternative?
+        </p>
+
+        <p>
+          That distinction matters because casket decisions often happen in a
+          high-pressure moment. A family can still choose a more expensive
+          casket when it reflects the person's wishes or family priorities. The
+          danger is choosing it without seeing the upgrade cost, total-budget
+          share, confirmed savings, and cash still due.
+        </p>
+      </section>
+
+      <div class="content-section">
+        <FAQSection
+          title="Casket Cost Calculator FAQ"
+          faqs={casketFaqs}
+        />
+      </div>
+
+      <div class="content-section">
+        <RelatedCalculators calculators={relatedCalculators} />
+      </div>
+    </CalculatorPageShell>
+
+    <MethodologySection category="casket and funeral container cost estimates" updated="July 2026" />
+  </div>
+
+  <script is:inline>
+    const getNumber = (id) => {
+      const rawValue = document.getElementById(id)?.value;
+      const value = Number(rawValue);
+      return Number.isFinite(value) && value >= 0 ? value : 0;
+    };
+
+    function formatMoney(value) {
+      return value.toLocaleString(undefined, {
+        style: "currency",
+        currency: "USD",
+        minimumFractionDigits: 0,
+        maximumFractionDigits: 0,
+      });
+    }
+
+    function formatPercent(value) {
+      if (!Number.isFinite(value)) {
+        return "N/A";
+      }
+
+      return `${value.toFixed(1)}%`;
+    }
+
+    function addBreakdownCard(container, label, value) {
+      const card = document.createElement("div");
+      card.className = "breakdown-card";
+      card.innerHTML = `<span>${label}</span><strong>${formatMoney(value)}</strong>`;
+      container.appendChild(card);
+    }
+
+    function addWarning(list, text) {
+      const item = document.createElement("li");
+      item.textContent = text;
+      list.appendChild(item);
+    }
+
+    function calculateCasketCost() {
+      const funeralBudget = getNumber("funeralBudget");
+      const basicCasket = getNumber("basicCasket");
+      const selectedCasket = getNumber("selectedCasket");
+      const rentalCasket = getNumber("rentalCasket");
+      const cremationContainer = getNumber("cremationContainer");
+      const sealedUpgrade = getNumber("sealedUpgrade");
+      const materialUpgrade = getNumber("materialUpgrade");
+      const deliveryCost = getNumber("deliveryCost");
+      const salesTax = getNumber("salesTax");
+      const handlingFee = getNumber("handlingFee");
+      const thirdPartySavings = getNumber("thirdPartySavings");
+      const confirmedCredits = getNumber("confirmedCredits");
+
+      const grossTotal =
+        selectedCasket +
+        sealedUpgrade +
+        materialUpgrade +
+        deliveryCost +
+        salesTax +
+        handlingFee;
+
+      const afterSavings = Math.max(0, grossTotal - thirdPartySavings);
+      const outOfPocket = Math.max(0, afterSavings - confirmedCredits);
+      const upgradeOverBasic = basicCasket > 0 ? Math.max(0, grossTotal - basicCasket) : 0;
+      const rentalDifference = rentalCasket > 0 ? Math.max(0, grossTotal - rentalCasket) : 0;
+      const cremationContainerDifference =
+        cremationContainer > 0 ? Math.max(0, grossTotal - cremationContainer) : 0;
+      const budgetShare = funeralBudget > 0 ? (afterSavings / funeralBudget) * 100 : NaN;
+      const lowRange = Math.max(0, afterSavings * 0.9);
+      const highRange = afterSavings * 1.18;
+
+      const results = document.getElementById("results");
+      const totalPrice = document.getElementById("totalPrice");
+      const rangeLine = document.getElementById("rangeLine");
+      const outOfPocketEl = document.getElementById("outOfPocket");
+      const upgradeCostEl = document.getElementById("upgradeCost");
+      const budgetShareEl = document.getElementById("budgetShare");
+      const breakdownGrid = document.getElementById("breakdownGrid");
+      const warningList = document.getElementById("warningList");
+      const resultNote = document.getElementById("resultNote");
+
+      results.classList.add("visible");
+      breakdownGrid.innerHTML = "";
+      warningList.innerHTML = "";
+
+      if (grossTotal <= 0) {
+        totalPrice.textContent = "$0";
+        rangeLine.textContent =
+          "Enter the selected casket or container cost, upgrades, delivery, tax, handling, savings, and confirmed credits to estimate the casket decision.";
+        outOfPocketEl.textContent = "$0";
+        upgradeCostEl.textContent = "$0";
+        budgetShareEl.textContent = "N/A";
+        resultNote.textContent =
+          "This calculator is designed to isolate the casket or container decision. Start by entering the selected casket, any lower-cost comparison options, upgrades, delivery, tax, handling, third-party savings, and confirmed help.";
+        addWarning(
+          warningList,
+          "Do not approve a casket upgrade until the provider has shown the basic, rental, cremation-container, and selected options in writing."
+        );
+        return;
+      }
+
+      totalPrice.textContent = formatMoney(afterSavings);
+      rangeLine.textContent = `Planning range: ${formatMoney(lowRange)} to ${formatMoney(highRange)} after confirmed third-party savings, before any late selection changes, delivery issues, provider rules, or tax/handling adjustments.`;
+      outOfPocketEl.textContent = formatMoney(outOfPocket);
+      upgradeCostEl.textContent = basicCasket > 0 ? formatMoney(upgradeOverBasic) : "N/A";
+      budgetShareEl.textContent = Number.isFinite(budgetShare) ? formatPercent(budgetShare) : "N/A";
+
+      addBreakdownCard(breakdownGrid, "Selected casket", selectedCasket);
+      addBreakdownCard(breakdownGrid, "Sealed or gasketed upgrade", sealedUpgrade);
+      addBreakdownCard(breakdownGrid, "Material or interior upgrade", materialUpgrade);
+      addBreakdownCard(breakdownGrid, "Delivery or freight", deliveryCost);
+      addBreakdownCard(breakdownGrid, "Sales tax", salesTax);
+      addBreakdownCard(breakdownGrid, "Funeral-home handling", handlingFee);
+      addBreakdownCard(breakdownGrid, "Third-party savings", thirdPartySavings);
+      addBreakdownCard(breakdownGrid, "Confirmed help or credits", confirmedCredits);
+      addBreakdownCard(breakdownGrid, "Basic casket comparison", basicCasket);
+      addBreakdownCard(breakdownGrid, "Rental casket comparison", rentalCasket);
+      addBreakdownCard(breakdownGrid, "Cremation container comparison", cremationContainer);
+
+      if (basicCasket > 0 && upgradeOverBasic > basicCasket) {
+        addWarning(
+          warningList,
+          "The selected casket and upgrades add more than the full basic casket price again. Review whether the upgrade is intentional and affordable."
+        );
+      }
+
+      if (Number.isFinite(budgetShare) && budgetShare >= 30) {
+        addWarning(
+          warningList,
+          "The casket/container cost is at least 30% of the total funeral budget entered. Make sure cemetery, obituary, reception, travel, and household needs are still covered."
+        );
+      }
+
+      if (sealedUpgrade > 0) {
+        addWarning(
+          warningList,
+          "A sealed or gasketed upgrade is included. Ask for a plain written explanation of what it does, what it does not do, and whether it is optional."
+        );
+      }
+
+      if (thirdPartySavings > 0 && deliveryCost === 0 && handlingFee === 0) {
+        addWarning(
+          warningList,
+          "Third-party savings were entered without delivery or handling costs. Confirm timing, freight, acceptance, tax, and any provider charges before counting the savings."
+        );
+      }
+
+      if (rentalDifference > 0 && rentalCasket > 0) {
+        addWarning(
+          warningList,
+          `Compared with the rental casket option entered, the selected casket path costs ${formatMoney(rentalDifference)} more before confirmed credits.`
+        );
+      }
+
+      if (cremationContainerDifference > 0 && cremationContainer > 0) {
+        addWarning(
+          warningList,
+          `Compared with the cremation container option entered, the selected casket path costs ${formatMoney(cremationContainerDifference)} more before confirmed credits.`
+        );
+      }
+
+      if (confirmedCredits === 0) {
+        addWarning(
+          warningList,
+          "No confirmed help or credits were entered. Do not subtract family promises, estate reimbursement, insurance, or prepaid benefits unless the amount is confirmed."
+        );
+      }
+
+      addWarning(
+        warningList,
+        "Casket decisions can carry emotional upsell pressure. Ask for the basic price list and compare options before approving the selected casket."
+      );
+
+      const shareText = Number.isFinite(budgetShare)
+        ? ` It represents ${formatPercent(budgetShare)} of the total funeral budget you entered.`
+        : "";
+
+      resultNote.textContent =
+        `This is not a full funeral estimate. It isolates the casket or container decision: ${formatMoney(grossTotal)} before third-party savings, ${formatMoney(afterSavings)} after confirmed third-party savings, and ${formatMoney(outOfPocket)} still out of pocket after confirmed help or credits.${shareText} The most important comparison is whether the selected casket cost is worth the upgrade over the basic, rental, or cremation-container option available for this service.`;
+    }
+
+    document
+      .getElementById("casketButton")
+      .addEventListener("click", calculateCasketCost);
+  </script>
+</Layout>

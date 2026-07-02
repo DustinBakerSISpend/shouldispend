@@ -1,0 +1,738 @@
+﻿---
+import Layout from "../layouts/Layout.astro";
+import CalculatorPageShell from "../components/CalculatorPageShell.astro";
+import FAQSection from "../components/FAQSection.astro";
+import RelatedCalculators from "../components/RelatedCalculators.astro";
+import MethodologySection from "../components/MethodologySection.astro";
+import CalculatorAssumptions from "../components/CalculatorAssumptions.astro";
+import KeyCostCategories from "../components/KeyCostCategories.astro";
+import ReduceCostTips from "../components/ReduceCostTips.astro";
+import { calculators } from "../data/calculators.js";
+
+const cemeteryPlotFaqs = [
+  {
+    question: "What does a cemetery plot and headstone calculator include?",
+    answer:
+      "This calculator estimates cemetery-only costs such as the burial plot, grave opening and closing, vault if required, headstone or flat marker, engraving, installation, cemetery administration fees, perpetual care, and confirmed credits or benefits. It does not estimate the full funeral-home bill.",
+  },
+  {
+    question: "Are cemetery costs usually included in a funeral home quote?",
+    answer:
+      "Sometimes they are coordinated by the funeral home, but cemetery charges are often separate or partially separate. Families should ask whether the quote includes the plot, opening and closing, vault, headstone, installation, perpetual care, and cemetery administration fees.",
+  },
+  {
+    question: "Why can a headstone or marker cost more than expected?",
+    answer:
+      "The final cost can change based on whether the family chooses a flat marker, upright headstone, companion marker, material upgrade, engraving length, photo or emblem, foundation, installation, cemetery rules, and later second-inscription needs.",
+  },
+  {
+    question: "Does this calculator include veterans cemetery benefits?",
+    answer:
+      "It lets you subtract only confirmed cemetery, veterans, prepaid, estate, or family credits. Do not count a benefit until the cemetery, veterans office, estate representative, or paying family member confirms the amount in writing.",
+  },
+  {
+    question: "Is this legal, estate, insurance, or funeral-director advice?",
+    answer:
+      "No. This is a planning estimate only. It is not legal, estate, tax, insurance, medical, or funeral-director advice. Confirm prices, rules, deadlines, benefits, and required items directly with the cemetery, monument company, funeral home, veterans office, or other responsible provider.",
+  },
+];
+
+const relatedCalculators = calculators
+  .filter(
+    (calculator) =>
+      calculator.category === "Funeral Costs" &&
+      calculator.href !== "/cemetery-plot-and-headstone-cost-calculator"
+  )
+  .slice(0, 6);
+---
+
+<Layout
+  title="Cemetery Plot and Headstone Cost Calculator"
+  description="Estimate cemetery plot, grave opening, vault, headstone, engraving, installation, perpetual care, cemetery fees, and out-of-pocket marker costs."
+>
+  <style>
+    .container {
+      max-width: 900px;
+      margin: auto;
+    }
+
+    .calculator {
+      background: white;
+      padding: 40px;
+      border-radius: 24px;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.06);
+    }
+
+    .calculator h2 {
+      margin-top: 0;
+      font-size: 2rem;
+      margin-bottom: 18px;
+      color: #0f172a;
+    }
+
+    .calculator-intro {
+      color: #334155;
+      line-height: 1.8;
+      margin-bottom: 30px;
+      font-size: 1.05rem;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+    }
+
+    .field label {
+      display: block;
+      font-weight: 800;
+      margin-bottom: 10px;
+      color: #0f172a;
+    }
+
+    .field input,
+    .field select {
+      width: 100%;
+      padding: 16px;
+      border-radius: 12px;
+      border: 1px solid #cbd5e1;
+      font-size: 1rem;
+      box-sizing: border-box;
+      background: white;
+    }
+
+    button {
+      margin-top: 30px;
+      background: #0f766e;
+      color: white;
+      border: none;
+      padding: 18px 32px;
+      border-radius: 999px;
+      font-size: 1.05rem;
+      font-weight: 800;
+      cursor: pointer;
+      transition: opacity 0.2s ease;
+    }
+
+    button:hover {
+      opacity: 0.92;
+    }
+
+    .results {
+      margin-top: 36px;
+      background: #f8fafc;
+      padding: 32px;
+      border-radius: 24px;
+      border: 1px solid var(--border);
+      box-shadow: 0 10px 24px rgba(15, 23, 42, 0.04);
+      display: none;
+    }
+
+    .results.visible {
+      display: block;
+    }
+
+    .result-label {
+      font-size: 1.15rem;
+      font-weight: 800;
+      color: #0f766e;
+      margin-bottom: 24px;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+    }
+
+    .total-price {
+      font-size: clamp(2.5rem, 6vw, 4rem);
+      font-weight: 900;
+      color: #0f172a;
+      line-height: 1.05;
+      margin-bottom: 12px;
+    }
+
+    .range-line {
+      color: #334155;
+      font-size: 1.1rem;
+      line-height: 1.8;
+      margin-bottom: 24px;
+    }
+
+    .summary-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+      margin: 24px 0;
+    }
+
+    .summary-card,
+    .breakdown-card {
+      background: white;
+      border: 1px solid #dbe4ee;
+      border-radius: 18px;
+      padding: 18px;
+    }
+
+    .summary-card span,
+    .breakdown-card span {
+      display: block;
+      color: #64748b;
+      font-size: 0.88rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      margin-bottom: 8px;
+    }
+
+    .summary-card strong,
+    .breakdown-card strong {
+      display: block;
+      color: #0f172a;
+      font-size: 1.35rem;
+      line-height: 1.2;
+    }
+
+    .breakdown-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 16px;
+      margin-top: 24px;
+    }
+
+    .warning-box,
+    .result-note,
+    .disclaimer {
+      margin-top: 24px;
+      padding: 20px;
+      border-radius: 18px;
+      line-height: 1.8;
+    }
+
+    .warning-box {
+      background: #fff7ed;
+      border: 1px solid #fed7aa;
+      color: #7c2d12;
+    }
+
+    .warning-box h3,
+    .result-note h3 {
+      margin-top: 0;
+      color: #0f172a;
+    }
+
+    .warning-box ul {
+      margin-bottom: 0;
+      padding-left: 22px;
+    }
+
+    .result-note {
+      background: white;
+      border: 1px solid #dbe4ee;
+      color: #334155;
+    }
+
+    .disclaimer {
+      background: #f1f5f9;
+      border: 1px solid #dbe4ee;
+      color: #475569;
+      font-size: 0.94rem;
+    }
+
+    .content-section {
+      margin-top: 60px;
+    }
+
+    .content-section h2 {
+      font-size: 2rem;
+      margin-bottom: 20px;
+      color: #0f172a;
+    }
+
+    .content-section h3 {
+      color: #0f172a;
+      margin-top: 28px;
+      margin-bottom: 10px;
+    }
+
+    .content-section p,
+    .content-section li {
+      font-size: 1.1rem;
+      line-height: 1.9;
+      color: #334155;
+    }
+
+    .content-link {
+      color: #0f766e;
+      font-weight: 700;
+      text-decoration: none;
+    }
+
+    .content-link:hover {
+      text-decoration: underline;
+    }
+    :global(.breakdown-card) {
+      background: white;
+      border: 1px solid #dbe4ee;
+      border-radius: 18px;
+      padding: 18px;
+      box-sizing: border-box;
+    }
+
+    :global(.breakdown-card span) {
+      display: block;
+      color: #64748b;
+      font-size: 0.82rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      margin-bottom: 8px;
+      line-height: 1.35;
+    }
+
+    :global(.breakdown-card strong) {
+      display: block;
+      color: #0f172a;
+      font-size: 1.25rem;
+      line-height: 1.2;
+    }
+
+
+
+    @media (max-width: 768px) {
+      .calculator {
+        padding: 24px;
+      }
+
+      .grid,
+      .summary-grid,
+      .breakdown-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .calculator h2,
+      .content-section h2 {
+        font-size: 1.7rem;
+      }
+
+      .results {
+        padding: 24px;
+      }
+    }
+  </style>
+
+  <div class="container">
+    <CalculatorPageShell
+      eyebrow="Funeral Cost Calculator"
+      title="Cemetery Plot and Headstone Cost Calculator"
+      description="Estimate the cemetery-only part of a burial plan, including the plot, opening and closing, vault, marker or headstone, engraving, installation, care fees, and confirmed credits."
+    >
+      <div class="calculator">
+        <h2>Estimate Cemetery Plot and Headstone Costs</h2>
+
+        <p class="calculator-intro">
+          Use this calculator to separate the cemetery and marker bill from the
+          funeral-home bill. Add the plot, grave opening and closing, vault if
+          required, headstone or flat marker, engraving, installation, cemetery
+          fees, perpetual care, and only confirmed help or credits.
+        </p>
+
+        <div class="grid">
+          <div class="field">
+            <label for="plotCost">Cemetery Plot Cost</label>
+            <input id="plotCost" type="number" placeholder="Example: 2500" />
+          </div>
+
+          <div class="field">
+            <label for="openingClosing">Opening and Closing Fee</label>
+            <input id="openingClosing" type="number" placeholder="Example: 1600" />
+          </div>
+
+          <div class="field">
+            <label for="vaultCost">Burial Vault or Grave Liner</label>
+            <input id="vaultCost" type="number" placeholder="Example: 1800" />
+          </div>
+
+          <div class="field">
+            <label for="markerCost">Headstone or Flat Marker</label>
+            <input id="markerCost" type="number" placeholder="Example: 3200" />
+          </div>
+
+          <div class="field">
+            <label for="engravingCost">Engraving, Emblems, or Photo Work</label>
+            <input id="engravingCost" type="number" placeholder="Example: 650" />
+          </div>
+
+          <div class="field">
+            <label for="installationCost">Foundation and Installation</label>
+            <input id="installationCost" type="number" placeholder="Example: 900" />
+          </div>
+
+          <div class="field">
+            <label for="adminFees">Cemetery Admin or Permit Fees</label>
+            <input id="adminFees" type="number" placeholder="Example: 350" />
+          </div>
+
+          <div class="field">
+            <label for="perpetualCare">Perpetual Care / Endowment Fee</label>
+            <input id="perpetualCare" type="number" placeholder="Example: 500" />
+          </div>
+
+          <div class="field">
+            <label for="secondInscription">Second Inscription Reserve</label>
+            <input id="secondInscription" type="number" placeholder="Example: 450" />
+          </div>
+
+          <div class="field">
+            <label for="confirmedCredits">Confirmed Credits or Benefits</label>
+            <input id="confirmedCredits" type="number" placeholder="Example: 1000" />
+          </div>
+        </div>
+
+        <button id="cemeteryButton" type="button">
+          Calculate Cemetery and Headstone Cost
+        </button>
+
+        <div class="results" id="results">
+          <div class="result-label">Estimated Cemetery + Marker Cost</div>
+
+          <div class="total-price" id="totalPrice"></div>
+
+          <div class="range-line" id="rangeLine"></div>
+
+          <div class="summary-grid">
+            <div class="summary-card">
+              <span>Out-of-pocket after confirmed help</span>
+              <strong id="outOfPocket"></strong>
+            </div>
+
+            <div class="summary-card">
+              <span>Cemetery charges</span>
+              <strong id="cemeteryCharges"></strong>
+            </div>
+
+            <div class="summary-card">
+              <span>Marker/headstone charges</span>
+              <strong id="markerCharges"></strong>
+            </div>
+          </div>
+
+          <div class="breakdown-grid" id="breakdownGrid"></div>
+
+          <div class="warning-box">
+            <h3>Cemetery-Specific Warnings</h3>
+            <ul id="warningList"></ul>
+          </div>
+
+          <div class="result-note">
+            <h3>Cemetery Bill Result Note</h3>
+            <p id="resultNote"></p>
+          </div>
+
+          <div class="disclaimer">
+            This is a planning estimate only. It is not legal, estate, tax,
+            insurance, medical, or funeral-director advice. Confirm cemetery,
+            monument, installation, engraving, benefit, and payment details in
+            writing with the cemetery, monument company, funeral home, veterans
+            office, estate representative, or family contributor before relying
+            on the estimate.
+          </div>
+        </div>
+      </div>
+
+      <section class="content-section">
+        <h2>Why Cemetery and Headstone Costs Need Their Own Estimate</h2>
+
+        <p>
+          A burial plan can look manageable when the family only sees the
+          funeral-home quote. The cemetery side may be separate: the plot, grave
+          opening and closing, vault or liner, monument, engraving, foundation,
+          installation, administrative fees, and perpetual care can arrive as a
+          second bill.
+        </p>
+
+        <p>
+          This calculator is intentionally narrower than a full funeral price
+          calculator. It focuses on the cemetery and marker costs that families
+          may miss when comparing funeral packages, cremation options, or a
+          quoted service price.
+        </p>
+
+        <p>
+          For the full funeral picture, compare this result with the <a class="content-link" href="/funeral-price-calculator">funeral price calculator</a>, the <a class="content-link" href="/burial-cost-calculator">burial cost calculator</a>, or the <a class="content-link" href="/funeral-calculators">funeral calculators hub</a>.
+        </p>
+      </section>
+
+      <KeyCostCategories
+        items={[
+          {
+            title: "Cemetery plot",
+            description:
+              "The burial space itself may be sold by the cemetery and may not be included in the funeral-home quote.",
+          },
+          {
+            title: "Opening and closing",
+            description:
+              "This fee covers grave preparation, closing, and related cemetery labor. It can be one of the largest cemetery-only charges.",
+          },
+          {
+            title: "Vault or grave liner",
+            description:
+              "Some cemeteries require an outer burial container. Families should confirm whether it is required, optional, or already included.",
+          },
+          {
+            title: "Headstone or marker",
+            description:
+              "Flat markers, upright headstones, companion monuments, materials, photos, emblems, and engraving choices can change the final cost.",
+          },
+          {
+            title: "Installation and cemetery approval",
+            description:
+              "Foundation work, installation, permits, cemetery rules, and monument-company coordination may be charged separately.",
+          },
+          {
+            title: "Confirmed credits",
+            description:
+              "Only subtract confirmed benefits, prepaid arrangements, cemetery credits, estate funds, veterans help, or family contributions.",
+          },
+        ]}
+      />
+
+      <ReduceCostTips
+        items={[
+          "Ask the cemetery for a written itemized quote before choosing a plot or marker.",
+          "Separate the cemetery quote from the funeral-home quote so the family can see what is actually covered.",
+          "Compare flat markers, upright headstones, companion markers, and delayed marker purchases before committing.",
+          "Confirm whether a burial vault or grave liner is required by the cemetery or simply optional.",
+          "Ask whether engraving, installation, foundation work, cemetery approval, and perpetual care are included or separate.",
+          "Delay non-urgent marker upgrades if the service cost and cemetery cash due are already stretching the family.",
+          "Use only confirmed benefits, prepaid cemetery arrangements, or written family help when reducing the out-of-pocket estimate.",
+        ]}
+      />
+
+      <CalculatorAssumptions
+        items={[
+          "This calculator estimates cemetery and marker costs only, not the full funeral-home bill.",
+          "The low-high range uses a planning buffer around the entered costs because cemetery rules, installation, engraving, and care fees can change the final total.",
+          "Confirmed credits are subtracted only after the full cemetery and marker estimate is calculated.",
+          "Second-inscription reserve is included because companion markers or future engraving can create a later family cost.",
+          "The calculator does not decide whether burial, cremation, direct cremation, or a memorial-only plan is best.",
+          "This page is educational and is not legal, estate, tax, insurance, medical, or funeral-director advice.",
+        ]}
+      />
+
+      <section id="FinancialRedFlags" class="content-section">
+        <h2>Cemetery Plot and Headstone Red Flags</h2>
+
+        <p>
+          Cemetery costs become risky when the family assumes the funeral-home
+          quote covers everything, then discovers a separate cemetery or
+          monument bill after decisions have already been made.
+        </p>
+
+        <ul>
+          <li>The funeral-home quote does not clearly say whether cemetery charges are included.</li>
+          <li>The plot price is known, but opening and closing, vault, marker, installation, and care fees are missing.</li>
+          <li>The family chooses an upgraded headstone before confirming the cash due for the burial itself.</li>
+          <li>A companion marker is selected without budgeting for a later second inscription.</li>
+          <li>Veterans, cemetery, estate, or family help is being counted before the amount is confirmed in writing.</li>
+          <li>The cemetery requires payment faster than insurance, estate funds, or family reimbursements are expected to arrive.</li>
+        </ul>
+      </section>
+
+      <section class="content-section">
+        <h2>What Makes This Different From a Funeral Price Estimate</h2>
+
+        <p>
+          A full funeral estimate looks at the overall service, funeral home,
+          transportation, burial or cremation, obituary, flowers, reception, and
+          family logistics. This page is narrower on purpose. It answers one
+          hidden-bill question: what could the cemetery and marker side cost
+          even after the funeral-home choices are made?
+        </p>
+
+        <p>
+          That matters because a family may approve a service package while
+          still needing separate cash for the burial plot, grave opening and
+          closing, vault, monument, installation, cemetery care, and engraving.
+          The safest next step is to ask every provider for written pricing and
+          compare the cemetery total against the full funeral plan before anyone
+          signs or fronts the money.
+        </p>
+      </section>
+
+      <div class="content-section">
+        <FAQSection
+          title="Cemetery Plot and Headstone Cost Calculator FAQ"
+          faqs={cemeteryPlotFaqs}
+        />
+      </div>
+
+      <div class="content-section">
+        <RelatedCalculators calculators={relatedCalculators} />
+      </div>
+    </CalculatorPageShell>
+
+    <MethodologySection category="cemetery plot and headstone cost estimates" updated="July 2026" />
+  </div>
+
+  <script is:inline>
+    const getNumber = (id) => {
+      const rawValue = document.getElementById(id)?.value;
+      const value = Number(rawValue);
+      return Number.isFinite(value) && value >= 0 ? value : 0;
+    };
+
+    function formatMoney(value) {
+      return value.toLocaleString(undefined, {
+        style: "currency",
+        currency: "USD",
+        minimumFractionDigits: 0,
+        maximumFractionDigits: 0,
+      });
+    }
+
+    function addBreakdownCard(container, label, value) {
+      const card = document.createElement("div");
+      card.className = "breakdown-card";
+      card.innerHTML = `<span>${label}</span><strong>${formatMoney(value)}</strong>`;
+      container.appendChild(card);
+    }
+
+    function addWarning(list, text) {
+      const item = document.createElement("li");
+      item.textContent = text;
+      list.appendChild(item);
+    }
+
+    function calculateCemeteryCost() {
+      const plotCost = getNumber("plotCost");
+      const openingClosing = getNumber("openingClosing");
+      const vaultCost = getNumber("vaultCost");
+      const markerCost = getNumber("markerCost");
+      const engravingCost = getNumber("engravingCost");
+      const installationCost = getNumber("installationCost");
+      const adminFees = getNumber("adminFees");
+      const perpetualCare = getNumber("perpetualCare");
+      const secondInscription = getNumber("secondInscription");
+      const confirmedCredits = getNumber("confirmedCredits");
+
+      const cemeterySide =
+        plotCost +
+        openingClosing +
+        vaultCost +
+        adminFees +
+        perpetualCare;
+
+      const markerSide =
+        markerCost +
+        engravingCost +
+        installationCost +
+        secondInscription;
+
+      const total = cemeterySide + markerSide;
+      const lowRange = Math.max(0, total * 0.9);
+      const highRange = total * 1.18;
+      const outOfPocket = Math.max(0, total - confirmedCredits);
+
+      const results = document.getElementById("results");
+      const totalPrice = document.getElementById("totalPrice");
+      const rangeLine = document.getElementById("rangeLine");
+      const outOfPocketEl = document.getElementById("outOfPocket");
+      const cemeteryChargesEl = document.getElementById("cemeteryCharges");
+      const markerChargesEl = document.getElementById("markerCharges");
+      const breakdownGrid = document.getElementById("breakdownGrid");
+      const warningList = document.getElementById("warningList");
+      const resultNote = document.getElementById("resultNote");
+
+      results.classList.add("visible");
+      breakdownGrid.innerHTML = "";
+      warningList.innerHTML = "";
+
+      if (total <= 0) {
+        totalPrice.textContent = "$0";
+        rangeLine.textContent =
+          "Enter cemetery, marker, installation, care, and confirmed-credit amounts to estimate the cemetery-only cost.";
+        outOfPocketEl.textContent = "$0";
+        cemeteryChargesEl.textContent = "$0";
+        markerChargesEl.textContent = "$0";
+        resultNote.textContent =
+          "This calculator is designed to isolate costs that may sit outside the funeral-home quote. Start by entering the plot, opening and closing, vault, marker, engraving, installation, cemetery fees, and confirmed credits.";
+        addWarning(
+          warningList,
+          "Do not assume the funeral-home quote includes cemetery charges until the quote says so in writing."
+        );
+        return;
+      }
+
+      totalPrice.textContent = formatMoney(total);
+      rangeLine.textContent = `Planning range: ${formatMoney(lowRange)} to ${formatMoney(highRange)} before any late changes, cemetery rule differences, inscription changes, or installation adjustments.`;
+      outOfPocketEl.textContent = formatMoney(outOfPocket);
+      cemeteryChargesEl.textContent = formatMoney(cemeterySide);
+      markerChargesEl.textContent = formatMoney(markerSide);
+
+      addBreakdownCard(breakdownGrid, "Cemetery plot", plotCost);
+      addBreakdownCard(breakdownGrid, "Opening and closing", openingClosing);
+      addBreakdownCard(breakdownGrid, "Vault or liner", vaultCost);
+      addBreakdownCard(breakdownGrid, "Headstone or marker", markerCost);
+      addBreakdownCard(breakdownGrid, "Engraving, photo, or emblem", engravingCost);
+      addBreakdownCard(breakdownGrid, "Foundation and installation", installationCost);
+      addBreakdownCard(breakdownGrid, "Cemetery admin fees", adminFees);
+      addBreakdownCard(breakdownGrid, "Perpetual care", perpetualCare);
+      addBreakdownCard(breakdownGrid, "Second inscription reserve", secondInscription);
+      addBreakdownCard(breakdownGrid, "Confirmed credits", confirmedCredits);
+
+      if (cemeterySide > 0 && markerSide > 0) {
+        addWarning(
+          warningList,
+          "This estimate has both cemetery charges and marker charges. Confirm which provider bills each item and when payment is due."
+        );
+      }
+
+      if (openingClosing > 0 && plotCost > 0 && openingClosing > plotCost * 0.6) {
+        addWarning(
+          warningList,
+          "Opening and closing is a major share of the plot cost. Make sure it was not omitted from any earlier quote."
+        );
+      }
+
+      if (markerSide > cemeterySide && cemeterySide > 0) {
+        addWarning(
+          warningList,
+          "The marker/headstone side is higher than the cemetery burial-space side. Review whether the selected monument, engraving, and installation choices match the family’s cash plan."
+        );
+      }
+
+      if (secondInscription > 0) {
+        addWarning(
+          warningList,
+          "A second-inscription reserve is included. Confirm future engraving rules, fees, and who will be responsible later."
+        );
+      }
+
+      if (confirmedCredits > total) {
+        addWarning(
+          warningList,
+          "Confirmed credits are higher than the estimated cemetery and marker bill. Verify whether unused credits can be refunded, redirected, or applied elsewhere."
+        );
+      }
+
+      if (confirmedCredits === 0) {
+        addWarning(
+          warningList,
+          "No confirmed credits were entered. Do not subtract veterans, estate, prepaid, cemetery, or family help unless the amount is confirmed."
+        );
+      }
+
+      addWarning(
+        warningList,
+        "Cemetery charges may not be part of the funeral-home quote. Ask for a written itemized quote from the cemetery and monument provider."
+      );
+
+      resultNote.textContent =
+        `This is not a full funeral estimate. It isolates the cemetery and marker bill: ${formatMoney(cemeterySide)} for cemetery-side charges and ${formatMoney(markerSide)} for marker/headstone-side charges. After confirmed credits, the estimated cash still needed for this part of the burial plan is ${formatMoney(outOfPocket)}.`;
+    }
+
+    document
+      .getElementById("cemeteryButton")
+      .addEventListener("click", calculateCemeteryCost);
+  </script>
+</Layout>
+

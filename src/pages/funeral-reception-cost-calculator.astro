@@ -1,0 +1,765 @@
+﻿---
+import Layout from "../layouts/Layout.astro";
+import CalculatorPageShell from "../components/CalculatorPageShell.astro";
+import FAQSection from "../components/FAQSection.astro";
+import RelatedCalculators from "../components/RelatedCalculators.astro";
+import MethodologySection from "../components/MethodologySection.astro";
+import CalculatorAssumptions from "../components/CalculatorAssumptions.astro";
+import KeyCostCategories from "../components/KeyCostCategories.astro";
+import ReduceCostTips from "../components/ReduceCostTips.astro";
+import { calculators } from "../data/calculators.js";
+
+const receptionFaqs = [
+  {
+    question: "What does a funeral reception cost calculator include?",
+    answer:
+      "This calculator estimates the family gathering or reception portion of a funeral plan, including guests, food per guest, venue, drinks, service fees, tips, rentals, printed materials, flowers or decor, cleanup, transportation, and confirmed family help or credits.",
+  },
+  {
+    question: "Is a funeral reception part of the funeral-home bill?",
+    answer:
+      "Sometimes the reception is coordinated by the funeral home, church, restaurant, caterer, or family separately. This calculator treats the reception as its own cost because food, venue, rentals, service fees, and guest-count changes can become a second bill outside the formal service.",
+  },
+  {
+    question: "What makes funeral reception costs rise quickly?",
+    answer:
+      "The biggest drivers are guest count, food per guest, venue minimums, drinks, service fees, tips, rentals, cleanup, and transportation. A small per-person increase can become expensive when the guest list grows.",
+  },
+  {
+    question: "Should we host a funeral reception at home?",
+    answer:
+      "A home, church hall, community room, or relative's house may lower venue and food costs, but families should still account for food, drinks, paper goods, cleanup, transportation, and who is doing the work. Lower-cost does not mean no-cost.",
+  },
+  {
+    question: "Is this legal, estate, insurance, medical, or funeral-director advice?",
+    answer:
+      "No. This is a planning estimate only. It is not legal, estate, tax, insurance, medical, or funeral-director advice. Confirm reception, catering, venue, tip, service-fee, transportation, and family-contribution details in writing with the relevant provider or family contributor.",
+  },
+];
+
+const relatedCalculators = calculators
+  .filter(
+    (calculator) =>
+      calculator.category === "Funeral Costs" &&
+      calculator.href !== "/funeral-reception-cost-calculator"
+  )
+  .slice(0, 6);
+---
+
+<Layout
+  title="Funeral Reception Cost Calculator"
+  description="Estimate funeral reception, food, venue, drinks, service fees, tips, rentals, decor, cleanup, transportation, per-guest cost, and out-of-pocket reception costs."
+>
+  <style>
+    .container {
+      max-width: 900px;
+      margin: auto;
+    }
+
+    .calculator {
+      background: white;
+      padding: 40px;
+      border-radius: 24px;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.06);
+    }
+
+    .calculator h2 {
+      margin-top: 0;
+      font-size: 2rem;
+      margin-bottom: 18px;
+      color: #0f172a;
+    }
+
+    .calculator-intro {
+      color: #334155;
+      line-height: 1.8;
+      margin-bottom: 30px;
+      font-size: 1.05rem;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+    }
+
+    .field label {
+      display: block;
+      font-weight: 800;
+      margin-bottom: 10px;
+      color: #0f172a;
+    }
+
+    .field input,
+    .field select {
+      width: 100%;
+      padding: 16px;
+      border-radius: 12px;
+      border: 1px solid #cbd5e1;
+      font-size: 1rem;
+      box-sizing: border-box;
+      background: white;
+    }
+
+    button {
+      margin-top: 30px;
+      background: #0f766e;
+      color: white;
+      border: none;
+      padding: 18px 32px;
+      border-radius: 999px;
+      font-size: 1.05rem;
+      font-weight: 800;
+      cursor: pointer;
+      transition: opacity 0.2s ease;
+    }
+
+    button:hover {
+      opacity: 0.92;
+    }
+
+    .results {
+      margin-top: 36px;
+      background: #f8fafc;
+      padding: 32px;
+      border-radius: 24px;
+      border: 1px solid var(--border);
+      box-shadow: 0 10px 24px rgba(15, 23, 42, 0.04);
+      display: none;
+    }
+
+    .results.visible {
+      display: block;
+    }
+
+    .result-label {
+      font-size: 1.15rem;
+      font-weight: 800;
+      color: #0f766e;
+      margin-bottom: 24px;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+    }
+
+    .total-price {
+      font-size: clamp(2.5rem, 6vw, 4rem);
+      font-weight: 900;
+      color: #0f172a;
+      line-height: 1.05;
+      margin-bottom: 12px;
+    }
+
+    .range-line {
+      color: #334155;
+      font-size: 1.1rem;
+      line-height: 1.8;
+      margin-bottom: 24px;
+    }
+
+    .summary-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+      margin: 24px 0;
+    }
+
+    .summary-card {
+      background: white;
+      border: 1px solid #dbe4ee;
+      border-radius: 18px;
+      padding: 18px;
+    }
+
+    .summary-card span {
+      display: block;
+      color: #64748b;
+      font-size: 0.88rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      margin-bottom: 8px;
+      line-height: 1.35;
+    }
+
+    .summary-card strong {
+      display: block;
+      color: #0f172a;
+      font-size: 1.35rem;
+      line-height: 1.2;
+    }
+
+    .breakdown-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 16px;
+      margin-top: 24px;
+    }
+
+    .warning-box,
+    .result-note,
+    .disclaimer {
+      margin-top: 24px;
+      padding: 20px;
+      border-radius: 18px;
+      line-height: 1.8;
+    }
+
+    .warning-box {
+      background: #fff7ed;
+      border: 1px solid #fed7aa;
+      color: #7c2d12;
+    }
+
+    .warning-box h3,
+    .result-note h3 {
+      margin-top: 0;
+      color: #0f172a;
+    }
+
+    .warning-box ul {
+      margin-bottom: 0;
+      padding-left: 22px;
+    }
+
+    .result-note {
+      background: white;
+      border: 1px solid #dbe4ee;
+      color: #334155;
+    }
+
+    .disclaimer {
+      background: #f1f5f9;
+      border: 1px solid #dbe4ee;
+      color: #475569;
+      font-size: 0.94rem;
+    }
+
+    .content-section {
+      margin-top: 60px;
+    }
+
+    .content-section h2 {
+      font-size: 2rem;
+      margin-bottom: 20px;
+      color: #0f172a;
+    }
+
+    .content-section h3 {
+      color: #0f172a;
+      margin-top: 28px;
+      margin-bottom: 10px;
+    }
+
+    .content-section p,
+    .content-section li {
+      font-size: 1.1rem;
+      line-height: 1.9;
+      color: #334155;
+    }
+
+    .content-link {
+      color: #0f766e;
+      font-weight: 700;
+      text-decoration: none;
+    }
+
+    .content-link:hover {
+      text-decoration: underline;
+    }
+
+    :global(.breakdown-card) {
+      background: white;
+      border: 1px solid #dbe4ee;
+      border-radius: 18px;
+      padding: 18px;
+      box-sizing: border-box;
+    }
+
+    :global(.breakdown-card span) {
+      display: block;
+      color: #64748b;
+      font-size: 0.82rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      margin-bottom: 8px;
+      line-height: 1.35;
+    }
+
+    :global(.breakdown-card strong) {
+      display: block;
+      color: #0f172a;
+      font-size: 1.25rem;
+      line-height: 1.2;
+    }
+
+    @media (max-width: 768px) {
+      .calculator {
+        padding: 24px;
+      }
+
+      .grid,
+      .summary-grid,
+      .breakdown-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .calculator h2,
+      .content-section h2 {
+        font-size: 1.7rem;
+      }
+
+      .results {
+        padding: 24px;
+      }
+    }
+  </style>
+
+  <div class="container">
+    <CalculatorPageShell
+      eyebrow="Funeral Cost Calculator"
+      title="Funeral Reception Cost Calculator"
+      description="Estimate the gathering after a funeral or memorial, including guests, food, venue, drinks, service fees, tips, rentals, printed materials, decor, cleanup, transportation, and confirmed help."
+    >
+      <div class="calculator">
+        <h2>Estimate Funeral Reception and Gathering Costs</h2>
+
+        <p class="calculator-intro">
+          Use this calculator to estimate the family gathering, meal, or
+          reception portion of a funeral plan. It shows the total reception
+          estimate, per-guest cost, cash still due after confirmed help, and
+          whether the gathering is starting to exceed the service budget.
+        </p>
+
+        <div class="grid">
+          <div class="field">
+            <label for="guests">Expected Guests</label>
+            <input id="guests" type="number" placeholder="Example: 75" />
+          </div>
+
+          <div class="field">
+            <label for="foodPerGuest">Food Cost per Guest</label>
+            <input id="foodPerGuest" type="number" placeholder="Example: 18" />
+          </div>
+
+          <div class="field">
+            <label for="serviceBudget">Funeral Service Budget or Quote</label>
+            <input id="serviceBudget" type="number" placeholder="Example: 6500" />
+          </div>
+
+          <div class="field">
+            <label for="venueCost">Venue or Room Cost</label>
+            <input id="venueCost" type="number" placeholder="Example: 500" />
+          </div>
+
+          <div class="field">
+            <label for="drinkCost">Drinks / Coffee / Beverages</label>
+            <input id="drinkCost" type="number" placeholder="Example: 300" />
+          </div>
+
+          <div class="field">
+            <label for="serviceFees">Service Fees</label>
+            <input id="serviceFees" type="number" placeholder="Example: 250" />
+          </div>
+
+          <div class="field">
+            <label for="tips">Tips or Gratuity</label>
+            <input id="tips" type="number" placeholder="Example: 200" />
+          </div>
+
+          <div class="field">
+            <label for="rentals">Tables, Chairs, Linens, or Equipment</label>
+            <input id="rentals" type="number" placeholder="Example: 300" />
+          </div>
+
+          <div class="field">
+            <label for="printedMaterials">Programs, Signs, or Printed Materials</label>
+            <input id="printedMaterials" type="number" placeholder="Example: 150" />
+          </div>
+
+          <div class="field">
+            <label for="decorCost">Flowers or Simple Decor</label>
+            <input id="decorCost" type="number" placeholder="Example: 250" />
+          </div>
+
+          <div class="field">
+            <label for="cleanupCost">Cleanup or Setup Help</label>
+            <input id="cleanupCost" type="number" placeholder="Example: 200" />
+          </div>
+
+          <div class="field">
+            <label for="transportationCost">Transportation Between Service and Reception</label>
+            <input id="transportationCost" type="number" placeholder="Example: 150" />
+          </div>
+
+          <div class="field">
+            <label for="confirmedHelp">Confirmed Family Help or Credits</label>
+            <input id="confirmedHelp" type="number" placeholder="Example: 500" />
+          </div>
+
+          <div class="field">
+            <label for="extraGuests">Possible Extra Guests</label>
+            <input id="extraGuests" type="number" placeholder="Example: 15" />
+          </div>
+        </div>
+
+        <button id="receptionButton" type="button">
+          Calculate Funeral Reception Cost
+        </button>
+
+        <div class="results" id="results">
+          <div class="result-label">Estimated Reception / Gathering Cost</div>
+
+          <div class="total-price" id="totalPrice"></div>
+
+          <div class="range-line" id="rangeLine"></div>
+
+          <div class="summary-grid">
+            <div class="summary-card">
+              <span>Out-of-pocket after confirmed help</span>
+              <strong id="outOfPocket"></strong>
+            </div>
+
+            <div class="summary-card">
+              <span>Estimated cost per guest</span>
+              <strong id="perGuestCost"></strong>
+            </div>
+
+            <div class="summary-card">
+              <span>Extra guest creep risk</span>
+              <strong id="guestCreepCost"></strong>
+            </div>
+          </div>
+
+          <div class="breakdown-grid" id="breakdownGrid"></div>
+
+          <div class="warning-box">
+            <h3>Reception-Specific Warnings</h3>
+            <ul id="warningList"></ul>
+          </div>
+
+          <div class="result-note">
+            <h3>Reception Cost Result Note</h3>
+            <p id="resultNote"></p>
+          </div>
+
+          <div class="disclaimer">
+            This is a planning estimate only. It is not legal, estate, tax,
+            insurance, medical, or funeral-director advice. Confirm food,
+            venue, service fee, gratuity, rental, transportation, cleanup, and
+            family-contribution details in writing with the caterer, restaurant,
+            funeral home, church, venue, transportation provider, or family
+            contributor before relying on the estimate.
+          </div>
+        </div>
+      </div>
+
+      <section class="content-section">
+        <h2>Why Funeral Reception Costs Need Their Own Estimate</h2>
+
+        <p>
+          A funeral or memorial reception can feel separate from the main
+          service, but it can still create a meaningful bill. Food, venue,
+          drinks, service fees, tips, rentals, printed materials, flowers,
+          cleanup, transportation, and guest-count changes can turn a simple
+          gathering into a second funeral expense.
+        </p>
+
+        <p>
+          This calculator is intentionally narrower than a full funeral price
+          calculator. It focuses on the family gathering itself: the per-guest
+          cost, the fixed reception costs, the extra cost if the guest list
+          grows, and the amount still due after confirmed help.
+        </p>
+
+        <p>
+          For the broader plan, compare this result with the <a class="content-link" href="/funeral-price-calculator">funeral price calculator</a>, the <a class="content-link" href="/funeral-travel-cost-calculator">funeral travel cost calculator</a>, or the <a class="content-link" href="/funeral-calculators">funeral calculators hub</a>.
+        </p>
+      </section>
+
+      <KeyCostCategories
+        items={[
+          {
+            title: "Guest count",
+            description:
+              "Reception cost changes quickly when the guest list grows. Per-person food and drink costs should be multiplied by the realistic guest count, not the ideal guest count.",
+          },
+          {
+            title: "Food and drinks",
+            description:
+              "Food per guest, drinks, coffee, desserts, and catering minimums can be the largest variable reception cost.",
+          },
+          {
+            title: "Venue and service fees",
+            description:
+              "Restaurants, churches, community rooms, funeral homes, and event spaces may charge room fees, service fees, minimums, or cleanup costs.",
+          },
+          {
+            title: "Tips and rentals",
+            description:
+              "Gratuity, tables, chairs, linens, dishes, equipment, setup, and cleanup can add cost even when the food estimate looks manageable.",
+          },
+          {
+            title: "Printed materials and decor",
+            description:
+              "Programs, signs, memory tables, flowers, and simple decor can be meaningful, but they should be separated from food and venue costs.",
+          },
+          {
+            title: "Confirmed help",
+            description:
+              "Only subtract family help, church support, prepaid credits, or donated food when the amount or specific contribution is confirmed.",
+          },
+        ]}
+      />
+
+      <ReduceCostTips
+        items={[
+          "Set a guest-count range before choosing food or a venue.",
+          "Compare per-person catering with trays, coffee, desserts, potluck support, or a simpler gathering.",
+          "Ask whether the venue quote includes room fee, setup, cleanup, service fee, tax, and gratuity.",
+          "Keep printed materials, decor, and flowers separate from food so small extras do not hide in one large number.",
+          "Use a church hall, community room, home, or relative's house if it lowers cash due without overloading one person.",
+          "Let relatives cover specific items directly, such as desserts, coffee, flowers, or printed programs.",
+          "Do not expand the reception if the service, cemetery, travel, or household bills are still not covered.",
+        ]}
+      />
+
+      <CalculatorAssumptions
+        items={[
+          "This calculator estimates reception, food, venue, and gathering costs only, not the full funeral-home, cemetery, casket, obituary, or travel bill.",
+          "Food cost is calculated by multiplying expected guests by food cost per guest.",
+          "Possible extra guests are used to estimate guest-count creep risk, not the base reception total.",
+          "The low-high range uses a planning buffer because guest count, service fees, tips, venue rules, and last-minute food changes can affect the final total.",
+          "Confirmed help is subtracted only after the full reception estimate is calculated.",
+          "This page is educational and is not legal, estate, tax, insurance, medical, or funeral-director advice.",
+        ]}
+      />
+
+      <section id="FinancialRedFlags" class="content-section">
+        <h2>Funeral Reception Red Flags</h2>
+
+        <p>
+          Funeral reception costs become risky when the gathering grows without
+          anyone watching the per-guest math or when the reception starts taking
+          money needed for the service, cemetery, travel, or household bills.
+        </p>
+
+        <ul>
+          <li>The guest count is unclear, but the family is already choosing food, venue, or catering packages.</li>
+          <li>The reception cost is approaching or exceeding the service budget itself.</li>
+          <li>Food, room fee, tax, service fee, gratuity, rentals, and cleanup are not shown separately.</li>
+          <li>Relatives are asking for a larger gathering without offering confirmed help for the added cost.</li>
+          <li>The reception is being paid by credit card while cemetery, travel, or household costs are still unresolved.</li>
+          <li>The family is expanding the guest list mainly to avoid disappointing people, not because the cash plan supports it.</li>
+        </ul>
+      </section>
+
+      <section class="content-section">
+        <h2>What Makes This Different From a Funeral Price Calculator</h2>
+
+        <p>
+          A full funeral price calculator estimates the total plan. This funeral
+          reception calculator answers a more specific question: how much will
+          the family gathering add once food, venue, drinks, service fees, tips,
+          rentals, printed materials, decor, cleanup, transportation, and
+          confirmed help are separated from the service itself?
+        </p>
+
+        <p>
+          That distinction matters because the reception is often chosen after
+          the main service decisions, when families are tired and trying to
+          accommodate guests. A smaller or simpler gathering can still be
+          respectful. The key is seeing the per-guest cost and the cash still
+          due before the guest list grows.
+        </p>
+      </section>
+
+      <div class="content-section">
+        <FAQSection
+          title="Funeral Reception Cost Calculator FAQ"
+          faqs={receptionFaqs}
+        />
+      </div>
+
+      <div class="content-section">
+        <RelatedCalculators calculators={relatedCalculators} />
+      </div>
+    </CalculatorPageShell>
+
+    <MethodologySection category="funeral reception and gathering cost estimates" updated="July 2026" />
+  </div>
+
+  <script is:inline>
+    const getNumber = (id) => {
+      const rawValue = document.getElementById(id)?.value;
+      const value = Number(rawValue);
+      return Number.isFinite(value) && value >= 0 ? value : 0;
+    };
+
+    function formatMoney(value) {
+      return value.toLocaleString(undefined, {
+        style: "currency",
+        currency: "USD",
+        minimumFractionDigits: 0,
+        maximumFractionDigits: 0,
+      });
+    }
+
+    function addBreakdownCard(container, label, value) {
+      const card = document.createElement("div");
+      card.className = "breakdown-card";
+      card.innerHTML = `<span>${label}</span><strong>${formatMoney(value)}</strong>`;
+      container.appendChild(card);
+    }
+
+    function addWarning(list, text) {
+      const item = document.createElement("li");
+      item.textContent = text;
+      list.appendChild(item);
+    }
+
+    function calculateReceptionCost() {
+      const guests = getNumber("guests");
+      const foodPerGuest = getNumber("foodPerGuest");
+      const serviceBudget = getNumber("serviceBudget");
+      const venueCost = getNumber("venueCost");
+      const drinkCost = getNumber("drinkCost");
+      const serviceFees = getNumber("serviceFees");
+      const tips = getNumber("tips");
+      const rentals = getNumber("rentals");
+      const printedMaterials = getNumber("printedMaterials");
+      const decorCost = getNumber("decorCost");
+      const cleanupCost = getNumber("cleanupCost");
+      const transportationCost = getNumber("transportationCost");
+      const confirmedHelp = getNumber("confirmedHelp");
+      const extraGuests = getNumber("extraGuests");
+
+      const foodTotal = guests * foodPerGuest;
+      const fixedGatheringCosts =
+        venueCost +
+        drinkCost +
+        serviceFees +
+        tips +
+        rentals +
+        printedMaterials +
+        decorCost +
+        cleanupCost +
+        transportationCost;
+
+      const total = foodTotal + fixedGatheringCosts;
+      const outOfPocket = Math.max(0, total - confirmedHelp);
+      const perGuestTotal = guests > 0 ? total / guests : 0;
+      const extraGuestRisk = extraGuests * foodPerGuest;
+      const lowRange = Math.max(0, total * 0.9);
+      const highRange = total * 1.2;
+      const receptionVsService = serviceBudget > 0 ? (total / serviceBudget) * 100 : NaN;
+
+      const results = document.getElementById("results");
+      const totalPrice = document.getElementById("totalPrice");
+      const rangeLine = document.getElementById("rangeLine");
+      const outOfPocketEl = document.getElementById("outOfPocket");
+      const perGuestCostEl = document.getElementById("perGuestCost");
+      const guestCreepCostEl = document.getElementById("guestCreepCost");
+      const breakdownGrid = document.getElementById("breakdownGrid");
+      const warningList = document.getElementById("warningList");
+      const resultNote = document.getElementById("resultNote");
+
+      results.classList.add("visible");
+      breakdownGrid.innerHTML = "";
+      warningList.innerHTML = "";
+
+      if (total <= 0) {
+        totalPrice.textContent = "$0";
+        rangeLine.textContent =
+          "Enter guests, food per guest, venue, drinks, service fees, tips, rentals, printed materials, decor, cleanup, transportation, and confirmed help to estimate the reception cost.";
+        outOfPocketEl.textContent = "$0";
+        perGuestCostEl.textContent = "N/A";
+        guestCreepCostEl.textContent = "$0";
+        resultNote.textContent =
+          "This calculator is designed to isolate the reception or gathering cost from the main funeral bill. Start by entering the guest count, food cost, venue costs, and any confirmed help.";
+        addWarning(
+          warningList,
+          "Do not commit to food or venue spending until the family has a realistic guest count and written pricing."
+        );
+        return;
+      }
+
+      totalPrice.textContent = formatMoney(total);
+      rangeLine.textContent = `Planning range: ${formatMoney(lowRange)} to ${formatMoney(highRange)} before guest-count changes, service-fee changes, gratuity changes, cleanup needs, or last-minute food adjustments.`;
+      outOfPocketEl.textContent = formatMoney(outOfPocket);
+      perGuestCostEl.textContent = guests > 0 ? formatMoney(perGuestTotal) : "N/A";
+      guestCreepCostEl.textContent = formatMoney(extraGuestRisk);
+
+      addBreakdownCard(breakdownGrid, "Food total", foodTotal);
+      addBreakdownCard(breakdownGrid, "Venue or room cost", venueCost);
+      addBreakdownCard(breakdownGrid, "Drinks and beverages", drinkCost);
+      addBreakdownCard(breakdownGrid, "Service fees", serviceFees);
+      addBreakdownCard(breakdownGrid, "Tips or gratuity", tips);
+      addBreakdownCard(breakdownGrid, "Rentals and equipment", rentals);
+      addBreakdownCard(breakdownGrid, "Printed materials", printedMaterials);
+      addBreakdownCard(breakdownGrid, "Flowers or decor", decorCost);
+      addBreakdownCard(breakdownGrid, "Cleanup or setup help", cleanupCost);
+      addBreakdownCard(breakdownGrid, "Transportation", transportationCost);
+      addBreakdownCard(breakdownGrid, "Confirmed help", confirmedHelp);
+      addBreakdownCard(breakdownGrid, "Possible extra guest cost", extraGuestRisk);
+
+      if (guests > 0 && extraGuests > 0) {
+        addWarning(
+          warningList,
+          `If ${extraGuests.toFixed(0)} extra guests are added at ${formatMoney(foodPerGuest)} per guest, the reception adds about ${formatMoney(extraGuestRisk)} before any extra drinks, seating, or cleanup.`
+        );
+      }
+
+      if (Number.isFinite(receptionVsService) && receptionVsService >= 50) {
+        addWarning(
+          warningList,
+          "The reception is at least half of the service budget entered. Make sure the gathering is not crowding out the funeral service, cemetery, travel, or household needs."
+        );
+      }
+
+      if (Number.isFinite(receptionVsService) && receptionVsService >= 100) {
+        addWarning(
+          warningList,
+          "The reception estimate is equal to or higher than the service budget entered. Review whether the gathering has grown beyond the main funeral plan."
+        );
+      }
+
+      if (serviceFees + tips > foodTotal * 0.25 && foodTotal > 0) {
+        addWarning(
+          warningList,
+          "Service fees and tips are a large share of the food cost. Confirm whether tax, service charge, and gratuity are included or separate."
+        );
+      }
+
+      if (guests === 0 && foodPerGuest > 0) {
+        addWarning(
+          warningList,
+          "Food cost per guest was entered without a guest count. Add a realistic guest estimate before relying on the total."
+        );
+      }
+
+      if (confirmedHelp === 0) {
+        addWarning(
+          warningList,
+          "No confirmed family help or credits were entered. Do not subtract vague promises, donated food, or church support unless the contribution is specific."
+        );
+      }
+
+      addWarning(
+        warningList,
+        "Guest-count creep is the main reception risk. A small per-person increase can become a large bill when the gathering grows."
+      );
+
+      const serviceText = Number.isFinite(receptionVsService)
+        ? ` The reception equals about ${receptionVsService.toFixed(1)}% of the service budget you entered.`
+        : "";
+
+      resultNote.textContent =
+        `This is not a full funeral estimate. It isolates the reception or gathering: ${formatMoney(foodTotal)} for food and ${formatMoney(fixedGatheringCosts)} for venue, drinks, fees, tips, rentals, printed materials, decor, cleanup, and transportation. After confirmed help, the estimated cash still needed is ${formatMoney(outOfPocket)}.${serviceText} The key reception-specific question is whether the family wants this gathering at this guest count, or whether a simpler format would protect money needed for the rest of the funeral plan.`;
+    }
+
+    document
+      .getElementById("receptionButton")
+      .addEventListener("click", calculateReceptionCost);
+  </script>
+</Layout>

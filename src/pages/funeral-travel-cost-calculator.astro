@@ -1,0 +1,777 @@
+﻿---
+import Layout from "../layouts/Layout.astro";
+import CalculatorPageShell from "../components/CalculatorPageShell.astro";
+import FAQSection from "../components/FAQSection.astro";
+import RelatedCalculators from "../components/RelatedCalculators.astro";
+import MethodologySection from "../components/MethodologySection.astro";
+import CalculatorAssumptions from "../components/CalculatorAssumptions.astro";
+import KeyCostCategories from "../components/KeyCostCategories.astro";
+import ReduceCostTips from "../components/ReduceCostTips.astro";
+import { calculators } from "../data/calculators.js";
+
+const funeralTravelFaqs = [
+  {
+    question: "What does a funeral travel cost calculator include?",
+    answer:
+      "This calculator estimates family travel and logistics costs around a funeral or memorial, including travelers, flights, gas mileage, hotel rooms, hotel nights, meals, rental cars, rideshare, parking, childcare, pet care, missed work, last-minute fare premiums, and confirmed family help or credits.",
+  },
+  {
+    question: "Why should funeral travel be estimated separately?",
+    answer:
+      "Funeral travel often sits completely outside the funeral-home invoice. A family may know the service quote but still face flights, lodging, meals, rental cars, missed work, childcare, pet care, and last-minute transportation costs.",
+  },
+  {
+    question: "What makes funeral travel costs rise quickly?",
+    answer:
+      "The biggest drivers are the number of travelers, last-minute airfare, hotel rooms, hotel nights, rental cars, meals, unpaid time away from work, and whether children or pets need care while the family is gone.",
+  },
+  {
+    question: "Should every family member travel for a funeral?",
+    answer:
+      "That is a personal and family decision. This calculator does not decide who should attend. It helps show the travel cost before one person feels pressured to cover flights, hotel rooms, rental cars, or missed-work losses for everyone.",
+  },
+  {
+    question: "Is this legal, estate, insurance, medical, or funeral-director advice?",
+    answer:
+      "No. This is a planning estimate only. It is not legal, estate, tax, insurance, medical, or funeral-director advice. Confirm travel, lodging, rental car, airfare, employer leave, childcare, pet care, reimbursement, and family-contribution details in writing with the relevant provider, employer, or family contributor.",
+  },
+];
+
+const relatedCalculators = calculators
+  .filter(
+    (calculator) =>
+      calculator.category === "Funeral Costs" &&
+      calculator.href !== "/funeral-travel-cost-calculator"
+  )
+  .slice(0, 6);
+---
+
+<Layout
+  title="Funeral Travel Cost Calculator"
+  description="Estimate funeral travel costs including flights, gas, hotels, meals, rental car, parking, childcare, pet care, missed work, last-minute fare premiums, and confirmed help."
+>
+  <style>
+    .container {
+      max-width: 900px;
+      margin: auto;
+    }
+
+    .calculator {
+      background: white;
+      padding: 40px;
+      border-radius: 24px;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.06);
+    }
+
+    .calculator h2 {
+      margin-top: 0;
+      font-size: 2rem;
+      margin-bottom: 18px;
+      color: #0f172a;
+    }
+
+    .calculator-intro {
+      color: #334155;
+      line-height: 1.8;
+      margin-bottom: 30px;
+      font-size: 1.05rem;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+    }
+
+    .field label {
+      display: block;
+      font-weight: 800;
+      margin-bottom: 10px;
+      color: #0f172a;
+    }
+
+    .field input,
+    .field select {
+      width: 100%;
+      padding: 16px;
+      border-radius: 12px;
+      border: 1px solid #cbd5e1;
+      font-size: 1rem;
+      box-sizing: border-box;
+      background: white;
+    }
+
+    button {
+      margin-top: 30px;
+      background: #0f766e;
+      color: white;
+      border: none;
+      padding: 18px 32px;
+      border-radius: 999px;
+      font-size: 1.05rem;
+      font-weight: 800;
+      cursor: pointer;
+      transition: opacity 0.2s ease;
+    }
+
+    button:hover {
+      opacity: 0.92;
+    }
+
+    .results {
+      margin-top: 36px;
+      background: #f8fafc;
+      padding: 32px;
+      border-radius: 24px;
+      border: 1px solid var(--border);
+      box-shadow: 0 10px 24px rgba(15, 23, 42, 0.04);
+      display: none;
+    }
+
+    .results.visible {
+      display: block;
+    }
+
+    .result-label {
+      font-size: 1.15rem;
+      font-weight: 800;
+      color: #0f766e;
+      margin-bottom: 24px;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+    }
+
+    .total-price {
+      font-size: clamp(2.5rem, 6vw, 4rem);
+      font-weight: 900;
+      color: #0f172a;
+      line-height: 1.05;
+      margin-bottom: 12px;
+    }
+
+    .range-line {
+      color: #334155;
+      font-size: 1.1rem;
+      line-height: 1.8;
+      margin-bottom: 24px;
+    }
+
+    .summary-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+      margin: 24px 0;
+    }
+
+    .summary-card {
+      background: white;
+      border: 1px solid #dbe4ee;
+      border-radius: 18px;
+      padding: 18px;
+    }
+
+    .summary-card span {
+      display: block;
+      color: #64748b;
+      font-size: 0.88rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      margin-bottom: 8px;
+      line-height: 1.35;
+    }
+
+    .summary-card strong {
+      display: block;
+      color: #0f172a;
+      font-size: 1.35rem;
+      line-height: 1.2;
+    }
+
+    .breakdown-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 16px;
+      margin-top: 24px;
+    }
+
+    .warning-box,
+    .result-note,
+    .disclaimer {
+      margin-top: 24px;
+      padding: 20px;
+      border-radius: 18px;
+      line-height: 1.8;
+    }
+
+    .warning-box {
+      background: #fff7ed;
+      border: 1px solid #fed7aa;
+      color: #7c2d12;
+    }
+
+    .warning-box h3,
+    .result-note h3 {
+      margin-top: 0;
+      color: #0f172a;
+    }
+
+    .warning-box ul {
+      margin-bottom: 0;
+      padding-left: 22px;
+    }
+
+    .result-note {
+      background: white;
+      border: 1px solid #dbe4ee;
+      color: #334155;
+    }
+
+    .disclaimer {
+      background: #f1f5f9;
+      border: 1px solid #dbe4ee;
+      color: #475569;
+      font-size: 0.94rem;
+    }
+
+    .content-section {
+      margin-top: 60px;
+    }
+
+    .content-section h2 {
+      font-size: 2rem;
+      margin-bottom: 20px;
+      color: #0f172a;
+    }
+
+    .content-section h3 {
+      color: #0f172a;
+      margin-top: 28px;
+      margin-bottom: 10px;
+    }
+
+    .content-section p,
+    .content-section li {
+      font-size: 1.1rem;
+      line-height: 1.9;
+      color: #334155;
+    }
+
+    .content-link {
+      color: #0f766e;
+      font-weight: 700;
+      text-decoration: none;
+    }
+
+    .content-link:hover {
+      text-decoration: underline;
+    }
+
+    :global(.breakdown-card) {
+      background: white;
+      border: 1px solid #dbe4ee;
+      border-radius: 18px;
+      padding: 18px;
+      box-sizing: border-box;
+    }
+
+    :global(.breakdown-card span) {
+      display: block;
+      color: #64748b;
+      font-size: 0.82rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      margin-bottom: 8px;
+      line-height: 1.35;
+    }
+
+    :global(.breakdown-card strong) {
+      display: block;
+      color: #0f172a;
+      font-size: 1.25rem;
+      line-height: 1.2;
+    }
+
+    @media (max-width: 768px) {
+      .calculator {
+        padding: 24px;
+      }
+
+      .grid,
+      .summary-grid,
+      .breakdown-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .calculator h2,
+      .content-section h2 {
+        font-size: 1.7rem;
+      }
+
+      .results {
+        padding: 24px;
+      }
+    }
+  </style>
+
+  <div class="container">
+    <CalculatorPageShell
+      eyebrow="Funeral Cost Calculator"
+      title="Funeral Travel Cost Calculator"
+      description="Estimate the hidden family logistics bill around a funeral or memorial, including travel, lodging, meals, missed work, childcare, pet care, rental cars, parking, and confirmed help."
+    >
+      <div class="calculator">
+        <h2>Estimate Funeral Travel and Family Logistics Costs</h2>
+
+        <p class="calculator-intro">
+          Use this calculator to estimate travel and lodging costs that sit
+          outside the funeral-home invoice. It includes flights or mileage,
+          hotels, meals, rental cars, parking, childcare, pet care, missed work,
+          last-minute fare premiums, and only confirmed family help or credits.
+        </p>
+
+        <div class="grid">
+          <div class="field">
+            <label for="travelers">Number of Travelers</label>
+            <input id="travelers" type="number" placeholder="Example: 4" />
+          </div>
+
+          <div class="field">
+            <label for="flightCostPerTraveler">Flight Cost per Traveler</label>
+            <input id="flightCostPerTraveler" type="number" placeholder="Example: 450" />
+          </div>
+
+          <div class="field">
+            <label for="roundTripMiles">Round-Trip Driving Miles</label>
+            <input id="roundTripMiles" type="number" placeholder="Example: 650" />
+          </div>
+
+          <div class="field">
+            <label for="costPerMile">Driving Cost per Mile</label>
+            <input id="costPerMile" type="number" step="0.01" placeholder="Example: 0.25" />
+          </div>
+
+          <div class="field">
+            <label for="hotelRooms">Hotel Rooms</label>
+            <input id="hotelRooms" type="number" placeholder="Example: 2" />
+          </div>
+
+          <div class="field">
+            <label for="hotelNights">Hotel Nights</label>
+            <input id="hotelNights" type="number" placeholder="Example: 2" />
+          </div>
+
+          <div class="field">
+            <label for="hotelCostPerNight">Hotel Cost per Room per Night</label>
+            <input id="hotelCostPerNight" type="number" placeholder="Example: 175" />
+          </div>
+
+          <div class="field">
+            <label for="mealCostPerPersonPerDay">Meals per Person per Day</label>
+            <input id="mealCostPerPersonPerDay" type="number" placeholder="Example: 45" />
+          </div>
+
+          <div class="field">
+            <label for="travelDays">Travel Days</label>
+            <input id="travelDays" type="number" placeholder="Example: 3" />
+          </div>
+
+          <div class="field">
+            <label for="rentalCarCost">Rental Car Total</label>
+            <input id="rentalCarCost" type="number" placeholder="Example: 240" />
+          </div>
+
+          <div class="field">
+            <label for="rideshareParking">Rideshare, Parking, or Tolls</label>
+            <input id="rideshareParking" type="number" placeholder="Example: 125" />
+          </div>
+
+          <div class="field">
+            <label for="childcareCost">Childcare Cost</label>
+            <input id="childcareCost" type="number" placeholder="Example: 180" />
+          </div>
+
+          <div class="field">
+            <label for="petCareCost">Pet Care Cost</label>
+            <input id="petCareCost" type="number" placeholder="Example: 120" />
+          </div>
+
+          <div class="field">
+            <label for="missedWorkCost">Missed Work / Lost Wages</label>
+            <input id="missedWorkCost" type="number" placeholder="Example: 600" />
+          </div>
+
+          <div class="field">
+            <label for="lastMinutePremium">Last-Minute Fare Premium</label>
+            <input id="lastMinutePremium" type="number" placeholder="Example: 350" />
+          </div>
+
+          <div class="field">
+            <label for="confirmedHelp">Confirmed Family Help or Credits</label>
+            <input id="confirmedHelp" type="number" placeholder="Example: 500" />
+          </div>
+        </div>
+
+        <button id="travelButton" type="button">
+          Calculate Funeral Travel Cost
+        </button>
+
+        <div class="results" id="results">
+          <div class="result-label">Estimated Funeral Travel Cost</div>
+
+          <div class="total-price" id="totalPrice"></div>
+
+          <div class="range-line" id="rangeLine"></div>
+
+          <div class="summary-grid">
+            <div class="summary-card">
+              <span>Out-of-pocket after confirmed help</span>
+              <strong id="outOfPocket"></strong>
+            </div>
+
+            <div class="summary-card">
+              <span>Estimated cost per traveler</span>
+              <strong id="perTravelerCost"></strong>
+            </div>
+
+            <div class="summary-card">
+              <span>Non-invoice logistics cost</span>
+              <strong id="logisticsCost"></strong>
+            </div>
+          </div>
+
+          <div class="breakdown-grid" id="breakdownGrid"></div>
+
+          <div class="warning-box">
+            <h3>Funeral Travel-Specific Warnings</h3>
+            <ul id="warningList"></ul>
+          </div>
+
+          <div class="result-note">
+            <h3>Funeral Travel Result Note</h3>
+            <p id="resultNote"></p>
+          </div>
+
+          <div class="disclaimer">
+            This is a planning estimate only. It is not legal, estate, tax,
+            insurance, medical, or funeral-director advice. Confirm airfare,
+            mileage, hotel, rental car, rideshare, parking, toll, childcare,
+            pet care, missed-work, reimbursement, and family-contribution
+            details in writing with the travel provider, lodging provider,
+            employer, caregiver, pet-care provider, estate representative, or
+            family contributor before relying on the estimate.
+          </div>
+        </div>
+      </div>
+
+      <section class="content-section">
+        <h2>Why Funeral Travel Costs Need Their Own Estimate</h2>
+
+        <p>
+          Funeral travel can create a second hidden funeral bill. The funeral
+          home may quote the service, but relatives may still need flights,
+          gas, hotel rooms, meals, rental cars, rideshare, parking, childcare,
+          pet care, and time away from work.
+        </p>
+
+        <p>
+          This calculator is intentionally narrower than a full funeral price
+          calculator. It focuses on family logistics: who is traveling, how
+          much the trip costs, what is lost to missed work, and what cash is
+          still due after confirmed help.
+        </p>
+
+        <p>
+          For the broader plan, compare this result with the <a class="content-link" href="/funeral-price-calculator">funeral price calculator</a>, the <a class="content-link" href="/funeral-reception-cost-calculator">funeral reception cost calculator</a>, or the <a class="content-link" href="/funeral-calculators">funeral calculators hub</a>.
+        </p>
+      </section>
+
+      <KeyCostCategories
+        items={[
+          {
+            title: "Travelers and transportation",
+            description:
+              "Flights, gas mileage, rideshare, parking, tolls, and rental cars can become expensive quickly when several relatives need to travel on short notice.",
+          },
+          {
+            title: "Hotels and meals",
+            description:
+              "Hotel rooms, hotel nights, and daily meals often sit outside the funeral-home quote but still affect the family's cash due.",
+          },
+          {
+            title: "Missed work",
+            description:
+              "Unpaid leave, reduced hours, or lost wages can be a real funeral-related cost even when no vendor sends an invoice.",
+          },
+          {
+            title: "Childcare and pet care",
+            description:
+              "Families may need care for children or pets while traveling, attending services, handling arrangements, or staying with relatives.",
+          },
+          {
+            title: "Last-minute premium",
+            description:
+              "Urgent travel can raise fares, hotel prices, rental car rates, and transportation costs because the family has little time to compare options.",
+          },
+          {
+            title: "Confirmed help",
+            description:
+              "Only subtract family help, travel points, employer support, estate reimbursement, or shared lodging help when the amount is confirmed.",
+          },
+        ]}
+      />
+
+      <ReduceCostTips
+        items={[
+          "Separate funeral-home costs from travel costs so the family can see the full cash need.",
+          "Compare who truly needs to travel with who could attend a livestream, later memorial, or smaller family gathering.",
+          "Share hotel rooms, rides, rental cars, or meals only when it is practical and comfortable for the family.",
+          "Ask relatives to pay specific travel costs directly instead of making vague reimbursement promises.",
+          "Check whether employer bereavement leave, travel points, or family lodging can reduce out-of-pocket cost.",
+          "Avoid booking extra rooms, extra nights, or rental cars before the schedule is confirmed.",
+          "Do not let travel costs quietly move to one person's credit card without a clear repayment plan.",
+        ]}
+      />
+
+      <CalculatorAssumptions
+        items={[
+          "This calculator estimates funeral-related travel, lodging, meal, missed-work, childcare, pet-care, and transportation logistics only, not the full funeral-home, cemetery, obituary, reception, or casket bill.",
+          "Flight cost is calculated by multiplying travelers by flight cost per traveler.",
+          "Driving cost is calculated by multiplying round-trip miles by cost per mile.",
+          "Hotel cost is calculated from hotel rooms, hotel nights, and cost per room per night.",
+          "Meal cost is calculated from travelers, meal cost per person per day, and travel days.",
+          "Confirmed help is subtracted only after the full funeral travel estimate is calculated.",
+          "This page is educational and is not legal, estate, tax, insurance, medical, or funeral-director advice.",
+        ]}
+      />
+
+      <section id="FinancialRedFlags" class="content-section">
+        <h2>Funeral Travel Red Flags</h2>
+
+        <p>
+          Funeral travel costs become risky when the service bill looks
+          manageable but the family logistics bill is being ignored or pushed
+          onto one person.
+        </p>
+
+        <ul>
+          <li>The funeral-home quote is known, but flights, hotels, meals, rental cars, and missed work have not been estimated.</li>
+          <li>One person is booking travel for several relatives without confirmed reimbursement.</li>
+          <li>Last-minute airfare or hotel costs are being placed on a credit card with no repayment plan.</li>
+          <li>Travel costs are rising while the service, cemetery, reception, or household bills are still unresolved.</li>
+          <li>Childcare, pet care, parking, rideshare, and missed wages are being treated as minor even though they affect cash due.</li>
+          <li>The family feels pressured to send more travelers than the cash plan can support.</li>
+        </ul>
+      </section>
+
+      <section class="content-section">
+        <h2>What Makes This Different From a Funeral Price Calculator</h2>
+
+        <p>
+          A full funeral price calculator estimates the formal funeral plan.
+          This funeral travel calculator answers a separate question: how much
+          will it cost the family to get there, stay there, eat there, miss work,
+          arrange care, and return home?
+        </p>
+
+        <p>
+          That distinction matters because travel costs may never appear on the
+          funeral-home invoice. A family can still decide travel is necessary
+          and meaningful. The risk is treating it as invisible until flights,
+          hotels, meals, parking, missed wages, childcare, and pet care have
+          already created a second bill.
+        </p>
+      </section>
+
+      <div class="content-section">
+        <FAQSection
+          title="Funeral Travel Cost Calculator FAQ"
+          faqs={funeralTravelFaqs}
+        />
+      </div>
+
+      <div class="content-section">
+        <RelatedCalculators calculators={relatedCalculators} />
+      </div>
+    </CalculatorPageShell>
+
+    <MethodologySection category="funeral travel and family logistics cost estimates" updated="July 2026" />
+  </div>
+
+  <script is:inline>
+    const getNumber = (id) => {
+      const rawValue = document.getElementById(id)?.value;
+      const value = Number(rawValue);
+      return Number.isFinite(value) && value >= 0 ? value : 0;
+    };
+
+    function formatMoney(value) {
+      return value.toLocaleString(undefined, {
+        style: "currency",
+        currency: "USD",
+        minimumFractionDigits: 0,
+        maximumFractionDigits: 0,
+      });
+    }
+
+    function addBreakdownCard(container, label, value) {
+      const card = document.createElement("div");
+      card.className = "breakdown-card";
+      card.innerHTML = `<span>${label}</span><strong>${formatMoney(value)}</strong>`;
+      container.appendChild(card);
+    }
+
+    function addWarning(list, text) {
+      const item = document.createElement("li");
+      item.textContent = text;
+      list.appendChild(item);
+    }
+
+    function calculateTravelCost() {
+      const travelers = getNumber("travelers");
+      const flightCostPerTraveler = getNumber("flightCostPerTraveler");
+      const roundTripMiles = getNumber("roundTripMiles");
+      const costPerMile = getNumber("costPerMile");
+      const hotelRooms = getNumber("hotelRooms");
+      const hotelNights = getNumber("hotelNights");
+      const hotelCostPerNight = getNumber("hotelCostPerNight");
+      const mealCostPerPersonPerDay = getNumber("mealCostPerPersonPerDay");
+      const travelDays = getNumber("travelDays");
+      const rentalCarCost = getNumber("rentalCarCost");
+      const rideshareParking = getNumber("rideshareParking");
+      const childcareCost = getNumber("childcareCost");
+      const petCareCost = getNumber("petCareCost");
+      const missedWorkCost = getNumber("missedWorkCost");
+      const lastMinutePremium = getNumber("lastMinutePremium");
+      const confirmedHelp = getNumber("confirmedHelp");
+
+      const flightTotal = travelers * flightCostPerTraveler;
+      const drivingTotal = roundTripMiles * costPerMile;
+      const hotelTotal = hotelRooms * hotelNights * hotelCostPerNight;
+      const mealTotal = travelers * mealCostPerPersonPerDay * travelDays;
+      const transportationTotal =
+        flightTotal +
+        drivingTotal +
+        rentalCarCost +
+        rideshareParking +
+        lastMinutePremium;
+
+      const careAndWorkTotal = childcareCost + petCareCost + missedWorkCost;
+
+      const total =
+        transportationTotal +
+        hotelTotal +
+        mealTotal +
+        careAndWorkTotal;
+
+      const outOfPocket = Math.max(0, total - confirmedHelp);
+      const perTravelerCost = travelers > 0 ? total / travelers : 0;
+      const logisticsCost = hotelTotal + mealTotal + careAndWorkTotal + rideshareParking;
+      const lowRange = Math.max(0, total * 0.9);
+      const highRange = total * 1.22;
+
+      const results = document.getElementById("results");
+      const totalPrice = document.getElementById("totalPrice");
+      const rangeLine = document.getElementById("rangeLine");
+      const outOfPocketEl = document.getElementById("outOfPocket");
+      const perTravelerCostEl = document.getElementById("perTravelerCost");
+      const logisticsCostEl = document.getElementById("logisticsCost");
+      const breakdownGrid = document.getElementById("breakdownGrid");
+      const warningList = document.getElementById("warningList");
+      const resultNote = document.getElementById("resultNote");
+
+      results.classList.add("visible");
+      breakdownGrid.innerHTML = "";
+      warningList.innerHTML = "";
+
+      if (total <= 0) {
+        totalPrice.textContent = "$0";
+        rangeLine.textContent =
+          "Enter travelers, flights or mileage, hotels, meals, rental cars, parking, childcare, pet care, missed work, last-minute premiums, and confirmed help to estimate funeral travel costs.";
+        outOfPocketEl.textContent = "$0";
+        perTravelerCostEl.textContent = "N/A";
+        logisticsCostEl.textContent = "$0";
+        resultNote.textContent =
+          "This calculator is designed to isolate funeral-related travel and family logistics from the funeral-home bill. Start by entering the people traveling, transportation, lodging, meals, missed work, care costs, and confirmed help.";
+        addWarning(
+          warningList,
+          "Do not assume the funeral-home quote reflects what the family will spend to travel, stay overnight, eat, miss work, and arrange care."
+        );
+        return;
+      }
+
+      totalPrice.textContent = formatMoney(total);
+      rangeLine.textContent = `Planning range: ${formatMoney(lowRange)} to ${formatMoney(highRange)} before airfare changes, hotel changes, added nights, extra meals, rental-car changes, missed-work changes, or care-cost changes.`;
+      outOfPocketEl.textContent = formatMoney(outOfPocket);
+      perTravelerCostEl.textContent = travelers > 0 ? formatMoney(perTravelerCost) : "N/A";
+      logisticsCostEl.textContent = formatMoney(logisticsCost);
+
+      addBreakdownCard(breakdownGrid, "Flights", flightTotal);
+      addBreakdownCard(breakdownGrid, "Driving mileage", drivingTotal);
+      addBreakdownCard(breakdownGrid, "Hotel rooms and nights", hotelTotal);
+      addBreakdownCard(breakdownGrid, "Meals", mealTotal);
+      addBreakdownCard(breakdownGrid, "Rental car", rentalCarCost);
+      addBreakdownCard(breakdownGrid, "Rideshare, parking, or tolls", rideshareParking);
+      addBreakdownCard(breakdownGrid, "Childcare", childcareCost);
+      addBreakdownCard(breakdownGrid, "Pet care", petCareCost);
+      addBreakdownCard(breakdownGrid, "Missed work or lost wages", missedWorkCost);
+      addBreakdownCard(breakdownGrid, "Last-minute fare premium", lastMinutePremium);
+      addBreakdownCard(breakdownGrid, "Confirmed family help", confirmedHelp);
+
+      if (travelers > 0 && flightCostPerTraveler > 0 && flightTotal >= hotelTotal + mealTotal) {
+        addWarning(
+          warningList,
+          "Flights are the largest travel driver entered. Confirm fares quickly and avoid booking for people who have not confirmed they can attend or pay their share."
+        );
+      }
+
+      if (hotelRooms > 0 && hotelNights > 0 && hotelTotal >= 1000) {
+        addWarning(
+          warningList,
+          "Hotel costs are high enough to deserve a separate written plan for rooms, nights, and who is paying."
+        );
+      }
+
+      if (missedWorkCost > 0) {
+        addWarning(
+          warningList,
+          "Missed work is included. This is a real funeral-related cost even though it may not appear on a receipt."
+        );
+      }
+
+      if (lastMinutePremium > 0) {
+        addWarning(
+          warningList,
+          "A last-minute fare premium is included. Urgent travel can create a second hidden funeral bill outside the funeral-home invoice."
+        );
+      }
+
+      if (confirmedHelp === 0) {
+        addWarning(
+          warningList,
+          "No confirmed help was entered. Do not subtract vague reimbursement promises, travel points, estate help, or family support unless the amount is specific."
+        );
+      }
+
+      if (travelers >= 5 && perTravelerCost > 0) {
+        addWarning(
+          warningList,
+          "Several travelers are included. Make sure one person is not quietly fronting the full travel bill for everyone else."
+        );
+      }
+
+      addWarning(
+        warningList,
+        "Funeral travel can create a second hidden funeral bill outside the funeral-home invoice. Estimate it before flights, rooms, and rental cars are booked."
+      );
+
+      resultNote.textContent =
+        `This is not a full funeral estimate. It isolates family travel and logistics: ${formatMoney(transportationTotal)} for transportation, ${formatMoney(hotelTotal)} for lodging, ${formatMoney(mealTotal)} for meals, and ${formatMoney(careAndWorkTotal)} for childcare, pet care, and missed work. After confirmed help, the estimated cash still needed is ${formatMoney(outOfPocket)}. The travel-specific question is whether every trip cost is intentional and confirmed, or whether funeral travel is becoming a second bill outside the formal funeral plan.`;
+    }
+
+    document
+      .getElementById("travelButton")
+      .addEventListener("click", calculateTravelCost);
+  </script>
+</Layout>

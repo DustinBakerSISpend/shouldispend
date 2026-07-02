@@ -1,4 +1,46 @@
-export const calculators = [
+﻿export const calculators = [
+  {
+    title: "Cemetery Plot and Headstone Cost Calculator",
+    href: "/cemetery-plot-and-headstone-cost-calculator",
+    category: "Funeral Costs",
+    description:
+      "Estimate cemetery-only costs including the plot, opening and closing, vault, headstone, engraving, installation, perpetual care, admin fees, and confirmed credits.",
+  },
+  {
+    title: "Casket Cost Calculator",
+    href: "/casket-cost-calculator",
+    category: "Funeral Costs",
+    description:
+      "Estimate casket, rental casket, cremation container, sealed upgrade, material upgrade, delivery, tax, handling, third-party savings, and confirmed credits.",
+  },
+  {
+    title: "Funeral Reception Cost Calculator",
+    href: "/funeral-reception-cost-calculator",
+    category: "Funeral Costs",
+    description:
+      "Estimate funeral reception costs including guests, food, venue, drinks, service fees, tips, rentals, decor, cleanup, transportation, confirmed help, and per-guest cost.",
+  },
+  {
+    title: "Obituary Cost Calculator",
+    href: "/obituary-cost-calculator",
+    category: "Funeral Costs",
+    description:
+      "Estimate obituary costs using newspaper base fees, word count, line count, photo fees, number of papers, print days, online memorials, programs, death certificate copies, and confirmed credits.",
+  },
+  {
+    title: "Funeral Travel Cost Calculator",
+    href: "/funeral-travel-cost-calculator",
+    category: "Funeral Costs",
+    description:
+      "Estimate funeral travel costs including travelers, flights, mileage, hotels, meals, rental cars, rideshare, parking, childcare, pet care, missed work, last-minute premiums, and confirmed help.",
+  },
+  {
+    title: "Funeral Cost Split Calculator",
+    href: "/funeral-cost-split-calculator",
+    category: "Funeral Costs",
+    description:
+      "Estimate funeral cost splits including per-person share, confirmed contributions, promised help, unpaid gaps, single-payer exposure, estate reimbursement, family caps, and credits.",
+  },
   {
     id: "move-out-affordability",
     category: "Moving",
@@ -1587,3 +1629,8 @@ export const calculators = [
 },
 
 ];
+
+
+
+
+

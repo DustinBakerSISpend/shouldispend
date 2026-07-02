@@ -1,0 +1,745 @@
+﻿---
+import Layout from "../layouts/Layout.astro";
+import CalculatorPageShell from "../components/CalculatorPageShell.astro";
+import FAQSection from "../components/FAQSection.astro";
+import RelatedCalculators from "../components/RelatedCalculators.astro";
+import MethodologySection from "../components/MethodologySection.astro";
+import CalculatorAssumptions from "../components/CalculatorAssumptions.astro";
+import KeyCostCategories from "../components/KeyCostCategories.astro";
+import ReduceCostTips from "../components/ReduceCostTips.astro";
+import { calculators } from "../data/calculators.js";
+
+const splitFaqs = [
+  {
+    question: "What does a funeral cost split calculator include?",
+    answer:
+      "This calculator estimates how a funeral bill might be split across contributors. It separates the total bill, confirmed contributions, promised or unconfirmed help, payer upfront cash, due-date timing, reimbursement delay, estate reimbursement, family caps, other credits, unpaid gap, and single-payer exposure.",
+  },
+  {
+    question: "Why separate confirmed help from promised help?",
+    answer:
+      "Confirmed help is money or direct payment the family can rely on now. Promised help is different because it may not arrive before the bill is due. This calculator does not treat vague promises like cash already available.",
+  },
+  {
+    question: "What is single-payer exposure?",
+    answer:
+      "Single-payer exposure is the amount one person may effectively be fronting after confirmed help and credits are counted. It matters because funeral bills are often due before insurance, estate reimbursement, or family reimbursements arrive.",
+  },
+  {
+    question: "Should every contributor pay the same amount?",
+    answer:
+      "This calculator shows an equal-share estimate, but families may choose another arrangement. Some relatives may pay a specific bill directly, some may have a firm cap, and some may not be able to contribute. The important step is making the agreement specific before one person signs or fronts the bill.",
+  },
+  {
+    question: "Is this legal, estate, insurance, tax, or funeral-director advice?",
+    answer:
+      "No. This is a planning estimate only. It is not legal, estate, tax, insurance, medical, or funeral-director advice. Confirm payment deadlines, estate reimbursement, insurance timing, family contributions, and contract responsibility in writing with the funeral home, cemetery, estate representative, insurer, or family contributors.",
+  },
+];
+
+const relatedCalculators = calculators
+  .filter(
+    (calculator) =>
+      calculator.category === "Funeral Costs" &&
+      calculator.href !== "/funeral-cost-split-calculator"
+  )
+  .slice(0, 6);
+---
+
+<Layout
+  title="Funeral Cost Split Calculator"
+  description="Estimate per-person funeral shares, confirmed help, promised help, unpaid gaps, single-payer exposure, upfront cash needs, estate reimbursement, and family caps."
+>
+  <style>
+    .container {
+      max-width: 900px;
+      margin: auto;
+    }
+
+    .calculator {
+      background: white;
+      padding: 40px;
+      border-radius: 24px;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.06);
+    }
+
+    .calculator h2 {
+      margin-top: 0;
+      font-size: 2rem;
+      margin-bottom: 18px;
+      color: #0f172a;
+    }
+
+    .calculator-intro {
+      color: #334155;
+      line-height: 1.8;
+      margin-bottom: 30px;
+      font-size: 1.05rem;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+    }
+
+    .field label {
+      display: block;
+      font-weight: 800;
+      margin-bottom: 10px;
+      color: #0f172a;
+    }
+
+    .field input,
+    .field select {
+      width: 100%;
+      padding: 16px;
+      border-radius: 12px;
+      border: 1px solid #cbd5e1;
+      font-size: 1rem;
+      box-sizing: border-box;
+      background: white;
+    }
+
+    button {
+      margin-top: 30px;
+      background: #0f766e;
+      color: white;
+      border: none;
+      padding: 18px 32px;
+      border-radius: 999px;
+      font-size: 1.05rem;
+      font-weight: 800;
+      cursor: pointer;
+      transition: opacity 0.2s ease;
+    }
+
+    button:hover {
+      opacity: 0.92;
+    }
+
+    .results {
+      margin-top: 36px;
+      background: #f8fafc;
+      padding: 32px;
+      border-radius: 24px;
+      border: 1px solid var(--border);
+      box-shadow: 0 10px 24px rgba(15, 23, 42, 0.04);
+      display: none;
+    }
+
+    .results.visible {
+      display: block;
+    }
+
+    .result-label {
+      font-size: 1.15rem;
+      font-weight: 800;
+      color: #0f766e;
+      margin-bottom: 24px;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+    }
+
+    .total-price {
+      font-size: clamp(2.5rem, 6vw, 4rem);
+      font-weight: 900;
+      color: #0f172a;
+      line-height: 1.05;
+      margin-bottom: 12px;
+    }
+
+    .range-line {
+      color: #334155;
+      font-size: 1.1rem;
+      line-height: 1.8;
+      margin-bottom: 24px;
+    }
+
+    .summary-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+      margin: 24px 0;
+    }
+
+    .summary-card {
+      background: white;
+      border: 1px solid #dbe4ee;
+      border-radius: 18px;
+      padding: 18px;
+    }
+
+    .summary-card span {
+      display: block;
+      color: #64748b;
+      font-size: 0.88rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      margin-bottom: 8px;
+      line-height: 1.35;
+    }
+
+    .summary-card strong {
+      display: block;
+      color: #0f172a;
+      font-size: 1.35rem;
+      line-height: 1.2;
+    }
+
+    .breakdown-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 16px;
+      margin-top: 24px;
+    }
+
+    .warning-box,
+    .result-note,
+    .disclaimer {
+      margin-top: 24px;
+      padding: 20px;
+      border-radius: 18px;
+      line-height: 1.8;
+    }
+
+    .warning-box {
+      background: #fff7ed;
+      border: 1px solid #fed7aa;
+      color: #7c2d12;
+    }
+
+    .warning-box h3,
+    .result-note h3 {
+      margin-top: 0;
+      color: #0f172a;
+    }
+
+    .warning-box ul {
+      margin-bottom: 0;
+      padding-left: 22px;
+    }
+
+    .result-note {
+      background: white;
+      border: 1px solid #dbe4ee;
+      color: #334155;
+    }
+
+    .disclaimer {
+      background: #f1f5f9;
+      border: 1px solid #dbe4ee;
+      color: #475569;
+      font-size: 0.94rem;
+    }
+
+    .content-section {
+      margin-top: 60px;
+    }
+
+    .content-section h2 {
+      font-size: 2rem;
+      margin-bottom: 20px;
+      color: #0f172a;
+    }
+
+    .content-section h3 {
+      color: #0f172a;
+      margin-top: 28px;
+      margin-bottom: 10px;
+    }
+
+    .content-section p,
+    .content-section li {
+      font-size: 1.1rem;
+      line-height: 1.9;
+      color: #334155;
+    }
+
+    .content-link {
+      color: #0f766e;
+      font-weight: 700;
+      text-decoration: none;
+    }
+
+    .content-link:hover {
+      text-decoration: underline;
+    }
+
+    :global(.breakdown-card) {
+      background: white;
+      border: 1px solid #dbe4ee;
+      border-radius: 18px;
+      padding: 18px;
+      box-sizing: border-box;
+    }
+
+    :global(.breakdown-card span) {
+      display: block;
+      color: #64748b;
+      font-size: 0.82rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      margin-bottom: 8px;
+      line-height: 1.35;
+    }
+
+    :global(.breakdown-card strong) {
+      display: block;
+      color: #0f172a;
+      font-size: 1.25rem;
+      line-height: 1.2;
+    }
+
+    @media (max-width: 768px) {
+      .calculator {
+        padding: 24px;
+      }
+
+      .grid,
+      .summary-grid,
+      .breakdown-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .calculator h2,
+      .content-section h2 {
+        font-size: 1.7rem;
+      }
+
+      .results {
+        padding: 24px;
+      }
+    }
+  </style>
+
+  <div class="container">
+    <CalculatorPageShell
+      eyebrow="Funeral Cost Calculator"
+      title="Funeral Cost Split Calculator"
+      description="Estimate per-person funeral shares, confirmed help, promised help, unpaid gaps, single-payer exposure, upfront cash needs, estate reimbursement timing, and family contribution caps."
+    >
+      <div class="calculator">
+        <h2>Estimate How to Split Funeral Costs</h2>
+
+        <p class="calculator-intro">
+          Use this calculator to separate confirmed money from promised money.
+          It estimates the equal per-person share, the unpaid gap, and the
+          amount one person may be exposed to if they front the bill before
+          family reimbursement, insurance, or estate money arrives.
+        </p>
+
+        <div class="grid">
+          <div class="field">
+            <label for="totalFuneralBill">Total Funeral Bill</label>
+            <input id="totalFuneralBill" type="number" placeholder="Example: 12000" />
+          </div>
+
+          <div class="field">
+            <label for="contributors">Number of Contributors</label>
+            <input id="contributors" type="number" placeholder="Example: 4" />
+          </div>
+
+          <div class="field">
+            <label for="confirmedContributions">Confirmed Contributions</label>
+            <input id="confirmedContributions" type="number" placeholder="Example: 3000" />
+          </div>
+
+          <div class="field">
+            <label for="promisedHelp">Promised / Unconfirmed Help</label>
+            <input id="promisedHelp" type="number" placeholder="Example: 2500" />
+          </div>
+
+          <div class="field">
+            <label for="payerUpfrontCash">Payer Upfront Cash Available</label>
+            <input id="payerUpfrontCash" type="number" placeholder="Example: 4000" />
+          </div>
+
+          <div class="field">
+            <label for="daysUntilDue">Days Until Payment Is Due</label>
+            <input id="daysUntilDue" type="number" placeholder="Example: 5" />
+          </div>
+
+          <div class="field">
+            <label for="reimbursementDelay">Expected Reimbursement Delay in Days</label>
+            <input id="reimbursementDelay" type="number" placeholder="Example: 30" />
+          </div>
+
+          <div class="field">
+            <label for="estateReimbursement">Expected Estate Reimbursement</label>
+            <input id="estateReimbursement" type="number" placeholder="Example: 2000" />
+          </div>
+
+          <div class="field">
+            <label for="familyCap">Family Cap per Contributor</label>
+            <input id="familyCap" type="number" placeholder="Example: 1500" />
+          </div>
+
+          <div class="field">
+            <label for="otherCredits">Other Confirmed Credits</label>
+            <input id="otherCredits" type="number" placeholder="Example: 1000" />
+          </div>
+        </div>
+
+        <button id="splitButton" type="button">
+          Calculate Funeral Cost Split
+        </button>
+
+        <div class="results" id="results">
+          <div class="result-label">Estimated Funeral Cost Split</div>
+
+          <div class="total-price" id="totalPrice"></div>
+
+          <div class="range-line" id="rangeLine"></div>
+
+          <div class="summary-grid">
+            <div class="summary-card">
+              <span>Equal share after confirmed help</span>
+              <strong id="perPersonShare"></strong>
+            </div>
+
+            <div class="summary-card">
+              <span>Unpaid gap before reimbursement</span>
+              <strong id="unpaidGap"></strong>
+            </div>
+
+            <div class="summary-card">
+              <span>Single-payer exposure</span>
+              <strong id="singlePayerExposure"></strong>
+            </div>
+          </div>
+
+          <div class="breakdown-grid" id="breakdownGrid"></div>
+
+          <div class="warning-box">
+            <h3>Cost-Split-Specific Warnings</h3>
+            <ul id="warningList"></ul>
+          </div>
+
+          <div class="result-note">
+            <h3>Funeral Cost Split Result Note</h3>
+            <p id="resultNote"></p>
+          </div>
+
+          <div class="disclaimer">
+            This is a planning estimate only. It is not legal, estate, tax,
+            insurance, medical, or funeral-director advice. Confirm funeral
+            contracts, payment deadlines, contribution amounts, reimbursement
+            timing, estate reimbursement, insurance timing, credits, and who is
+            legally responsible for payment in writing with the funeral home,
+            cemetery, insurer, estate representative, or family contributors
+            before relying on the estimate.
+          </div>
+        </div>
+      </div>
+
+      <section class="content-section">
+        <h2>Why Funeral Cost Splits Need Their Own Estimate</h2>
+
+        <p>
+          A funeral bill can look shared in conversation but become one person's
+          bill in practice. The problem is not only the total cost. The problem
+          is whether money is confirmed, when payment is due, who signs, who
+          fronts the cash, and whether promised help arrives before the bill has
+          to be paid.
+        </p>
+
+        <p>
+          This calculator is intentionally narrower than a full funeral price
+          calculator. It focuses on the family payment arrangement: confirmed
+          contributions, promised help, estate reimbursement, family caps,
+          available upfront cash, reimbursement delays, the unpaid gap, and
+          single-payer exposure.
+        </p>
+
+        <p>
+          For the broader plan, compare this result with the <a class="content-link" href="/funeral-price-calculator">funeral price calculator</a>, the <a class="content-link" href="/funeral-payment-plan-calculator">funeral payment plan calculator</a>, or the <a class="content-link" href="/funeral-calculators">funeral calculators hub</a>.
+        </p>
+      </section>
+
+      <KeyCostCategories
+        items={[
+          {
+            title: "Total funeral bill",
+            description:
+              "The split starts with the full bill being divided, not just the portion people remember or verbally agreed to discuss.",
+          },
+          {
+            title: "Confirmed contributions",
+            description:
+              "Confirmed contributions are specific amounts available now or paid directly. They are different from vague promises to help later.",
+          },
+          {
+            title: "Promised help",
+            description:
+              "Promised or unconfirmed help should be tracked, but it should not be treated like cash due today unless the amount and timing are reliable.",
+          },
+          {
+            title: "Single-payer exposure",
+            description:
+              "If one person signs or fronts the bill, that person may carry the real cash risk while waiting for family, estate, or insurance reimbursement.",
+          },
+          {
+            title: "Due-date timing",
+            description:
+              "A reimbursement that arrives after the bill is due may still leave someone exposed to credit card debt, a payment plan, or a cash shortfall.",
+          },
+          {
+            title: "Family cap",
+            description:
+              "If each contributor has a firm cap, the family should identify the gap before one person is pressured to cover the difference.",
+          },
+        ]}
+      />
+
+      <ReduceCostTips
+        items={[
+          "Write down each person's confirmed amount before anyone signs or fronts the bill.",
+          "Separate confirmed money from promised help, estate reimbursement, insurance timing, and vague family support.",
+          "Let relatives pay specific charges directly when possible instead of reimbursing one person later.",
+          "Set a family cap before choosing upgrades, reception costs, travel support, or optional memorial items.",
+          "Ask the funeral home what is due now, what can wait, and who is responsible on the contract.",
+          "Delay optional costs if the unpaid gap depends on promises that are not confirmed.",
+          "Avoid putting the full bill on one person's credit card unless repayment timing is specific and realistic.",
+        ]}
+      />
+
+      <CalculatorAssumptions
+        items={[
+          "This calculator estimates how a funeral bill may be split among contributors. It does not estimate the full funeral price, cemetery cost, obituary cost, reception cost, or travel cost.",
+          "Confirmed contributions and other confirmed credits reduce the amount that still needs to be covered before delayed reimbursement.",
+          "Promised or unconfirmed help is tracked separately and does not reduce the immediate cash due.",
+          "Estate reimbursement is treated as delayed help, not cash available before the bill is due.",
+          "Equal share after confirmed help is calculated by dividing the remaining immediate amount by the number of contributors.",
+          "This page is educational and is not legal, estate, tax, insurance, medical, or funeral-director advice.",
+        ]}
+      />
+
+      <section id="FinancialRedFlags" class="content-section">
+        <h2>Funeral Cost Split Red Flags</h2>
+
+        <p>
+          Funeral cost splits become risky when the family talks as if everyone
+          is sharing the bill, but one person is expected to sign, pay now, and
+          wait for unclear reimbursement.
+        </p>
+
+        <ul>
+          <li>One person is being pressured to front the bill while others make vague promises to help later.</li>
+          <li>The funeral home needs payment before insurance, estate reimbursement, or family reimbursement is expected to arrive.</li>
+          <li>Family members agree in principle but have not named a specific dollar amount.</li>
+          <li>The equal share is higher than the family cap several contributors can actually afford.</li>
+          <li>The payer's upfront cash is lower than the amount due before reimbursement.</li>
+          <li>Optional upgrades are being approved before the unpaid gap is covered by confirmed money.</li>
+        </ul>
+      </section>
+
+      <section class="content-section">
+        <h2>What Makes This Different From a Funeral Price Calculator</h2>
+
+        <p>
+          A full funeral price calculator estimates the cost of the plan. This
+          funeral cost split calculator answers a different question: after the
+          bill exists, who is actually paying, how much is confirmed, what is
+          only promised, and how much risk lands on the person expected to front
+          the money?
+        </p>
+
+        <p>
+          That distinction matters because a funeral can be affordable for a
+          group but unaffordable for the one person who signs today. A clear
+          split protects relationships and cash flow better than vague promises.
+          The safest plan makes dollar amounts, due dates, and reimbursement
+          timing specific before the bill is approved.
+        </p>
+      </section>
+
+      <div class="content-section">
+        <FAQSection
+          title="Funeral Cost Split Calculator FAQ"
+          faqs={splitFaqs}
+        />
+      </div>
+
+      <div class="content-section">
+        <RelatedCalculators calculators={relatedCalculators} />
+      </div>
+    </CalculatorPageShell>
+
+    <MethodologySection category="funeral cost split and family contribution estimates" updated="July 2026" />
+  </div>
+
+  <script is:inline>
+    const getNumber = (id) => {
+      const rawValue = document.getElementById(id)?.value;
+      const value = Number(rawValue);
+      return Number.isFinite(value) && value >= 0 ? value : 0;
+    };
+
+    function formatMoney(value) {
+      return value.toLocaleString(undefined, {
+        style: "currency",
+        currency: "USD",
+        minimumFractionDigits: 0,
+        maximumFractionDigits: 0,
+      });
+    }
+
+    function addBreakdownCard(container, label, value) {
+      const card = document.createElement("div");
+      card.className = "breakdown-card";
+      card.innerHTML = `<span>${label}</span><strong>${formatMoney(value)}</strong>`;
+      container.appendChild(card);
+    }
+
+    function addWarning(list, text) {
+      const item = document.createElement("li");
+      item.textContent = text;
+      list.appendChild(item);
+    }
+
+    function calculateSplit() {
+      const totalFuneralBill = getNumber("totalFuneralBill");
+      const contributors = Math.max(getNumber("contributors"), 1);
+      const confirmedContributions = getNumber("confirmedContributions");
+      const promisedHelp = getNumber("promisedHelp");
+      const payerUpfrontCash = getNumber("payerUpfrontCash");
+      const daysUntilDue = getNumber("daysUntilDue");
+      const reimbursementDelay = getNumber("reimbursementDelay");
+      const estateReimbursement = getNumber("estateReimbursement");
+      const familyCap = getNumber("familyCap");
+      const otherCredits = getNumber("otherCredits");
+
+      const confirmedNow = confirmedContributions + otherCredits;
+      const immediateAmountDue = Math.max(0, totalFuneralBill - confirmedNow);
+      const equalShareAfterConfirmed = immediateAmountDue / contributors;
+      const singlePayerExposure = immediateAmountDue;
+      const unpaidGap = Math.max(0, immediateAmountDue - payerUpfrontCash);
+      const delayedPotentialHelp = promisedHelp + estateReimbursement;
+      const netAfterDelayedHelp = Math.max(0, immediateAmountDue - delayedPotentialHelp);
+      const familyCapTotal = familyCap > 0 ? familyCap * contributors : 0;
+      const familyCapGap = familyCap > 0 ? Math.max(0, immediateAmountDue - familyCapTotal) : 0;
+      const confirmedCoveragePercent =
+        totalFuneralBill > 0 ? (confirmedNow / totalFuneralBill) * 100 : NaN;
+
+      const lowRange = Math.max(0, immediateAmountDue * 0.95);
+      const highRange = immediateAmountDue * 1.1;
+
+      const results = document.getElementById("results");
+      const totalPrice = document.getElementById("totalPrice");
+      const rangeLine = document.getElementById("rangeLine");
+      const perPersonShareEl = document.getElementById("perPersonShare");
+      const unpaidGapEl = document.getElementById("unpaidGap");
+      const singlePayerExposureEl = document.getElementById("singlePayerExposure");
+      const breakdownGrid = document.getElementById("breakdownGrid");
+      const warningList = document.getElementById("warningList");
+      const resultNote = document.getElementById("resultNote");
+
+      results.classList.add("visible");
+      breakdownGrid.innerHTML = "";
+      warningList.innerHTML = "";
+
+      if (totalFuneralBill <= 0) {
+        totalPrice.textContent = "$0";
+        rangeLine.textContent =
+          "Enter the total funeral bill, contributors, confirmed contributions, promised help, payer cash, timing, estate reimbursement, family caps, and credits to estimate the split.";
+        perPersonShareEl.textContent = "$0";
+        unpaidGapEl.textContent = "$0";
+        singlePayerExposureEl.textContent = "$0";
+        resultNote.textContent =
+          "This calculator is designed to isolate the family payment arrangement. Start with the total bill, then separate confirmed money from promised help before one person signs or fronts the cost.";
+        addWarning(
+          warningList,
+          "Do not treat vague promises as confirmed money before the bill is due."
+        );
+        return;
+      }
+
+      totalPrice.textContent = formatMoney(totalFuneralBill);
+      rangeLine.textContent = `Immediate amount still needing coverage after confirmed contributions and credits: ${formatMoney(immediateAmountDue)}. Planning exposure range: ${formatMoney(lowRange)} to ${formatMoney(highRange)} before timing, reimbursement, or contribution changes.`;
+      perPersonShareEl.textContent = formatMoney(equalShareAfterConfirmed);
+      unpaidGapEl.textContent = formatMoney(unpaidGap);
+      singlePayerExposureEl.textContent = formatMoney(singlePayerExposure);
+
+      addBreakdownCard(breakdownGrid, "Total funeral bill", totalFuneralBill);
+      addBreakdownCard(breakdownGrid, "Confirmed contributions", confirmedContributions);
+      addBreakdownCard(breakdownGrid, "Other confirmed credits", otherCredits);
+      addBreakdownCard(breakdownGrid, "Immediate amount due", immediateAmountDue);
+      addBreakdownCard(breakdownGrid, "Equal share after confirmed help", equalShareAfterConfirmed);
+      addBreakdownCard(breakdownGrid, "Payer upfront cash", payerUpfrontCash);
+      addBreakdownCard(breakdownGrid, "Unpaid gap before reimbursement", unpaidGap);
+      addBreakdownCard(breakdownGrid, "Promised unconfirmed help", promisedHelp);
+      addBreakdownCard(breakdownGrid, "Expected estate reimbursement", estateReimbursement);
+      addBreakdownCard(breakdownGrid, "Net after delayed help", netAfterDelayedHelp);
+      addBreakdownCard(breakdownGrid, "Family cap total", familyCapTotal);
+      addBreakdownCard(breakdownGrid, "Family cap gap", familyCapGap);
+
+      if (promisedHelp > confirmedNow) {
+        addWarning(
+          warningList,
+          "Promised or unconfirmed help is larger than confirmed money. Do not let one person front the bill based mainly on vague promises."
+        );
+      }
+
+      if (unpaidGap > 0) {
+        addWarning(
+          warningList,
+          `The payer's upfront cash is short by ${formatMoney(unpaidGap)} before delayed reimbursement or promised help.`
+        );
+      }
+
+      if (familyCap > 0 && equalShareAfterConfirmed > familyCap) {
+        addWarning(
+          warningList,
+          "The equal share after confirmed help is higher than the family cap entered. The family needs a smaller bill, more confirmed help, or a different split."
+        );
+      }
+
+      if (daysUntilDue > 0 && reimbursementDelay > daysUntilDue) {
+        addWarning(
+          warningList,
+          "Expected reimbursement arrives after the payment due date entered. Someone may have to front cash or use financing before reimbursement arrives."
+        );
+      }
+
+      if (daysUntilDue > 0 && daysUntilDue <= 3 && immediateAmountDue > 0) {
+        addWarning(
+          warningList,
+          "Payment is due very soon. Confirm who is paying now instead of relying on future reimbursement."
+        );
+      }
+
+      if (estateReimbursement > 0) {
+        addWarning(
+          warningList,
+          "Estate reimbursement is included as delayed help. Confirm timing, authority, and availability before counting on it."
+        );
+      }
+
+      if (Number.isFinite(confirmedCoveragePercent) && confirmedCoveragePercent < 50) {
+        addWarning(
+          warningList,
+          "Less than half of the bill is covered by confirmed money or credits. The split depends heavily on future or unconfirmed help."
+        );
+      }
+
+      addWarning(
+        warningList,
+        "One person being pressured to front the bill while others make vague promises is the main cost-split risk."
+      );
+
+      const coverageText = Number.isFinite(confirmedCoveragePercent)
+        ? ` Confirmed money currently covers about ${confirmedCoveragePercent.toFixed(1)}% of the total bill.`
+        : "";
+
+      resultNote.textContent =
+        `This is not a full funeral estimate. It isolates the family split: ${formatMoney(immediateAmountDue)} still needs coverage after confirmed contributions and credits, the equal share is ${formatMoney(equalShareAfterConfirmed)} per contributor, and the single-payer exposure is ${formatMoney(singlePayerExposure)} if one person fronts the remaining amount.${coverageText} Promised help and estate reimbursement may reduce the burden later, but they should not be treated like cash available before the payment deadline unless the timing is confirmed.`;
+    }
+
+    document
+      .getElementById("splitButton")
+      .addEventListener("click", calculateSplit);
+  </script>
+</Layout>
