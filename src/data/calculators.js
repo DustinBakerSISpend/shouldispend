@@ -1,5 +1,53 @@
 ﻿export const calculators = [
   {
+    title: "Wedding Catering Cost Calculator",
+    description:
+      "Estimate food, bar, service fees, rentals, staffing, tax, gratuity, guest-count pressure, and out-of-pocket cost before choosing a wedding catering package.",
+    href: "/wedding-catering-cost-calculator",
+    category: "Weddings",
+  },
+
+  {
+    title: "Wedding Photography Cost Calculator",
+    description:
+      "Estimate coverage hours, second shooter cost, engagement photos, albums, travel, overtime risk, tax, gratuity, and photography budget pressure.",
+    href: "/wedding-photography-cost-calculator",
+    category: "Weddings",
+  },
+
+  {
+    title: "Wedding Flowers and Decor Cost Calculator",
+    description:
+      "Estimate bouquets, boutonnieres, centerpieces, ceremony pieces, installations, rentals, delivery, setup, strike, tax, and decor budget pressure.",
+    href: "/wedding-flowers-and-decor-cost-calculator",
+    category: "Weddings",
+  },
+
+  {
+    title: "Wedding DJ and Music Cost Calculator",
+    description:
+      "Estimate reception hours, ceremony audio, cocktail music, MC duties, lighting, travel, overtime, tax, gratuity, and wedding music budget pressure.",
+    href: "/wedding-dj-and-music-cost-calculator",
+    category: "Weddings",
+  },
+
+  {
+    title: "Wedding Invitations and Stationery Cost Calculator",
+    description:
+      "Estimate save-the-dates, invitation suites, inserts, envelopes, postage, addressing, assembly, day-of paper, thank-you cards, tax, and stationery budget pressure.",
+    href: "/wedding-invitations-and-stationery-cost-calculator",
+    category: "Weddings",
+  },
+
+  {
+    title: "Rehearsal Dinner Cost Calculator",
+    description:
+      "Estimate rehearsal dinner guests, food, drinks, private room fees, minimums, service charges, tax, gratuity, welcome-party creep, and budget pressure.",
+    href: "/rehearsal-dinner-cost-calculator",
+    category: "Weddings",
+  },
+
+  {
     title: "Cemetery Plot and Headstone Cost Calculator",
     href: "/cemetery-plot-and-headstone-cost-calculator",
     category: "Funeral Costs",
@@ -1629,6 +1677,14 @@
 },
 
 ];
+
+
+
+
+
+
+
+
 
 
 

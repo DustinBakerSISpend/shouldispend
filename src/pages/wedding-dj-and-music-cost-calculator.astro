@@ -1,0 +1,837 @@
+﻿---
+import Layout from "../layouts/Layout.astro";
+import CalculatorPageShell from "../components/CalculatorPageShell.astro";
+import FAQSection from "../components/FAQSection.astro";
+import RelatedCalculators from "../components/RelatedCalculators.astro";
+import MethodologySection from "../components/MethodologySection.astro";
+import CalculatorAssumptions from "../components/CalculatorAssumptions.astro";
+import KeyCostCategories from "../components/KeyCostCategories.astro";
+import ReduceCostTips from "../components/ReduceCostTips.astro";
+import { calculators } from "../data/calculators.js";
+
+const musicFaqs = [
+  {
+    question: "How much does a wedding DJ cost?",
+    answer:
+      "Wedding DJ cost depends on reception hours, ceremony audio, cocktail hour music, MC duties, lighting, sound equipment, travel, setup, overtime, tax, gratuity, and whether the package includes planning meetings or custom music edits.",
+  },
+  {
+    question: "Is a wedding DJ cheaper than a live band?",
+    answer:
+      "Usually, but not always. A DJ can be cheaper because fewer people are involved, while a band may have more performers, sound needs, travel costs, meal needs, and setup requirements. The right choice depends on the couple's priorities and budget.",
+  },
+  {
+    question: "What should be included in a wedding DJ quote?",
+    answer:
+      "A useful quote should show reception hours, ceremony audio, cocktail hour coverage, MC duties, microphones, speakers, lighting, setup and strike time, overtime rate, travel fees, tax, gratuity, and cancellation terms.",
+  },
+  {
+    question: "Do I need ceremony audio from the DJ?",
+    answer:
+      "Ceremony audio can be worth it if the venue is large, outdoors, windy, spread out, or if guests need to clearly hear vows, readings, and officiant remarks. It should not be assumed unless it is included in the quote.",
+  },
+  {
+    question: "How can I lower wedding music costs?",
+    answer:
+      "The main levers are reception hours, ceremony audio, lighting package, live musician add-ons, travel, overtime buffer, and whether you need premium production or simply strong music, announcements, and reliable sound.",
+  },
+];
+
+const relatedCalculators = calculators
+  .filter(
+    (calculator) =>
+      calculator.category === "Weddings" &&
+      calculator.href !== "/wedding-dj-and-music-cost-calculator"
+  )
+  .slice(0, 4);
+---
+
+<Layout
+  title="Wedding DJ and Music Cost Calculator"
+  description="Use this wedding DJ and music cost calculator to estimate reception hours, ceremony audio, cocktail music, MC duties, lighting, travel, overtime, tax, gratuity, and music budget pressure."
+>
+  <style>
+    .container {
+      max-width: 940px;
+      margin: auto;
+    }
+
+    .calculator {
+      background: var(--card);
+      padding: 40px;
+      border-radius: 24px;
+      border: 1px solid var(--border);
+      box-shadow: var(--shadow-soft);
+    }
+
+    .calculator h2 {
+      margin-top: 0;
+      font-size: 2rem;
+      margin-bottom: 18px;
+      color: var(--text);
+      letter-spacing: -0.03em;
+    }
+
+    .calculator-intro {
+      color: var(--muted);
+      line-height: 1.8;
+      margin-bottom: 30px;
+      font-size: 1.05rem;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 22px;
+    }
+
+    .field label {
+      display: block;
+      font-weight: 800;
+      margin-bottom: 10px;
+      color: var(--text);
+    }
+
+    .field input,
+    .field select {
+      width: 100%;
+      padding: 16px;
+      border-radius: 12px;
+      border: 1px solid var(--border);
+      font-size: 1rem;
+      box-sizing: border-box;
+      background: #ffffff;
+      color: var(--text);
+    }
+
+    .field input:focus,
+    .field select:focus {
+      outline: 3px solid rgba(15, 110, 86, 0.18);
+      border-color: var(--primary);
+    }
+
+    button {
+      margin-top: 30px;
+      background: var(--button);
+      color: white;
+      border: none;
+      padding: 18px 32px;
+      border-radius: 999px;
+      font-size: 1.05rem;
+      font-weight: 800;
+      cursor: pointer;
+      transition:
+        opacity 0.2s ease,
+        transform 0.2s ease;
+    }
+
+    button:hover {
+      opacity: 0.92;
+      transform: translateY(-1px);
+    }
+
+    .results {
+      margin-top: 36px;
+      background: var(--surface-warm);
+      padding: 32px;
+      border-radius: 24px;
+      border: 1px solid var(--border);
+      box-shadow: var(--shadow-soft);
+      display: none;
+    }
+
+    .results.visible {
+      display: block;
+    }
+
+    .result-label {
+      font-size: 0.86rem;
+      font-weight: 900;
+      color: var(--primary);
+      margin-bottom: 14px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+    }
+
+    .total-price {
+      font-size: clamp(2.55rem, 6vw, 4.25rem);
+      font-weight: 950;
+      color: var(--text);
+      line-height: 1.02;
+      margin-bottom: 10px;
+      letter-spacing: -0.055em;
+    }
+
+    .pressure-pill {
+      display: inline-flex;
+      align-items: center;
+      margin: 8px 0 22px;
+      padding: 9px 13px;
+      border-radius: 999px;
+      background: #eef8f3;
+      color: var(--primary-dark);
+      font-weight: 900;
+      border: 1px solid #cfeee1;
+    }
+
+    .pressure-meter {
+      width: 100%;
+      height: 14px;
+      background: #e7eadf;
+      border-radius: 999px;
+      overflow: hidden;
+      margin: 10px 0 24px;
+    }
+
+    .pressure-fill {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, #0f6e56, #b45309, #b91c1c);
+      border-radius: 999px;
+      transition: width 0.25s ease;
+    }
+
+    .result-details {
+      color: var(--muted);
+      line-height: 1.9;
+      font-size: 1.02rem;
+    }
+
+    .result-details p {
+      margin: 0 0 12px;
+    }
+
+    .mini-summary,
+    .sound-check {
+      margin-top: 24px;
+      padding: 20px;
+      border-radius: 18px;
+      background: #ffffff;
+      border: 1px solid var(--border);
+      color: var(--muted);
+      line-height: 1.8;
+    }
+
+    .sound-check strong,
+    .mini-summary strong {
+      color: var(--text);
+    }
+
+    .disclaimer {
+      margin-top: 24px;
+      font-size: 0.9rem;
+      color: var(--muted);
+      line-height: 1.7;
+    }
+
+    .content-section {
+      margin-top: 62px;
+    }
+
+    .content-section h2 {
+      font-size: 2rem;
+      margin-bottom: 18px;
+      color: var(--text);
+      letter-spacing: -0.03em;
+    }
+
+    .content-section p,
+    .content-section li {
+      font-size: 1.08rem;
+      line-height: 1.9;
+      color: var(--muted);
+    }
+
+    .content-link {
+      color: var(--primary);
+      font-weight: 800;
+      text-decoration: none;
+    }
+
+    .content-link:hover {
+      text-decoration: underline;
+    }
+
+    .red-flags {
+      margin-top: 62px;
+      background: #fff7f7;
+      border: 1px solid #fecaca;
+      border-radius: 24px;
+      padding: 32px;
+    }
+
+    .red-flags h2 {
+      margin-top: 0;
+      color: #7f1d1d;
+      letter-spacing: -0.03em;
+    }
+
+    .red-flags p,
+    .red-flags li {
+      color: #7f1d1d;
+      line-height: 1.8;
+    }
+
+    @media (max-width: 768px) {
+      .calculator {
+        padding: 24px;
+      }
+
+      .grid {
+        grid-template-columns: 1fr;
+      }
+
+      .calculator h2,
+      .content-section h2 {
+        font-size: 1.7rem;
+      }
+
+      .results {
+        padding: 24px;
+      }
+    }
+  </style>
+
+  <div class="container">
+    <CalculatorPageShell
+      eyebrow="Wedding DJ and Music Cost Calculator"
+      title="Wedding DJ and Music Cost Calculator"
+      description="Estimate the full cost of wedding music, including reception hours, ceremony audio, cocktail hour coverage, MC duties, lighting, travel, overtime, tax, gratuity, and budget pressure."
+    >
+      <div class="calculator">
+        <h2>Estimate Wedding DJ and Music Cost</h2>
+
+        <p class="calculator-intro">
+          Wedding music is not just the dance floor. It can include ceremony
+          sound, microphones, processional songs, cocktail hour, reception MC
+          duties, announcements, lighting, special edits, travel, setup, and
+          overtime. This calculator separates those pieces so the music plan is
+          judged by how the day actually flows.
+        </p>
+
+        <div class="grid">
+          <div class="field">
+            <label for="musicType">Primary Music Setup</label>
+            <select id="musicType">
+              <option value="" selected disabled>Select music setup</option>
+              <option value="dj">DJ only</option>
+              <option value="djmc">DJ with strong MC role</option>
+              <option value="band">Live band</option>
+              <option value="hybrid">DJ plus live musician add-ons</option>
+            </select>
+          </div>
+
+          <div class="field">
+            <label for="basePackage">Base Music Package</label>
+            <input id="basePackage" type="number" placeholder="Example: 2200" />
+          </div>
+
+          <div class="field">
+            <label for="includedHours">Hours Included in Package</label>
+            <input id="includedHours" type="number" placeholder="Example: 5" />
+          </div>
+
+          <div class="field">
+            <label for="neededHours">Total Hours Needed</label>
+            <input id="neededHours" type="number" placeholder="Example: 7" />
+          </div>
+
+          <div class="field">
+            <label for="overtimeRate">Overtime Rate per Hour</label>
+            <input id="overtimeRate" type="number" placeholder="Example: 250" />
+          </div>
+
+          <div class="field">
+            <label for="ceremonyAudio">Ceremony Audio and Microphones</label>
+            <input id="ceremonyAudio" type="number" placeholder="Example: 450" />
+          </div>
+
+          <div class="field">
+            <label for="cocktailMusic">Cocktail Hour Music</label>
+            <input id="cocktailMusic" type="number" placeholder="Example: 350" />
+          </div>
+
+          <div class="field">
+            <label for="receptionSound">Reception Sound or Speaker Upgrade</label>
+            <input id="receptionSound" type="number" placeholder="Example: 300" />
+          </div>
+
+          <div class="field">
+            <label for="lightingCost">Dance Floor Lighting or Uplighting</label>
+            <input id="lightingCost" type="number" placeholder="Example: 650" />
+          </div>
+
+          <div class="field">
+            <label for="liveAddOn">Live Musician or Ceremony Performer Add-On</label>
+            <input id="liveAddOn" type="number" placeholder="Example: 800" />
+          </div>
+
+          <div class="field">
+            <label for="emceeFee">Extra MC or Reception Coordination Fee</label>
+            <input id="emceeFee" type="number" placeholder="Example: 300" />
+          </div>
+
+          <div class="field">
+            <label for="customEditCost">Custom Edits, Mixes, or Special Songs</label>
+            <input id="customEditCost" type="number" placeholder="Example: 150" />
+          </div>
+
+          <div class="field">
+            <label for="travelCost">Travel, Parking, or Lodging Fee</label>
+            <input id="travelCost" type="number" placeholder="Example: 250" />
+          </div>
+
+          <div class="field">
+            <label for="setupStrikeCost">Early Setup, Room Flip, or Strike Fee</label>
+            <input id="setupStrikeCost" type="number" placeholder="Example: 250" />
+          </div>
+
+          <div class="field">
+            <label for="vendorMealCost">Vendor Meals for Music Team</label>
+            <input id="vendorMealCost" type="number" placeholder="Example: 80" />
+          </div>
+
+          <div class="field">
+            <label for="powerCost">Power, Generator, or Venue Audio Fee</label>
+            <input id="powerCost" type="number" placeholder="Example: 150" />
+          </div>
+
+          <div class="field">
+            <label for="taxRate">Tax Rate Percentage</label>
+            <input id="taxRate" type="number" placeholder="Example: 8" />
+          </div>
+
+          <div class="field">
+            <label for="gratuity">Optional Gratuity</label>
+            <input id="gratuity" type="number" placeholder="Example: 250" />
+          </div>
+
+          <div class="field">
+            <label for="weddingBudget">Total Wedding Budget</label>
+            <input id="weddingBudget" type="number" placeholder="Example: 30000" />
+          </div>
+
+          <div class="field">
+            <label for="musicFund">Cash Available for DJ and Music</label>
+            <input id="musicFund" type="number" placeholder="Example: 3000" />
+          </div>
+
+          <div class="field">
+            <label for="outsideHelp">Family Help or Music Contribution</label>
+            <input id="outsideHelp" type="number" placeholder="Example: 500" />
+          </div>
+
+          <div class="field">
+            <label for="monthsUntilWedding">Months Until Wedding</label>
+            <input id="monthsUntilWedding" type="number" placeholder="Example: 10" />
+          </div>
+
+          <div class="field">
+            <label for="monthlyIncome">Monthly Take-Home Income</label>
+            <input id="monthlyIncome" type="number" placeholder="Example: 6500" />
+          </div>
+
+          <div class="field">
+            <label for="emergencySavings">Emergency Savings After Paying</label>
+            <input id="emergencySavings" type="number" placeholder="Example: 12000" />
+          </div>
+
+          <div class="field">
+            <label for="currentWeddingDebt">Current Wedding Debt</label>
+            <input id="currentWeddingDebt" type="number" placeholder="Example: 0" />
+          </div>
+
+          <div class="field">
+            <label for="musicPriority">Music Priority</label>
+            <select id="musicPriority">
+              <option value="" selected disabled>Select music priority</option>
+              <option value="low">Music is flexible</option>
+              <option value="medium">Music matters, but budget matters too</option>
+              <option value="high">Music is a top priority</option>
+            </select>
+          </div>
+        </div>
+
+        <button id="musicButton" type="button">Calculate DJ and Music Cost</button>
+
+        <div class="results" id="results">
+          <div class="result-label">Estimated DJ and Music Cost</div>
+
+          <div class="total-price" id="totalPrice"></div>
+
+          <div class="pressure-pill" id="pressurePill"></div>
+
+          <div class="pressure-meter" aria-hidden="true">
+            <div class="pressure-fill" id="pressureFill"></div>
+          </div>
+
+          <div class="result-details" id="resultDetails"></div>
+
+          <div class="sound-check" id="soundCheck"></div>
+
+          <div class="mini-summary" id="musicSummary"></div>
+
+          <div class="disclaimer">
+            This estimate is educational and uses simplified assumptions. Actual
+            DJ, band, and music contracts may calculate overtime, equipment,
+            travel, setup, ceremony audio, licensing, tax, and gratuity
+            differently.
+          </div>
+        </div>
+      </div>
+
+      <section class="content-section">
+        <h2>Why Wedding Music Needs Its Own Calculator</h2>
+
+        <p>
+          Wedding music is part entertainment, part timeline management, and part
+          technical production. The quote may need to cover ceremony microphones,
+          cocktail hour, reception sound, announcements, lighting, setup, travel,
+          and overtime risk.
+        </p>
+
+        <p>
+          That makes this calculator different from photography, flowers, and
+          catering. It focuses on time, sound coverage, MC responsibility,
+          production add-ons, and whether the music plan actually supports the
+          ceremony and reception without turning into a surprise bill.
+        </p>
+
+        <p>
+          For the bigger picture, compare this result with the
+          <a class="content-link" href="/wedding-calculators">
+            wedding budget calculators hub
+          </a>
+          or the
+          <a class="content-link" href="/wedding-photography-cost-calculator">
+            wedding photography cost calculator
+          </a>.
+        </p>
+      </section>
+
+      <KeyCostCategories
+        items={[
+          {
+            title: "Reception hours",
+            description:
+              "The base package may not cover the full timeline, especially if the DJ is needed for dinner, speeches, dances, open dancing, and send-off.",
+          },
+          {
+            title: "Ceremony audio",
+            description:
+              "Microphones, speakers, processional songs, officiant audio, vows, readings, and outdoor sound needs should be confirmed before the wedding.",
+          },
+          {
+            title: "MC and timeline role",
+            description:
+              "Some DJs mainly play music. Others manage announcements, transitions, entrances, speeches, dances, and room energy.",
+          },
+          {
+            title: "Production add-ons",
+            description:
+              "Lighting, uplighting, extra speakers, live musicians, custom mixes, dance floor effects, and venue audio needs can raise the final estimate.",
+          },
+          {
+            title: "Overtime and logistics",
+            description:
+              "Travel, parking, early setup, room flips, strike, overtime, vendor meals, and venue power requirements can turn a simple quote into a larger bill.",
+          },
+        ]}
+      />
+
+      <ReduceCostTips
+        items={[
+          "Match coverage hours to the real timeline instead of buying the longest package by default.",
+          "Add ceremony audio only if the venue layout, outdoor setting, or guest count makes it necessary.",
+          "Separate music essentials from lighting, effects, custom edits, and live musician add-ons.",
+          "Ask for the overtime rate before signing so a late reception does not become a surprise charge.",
+          "Choose one strong reception plan instead of paying for multiple small upgrades that guests may not notice.",
+          "Confirm microphones, speakers, setup time, travel, vendor meals, and strike before comparing DJ quotes.",
+        ]}
+      />
+
+      <CalculatorAssumptions
+        items={[
+          "Extra coverage is calculated when total needed hours exceed included package hours.",
+          "Tax is estimated on the music subtotal before optional gratuity.",
+          "Outside help reduces out-of-pocket cost before pressure is calculated.",
+          "If outside help covers the full estimated cost, pressure is treated as minimal.",
+          "Music setup type adjusts pressure because live bands and hybrid setups often involve more people, equipment, and logistics.",
+          "The calculator does not replace a DJ contract, band contract, venue policy, tax advice, or financial planning.",
+        ]}
+      />
+
+      <section class="content-section">
+        <h2>The Reception Energy Tradeoff</h2>
+
+        <p>
+          A good music plan is not only about price. It affects whether guests can
+          hear the ceremony, whether speeches run smoothly, whether transitions feel
+          awkward, and whether the reception has energy after dinner.
+        </p>
+
+        <p>
+          The goal is not always the cheapest DJ or the biggest production package.
+          The better question is whether the music setup solves the actual problems
+          of the day: sound, announcements, timing, dancing, and keeping the event
+          moving without creating debt or crowding out more important wedding costs.
+        </p>
+      </section>
+
+      <section class="red-flags" id="FinancialRedFlags">
+        <h2>Wedding DJ and Music Red Flags</h2>
+
+        <p>
+          Wedding music deserves extra caution when the quote sounds simple but the
+          event needs more coverage, equipment, or MC responsibility than the package
+          clearly includes.
+        </p>
+
+        <ul>
+          <li>The package does not clearly list reception hours or overtime rates.</li>
+          <li>Ceremony microphones or outdoor audio are assumed but not included.</li>
+          <li>The couple is paying for lighting or effects before solving basic sound needs.</li>
+          <li>Travel, setup, strike, vendor meals, power, or venue audio fees are unclear.</li>
+          <li>The music deposit drains cash needed for catering, venue payments, or emergency savings.</li>
+          <li>The final payment would require credit card debt or money needed after the wedding.</li>
+        </ul>
+      </section>
+
+      <div class="content-section">
+        <FAQSection title="Wedding DJ and Music Cost FAQ" faqs={musicFaqs} />
+      </div>
+
+      <div class="content-section">
+        <RelatedCalculators calculators={relatedCalculators} />
+      </div>
+    </CalculatorPageShell>
+
+    <MethodologySection category="wedding DJ and music cost estimates" updated="July 2026" />
+  </div>
+
+  <script is:inline>
+    const getNumber = (id) => {
+      const rawValue = document.getElementById(id)?.value;
+      const value = Number(rawValue);
+      return Number.isFinite(value) && value >= 0 ? value : 0;
+    };
+
+    const getValue = (id) => document.getElementById(id)?.value || "";
+
+    function formatMoney(value) {
+      return value.toLocaleString(undefined, {
+        style: "currency",
+        currency: "USD",
+        minimumFractionDigits: 0,
+        maximumFractionDigits: 0,
+      });
+    }
+
+    function formatPercent(value) {
+      return `${value.toFixed(0)}%`;
+    }
+
+    function clamp(value, min, max) {
+      return Math.min(Math.max(value, min), max);
+    }
+
+    function musicTypePressure(type) {
+      const pressure = {
+        dj: 0,
+        djmc: 3,
+        band: 12,
+        hybrid: 8,
+      };
+
+      return pressure[type] || 0;
+    }
+
+    function musicTypeMultiplier(type) {
+      const multipliers = {
+        dj: 1,
+        djmc: 1.08,
+        band: 1.35,
+        hybrid: 1.18,
+      };
+
+      return multipliers[type] || 1;
+    }
+
+    function priorityAdjustment(priority) {
+      if (priority === "high") {
+        return -8;
+      }
+
+      if (priority === "low") {
+        return 7;
+      }
+
+      return 0;
+    }
+
+    function getPressureLabel(score) {
+      if (score >= 75) {
+        return "High music pressure";
+      }
+
+      if (score >= 50) {
+        return "Moderate music pressure";
+      }
+
+      if (score >= 25) {
+        return "Manageable music pressure";
+      }
+
+      return "Low music pressure";
+    }
+
+    function calculateMusic() {
+      const musicType = getValue("musicType");
+      const basePackage = getNumber("basePackage");
+      const includedHours = getNumber("includedHours");
+      const neededHours = getNumber("neededHours");
+      const overtimeRate = getNumber("overtimeRate");
+      const ceremonyAudio = getNumber("ceremonyAudio");
+      const cocktailMusic = getNumber("cocktailMusic");
+      const receptionSound = getNumber("receptionSound");
+      const lightingCost = getNumber("lightingCost");
+      const liveAddOn = getNumber("liveAddOn");
+      const emceeFee = getNumber("emceeFee");
+      const customEditCost = getNumber("customEditCost");
+      const travelCost = getNumber("travelCost");
+      const setupStrikeCost = getNumber("setupStrikeCost");
+      const vendorMealCost = getNumber("vendorMealCost");
+      const powerCost = getNumber("powerCost");
+      const taxRate = getNumber("taxRate") / 100;
+      const gratuity = getNumber("gratuity");
+      const weddingBudget = getNumber("weddingBudget");
+      const musicFund = getNumber("musicFund");
+      const outsideHelp = getNumber("outsideHelp");
+      const monthsUntilWedding = Math.max(getNumber("monthsUntilWedding"), 1);
+      const monthlyIncome = getNumber("monthlyIncome");
+      const emergencySavings = getNumber("emergencySavings");
+      const currentWeddingDebt = getNumber("currentWeddingDebt");
+      const musicPriority = getValue("musicPriority");
+
+      const results = document.getElementById("results");
+      const totalPrice = document.getElementById("totalPrice");
+      const pressurePill = document.getElementById("pressurePill");
+      const pressureFill = document.getElementById("pressureFill");
+      const resultDetails = document.getElementById("resultDetails");
+      const soundCheck = document.getElementById("soundCheck");
+      const musicSummary = document.getElementById("musicSummary");
+
+      results.classList.add("visible");
+
+      if (basePackage <= 0) {
+        totalPrice.textContent = "$0";
+        pressurePill.textContent = "Enter a base music package";
+        pressureFill.style.width = "0%";
+        resultDetails.innerHTML =
+          "<p>Enter at least the base DJ, band, or music package to estimate wedding music cost.</p>";
+        soundCheck.textContent = "";
+        musicSummary.textContent = "";
+        return;
+      }
+
+      const extraHours = Math.max(neededHours - includedHours, 0);
+      const overtimeTotal = extraHours * overtimeRate;
+
+      const packageAdjustedBase =
+        basePackage * musicTypeMultiplier(musicType);
+
+      const productionAddOns =
+        ceremonyAudio +
+        cocktailMusic +
+        receptionSound +
+        lightingCost +
+        liveAddOn +
+        emceeFee +
+        customEditCost +
+        travelCost +
+        setupStrikeCost +
+        vendorMealCost +
+        powerCost;
+
+      const preTaxSubtotal =
+        packageAdjustedBase + overtimeTotal + productionAddOns;
+
+      const taxTotal = preTaxSubtotal * taxRate;
+      const totalCost = preTaxSubtotal + taxTotal + gratuity;
+      const helpApplied = Math.min(outsideHelp, totalCost);
+      const outOfPocketCost = Math.max(totalCost - helpApplied, 0);
+      const cashGap = Math.max(outOfPocketCost - musicFund, 0);
+      const monthlySavingsNeeded = cashGap / monthsUntilWedding;
+      const budgetShare = weddingBudget > 0 ? (totalCost / weddingBudget) * 100 : 0;
+      const incomeMultiple = monthlyIncome > 0 ? outOfPocketCost / monthlyIncome : 0;
+      const emergencyRatio =
+        emergencySavings > 0 ? outOfPocketCost / emergencySavings : 999;
+
+      let pressureScore = 0;
+
+      pressureScore += budgetShare > 12 ? 22 : budgetShare > 8 ? 14 : budgetShare > 5 ? 7 : 0;
+      pressureScore += cashGap > 0 ? 18 : 0;
+      pressureScore += monthlyIncome > 0 && monthlySavingsNeeded > monthlyIncome * 0.08 ? 16 : 0;
+      pressureScore += emergencyRatio > 1 ? 18 : emergencyRatio > 0.45 ? 10 : 0;
+      pressureScore += currentWeddingDebt > 0 ? 10 : 0;
+      pressureScore += incomeMultiple > 0.9 ? 8 : 0;
+      pressureScore += extraHours >= 3 ? 8 : extraHours > 0 ? 4 : 0;
+      pressureScore += productionAddOns > packageAdjustedBase * 0.65 ? 8 : 0;
+      pressureScore += musicTypePressure(musicType);
+      pressureScore += priorityAdjustment(musicPriority);
+
+      if (outsideHelp >= totalCost) {
+        pressureScore = 5;
+      }
+
+      pressureScore = clamp(pressureScore, 0, 100);
+
+      const label = getPressureLabel(pressureScore);
+      const coverageGapText =
+        extraHours > 0
+          ? `${extraHours.toFixed(1)} extra ${extraHours === 1 ? "hour" : "hours"} beyond the package`
+          : "no extra music hours based on the entries";
+      const ceremonyShare = totalCost > 0 ? (ceremonyAudio / totalCost) * 100 : 0;
+
+      totalPrice.textContent = formatMoney(totalCost);
+      pressurePill.textContent = `${label} - ${formatPercent(pressureScore)}`;
+      pressureFill.style.width = `${pressureScore}%`;
+
+      resultDetails.innerHTML = `
+        <p><strong>Adjusted base package:</strong> ${formatMoney(packageAdjustedBase)}.</p>
+
+        <p><strong>Overtime cost:</strong> ${formatMoney(overtimeTotal)} for ${coverageGapText}.</p>
+
+        <p><strong>Ceremony, cocktail, sound, lighting, live music, MC, travel, setup, meals, and power add-ons:</strong> ${formatMoney(productionAddOns)}.</p>
+
+        <p><strong>Estimated tax and gratuity:</strong> ${formatMoney(taxTotal + gratuity)}.</p>
+
+        <p><strong>Out-of-pocket cost after family help or contributions:</strong> ${formatMoney(outOfPocketCost)}.</p>
+
+        <p><strong>Estimated share of total wedding budget:</strong> ${formatPercent(budgetShare)}.</p>
+
+        <p><strong>Cash gap after available music funds:</strong> ${formatMoney(cashGap)}.</p>
+
+        <p><strong>Monthly savings needed until the wedding:</strong> ${formatMoney(monthlySavingsNeeded)} for ${monthsUntilWedding.toFixed(0)} ${monthsUntilWedding === 1 ? "month" : "months"}.</p>
+      `;
+
+      soundCheck.innerHTML = `
+        <strong>Sound check:</strong> Ceremony audio is about <strong>${formatPercent(ceremonyShare)}</strong> of this estimate.
+        If the ceremony is outdoors, spread out, windy, or guest-heavy, microphones and speakers may be more important than lighting upgrades.
+        If the reception timeline runs long, the overtime rate is the number to know before the wedding day.
+      `;
+
+      musicSummary.innerHTML = `
+        This DJ and music plan is estimated at <strong>${formatMoney(totalCost)}</strong>. After confirmed help,
+        the estimated out-of-pocket cost is <strong>${formatMoney(outOfPocketCost)}</strong>. The pressure result is
+        <strong>${label.toLowerCase()}</strong> based on budget share, cash gap, emergency savings, current wedding debt,
+        overtime risk, production add-ons, music setup type, and monthly savings needed.
+      `;
+    }
+
+    document
+      .getElementById("musicButton")
+      .addEventListener("click", calculateMusic);
+  </script>
+</Layout>
+

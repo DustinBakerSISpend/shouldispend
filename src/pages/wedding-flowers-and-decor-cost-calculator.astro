@@ -1,0 +1,863 @@
+﻿---
+import Layout from "../layouts/Layout.astro";
+import CalculatorPageShell from "../components/CalculatorPageShell.astro";
+import FAQSection from "../components/FAQSection.astro";
+import RelatedCalculators from "../components/RelatedCalculators.astro";
+import MethodologySection from "../components/MethodologySection.astro";
+import CalculatorAssumptions from "../components/CalculatorAssumptions.astro";
+import KeyCostCategories from "../components/KeyCostCategories.astro";
+import ReduceCostTips from "../components/ReduceCostTips.astro";
+import { calculators } from "../data/calculators.js";
+
+const flowersDecorFaqs = [
+  {
+    question: "How much should wedding flowers and decor cost?",
+    answer:
+      "Wedding flowers and decor cost depends on wedding party size, centerpiece count, ceremony pieces, installations, candles, linens, rentals, delivery, setup, strike, tax, designer fees, and how much decor can be reused between ceremony and reception.",
+  },
+  {
+    question: "What is the biggest driver of wedding floral cost?",
+    answer:
+      "The biggest drivers are usually guest table count, large installations, ceremony arches, hanging pieces, premium flowers, delivery/setup labor, and whether the design requires same-day room flips or strike after the event.",
+  },
+  {
+    question: "Can I save money by reusing ceremony flowers at the reception?",
+    answer:
+      "Yes, but only if the timeline, staff, transportation, weather, and venue rules allow it. Reuse can lower pressure, but it should be planned instead of assumed.",
+  },
+  {
+    question: "Are candles, linens, and signage part of flowers and decor?",
+    answer:
+      "They can be. Some couples separate florals from decor rentals, while others treat centerpieces, candles, linens, signage, arches, lounge pieces, and tabletop items as one design budget.",
+  },
+  {
+    question: "How do I lower wedding decor costs without making the wedding feel bare?",
+    answer:
+      "Focus on high-visibility areas, reuse ceremony pieces, simplify guest tables, choose seasonal flowers, reduce premium blooms, use the venue's existing look, and avoid spreading small decor everywhere.",
+  },
+];
+
+const relatedCalculators = calculators
+  .filter(
+    (calculator) =>
+      calculator.category === "Weddings" &&
+      calculator.href !== "/wedding-flowers-and-decor-cost-calculator"
+  )
+  .slice(0, 4);
+---
+
+<Layout
+  title="Wedding Flowers and Decor Cost Calculator"
+  description="Use this wedding flowers and decor cost calculator to estimate bouquets, boutonnieres, centerpieces, ceremony pieces, installations, rentals, delivery, setup, tax, and design budget pressure."
+>
+  <style>
+    .container {
+      max-width: 940px;
+      margin: auto;
+    }
+
+    .calculator {
+      background: var(--card);
+      padding: 40px;
+      border-radius: 24px;
+      border: 1px solid var(--border);
+      box-shadow: var(--shadow-soft);
+    }
+
+    .calculator h2 {
+      margin-top: 0;
+      font-size: 2rem;
+      margin-bottom: 18px;
+      color: var(--text);
+      letter-spacing: -0.03em;
+    }
+
+    .calculator-intro {
+      color: var(--muted);
+      line-height: 1.8;
+      margin-bottom: 30px;
+      font-size: 1.05rem;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 22px;
+    }
+
+    .field label {
+      display: block;
+      font-weight: 800;
+      margin-bottom: 10px;
+      color: var(--text);
+    }
+
+    .field input,
+    .field select {
+      width: 100%;
+      padding: 16px;
+      border-radius: 12px;
+      border: 1px solid var(--border);
+      font-size: 1rem;
+      box-sizing: border-box;
+      background: #ffffff;
+      color: var(--text);
+    }
+
+    .field input:focus,
+    .field select:focus {
+      outline: 3px solid rgba(15, 110, 86, 0.18);
+      border-color: var(--primary);
+    }
+
+    button {
+      margin-top: 30px;
+      background: var(--button);
+      color: white;
+      border: none;
+      padding: 18px 32px;
+      border-radius: 999px;
+      font-size: 1.05rem;
+      font-weight: 800;
+      cursor: pointer;
+      transition:
+        opacity 0.2s ease,
+        transform 0.2s ease;
+    }
+
+    button:hover {
+      opacity: 0.92;
+      transform: translateY(-1px);
+    }
+
+    .results {
+      margin-top: 36px;
+      background: var(--surface-warm);
+      padding: 32px;
+      border-radius: 24px;
+      border: 1px solid var(--border);
+      box-shadow: var(--shadow-soft);
+      display: none;
+    }
+
+    .results.visible {
+      display: block;
+    }
+
+    .result-label {
+      font-size: 0.86rem;
+      font-weight: 900;
+      color: var(--primary);
+      margin-bottom: 14px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+    }
+
+    .total-price {
+      font-size: clamp(2.55rem, 6vw, 4.25rem);
+      font-weight: 950;
+      color: var(--text);
+      line-height: 1.02;
+      margin-bottom: 10px;
+      letter-spacing: -0.055em;
+    }
+
+    .pressure-pill {
+      display: inline-flex;
+      align-items: center;
+      margin: 8px 0 22px;
+      padding: 9px 13px;
+      border-radius: 999px;
+      background: #eef8f3;
+      color: var(--primary-dark);
+      font-weight: 900;
+      border: 1px solid #cfeee1;
+    }
+
+    .pressure-meter {
+      width: 100%;
+      height: 14px;
+      background: #e7eadf;
+      border-radius: 999px;
+      overflow: hidden;
+      margin: 10px 0 24px;
+    }
+
+    .pressure-fill {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, #0f6e56, #b45309, #b91c1c);
+      border-radius: 999px;
+      transition: width 0.25s ease;
+    }
+
+    .result-details {
+      color: var(--muted);
+      line-height: 1.9;
+      font-size: 1.02rem;
+    }
+
+    .result-details p {
+      margin: 0 0 12px;
+    }
+
+    .mini-summary,
+    .design-levers {
+      margin-top: 24px;
+      padding: 20px;
+      border-radius: 18px;
+      background: #ffffff;
+      border: 1px solid var(--border);
+      color: var(--muted);
+      line-height: 1.8;
+    }
+
+    .design-levers strong,
+    .mini-summary strong {
+      color: var(--text);
+    }
+
+    .disclaimer {
+      margin-top: 24px;
+      font-size: 0.9rem;
+      color: var(--muted);
+      line-height: 1.7;
+    }
+
+    .content-section {
+      margin-top: 62px;
+    }
+
+    .content-section h2 {
+      font-size: 2rem;
+      margin-bottom: 18px;
+      color: var(--text);
+      letter-spacing: -0.03em;
+    }
+
+    .content-section p,
+    .content-section li {
+      font-size: 1.08rem;
+      line-height: 1.9;
+      color: var(--muted);
+    }
+
+    .content-link {
+      color: var(--primary);
+      font-weight: 800;
+      text-decoration: none;
+    }
+
+    .content-link:hover {
+      text-decoration: underline;
+    }
+
+    .red-flags {
+      margin-top: 62px;
+      background: #fff7f7;
+      border: 1px solid #fecaca;
+      border-radius: 24px;
+      padding: 32px;
+    }
+
+    .red-flags h2 {
+      margin-top: 0;
+      color: #7f1d1d;
+      letter-spacing: -0.03em;
+    }
+
+    .red-flags p,
+    .red-flags li {
+      color: #7f1d1d;
+      line-height: 1.8;
+    }
+
+    @media (max-width: 768px) {
+      .calculator {
+        padding: 24px;
+      }
+
+      .grid {
+        grid-template-columns: 1fr;
+      }
+
+      .calculator h2,
+      .content-section h2 {
+        font-size: 1.7rem;
+      }
+
+      .results {
+        padding: 24px;
+      }
+    }
+  </style>
+
+  <div class="container">
+    <CalculatorPageShell
+      eyebrow="Wedding Flowers and Decor Cost Calculator"
+      title="Wedding Flowers and Decor Cost Calculator"
+      description="Estimate the full design cost behind bouquets, centerpieces, ceremony pieces, installations, rentals, candles, linens, delivery, setup, strike, tax, and decor budget pressure."
+    >
+      <div class="calculator">
+        <h2>Estimate Wedding Flowers and Decor Cost</h2>
+
+        <p class="calculator-intro">
+          Wedding flowers and decor can spread across the whole event: wedding
+          party flowers, ceremony focal points, guest tables, head table, candles,
+          linens, signage, rentals, delivery, setup, and strike. This calculator
+          separates the design pieces so the total is not hidden behind one
+          beautiful mood board.
+        </p>
+
+        <div class="grid">
+          <div class="field">
+            <label for="designStyle">Overall Design Style</label>
+            <select id="designStyle">
+              <option value="" selected disabled>Select design style</option>
+              <option value="minimal">Minimal or greenery-heavy</option>
+              <option value="classic">Classic floral design</option>
+              <option value="lush">Lush florals</option>
+              <option value="statement">Statement installations</option>
+            </select>
+          </div>
+
+          <div class="field">
+            <label for="reusePlan">Ceremony-to-Reception Reuse</label>
+            <select id="reusePlan">
+              <option value="" selected disabled>Select reuse plan</option>
+              <option value="none">No planned reuse</option>
+              <option value="some">Some pieces reused</option>
+              <option value="strong">Strong reuse plan</option>
+            </select>
+          </div>
+
+          <div class="field">
+            <label for="bouquetCount">Bouquets Needed</label>
+            <input id="bouquetCount" type="number" placeholder="Example: 6" />
+          </div>
+
+          <div class="field">
+            <label for="bouquetCost">Average Bouquet Cost</label>
+            <input id="bouquetCost" type="number" placeholder="Example: 175" />
+          </div>
+
+          <div class="field">
+            <label for="boutonniereCount">Boutonnieres Needed</label>
+            <input id="boutonniereCount" type="number" placeholder="Example: 8" />
+          </div>
+
+          <div class="field">
+            <label for="boutonniereCost">Average Boutonniere Cost</label>
+            <input id="boutonniereCost" type="number" placeholder="Example: 22" />
+          </div>
+
+          <div class="field">
+            <label for="corsageCount">Corsages or Small Personal Flowers</label>
+            <input id="corsageCount" type="number" placeholder="Example: 4" />
+          </div>
+
+          <div class="field">
+            <label for="corsageCost">Average Corsage Cost</label>
+            <input id="corsageCost" type="number" placeholder="Example: 45" />
+          </div>
+
+          <div class="field">
+            <label for="guestTables">Guest Tables</label>
+            <input id="guestTables" type="number" placeholder="Example: 18" />
+          </div>
+
+          <div class="field">
+            <label for="centerpieceCost">Average Centerpiece Cost</label>
+            <input id="centerpieceCost" type="number" placeholder="Example: 125" />
+          </div>
+
+          <div class="field">
+            <label for="ceremonyPieces">Ceremony Floral Pieces</label>
+            <input id="ceremonyPieces" type="number" placeholder="Example: 2" />
+          </div>
+
+          <div class="field">
+            <label for="ceremonyPieceCost">Average Ceremony Piece Cost</label>
+            <input id="ceremonyPieceCost" type="number" placeholder="Example: 350" />
+          </div>
+
+          <div class="field">
+            <label for="aisleDecorCost">Aisle, Welcome, or Bar Decor</label>
+            <input id="aisleDecorCost" type="number" placeholder="Example: 600" />
+          </div>
+
+          <div class="field">
+            <label for="headTableCost">Head Table or Sweetheart Table Decor</label>
+            <input id="headTableCost" type="number" placeholder="Example: 750" />
+          </div>
+
+          <div class="field">
+            <label for="installationCost">Arch, Hanging, Wall, or Statement Install</label>
+            <input id="installationCost" type="number" placeholder="Example: 1800" />
+          </div>
+
+          <div class="field">
+            <label for="candleRentalCost">Candles, Votives, Vases, or Holders</label>
+            <input id="candleRentalCost" type="number" placeholder="Example: 500" />
+          </div>
+
+          <div class="field">
+            <label for="linenRentalCost">Linens, Runners, Napkins, or Table Rentals</label>
+            <input id="linenRentalCost" type="number" placeholder="Example: 900" />
+          </div>
+
+          <div class="field">
+            <label for="signageDecorCost">Signage, Seating Chart, or Small Decor</label>
+            <input id="signageDecorCost" type="number" placeholder="Example: 450" />
+          </div>
+
+          <div class="field">
+            <label for="deliverySetupStrike">Delivery, Setup, Flip, and Strike Labor</label>
+            <input id="deliverySetupStrike" type="number" placeholder="Example: 1200" />
+          </div>
+
+          <div class="field">
+            <label for="designerFee">Designer or Coordination Fee Percentage</label>
+            <input id="designerFee" type="number" placeholder="Example: 15" />
+          </div>
+
+          <div class="field">
+            <label for="taxRate">Tax Rate Percentage</label>
+            <input id="taxRate" type="number" placeholder="Example: 8" />
+          </div>
+
+          <div class="field">
+            <label for="weddingBudget">Total Wedding Budget</label>
+            <input id="weddingBudget" type="number" placeholder="Example: 30000" />
+          </div>
+
+          <div class="field">
+            <label for="decorFund">Cash Available for Flowers and Decor</label>
+            <input id="decorFund" type="number" placeholder="Example: 4500" />
+          </div>
+
+          <div class="field">
+            <label for="outsideHelp">Family Help or Decor Contribution</label>
+            <input id="outsideHelp" type="number" placeholder="Example: 1000" />
+          </div>
+
+          <div class="field">
+            <label for="monthsUntilWedding">Months Until Wedding</label>
+            <input id="monthsUntilWedding" type="number" placeholder="Example: 10" />
+          </div>
+
+          <div class="field">
+            <label for="monthlyIncome">Monthly Take-Home Income</label>
+            <input id="monthlyIncome" type="number" placeholder="Example: 6500" />
+          </div>
+
+          <div class="field">
+            <label for="emergencySavings">Emergency Savings After Paying</label>
+            <input id="emergencySavings" type="number" placeholder="Example: 12000" />
+          </div>
+
+          <div class="field">
+            <label for="currentWeddingDebt">Current Wedding Debt</label>
+            <input id="currentWeddingDebt" type="number" placeholder="Example: 0" />
+          </div>
+
+          <div class="field">
+            <label for="decorPriority">Decor Priority</label>
+            <select id="decorPriority">
+              <option value="" selected disabled>Select decor priority</option>
+              <option value="low">Decor is flexible</option>
+              <option value="medium">Decor matters, but budget matters too</option>
+              <option value="high">Decor is a top priority</option>
+            </select>
+          </div>
+        </div>
+
+        <button id="decorButton" type="button">Calculate Flowers and Decor Cost</button>
+
+        <div class="results" id="results">
+          <div class="result-label">Estimated Flowers and Decor Cost</div>
+
+          <div class="total-price" id="totalPrice"></div>
+
+          <div class="pressure-pill" id="pressurePill"></div>
+
+          <div class="pressure-meter" aria-hidden="true">
+            <div class="pressure-fill" id="pressureFill"></div>
+          </div>
+
+          <div class="result-details" id="resultDetails"></div>
+
+          <div class="design-levers" id="designLevers"></div>
+
+          <div class="mini-summary" id="decorSummary"></div>
+
+          <div class="disclaimer">
+            This estimate is educational and uses simplified assumptions. Actual
+            floral and decor contracts may calculate minimums, substitutions,
+            rentals, damage waivers, setup, strike, tax, and service fees
+            differently.
+          </div>
+        </div>
+      </div>
+
+      <section class="content-section">
+        <h2>Why Flowers and Decor Need Their Own Wedding Calculator</h2>
+
+        <p>
+          Flowers and decor are not one single purchase. They are a design system:
+          what people carry, what guests sit near, what frames the ceremony, what
+          appears in photos, what gets reused, and what must be delivered, moved,
+          cleaned up, or returned after the event.
+        </p>
+
+        <p>
+          That makes this calculator different from catering and photography. It
+          focuses on design spread, visual density, repurposing, rentals, labor,
+          and whether the floral plan is concentrated in the areas guests will
+          notice most.
+        </p>
+
+        <p>
+          For the bigger picture, compare this result with the
+          <a class="content-link" href="/wedding-calculators">
+            wedding budget calculators hub
+          </a>
+          or the
+          <a class="content-link" href="/wedding-photography-cost-calculator">
+            wedding photography cost calculator
+          </a>.
+        </p>
+      </section>
+
+      <KeyCostCategories
+        items={[
+          {
+            title: "Personal flowers",
+            description:
+              "Bouquets, boutonnieres, corsages, flower crowns, pocket squares, and family flowers can add up with a large wedding party.",
+          },
+          {
+            title: "Guest table design",
+            description:
+              "Centerpieces, candles, vessels, linens, table numbers, runners, napkins, and chargers often multiply by table count.",
+          },
+          {
+            title: "Ceremony focal points",
+            description:
+              "Arches, aisle markers, altar pieces, welcome arrangements, and memorial tables can be high-impact but expensive if they cannot be reused.",
+          },
+          {
+            title: "Statement installations",
+            description:
+              "Hanging florals, floral walls, staircase pieces, ceiling installs, and large arches usually require more design labor, materials, setup, and strike.",
+          },
+          {
+            title: "Logistics and labor",
+            description:
+              "Delivery, setup, room flips, strike, rentals, damage waivers, staffing, and late-night pickup can be a major part of the final quote.",
+          },
+        ]}
+      />
+
+      <ReduceCostTips
+        items={[
+          "Put the most money into areas that appear in photos or shape the guest experience.",
+          "Reuse ceremony flowers at the reception only if the timeline and staffing make it realistic.",
+          "Choose fewer large focal points instead of spreading small decor across every corner.",
+          "Use seasonal flowers, greenery, candles, and venue architecture before paying for premium blooms everywhere.",
+          "Ask which rentals are included, which must be returned, and whether setup or strike is billed separately.",
+          "Simplify guest table decor if table count is driving the quote beyond the budget.",
+        ]}
+      />
+
+      <CalculatorAssumptions
+        items={[
+          "Bouquets, boutonnieres, corsages, centerpieces, and ceremony pieces are calculated from quantity times average cost.",
+          "A design style multiplier estimates how minimal, classic, lush, or installation-heavy choices affect the floral subtotal.",
+          "A reuse credit reduces the estimate only when ceremony-to-reception reuse is planned.",
+          "Designer fee and tax are estimated as percentages of the adjusted floral and decor subtotal.",
+          "Outside help reduces out-of-pocket cost before pressure is calculated.",
+          "The calculator does not replace a florist proposal, rental contract, venue policy, tax advice, or financial planning.",
+        ]}
+      />
+
+      <section class="content-section">
+        <h2>The Decor Spread Problem</h2>
+
+        <p>
+          Flowers and decor can become expensive when the design is spread too
+          evenly. A little something everywhere can cost more than one strong focal
+          point, especially if each area needs its own rentals, vessels, candles,
+          setup labor, or late-night pickup.
+        </p>
+
+        <p>
+          A stronger plan usually chooses the places that matter most: the ceremony
+          frame, the couple's table, guest tables, the bar, the entrance, or the
+          photo backdrop. The goal is not to make every surface expensive. The goal
+          is to make the right moments feel intentional.
+        </p>
+      </section>
+
+      <section class="red-flags" id="FinancialRedFlags">
+        <h2>Wedding Flowers and Decor Red Flags</h2>
+
+        <p>
+          Flowers and decor deserve extra caution when the design plan looks
+          beautiful but the labor, rental, reuse, or cash-flow reality is unclear.
+        </p>
+
+        <ul>
+          <li>The quote lists flowers but not delivery, setup, room flip, or strike labor.</li>
+          <li>The couple assumes ceremony pieces can be reused but no one is assigned to move them.</li>
+          <li>Rentals, linens, candles, vessels, or damage waivers are missing from the estimate.</li>
+          <li>The design depends on premium flowers in every area instead of clear priorities.</li>
+          <li>The decor deposit drains cash needed for venue, catering, photography, or emergency savings.</li>
+          <li>The final payment would require credit card debt or money needed after the wedding.</li>
+        </ul>
+      </section>
+
+      <div class="content-section">
+        <FAQSection title="Wedding Flowers and Decor Cost FAQ" faqs={flowersDecorFaqs} />
+      </div>
+
+      <div class="content-section">
+        <RelatedCalculators calculators={relatedCalculators} />
+      </div>
+    </CalculatorPageShell>
+
+    <MethodologySection category="wedding flowers and decor cost estimates" updated="July 2026" />
+  </div>
+
+  <script is:inline>
+    const getNumber = (id) => {
+      const rawValue = document.getElementById(id)?.value;
+      const value = Number(rawValue);
+      return Number.isFinite(value) && value >= 0 ? value : 0;
+    };
+
+    const getValue = (id) => document.getElementById(id)?.value || "";
+
+    function formatMoney(value) {
+      return value.toLocaleString(undefined, {
+        style: "currency",
+        currency: "USD",
+        minimumFractionDigits: 0,
+        maximumFractionDigits: 0,
+      });
+    }
+
+    function formatPercent(value) {
+      return `${value.toFixed(0)}%`;
+    }
+
+    function clamp(value, min, max) {
+      return Math.min(Math.max(value, min), max);
+    }
+
+    function designMultiplier(style) {
+      const multipliers = {
+        minimal: 0.82,
+        classic: 1,
+        lush: 1.22,
+        statement: 1.42,
+      };
+
+      return multipliers[style] || 1;
+    }
+
+    function reuseCreditRate(plan) {
+      const rates = {
+        none: 0,
+        some: 0.08,
+        strong: 0.16,
+      };
+
+      return rates[plan] || 0;
+    }
+
+    function priorityAdjustment(priority) {
+      if (priority === "high") {
+        return -8;
+      }
+
+      if (priority === "low") {
+        return 7;
+      }
+
+      return 0;
+    }
+
+    function getPressureLabel(score) {
+      if (score >= 75) {
+        return "High decor pressure";
+      }
+
+      if (score >= 50) {
+        return "Moderate decor pressure";
+      }
+
+      if (score >= 25) {
+        return "Manageable decor pressure";
+      }
+
+      return "Low decor pressure";
+    }
+
+    function calculateDecor() {
+      const designStyle = getValue("designStyle");
+      const reusePlan = getValue("reusePlan");
+      const bouquetCount = getNumber("bouquetCount");
+      const bouquetCost = getNumber("bouquetCost");
+      const boutonniereCount = getNumber("boutonniereCount");
+      const boutonniereCost = getNumber("boutonniereCost");
+      const corsageCount = getNumber("corsageCount");
+      const corsageCost = getNumber("corsageCost");
+      const guestTables = getNumber("guestTables");
+      const centerpieceCost = getNumber("centerpieceCost");
+      const ceremonyPieces = getNumber("ceremonyPieces");
+      const ceremonyPieceCost = getNumber("ceremonyPieceCost");
+      const aisleDecorCost = getNumber("aisleDecorCost");
+      const headTableCost = getNumber("headTableCost");
+      const installationCost = getNumber("installationCost");
+      const candleRentalCost = getNumber("candleRentalCost");
+      const linenRentalCost = getNumber("linenRentalCost");
+      const signageDecorCost = getNumber("signageDecorCost");
+      const deliverySetupStrike = getNumber("deliverySetupStrike");
+      const designerFee = getNumber("designerFee") / 100;
+      const taxRate = getNumber("taxRate") / 100;
+      const weddingBudget = getNumber("weddingBudget");
+      const decorFund = getNumber("decorFund");
+      const outsideHelp = getNumber("outsideHelp");
+      const monthsUntilWedding = Math.max(getNumber("monthsUntilWedding"), 1);
+      const monthlyIncome = getNumber("monthlyIncome");
+      const emergencySavings = getNumber("emergencySavings");
+      const currentWeddingDebt = getNumber("currentWeddingDebt");
+      const decorPriority = getValue("decorPriority");
+
+      const results = document.getElementById("results");
+      const totalPrice = document.getElementById("totalPrice");
+      const pressurePill = document.getElementById("pressurePill");
+      const pressureFill = document.getElementById("pressureFill");
+      const resultDetails = document.getElementById("resultDetails");
+      const designLevers = document.getElementById("designLevers");
+      const decorSummary = document.getElementById("decorSummary");
+
+      results.classList.add("visible");
+
+      const personalFlowers =
+        bouquetCount * bouquetCost +
+        boutonniereCount * boutonniereCost +
+        corsageCount * corsageCost;
+
+      const tableDecor = guestTables * centerpieceCost;
+      const ceremonyDecor = ceremonyPieces * ceremonyPieceCost + aisleDecorCost;
+      const receptionFocalDecor = headTableCost + installationCost;
+      const rentalDecor = candleRentalCost + linenRentalCost + signageDecorCost;
+
+      const rawDesignSubtotal =
+        personalFlowers +
+        tableDecor +
+        ceremonyDecor +
+        receptionFocalDecor +
+        rentalDecor;
+
+      if (rawDesignSubtotal <= 0) {
+        totalPrice.textContent = "$0";
+        pressurePill.textContent = "Enter at least one floral or decor cost";
+        pressureFill.style.width = "0%";
+        resultDetails.innerHTML =
+          "<p>Enter at least one flowers or decor cost to estimate the wedding design budget.</p>";
+        designLevers.textContent = "";
+        decorSummary.textContent = "";
+        return;
+      }
+
+      const styleAdjustedSubtotal =
+        rawDesignSubtotal * designMultiplier(designStyle);
+
+      const reusableBase = Math.min(ceremonyDecor, receptionFocalDecor + tableDecor);
+      const reuseCredit = reusableBase * reuseCreditRate(reusePlan);
+      const adjustedDecorSubtotal = Math.max(styleAdjustedSubtotal - reuseCredit, 0);
+
+      const designerFeeTotal = adjustedDecorSubtotal * designerFee;
+      const preTaxSubtotal =
+        adjustedDecorSubtotal + designerFeeTotal + deliverySetupStrike;
+      const taxTotal = preTaxSubtotal * taxRate;
+      const totalCost = preTaxSubtotal + taxTotal;
+
+      const helpApplied = Math.min(outsideHelp, totalCost);
+      const outOfPocketCost = Math.max(totalCost - helpApplied, 0);
+      const cashGap = Math.max(outOfPocketCost - decorFund, 0);
+      const monthlySavingsNeeded = cashGap / monthsUntilWedding;
+      const budgetShare = weddingBudget > 0 ? (totalCost / weddingBudget) * 100 : 0;
+      const emergencyRatio =
+        emergencySavings > 0 ? outOfPocketCost / emergencySavings : 999;
+      const tableCostPressure = guestTables > 0 ? tableDecor / guestTables : 0;
+
+      let pressureScore = 0;
+
+      pressureScore += budgetShare > 18 ? 24 : budgetShare > 12 ? 14 : budgetShare > 8 ? 7 : 0;
+      pressureScore += cashGap > 0 ? 18 : 0;
+      pressureScore += monthlyIncome > 0 && monthlySavingsNeeded > monthlyIncome * 0.1 ? 16 : 0;
+      pressureScore += emergencyRatio > 1 ? 18 : emergencyRatio > 0.5 ? 10 : 0;
+      pressureScore += currentWeddingDebt > 0 ? 10 : 0;
+      pressureScore += installationCost > adjustedDecorSubtotal * 0.25 ? 8 : 0;
+      pressureScore += deliverySetupStrike > adjustedDecorSubtotal * 0.18 ? 7 : 0;
+      pressureScore += reusePlan === "none" && ceremonyDecor > 0 ? 5 : 0;
+      pressureScore += priorityAdjustment(decorPriority);
+
+      if (outsideHelp >= totalCost) {
+        pressureScore = 5;
+      }
+
+      pressureScore = clamp(pressureScore, 0, 100);
+
+      const label = getPressureLabel(pressureScore);
+      const tenTableSwing = centerpieceCost * 10 * designMultiplier(designStyle);
+
+      totalPrice.textContent = formatMoney(totalCost);
+      pressurePill.textContent = `${label} - ${formatPercent(pressureScore)}`;
+      pressureFill.style.width = `${pressureScore}%`;
+
+      resultDetails.innerHTML = `
+        <p><strong>Personal flowers:</strong> ${formatMoney(personalFlowers)}.</p>
+
+        <p><strong>Guest table decor:</strong> ${formatMoney(tableDecor)} across ${guestTables.toFixed(0)} ${guestTables === 1 ? "table" : "tables"}.</p>
+
+        <p><strong>Ceremony, head table, installation, rentals, and small decor:</strong> ${formatMoney(ceremonyDecor + receptionFocalDecor + rentalDecor)}.</p>
+
+        <p><strong>Estimated ceremony reuse credit:</strong> ${formatMoney(reuseCredit)}.</p>
+
+        <p><strong>Delivery, setup, designer fee, and tax:</strong> ${formatMoney(deliverySetupStrike + designerFeeTotal + taxTotal)}.</p>
+
+        <p><strong>Out-of-pocket cost after family help or contributions:</strong> ${formatMoney(outOfPocketCost)}.</p>
+
+        <p><strong>Estimated share of total wedding budget:</strong> ${formatPercent(budgetShare)}.</p>
+
+        <p><strong>Cash gap after available decor funds:</strong> ${formatMoney(cashGap)}.</p>
+
+        <p><strong>Monthly savings needed until the wedding:</strong> ${formatMoney(monthlySavingsNeeded)} for ${monthsUntilWedding.toFixed(0)} ${monthsUntilWedding === 1 ? "month" : "months"}.</p>
+      `;
+
+      designLevers.innerHTML = `
+        <strong>Design levers:</strong> At your entered centerpiece price, every 10 guest tables changes the estimate by about
+        <strong>${formatMoney(tenTableSwing)}</strong> before labor, fee, and tax effects. Your average table decor is
+        <strong>${formatMoney(tableCostPressure)}</strong> per table before design-style adjustment. If decor pressure is high, guest table count,
+        statement installs, and delivery or strike labor are the first places to inspect.
+      `;
+
+      decorSummary.innerHTML = `
+        This flowers and decor plan is estimated at <strong>${formatMoney(totalCost)}</strong>. After confirmed help,
+        the estimated out-of-pocket cost is <strong>${formatMoney(outOfPocketCost)}</strong>. The pressure result is
+        <strong>${label.toLowerCase()}</strong> based on budget share, cash gap, emergency savings, debt, installation load,
+        delivery labor, reuse planning, and monthly savings needed.
+      `;
+    }
+
+    document
+      .getElementById("decorButton")
+      .addEventListener("click", calculateDecor);
+  </script>
+</Layout>
+

@@ -1,0 +1,793 @@
+﻿---
+import Layout from "../layouts/Layout.astro";
+import CalculatorPageShell from "../components/CalculatorPageShell.astro";
+import FAQSection from "../components/FAQSection.astro";
+import RelatedCalculators from "../components/RelatedCalculators.astro";
+import MethodologySection from "../components/MethodologySection.astro";
+import CalculatorAssumptions from "../components/CalculatorAssumptions.astro";
+import KeyCostCategories from "../components/KeyCostCategories.astro";
+import ReduceCostTips from "../components/ReduceCostTips.astro";
+import { calculators } from "../data/calculators.js";
+
+const photographyFaqs = [
+  {
+    question: "How much does wedding photography cost?",
+    answer:
+      "Wedding photography cost depends on coverage hours, photographer experience, second shooter needs, engagement sessions, albums, travel, editing, delivery rights, tax, gratuity, and whether the timeline requires overtime.",
+  },
+  {
+    question: "How many hours of wedding photography do I need?",
+    answer:
+      "Many weddings need 6 to 10 hours depending on getting-ready photos, first look, ceremony timing, family portraits, reception events, travel between locations, and whether the couple wants full dance-floor coverage.",
+  },
+  {
+    question: "Is a second shooter worth it?",
+    answer:
+      "A second shooter can be worth it when there are multiple locations, a large wedding party, parallel getting-ready timelines, tight family portrait windows, or a ceremony where one photographer cannot capture both angles.",
+  },
+  {
+    question: "What should be included in a wedding photography quote?",
+    answer:
+      "A useful quote should show coverage hours, second shooter cost, engagement session, editing, travel, albums, prints, delivery timeline, image rights, overtime rate, tax, gratuity, and any required deposit or payment schedule.",
+  },
+  {
+    question: "How can I lower wedding photography costs?",
+    answer:
+      "The main levers are coverage hours, second shooter needs, album choices, engagement session cost, travel, overtime buffer, and whether you choose one strong photographer over a larger package full of extras.",
+  },
+];
+
+const relatedCalculators = calculators
+  .filter(
+    (calculator) =>
+      calculator.category === "Weddings" &&
+      calculator.href !== "/wedding-photography-cost-calculator"
+  )
+  .slice(0, 4);
+---
+
+<Layout
+  title="Wedding Photography Cost Calculator"
+  description="Use this wedding photography cost calculator to estimate coverage hours, second shooter cost, engagement sessions, albums, travel, overtime, tax, gratuity, and photo budget pressure."
+>
+  <style>
+    .container {
+      max-width: 940px;
+      margin: auto;
+    }
+
+    .calculator {
+      background: var(--card);
+      padding: 40px;
+      border-radius: 24px;
+      border: 1px solid var(--border);
+      box-shadow: var(--shadow-soft);
+    }
+
+    .calculator h2 {
+      margin-top: 0;
+      font-size: 2rem;
+      margin-bottom: 18px;
+      color: var(--text);
+      letter-spacing: -0.03em;
+    }
+
+    .calculator-intro {
+      color: var(--muted);
+      line-height: 1.8;
+      margin-bottom: 30px;
+      font-size: 1.05rem;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 22px;
+    }
+
+    .field label {
+      display: block;
+      font-weight: 800;
+      margin-bottom: 10px;
+      color: var(--text);
+    }
+
+    .field input,
+    .field select {
+      width: 100%;
+      padding: 16px;
+      border-radius: 12px;
+      border: 1px solid var(--border);
+      font-size: 1rem;
+      box-sizing: border-box;
+      background: #ffffff;
+      color: var(--text);
+    }
+
+    .field input:focus,
+    .field select:focus {
+      outline: 3px solid rgba(15, 110, 86, 0.18);
+      border-color: var(--primary);
+    }
+
+    button {
+      margin-top: 30px;
+      background: var(--button);
+      color: white;
+      border: none;
+      padding: 18px 32px;
+      border-radius: 999px;
+      font-size: 1.05rem;
+      font-weight: 800;
+      cursor: pointer;
+      transition:
+        opacity 0.2s ease,
+        transform 0.2s ease;
+    }
+
+    button:hover {
+      opacity: 0.92;
+      transform: translateY(-1px);
+    }
+
+    .results {
+      margin-top: 36px;
+      background: var(--surface-warm);
+      padding: 32px;
+      border-radius: 24px;
+      border: 1px solid var(--border);
+      box-shadow: var(--shadow-soft);
+      display: none;
+    }
+
+    .results.visible {
+      display: block;
+    }
+
+    .result-label {
+      font-size: 0.86rem;
+      font-weight: 900;
+      color: var(--primary);
+      margin-bottom: 14px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+    }
+
+    .total-price {
+      font-size: clamp(2.55rem, 6vw, 4.25rem);
+      font-weight: 950;
+      color: var(--text);
+      line-height: 1.02;
+      margin-bottom: 10px;
+      letter-spacing: -0.055em;
+    }
+
+    .pressure-pill {
+      display: inline-flex;
+      align-items: center;
+      margin: 8px 0 22px;
+      padding: 9px 13px;
+      border-radius: 999px;
+      background: #eef8f3;
+      color: var(--primary-dark);
+      font-weight: 900;
+      border: 1px solid #cfeee1;
+    }
+
+    .pressure-meter {
+      width: 100%;
+      height: 14px;
+      background: #e7eadf;
+      border-radius: 999px;
+      overflow: hidden;
+      margin: 10px 0 24px;
+    }
+
+    .pressure-fill {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, #0f6e56, #b45309, #b91c1c);
+      border-radius: 999px;
+      transition: width 0.25s ease;
+    }
+
+    .result-details {
+      color: var(--muted);
+      line-height: 1.9;
+      font-size: 1.02rem;
+    }
+
+    .result-details p {
+      margin: 0 0 12px;
+    }
+
+    .mini-summary,
+    .timeline-check {
+      margin-top: 24px;
+      padding: 20px;
+      border-radius: 18px;
+      background: #ffffff;
+      border: 1px solid var(--border);
+      color: var(--muted);
+      line-height: 1.8;
+    }
+
+    .timeline-check strong,
+    .mini-summary strong {
+      color: var(--text);
+    }
+
+    .disclaimer {
+      margin-top: 24px;
+      font-size: 0.9rem;
+      color: var(--muted);
+      line-height: 1.7;
+    }
+
+    .content-section {
+      margin-top: 62px;
+    }
+
+    .content-section h2 {
+      font-size: 2rem;
+      margin-bottom: 18px;
+      color: var(--text);
+      letter-spacing: -0.03em;
+    }
+
+    .content-section p,
+    .content-section li {
+      font-size: 1.08rem;
+      line-height: 1.9;
+      color: var(--muted);
+    }
+
+    .content-link {
+      color: var(--primary);
+      font-weight: 800;
+      text-decoration: none;
+    }
+
+    .content-link:hover {
+      text-decoration: underline;
+    }
+
+    .red-flags {
+      margin-top: 62px;
+      background: #fff7f7;
+      border: 1px solid #fecaca;
+      border-radius: 24px;
+      padding: 32px;
+    }
+
+    .red-flags h2 {
+      margin-top: 0;
+      color: #7f1d1d;
+      letter-spacing: -0.03em;
+    }
+
+    .red-flags p,
+    .red-flags li {
+      color: #7f1d1d;
+      line-height: 1.8;
+    }
+
+    @media (max-width: 768px) {
+      .calculator {
+        padding: 24px;
+      }
+
+      .grid {
+        grid-template-columns: 1fr;
+      }
+
+      .calculator h2,
+      .content-section h2 {
+        font-size: 1.7rem;
+      }
+
+      .results {
+        padding: 24px;
+      }
+    }
+  </style>
+
+  <div class="container">
+    <CalculatorPageShell
+      eyebrow="Wedding Photography Cost Calculator"
+      title="Wedding Photography Cost Calculator"
+      description="Estimate the full cost of a wedding photography package, including coverage hours, second shooter needs, engagement photos, albums, travel, overtime risk, tax, gratuity, and budget pressure."
+    >
+      <div class="calculator">
+        <h2>Estimate Wedding Photography Cost</h2>
+
+        <p class="calculator-intro">
+          Wedding photography is not only a vendor price. It is a timeline
+          decision, a memory decision, and a post-wedding cash-flow decision.
+          Enter the package details below to estimate the full photo cost and
+          whether it creates pressure inside the larger wedding budget.
+        </p>
+
+        <div class="grid">
+          <div class="field">
+            <label for="basePackage">Base Photography Package</label>
+            <input id="basePackage" type="number" placeholder="Example: 4200" />
+          </div>
+
+          <div class="field">
+            <label for="includedHours">Hours Included in Package</label>
+            <input id="includedHours" type="number" placeholder="Example: 8" />
+          </div>
+
+          <div class="field">
+            <label for="neededHours">Hours You Want Covered</label>
+            <input id="neededHours" type="number" placeholder="Example: 10" />
+          </div>
+
+          <div class="field">
+            <label for="extraHourRate">Extra Hour Rate</label>
+            <input id="extraHourRate" type="number" placeholder="Example: 400" />
+          </div>
+
+          <div class="field">
+            <label for="secondShooter">Second Shooter Plan</label>
+            <select id="secondShooter">
+              <option value="" selected disabled>Select second shooter plan</option>
+              <option value="none">No second shooter</option>
+              <option value="included">Included in package</option>
+              <option value="addon">Paid add-on</option>
+            </select>
+          </div>
+
+          <div class="field">
+            <label for="secondShooterCost">Second Shooter Add-On Cost</label>
+            <input id="secondShooterCost" type="number" placeholder="Example: 900" />
+          </div>
+
+          <div class="field">
+            <label for="engagementCost">Engagement Session Cost</label>
+            <input id="engagementCost" type="number" placeholder="Example: 500" />
+          </div>
+
+          <div class="field">
+            <label for="albumPrintCost">Albums, Prints, or Photo Credit</label>
+            <input id="albumPrintCost" type="number" placeholder="Example: 750" />
+          </div>
+
+          <div class="field">
+            <label for="travelCost">Travel or Lodging Fee</label>
+            <input id="travelCost" type="number" placeholder="Example: 350" />
+          </div>
+
+          <div class="field">
+            <label for="permitCost">Venue, Permit, or Location Fee</label>
+            <input id="permitCost" type="number" placeholder="Example: 150" />
+          </div>
+
+          <div class="field">
+            <label for="deliveryCost">Editing, Rush, or Gallery Add-On</label>
+            <input id="deliveryCost" type="number" placeholder="Example: 300" />
+          </div>
+
+          <div class="field">
+            <label for="rightsCost">Print Rights or Download Upgrade</label>
+            <input id="rightsCost" type="number" placeholder="Example: 250" />
+          </div>
+
+          <div class="field">
+            <label for="taxRate">Tax Rate Percentage</label>
+            <input id="taxRate" type="number" placeholder="Example: 8" />
+          </div>
+
+          <div class="field">
+            <label for="gratuity">Optional Gratuity</label>
+            <input id="gratuity" type="number" placeholder="Example: 300" />
+          </div>
+
+          <div class="field">
+            <label for="weddingBudget">Total Wedding Budget</label>
+            <input id="weddingBudget" type="number" placeholder="Example: 30000" />
+          </div>
+
+          <div class="field">
+            <label for="photoFund">Cash Available for Photography</label>
+            <input id="photoFund" type="number" placeholder="Example: 5000" />
+          </div>
+
+          <div class="field">
+            <label for="outsideHelp">Family Help or Photo Contribution</label>
+            <input id="outsideHelp" type="number" placeholder="Example: 1000" />
+          </div>
+
+          <div class="field">
+            <label for="monthsUntilWedding">Months Until Wedding</label>
+            <input id="monthsUntilWedding" type="number" placeholder="Example: 10" />
+          </div>
+
+          <div class="field">
+            <label for="monthlyIncome">Monthly Take-Home Income</label>
+            <input id="monthlyIncome" type="number" placeholder="Example: 6500" />
+          </div>
+
+          <div class="field">
+            <label for="emergencySavings">Emergency Savings After Paying</label>
+            <input id="emergencySavings" type="number" placeholder="Example: 12000" />
+          </div>
+
+          <div class="field">
+            <label for="currentWeddingDebt">Current Wedding Debt</label>
+            <input id="currentWeddingDebt" type="number" placeholder="Example: 0" />
+          </div>
+
+          <div class="field">
+            <label for="photoPriority">Photography Priority</label>
+            <select id="photoPriority">
+              <option value="" selected disabled>Select photo priority</option>
+              <option value="low">Photos are flexible</option>
+              <option value="medium">Photos matter, but budget matters too</option>
+              <option value="high">Photos are a top priority</option>
+            </select>
+          </div>
+        </div>
+
+        <button id="photographyButton" type="button">Calculate Photography Cost</button>
+
+        <div class="results" id="results">
+          <div class="result-label">Estimated Photography Cost</div>
+
+          <div class="total-price" id="totalPrice"></div>
+
+          <div class="pressure-pill" id="pressurePill"></div>
+
+          <div class="pressure-meter" aria-hidden="true">
+            <div class="pressure-fill" id="pressureFill"></div>
+          </div>
+
+          <div class="result-details" id="resultDetails"></div>
+
+          <div class="timeline-check" id="timelineCheck"></div>
+
+          <div class="mini-summary" id="photoSummary"></div>
+
+          <div class="disclaimer">
+            This estimate is educational and uses simplified assumptions. Actual
+            photography contracts may calculate travel, overtime, print rights,
+            albums, tax, delivery timing, and retainers differently.
+          </div>
+        </div>
+      </div>
+
+      <section class="content-section">
+        <h2>Why Photography Needs a Different Wedding Calculator</h2>
+
+        <p>
+          Catering changes with guest count. Photography changes with time,
+          timeline complexity, the number of shooters, delivery expectations, and
+          how much of the day the couple wants documented.
+        </p>
+
+        <p>
+          A quote that looks expensive can be reasonable if it solves a real
+          timeline problem. A quote that looks simple can become incomplete if it
+          leaves out overtime, second-shooter needs, albums, travel, image rights,
+          or the cost of getting the final gallery delivered the way the couple
+          expects.
+        </p>
+
+        <p>
+          For the bigger picture, compare this result with the
+          <a class="content-link" href="/wedding-calculators">
+            wedding budget calculators hub
+          </a>
+          or the
+          <a class="content-link" href="/wedding-catering-cost-calculator">
+            wedding catering cost calculator
+          </a>.
+        </p>
+      </section>
+
+      <KeyCostCategories
+        items={[
+          {
+            title: "Coverage hours",
+            description:
+              "Getting-ready photos, first look, ceremony, portraits, reception events, speeches, dances, and send-off timing all affect how many hours are needed.",
+          },
+          {
+            title: "Second shooter",
+            description:
+              "A second shooter can matter when events happen in two places at once or the couple wants more angles during ceremony, portraits, and reception.",
+          },
+          {
+            title: "Albums and delivery",
+            description:
+              "Albums, prints, rush edits, extra galleries, downloads, and image rights can move the final cost beyond the base package.",
+          },
+          {
+            title: "Travel and location fees",
+            description:
+              "Travel, lodging, parking, venue access fees, permit costs, and multi-location timelines should be included before signing.",
+          },
+          {
+            title: "Budget pressure",
+            description:
+              "The calculator compares the photo estimate with wedding budget share, cash available, outside help, emergency savings, and current wedding debt.",
+          },
+        ]}
+      />
+
+      <ReduceCostTips
+        items={[
+          "Pay for the hours that protect the real timeline, not automatic all-day coverage if the schedule does not need it.",
+          "Ask whether a second shooter solves a specific problem before adding one by default.",
+          "Separate must-have coverage from albums, print credits, rush edits, and delivery upgrades.",
+          "Bundle engagement photos only if they matter to you or help you get comfortable with the photographer.",
+          "Ask for the overtime rate before the wedding day so a late timeline does not become a surprise bill.",
+          "Prioritize portfolio quality, contract clarity, backup planning, and delivery rights over extras that sound premium but do not matter to you.",
+        ]}
+      />
+
+      <CalculatorAssumptions
+        items={[
+          "Extra coverage is calculated when desired hours exceed included package hours.",
+          "Second shooter cost is added only when the paid add-on option is selected.",
+          "Tax is estimated on the photography subtotal before optional gratuity.",
+          "Outside help reduces out-of-pocket cost before pressure is calculated.",
+          "If outside help covers the full estimated cost, pressure is treated as minimal.",
+          "The calculator does not replace a photographer contract, venue policy, tax advice, or financial planning.",
+        ]}
+      />
+
+      <section class="content-section">
+        <h2>The Wedding Photo Tradeoff</h2>
+
+        <p>
+          Photography is one of the few wedding expenses that lasts after the day
+          is over. That does not mean the most expensive package is automatically
+          the right one. It means the couple should decide what coverage actually
+          protects the memories they care about.
+        </p>
+
+        <p>
+          A strong photography plan usually starts with the timeline: where people
+          are getting ready, when portraits happen, whether there is a first look,
+          how far the ceremony is from the reception, and which reception moments
+          are important enough to keep the photographer late.
+        </p>
+      </section>
+
+      <section class="red-flags" id="FinancialRedFlags">
+        <h2>Wedding Photography Red Flags</h2>
+
+        <p>
+          Photography deserves extra caution when the quote looks complete but the
+          timeline, delivery terms, or post-wedding cash impact are unclear.
+        </p>
+
+        <ul>
+          <li>The package does not list coverage hours or overtime rates clearly.</li>
+          <li>The couple assumes a second shooter is included but the contract says otherwise.</li>
+          <li>Travel, parking, permits, albums, image rights, or rush delivery are unclear.</li>
+          <li>The photo deposit drains cash needed for catering, venue payments, or emergency savings.</li>
+          <li>The quote requires credit card debt to cover final payment.</li>
+          <li>The package includes expensive extras but does not solve the actual timeline problem.</li>
+        </ul>
+      </section>
+
+      <div class="content-section">
+        <FAQSection title="Wedding Photography Cost FAQ" faqs={photographyFaqs} />
+      </div>
+
+      <div class="content-section">
+        <RelatedCalculators calculators={relatedCalculators} />
+      </div>
+    </CalculatorPageShell>
+
+    <MethodologySection category="wedding photography cost estimates" updated="July 2026" />
+  </div>
+
+  <script is:inline>
+    const getNumber = (id) => {
+      const rawValue = document.getElementById(id)?.value;
+      const value = Number(rawValue);
+      return Number.isFinite(value) && value >= 0 ? value : 0;
+    };
+
+    const getValue = (id) => document.getElementById(id)?.value || "";
+
+    function formatMoney(value) {
+      return value.toLocaleString(undefined, {
+        style: "currency",
+        currency: "USD",
+        minimumFractionDigits: 0,
+        maximumFractionDigits: 0,
+      });
+    }
+
+    function formatPercent(value) {
+      return `${value.toFixed(0)}%`;
+    }
+
+    function clamp(value, min, max) {
+      return Math.min(Math.max(value, min), max);
+    }
+
+    function priorityAdjustment(priority) {
+      if (priority === "high") {
+        return -8;
+      }
+
+      if (priority === "low") {
+        return 7;
+      }
+
+      return 0;
+    }
+
+    function secondShooterRisk(secondShooter, neededHours) {
+      if (secondShooter === "none" && neededHours >= 9) {
+        return 10;
+      }
+
+      if (secondShooter === "none" && neededHours >= 7) {
+        return 5;
+      }
+
+      return 0;
+    }
+
+    function getPressureLabel(score) {
+      if (score >= 75) {
+        return "High photography pressure";
+      }
+
+      if (score >= 50) {
+        return "Moderate photography pressure";
+      }
+
+      if (score >= 25) {
+        return "Manageable photography pressure";
+      }
+
+      return "Low photography pressure";
+    }
+
+    function calculatePhotography() {
+      const basePackage = getNumber("basePackage");
+      const includedHours = getNumber("includedHours");
+      const neededHours = getNumber("neededHours");
+      const extraHourRate = getNumber("extraHourRate");
+      const secondShooter = getValue("secondShooter");
+      const secondShooterCost = getNumber("secondShooterCost");
+      const engagementCost = getNumber("engagementCost");
+      const albumPrintCost = getNumber("albumPrintCost");
+      const travelCost = getNumber("travelCost");
+      const permitCost = getNumber("permitCost");
+      const deliveryCost = getNumber("deliveryCost");
+      const rightsCost = getNumber("rightsCost");
+      const taxRate = getNumber("taxRate") / 100;
+      const gratuity = getNumber("gratuity");
+      const weddingBudget = getNumber("weddingBudget");
+      const photoFund = getNumber("photoFund");
+      const outsideHelp = getNumber("outsideHelp");
+      const monthsUntilWedding = Math.max(getNumber("monthsUntilWedding"), 1);
+      const monthlyIncome = getNumber("monthlyIncome");
+      const emergencySavings = getNumber("emergencySavings");
+      const currentWeddingDebt = getNumber("currentWeddingDebt");
+      const photoPriority = getValue("photoPriority");
+
+      const results = document.getElementById("results");
+      const totalPrice = document.getElementById("totalPrice");
+      const pressurePill = document.getElementById("pressurePill");
+      const pressureFill = document.getElementById("pressureFill");
+      const resultDetails = document.getElementById("resultDetails");
+      const timelineCheck = document.getElementById("timelineCheck");
+      const photoSummary = document.getElementById("photoSummary");
+
+      results.classList.add("visible");
+
+      if (basePackage <= 0) {
+        totalPrice.textContent = "$0";
+        pressurePill.textContent = "Enter a base package";
+        pressureFill.style.width = "0%";
+        resultDetails.innerHTML =
+          "<p>Enter at least the base photography package to estimate wedding photography cost.</p>";
+        timelineCheck.textContent = "";
+        photoSummary.textContent = "";
+        return;
+      }
+
+      const extraHours = Math.max(neededHours - includedHours, 0);
+      const extraHourTotal = extraHours * extraHourRate;
+      const secondShooterTotal =
+        secondShooter === "addon" ? secondShooterCost : 0;
+
+      const preTaxSubtotal =
+        basePackage +
+        extraHourTotal +
+        secondShooterTotal +
+        engagementCost +
+        albumPrintCost +
+        travelCost +
+        permitCost +
+        deliveryCost +
+        rightsCost;
+
+      const taxTotal = preTaxSubtotal * taxRate;
+      const totalCost = preTaxSubtotal + taxTotal + gratuity;
+      const helpApplied = Math.min(outsideHelp, totalCost);
+      const outOfPocketCost = Math.max(totalCost - helpApplied, 0);
+      const cashGap = Math.max(outOfPocketCost - photoFund, 0);
+      const monthlySavingsNeeded = cashGap / monthsUntilWedding;
+      const budgetShare = weddingBudget > 0 ? (totalCost / weddingBudget) * 100 : 0;
+      const incomeMultiple = monthlyIncome > 0 ? outOfPocketCost / monthlyIncome : 0;
+      const emergencyRatio =
+        emergencySavings > 0 ? outOfPocketCost / emergencySavings : 999;
+
+      let pressureScore = 0;
+
+      pressureScore += budgetShare > 18 ? 24 : budgetShare > 12 ? 14 : budgetShare > 8 ? 7 : 0;
+      pressureScore += cashGap > 0 ? 18 : 0;
+      pressureScore += monthlyIncome > 0 && monthlySavingsNeeded > monthlyIncome * 0.1 ? 16 : 0;
+      pressureScore += emergencyRatio > 1 ? 18 : emergencyRatio > 0.5 ? 10 : 0;
+      pressureScore += currentWeddingDebt > 0 ? 10 : 0;
+      pressureScore += incomeMultiple > 1.2 ? 8 : 0;
+      pressureScore += extraHours >= 3 ? 7 : extraHours > 0 ? 3 : 0;
+      pressureScore += secondShooterRisk(secondShooter, neededHours);
+      pressureScore += priorityAdjustment(photoPriority);
+
+      if (outsideHelp >= totalCost) {
+        pressureScore = 5;
+      }
+
+      pressureScore = clamp(pressureScore, 0, 100);
+
+      const label = getPressureLabel(pressureScore);
+      const coverageGapText =
+        extraHours > 0
+          ? `${extraHours.toFixed(1)} extra ${extraHours === 1 ? "hour" : "hours"} beyond the package`
+          : "no extra coverage hours based on the entries";
+
+      totalPrice.textContent = formatMoney(totalCost);
+      pressurePill.textContent = `${label} - ${formatPercent(pressureScore)}`;
+      pressureFill.style.width = `${pressureScore}%`;
+
+      resultDetails.innerHTML = `
+        <p><strong>Base package:</strong> ${formatMoney(basePackage)}.</p>
+
+        <p><strong>Extra coverage cost:</strong> ${formatMoney(extraHourTotal)} for ${coverageGapText}.</p>
+
+        <p><strong>Second shooter, engagement, album, travel, permits, delivery, and rights add-ons:</strong> ${formatMoney(secondShooterTotal + engagementCost + albumPrintCost + travelCost + permitCost + deliveryCost + rightsCost)}.</p>
+
+        <p><strong>Estimated tax and gratuity:</strong> ${formatMoney(taxTotal + gratuity)}.</p>
+
+        <p><strong>Out-of-pocket cost after family help or contributions:</strong> ${formatMoney(outOfPocketCost)}.</p>
+
+        <p><strong>Estimated share of total wedding budget:</strong> ${formatPercent(budgetShare)}.</p>
+
+        <p><strong>Cash gap after available photo funds:</strong> ${formatMoney(cashGap)}.</p>
+
+        <p><strong>Monthly savings needed until the wedding:</strong> ${formatMoney(monthlySavingsNeeded)} for ${monthsUntilWedding.toFixed(0)} ${monthsUntilWedding === 1 ? "month" : "months"}.</p>
+      `;
+
+      timelineCheck.innerHTML = `
+        <strong>Timeline check:</strong> This estimate assumes <strong>${neededHours.toFixed(1)}</strong> desired coverage hours and
+        <strong>${includedHours.toFixed(1)}</strong> included hours. If the schedule includes separate getting-ready locations,
+        a first look, family portraits, ceremony, reception entrances, speeches, dances, and send-off coverage, make sure the
+        coverage hours match the actual day instead of the cheapest package.
+      `;
+
+      photoSummary.innerHTML = `
+        This photography plan is estimated at <strong>${formatMoney(totalCost)}</strong>. After confirmed help,
+        the estimated out-of-pocket cost is <strong>${formatMoney(outOfPocketCost)}</strong>. The pressure result is
+        <strong>${label.toLowerCase()}</strong> based on wedding budget share, cash gap, emergency savings,
+        current wedding debt, timeline coverage, second-shooter risk, and monthly savings needed.
+      `;
+    }
+
+    document
+      .getElementById("photographyButton")
+      .addEventListener("click", calculatePhotography);
+  </script>
+</Layout>
+

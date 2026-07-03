@@ -1,0 +1,812 @@
+﻿---
+import Layout from "../layouts/Layout.astro";
+import CalculatorPageShell from "../components/CalculatorPageShell.astro";
+import FAQSection from "../components/FAQSection.astro";
+import RelatedCalculators from "../components/RelatedCalculators.astro";
+import MethodologySection from "../components/MethodologySection.astro";
+import CalculatorAssumptions from "../components/CalculatorAssumptions.astro";
+import KeyCostCategories from "../components/KeyCostCategories.astro";
+import ReduceCostTips from "../components/ReduceCostTips.astro";
+import { calculators } from "../data/calculators.js";
+
+const cateringFaqs = [
+  {
+    question: "How much does wedding catering cost per guest?",
+    answer:
+      "Wedding catering cost per guest depends on meal style, service level, bar package, rentals, tax, gratuity, staffing, dessert, vendor meals, and the guest count. A plated dinner with an open bar usually costs much more per guest than a buffet or lighter reception.",
+  },
+  {
+    question: "What should be included in a wedding catering quote?",
+    answer:
+      "A useful catering quote should show food, bar, staffing, rentals, service fees, admin fees, delivery, setup, cleanup, tax, gratuity, vendor meals, cake cutting, late-night snacks, and any minimum spend requirements.",
+  },
+  {
+    question: "Is buffet catering always cheaper than plated dinner?",
+    answer:
+      "Not always. Buffets can reduce service complexity, but they may require more food, rentals, serving stations, and staffing than expected. The calculator treats meal style as a cost driver, not an automatic verdict.",
+  },
+  {
+    question: "How do I lower wedding catering costs?",
+    answer:
+      "The biggest levers are guest count, bar structure, meal style, appetizer count, rental choices, service level, dessert plan, and whether the event is brunch, lunch, cocktail style, or dinner.",
+  },
+  {
+    question: "Should catering be a large share of the wedding budget?",
+    answer:
+      "Catering is often one of the largest wedding costs because it multiplies by guest count. A high catering share can be fine if food is a top priority and the total wedding budget still protects savings, debt, and post-wedding cash flow.",
+  },
+];
+
+const relatedCalculators = calculators
+  .filter(
+    (calculator) =>
+      calculator.category === "Weddings" &&
+      calculator.href !== "/wedding-catering-cost-calculator"
+  )
+  .slice(0, 4);
+---
+
+<Layout
+  title="Wedding Catering Cost Calculator"
+  description="Use this wedding catering cost calculator to estimate food, bar, service fees, rentals, staffing, tax, gratuity, guest-count pressure, and out-of-pocket cost."
+>
+  <style>
+    .container {
+      max-width: 940px;
+      margin: auto;
+    }
+
+    .calculator {
+      background: var(--card);
+      padding: 40px;
+      border-radius: 24px;
+      border: 1px solid var(--border);
+      box-shadow: var(--shadow-soft);
+    }
+
+    .calculator h2 {
+      margin-top: 0;
+      font-size: 2rem;
+      margin-bottom: 18px;
+      color: var(--text);
+      letter-spacing: -0.03em;
+    }
+
+    .calculator-intro {
+      color: var(--muted);
+      line-height: 1.8;
+      margin-bottom: 30px;
+      font-size: 1.05rem;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 22px;
+    }
+
+    .field label {
+      display: block;
+      font-weight: 800;
+      margin-bottom: 10px;
+      color: var(--text);
+    }
+
+    .field input,
+    .field select {
+      width: 100%;
+      padding: 16px;
+      border-radius: 12px;
+      border: 1px solid var(--border);
+      font-size: 1rem;
+      box-sizing: border-box;
+      background: #ffffff;
+      color: var(--text);
+    }
+
+    .field input:focus,
+    .field select:focus {
+      outline: 3px solid rgba(15, 110, 86, 0.18);
+      border-color: var(--primary);
+    }
+
+    button {
+      margin-top: 30px;
+      background: var(--button);
+      color: white;
+      border: none;
+      padding: 18px 32px;
+      border-radius: 999px;
+      font-size: 1.05rem;
+      font-weight: 800;
+      cursor: pointer;
+      transition:
+        opacity 0.2s ease,
+        transform 0.2s ease;
+    }
+
+    button:hover {
+      opacity: 0.92;
+      transform: translateY(-1px);
+    }
+
+    .results {
+      margin-top: 36px;
+      background: var(--surface-warm);
+      padding: 32px;
+      border-radius: 24px;
+      border: 1px solid var(--border);
+      box-shadow: var(--shadow-soft);
+      display: none;
+    }
+
+    .results.visible {
+      display: block;
+    }
+
+    .result-label {
+      font-size: 0.86rem;
+      font-weight: 900;
+      color: var(--primary);
+      margin-bottom: 14px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+    }
+
+    .total-price {
+      font-size: clamp(2.55rem, 6vw, 4.25rem);
+      font-weight: 950;
+      color: var(--text);
+      line-height: 1.02;
+      margin-bottom: 10px;
+      letter-spacing: -0.055em;
+    }
+
+    .pressure-pill {
+      display: inline-flex;
+      align-items: center;
+      margin: 8px 0 22px;
+      padding: 9px 13px;
+      border-radius: 999px;
+      background: #eef8f3;
+      color: var(--primary-dark);
+      font-weight: 900;
+      border: 1px solid #cfeee1;
+    }
+
+    .pressure-meter {
+      width: 100%;
+      height: 14px;
+      background: #e7eadf;
+      border-radius: 999px;
+      overflow: hidden;
+      margin: 10px 0 24px;
+    }
+
+    .pressure-fill {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, #0f6e56, #b45309, #b91c1c);
+      border-radius: 999px;
+      transition: width 0.25s ease;
+    }
+
+    .result-details {
+      color: var(--muted);
+      line-height: 1.9;
+      font-size: 1.02rem;
+    }
+
+    .result-details p {
+      margin: 0 0 12px;
+    }
+
+    .mini-summary,
+    .guest-levers {
+      margin-top: 24px;
+      padding: 20px;
+      border-radius: 18px;
+      background: #ffffff;
+      border: 1px solid var(--border);
+      color: var(--muted);
+      line-height: 1.8;
+    }
+
+    .guest-levers strong,
+    .mini-summary strong {
+      color: var(--text);
+    }
+
+    .disclaimer {
+      margin-top: 24px;
+      font-size: 0.9rem;
+      color: var(--muted);
+      line-height: 1.7;
+    }
+
+    .content-section {
+      margin-top: 62px;
+    }
+
+    .content-section h2 {
+      font-size: 2rem;
+      margin-bottom: 18px;
+      color: var(--text);
+      letter-spacing: -0.03em;
+    }
+
+    .content-section p,
+    .content-section li {
+      font-size: 1.08rem;
+      line-height: 1.9;
+      color: var(--muted);
+    }
+
+    .content-link {
+      color: var(--primary);
+      font-weight: 800;
+      text-decoration: none;
+    }
+
+    .content-link:hover {
+      text-decoration: underline;
+    }
+
+    .red-flags {
+      margin-top: 62px;
+      background: #fff7f7;
+      border: 1px solid #fecaca;
+      border-radius: 24px;
+      padding: 32px;
+    }
+
+    .red-flags h2 {
+      margin-top: 0;
+      color: #7f1d1d;
+      letter-spacing: -0.03em;
+    }
+
+    .red-flags p,
+    .red-flags li {
+      color: #7f1d1d;
+      line-height: 1.8;
+    }
+
+    @media (max-width: 768px) {
+      .calculator {
+        padding: 24px;
+      }
+
+      .grid {
+        grid-template-columns: 1fr;
+      }
+
+      .calculator h2,
+      .content-section h2 {
+        font-size: 1.7rem;
+      }
+
+      .results {
+        padding: 24px;
+      }
+    }
+  </style>
+
+  <div class="container">
+    <CalculatorPageShell
+      eyebrow="Wedding Catering Cost Calculator"
+      title="Wedding Catering Cost Calculator"
+      description="Estimate the full catering cost behind the food quote: guest count, meal style, bar package, service fees, staffing, rentals, tax, gratuity, and out-of-pocket pressure."
+    >
+      <div class="calculator">
+        <h2>Estimate Wedding Catering Cost</h2>
+
+        <p class="calculator-intro">
+          Wedding catering is a guest-count multiplier. A small change in guest
+          count, bar package, service style, rentals, or gratuity can move the
+          total by thousands. Enter the details below to estimate the full cost
+          and see whether the catering plan creates budget pressure.
+        </p>
+
+        <div class="grid">
+          <div class="field">
+            <label for="guestCount">Guest Count</label>
+            <input id="guestCount" type="number" placeholder="Example: 150" />
+          </div>
+
+          <div class="field">
+            <label for="mealStyle">Meal Style</label>
+            <select id="mealStyle">
+              <option value="buffet">Buffet or casual dinner</option>
+              <option value="plated" selected>Plated dinner</option>
+              <option value="stations">Stations or family style</option>
+              <option value="cocktail">Cocktail reception</option>
+              <option value="brunch">Brunch or lunch reception</option>
+            </select>
+          </div>
+
+          <div class="field">
+            <label for="foodPerGuest">Food Cost per Guest</label>
+            <input id="foodPerGuest" type="number" placeholder="Example: 85" />
+          </div>
+
+          <div class="field">
+            <label for="barPerGuest">Bar Cost per Guest</label>
+            <input id="barPerGuest" type="number" placeholder="Example: 38" />
+          </div>
+
+          <div class="field">
+            <label for="barType">Bar Type</label>
+            <select id="barType">
+              <option value="none">No hosted bar</option>
+              <option value="beerwine" selected>Beer and wine</option>
+              <option value="full">Full open bar</option>
+              <option value="limited">Limited consumption bar</option>
+            </select>
+          </div>
+
+          <div class="field">
+            <label for="serviceFee">Service Fee Percentage</label>
+            <input id="serviceFee" type="number" placeholder="Example: 22" />
+          </div>
+
+          <div class="field">
+            <label for="taxRate">Tax Rate Percentage</label>
+            <input id="taxRate" type="number" placeholder="Example: 8" />
+          </div>
+
+          <div class="field">
+            <label for="gratuityRate">Additional Gratuity Percentage</label>
+            <input id="gratuityRate" type="number" placeholder="Example: 5" />
+          </div>
+
+          <div class="field">
+            <label for="rentalCost">Rentals, Linens, China, Glassware</label>
+            <input id="rentalCost" type="number" placeholder="Example: 2500" />
+          </div>
+
+          <div class="field">
+            <label for="staffCost">Extra Staffing, Delivery, Setup</label>
+            <input id="staffCost" type="number" placeholder="Example: 1200" />
+          </div>
+
+          <div class="field">
+            <label for="dessertPerGuest">Dessert or Cake Cost per Guest</label>
+            <input id="dessertPerGuest" type="number" placeholder="Example: 8" />
+          </div>
+
+          <div class="field">
+            <label for="snackPerGuest">Late-Night Snack per Guest</label>
+            <input id="snackPerGuest" type="number" placeholder="Example: 6" />
+          </div>
+
+          <div class="field">
+            <label for="vendorMeals">Vendor Meals Needed</label>
+            <input id="vendorMeals" type="number" placeholder="Example: 8" />
+          </div>
+
+          <div class="field">
+            <label for="vendorMealCost">Cost per Vendor Meal</label>
+            <input id="vendorMealCost" type="number" placeholder="Example: 35" />
+          </div>
+
+          <div class="field">
+            <label for="weddingBudget">Total Wedding Budget</label>
+            <input id="weddingBudget" type="number" placeholder="Example: 30000" />
+          </div>
+
+          <div class="field">
+            <label for="weddingFund">Cash Available for Catering</label>
+            <input id="weddingFund" type="number" placeholder="Example: 12000" />
+          </div>
+
+          <div class="field">
+            <label for="outsideHelp">Family Help or Catering Contribution</label>
+            <input id="outsideHelp" type="number" placeholder="Example: 3000" />
+          </div>
+
+          <div class="field">
+            <label for="monthsUntilWedding">Months Until Wedding</label>
+            <input id="monthsUntilWedding" type="number" placeholder="Example: 10" />
+          </div>
+
+          <div class="field">
+            <label for="monthlyIncome">Monthly Take-Home Income</label>
+            <input id="monthlyIncome" type="number" placeholder="Example: 6500" />
+          </div>
+
+          <div class="field">
+            <label for="emergencySavings">Emergency Savings After Paying</label>
+            <input id="emergencySavings" type="number" placeholder="Example: 12000" />
+          </div>
+
+          <div class="field">
+            <label for="currentWeddingDebt">Current Wedding Debt</label>
+            <input id="currentWeddingDebt" type="number" placeholder="Example: 0" />
+          </div>
+
+          <div class="field">
+            <label for="priority">Food Priority</label>
+            <select id="priority">
+              <option value="low">Food is flexible</option>
+              <option value="medium" selected>Food matters, but budget matters too</option>
+              <option value="high">Food is a top priority</option>
+            </select>
+          </div>
+        </div>
+
+        <button id="cateringButton" type="button">Calculate Catering Cost</button>
+
+        <div class="results" id="results">
+          <div class="result-label">Estimated Catering Cost</div>
+
+          <div class="total-price" id="totalPrice"></div>
+
+          <div class="pressure-pill" id="pressurePill"></div>
+
+          <div class="pressure-meter" aria-hidden="true">
+            <div class="pressure-fill" id="pressureFill"></div>
+          </div>
+
+          <div class="result-details" id="resultDetails"></div>
+
+          <div class="guest-levers" id="guestLevers"></div>
+
+          <div class="mini-summary" id="cateringSummary"></div>
+
+          <div class="disclaimer">
+            This estimate is educational and uses simplified assumptions. Actual
+            catering quotes may calculate tax, service fees, gratuity, rentals,
+            staffing, and bar costs differently.
+          </div>
+        </div>
+      </div>
+
+      <section class="content-section">
+        <h2>Why Catering Needs Its Own Wedding Calculator</h2>
+
+        <p>
+          Catering is not a flat wedding line item. It changes every time the guest
+          count changes. One extra table can mean more meals, more drinks, more
+          staff time, more linens, more glassware, more setup, and a larger service
+          fee.
+        </p>
+
+        <p>
+          That is why this calculator does more than multiply food cost by guest
+          count. It separates food, bar, rentals, staffing, dessert, vendor meals,
+          tax, service fees, gratuity, available cash, outside help, and the share
+          of the total wedding budget.
+        </p>
+
+        <p>
+          For the bigger picture, compare this result with the
+          <a class="content-link" href="/wedding-calculators">
+            wedding budget calculators hub
+          </a>
+          or the
+          <a class="content-link" href="/should-i-spend-30000-on-a-wedding">
+            $30,000 wedding calculator
+          </a>.
+        </p>
+      </section>
+
+      <KeyCostCategories
+        items={[
+          {
+            title: "Food and meal style",
+            description:
+              "Plated dinners, buffets, stations, brunch, and cocktail receptions can have very different food, service, and staffing costs.",
+          },
+          {
+            title: "Bar package",
+            description:
+              "Beer and wine, full open bar, consumption bars, and no-host options change the total quickly because the cost multiplies by guest count.",
+          },
+          {
+            title: "Service fees and gratuity",
+            description:
+              "Service fees, admin fees, tax, and gratuity can add a large percentage on top of the visible food and bar quote.",
+          },
+          {
+            title: "Rentals and staffing",
+            description:
+              "Tables, linens, plates, glassware, delivery, setup, servers, bartenders, and cleanup may be included or billed separately.",
+          },
+          {
+            title: "Vendor meals and extras",
+            description:
+              "Photographers, planners, DJs, bands, and videographers often need meals, and late-night snacks can add another guest-count cost.",
+          },
+        ]}
+      />
+
+      <ReduceCostTips
+        items={[
+          "Trim the guest list before cutting the parts of the meal guests will actually notice.",
+          "Ask for a quote that separates food, bar, staffing, rentals, service fees, tax, and gratuity.",
+          "Compare plated dinner, buffet, stations, brunch, and cocktail reception pricing instead of assuming one style is always cheaper.",
+          "Limit the bar to beer and wine, a signature drink, or a shorter hosted window if alcohol is driving the quote.",
+          "Skip late-night snacks, extra courses, premium linens, or passed appetizers if the base meal already works.",
+          "Protect dietary needs and guest comfort before spending on upgrades that mainly photograph well.",
+        ]}
+      />
+
+      <CalculatorAssumptions
+        items={[
+          "Food, bar, dessert, and late-night snacks are multiplied by guest count.",
+          "Vendor meals are calculated separately from guest meals.",
+          "Service fee, tax, and gratuity are estimated as percentages of the catering subtotal.",
+          "Outside help reduces out-of-pocket cost before pressure is calculated.",
+          "If outside help covers the full estimated cost, pressure is treated as minimal.",
+          "The calculator does not replace a venue contract, caterer proposal, tax advice, or financial planning.",
+        ]}
+      />
+
+      <section class="content-section">
+        <h2>The Catering Quote Trap</h2>
+
+        <p>
+          A quote that starts with a clean per-person price can still be incomplete.
+          Some couples see a food number first and only later discover service
+          charges, bar minimums, rental gaps, staffing fees, delivery charges,
+          gratuity expectations, tax, cake cutting, corkage, or overtime.
+        </p>
+
+        <p>
+          The safest catering decision is based on the final out-the-door estimate,
+          not the first menu number. If a caterer or venue cannot explain what is
+          included, what is optional, and what can change, the quote deserves more
+          scrutiny before a deposit is paid.
+        </p>
+      </section>
+
+      <section class="red-flags" id="FinancialRedFlags">
+        <h2>Wedding Catering Red Flags</h2>
+
+        <p>
+          Catering deserves extra caution when the quote looks manageable only
+          because major cost categories are missing or delayed.
+        </p>
+
+        <ul>
+          <li>The quote shows food cost but not service fees, tax, rentals, or gratuity.</li>
+          <li>The bar package is open-ended or based on unclear consumption pricing.</li>
+          <li>The guest count is not final, but the budget has no room for growth.</li>
+          <li>The catering deposit drains cash needed for other wedding bills.</li>
+          <li>Vendor meals, late-night snacks, staffing, or cleanup are missing.</li>
+          <li>The couple needs credit card debt to cover the final payment.</li>
+        </ul>
+      </section>
+
+      <div class="content-section">
+        <FAQSection title="Wedding Catering Cost FAQ" faqs={cateringFaqs} />
+      </div>
+
+      <div class="content-section">
+        <RelatedCalculators calculators={relatedCalculators} />
+      </div>
+    </CalculatorPageShell>
+
+    <MethodologySection category="wedding catering cost estimates" updated="July 2026" />
+  </div>
+
+  <script is:inline>
+    const getNumber = (id) => {
+      const rawValue = document.getElementById(id)?.value;
+      const value = Number(rawValue);
+      return Number.isFinite(value) && value >= 0 ? value : 0;
+    };
+
+    const getValue = (id) => document.getElementById(id)?.value || "";
+
+    function formatMoney(value) {
+      return value.toLocaleString(undefined, {
+        style: "currency",
+        currency: "USD",
+        minimumFractionDigits: 0,
+        maximumFractionDigits: 0,
+      });
+    }
+
+    function formatPercent(value) {
+      return `${value.toFixed(0)}%`;
+    }
+
+    function clamp(value, min, max) {
+      return Math.min(Math.max(value, min), max);
+    }
+
+    function mealStyleMultiplier(style) {
+      const multipliers = {
+        buffet: 0.92,
+        plated: 1,
+        stations: 1.12,
+        cocktail: 0.82,
+        brunch: 0.76,
+      };
+
+      return multipliers[style] || 1;
+    }
+
+    function barMultiplier(type) {
+      const multipliers = {
+        none: 0,
+        beerwine: 1,
+        full: 1.35,
+        limited: 0.72,
+      };
+
+      return multipliers[type] ?? 1;
+    }
+
+    function priorityAdjustment(priority) {
+      if (priority === "high") {
+        return -8;
+      }
+
+      if (priority === "low") {
+        return 7;
+      }
+
+      return 0;
+    }
+
+    function getPressureLabel(score) {
+      if (score >= 75) {
+        return "High catering pressure";
+      }
+
+      if (score >= 50) {
+        return "Moderate catering pressure";
+      }
+
+      if (score >= 25) {
+        return "Manageable catering pressure";
+      }
+
+      return "Low catering pressure";
+    }
+
+    function calculateCatering() {
+      const guestCount = getNumber("guestCount");
+      const mealStyle = getValue("mealStyle");
+      const foodPerGuest = getNumber("foodPerGuest");
+      const barPerGuest = getNumber("barPerGuest");
+      const barType = getValue("barType");
+      const serviceFee = getNumber("serviceFee") / 100;
+      const taxRate = getNumber("taxRate") / 100;
+      const gratuityRate = getNumber("gratuityRate") / 100;
+      const rentalCost = getNumber("rentalCost");
+      const staffCost = getNumber("staffCost");
+      const dessertPerGuest = getNumber("dessertPerGuest");
+      const snackPerGuest = getNumber("snackPerGuest");
+      const vendorMeals = getNumber("vendorMeals");
+      const vendorMealCost = getNumber("vendorMealCost");
+      const weddingBudget = getNumber("weddingBudget");
+      const weddingFund = getNumber("weddingFund");
+      const outsideHelp = getNumber("outsideHelp");
+      const monthsUntilWedding = Math.max(getNumber("monthsUntilWedding"), 1);
+      const monthlyIncome = getNumber("monthlyIncome");
+      const emergencySavings = getNumber("emergencySavings");
+      const currentWeddingDebt = getNumber("currentWeddingDebt");
+      const priority = getValue("priority");
+
+      const results = document.getElementById("results");
+      const totalPrice = document.getElementById("totalPrice");
+      const pressurePill = document.getElementById("pressurePill");
+      const pressureFill = document.getElementById("pressureFill");
+      const resultDetails = document.getElementById("resultDetails");
+      const guestLevers = document.getElementById("guestLevers");
+      const cateringSummary = document.getElementById("cateringSummary");
+
+      results.classList.add("visible");
+
+      if (guestCount <= 0 || foodPerGuest <= 0) {
+        totalPrice.textContent = "$0";
+        pressurePill.textContent = "Enter guest count and food cost";
+        pressureFill.style.width = "0%";
+        resultDetails.innerHTML =
+          "<p>Enter at least guest count and food cost per guest to estimate wedding catering cost.</p>";
+        guestLevers.textContent = "";
+        cateringSummary.textContent = "";
+        return;
+      }
+
+      const adjustedFoodPerGuest = foodPerGuest * mealStyleMultiplier(mealStyle);
+      const adjustedBarPerGuest = barPerGuest * barMultiplier(barType);
+      const foodTotal = adjustedFoodPerGuest * guestCount;
+      const barTotal = adjustedBarPerGuest * guestCount;
+      const dessertTotal = dessertPerGuest * guestCount;
+      const snackTotal = snackPerGuest * guestCount;
+      const vendorMealTotal = vendorMeals * vendorMealCost;
+
+      const preFeeSubtotal =
+        foodTotal +
+        barTotal +
+        dessertTotal +
+        snackTotal +
+        vendorMealTotal +
+        rentalCost +
+        staffCost;
+
+      const serviceFeeTotal = preFeeSubtotal * serviceFee;
+      const taxableBase = preFeeSubtotal + serviceFeeTotal;
+      const taxTotal = taxableBase * taxRate;
+      const gratuityTotal = preFeeSubtotal * gratuityRate;
+      const totalCost = preFeeSubtotal + serviceFeeTotal + taxTotal + gratuityTotal;
+
+      const helpApplied = Math.min(outsideHelp, totalCost);
+      const outOfPocketCost = Math.max(totalCost - helpApplied, 0);
+      const cashGap = Math.max(outOfPocketCost - weddingFund, 0);
+      const monthlySavingsNeeded = cashGap / monthsUntilWedding;
+      const costPerGuest = totalCost / guestCount;
+      const budgetShare = weddingBudget > 0 ? (totalCost / weddingBudget) * 100 : 0;
+      const emergencyRatio =
+        emergencySavings > 0 ? outOfPocketCost / emergencySavings : 999;
+
+      let pressureScore = 0;
+
+      pressureScore += budgetShare > 35 ? 24 : budgetShare > 25 ? 14 : budgetShare > 18 ? 7 : 0;
+      pressureScore += cashGap > 0 ? 18 : 0;
+      pressureScore += monthlyIncome > 0 && monthlySavingsNeeded > monthlyIncome * 0.12 ? 18 : 0;
+      pressureScore += emergencyRatio > 1 ? 18 : emergencyRatio > 0.55 ? 10 : 0;
+      pressureScore += currentWeddingDebt > 0 ? 10 : 0;
+      pressureScore += serviceFee + taxRate + gratuityRate > 0.35 ? 8 : 0;
+      pressureScore += barType === "full" ? 7 : 0;
+      pressureScore += priorityAdjustment(priority);
+
+      if (outsideHelp >= totalCost) {
+        pressureScore = 5;
+      }
+
+      pressureScore = clamp(pressureScore, 0, 100);
+
+      const tenGuestSwing = costPerGuest * 10;
+      const twentyGuestSwing = costPerGuest * 20;
+      const label = getPressureLabel(pressureScore);
+
+      totalPrice.textContent = formatMoney(totalCost);
+      pressurePill.textContent = `${label} - ${formatPercent(pressureScore)}`;
+      pressureFill.style.width = `${pressureScore}%`;
+
+      resultDetails.innerHTML = `
+        <p><strong>Estimated cost per guest:</strong> ${formatMoney(costPerGuest)}.</p>
+
+        <p><strong>Food and bar subtotal:</strong> ${formatMoney(foodTotal + barTotal)}.</p>
+
+        <p><strong>Rentals, staffing, dessert, snacks, and vendor meals:</strong> ${formatMoney(rentalCost + staffCost + dessertTotal + snackTotal + vendorMealTotal)}.</p>
+
+        <p><strong>Estimated service fee, tax, and gratuity:</strong> ${formatMoney(serviceFeeTotal + taxTotal + gratuityTotal)}.</p>
+
+        <p><strong>Out-of-pocket cost after family help or contributions:</strong> ${formatMoney(outOfPocketCost)}.</p>
+
+        <p><strong>Estimated share of total wedding budget:</strong> ${formatPercent(budgetShare)}.</p>
+
+        <p><strong>Cash gap after available catering funds:</strong> ${formatMoney(cashGap)}.</p>
+
+        <p><strong>Monthly savings needed until the wedding:</strong> ${formatMoney(monthlySavingsNeeded)} for ${monthsUntilWedding.toFixed(0)} ${monthsUntilWedding === 1 ? "month" : "months"}.</p>
+      `;
+
+      guestLevers.innerHTML = `
+        <strong>Guest-count lever:</strong> At this setup, every 10 guests changes the estimate by about
+        <strong>${formatMoney(tenGuestSwing)}</strong>. A 20-guest swing changes it by about
+        <strong>${formatMoney(twentyGuestSwing)}</strong>. Catering pressure often starts with the guest list, not the menu.
+      `;
+
+      cateringSummary.innerHTML = `
+        This catering plan is estimated at <strong>${formatMoney(totalCost)}</strong>, or
+        <strong>${formatMoney(costPerGuest)}</strong> per guest. After confirmed help, the estimated
+        out-of-pocket cost is <strong>${formatMoney(outOfPocketCost)}</strong>. The pressure result is
+        <strong>${label.toLowerCase()}</strong> based on budget share, cash gap, emergency savings,
+        current wedding debt, bar structure, and monthly savings needed.
+      `;
+    }
+
+    document
+      .getElementById("cateringButton")
+      .addEventListener("click", calculateCatering);
+  </script>
+</Layout>
+
+

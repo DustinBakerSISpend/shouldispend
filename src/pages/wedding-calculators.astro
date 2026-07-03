@@ -4,9 +4,47 @@ import CalculatorCard from "../components/CalculatorCard.astro";
 import FAQSection from "../components/FAQSection.astro";
 import { calculators } from "../data/calculators.js";
 
-const weddingCalculators = calculators.filter(
-  (calculator) => calculator.category === "Weddings"
-);
+const weddingCalculatorOrder = [
+  "/wedding-catering-cost-calculator",
+  "/wedding-photography-cost-calculator",
+  "/wedding-guest-count",
+  "/wedding-flowers-and-decor-cost-calculator",
+  "/wedding-dj-and-music-cost-calculator",
+  "/rehearsal-dinner-cost-calculator",
+  "/wedding-invitations-and-stationery-cost-calculator",
+  "/wedding-planner",
+  "/open-bar",
+  "/wedding-dress",
+  "/pay-for-wedding-ourselves",
+  "/destination-wedding",
+  "/should-i-spend-30000-on-a-wedding",
+  "/should-i-spend-15000-on-a-wedding",
+  "/should-i-spend-40000-on-a-wedding",
+  "/should-i-spend-50000-on-a-wedding",
+  "/should-i-spend-20000-on-a-wedding-venue",
+  "/should-i-spend-10000-on-a-destination-wedding",
+];
+
+const weddingCalculators = calculators
+  .filter((calculator) => calculator.category === "Weddings")
+  .sort((a, b) => {
+    const aIndex = weddingCalculatorOrder.indexOf(a.href);
+    const bIndex = weddingCalculatorOrder.indexOf(b.href);
+
+    if (aIndex === -1 && bIndex === -1) {
+      return a.title.localeCompare(b.title);
+    }
+
+    if (aIndex === -1) {
+      return 1;
+    }
+
+    if (bIndex === -1) {
+      return -1;
+    }
+
+    return aIndex - bIndex;
+  });
 
 const weddingFaqs = [
   {
@@ -43,28 +81,40 @@ const weddingFaqs = [
 
 const featuredWeddingLinks = [
   {
-    href: "/should-i-spend-15000-on-a-wedding",
-    title: "$15,000 Wedding Calculator",
+    href: "/wedding-catering-cost-calculator",
+    title: "Wedding Catering Cost Calculator",
     text:
-      "Pressure-test a leaner wedding budget against savings, guest count, debt, and first-year marriage flexibility.",
+      "Estimate food, bar, staffing, rentals, service fees, tax, gratuity, and guest-count pressure.",
+  },
+  {
+    href: "/wedding-photography-cost-calculator",
+    title: "Wedding Photography Cost Calculator",
+    text:
+      "Pressure-test coverage hours, second shooter needs, travel, albums, overtime, and photo budget share.",
+  },
+  {
+    href: "/wedding-guest-count",
+    title: "Should I Invite This Many Wedding Guests?",
+    text:
+      "See how the guest list affects catering, venue, bar, rentals, lodging, and family expectations.",
+  },
+  {
+    href: "/wedding-flowers-and-decor-cost-calculator",
+    title: "Wedding Flowers and Decor Cost Calculator",
+    text:
+      "Estimate bouquets, centerpieces, ceremony pieces, installations, rentals, setup, strike, and decor pressure.",
+  },
+  {
+    href: "/wedding-dj-and-music-cost-calculator",
+    title: "Wedding DJ and Music Cost Calculator",
+    text:
+      "Estimate reception hours, ceremony audio, MC duties, lighting, overtime, travel, and music pressure.",
   },
   {
     href: "/should-i-spend-30000-on-a-wedding",
     title: "$30,000 Wedding Calculator",
     text:
-      "Evaluate whether a mid-to-large wedding budget fits your income, emergency cushion, and other financial goals.",
-  },
-  {
-    href: "/should-i-spend-50000-on-a-wedding",
-    title: "$50,000 Wedding Calculator",
-    text:
-      "Treat a high-cost wedding like a major financial event and test whether the tradeoff is sustainable.",
-  },
-  {
-    href: "/should-i-spend-15000-on-a-honeymoon",
-    title: "$15,000 Honeymoon Calculator",
-    text:
-      "Look at the combined post-wedding impact of travel spending, savings drawdown, and debt pressure.",
+      "Use a broad total-budget pressure test after checking the biggest wedding vendor categories.",
   },
 ];
 
@@ -227,20 +277,22 @@ const relatedGuides = [
 ];
 
 const internalLinks = [
-  { href: "/should-i-spend-15000-on-a-wedding", label: "$15,000 wedding" },
+  { href: "/wedding-catering-cost-calculator", label: "catering cost" },
+  { href: "/wedding-photography-cost-calculator", label: "photography cost" },
+  { href: "/wedding-guest-count", label: "guest count" },
+  { href: "/wedding-flowers-and-decor-cost-calculator", label: "flowers and decor" },
+  { href: "/wedding-dj-and-music-cost-calculator", label: "DJ and music" },
+  { href: "/rehearsal-dinner-cost-calculator", label: "rehearsal dinner" },
+  { href: "/wedding-invitations-and-stationery-cost-calculator", label: "invitations" },
   { href: "/should-i-spend-30000-on-a-wedding", label: "$30,000 wedding" },
-  { href: "/should-i-spend-50000-on-a-wedding", label: "$50,000 wedding" },
-  { href: "/should-i-spend-15000-on-a-honeymoon", label: "$15,000 honeymoon" },
   { href: "/how-to-budget-for-a-wedding-without-going-into-debt", label: "wedding debt guide" },
-  { href: "/how-much-emergency-savings-should-i-have", label: "emergency savings" },
-  { href: "/travel-calculators", label: "travel calculators" },
   { href: "/calculators", label: "all calculators" },
 ];
 ---
 
 <Layout
   title="Wedding Budget Calculators | Wedding Costs, Debt and Savings"
-  description="Use wedding budget calculators to evaluate $15,000, $30,000, and $50,000 weddings, honeymoon costs, guest count, debt, savings, and affordability."
+  description="Use wedding budget calculators to evaluate catering, photography, guest count, flowers, DJ, rehearsal dinner, invitations, honeymoon costs, debt, savings, and affordability."
 >
   <style>
     .hub-page {
@@ -521,7 +573,7 @@ const internalLinks = [
 
     <section class="wide-section">
       <div class="eyebrow">Start here</div>
-      <h2>Common wedding budget decisions</h2>
+      <h2>Start with the biggest wedding cost drivers</h2>
 
       <div class="link-grid">
         {featuredWeddingLinks.map((link) => (
@@ -536,7 +588,7 @@ const internalLinks = [
     {weddingCalculators.length > 0 && (
       <section class="wide-section">
         <div class="eyebrow">All wedding calculators</div>
-        <h2>Wedding and honeymoon affordability calculators</h2>
+        <h2>All wedding cost and affordability calculators</h2>
 
         <p>
           Use these tools to compare wedding budgets, honeymoon costs, guest count,

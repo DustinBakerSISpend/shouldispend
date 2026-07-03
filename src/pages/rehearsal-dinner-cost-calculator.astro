@@ -1,0 +1,886 @@
+﻿---
+import Layout from "../layouts/Layout.astro";
+import CalculatorPageShell from "../components/CalculatorPageShell.astro";
+import FAQSection from "../components/FAQSection.astro";
+import RelatedCalculators from "../components/RelatedCalculators.astro";
+import MethodologySection from "../components/MethodologySection.astro";
+import CalculatorAssumptions from "../components/CalculatorAssumptions.astro";
+import KeyCostCategories from "../components/KeyCostCategories.astro";
+import ReduceCostTips from "../components/ReduceCostTips.astro";
+import { calculators } from "../data/calculators.js";
+
+const rehearsalDinnerFaqs = [
+  {
+    question: "How much does a rehearsal dinner cost?",
+    answer:
+      "Rehearsal dinner cost depends on guest count, meal style, drinks, private room fees, food and beverage minimums, service charges, tax, gratuity, decor, speeches, transportation, and whether the event has expanded into a welcome party.",
+  },
+  {
+    question: "Who should be invited to a rehearsal dinner?",
+    answer:
+      "The traditional list usually includes the couple, immediate family, wedding party, officiant, and partners. Some couples also invite out-of-town guests, but that can turn the dinner into a much larger welcome event.",
+  },
+  {
+    question: "What is the difference between a rehearsal dinner and welcome party?",
+    answer:
+      "A rehearsal dinner is usually smaller and tied to the ceremony rehearsal. A welcome party is broader, often includes more out-of-town guests, and can create much more food, drink, venue, and staffing pressure.",
+  },
+  {
+    question: "What should be included in a rehearsal dinner estimate?",
+    answer:
+      "A realistic estimate should include food, drinks, room rental, minimum spend, tax, gratuity, service fees, dessert, invitations, decor, audio needs, transportation, vendor or host meals, and any after-dinner drinks.",
+  },
+  {
+    question: "How can I lower rehearsal dinner costs?",
+    answer:
+      "The biggest levers are invite scope, meal style, bar structure, room minimums, private room fees, dessert, transportation, and keeping the event from becoming a second wedding reception.",
+  },
+];
+
+const relatedCalculators = calculators
+  .filter(
+    (calculator) =>
+      calculator.category === "Weddings" &&
+      calculator.href !== "/rehearsal-dinner-cost-calculator"
+  )
+  .slice(0, 4);
+---
+
+<Layout
+  title="Rehearsal Dinner Cost Calculator"
+  description="Use this rehearsal dinner cost calculator to estimate guests, food, drinks, private room fees, minimums, service fees, tax, gratuity, welcome-party creep, and budget pressure."
+>
+  <style>
+    .container {
+      max-width: 940px;
+      margin: auto;
+    }
+
+    .calculator {
+      background: var(--card);
+      padding: 40px;
+      border-radius: 24px;
+      border: 1px solid var(--border);
+      box-shadow: var(--shadow-soft);
+    }
+
+    .calculator h2 {
+      margin-top: 0;
+      font-size: 2rem;
+      margin-bottom: 18px;
+      color: var(--text);
+      letter-spacing: -0.03em;
+    }
+
+    .calculator-intro {
+      color: var(--muted);
+      line-height: 1.8;
+      margin-bottom: 30px;
+      font-size: 1.05rem;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 22px;
+    }
+
+    .field label {
+      display: block;
+      font-weight: 800;
+      margin-bottom: 10px;
+      color: var(--text);
+    }
+
+    .field input,
+    .field select {
+      width: 100%;
+      padding: 16px;
+      border-radius: 12px;
+      border: 1px solid var(--border);
+      font-size: 1rem;
+      box-sizing: border-box;
+      background: #ffffff;
+      color: var(--text);
+    }
+
+    .field input:focus,
+    .field select:focus {
+      outline: 3px solid rgba(15, 110, 86, 0.18);
+      border-color: var(--primary);
+    }
+
+    button {
+      margin-top: 30px;
+      background: var(--button);
+      color: white;
+      border: none;
+      padding: 18px 32px;
+      border-radius: 999px;
+      font-size: 1.05rem;
+      font-weight: 800;
+      cursor: pointer;
+      transition:
+        opacity 0.2s ease,
+        transform 0.2s ease;
+    }
+
+    button:hover {
+      opacity: 0.92;
+      transform: translateY(-1px);
+    }
+
+    .results {
+      margin-top: 36px;
+      background: var(--surface-warm);
+      padding: 32px;
+      border-radius: 24px;
+      border: 1px solid var(--border);
+      box-shadow: var(--shadow-soft);
+      display: none;
+    }
+
+    .results.visible {
+      display: block;
+    }
+
+    .result-label {
+      font-size: 0.86rem;
+      font-weight: 900;
+      color: var(--primary);
+      margin-bottom: 14px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+    }
+
+    .total-price {
+      font-size: clamp(2.55rem, 6vw, 4.25rem);
+      font-weight: 950;
+      color: var(--text);
+      line-height: 1.02;
+      margin-bottom: 10px;
+      letter-spacing: -0.055em;
+    }
+
+    .pressure-pill {
+      display: inline-flex;
+      align-items: center;
+      margin: 8px 0 22px;
+      padding: 9px 13px;
+      border-radius: 999px;
+      background: #eef8f3;
+      color: var(--primary-dark);
+      font-weight: 900;
+      border: 1px solid #cfeee1;
+    }
+
+    .pressure-meter {
+      width: 100%;
+      height: 14px;
+      background: #e7eadf;
+      border-radius: 999px;
+      overflow: hidden;
+      margin: 10px 0 24px;
+    }
+
+    .pressure-fill {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, #0f6e56, #b45309, #b91c1c);
+      border-radius: 999px;
+      transition: width 0.25s ease;
+    }
+
+    .result-details {
+      color: var(--muted);
+      line-height: 1.9;
+      font-size: 1.02rem;
+    }
+
+    .result-details p {
+      margin: 0 0 12px;
+    }
+
+    .mini-summary,
+    .scope-check {
+      margin-top: 24px;
+      padding: 20px;
+      border-radius: 18px;
+      background: #ffffff;
+      border: 1px solid var(--border);
+      color: var(--muted);
+      line-height: 1.8;
+    }
+
+    .scope-check strong,
+    .mini-summary strong {
+      color: var(--text);
+    }
+
+    .disclaimer {
+      margin-top: 24px;
+      font-size: 0.9rem;
+      color: var(--muted);
+      line-height: 1.7;
+    }
+
+    .content-section {
+      margin-top: 62px;
+    }
+
+    .content-section h2 {
+      font-size: 2rem;
+      margin-bottom: 18px;
+      color: var(--text);
+      letter-spacing: -0.03em;
+    }
+
+    .content-section p,
+    .content-section li {
+      font-size: 1.08rem;
+      line-height: 1.9;
+      color: var(--muted);
+    }
+
+    .content-link {
+      color: var(--primary);
+      font-weight: 800;
+      text-decoration: none;
+    }
+
+    .content-link:hover {
+      text-decoration: underline;
+    }
+
+    .red-flags {
+      margin-top: 62px;
+      background: #fff7f7;
+      border: 1px solid #fecaca;
+      border-radius: 24px;
+      padding: 32px;
+    }
+
+    .red-flags h2 {
+      margin-top: 0;
+      color: #7f1d1d;
+      letter-spacing: -0.03em;
+    }
+
+    .red-flags p,
+    .red-flags li {
+      color: #7f1d1d;
+      line-height: 1.8;
+    }
+
+    @media (max-width: 768px) {
+      .calculator {
+        padding: 24px;
+      }
+
+      .grid {
+        grid-template-columns: 1fr;
+      }
+
+      .calculator h2,
+      .content-section h2 {
+        font-size: 1.7rem;
+      }
+
+      .results {
+        padding: 24px;
+      }
+    }
+  </style>
+
+  <div class="container">
+    <CalculatorPageShell
+      eyebrow="Rehearsal Dinner Cost Calculator"
+      title="Rehearsal Dinner Cost Calculator"
+      description="Estimate the full cost of a rehearsal dinner or welcome-party-adjacent event, including guest scope, food, drinks, room fees, minimums, service charges, tax, gratuity, and budget pressure."
+    >
+      <div class="calculator">
+        <h2>Estimate Rehearsal Dinner Cost</h2>
+
+        <p class="calculator-intro">
+          A rehearsal dinner can be a small thank-you meal or it can quietly become
+          a second reception. This calculator separates the core rehearsal group
+          from optional out-of-town guests, then adds food, drinks, private room
+          costs, minimums, service fees, tax, gratuity, and welcome-party creep.
+        </p>
+
+        <div class="grid">
+          <div class="field">
+            <label for="eventScope">Event Scope</label>
+            <select id="eventScope">
+              <option value="" selected disabled>Select event scope</option>
+              <option value="core">Core rehearsal dinner only</option>
+              <option value="expanded">Expanded family dinner</option>
+              <option value="welcome">Welcome party style</option>
+              <option value="casual">Casual hosted gathering</option>
+            </select>
+          </div>
+
+          <div class="field">
+            <label for="mealStyle">Meal Style</label>
+            <select id="mealStyle">
+              <option value="" selected disabled>Select meal style</option>
+              <option value="casual">Casual restaurant or pizza/tacos</option>
+              <option value="buffet">Buffet or family style</option>
+              <option value="plated">Plated private-room dinner</option>
+              <option value="cocktail">Cocktail and appetizers</option>
+              <option value="brunch">Brunch or lunch</option>
+            </select>
+          </div>
+
+          <div class="field">
+            <label for="weddingPartyGuests">Wedding Party and Partners</label>
+            <input id="weddingPartyGuests" type="number" placeholder="Example: 18" />
+          </div>
+
+          <div class="field">
+            <label for="immediateFamilyGuests">Immediate Family Guests</label>
+            <input id="immediateFamilyGuests" type="number" placeholder="Example: 16" />
+          </div>
+
+          <div class="field">
+            <label for="extraFamilyGuests">Extra Family or VIP Guests</label>
+            <input id="extraFamilyGuests" type="number" placeholder="Example: 12" />
+          </div>
+
+          <div class="field">
+            <label for="outOfTownGuests">Out-of-Town Guests Invited</label>
+            <input id="outOfTownGuests" type="number" placeholder="Example: 30" />
+          </div>
+
+          <div class="field">
+            <label for="kidsGuests">Kids or Lower-Cost Guests</label>
+            <input id="kidsGuests" type="number" placeholder="Example: 6" />
+          </div>
+
+          <div class="field">
+            <label for="adultMealCost">Adult Meal Cost per Guest</label>
+            <input id="adultMealCost" type="number" placeholder="Example: 55" />
+          </div>
+
+          <div class="field">
+            <label for="kidMealCost">Kids Meal Cost per Guest</label>
+            <input id="kidMealCost" type="number" placeholder="Example: 22" />
+          </div>
+
+          <div class="field">
+            <label for="drinkCost">Drinks or Bar Cost per Adult</label>
+            <input id="drinkCost" type="number" placeholder="Example: 24" />
+          </div>
+
+          <div class="field">
+            <label for="dessertCost">Dessert or Cake Cost per Guest</label>
+            <input id="dessertCost" type="number" placeholder="Example: 7" />
+          </div>
+
+          <div class="field">
+            <label for="lateNightCost">After-Dinner Drinks or Welcome Snack per Guest</label>
+            <input id="lateNightCost" type="number" placeholder="Example: 8" />
+          </div>
+
+          <div class="field">
+            <label for="roomFee">Private Room or Venue Fee</label>
+            <input id="roomFee" type="number" placeholder="Example: 500" />
+          </div>
+
+          <div class="field">
+            <label for="minimumSpend">Food and Beverage Minimum</label>
+            <input id="minimumSpend" type="number" placeholder="Example: 3500" />
+          </div>
+
+          <div class="field">
+            <label for="decorCost">Simple Decor, Florals, or Signage</label>
+            <input id="decorCost" type="number" placeholder="Example: 250" />
+          </div>
+
+          <div class="field">
+            <label for="inviteCost">Invites, Printed Menus, or Place Cards</label>
+            <input id="inviteCost" type="number" placeholder="Example: 150" />
+          </div>
+
+          <div class="field">
+            <label for="audioCost">Microphone, Slideshow, or AV Fee</label>
+            <input id="audioCost" type="number" placeholder="Example: 200" />
+          </div>
+
+          <div class="field">
+            <label for="transportCost">Shuttle, Rideshare, or Parking Support</label>
+            <input id="transportCost" type="number" placeholder="Example: 400" />
+          </div>
+
+          <div class="field">
+            <label for="serviceFee">Service Fee Percentage</label>
+            <input id="serviceFee" type="number" placeholder="Example: 22" />
+          </div>
+
+          <div class="field">
+            <label for="taxRate">Tax Rate Percentage</label>
+            <input id="taxRate" type="number" placeholder="Example: 8" />
+          </div>
+
+          <div class="field">
+            <label for="gratuityRate">Additional Gratuity Percentage</label>
+            <input id="gratuityRate" type="number" placeholder="Example: 5" />
+          </div>
+
+          <div class="field">
+            <label for="totalWeddingBudget">Total Wedding Budget</label>
+            <input id="totalWeddingBudget" type="number" placeholder="Example: 30000" />
+          </div>
+
+          <div class="field">
+            <label for="rehearsalFund">Cash Available for Rehearsal Dinner</label>
+            <input id="rehearsalFund" type="number" placeholder="Example: 3500" />
+          </div>
+
+          <div class="field">
+            <label for="outsideHelp">Family Help or Host Contribution</label>
+            <input id="outsideHelp" type="number" placeholder="Example: 2000" />
+          </div>
+
+          <div class="field">
+            <label for="monthsUntilWedding">Months Until Wedding</label>
+            <input id="monthsUntilWedding" type="number" placeholder="Example: 10" />
+          </div>
+
+          <div class="field">
+            <label for="monthlyIncome">Monthly Take-Home Income</label>
+            <input id="monthlyIncome" type="number" placeholder="Example: 6500" />
+          </div>
+
+          <div class="field">
+            <label for="emergencySavings">Emergency Savings After Paying</label>
+            <input id="emergencySavings" type="number" placeholder="Example: 12000" />
+          </div>
+
+          <div class="field">
+            <label for="currentWeddingDebt">Current Wedding Debt</label>
+            <input id="currentWeddingDebt" type="number" placeholder="Example: 0" />
+          </div>
+
+          <div class="field">
+            <label for="hospitalityPriority">Hospitality Priority</label>
+            <select id="hospitalityPriority">
+              <option value="" selected disabled>Select hospitality priority</option>
+              <option value="low">Keep it simple</option>
+              <option value="medium">Nice, but controlled</option>
+              <option value="high">Hosting guests is a top priority</option>
+            </select>
+          </div>
+        </div>
+
+        <button id="rehearsalButton" type="button">Calculate Rehearsal Dinner Cost</button>
+
+        <div class="results" id="results">
+          <div class="result-label">Estimated Rehearsal Dinner Cost</div>
+
+          <div class="total-price" id="totalPrice"></div>
+
+          <div class="pressure-pill" id="pressurePill"></div>
+
+          <div class="pressure-meter" aria-hidden="true">
+            <div class="pressure-fill" id="pressureFill"></div>
+          </div>
+
+          <div class="result-details" id="resultDetails"></div>
+
+          <div class="scope-check" id="scopeCheck"></div>
+
+          <div class="mini-summary" id="rehearsalSummary"></div>
+
+          <div class="disclaimer">
+            This estimate is educational and uses simplified assumptions. Actual
+            restaurant, venue, catering, bar, tax, service fee, gratuity, and
+            minimum-spend rules may calculate differently.
+          </div>
+        </div>
+      </div>
+
+      <section class="content-section">
+        <h2>Why a Rehearsal Dinner Needs a Separate Calculator</h2>
+
+        <p>
+          A rehearsal dinner is not the same as wedding catering. The guest list is
+          smaller, the host may be different, the timing is compressed, and the
+          social pressure can be awkward. The cost risk comes from scope creep:
+          adding out-of-town guests, welcome drinks, speeches, transportation, and
+          private-room minimums until the night before the wedding becomes another
+          large event.
+        </p>
+
+        <p>
+          This calculator focuses on who is invited, what kind of meal is planned,
+          whether there is a food and beverage minimum, how drinks are handled, and
+          whether the event still fits the full wedding budget after the main
+          wedding costs are considered.
+        </p>
+
+        <p>
+          For the bigger picture, compare this result with the
+          <a class="content-link" href="/wedding-calculators">
+            wedding budget calculators hub
+          </a>
+          or the
+          <a class="content-link" href="/wedding-catering-cost-calculator">
+            wedding catering cost calculator
+          </a>.
+        </p>
+      </section>
+
+      <KeyCostCategories
+        items={[
+          {
+            title: "Invite scope",
+            description:
+              "The biggest rehearsal dinner lever is whether the event includes only the core rehearsal group or expands to out-of-town guests and welcome-party expectations.",
+          },
+          {
+            title: "Meal and drink structure",
+            description:
+              "A casual hosted meal, plated private-room dinner, buffet, cocktail reception, or welcome drinks format can change cost quickly.",
+          },
+          {
+            title: "Private room and minimums",
+            description:
+              "Room fees, food and beverage minimums, bar minimums, service fees, and taxes can matter more than the menu price alone.",
+          },
+          {
+            title: "Night-before extras",
+            description:
+              "Decor, printed menus, AV for speeches, slideshows, transportation, parking, and after-dinner drinks can make the event feel larger than planned.",
+          },
+          {
+            title: "Host contribution and pressure",
+            description:
+              "The calculator separates confirmed family help or host contribution from the couple's uncovered cost and cash gap.",
+          },
+        ]}
+      />
+
+      <ReduceCostTips
+        items={[
+          "Decide the invite rule before picking the restaurant: core rehearsal group, expanded family, or welcome party.",
+          "Ask for the all-in number with tax, service fee, gratuity, room fee, and minimum spend included.",
+          "Use a hosted beer-and-wine limit, drink tickets, or a shorter bar window if alcohol is driving the estimate.",
+          "Choose a restaurant or casual venue that already looks good instead of adding decor to a plain room.",
+          "Keep speeches, slideshows, and AV simple if the room charges extra for microphones or screens.",
+          "Do not let guilt over out-of-town guests create a second reception if the main wedding budget is already tight.",
+        ]}
+      />
+
+      <CalculatorAssumptions
+        items={[
+          "Adults are calculated from wedding party, immediate family, extra family, and out-of-town guests.",
+          "Kids are calculated separately using the kids meal cost.",
+          "Food and drink subtotal is compared with any food and beverage minimum, and the higher number is used.",
+          "Service fee, tax, and gratuity are estimated as percentages of the rehearsal dinner subtotal.",
+          "Outside help reduces out-of-pocket cost before pressure is calculated.",
+          "If outside help covers the full estimated cost, pressure is treated as minimal.",
+        ]}
+      />
+
+      <section class="content-section">
+        <h2>The Welcome-Party Creep Problem</h2>
+
+        <p>
+          Rehearsal dinner pressure usually starts with one sentence: "Should we
+          invite the out-of-town guests too?" Sometimes the answer is yes. It can
+          be generous, warm, and practical. But it changes the math immediately.
+          More guests means more meals, more drinks, more room needs, and more
+          pressure to make the night feel like an official event.
+        </p>
+
+        <p>
+          A healthy plan names the event honestly. If it is a small rehearsal
+          dinner, keep it small. If it is a welcome party, budget it like one. The
+          expensive middle ground is pretending it is still a simple dinner after
+          the guest list has doubled.
+        </p>
+      </section>
+
+      <section class="red-flags" id="FinancialRedFlags">
+        <h2>Rehearsal Dinner Red Flags</h2>
+
+        <p>
+          A rehearsal dinner deserves extra caution when the social pressure is
+          bigger than the budget or the quote hides the full restaurant math.
+        </p>
+
+        <ul>
+          <li>The event is described as a small dinner but includes most out-of-town guests.</li>
+          <li>The quote does not include tax, service fee, gratuity, room fee, or minimum spend.</li>
+          <li>The restaurant minimum forces a larger menu or bar package than needed.</li>
+          <li>Alcohol, after-dinner drinks, transportation, or AV are not included in the estimate.</li>
+          <li>The host contribution is assumed but not confirmed.</li>
+          <li>The dinner requires credit card debt or drains cash needed for the wedding day.</li>
+        </ul>
+      </section>
+
+      <div class="content-section">
+        <FAQSection title="Rehearsal Dinner Cost FAQ" faqs={rehearsalDinnerFaqs} />
+      </div>
+
+      <div class="content-section">
+        <RelatedCalculators calculators={relatedCalculators} />
+      </div>
+    </CalculatorPageShell>
+
+    <MethodologySection category="rehearsal dinner cost estimates" updated="July 2026" />
+  </div>
+
+  <script is:inline>
+    const getNumber = (id) => {
+      const rawValue = document.getElementById(id)?.value;
+      const value = Number(rawValue);
+      return Number.isFinite(value) && value >= 0 ? value : 0;
+    };
+
+    const getValue = (id) => document.getElementById(id)?.value || "";
+
+    function formatMoney(value) {
+      return value.toLocaleString(undefined, {
+        style: "currency",
+        currency: "USD",
+        minimumFractionDigits: 0,
+        maximumFractionDigits: 0,
+      });
+    }
+
+    function formatPercent(value) {
+      return `${value.toFixed(0)}%`;
+    }
+
+    function clamp(value, min, max) {
+      return Math.min(Math.max(value, min), max);
+    }
+
+    function mealStyleMultiplier(style) {
+      const multipliers = {
+        casual: 0.78,
+        buffet: 0.92,
+        plated: 1.12,
+        cocktail: 0.88,
+        brunch: 0.72,
+      };
+
+      return multipliers[style] || 1;
+    }
+
+    function scopePressure(scope) {
+      const pressure = {
+        core: 0,
+        expanded: 6,
+        welcome: 14,
+        casual: -4,
+      };
+
+      return pressure[scope] || 0;
+    }
+
+    function scopeLabel(scope) {
+      const labels = {
+        core: "core rehearsal dinner",
+        expanded: "expanded family dinner",
+        welcome: "welcome-party style event",
+        casual: "casual hosted gathering",
+      };
+
+      return labels[scope] || "rehearsal dinner";
+    }
+
+    function priorityAdjustment(priority) {
+      if (priority === "high") {
+        return -8;
+      }
+
+      if (priority === "low") {
+        return 7;
+      }
+
+      return 0;
+    }
+
+    function getPressureLabel(score) {
+      if (score >= 75) {
+        return "High rehearsal dinner pressure";
+      }
+
+      if (score >= 50) {
+        return "Moderate rehearsal dinner pressure";
+      }
+
+      if (score >= 25) {
+        return "Manageable rehearsal dinner pressure";
+      }
+
+      return "Low rehearsal dinner pressure";
+    }
+
+    function calculateRehearsalDinner() {
+      const eventScope = getValue("eventScope");
+      const mealStyle = getValue("mealStyle");
+      const weddingPartyGuests = getNumber("weddingPartyGuests");
+      const immediateFamilyGuests = getNumber("immediateFamilyGuests");
+      const extraFamilyGuests = getNumber("extraFamilyGuests");
+      const outOfTownGuests = getNumber("outOfTownGuests");
+      const kidsGuests = getNumber("kidsGuests");
+      const adultMealCost = getNumber("adultMealCost");
+      const kidMealCost = getNumber("kidMealCost");
+      const drinkCost = getNumber("drinkCost");
+      const dessertCost = getNumber("dessertCost");
+      const lateNightCost = getNumber("lateNightCost");
+      const roomFee = getNumber("roomFee");
+      const minimumSpend = getNumber("minimumSpend");
+      const decorCost = getNumber("decorCost");
+      const inviteCost = getNumber("inviteCost");
+      const audioCost = getNumber("audioCost");
+      const transportCost = getNumber("transportCost");
+      const serviceFee = getNumber("serviceFee") / 100;
+      const taxRate = getNumber("taxRate") / 100;
+      const gratuityRate = getNumber("gratuityRate") / 100;
+      const totalWeddingBudget = getNumber("totalWeddingBudget");
+      const rehearsalFund = getNumber("rehearsalFund");
+      const outsideHelp = getNumber("outsideHelp");
+      const monthsUntilWedding = Math.max(getNumber("monthsUntilWedding"), 1);
+      const monthlyIncome = getNumber("monthlyIncome");
+      const emergencySavings = getNumber("emergencySavings");
+      const currentWeddingDebt = getNumber("currentWeddingDebt");
+      const hospitalityPriority = getValue("hospitalityPriority");
+
+      const results = document.getElementById("results");
+      const totalPrice = document.getElementById("totalPrice");
+      const pressurePill = document.getElementById("pressurePill");
+      const pressureFill = document.getElementById("pressureFill");
+      const resultDetails = document.getElementById("resultDetails");
+      const scopeCheck = document.getElementById("scopeCheck");
+      const rehearsalSummary = document.getElementById("rehearsalSummary");
+
+      results.classList.add("visible");
+
+      const adultGuests =
+        weddingPartyGuests +
+        immediateFamilyGuests +
+        extraFamilyGuests +
+        outOfTownGuests;
+      const totalGuests = adultGuests + kidsGuests;
+
+      if (totalGuests <= 0 || adultMealCost <= 0) {
+        totalPrice.textContent = "$0";
+        pressurePill.textContent = "Enter guest count and meal cost";
+        pressureFill.style.width = "0%";
+        resultDetails.innerHTML =
+          "<p>Enter at least rehearsal dinner guests and adult meal cost to estimate the event.</p>";
+        scopeCheck.textContent = "";
+        rehearsalSummary.textContent = "";
+        return;
+      }
+
+      const adjustedAdultMealCost =
+        adultMealCost * mealStyleMultiplier(mealStyle);
+      const adultFoodTotal = adultGuests * adjustedAdultMealCost;
+      const kidsFoodTotal = kidsGuests * kidMealCost;
+      const drinkTotal = adultGuests * drinkCost;
+      const dessertTotal = totalGuests * dessertCost;
+      const lateNightTotal = totalGuests * lateNightCost;
+      const foodDrinkSubtotal =
+        adultFoodTotal + kidsFoodTotal + drinkTotal + dessertTotal + lateNightTotal;
+      const minimumSpendGap = Math.max(minimumSpend - foodDrinkSubtotal, 0);
+      const billableFoodDrink = Math.max(foodDrinkSubtotal, minimumSpend);
+
+      const extrasTotal =
+        roomFee + decorCost + inviteCost + audioCost + transportCost;
+      const preFeeSubtotal = billableFoodDrink + extrasTotal;
+      const serviceFeeTotal = preFeeSubtotal * serviceFee;
+      const gratuityTotal = preFeeSubtotal * gratuityRate;
+      const taxTotal = (preFeeSubtotal + serviceFeeTotal) * taxRate;
+      const totalCost =
+        preFeeSubtotal + serviceFeeTotal + gratuityTotal + taxTotal;
+
+      const helpApplied = Math.min(outsideHelp, totalCost);
+      const outOfPocketCost = Math.max(totalCost - helpApplied, 0);
+      const cashGap = Math.max(outOfPocketCost - rehearsalFund, 0);
+      const monthlySavingsNeeded = cashGap / monthsUntilWedding;
+      const budgetShare =
+        totalWeddingBudget > 0 ? (totalCost / totalWeddingBudget) * 100 : 0;
+      const emergencyRatio =
+        emergencySavings > 0 ? outOfPocketCost / emergencySavings : 999;
+      const costPerGuest = totalCost / totalGuests;
+      const outOfTownShare =
+        adultGuests > 0 ? (outOfTownGuests / adultGuests) * 100 : 0;
+
+      let pressureScore = 0;
+
+      pressureScore += budgetShare > 12 ? 24 : budgetShare > 8 ? 14 : budgetShare > 5 ? 7 : 0;
+      pressureScore += cashGap > 0 ? 18 : 0;
+      pressureScore += monthlyIncome > 0 && monthlySavingsNeeded > monthlyIncome * 0.08 ? 16 : 0;
+      pressureScore += emergencyRatio > 0.8 ? 18 : emergencyRatio > 0.4 ? 10 : 0;
+      pressureScore += currentWeddingDebt > 0 ? 10 : 0;
+      pressureScore += minimumSpendGap > foodDrinkSubtotal * 0.25 ? 8 : minimumSpendGap > 0 ? 4 : 0;
+      pressureScore += outOfTownShare > 45 ? 10 : outOfTownShare > 25 ? 5 : 0;
+      pressureScore += scopePressure(eventScope);
+      pressureScore += priorityAdjustment(hospitalityPriority);
+
+      if (outsideHelp >= totalCost) {
+        pressureScore = 5;
+      }
+
+      pressureScore = clamp(pressureScore, 0, 100);
+
+      const label = getPressureLabel(pressureScore);
+      const tenGuestSwing =
+        10 *
+        (adjustedAdultMealCost + drinkCost + dessertCost + lateNightCost) *
+        (1 + serviceFee + gratuityRate + taxRate);
+
+      totalPrice.textContent = formatMoney(totalCost);
+      pressurePill.textContent = `${label} - ${formatPercent(pressureScore)}`;
+      pressureFill.style.width = `${pressureScore}%`;
+
+      resultDetails.innerHTML = `
+        <p><strong>Estimated guest count:</strong> ${totalGuests.toLocaleString()} total guests, including ${adultGuests.toLocaleString()} adults and ${kidsGuests.toLocaleString()} kids.</p>
+
+        <p><strong>Food, drinks, dessert, and after-dinner items:</strong> ${formatMoney(foodDrinkSubtotal)} before any minimum-spend adjustment.</p>
+
+        <p><strong>Minimum-spend gap:</strong> ${formatMoney(minimumSpendGap)}.</p>
+
+        <p><strong>Room fee, decor, invitations, AV, and transportation:</strong> ${formatMoney(extrasTotal)}.</p>
+
+        <p><strong>Estimated service fee, tax, and gratuity:</strong> ${formatMoney(serviceFeeTotal + taxTotal + gratuityTotal)}.</p>
+
+        <p><strong>Estimated cost per guest:</strong> ${formatMoney(costPerGuest)}.</p>
+
+        <p><strong>Out-of-pocket cost after family help or host contribution:</strong> ${formatMoney(outOfPocketCost)}.</p>
+
+        <p><strong>Estimated share of total wedding budget:</strong> ${formatPercent(budgetShare)}.</p>
+
+        <p><strong>Cash gap after available rehearsal dinner funds:</strong> ${formatMoney(cashGap)}.</p>
+
+        <p><strong>Monthly savings needed until the wedding:</strong> ${formatMoney(monthlySavingsNeeded)} for ${monthsUntilWedding.toFixed(0)} ${monthsUntilWedding === 1 ? "month" : "months"}.</p>
+      `;
+
+      scopeCheck.innerHTML = `
+        <strong>Scope check:</strong> This looks like a <strong>${scopeLabel(eventScope)}</strong>.
+        Out-of-town guests are about <strong>${formatPercent(outOfTownShare)}</strong> of the adult invite list.
+        Every 10 added adult guests changes the estimate by about <strong>${formatMoney(tenGuestSwing)}</strong> after estimated fee and tax effects.
+        If pressure is high, narrow the invite rule before cutting the parts of the meal that make the event hospitable.
+      `;
+
+      rehearsalSummary.innerHTML = `
+        This rehearsal dinner plan is estimated at <strong>${formatMoney(totalCost)}</strong>, or
+        <strong>${formatMoney(costPerGuest)}</strong> per guest. After confirmed help, the estimated out-of-pocket cost is
+        <strong>${formatMoney(outOfPocketCost)}</strong>. The pressure result is <strong>${label.toLowerCase()}</strong>
+        based on invite scope, minimum spend, cash gap, wedding budget share, emergency savings, current wedding debt,
+        host contribution, and monthly savings needed.
+      `;
+    }
+
+    document
+      .getElementById("rehearsalButton")
+      .addEventListener("click", calculateRehearsalDinner);
+  </script>
+</Layout>
+
