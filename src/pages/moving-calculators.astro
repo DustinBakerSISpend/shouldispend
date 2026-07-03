@@ -1,207 +1,696 @@
----
+﻿---
 import Layout from "../layouts/Layout.astro";
 import CalculatorCard from "../components/CalculatorCard.astro";
 import FAQSection from "../components/FAQSection.astro";
 import { calculators } from "../data/calculators.js";
 
-const movingCalculators = calculators.filter(
-  (calculator) => calculator.category === "Moving"
-);
+const movingCalculators = calculators.filter((calculator) => {
+  const category = calculator.category.toLowerCase();
+  const title = calculator.title.toLowerCase();
+  const href = calculator.href.toLowerCase();
+
+  return (
+    category.includes("moving") ||
+    category.includes("apartment") ||
+    title.includes("moving") ||
+    title.includes("move") ||
+    title.includes("first apartment") ||
+    href.includes("moving") ||
+    href.includes("move") ||
+    href.includes("first-apartment")
+  );
+});
 
 const movingFaqs = [
   {
-    question: "What moving costs should I include?",
+    question: "How much should I budget for moving?",
     answer:
-      "Include first month of rent, security deposit, application fees, utility deposits, movers, truck rental, basic furniture, groceries, renters insurance, transportation changes, and emergency savings after the move.",
+      "A realistic moving budget depends on distance, movers, truck rental, deposits, utility setup, furniture, supplies, storage, cleaning, travel, and the cash cushion left after the move.",
   },
   {
-    question: "Is rent the biggest part of moving out?",
+    question: "What moving costs do people forget?",
     answer:
-      "Rent is usually the biggest recurring cost, but move-in cash and setup costs can create pressure before the first normal month even begins.",
+      "Commonly forgotten moving costs include deposits, application fees, utility setup, renter's insurance, boxes, cleaning supplies, food during the move, tips, storage, parking, pet fees, and replacement household items.",
   },
   {
-    question: "Should I count family help?",
+    question: "Should I hire movers or move myself?",
     answer:
-      "Confirmed family help, employer relocation help, gifts, or roommate reimbursements should reduce the uncovered cost. Unconfirmed help should not be treated as guaranteed.",
+      "Hiring movers can make sense when time, distance, stairs, injury risk, heavy furniture, or work schedules make a DIY move unrealistic. A DIY move can be cheaper, but only if the total time and hidden costs are honest.",
   },
   {
-    question: "Can moving pressure be zero?",
+    question: "How much should I spend on a first apartment?",
     answer:
-      "Yes. If outside help covers the move, savings remain strong, and the monthly budget still has room after rent and utilities, the pressure can be zero. There is no artificial minimum pressure.",
+      "A first apartment should be judged by the full move-in cost, not just monthly rent. Deposits, furniture, utilities, groceries, transportation, insurance, and emergency savings all matter.",
   },
   {
-    question: "Is moving out always bad if the score is high?",
+    question: "Should I finance furniture for a first apartment?",
     answer:
-      "No. Some moves are necessary for work, school, family, safety, or independence. A high-pressure result means the plan needs more protection, not that the need is fake.",
+      "Financing furniture is riskier when it adds monthly payments before the new housing budget has settled. Basic essentials usually matter more than furnishing the whole apartment immediately.",
   },
 ];
+
+const featuredMovingLinks = movingCalculators.slice(0, 4).map((calculator) => ({
+  href: calculator.href,
+  title: calculator.title,
+  text: calculator.description,
+}));
+
+const movingCostFactors = [
+  {
+    title: "Move-in cash",
+    text:
+      "Deposits, first month's rent, application fees, admin fees, pet fees, parking, utility setup, and overlap rent can hit before the first normal month begins.",
+  },
+  {
+    title: "Movers or truck rental",
+    text:
+      "Professional movers, truck rental, mileage, fuel, insurance, equipment, stairs, long carries, packing help, and tips can change the true moving cost.",
+  },
+  {
+    title: "Furniture and household basics",
+    text:
+      "A bed, table, seating, cookware, cleaning supplies, tools, trash cans, curtains, lamps, and bathroom basics can add up fast in a first apartment.",
+  },
+  {
+    title: "Utilities and services",
+    text:
+      "Electric, gas, water, trash, internet, renter's insurance, deposits, installation charges, and transfer fees should be included before signing.",
+  },
+  {
+    title: "Storage and timing",
+    text:
+      "Temporary storage, hotel nights, cleaning overlap, lease gaps, closing delays, and travel days can create costs that do not show up in the rent number.",
+  },
+  {
+    title: "Emergency cushion",
+    text:
+      "A move is safer when the household still has cash after deposits, furniture, food, transportation, and setup costs are paid.",
+  },
+];
+
+const pressureFactors = [
+  {
+    title: "Total upfront cost",
+    text:
+      "The safest moving budget includes every cost needed to get into the new place, not just the truck or rent deposit.",
+  },
+  {
+    title: "Monthly reset",
+    text:
+      "A move changes rent, utilities, transportation, groceries, insurance, and commute costs all at once.",
+  },
+  {
+    title: "Debt added",
+    text:
+      "Credit cards, furniture financing, moving loans, and buy-now-pay-later purchases can make the move feel cheaper now and tighter later.",
+  },
+  {
+    title: "Distance and complexity",
+    text:
+      "Long-distance moves, stairs, elevators, large furniture, children, pets, tight timelines, and work schedules increase the risk of surprise costs.",
+  },
+  {
+    title: "First-apartment gap",
+    text:
+      "First apartments often require buying basic items that established households already own.",
+  },
+  {
+    title: "Recovery room",
+    text:
+      "The move is less risky when there is enough money left to handle groceries, bills, repairs, and the first few imperfect months.",
+  },
+];
+
+const reduceCostTips = [
+  {
+    title: "Separate must-have from nice-to-have",
+    text:
+      "Beds, basic cookware, cleaning supplies, and safety items matter more than decorating the entire place on day one.",
+  },
+  {
+    title: "Price the move both ways",
+    text:
+      "Compare professional movers with truck rental, fuel, mileage, equipment, food, time off work, and injury risk.",
+  },
+  {
+    title: "Buy furniture in phases",
+    text:
+      "A slower setup can protect cash and avoid financing furniture before the new budget has proven itself.",
+  },
+  {
+    title: "Watch small setup costs",
+    text:
+      "Trash cans, shower curtains, rugs, tools, lamps, extension cords, pantry basics, and cleaning supplies can quietly raise the first month.",
+  },
+  {
+    title: "Preserve a cash cushion",
+    text:
+      "Do not let the move consume every dollar if the new place still needs groceries, utilities, transportation, and basic repairs.",
+  },
+  {
+    title: "Avoid panic upgrades",
+    text:
+      "Last-minute purchases are often more expensive. A short essentials list usually beats furnishing from stress.",
+  },
+];
+
+const redFlags = [
+  "The move would drain emergency savings to zero.",
+  "Deposits and first-month costs are known, but furniture and setup costs are not.",
+  "The new monthly rent only works in a perfect month.",
+  "Most moving expenses would go on a credit card.",
+  "Furniture financing begins before the new budget has stabilized.",
+  "Utility setup, renter's insurance, parking, storage, or pet fees have not been included.",
+  "The move depends on future overtime, bonuses, or help that is not confirmed.",
+  "The household is moving because of pressure, timing panic, or comparison instead of a workable plan.",
+];
+
+const assumptions = [
+  "Monthly income means take-home pay, not gross income.",
+  "Moving affordability includes upfront costs, new monthly costs, furniture, utilities, transportation, and emergency savings.",
+  "First-apartment spending should focus on basic function before full furnishing.",
+  "A cheaper DIY move is not always cheaper once time, fuel, supplies, injury risk, and complexity are included.",
+  "A move is less risky when cash remains available after move-in.",
+  "These calculators are educational tools and do not replace legal, housing, tax, insurance, or financial advice.",
+];
+
+const relatedGuides = [
+  {
+    href: "/rent-calculators",
+    title: "Rent Calculators",
+    text:
+      "Compare rent, utilities, transportation, debt, savings, and monthly breathing room before signing.",
+  },
+  {
+    href: "/budget-rule-calculators",
+    title: "Budget Rule Calculators",
+    text:
+      "Pressure-test moving costs against savings, debt, income, and budget rules.",
+  },
+  {
+    href: "/how-much-emergency-savings-should-i-have",
+    title: "Emergency Savings Calculator",
+    text:
+      "See how much cash cushion to preserve before or after a move.",
+  },
+  {
+    href: "/grocery-calculators",
+    title: "Grocery Calculators",
+    text:
+      "Plan for the food and household basics that show up during the first month.",
+  },
+  {
+    href: "/home-improvement-calculators",
+    title: "Home Improvement Calculators",
+    text:
+      "Compare repair and setup costs if the new place needs immediate work.",
+  },
+  {
+    href: "/calculators",
+    title: "All ShouldISpend Calculators",
+    text:
+      "Browse every calculator for major household decisions and spending pressure.",
+  },
+];
+
+const internalLinks = movingCalculators.slice(0, 8).map((calculator) => ({
+  href: calculator.href,
+  label: calculator.title
+    .replace("Should I Spend ", "")
+    .replace(" Calculator", "")
+    .replace("?", "")
+    .toLowerCase(),
+}));
 ---
 
 <Layout
-  title="Moving and First Apartment Calculators | ShouldISpend"
-  description="Use moving and first apartment calculators to estimate move-out costs, deposits, utilities, furniture, savings cushion, debt risk, and monthly flexibility."
+  title="Moving Calculators | First Apartment, Movers and Move-In Costs"
+  description="Use moving calculators to evaluate movers, first apartment costs, deposits, furniture, utilities, savings, debt, and move-in affordability."
 >
   <style>
-    .container { max-width: 1100px; margin: 0 auto; padding: 80px 24px 96px; }
-    .eyebrow { color: var(--primary); text-transform: uppercase; letter-spacing: 2px; font-size: 0.8rem; font-weight: 800; margin-bottom: 16px; }
-    h1 { font-size: clamp(2.7rem, 7vw, 4.8rem); line-height: 1; margin: 0 0 24px; max-width: 920px; color: var(--text); letter-spacing: -0.045em; }
-    .intro, .content-section p, .content-section li { color: var(--muted); line-height: 1.8; font-size: 1.05rem; }
-    .intro { max-width: 850px; margin-bottom: 54px; }
-    .grid, .link-grid, .info-grid { display: grid; gap: 24px; }
-    .grid { grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); margin-top: 32px; }
-    .link-grid, .info-grid { grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); margin-top: 26px; }
-    .content-section { max-width: 900px; margin-top: 76px; }
-    .content-section h2 { font-size: clamp(1.8rem, 4vw, 2.25rem); line-height: 1.15; margin: 0 0 18px; color: var(--text); letter-spacing: -0.03em; }
-    .content-section h3 { margin: 0 0 10px; color: var(--text); }
-    .link-card, .info-card, .pillar-card { display: block; background: var(--card); border: 1px solid var(--border); border-radius: 18px; padding: 22px; text-decoration: none; color: inherit; }
-    .pillar-card { background: #f8fafc; border-color: #cbd5e1; margin-top: 26px; }
-    .link-card strong, .pillar-card strong { display: block; color: var(--text); margin-bottom: 10px; font-size: 1.02rem; }
-    .link-card span, .pillar-card span, .info-card p { display: block; color: var(--muted); line-height: 1.7; font-size: 0.96rem; margin: 0; }
-    ul { padding-left: 22px; }
-    li { margin-bottom: 10px; }
-    .red-list li::marker { color: #b91c1c; }
+    .hub-page {
+      width: 92%;
+      max-width: 1120px;
+      margin: 0 auto;
+      padding: 72px 0 20px;
+    }
+
+    .hero {
+      max-width: 940px;
+      margin-bottom: 56px;
+    }
+
+    .eyebrow {
+      color: var(--primary);
+      text-transform: uppercase;
+      letter-spacing: 1.8px;
+      font-size: 0.78rem;
+      font-weight: 800;
+      margin-bottom: 16px;
+    }
+
+    h1 {
+      max-width: 980px;
+      font-size: clamp(2.75rem, 6.4vw, 5rem);
+      line-height: 0.98;
+      letter-spacing: -0.055em;
+      margin: 0 0 24px;
+      color: var(--text);
+    }
+
+    h2 {
+      font-size: clamp(1.85rem, 3.6vw, 2.65rem);
+      line-height: 1.08;
+      letter-spacing: -0.035em;
+      margin: 0 0 18px;
+      color: var(--text);
+    }
+
+    h3 {
+      color: var(--text);
+      font-size: 1.15rem;
+      line-height: 1.32;
+      margin: 0 0 10px;
+    }
+
+    p,
+    li {
+      color: var(--muted);
+      line-height: 1.85;
+      font-size: 1.04rem;
+    }
+
+    .intro {
+      max-width: 880px;
+      color: var(--muted);
+      font-size: 1.1rem;
+      line-height: 1.85;
+      margin: 0 0 18px;
+    }
+
+    .section {
+      margin-top: 76px;
+      max-width: 920px;
+    }
+
+    .wide-section {
+      margin-top: 76px;
+    }
+
+    .grid,
+    .info-grid,
+    .link-grid {
+      display: grid;
+      gap: 24px;
+    }
+
+    .grid {
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      margin-top: 34px;
+    }
+
+    .info-grid,
+    .link-grid {
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      margin-top: 28px;
+    }
+
+    .verdict-bar,
+    .callout {
+      margin-top: 56px;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 24px;
+      padding: 32px;
+      box-shadow: var(--shadow-soft);
+    }
+
+    .verdict-label {
+      color: var(--primary);
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      font-size: 0.8rem;
+      font-weight: 800;
+      margin-bottom: 14px;
+    }
+
+    .info-card,
+    .link-card {
+      display: block;
+      border: 1px solid var(--border);
+      background: var(--card);
+      border-radius: 20px;
+      padding: 22px;
+      text-decoration: none;
+      color: inherit;
+    }
+
+    .link-card {
+      transition:
+        transform 0.15s ease,
+        box-shadow 0.15s ease,
+        border-color 0.15s ease;
+    }
+
+    .link-card:hover {
+      transform: translateY(-3px);
+      border-color: var(--primary);
+      box-shadow: var(--shadow-soft);
+    }
+
+    .info-card p,
+    .link-card span {
+      display: block;
+      color: var(--muted);
+      line-height: 1.7;
+      font-size: 0.96rem;
+      margin: 0;
+    }
+
+    .link-card strong {
+      display: block;
+      color: var(--text);
+      line-height: 1.3;
+      font-size: 1.08rem;
+      margin: 0 0 10px;
+    }
+
+    .check-list,
+    .red-flag-list {
+      margin: 22px 0 0;
+      padding: 0;
+      list-style: none;
+      display: grid;
+      gap: 12px;
+    }
+
+    .check-list li,
+    .red-flag-list li {
+      margin: 0;
+      padding: 15px 16px;
+      border-radius: 16px;
+      line-height: 1.55;
+      font-size: 0.96rem;
+    }
+
+    .red-flag-list li {
+      border: 1px solid #fecaca;
+      background: #fff7f7;
+      color: #7f1d1d;
+    }
+
+    .check-list li {
+      border: 1px solid #cfeee1;
+      background: #f1fbf6;
+      color: #173404;
+    }
+
+    .inline-links {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-top: 26px;
+    }
+
+    .inline-links a {
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      padding: 10px 14px;
+      color: var(--primary);
+      text-decoration: none;
+      font-weight: 800;
+      font-size: 0.92rem;
+      background: var(--card);
+    }
+
+    .inline-links a:hover {
+      border-color: var(--primary);
+      transform: translateY(-2px);
+    }
+
+    .dark-callout {
+      background: var(--primary-dark);
+      border-color: var(--primary-dark);
+      color: #ffffff;
+    }
+
+    .dark-callout h2 {
+      color: #ffffff;
+    }
+
+    .dark-callout p {
+      color: #e7eadf;
+    }
+
+    @media (max-width: 720px) {
+      .hub-page {
+        padding: 56px 0 12px;
+      }
+
+      h1 {
+        font-size: 2.55rem;
+        line-height: 1.03;
+      }
+
+      .intro,
+      p,
+      li {
+        font-size: 1rem;
+      }
+
+      .grid,
+      .info-grid,
+      .link-grid {
+        grid-template-columns: 1fr;
+        gap: 18px;
+      }
+
+      .section,
+      .wide-section {
+        margin-top: 58px;
+      }
+
+      .verdict-bar,
+      .callout {
+        padding: 24px;
+      }
+    }
   </style>
 
-  <main class="container">
-    <div class="eyebrow">Moving Calculators</div>
+  <main class="hub-page">
+    <section class="hero">
+      <div class="eyebrow">Moving and First Apartment Calculators</div>
 
-    <h1>Moving and First Apartment Calculators</h1>
+      <h1>Moving costs are bigger than the truck.</h1>
 
-    <p class="intro">
-      Moving out can look affordable when the focus is only on rent, but the
-      real decision includes deposits, utility setup, furniture, movers, basic
-      supplies, groceries, transportation, debt payments, emergency savings, and
-      monthly breathing room after the lease begins.
-    </p>
+      <p class="intro">
+        Moving can look manageable until deposits, utility setup, furniture,
+        supplies, storage, cleaning, food, transportation, and the first few bills
+        arrive together.
+      </p>
 
-    <div class="grid">
-      {movingCalculators.map((calculator) => (
-        <CalculatorCard
-          category={calculator.category}
-          title={calculator.title}
-          description={calculator.description}
-          href={calculator.href}
-        />
-      ))}
+      <p class="intro">
+        These calculators help pressure-test moving and first-apartment decisions
+        against upfront cash, monthly rent, debt, savings, and the cost of getting
+        settled.
+      </p>
+
+      {internalLinks.length > 0 && (
+        <div class="inline-links">
+          {internalLinks.map((link) => (
+            <a href={link.href}>{link.label}</a>
+          ))}
+        </div>
+      )}
+    </section>
+
+    {featuredMovingLinks.length > 0 && (
+      <section class="wide-section">
+        <div class="eyebrow">Start here</div>
+        <h2>Common moving and first apartment decisions</h2>
+
+        <div class="link-grid">
+          {featuredMovingLinks.map((link) => (
+            <a class="link-card" href={link.href}>
+              <strong>{link.title}</strong>
+              <span>{link.text}</span>
+            </a>
+          ))}
+        </div>
+      </section>
+    )}
+
+    {movingCalculators.length > 0 && (
+      <section class="wide-section">
+        <div class="eyebrow">All moving calculators</div>
+        <h2>Moving, move-in, and first apartment calculators</h2>
+
+        <p>
+          Use these tools to compare mover costs, deposits, furniture, setup costs,
+          savings, debt, rent pressure, and the money left after the move.
+        </p>
+
+        <div class="grid">
+          {movingCalculators.map((calculator) => (
+            <CalculatorCard
+              category={calculator.category}
+              title={calculator.title}
+              description={calculator.description}
+              href={calculator.href}
+            />
+          ))}
+        </div>
+      </section>
+    )}
+
+    <div class="verdict-bar">
+      <div class="verdict-label">Moving pressure</div>
+
+      <h2>The first month is usually the expensive month.</h2>
+
+      <p>
+        A move is safer when the household can pay deposits, rent, utilities,
+        furniture, groceries, transportation, and basic setup costs without draining
+        every dollar or creating new debt that follows the move.
+      </p>
     </div>
 
-    <section class="content-section">
-      <h2>Start With the Move-Out Calculator</h2>
+    <section class="section">
+      <div class="eyebrow">Decision framework</div>
+      <h2>What moving affordability really means</h2>
 
       <p>
-        The anchor calculator for this cluster estimates whether moving out is
-        realistic after upfront move-in costs, the new monthly budget, savings
-        left afterward, debt load, and confirmed outside help are included.
+        Moving affordability is not just whether the rent or truck fits the budget.
+        It is whether the household can get into the new place, make it functional,
+        and still recover afterward.
       </p>
 
-      <a class="pillar-card" href="/can-i-afford-to-move-out">
-        <strong>Can I Afford to Move Out?</strong>
-        <span>
-          Compare rent, deposits, utilities, furniture, moving costs, take-home
-          income, savings, debt, outside help, and emergency cushion before
-          signing a lease.
-        </span>
-      </a>
+      <p>
+        A first apartment deserves extra caution because the first month often
+        includes basics that established households already own: furniture, cookware,
+        cleaning supplies, tools, bathroom items, pantry staples, and utility setup.
+      </p>
     </section>
 
-    <section id="KeyCostCategories" class="content-section">
-      <h2>Moving Costs People Often Underestimate</h2>
+    <section class="wide-section">
+      <div class="eyebrow">Cost categories</div>
+      <h2>Moving costs that often get missed</h2>
 
       <div class="info-grid">
-        <div class="info-card">
-          <h3>Move-in cash</h3>
-          <p>First month of rent, security deposit, application fees, pet fees, utility deposits, and renters insurance can hit before the first normal month.</p>
-        </div>
-
-        <div class="info-card">
-          <h3>Basic setup costs</h3>
-          <p>A first apartment may require furniture, cookware, bedding, cleaning supplies, tools, internet equipment, and other essentials.</p>
-        </div>
-
-        <div class="info-card">
-          <h3>Monthly bills</h3>
-          <p>Rent must fit beside utilities, groceries, transportation, subscriptions, debt payments, insurance, and savings.</p>
-        </div>
-
-        <div class="info-card">
-          <h3>Emergency cushion</h3>
-          <p>The move is safer when money remains afterward for car repairs, job disruption, medical bills, higher utilities, or lease surprises.</p>
-        </div>
+        {movingCostFactors.map((factor) => (
+          <div class="info-card">
+            <h3>{factor.title}</h3>
+            <p>{factor.text}</p>
+          </div>
+        ))}
       </div>
     </section>
 
-    <section id="FinancialRedFlags" class="content-section">
-      <h2>Moving Red Flags</h2>
+    <section class="wide-section">
+      <div class="eyebrow">Pressure factors</div>
+      <h2>What makes a move manageable or risky</h2>
 
-      <ul class="red-list">
-        <li>The move requires credit card debt for deposits, furniture, or basic supplies.</li>
-        <li>Emergency savings would be drained immediately after moving.</li>
-        <li>Rent fits only before utilities, groceries, transportation, and debt are included.</li>
-        <li>Outside help is assumed but not confirmed.</li>
-        <li>The move depends on a future raise, roommate, or side income that is not guaranteed.</li>
+      <p>
+        A moving calculator should judge the full move: upfront cash, monthly reset,
+        furniture, utilities, transportation, debt, and recovery room.
+      </p>
+
+      <div class="info-grid">
+        {pressureFactors.map((factor) => (
+          <div class="info-card">
+            <h3>{factor.title}</h3>
+            <p>{factor.text}</p>
+          </div>
+        ))}
+      </div>
+    </section>
+
+    <section class="wide-section">
+      <div class="eyebrow">Lower the pressure</div>
+      <h2>Ways to make moving safer</h2>
+
+      <div class="info-grid">
+        {reduceCostTips.map((tip) => (
+          <div class="info-card">
+            <h3>{tip.title}</h3>
+            <p>{tip.text}</p>
+          </div>
+        ))}
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="eyebrow">Warning signs</div>
+      <h2>Moving and first apartment red flags</h2>
+
+      <p>
+        These warning signs do not mean the move cannot happen. They mean the
+        timing, deposits, furniture plan, or monthly reset needs more pressure
+        testing.
+      </p>
+
+      <ul class="red-flag-list">
+        {redFlags.map((flag) => <li>{flag}</li>)}
       </ul>
     </section>
 
-    <section id="ReduceCostTips" class="content-section">
-      <h2>Ways to Lower Moving Pressure</h2>
+    <section class="section">
+      <div class="eyebrow">When spending more can make sense</div>
+      <h2>A more expensive move can be reasonable when it lowers real risk.</h2>
 
-      <ul>
-        <li>Choose a lower-rent place, roommate, or shorter move before using debt.</li>
-        <li>Buy only essential furniture first and delay upgrades.</li>
-        <li>Compare utility setup fees, internet plans, and renters insurance before move-in.</li>
-        <li>Ask for confirmed help with specific costs instead of assuming open-ended support.</li>
-        <li>Delay the move until emergency savings survives the upfront costs.</li>
+      <p>
+        Hiring movers, choosing a safer apartment, paying for storage, or buying
+        better basics can make sense when it protects time, safety, work, commute,
+        health, or a stable first month.
+      </p>
+
+      <p>
+        It becomes riskier when the move is funded mostly with debt, furniture is
+        financed before the budget settles, or every setup purchase feels urgent.
+      </p>
+    </section>
+
+    <section class="section">
+      <div class="eyebrow">Assumptions</div>
+      <h2>How these calculators think about moving costs</h2>
+
+      <p>
+        These assumptions help keep moving and first-apartment results realistic
+        across different households.
+      </p>
+
+      <ul class="check-list">
+        {assumptions.map((assumption) => <li>{assumption}</li>)}
       </ul>
     </section>
 
-    <section id="CalculatorAssumptions" class="content-section">
-      <h2>Moving Calculator Assumptions</h2>
-
-      <p>
-        These calculators use take-home income, current savings, monthly debt
-        payments, upfront moving costs, expected rent, utilities, groceries,
-        transportation, and confirmed outside help. The goal is to estimate
-        pressure after the move, not simply whether the first payment can be made.
-      </p>
-    </section>
-
-    <section id="MethodologySection" class="content-section">
-      <h2>How ShouldISpend Evaluates Moving Affordability</h2>
-
-      <p>
-        ShouldISpend treats moving as both a one-time cost and a recurring
-        monthly commitment. A move becomes lower pressure when confirmed help,
-        strong savings, low debt, and manageable rent leave breathing room after
-        the lease starts.
-      </p>
-
-      <p>
-        A low-pressure result is not a command to move, and a high-pressure
-        result does not mean moving is impossible. The score is a planning signal
-        that helps identify whether the move needs a smaller budget, more savings,
-        a roommate, or a delay.
-      </p>
-    </section>
-
-    <section id="RelatedCalculators" class="content-section">
-      <h2>Related Calculators</h2>
+    <section class="wide-section">
+      <div class="eyebrow">Related tools</div>
+      <h2>Other calculators that connect to moving costs</h2>
 
       <div class="link-grid">
-                <a class="link-card" href="/how-much-should-i-save-before-moving-out"><strong>How Much Should I Save Before Moving Out?</strong><span>Estimate a practical savings target before paying deposits, furniture, moving costs, and first-apartment bills.</span></a>
-        <a class="link-card" href="/first-apartment-cost-calculator"><strong>First Apartment Cost Calculator</strong><span>Estimate rent or mortgage, deposits, utilities, furniture, moving costs, groceries, and setup supplies before move-in.</span></a>
-        <a class="link-card" href="/security-deposit-and-move-in-cost-calculator"><strong>Security Deposit and Move-In Cost Calculator</strong><span>Separate cash due before keys into refundable deposits, non-refundable fees, prepaid housing, credits, and confirmed help.</span></a>
-        <a class="link-card" href="/moving-cost-calculator"><strong>Moving Cost Calculator</strong><span>Estimate DIY, hybrid, and full-service moving costs using movers, truck rental, mileage, fuel, supplies, storage, tips, and access fees.</span></a>
-        <a class="link-card" href="/first-apartment-furniture-cost-calculator"><strong>First Apartment Furniture Cost Calculator</strong><span>Estimate bedroom, living room, kitchen, bathroom, storage, cleaning, decor, delivery, and setup costs by room.</span></a>
-        <a class="link-card" href="/roommate-vs-living-alone-calculator"><strong>Roommate vs. Living Alone Calculator</strong><span>Compare monthly, annual, and first-year costs for living alone versus sharing housing with a roommate.</span></a>
-<a class="link-card" href="/can-i-afford-to-move-out"><strong>Can I Afford to Move Out?</strong><span>Pressure-test the full move-out decision before signing a lease.</span></a>
-        <a class="link-card" href="/how-much-rent-can-i-afford"><strong>How Much Rent Can I Afford?</strong><span>Estimate a realistic rent range using income, debt, utilities, and savings.</span></a>
-        <a class="link-card" href="/should-i-spend-30-percent-income-on-rent"><strong>30% Rent Rule Calculator</strong><span>Check whether the classic rent rule works for your full budget.</span></a>
-        <a class="link-card" href="/how-much-emergency-savings-should-i-have"><strong>Emergency Savings Calculator</strong><span>Estimate how much cushion to keep before and after moving.</span></a>
-        <a class="link-card" href="/what-counts-as-debt"><strong>What Counts as Debt?</strong><span>Know which obligations should be included in affordability decisions.</span></a>
-        <a class="link-card" href="/calculators"><strong>All ShouldISpend Calculators</strong><span>Browse calculators for rent, debt, groceries, cars, travel, and major life costs.</span></a>
+        {relatedGuides.map((guide) => (
+          <a class="link-card" href={guide.href}>
+            <strong>{guide.title}</strong>
+            <span>{guide.text}</span>
+          </a>
+        ))}
       </div>
     </section>
 
-    <FAQSection id="FAQSection" faqs={movingFaqs} />
+    <section class="callout dark-callout">
+      <div class="eyebrow">Use these as pressure tests</div>
+
+      <h2>A move should create a better setup, not a fragile month one.</h2>
+
+      <p>
+        ShouldISpend moving calculators are educational tools. Use them to compare
+        deposits, furniture, movers, utilities, debt, savings, and monthly pressure
+        before committing. They do not replace legal, housing, tax, insurance, or
+        financial advice.
+      </p>
+    </section>
+
+    <FAQSection title="Moving and First Apartment FAQ" faqs={movingFaqs} />
   </main>
 </Layout>

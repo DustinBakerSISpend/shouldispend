@@ -1,4 +1,4 @@
----
+﻿---
 import Layout from "../layouts/Layout.astro";
 import CalculatorCard from "../components/CalculatorCard.astro";
 import FAQSection from "../components/FAQSection.astro";
@@ -8,277 +8,294 @@ const homeImprovementCalculators = calculators.filter(
   (calculator) => calculator.category === "Home Improvement"
 );
 
-const homeImprovementFaqs = [
+const homeFaqs = [
+  {
+    question: "How much should I budget for home repairs each year?",
+    answer:
+      "A realistic annual home repair budget depends on home value, age, climate, condition, roof age, systems risk, emergency savings, and whether repairs are urgent or optional.",
+  },
   {
     question: "Should I use emergency savings for home repairs?",
     answer:
-      "Yes, if the repair protects safety, prevents major damage, or keeps the home livable. Emergency savings is harder to justify for cosmetic upgrades, optional remodeling, or projects that can wait until cash is rebuilt.",
-  },
-  {
-    question: "Are home repairs different from home improvements?",
-    answer:
-      "Yes. A repair fixes a problem. An improvement upgrades the home. A broken furnace, roof leak, sewer backup, or electrical hazard should be judged differently from new flooring, countertops, paint, or a larger remodel.",
+      "Emergency savings can make sense for urgent repairs that protect safety, shelter, water, heat, electrical systems, or further damage. It is riskier when the repair is cosmetic or drains the entire cushion.",
   },
   {
     question: "Should I finance a home repair?",
     answer:
-      "Financing can make sense for urgent repairs when delaying the work would create bigger damage. It becomes risky when the monthly payment strains the budget, uses high-interest debt, or leaves no room for the next home problem.",
+      "Financing may be reasonable for urgent repairs when cash is not available, but the monthly payment, interest rate, fees, and existing debt should be tested first.",
   },
   {
-    question: "How much should I keep saved after a home repair?",
+    question: "Which home repairs should not wait?",
     answer:
-      "There is no single number for every household, but many homeowners should try to keep at least one month of essential expenses after the repair. Older homes, unstable income, dependents, high debt, or a history of surprise repairs usually call for a larger cushion.",
+      "Leaks, mold, electrical hazards, roof failure, plumbing problems, foundation issues, heating or cooling failure, safety risks, and water damage usually deserve faster attention than cosmetic upgrades.",
   },
   {
-    question: "When is a renovation worth the money?",
+    question: "Is a remodel different from a repair?",
     answer:
-      "A renovation is easier to justify when it improves daily life, fixes a long-term problem, avoids future damage, or is paid for without weakening emergency savings. It is harder to justify when it mostly creates a payment, drains savings, or is being done because of pressure, comparison, or resale optimism.",
-  },
-  {
-    question: "Should I choose the cheapest contractor?",
-    answer:
-      "Not automatically. The cheapest bid can be risky if it skips permits, uses weak materials, lacks insurance, or does not clearly define the work. Home projects should be judged by total risk, not just the first quoted price.",
+      "Yes. Repairs often protect the home from damage or safety issues. Remodels may improve comfort, resale value, or lifestyle, but they usually deserve stricter affordability testing.",
   },
 ];
 
-const relatedGuides = [
+const featuredHomeLinks = [
   {
-    title: "Emergency Savings Calculator",
-    href: "/how-much-emergency-savings-should-i-have",
-    description:
-      "Estimate how much emergency savings you may need before and after a major home expense.",
+    href: "/home-improvement-annual-cost-calculator",
+    title: "Home Improvement Annual Cost Calculator",
+    text:
+      "Estimate a realistic yearly home repair and improvement budget using home value, home age, condition, climate, systems risk, savings, and renovation goals.",
   },
   {
-    title: "How Much Debt Is Too Much?",
-    href: "/how-much-debt-is-too-much",
-    description:
-      "See how monthly debt pressure affects your ability to absorb repairs, renovations, and contractor financing.",
+    href: "/should-i-spend-this-much-on-home-repairs",
+    title: "Home Repair Cost Calculator",
+    text:
+      "Evaluate home repair affordability using emergency savings, urgency, debt pressure, financing risk, and long-term flexibility.",
   },
   {
-    title: "How Much House Can I Afford?",
-    href: "/how-much-house-can-i-afford",
-    description:
-      "Evaluate home affordability using income, taxes, insurance, maintenance, debt, and savings.",
+    href: "/should-i-spend-10000-on-a-roof-replacement",
+    title: "$10,000 Roof Replacement Calculator",
+    text:
+      "Pressure-test a roof replacement against insurance help, savings, urgency, financing, debt, and home protection value.",
   },
   {
-    title: "Budget Rule Calculators",
-    href: "/budget-rule-calculators",
-    description:
-      "Compare major expenses against take-home income, savings, debt, and monthly breathing room.",
-  },
-  {
-    title: "Medical Cost Calculators",
-    href: "/medical-calculators",
-    description:
-      "Compare another category where urgency, savings, and debt pressure often collide.",
-  },
-  {
-    title: "Grocery Budget Calculators",
-    href: "/grocery-calculators",
-    description:
-      "Understand how recurring household costs affect your ability to rebuild savings after a repair.",
+    href: "/should-i-spend-8000-on-hvac-replacement",
+    title: "$8,000 HVAC Replacement Calculator",
+    text:
+      "Evaluate HVAC replacement affordability using repair urgency, emergency savings, financing risk, debt pressure, and monthly cash flow.",
   },
 ];
 
-const repairCategories = [
+const homeCostFactors = [
   {
-    title: "Emergency Repairs",
+    title: "Urgency and safety",
     text:
-      "Roof leaks, broken heat, electrical hazards, sewer backups, burst pipes, water intrusion, and safety problems usually deserve the fastest decision because delay can create larger costs.",
+      "Water intrusion, electrical hazards, broken heat, plumbing failures, mold, foundation problems, and unsafe structures should be judged differently from cosmetic projects.",
   },
   {
-    title: "Preventive Maintenance",
+    title: "Home age and condition",
     text:
-      "HVAC service, gutter work, small plumbing fixes, appliance maintenance, caulking, drainage corrections, and minor roof work can be boring, but they may prevent more expensive failures.",
+      "Older homes, deferred maintenance, harsh climates, aging roofs, old systems, and prior quick fixes can increase repair exposure.",
   },
   {
-    title: "Livability Upgrades",
+    title: "Emergency savings",
     text:
-      "Projects that improve comfort, accessibility, storage, energy use, or daily function can be worthwhile when they do not damage emergency savings or add unaffordable monthly payments.",
+      "A repair is safer when it protects the home without leaving the household unable to handle the next surprise.",
   },
   {
-    title: "Cosmetic Renovations",
+    title: "Financing cost",
     text:
-      "Paint, flooring, countertops, fixtures, landscaping, and design changes can be valuable, but they should usually wait behind urgent repairs, debt control, and cash reserves.",
+      "Contractor financing, credit cards, personal loans, HELOCs, and payment plans can make a repair possible but still create long-term pressure.",
   },
   {
-    title: "Resale-Driven Projects",
+    title: "Insurance help",
     text:
-      "Projects done for resale should be judged carefully because homeowners often overestimate how much of the cost they will recover when they sell.",
+      "Insurance may reduce the uncovered cost, but deductibles, claim timing, exclusions, and coverage disputes should be understood before committing.",
   },
   {
-    title: "Insurance or Claim-Related Work",
+    title: "Home value and payoff",
     text:
-      "Storm damage, water damage, and covered losses require extra caution around deductibles, claim timing, contractor estimates, and what the insurer will actually reimburse.",
+      "Some projects protect the home, some improve resale value, and some are mostly lifestyle upgrades. The reason matters.",
   },
 ];
 
 const pressureFactors = [
   {
-    title: "Urgency",
+    title: "Uncovered cost",
     text:
-      "A repair that protects the structure, safety, heat, water, or basic use of the home receives more priority than a project that is mainly cosmetic.",
+      "The real pressure is the amount the household must cover after insurance, warranties, family help, discounts, and confirmed credits.",
   },
   {
-    title: "Cash Left After the Project",
+    title: "Repair delay risk",
     text:
-      "The project is safer when the household still has enough money for bills, food, transportation, insurance, medical costs, and the next surprise repair.",
+      "Waiting can be expensive when the problem may spread, create water damage, worsen safety risk, or damage other systems.",
   },
   {
-    title: "Debt Added",
+    title: "Existing debt",
     text:
-      "A repair can be necessary and still create pressure if it adds a loan, credit card balance, HELOC draw, or contractor payment that strains the monthly budget.",
+      "Credit cards, car loans, student loans, medical debt, and other monthly obligations reduce room for home repair payments.",
   },
   {
-    title: "Home Age and Condition",
+    title: "Monthly payment",
     text:
-      "Older homes can have clustered repairs. Replacing one system may reveal problems with another, so a larger cash cushion matters.",
+      "A financed repair should still leave room for groceries, utilities, rent or mortgage, savings, insurance, and normal bills.",
   },
   {
-    title: "Income Stability",
+    title: "Project scope creep",
     text:
-      "A household with stable take-home income can recover from a repair faster than a household with seasonal, commission-based, or uncertain earnings.",
+      "A simple repair can become a bigger project once walls are opened, materials are upgraded, or related problems are discovered.",
   },
   {
-    title: "Ability to Delay or Phase",
+    title: "Essential vs optional",
     text:
-      "Some projects can be split into urgent, soon, and later phases. Others must be handled immediately to avoid damage or safety risk.",
+      "Necessary repairs deserve more priority than cosmetic upgrades, convenience improvements, or projects driven mainly by comparison.",
   },
-];
-
-const redFlags = [
-  "The repair would use nearly all emergency savings.",
-  "The project is mostly cosmetic but requires high-interest debt.",
-  "The contractor is pressuring you to sign immediately.",
-  "You have only one estimate for a large project.",
-  "The scope is vague, verbal, or missing materials and labor details.",
-  "The monthly payment would make normal bills tight.",
-  "You are counting on resale value to justify a project you cannot comfortably afford.",
-  "You are postponing a safety or water-damage issue to fund an optional upgrade.",
 ];
 
 const reduceCostTips = [
   {
-    title: "Separate must-do work from nice-to-have work",
+    title: "Get more than one quote",
     text:
-      "Ask what solves the actual problem now and what can wait. Many projects become more affordable when the urgent repair is separated from the full dream remodel.",
+      "Multiple estimates can reveal whether the first quote is high, incomplete, or missing a less expensive repair path.",
   },
   {
-    title: "Get more than one estimate",
+    title: "Separate repair from upgrade",
     text:
-      "For major repairs, multiple estimates help expose inflated pricing, unclear scope, unnecessary add-ons, or a contractor who missed part of the problem.",
+      "Fixing the leak is different from remodeling the whole room. Keep the must-do work visible before adding extras.",
   },
   {
-    title: "Ask for good-better-best options",
+    title: "Ask about phased work",
     text:
-      "A contractor may be able to quote a basic repair, a more durable repair, and a larger replacement. That gives you a financial decision instead of one scary number.",
+      "Some projects can be split into urgent work now and optional improvements later.",
   },
   {
-    title: "Use cash for optional upgrades",
+    title: "Check insurance and warranties",
     text:
-      "If the project is cosmetic or preference-based, waiting until cash is available usually creates less pressure than financing it.",
+      "Home insurance, manufacturer warranties, installer warranties, and service contracts may reduce the uncovered cost.",
   },
   {
-    title: "Phase the project",
+    title: "Protect the next emergency",
     text:
-      "Handle safety, water, heat, electrical, and structural issues first. Then schedule cosmetic or convenience upgrades after savings recover.",
+      "Avoid using every dollar of cash on a project that still leaves the home exposed to future repairs.",
   },
   {
-    title: "Protect the emergency fund after the work",
+    title: "Watch financing terms",
     text:
-      "The repair decision is not only about affording the invoice. It is also about whether you can handle normal life after paying it.",
+      "Low monthly payments can hide high interest, deferred interest, fees, or long repayment timelines.",
   },
+];
+
+const redFlags = [
+  "The repair would go entirely on a high-interest credit card.",
+  "The project is mostly cosmetic but would drain emergency savings.",
+  "The contractor quote is not itemized.",
+  "The household has not checked insurance, warranties, or second opinions.",
+  "The monthly payment would crowd out groceries, utilities, debt payments, or savings.",
+  "The project keeps expanding before the urgent problem is solved.",
+  "The home has multiple aging systems and no remaining repair cushion.",
+  "The decision is being rushed by fear, sales pressure, or comparison.",
 ];
 
 const assumptions = [
-  "Monthly income means take-home pay available to support the household, not gross income.",
-  "A necessary repair can be the right decision even when the pressure score is high.",
-  "Cosmetic projects should usually face a stricter affordability test than urgent repairs.",
-  "Insurance reimbursement, warranty coverage, family help, or outside assistance should reduce the true uncovered cost.",
-  "Financing is treated as pressure when it creates a new monthly obligation or high-interest balance.",
-  "The safest home project leaves both a completed repair and a household that can recover afterward.",
+  "Monthly income means take-home pay, not gross income.",
+  "Home repair affordability depends on urgency, safety, savings, debt, financing terms, and recovery room.",
+  "Necessary repairs are treated differently from cosmetic upgrades.",
+  "Insurance, warranties, rebates, and confirmed help should reduce the true uncovered cost.",
+  "A repair is less risky when emergency savings remain strong afterward.",
+  "These calculators are educational tools and do not replace contractor, legal, insurance, tax, or financial advice.",
+];
+
+const relatedGuides = [
+  {
+    href: "/should-i-spend-2500-on-water-heater-replacement",
+    title: "$2,500 Water Heater Replacement Calculator",
+    text:
+      "Evaluate water heater replacement affordability using age, leak risk, household need, repair history, savings, financing, and cash flow.",
+  },
+  {
+    href: "/should-i-spend-12000-on-new-windows",
+    title: "$12,000 New Windows Calculator",
+    text:
+      "Compare window replacement cost against energy savings, emergency reserves, financing costs, debt pressure, and long-term home value.",
+  },
+  {
+    href: "/should-i-spend-15000-on-foundation-repair",
+    title: "$15,000 Foundation Repair Calculator",
+    text:
+      "Evaluate foundation repair affordability using structural risk, emergency savings, financing pressure, debt load, and home stability.",
+  },
+  {
+    href: "/how-much-emergency-savings-should-i-have",
+    title: "Emergency Savings Calculator",
+    text:
+      "See how much cash cushion to preserve before or after a major home repair.",
+  },
+  {
+    href: "/how-much-debt-is-too-much",
+    title: "Debt Pressure Calculator",
+    text:
+      "Understand whether existing debt leaves enough room for a home repair payment.",
+  },
+  {
+    href: "/calculators",
+    title: "All ShouldISpend Calculators",
+    text:
+      "Browse calculators for home repairs, rent, groceries, cars, medical bills, travel, and more.",
+  },
 ];
 
 const internalLinks = [
+  { href: "/home-improvement-annual-cost-calculator", label: "annual home repair budget" },
+  { href: "/should-i-spend-this-much-on-home-repairs", label: "home repair cost" },
+  { href: "/should-i-spend-10000-on-a-roof-replacement", label: "$10,000 roof" },
+  { href: "/should-i-spend-8000-on-hvac-replacement", label: "$8,000 HVAC" },
+  { href: "/should-i-spend-2500-on-water-heater-replacement", label: "water heater" },
+  { href: "/should-i-spend-15000-on-foundation-repair", label: "foundation repair" },
   { href: "/how-much-emergency-savings-should-i-have", label: "emergency savings" },
-  { href: "/how-much-debt-is-too-much", label: "debt pressure" },
-  { href: "/how-much-house-can-i-afford", label: "home affordability" },
-  { href: "/budget-rule-calculators", label: "budget rule calculators" },
-  { href: "/grocery-calculators", label: "grocery calculators" },
-  { href: "/medical-calculators", label: "medical calculators" },
-  { href: "/wedding-calculators", label: "wedding calculators" },
   { href: "/calculators", label: "all calculators" },
 ];
 ---
 
 <Layout
-  title="Home Improvement Calculators | Repairs, Renovations and Savings"
-  description="Use home improvement calculators to evaluate repairs, renovations, emergency savings, contractor costs, debt pressure, and household affordability."
+  title="Home Improvement Calculators | Repair Costs, Savings and Debt"
+  description="Use home improvement calculators to evaluate repairs, roof replacement, HVAC, windows, water heaters, foundation work, savings, debt, and financing pressure."
 >
   <style>
-    .container {
+    .hub-page {
       width: 92%;
       max-width: 1120px;
       margin: 0 auto;
-      padding: 72px 0;
+      padding: 72px 0 20px;
     }
 
     .hero {
-      max-width: 920px;
+      max-width: 940px;
       margin-bottom: 56px;
     }
 
     .eyebrow {
       color: var(--primary);
       text-transform: uppercase;
-      letter-spacing: 2px;
-      font-size: 0.8rem;
+      letter-spacing: 1.8px;
+      font-size: 0.78rem;
       font-weight: 800;
       margin-bottom: 16px;
     }
 
     h1 {
-      font-size: clamp(2.8rem, 6vw, 5rem);
-      line-height: 1;
-      margin-bottom: 24px;
-      color: var(--primary);
+      max-width: 980px;
+      font-size: clamp(2.75rem, 6.4vw, 5rem);
+      line-height: 0.98;
+      letter-spacing: -0.055em;
+      margin: 0 0 24px;
+      color: var(--text);
     }
 
-    .hero p,
-    .section p,
-    .verdict-bar p,
-    .callout p {
-      font-size: 1.05rem;
-      line-height: 1.85;
+    h2 {
+      font-size: clamp(1.85rem, 3.6vw, 2.65rem);
+      line-height: 1.08;
+      letter-spacing: -0.035em;
+      margin: 0 0 18px;
+      color: var(--text);
+    }
+
+    h3 {
+      color: var(--text);
+      font-size: 1.15rem;
+      line-height: 1.32;
+      margin: 0 0 10px;
+    }
+
+    p,
+    li {
       color: var(--muted);
+      line-height: 1.85;
+      font-size: 1.04rem;
     }
 
-    .hero p {
-      max-width: 860px;
-    }
-
-    .grid,
-    .info-grid,
-    .link-grid,
-    .split-grid {
-      display: grid;
-      gap: 24px;
-    }
-
-    .grid {
-      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-      margin-top: 36px;
-    }
-
-    .info-grid,
-    .link-grid {
-      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-      margin-top: 28px;
-    }
-
-    .split-grid {
-      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-      margin-top: 28px;
+    .intro {
+      max-width: 880px;
+      color: var(--muted);
+      font-size: 1.1rem;
+      line-height: 1.85;
+      margin: 0 0 18px;
     }
 
     .section {
@@ -290,29 +307,32 @@ const internalLinks = [
       margin-top: 76px;
     }
 
-    .section h2,
-    .wide-section h2,
-    .verdict-bar h2,
-    .callout h2 {
-      font-size: 2rem;
-      margin-bottom: 22px;
-      line-height: 1.2;
-      color: var(--text);
+    .grid,
+    .info-grid,
+    .link-grid {
+      display: grid;
+      gap: 24px;
     }
 
-    .section h3 {
-      font-size: 1.35rem;
-      margin: 28px 0 12px;
-      color: var(--text);
+    .grid {
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      margin-top: 34px;
+    }
+
+    .info-grid,
+    .link-grid {
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      margin-top: 28px;
     }
 
     .verdict-bar,
     .callout {
       margin-top: 56px;
-      background: #f8fafc;
-      border: 1px solid #dbe4ee;
+      background: var(--card);
+      border: 1px solid var(--border);
       border-radius: 24px;
       padding: 32px;
+      box-shadow: var(--shadow-soft);
     }
 
     .verdict-label {
@@ -328,7 +348,7 @@ const internalLinks = [
     .link-card {
       display: block;
       border: 1px solid var(--border);
-      background: white;
+      background: var(--card);
       border-radius: 20px;
       padding: 22px;
       text-decoration: none;
@@ -336,47 +356,63 @@ const internalLinks = [
     }
 
     .link-card {
-      transition: transform 0.15s ease;
+      transition:
+        transform 0.15s ease,
+        box-shadow 0.15s ease,
+        border-color 0.15s ease;
     }
 
     .link-card:hover {
-      transform: translateY(-2px);
-    }
-
-    .info-card h3,
-    .link-card strong {
-      display: block;
-      margin: 0 0 10px;
-      color: var(--text);
-      line-height: 1.3;
-      font-size: 1.08rem;
+      transform: translateY(-3px);
+      border-color: var(--primary);
+      box-shadow: var(--shadow-soft);
     }
 
     .info-card p,
     .link-card span {
+      display: block;
       color: var(--muted);
       line-height: 1.7;
       font-size: 0.96rem;
       margin: 0;
     }
 
-    .ordered-list,
+    .link-card strong {
+      display: block;
+      color: var(--text);
+      line-height: 1.3;
+      font-size: 1.08rem;
+      margin: 0 0 10px;
+    }
+
     .check-list,
     .red-flag-list {
       margin: 22px 0 0;
-      padding-left: 22px;
-      color: var(--muted);
-      line-height: 1.8;
+      padding: 0;
+      list-style: none;
+      display: grid;
+      gap: 12px;
     }
 
-    .ordered-list li,
     .check-list li,
     .red-flag-list li {
-      margin-bottom: 12px;
+      margin: 0;
+      padding: 15px 16px;
+      border-radius: 16px;
+      line-height: 1.55;
+      font-size: 0.96rem;
     }
 
-    .red-flag-list li::marker {
-      color: #b91c1c;
+    .red-flag-list li {
+      border: 1px solid #fecaca;
+      background: #fff7f7;
+      color: #7f1d1d;
+    }
+
+    .check-list li {
+      border: 1px solid #cfeee1;
+      background: #f1fbf6;
+      color: #173404;
     }
 
     .inline-links {
@@ -392,160 +428,178 @@ const internalLinks = [
       padding: 10px 14px;
       color: var(--primary);
       text-decoration: none;
-      font-weight: 700;
+      font-weight: 800;
       font-size: 0.92rem;
-      background: white;
+      background: var(--card);
     }
 
-    .note {
-      margin-top: 24px;
-      padding: 18px 20px;
-      border-left: 4px solid var(--primary);
-      background: #f8fafc;
-      color: var(--muted);
-      line-height: 1.75;
-      border-radius: 14px;
+    .inline-links a:hover {
+      border-color: var(--primary);
+      transform: translateY(-2px);
+    }
+
+    .dark-callout {
+      background: var(--primary-dark);
+      border-color: var(--primary-dark);
+      color: #ffffff;
+    }
+
+    .dark-callout h2 {
+      color: #ffffff;
+    }
+
+    .dark-callout p {
+      color: #e7eadf;
     }
 
     @media (max-width: 720px) {
-      .container {
-        padding: 56px 0;
+      .hub-page {
+        padding: 56px 0 12px;
       }
 
       h1 {
-        font-size: 2.85rem;
+        font-size: 2.55rem;
+        line-height: 1.03;
       }
 
-      .hero p,
-      .section p,
-      .verdict-bar p,
-      .callout p {
+      .intro,
+      p,
+      li {
         font-size: 1rem;
       }
 
-      .section h2,
-      .wide-section h2,
-      .verdict-bar h2,
-      .callout h2 {
-        font-size: 1.65rem;
+      .grid,
+      .info-grid,
+      .link-grid {
+        grid-template-columns: 1fr;
+        gap: 18px;
+      }
+
+      .section,
+      .wide-section {
+        margin-top: 58px;
+      }
+
+      .verdict-bar,
+      .callout {
+        padding: 24px;
       }
     }
   </style>
 
-  <main class="container">
+  <main class="hub-page">
     <section class="hero">
       <div class="eyebrow">Home Improvement Calculators</div>
 
-      <h1>Home Improvement Calculators for Repairs, Renovations and Household Pressure</h1>
+      <h1>Home repairs are not all the same kind of spending.</h1>
 
-      <p>
-        Home projects are not all the same. A leaking roof, broken furnace, sewer
-        backup, electrical hazard, or failing water heater is a different kind of
-        decision than new flooring, a kitchen refresh, landscaping, or a cosmetic
-        remodel. These calculators help you judge home repair and renovation costs
-        by looking at urgency, emergency savings, debt pressure, take-home income,
-        home age, and how much financial breathing room remains after the work is
-        done.
+      <p class="intro">
+        A leaking roof, broken furnace, aging water heater, cracked foundation,
+        and cosmetic remodel do not deserve the same financial test.
       </p>
 
-      <p>
-        The goal is not to make every home expense look affordable or unaffordable.
-        The goal is to separate necessary repairs from optional upgrades and show
-        when a project protects the household versus when it creates a new financial
-        problem.
+      <p class="intro">
+        These calculators help pressure-test repair and improvement decisions
+        against urgency, savings, debt, financing, insurance, and the cost of
+        waiting.
       </p>
 
       <div class="inline-links">
-        {internalLinks.map((link) => <a href={link.href}>{link.label}</a>)}
+        {internalLinks.map((link) => (
+          <a href={link.href}>{link.label}</a>
+        ))}
       </div>
     </section>
 
-    <div class="grid">
-      {homeImprovementCalculators.map((calculator) => (
-        <CalculatorCard
-          category={calculator.category}
-          title={calculator.title}
-          description={calculator.description}
-          href={calculator.href}
-        />
-      ))}
-    </div>
+    <section class="wide-section">
+      <div class="eyebrow">Start here</div>
+      <h2>Common home repair decisions</h2>
+
+      <div class="link-grid">
+        {featuredHomeLinks.map((link) => (
+          <a class="link-card" href={link.href}>
+            <strong>{link.title}</strong>
+            <span>{link.text}</span>
+          </a>
+        ))}
+      </div>
+    </section>
+
+    {homeImprovementCalculators.length > 0 && (
+      <section class="wide-section">
+        <div class="eyebrow">All home improvement calculators</div>
+        <h2>Home repair and improvement affordability calculators</h2>
+
+        <p>
+          Use these tools to compare repair urgency, savings, debt, financing,
+          insurance help, home value, and the pressure a project creates after the
+          work is done.
+        </p>
+
+        <div class="grid">
+          {homeImprovementCalculators.map((calculator) => (
+            <CalculatorCard
+              category={calculator.category}
+              title={calculator.title}
+              description={calculator.description}
+              href={calculator.href}
+            />
+          ))}
+        </div>
+      </section>
+    )}
 
     <div class="verdict-bar">
-      <div class="verdict-label">Home Repair Pressure</div>
+      <div class="verdict-label">Home repair pressure</div>
 
-      <h2>
-        A home project becomes risky when it solves a house problem by creating a
-        household money problem.
-      </h2>
+      <h2>The cost of waiting can be part of the cost.</h2>
 
       <p>
-        Some repairs are worth doing even when the cost hurts. If the project
-        prevents water damage, protects heat, fixes unsafe electrical work, keeps
-        plumbing usable, or preserves the structure, delaying can be more expensive
-        than acting. But the right repair still needs a recovery plan. After the
-        invoice is paid, the household still needs food, transportation, insurance,
-        medical room, debt control, and enough savings to survive the next surprise.
+        Some home projects are optional. Others protect safety, shelter, water,
+        heat, structure, or the value of the home. The safest decision weighs the
+        repair cost against the risk of delaying it and the household's ability to
+        recover afterward.
       </p>
     </div>
 
     <section class="section">
-      <h2>What Home Improvement Affordability Really Means</h2>
+      <div class="eyebrow">Decision framework</div>
+      <h2>What home repair affordability really means</h2>
 
       <p>
-        Home improvement affordability is not just the question, “Can I pay the
-        contractor?” A better question is, “After this project, is the household
-        still stable?” That means looking at the true uncovered cost, the savings
-        left behind, the monthly payment if financed, and the urgency of the repair.
+        Home repair affordability is not just whether the quote can be paid. It is
+        whether the repair protects the home without creating a new financial
+        emergency.
       </p>
 
       <p>
-        A necessary repair can score as financially stressful and still be the best
-        available decision. A broken furnace in winter, an active roof leak, a
-        sewer problem, or a safety issue may need action even if the timing is bad.
-        In those cases, the calculator should help you understand pressure, not
-        shame you for spending money on the house.
+        A necessary repair may be worth using savings or financing. A cosmetic
+        project should usually face a stricter test, especially when emergency
+        savings are thin or debt is already high.
       </p>
-
-      <p>
-        Optional upgrades deserve a stricter test. A cosmetic renovation should not
-        usually drain emergency savings, create high-interest debt, or make the
-        monthly budget fragile. If the project improves comfort but the home is
-        already livable, waiting can be the financially stronger move.
-      </p>
-
-      <div class="note">
-        Monthly income on ShouldISpend means take-home pay available to support
-        the household, not gross income before taxes and deductions.
-      </div>
     </section>
 
-    <section id="KeyCostCategories" class="wide-section">
-      <h2>Key Cost Categories</h2>
-
-      <p>
-        Home expenses usually fall into different pressure categories. The same
-        dollar amount can be reasonable or dangerous depending on what the money
-        is fixing.
-      </p>
+    <section class="wide-section">
+      <div class="eyebrow">Cost categories</div>
+      <h2>What can change the real cost of home repairs</h2>
 
       <div class="info-grid">
-        {repairCategories.map((category) => (
+        {homeCostFactors.map((factor) => (
           <div class="info-card">
-            <h3>{category.title}</h3>
-            <p>{category.text}</p>
+            <h3>{factor.title}</h3>
+            <p>{factor.text}</p>
           </div>
         ))}
       </div>
     </section>
 
     <section class="wide-section">
-      <h2>How These Home Improvement Calculators Think</h2>
+      <div class="eyebrow">Pressure factors</div>
+      <h2>What makes a home project manageable or risky</h2>
 
       <p>
-        A good home repair calculator should not treat every project like a luxury
-        purchase. It should weigh the project against the household’s financial
-        position and the risk of waiting.
+        A home improvement calculator should judge the project against urgency,
+        uncovered cost, savings, debt, financing, and the risk of doing nothing.
       </p>
 
       <div class="info-grid">
@@ -558,57 +612,9 @@ const internalLinks = [
       </div>
     </section>
 
-    <section id="MethodologySection" class="section">
-      <h2>Methodology: How We Judge Home Repair Pressure</h2>
-
-      <p>
-        ShouldISpend home improvement calculators look at the relationship between
-        cost, urgency, cash reserves, borrowing, and recovery room. The same repair
-        may be low pressure for a household with strong savings and stable income,
-        but high pressure for a household that would be left with no cushion.
-      </p>
-
-      <ol class="ordered-list">
-        <li>
-          <strong>Start with the true uncovered cost.</strong> Insurance,
-          warranty coverage, family help, grants, rebates, or seller credits should
-          reduce the amount the household actually has to cover.
-        </li>
-        <li>
-          <strong>Separate emergency repairs from optional upgrades.</strong>
-          Safety, heat, water, electrical, plumbing, structural, and active damage
-          issues receive different treatment than cosmetic or preference-based
-          projects.
-        </li>
-        <li>
-          <strong>Measure savings after the project.</strong> A project that leaves
-          meaningful emergency savings is much safer than one that leaves the
-          household exposed.
-        </li>
-        <li>
-          <strong>Account for new monthly payments.</strong> Financing can be
-          practical, but the payment has to fit inside the real monthly budget.
-        </li>
-        <li>
-          <strong>Consider the home’s future repair risk.</strong> Older homes and
-          homes with multiple aging systems need more cushion because one repair
-          often leads to another.
-        </li>
-        <li>
-          <strong>Look for a recovery path.</strong> The best decisions include a
-          realistic plan to rebuild savings after the repair.
-        </li>
-      </ol>
-    </section>
-
-    <section id="ReduceCostTips" class="wide-section">
-      <h2>Reduce Cost Tips</h2>
-
-      <p>
-        The cheapest project is not always the safest project, but most homeowners
-        can reduce pressure by narrowing the scope, getting better information, and
-        protecting cash.
-      </p>
+    <section class="wide-section">
+      <div class="eyebrow">Lower the pressure</div>
+      <h2>Ways to make a home project safer</h2>
 
       <div class="info-grid">
         {reduceCostTips.map((tip) => (
@@ -620,12 +626,13 @@ const internalLinks = [
       </div>
     </section>
 
-    <section id="FinancialRedFlags" class="section">
-      <h2>Financial Red Flags</h2>
+    <section class="section">
+      <div class="eyebrow">Warning signs</div>
+      <h2>Home repair red flags</h2>
 
       <p>
-        These warning signs do not always mean the answer is no. They mean the
-        project deserves more caution before you sign, borrow, or empty savings.
+        These signs do not mean the repair should be ignored. They mean the quote,
+        timing, financing, or project scope deserves a closer look.
       </p>
 
       <ul class="red-flag-list">
@@ -634,36 +641,28 @@ const internalLinks = [
     </section>
 
     <section class="section">
-      <h2>When Spending on the House Makes Sense</h2>
+      <div class="eyebrow">When spending more can make sense</div>
+      <h2>A bigger repair can be the safer decision when it prevents bigger damage.</h2>
 
       <p>
-        Spending on a home can be the right move when the project protects safety,
-        prevents a bigger repair, keeps the home usable, or solves a recurring
-        problem. A $2,500 repair that stops water intrusion may be more financially
-        responsible than a $900 cosmetic upgrade that adds no protection.
+        Spending more can make sense when the project protects the structure,
+        avoids water damage, improves safety, restores heat or cooling, prevents
+        mold, or fixes a system that keeps failing.
       </p>
 
       <p>
-        It can also make sense to spend on comfort and livability when the basics
-        are already stable. If emergency savings remain healthy, high-interest debt
-        is not growing, and the project improves daily life, then a home upgrade
-        does not have to be treated as reckless.
-      </p>
-
-      <p>
-        The danger is using homeownership as a reason to approve every project.
-        Owning a house creates real maintenance obligations, but it also creates
-        endless opportunities to spend. The best decision is the one that keeps the
-        home functioning and keeps the household financially intact.
+        It becomes riskier when the project is mostly cosmetic, financed
+        aggressively, or expanded before the urgent repair is solved.
       </p>
     </section>
 
-    <section id="CalculatorAssumptions" class="section">
-      <h2>Calculator Assumptions</h2>
+    <section class="section">
+      <div class="eyebrow">Assumptions</div>
+      <h2>How these calculators think about home repair costs</h2>
 
       <p>
-        These assumptions help keep home repair results realistic and consistent
-        across ShouldISpend calculators.
+        These assumptions help keep home improvement results realistic across
+        different homes and project types.
       </p>
 
       <ul class="check-list">
@@ -671,37 +670,33 @@ const internalLinks = [
       </ul>
     </section>
 
-    <section id="RelatedCalculators" class="wide-section">
-      <h2>Related Calculators and Guides</h2>
-
-      <p>
-        Home projects often connect to broader household affordability. A repair
-        decision may depend on savings, debt, housing costs, groceries, medical
-        expenses, or other major spending categories.
-      </p>
+    <section class="wide-section">
+      <div class="eyebrow">Related tools</div>
+      <h2>Other calculators that connect to home repairs</h2>
 
       <div class="link-grid">
         {relatedGuides.map((guide) => (
           <a class="link-card" href={guide.href}>
             <strong>{guide.title}</strong>
-            <span>{guide.description}</span>
+            <span>{guide.text}</span>
           </a>
         ))}
       </div>
     </section>
 
-    <div class="callout">
-      <h2>Use the calculators as a pressure test, not a permission slip.</h2>
+    <section class="callout dark-callout">
+      <div class="eyebrow">Use these as pressure tests</div>
+
+      <h2>A home repair should protect the house without wrecking the household.</h2>
 
       <p>
-        A low-pressure result does not mean every upgrade is necessary. A
-        high-pressure result does not mean every repair should be avoided. The
-        result should help you see the tradeoff clearly: what the project fixes,
-        what it costs, what it does to savings, and how much flexibility remains
-        afterward.
+        ShouldISpend home improvement calculators are educational tools. Use them
+        to compare urgency, savings, debt, financing, and repair tradeoffs before
+        committing. They do not replace contractor, legal, insurance, tax, or
+        financial advice.
       </p>
-    </div>
+    </section>
 
-    <FAQSection title="Home Improvement FAQ" faqs={homeImprovementFaqs} />
+    <FAQSection title="Home Improvement FAQ" faqs={homeFaqs} />
   </main>
 </Layout>

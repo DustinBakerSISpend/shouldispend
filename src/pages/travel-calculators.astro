@@ -1,4 +1,4 @@
----
+﻿---
 import Layout from "../layouts/Layout.astro";
 import CalculatorCard from "../components/CalculatorCard.astro";
 import FAQSection from "../components/FAQSection.astro";
@@ -35,378 +35,669 @@ const travelFaqs = [
       "Reduce the number of travel days, choose fewer paid activities, use cheaper dates, book lodging with a kitchen, limit souvenirs, avoid unnecessary upgrades, and build more free time into the itinerary.",
   },
 ];
+
+const featuredTravelLinks = [
+  {
+    href: "/how-much-vacation-can-i-afford",
+    title: "How Much Vacation Can I Afford?",
+    text:
+      "Build a realistic vacation budget using income, savings, debt, emergency cushion, trip type, hidden costs, and post-trip flexibility.",
+  },
+  {
+    href: "/should-i-spend-5000-on-a-vacation",
+    title: "$5,000 Vacation Calculator",
+    text:
+      "Estimate whether a standard vacation fits your current budget without creating debt or draining savings.",
+  },
+  {
+    href: "/should-i-spend-10000-on-a-europe-trip",
+    title: "$10,000 Europe Trip Calculator",
+    text:
+      "Evaluate flights, hotels, trains, museums, meals, currency cushion, and the cost of coming home.",
+  },
+  {
+    href: "/should-i-spend-20000-on-a-family-vacation",
+    title: "$20,000 Family Vacation Calculator",
+    text:
+      "Measure airfare multipliers, larger rooms, meals, activities, kid costs, savings drawdown, and debt pressure.",
+  },
+];
+
+const travelCostFactors = [
+  {
+    title: "Flights and transportation",
+    text:
+      "Airfare, checked bags, seat selection, parking, rideshares, rental cars, trains, ferries, fuel, and airport transfers can change the real trip cost quickly.",
+  },
+  {
+    title: "Lodging and fees",
+    text:
+      "Hotels, rentals, resort fees, cleaning fees, taxes, deposits, parking, and required minimum stays can push the total beyond the nightly rate.",
+  },
+  {
+    title: "Food and daily spending",
+    text:
+      "Meals, snacks, drinks, groceries, coffee, tips, room service, and convenience spending can quietly add hundreds or thousands to a trip.",
+  },
+  {
+    title: "Activities and tickets",
+    text:
+      "Theme parks, museums, excursions, tours, shows, rentals, lessons, and timed-entry tickets should be part of the budget before booking.",
+  },
+  {
+    title: "Travel documents and insurance",
+    text:
+      "Passports, visas, travel insurance, phone plans, vaccines, baggage protection, and emergency expenses may matter depending on the destination.",
+  },
+  {
+    title: "Return-home pressure",
+    text:
+      "The trip is safer when bills, rent, groceries, debt payments, and emergency savings still work after you get home.",
+  },
+];
+
+const pressureFactors = [
+  {
+    title: "Take-home income",
+    text:
+      "Vacation affordability should be measured against money actually available after taxes, deductions, and normal bills.",
+  },
+  {
+    title: "Emergency savings",
+    text:
+      "A trip becomes riskier when it drains the cash needed for medical bills, car repairs, job changes, or home problems.",
+  },
+  {
+    title: "Debt added",
+    text:
+      "Credit cards, personal loans, buy-now-pay-later plans, and travel financing can make a short trip create long-term pressure.",
+  },
+  {
+    title: "Trip timing",
+    text:
+      "A vacation is easier to afford when it does not collide with moving costs, tuition, holidays, medical bills, car repairs, or wedding spending.",
+  },
+  {
+    title: "Family size",
+    text:
+      "A family trip multiplies flights, food, tickets, rooms, souvenirs, and backup costs faster than many people expect.",
+  },
+  {
+    title: "Hidden costs",
+    text:
+      "The safest trip budget includes the small costs that show up every day, not just flights and hotels.",
+  },
+];
+
+const reduceCostTips = [
+  {
+    title: "Shorten the trip before cutting the good parts",
+    text:
+      "One fewer night can lower lodging, food, transportation, parking, and activity costs without making the whole trip feel cheap.",
+  },
+  {
+    title: "Pick cheaper dates",
+    text:
+      "Flexible dates can reduce airfare, hotels, rental cars, park tickets, and crowds at the same time.",
+  },
+  {
+    title: "Build in free time",
+    text:
+      "A trip packed with paid activities can become expensive and exhausting. Free time protects both the budget and the experience.",
+  },
+  {
+    title: "Limit upgrades",
+    text:
+      "Rooms, seats, rental cars, views, packages, and premium add-ons should be intentional, not automatic.",
+  },
+  {
+    title: "Plan food realistically",
+    text:
+      "Lodging with breakfast, grocery stops, snacks, and simple meals can reduce restaurant pressure without ruining the trip.",
+  },
+  {
+    title: "Avoid travel debt",
+    text:
+      "A trip paid off before departure usually feels different from a trip that follows you home on a credit card.",
+  },
+];
+
+const redFlags = [
+  "The trip would go mostly on a credit card.",
+  "The vacation would drain emergency savings.",
+  "The budget only includes flights and lodging.",
+  "The trip happens right before a major bill, move, tuition payment, or wedding.",
+  "The traveler is assuming future overtime, bonuses, or tax refunds will fix the cost.",
+  "The family is cutting basics at home to afford upgrades on the trip.",
+  "The return-home budget is not planned.",
+  "The trip is being booked because of pressure, comparison, or fear of missing out.",
+];
+
+const assumptions = [
+  "Monthly income means take-home pay, not gross income.",
+  "Travel affordability includes flights, lodging, transportation, food, activities, fees, insurance, and return-home pressure.",
+  "Savings are safer than high-interest travel debt.",
+  "A vacation is less risky when emergency savings remain strong afterward.",
+  "Family trips usually need a larger buffer because many costs multiply by traveler count.",
+  "A more expensive trip can make sense when it is planned, prioritized, and does not weaken essential bills.",
+];
+
+const relatedGuides = [
+  {
+    href: "/should-i-spend-8000-on-a-disney-vacation",
+    title: "$8,000 Disney Vacation Calculator",
+    text:
+      "Check tickets, hotels, food, souvenirs, add-ons, park-day pressure, savings, and family cash flow.",
+  },
+  {
+    href: "/should-i-spend-12000-on-a-cruise",
+    title: "$12,000 Cruise Calculator",
+    text:
+      "Account for gratuities, excursions, drink packages, flights, onboard spending, and port costs.",
+  },
+  {
+    href: "/should-i-spend-15000-on-a-honeymoon",
+    title: "$15,000 Honeymoon Calculator",
+    text:
+      "Balance milestone memories with wedding costs, savings, debt, and first-year cash flow.",
+  },
+  {
+    href: "/how-much-emergency-savings-should-i-have",
+    title: "Emergency Savings Calculator",
+    text:
+      "See how much cushion to preserve before committing money to travel.",
+  },
+  {
+    href: "/how-much-debt-is-too-much",
+    title: "Debt Pressure Calculator",
+    text:
+      "Understand whether existing debt leaves enough room for travel spending.",
+  },
+  {
+    href: "/calculators",
+    title: "All ShouldISpend Calculators",
+    text:
+      "Browse calculators for travel, rent, groceries, cars, weddings, college, medical bills, and more.",
+  },
+];
+
+const internalLinks = [
+  { href: "/how-much-vacation-can-i-afford", label: "vacation affordability" },
+  { href: "/should-i-spend-5000-on-a-vacation", label: "$5,000 vacation" },
+  { href: "/should-i-spend-8000-on-a-disney-vacation", label: "$8,000 Disney" },
+  { href: "/should-i-spend-10000-on-a-europe-trip", label: "$10,000 Europe" },
+  { href: "/should-i-spend-12000-on-a-cruise", label: "$12,000 cruise" },
+  { href: "/should-i-spend-15000-on-a-honeymoon", label: "$15,000 honeymoon" },
+  { href: "/should-i-spend-20000-on-a-family-vacation", label: "$20,000 family trip" },
+  { href: "/calculators", label: "all calculators" },
+];
 ---
 
 <Layout
-  title="Travel Budget Calculators"
+  title="Travel Budget Calculators | Vacation Affordability Tools"
   description="Browse travel budget calculators for vacations, Europe trips, Disney vacations, cruises, honeymoons, family trips, and major travel spending decisions."
 >
   <style>
-    .container {
-      max-width: 1100px;
+    .hub-page {
+      width: 92%;
+      max-width: 1120px;
       margin: 0 auto;
-      padding: 80px 24px;
+      padding: 72px 0 20px;
+    }
+
+    .hero {
+      max-width: 940px;
+      margin-bottom: 56px;
     }
 
     .eyebrow {
-      color: var(--accent);
+      color: var(--primary);
       text-transform: uppercase;
-      letter-spacing: 2px;
-      font-size: 0.8rem;
-      font-weight: 700;
+      letter-spacing: 1.8px;
+      font-size: 0.78rem;
+      font-weight: 800;
       margin-bottom: 16px;
     }
 
     h1 {
-      font-size: clamp(2.8rem, 7vw, 4.8rem);
-      line-height: 1;
-      margin-bottom: 24px;
-      max-width: 900px;
-    }
-
-    .intro {
-      max-width: 780px;
-      color: var(--muted);
-      font-size: 1.1rem;
-      line-height: 1.8;
-      margin-bottom: 56px;
-    }
-
-    .grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-      gap: 24px;
-      margin-top: 32px;
-    }
-
-    .content-section {
-      max-width: 800px;
-      margin-top: 80px;
-    }
-
-    .content-section h2 {
-      font-size: 2rem;
-      margin-bottom: 20px;
-      line-height: 1.2;
-    }
-
-    .content-section h3 {
-      font-size: 1.3rem;
-      margin-top: 34px;
-      margin-bottom: 10px;
-    }
-
-    .content-section p,
-    .content-section li {
-      color: var(--muted);
-      line-height: 1.8;
-      margin-bottom: 18px;
-    }
-
-    .link-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-      gap: 16px;
-      margin: 28px 0 18px;
-    }
-
-    .link-card,
-    .pillar-card {
-      display: block;
-      border: 1px solid var(--border);
-      border-radius: 18px;
-      padding: 18px;
-      background: var(--card);
-      text-decoration: none;
-      color: inherit;
-      transition: transform 0.15s ease;
-    }
-
-    .pillar-card {
-      background: #f8fafc;
-      border: 1px solid #cbd5e1;
-      padding: 24px;
-      margin-top: 28px;
-    }
-
-    .link-card:hover,
-    .pillar-card:hover {
-      transform: translateY(-2px);
-    }
-
-    .link-card strong,
-    .pillar-card strong {
-      display: block;
-      margin-bottom: 8px;
+      max-width: 980px;
+      font-size: clamp(2.75rem, 6.4vw, 5rem);
+      line-height: 0.98;
+      letter-spacing: -0.055em;
+      margin: 0 0 24px;
       color: var(--text);
     }
 
-    .link-card span,
-    .pillar-card span {
-      color: var(--muted);
-      line-height: 1.6;
-      font-size: 0.95rem;
+    h2 {
+      font-size: clamp(1.85rem, 3.6vw, 2.65rem);
+      line-height: 1.08;
+      letter-spacing: -0.035em;
+      margin: 0 0 18px;
+      color: var(--text);
     }
 
+    h3 {
+      color: var(--text);
+      font-size: 1.15rem;
+      line-height: 1.32;
+      margin: 0 0 10px;
+    }
+
+    p,
+    li {
+      color: var(--muted);
+      line-height: 1.85;
+      font-size: 1.04rem;
+    }
+
+    .intro {
+      max-width: 880px;
+      color: var(--muted);
+      font-size: 1.1rem;
+      line-height: 1.85;
+      margin: 0 0 18px;
+    }
+
+    .section {
+      margin-top: 76px;
+      max-width: 920px;
+    }
+
+    .wide-section {
+      margin-top: 76px;
+    }
+
+    .grid,
+    .info-grid,
+    .link-grid {
+      display: grid;
+      gap: 24px;
+    }
+
+    .grid {
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      margin-top: 34px;
+    }
+
+    .info-grid,
+    .link-grid {
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      margin-top: 28px;
+    }
+
+    .verdict-bar,
     .callout {
+      margin-top: 56px;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 24px;
+      padding: 32px;
+      box-shadow: var(--shadow-soft);
+    }
+
+    .verdict-label {
+      color: var(--primary);
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      font-size: 0.8rem;
+      font-weight: 800;
+      margin-bottom: 14px;
+    }
+
+    .info-card,
+    .link-card {
+      display: block;
       border: 1px solid var(--border);
       background: var(--card);
-      border-radius: 22px;
-      padding: 24px;
-      margin-top: 30px;
+      border-radius: 20px;
+      padding: 22px;
+      text-decoration: none;
+      color: inherit;
     }
 
-    .callout p {
+    .link-card {
+      transition:
+        transform 0.15s ease,
+        box-shadow 0.15s ease,
+        border-color 0.15s ease;
+    }
+
+    .link-card:hover {
+      transform: translateY(-3px);
+      border-color: var(--primary);
+      box-shadow: var(--shadow-soft);
+    }
+
+    .info-card p,
+    .link-card span {
+      display: block;
+      color: var(--muted);
+      line-height: 1.7;
+      font-size: 0.96rem;
       margin: 0;
+    }
+
+    .link-card strong {
+      display: block;
+      color: var(--text);
+      line-height: 1.3;
+      font-size: 1.08rem;
+      margin: 0 0 10px;
+    }
+
+    .check-list,
+    .red-flag-list {
+      margin: 22px 0 0;
+      padding: 0;
+      list-style: none;
+      display: grid;
+      gap: 12px;
+    }
+
+    .check-list li,
+    .red-flag-list li {
+      margin: 0;
+      padding: 15px 16px;
+      border-radius: 16px;
+      line-height: 1.55;
+      font-size: 0.96rem;
+    }
+
+    .red-flag-list li {
+      border: 1px solid #fecaca;
+      background: #fff7f7;
+      color: #7f1d1d;
+    }
+
+    .check-list li {
+      border: 1px solid #cfeee1;
+      background: #f1fbf6;
+      color: #173404;
+    }
+
+    .inline-links {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-top: 26px;
+    }
+
+    .inline-links a {
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      padding: 10px 14px;
+      color: var(--primary);
+      text-decoration: none;
+      font-weight: 800;
+      font-size: 0.92rem;
+      background: var(--card);
+    }
+
+    .inline-links a:hover {
+      border-color: var(--primary);
+      transform: translateY(-2px);
+    }
+
+    .dark-callout {
+      background: var(--primary-dark);
+      border-color: var(--primary-dark);
+      color: #ffffff;
+    }
+
+    .dark-callout h2 {
+      color: #ffffff;
+    }
+
+    .dark-callout p {
+      color: #e7eadf;
+    }
+
+    @media (max-width: 720px) {
+      .hub-page {
+        padding: 56px 0 12px;
+      }
+
+      h1 {
+        font-size: 2.55rem;
+        line-height: 1.03;
+      }
+
+      .intro,
+      p,
+      li {
+        font-size: 1rem;
+      }
+
+      .grid,
+      .info-grid,
+      .link-grid {
+        grid-template-columns: 1fr;
+        gap: 18px;
+      }
+
+      .section,
+      .wide-section {
+        margin-top: 58px;
+      }
+
+      .verdict-bar,
+      .callout {
+        padding: 24px;
+      }
     }
   </style>
 
-  <main class="container">
-    <div class="eyebrow">Travel Calculators</div>
+  <main class="hub-page">
+    <section class="hero">
+      <div class="eyebrow">Vacation Spending Calculators</div>
 
-    <h1>Travel Budget Calculators and Vacation Affordability Tools</h1>
+      <h1>A vacation can be worth it and still be too expensive right now.</h1>
 
-    <p class="intro">
-      Travel can be one of the most worthwhile uses of money, but the final cost
-      often reaches beyond flights and hotels. These calculators help you decide
-      whether a vacation fits your income, savings, debt, emergency cushion, and
-      long-term financial flexibility before you book.
-    </p>
+      <p class="intro">
+        Travel can be one of the best uses of money, but the final cost often
+        reaches beyond flights and hotels. A safe trip budget has to survive food,
+        transportation, excursions, fees, emergencies, and the bills waiting when
+        normal life resumes.
+      </p>
 
-    <div class="grid">
-      {travelCalculators.map((calculator) => (
-        <CalculatorCard
-          category={calculator.category}
-          title={calculator.title}
-          description={calculator.description}
-          href={calculator.href}
-        />
-      ))}
+      <p class="intro">
+        These calculators help pressure-test vacations against income, savings,
+        debt, emergency cushion, hidden costs, and return-home flexibility.
+      </p>
+
+      <div class="inline-links">
+        {internalLinks.map((link) => (
+          <a href={link.href}>{link.label}</a>
+        ))}
+      </div>
+    </section>
+
+    <section class="wide-section">
+      <div class="eyebrow">Start here</div>
+      <h2>Common travel budget decisions</h2>
+
+      <div class="link-grid">
+        {featuredTravelLinks.map((link) => (
+          <a class="link-card" href={link.href}>
+            <strong>{link.title}</strong>
+            <span>{link.text}</span>
+          </a>
+        ))}
+      </div>
+    </section>
+
+    {travelCalculators.length > 0 && (
+      <section class="wide-section">
+        <div class="eyebrow">All travel calculators</div>
+        <h2>Vacation and travel affordability calculators</h2>
+
+        <p>
+          Use these tools to compare vacation costs, Disney trips, Europe trips,
+          cruises, honeymoons, family travel, savings drawdown, debt pressure, and
+          return-home flexibility.
+        </p>
+
+        <div class="grid">
+          {travelCalculators.map((calculator) => (
+            <CalculatorCard
+              category={calculator.category}
+              title={calculator.title}
+              description={calculator.description}
+              href={calculator.href}
+            />
+          ))}
+        </div>
+      </section>
+    )}
+
+    <div class="verdict-bar">
+      <div class="verdict-label">Travel pressure</div>
+
+      <h2>The trip is not over financially when you come home.</h2>
+
+      <p>
+        A safe vacation budget leaves room for the experience, the return home, and
+        the next financial priority. The real pressure is not only the trip price.
+        It is the savings left afterward, the debt added, and the bills waiting
+        when normal life resumes.
+      </p>
     </div>
 
-    <section class="content-section">
-      <h2>Start With the Full Vacation Affordability Guide</h2>
+    <section class="section">
+      <div class="eyebrow">Decision framework</div>
+      <h2>What travel affordability really means</h2>
 
       <p>
-        Before choosing a destination or booking a trip, it helps to understand
-        how much vacation your budget can safely handle. The full vacation
-        affordability guide explains how savings, debt, emergency funds, hidden
-        travel costs, and post-trip flexibility all affect the decision.
-      </p>
-
-      <a class="pillar-card" href="/how-much-vacation-can-i-afford">
-        <strong>How Much Vacation Can I Afford?</strong>
-
-        <span>
-          Learn how to calculate a realistic vacation budget using income,
-          savings, debt, emergency cushion, trip type, hidden travel costs, and
-          long-term flexibility.
-        </span>
-      </a>
-    </section>
-
-    <section id="RelatedCalculators" class="content-section">
-      <h2>Popular Travel Affordability Calculators</h2>
-
-      <p>
-        Different trips create different kinds of financial pressure. A Disney
-        vacation may be driven by tickets, park days, food, and souvenirs. A
-        cruise may look bundled until gratuities, excursions, drink packages, and
-        flights are included. A Europe trip may require trains, hotels, museums,
-        meals, and an exchange-rate cushion.
-      </p>
-
-      <div class="link-grid">
-        <a class="link-card" href="/should-i-spend-5000-on-a-vacation">
-          <strong>$5,000 Vacation Calculator</strong>
-          <span>
-            Estimate whether a standard vacation fits your current budget.
-          </span>
-        </a>
-
-        <a class="link-card" href="/should-i-spend-8000-on-a-disney-vacation">
-          <strong>$8,000 Disney Vacation Calculator</strong>
-          <span>
-            Check tickets, hotels, food, souvenirs, and park-day pressure.
-          </span>
-        </a>
-
-        <a class="link-card" href="/should-i-spend-10000-on-a-europe-trip">
-          <strong>$10,000 Europe Trip Calculator</strong>
-          <span>
-            Evaluate flights, hotels, trains, museums, meals, and currency
-            buffers.
-          </span>
-        </a>
-
-        <a class="link-card" href="/should-i-spend-12000-on-a-cruise">
-          <strong>$12,000 Cruise Calculator</strong>
-          <span>
-            Account for gratuities, excursions, drink packages, flights, and
-            port costs.
-          </span>
-        </a>
-
-        <a class="link-card" href="/should-i-spend-15000-on-a-honeymoon">
-          <strong>$15,000 Honeymoon Calculator</strong>
-          <span>
-            Balance milestone memories with wedding debt and post-wedding cash
-            flow.
-          </span>
-        </a>
-
-        <a class="link-card" href="/should-i-spend-20000-on-a-family-vacation">
-          <strong>$20,000 Family Vacation Calculator</strong>
-          <span>
-            Measure airfare multipliers, larger rooms, meals, activities, and
-            kid costs.
-          </span>
-        </a>
-      </div>
-    </section>
-
-    <section class="content-section">
-      <h2>How Much Should You Spend on Travel?</h2>
-
-      <p>
-        A travel budget should be judged by more than the trip price. The better
-        question is whether the trip still works after your
-        <a href="/how-much-emergency-savings-should-i-have">
-          emergency fund
-        </a>, debt payments, upcoming bills, housing costs, childcare costs, and
-        normal monthly spending are considered.
+        A trip can be technically payable and still create pressure if it drains
+        emergency savings, adds credit card debt, or makes the next month feel
+        impossible.
       </p>
 
       <p>
-        A trip that fits comfortably should create memories without creating
-        months of stress afterward. The safest travel budget leaves room for the
-        experience, the return home, and the next financial priority.
-      </p>
-
-      <div class="callout">
-        <p>
-          A better question than “Can I afford this trip?” is often: “Can I
-          comfortably afford this trip without damaging my long-term financial
-          flexibility?”
-        </p>
-      </div>
-
-      <h3>A Simple Travel Budget Rule</h3>
-
-      <p>
-        A vacation is usually safer when it is paid mostly from savings, does not
-        wipe out your emergency cushion, and does not require high-interest
-        credit card debt. The larger the trip, the more important the recovery
-        period becomes.
-      </p>
-
-      <h3 id="KeyCostCategories">Hidden Travel Costs to Include</h3>
-
-      <p>
-        Many trips cost more than the first quote. Include luggage,
-        transportation, resort fees, tips, meals, snacks, tours, excursions,
-        tickets, travel insurance, passports, parking, exchange-rate swings, and
-        emergency spending.
-      </p>
-
-      <h3 id="FinancialRedFlags">When Waiting Is the Better Move</h3>
-
-      <p>
-        Waiting may be smarter if the trip would drain savings, require credit
-        card debt, delay debt payoff, or make normal bills feel tight after you
-        return home. A cheaper version, shorter trip, off-season booking, or
-        delayed vacation can protect the same goal with less pressure.
+        The better question is not just whether you can book the trip. It is whether
+        the full trip still makes sense after flights, hotels, food, activities,
+        fees, transportation, and return-home cash flow are included.
       </p>
     </section>
 
-    <section class="content-section">
-      <h2>Travel Planning Guides</h2>
+    <section class="wide-section">
+      <div class="eyebrow">Cost categories</div>
+      <h2>Travel costs that often get missed</h2>
 
-      <p>
-        These guides go deeper than the calculators alone, helping you understand
-        hidden travel costs, budget pressure points, and ways to avoid vacation
-        debt.
-      </p>
-
-      <div class="link-grid">
-        <a class="link-card" href="/how-much-vacation-can-i-afford">
-          <strong>How Much Vacation Can I Afford?</strong>
-          <span>
-            Learn how much trip your budget can safely handle before booking.
-          </span>
-        </a>
-
-        <a class="link-card" href="/how-to-budget-for-a-disney-vacation">
-          <strong>How to Budget for a Disney Vacation</strong>
-          <span>
-            Learn how to plan Disney tickets, hotels, food, upgrades, souvenirs,
-            and realistic family costs.
-          </span>
-        </a>
-
-        <a class="link-card" href="/how-to-avoid-vacation-debt">
-          <strong>How to Avoid Vacation Debt</strong>
-          <span>
-            Learn how to budget trips realistically, avoid credit card pressure,
-            and keep vacations from creating long-term financial stress.
-          </span>
-        </a>
-
-        <a class="link-card" href="/how-much-debt-is-too-much">
-  <strong>How Much Debt Is Too Much?</strong>
-  <span>
-    Learn how debt ratios, monthly obligations, and financial flexibility
-    affect major spending decisions.
-  </span>
-</a>
-
+      <div class="info-grid">
+        {travelCostFactors.map((factor) => (
+          <div class="info-card">
+            <h3>{factor.title}</h3>
+            <p>{factor.text}</p>
           </div>
+        ))}
+      </div>
     </section>
 
-    <section id="ReduceCostTips" class="content-section">
-      <h2>Travel Budget Rules That Matter</h2>
+    <section class="wide-section">
+      <div class="eyebrow">Pressure factors</div>
+      <h2>What makes travel manageable or risky</h2>
 
       <p>
-        The total vacation price is only part of the equation. A trip becomes
-        risky when it drains emergency savings, forces credit card debt, or
-        creates stress after returning home.
+        Travel affordability depends on the whole household picture, not just the
+        flight and hotel quote.
+      </p>
+
+      <div class="info-grid">
+        {pressureFactors.map((factor) => (
+          <div class="info-card">
+            <h3>{factor.title}</h3>
+            <p>{factor.text}</p>
+          </div>
+        ))}
+      </div>
+    </section>
+
+    <section class="wide-section">
+      <div class="eyebrow">Lower the pressure</div>
+      <h2>Ways to make a trip safer</h2>
+
+      <div class="info-grid">
+        {reduceCostTips.map((tip) => (
+          <div class="info-card">
+            <h3>{tip.title}</h3>
+            <p>{tip.text}</p>
+          </div>
+        ))}
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="eyebrow">Warning signs</div>
+      <h2>Travel budget red flags</h2>
+
+      <p>
+        These signs do not mean the trip is bad. They mean the timing, budget, or
+        financing needs more pressure testing.
+      </p>
+
+      <ul class="red-flag-list">
+        {redFlags.map((flag) => <li>{flag}</li>)}
+      </ul>
+    </section>
+
+    <section class="section">
+      <div class="eyebrow">When spending more can make sense</div>
+      <h2>A more expensive trip can be reasonable when it is truly planned.</h2>
+
+      <p>
+        Spending more can make sense for a milestone, rare family opportunity,
+        safer logistics, limited travel windows, accessibility, or a destination
+        that deeply matters.
       </p>
 
       <p>
-        Good travel budgets usually include an emergency cushion, realistic food
-        costs, transportation between destinations, baggage fees, travel
-        insurance, and room for unexpected expenses. Many travelers underestimate
-        how quickly costs rise once flights and hotels are booked.
-      </p>
-
-      <p>
-        The strongest travel budgets account for the whole experience: the trip
-        itself, the return home, and the financial goals that still need to be
-        protected afterward.
+        It becomes riskier when the trip depends on debt, drains the emergency
+        fund, or gets upgraded because of pressure, comparison, or fear of missing
+        out.
       </p>
     </section>
 
-    <section id="CalculatorAssumptions" class="content-section">
-      <h2>Travel Calculator Assumptions</h2>
+    <section class="section">
+      <div class="eyebrow">Assumptions</div>
+      <h2>How these calculators think about travel costs</h2>
 
       <p>
-        These calculators evaluate travel affordability using trip cost,
-        take-home income, savings, debt pressure, emergency cushion, hidden
-        costs, and post-trip flexibility. The goal is to estimate whether a trip
-        creates financial pressure after the traveler returns home.
+        These assumptions help keep travel pressure results realistic across
+        different trips and households.
       </p>
+
+      <ul class="check-list">
+        {assumptions.map((assumption) => <li>{assumption}</li>)}
+      </ul>
     </section>
 
-    <section id="MethodologySection" class="content-section">
-      <h2>How ShouldISpend Evaluates Travel Affordability</h2>
+    <section class="wide-section">
+      <div class="eyebrow">Related tools</div>
+      <h2>Other calculators that connect to travel planning</h2>
+
+      <div class="link-grid">
+        {relatedGuides.map((guide) => (
+          <a class="link-card" href={guide.href}>
+            <strong>{guide.title}</strong>
+            <span>{guide.text}</span>
+          </a>
+        ))}
+      </div>
+    </section>
+
+    <section class="callout dark-callout">
+      <div class="eyebrow">Use these as pressure tests</div>
+
+      <h2>A good trip should not make normal life harder for months.</h2>
 
       <p>
-        ShouldISpend treats vacations as pressure decisions. A trip is safer
-        when it can be paid without high-interest debt, without draining
-        emergency savings, and without making normal bills harder after the trip.
+        ShouldISpend travel calculators are educational tools. Use them to compare
+        travel costs, savings, debt, hidden expenses, and return-home pressure
+        before booking. They do not replace tax, legal, insurance, travel, or
+        financial advice.
       </p>
     </section>
-
 
     <FAQSection title="Travel Budget FAQ" faqs={travelFaqs} />
   </main>
