@@ -1,13 +1,7 @@
----
+﻿---
 import Layout from "../layouts/Layout.astro";
 import CalculatorCard from "../components/CalculatorCard.astro";
 import FAQSection from "../components/FAQSection.astro";
-import MethodologySection from "../components/MethodologySection.astro";
-import KeyCostCategories from "../components/KeyCostCategories.astro";
-import ReduceCostTips from "../components/ReduceCostTips.astro";
-import FinancialRedFlags from "../components/FinancialRedFlags.astro";
-import CalculatorAssumptions from "../components/CalculatorAssumptions.astro";
-import RelatedCalculators from "../components/RelatedCalculators.astro";
 import { calculators } from "../data/calculators.js";
 
 const medicalCalculators = calculators.filter(
@@ -18,7 +12,7 @@ const medicalFaqs = [
   {
     question: "Should I use emergency savings for medical bills?",
     answer:
-      "Emergency savings are often intended for unavoidable expenses like medical costs, especially when delaying treatment creates greater risk. The key question is whether the bill leaves enough cushion afterward.",
+      "Emergency savings are often meant for unavoidable expenses like medical costs, especially when delaying treatment creates greater risk. The key question is whether the bill leaves enough cushion afterward.",
   },
   {
     question: "Should I go into debt for medical treatment?",
@@ -33,7 +27,7 @@ const medicalFaqs = [
   {
     question: "Should I delay medical care because of cost?",
     answer:
-      "That depends on the urgency and medical necessity. Some care can safely wait while savings improve, but delaying important treatment may increase both health risk and future financial risk.",
+      "That depends on urgency and medical necessity. Some care can safely wait while savings improve, but delaying important treatment may increase both health risk and future financial risk.",
   },
   {
     question: "What matters most when comparing medical costs?",
@@ -42,48 +36,167 @@ const medicalFaqs = [
   },
 ];
 
+const featuredMedicalLinks = [
+  {
+    title: "Should I Spend This Much on Medical Bills?",
+    href: "/should-i-spend-this-much-on-medical-bills",
+    text:
+      "Pressure-test a medical bill against savings, income, urgency, debt, insurance gaps, and monthly recovery room.",
+  },
+  {
+    title: "Medical Bill Payment Plan Calculator",
+    href: "/medical-bill-payment-plan-calculator",
+    text:
+      "Estimate whether a monthly medical payment plan fits your budget without crowding out normal bills.",
+  },
+  {
+    title: "Should I Use Emergency Savings for Medical Bills?",
+    href: "/should-i-use-emergency-savings-for-medical-bills",
+    text:
+      "Decide whether paying from savings protects your household or leaves too little cushion afterward.",
+  },
+  {
+    title: "Emergency Savings Calculator",
+    href: "/how-much-emergency-savings-should-i-have",
+    text:
+      "See how much cash cushion may help before and after an unavoidable medical expense.",
+  },
+];
+
+const medicalCostFactors = [
+  {
+    title: "Insurance gaps",
+    text:
+      "Deductibles, coinsurance, copays, out-of-network charges, denied claims, uncovered procedures, and balance bills can make the final cost very different from the first estimate.",
+  },
+  {
+    title: "Urgency of care",
+    text:
+      "Emergency care, necessary treatment, pain relief, mobility, dental work, therapy, prescriptions, and follow-up care should be judged differently from optional or easily delayed care.",
+  },
+  {
+    title: "Emergency savings",
+    text:
+      "Savings can make medical care easier to handle, but the remaining cushion matters after the bill is paid.",
+  },
+  {
+    title: "Payment plan terms",
+    text:
+      "A payment plan can reduce immediate strain, but the monthly payment still competes with rent, groceries, transportation, childcare, and debt payoff.",
+  },
+  {
+    title: "Existing debt",
+    text:
+      "Credit cards, car loans, student loans, personal loans, and other monthly obligations affect whether a medical bill is manageable.",
+  },
+  {
+    title: "Recovery path",
+    text:
+      "The safest medical spending decisions leave a realistic path to rebuild savings and keep the household stable after treatment.",
+  },
+];
+
+const reduceCostTips = [
+  {
+    title: "Ask for an itemized bill",
+    text:
+      "Billing errors happen. An itemized bill makes it easier to spot duplicate charges, unclear fees, denied claims, or services that need review.",
+  },
+  {
+    title: "Ask about financial assistance",
+    text:
+      "Hospitals and providers may offer charity care, hardship discounts, income-based assistance, or lower payment terms.",
+  },
+  {
+    title: "Check network status early",
+    text:
+      "For non-emergency care, confirm whether the provider, facility, lab, anesthesiologist, and other services are in network.",
+  },
+  {
+    title: "Compare payment options",
+    text:
+      "A no-interest medical payment plan is usually safer than a high-interest credit card if the monthly payment fits.",
+  },
+  {
+    title: "Protect basic bills",
+    text:
+      "Medical spending should not accidentally crowd out rent, groceries, transportation, prescriptions, insurance premiums, or childcare.",
+  },
+  {
+    title: "Appeal when something looks wrong",
+    text:
+      "Insurance appeals, billing reviews, coding questions, and provider assistance can matter before a bill becomes debt.",
+  },
+];
+
+const redFlags = [
+  "The bill would wipe out emergency savings with no realistic plan to rebuild them.",
+  "The payment plan would make rent, groceries, transportation, or childcare difficult to cover.",
+  "The provider is out of network and the final bill is uncertain.",
+  "The plan depends on a high-interest credit card instead of a lower-pressure payment option.",
+  "Optional treatment is being financed while essential bills are already strained.",
+  "The household has not asked about financial assistance, itemized billing, or insurance appeals.",
+  "The medical cost is being delayed even though waiting could make the health problem worse.",
+  "A one-time medical bill would create monthly debt pressure for years.",
+];
+
+const assumptions = [
+  "Monthly income means take-home pay, not gross income.",
+  "Medical affordability depends on both the bill amount and the household's ability to recover afterward.",
+  "Emergency savings are useful for medical costs, but they should not be drained casually.",
+  "No-interest payment plans are generally less risky than high-interest credit card debt.",
+  "Necessary medical care may still be worth pursuing even when the financial pressure is real.",
+  "Optional, cosmetic, or easily delayed care should be judged differently from urgent or necessary care.",
+  "These calculators are educational tools and do not replace medical, insurance, legal, or financial advice.",
+];
+
 const relatedGuides = [
   {
     title: "How Much Emergency Savings Should I Have?",
     href: "/how-much-emergency-savings-should-i-have",
-    description:
+    text:
       "Learn how emergency savings affect medical flexibility, financial pressure, and recovery from unexpected expenses.",
   },
   {
     title: "How Much Debt Is Too Much?",
     href: "/how-much-debt-is-too-much",
-    description:
+    text:
       "Understand how recurring debt obligations affect monthly breathing room and financial stability.",
   },
   {
     title: "What Counts as Debt?",
     href: "/what-counts-as-debt",
-    description:
+    text:
       "See which financial obligations should be included when evaluating affordability and monthly pressure.",
-  },
-  {
-    title: "Should I Use Emergency Savings for Medical Bills?",
-    href: "/should-i-use-emergency-savings-for-medical-bills",
-    description:
-      "Decide whether using savings for healthcare protects your finances or leaves too little cushion.",
   },
   {
     title: "Medical Bill Payment Plan Calculator",
     href: "/medical-bill-payment-plan-calculator",
-    description:
+    text:
       "Estimate whether a monthly medical payment plan fits your income, savings, debt, and budget flexibility.",
   },
   {
     title: "Should I Spend This Much on Medical Bills?",
     href: "/should-i-spend-this-much-on-medical-bills",
-    description:
+    text:
       "Pressure-test a medical bill against savings, income, urgency, debt, and monthly recovery power.",
+  },
+  {
+    title: "All Calculators",
+    href: "/calculators",
+    text:
+      "Browse other ShouldISpend calculators for debt, emergency savings, rent, groceries, baby costs, and major spending decisions.",
   },
 ];
 
-const relatedMedicalCalculators = medicalCalculators
-  .filter((calculator) => calculator.href !== "/medical-calculators")
-  .slice(0, 8);
+const internalLinks = [
+  { href: "/should-i-spend-this-much-on-medical-bills", label: "medical bill calculator" },
+  { href: "/medical-bill-payment-plan-calculator", label: "payment plan calculator" },
+  { href: "/should-i-use-emergency-savings-for-medical-bills", label: "use savings for medical bills" },
+  { href: "/how-much-emergency-savings-should-i-have", label: "emergency savings" },
+  { href: "/how-much-debt-is-too-much", label: "debt pressure" },
+  { href: "/calculators", label: "all calculators" },
+];
 ---
 
 <Layout
@@ -91,39 +204,73 @@ const relatedMedicalCalculators = medicalCalculators
   description="Evaluate medical bills, payment plans, emergency savings, healthcare affordability, insurance gaps, debt pressure, and monthly financial flexibility."
 >
   <style>
-    .container {
+    .hub-page {
       width: 92%;
-      max-width: 1100px;
+      max-width: 1120px;
       margin: 0 auto;
-      padding: 72px 0;
+      padding: 72px 0 20px;
     }
 
     .hero {
-      max-width: 900px;
+      max-width: 940px;
       margin-bottom: 56px;
     }
 
     .eyebrow {
       color: var(--primary);
       text-transform: uppercase;
-      letter-spacing: 2px;
-      font-size: 0.8rem;
+      letter-spacing: 1.8px;
+      font-size: 0.78rem;
       font-weight: 800;
       margin-bottom: 16px;
     }
 
     h1 {
-      font-size: clamp(2.8rem, 6vw, 5rem);
-      line-height: 1;
+      max-width: 980px;
+      font-size: clamp(2.75rem, 6.4vw, 5rem);
+      line-height: 0.98;
+      letter-spacing: -0.055em;
       margin: 0 0 24px;
-      color: var(--primary);
+      color: var(--text);
     }
 
-    .hero p {
+    h2 {
+      font-size: clamp(1.85rem, 3.6vw, 2.65rem);
+      line-height: 1.08;
+      letter-spacing: -0.035em;
+      margin: 0 0 18px;
+      color: var(--text);
+    }
+
+    h3 {
+      color: var(--text);
+      font-size: 1.15rem;
+      line-height: 1.32;
+      margin: 0 0 10px;
+    }
+
+    p,
+    li {
+      color: var(--muted);
+      line-height: 1.85;
+      font-size: 1.04rem;
+    }
+
+    .intro {
+      max-width: 880px;
+      color: var(--muted);
       font-size: 1.1rem;
       line-height: 1.85;
-      color: var(--muted);
-      max-width: 860px;
+      margin: 0 0 18px;
+    }
+
+    .section {
+      margin-top: 76px;
+      max-width: 920px;
+    }
+
+    .wide-section {
+      margin-top: 76px;
     }
 
     .grid,
@@ -135,53 +282,24 @@ const relatedMedicalCalculators = medicalCalculators
 
     .grid {
       grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-      margin-top: 36px;
+      margin-top: 34px;
     }
 
     .info-grid,
     .link-grid {
-      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
       margin-top: 28px;
     }
 
-    .section {
-      margin-top: 72px;
-      max-width: 900px;
-    }
-
-    .section.full {
-      max-width: none;
-    }
-
-    .section-kicker {
-      color: var(--primary);
-      font-weight: 800;
-      text-transform: uppercase;
-      letter-spacing: 0.12em;
-      font-size: 0.76rem;
-      margin-bottom: 12px;
-    }
-
-    .section h2 {
-      font-size: 2rem;
-      margin-bottom: 22px;
-      line-height: 1.2;
-      color: var(--text);
-    }
-
-    .section p {
-      line-height: 1.9;
-      color: var(--muted);
-      margin-bottom: 24px;
-      font-size: 1.05rem;
-    }
-
-    .verdict-bar {
+    .verdict-bar,
+    .callout,
+    .note {
       margin-top: 56px;
-      background: #f8fafc;
-      border: 1px solid #dbe4ee;
+      background: var(--card);
+      border: 1px solid var(--border);
       border-radius: 24px;
       padding: 32px;
+      box-shadow: var(--shadow-soft);
     }
 
     .verdict-label {
@@ -193,24 +311,11 @@ const relatedMedicalCalculators = medicalCalculators
       margin-bottom: 14px;
     }
 
-    .verdict-bar h2 {
-      margin: 0 0 16px;
-      font-size: 2rem;
-      color: var(--text);
-      line-height: 1.2;
-    }
-
-    .verdict-bar p {
-      margin: 0;
-      line-height: 1.85;
-      color: var(--muted);
-    }
-
     .info-card,
     .link-card {
       display: block;
       border: 1px solid var(--border);
-      background: white;
+      background: var(--card);
       border-radius: 20px;
       padding: 22px;
       text-decoration: none;
@@ -218,290 +323,324 @@ const relatedMedicalCalculators = medicalCalculators
     }
 
     .link-card {
-      transition: transform 0.15s ease;
+      transition:
+        transform 0.15s ease,
+        box-shadow 0.15s ease,
+        border-color 0.15s ease;
     }
 
     .link-card:hover {
-      transform: translateY(-2px);
-    }
-
-    .info-card h3,
-    .link-card strong {
-      display: block;
-      margin-bottom: 10px;
-      color: var(--text);
-      line-height: 1.3;
+      transform: translateY(-3px);
+      border-color: var(--primary);
+      box-shadow: var(--shadow-soft);
     }
 
     .info-card p,
     .link-card span {
+      display: block;
       color: var(--muted);
       line-height: 1.7;
       font-size: 0.96rem;
       margin: 0;
     }
 
+    .link-card strong {
+      display: block;
+      color: var(--text);
+      line-height: 1.3;
+      font-size: 1.08rem;
+      margin: 0 0 10px;
+    }
+
+    .check-list,
+    .red-flag-list {
+      margin: 22px 0 0;
+      padding: 0;
+      list-style: none;
+      display: grid;
+      gap: 12px;
+    }
+
+    .check-list li,
+    .red-flag-list li {
+      margin: 0;
+      padding: 15px 16px;
+      border-radius: 16px;
+      line-height: 1.55;
+      font-size: 0.96rem;
+    }
+
+    .red-flag-list li {
+      border: 1px solid #fecaca;
+      background: #fff7f7;
+      color: #7f1d1d;
+    }
+
+    .check-list li {
+      border: 1px solid #cfeee1;
+      background: #f1fbf6;
+      color: #173404;
+    }
+
+    .inline-links {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-top: 26px;
+    }
+
+    .inline-links a {
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      padding: 10px 14px;
+      color: var(--primary);
+      text-decoration: none;
+      font-weight: 800;
+      font-size: 0.92rem;
+      background: var(--card);
+    }
+
+    .inline-links a:hover {
+      border-color: var(--primary);
+      transform: translateY(-2px);
+    }
+
+    .dark-callout {
+      background: var(--primary-dark);
+      border-color: var(--primary-dark);
+      color: #ffffff;
+    }
+
+    .dark-callout h2 {
+      color: #ffffff;
+    }
+
+    .dark-callout p {
+      color: #e7eadf;
+    }
+
     @media (max-width: 720px) {
-      .container {
-        padding: 56px 0;
+      .hub-page {
+        padding: 56px 0 12px;
       }
 
       h1 {
-        font-size: 2.9rem;
+        font-size: 2.55rem;
+        line-height: 1.03;
       }
 
-      .hero p {
+      .intro,
+      p,
+      li {
         font-size: 1rem;
-      }
-
-      .section h2,
-      .verdict-bar h2 {
-        font-size: 1.7rem;
       }
 
       .grid,
       .info-grid,
       .link-grid {
         grid-template-columns: 1fr;
+        gap: 18px;
+      }
+
+      .section,
+      .wide-section {
+        margin-top: 58px;
+      }
+
+      .verdict-bar,
+      .callout,
+      .note {
+        padding: 24px;
       }
     }
   </style>
 
-  <main class="container">
+  <main class="hub-page">
     <section class="hero">
       <div class="eyebrow">Medical Cost Calculators</div>
 
-      <h1>Medical Cost Calculators and Healthcare Affordability Tools</h1>
+      <h1>Medical bills are not ordinary bills.</h1>
 
-      <p>
-        Medical costs can create financial pressure even when treatment is
-        necessary. These calculators evaluate healthcare spending using income,
-        savings, debt pressure, insurance gaps, payment plans, emergency
-        reserves, and monthly flexibility instead of looking at the bill alone.
-      </p>
-    </section>
-
-    <div class="grid">
-      {medicalCalculators.map((calculator) => (
-        <CalculatorCard
-          category={calculator.category}
-          title={calculator.title}
-          description={calculator.description}
-          href={calculator.href}
-        />
-      ))}
-    </div>
-
-    <div class="verdict-bar">
-      <div class="verdict-label">Healthcare Affordability</div>
-
-      <h2>
-        A medical bill becomes financially dangerous when it weakens long-term
-        stability after treatment.
-      </h2>
-
-      <p>
-        Medical spending should be evaluated differently than luxury purchases
-        because healthcare is often unavoidable. The goal is not simply avoiding
-        spending. It is protecting both health and long-term financial
-        flexibility at the same time.
-      </p>
-    </div>
-
-    <section class="section">
-      <div class="section-kicker">Decision Framework</div>
-
-      <h2>What Medical Affordability Really Means</h2>
-
-      <p>
-        A medical expense can be technically affordable and still create major
-        financial pressure if it drains emergency savings, increases
-        high-interest debt, or leaves little room for rent, groceries,
-        transportation, childcare, insurance premiums, or normal monthly
-        expenses afterward.
+      <p class="intro">
+        Healthcare costs can create financial pressure even when care is necessary.
+        These calculators help compare medical bills, payment plans, emergency savings,
+        insurance gaps, debt pressure, and monthly breathing room without treating
+        healthcare like a luxury purchase.
       </p>
 
-      <p>
-        Healthcare affordability depends on more than the invoice. Insurance
-        coverage, deductibles, out-of-network risk, payment plan terms, income
-        stability, existing debt, emergency savings, and the urgency of care all
-        matter. A $2,500 bill can be manageable for one household and
-        destabilizing for another.
-      </p>
-
-      <p>
-        Some treatments are unavoidable, which makes medical affordability
-        different from travel, weddings, or luxury spending. The safest approach
-        is usually the one that balances medical necessity with long-term
-        financial survivability.
-      </p>
-    </section>
-
-    <section class="section full">
-      <div class="section-kicker">Pressure Factors</div>
-
-      <h2>Financial Pressure Factors in Medical Spending</h2>
-
-      <div class="info-grid">
-        <div class="info-card">
-          <h3>Emergency Savings</h3>
-          <p>
-            Emergency savings can reduce the need for high-interest borrowing
-            after unexpected healthcare costs.
-          </p>
-        </div>
-
-        <div class="info-card">
-          <h3>Insurance Gaps</h3>
-          <p>
-            Deductibles, out-of-network costs, coinsurance, denied claims, and
-            uncovered procedures can dramatically change affordability.
-          </p>
-        </div>
-
-        <div class="info-card">
-          <h3>Payment Plans</h3>
-          <p>
-            Monthly medical payments still affect long-term flexibility even if
-            they reduce short-term pressure.
-          </p>
-        </div>
-
-        <div class="info-card">
-          <h3>Debt Load</h3>
-          <p>
-            Existing debt obligations can make otherwise manageable healthcare
-            costs much harder to absorb.
-          </p>
-        </div>
-
-        <div class="info-card">
-          <h3>Income Stability</h3>
-          <p>
-            Stable income generally reduces medical financial risk compared with
-            irregular or uncertain earnings.
-          </p>
-        </div>
-
-        <div class="info-card">
-          <h3>Recovery Timeline</h3>
-          <p>
-            The safest financial decisions usually leave a realistic path to
-            rebuilding savings afterward.
-          </p>
-        </div>
+      <div class="inline-links">
+        {internalLinks.map((link) => (
+          <a href={link.href}>{link.label}</a>
+        ))}
       </div>
     </section>
 
-    <KeyCostCategories
-      items={[
-        {
-          title: "Out-of-pocket cost",
-          description:
-            "The real bill depends on deductibles, coinsurance, copays, out-of-network charges, denied claims, and uncovered services.",
-        },
-        {
-          title: "Emergency savings",
-          description:
-            "Savings can make medical care easier to handle, but the remaining cushion matters after the bill is paid.",
-        },
-        {
-          title: "Payment plan terms",
-          description:
-            "A payment plan can reduce immediate pain, but it still competes with rent, groceries, transportation, childcare, and other obligations.",
-        },
-        {
-          title: "Existing debt",
-          description:
-            "Credit cards, car loans, personal loans, and other monthly payments affect whether a medical bill is manageable.",
-        },
-        {
-          title: "Medical urgency",
-          description:
-            "Necessary or time-sensitive care should be judged differently from optional, cosmetic, or easily delayed care.",
-        },
-      ]}
-    />
-
-    <ReduceCostTips
-      items={[
-        "Ask for an itemized bill before paying a large medical charge.",
-        "Check whether the provider offers financial assistance, charity care, or income-based discounts.",
-        "Confirm whether the provider is in-network before scheduling non-emergency care.",
-        "Ask whether a no-interest payment plan is available before using a credit card.",
-        "Compare cash-pay prices when insurance does not meaningfully reduce the cost.",
-        "Avoid draining emergency savings completely unless the care is urgent and unavoidable.",
-      ]}
-    />
-
-    <FinancialRedFlags
-      items={[
-        "The bill would wipe out emergency savings with no realistic plan to rebuild them.",
-        "The payment plan would make rent, groceries, transportation, or childcare difficult to cover.",
-        "The provider is out of network and the final bill is uncertain.",
-        "The plan depends on a high-interest credit card instead of a lower-pressure payment option.",
-        "Optional treatment is being financed while other essential bills are already strained.",
-        "The household is ignoring insurance appeals, itemized billing errors, or financial assistance options.",
-      ]}
-    />
-
-    <CalculatorAssumptions
-      items={[
-        "Monthly income means take-home pay, not gross income.",
-        "Medical affordability depends on both the bill amount and the household's ability to recover afterward.",
-        "Emergency savings are useful for medical costs, but they should not be drained casually.",
-        "No-interest payment plans are generally less risky than high-interest credit card debt.",
-        "Necessary medical care may still be worth pursuing even when the financial pressure is real.",
-        "These calculators are educational tools and do not replace medical, insurance, legal, or financial advice.",
-      ]}
-    />
-
-    <section class="section">
-      <div class="section-kicker">When Spending Makes Sense</div>
-
-      <h2>When Medical Spending Can Be the Right Decision</h2>
-
-      <p>
-        Medical spending can make sense even when the number feels uncomfortable.
-        Necessary treatment, pain reduction, mobility, fertility care,
-        emergency care, dental work, therapy, hearing aids, and vision
-        procedures may protect quality of life or prevent larger problems later.
-      </p>
-
-      <p>
-        The strongest medical spending decisions usually have clear medical
-        value, a verified bill, a realistic payment plan, and enough remaining
-        cushion to keep the household stable after treatment.
-      </p>
-    </section>
-
-    <section class="section">
-      <div class="section-kicker">Related Guides</div>
-
-      <h2>Related Medical and Financial Pressure Guides</h2>
-
-      <p>
-        Medical bills rarely happen in isolation. These related pages help
-        connect healthcare costs with emergency savings, existing debt, payment
-        pressure, and monthly financial flexibility.
-      </p>
+    <section class="wide-section">
+      <div class="eyebrow">Start here</div>
+      <h2>Common medical cost decisions</h2>
 
       <div class="link-grid">
-        {relatedGuides.map((guide) => (
-          <a class="link-card" href={guide.href}>
-            <strong>{guide.title}</strong>
-            <span>{guide.description}</span>
+        {featuredMedicalLinks.map((link) => (
+          <a class="link-card" href={link.href}>
+            <strong>{link.title}</strong>
+            <span>{link.text}</span>
           </a>
         ))}
       </div>
     </section>
 
-    <FAQSection title="Medical Cost FAQ" faqs={medicalFaqs} />
+    {medicalCalculators.length > 0 && (
+      <section class="wide-section">
+        <div class="eyebrow">All medical calculators</div>
+        <h2>Medical bill and healthcare affordability calculators</h2>
 
-    <div class="section full">
-      <RelatedCalculators calculators={relatedMedicalCalculators} />
+        <p>
+          Use these tools to compare medical bills, insurance gaps, payment plans,
+          emergency savings use, debt pressure, and the household budget after care.
+        </p>
+
+        <div class="grid">
+          {medicalCalculators.map((calculator) => (
+            <CalculatorCard
+              category={calculator.category}
+              title={calculator.title}
+              description={calculator.description}
+              href={calculator.href}
+            />
+          ))}
+        </div>
+      </section>
+    )}
+
+    <div class="verdict-bar">
+      <div class="verdict-label">Healthcare affordability</div>
+
+      <h2>The goal is to protect both your health and your financial stability.</h2>
+
+      <p>
+        Medical spending should be evaluated differently from optional purchases.
+        Some care cannot wait. Some bills can be negotiated, appealed, financed,
+        or planned around. The safest decision usually balances medical necessity
+        with a realistic path back to stability.
+      </p>
     </div>
-  </main>
 
-  <MethodologySection category="medical cost affordability" updated="June 2026" />
+    <section class="section">
+      <div class="eyebrow">Decision framework</div>
+      <h2>What medical affordability really means</h2>
+
+      <p>
+        A medical expense can be technically payable and still create real pressure
+        if it drains emergency savings, adds high-interest debt, or leaves too little
+        room for rent, groceries, transportation, childcare, insurance premiums, or
+        normal monthly expenses.
+      </p>
+
+      <p>
+        The bill matters, but so does the timing, urgency, insurance coverage, payment
+        plan, savings cushion, existing debt, and what happens if care is delayed.
+      </p>
+    </section>
+
+    <section class="wide-section">
+      <div class="eyebrow">Cost factors</div>
+      <h2>What can change the real cost of medical care</h2>
+
+      <div class="info-grid">
+        {medicalCostFactors.map((factor) => (
+          <div class="info-card">
+            <h3>{factor.title}</h3>
+            <p>{factor.text}</p>
+          </div>
+        ))}
+      </div>
+    </section>
+
+    <section class="wide-section">
+      <div class="eyebrow">Lower the pressure</div>
+      <h2>Ways to make a medical bill safer</h2>
+
+      <div class="info-grid">
+        {reduceCostTips.map((tip) => (
+          <div class="info-card">
+            <h3>{tip.title}</h3>
+            <p>{tip.text}</p>
+          </div>
+        ))}
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="eyebrow">Warning signs</div>
+      <h2>Medical bill red flags</h2>
+
+      <p>
+        These signs do not mean you should skip care. They mean the payment plan,
+        bill, provider, or timing deserves a closer look.
+      </p>
+
+      <ul class="red-flag-list">
+        {redFlags.map((flag) => <li>{flag}</li>)}
+      </ul>
+    </section>
+
+    <section class="section">
+      <div class="eyebrow">When spending makes sense</div>
+      <h2>Necessary care can still be the right decision.</h2>
+
+      <p>
+        Medical spending can make sense even when the number feels uncomfortable.
+        Treatment, pain reduction, mobility, fertility care, emergency care, dental
+        work, therapy, hearing aids, vision procedures, and prescriptions may protect
+        quality of life or prevent larger problems later.
+      </p>
+
+      <p>
+        The strongest medical spending decisions usually have clear medical value,
+        a verified bill, a realistic payment plan, and enough remaining cushion to
+        keep the household stable after treatment.
+      </p>
+    </section>
+
+    <section class="section">
+      <div class="eyebrow">Assumptions</div>
+      <h2>How these calculators think about medical costs</h2>
+
+      <p>
+        These assumptions help keep the medical calculator cluster consistent.
+      </p>
+
+      <ul class="check-list">
+        {assumptions.map((assumption) => <li>{assumption}</li>)}
+      </ul>
+    </section>
+
+    <section class="wide-section">
+      <div class="eyebrow">Related tools</div>
+      <h2>Other calculators that connect to medical bills</h2>
+
+      <div class="link-grid">
+        {relatedGuides.map((guide) => (
+          <a class="link-card" href={guide.href}>
+            <strong>{guide.title}</strong>
+            <span>{guide.text}</span>
+          </a>
+        ))}
+      </div>
+    </section>
+
+    <section class="callout dark-callout">
+      <div class="eyebrow">Use these as pressure tests</div>
+
+      <h2>A medical bill result is not a medical recommendation.</h2>
+
+      <p>
+        ShouldISpend medical calculators are educational tools for financial
+        decision support. They do not replace a doctor, insurer, hospital billing
+        office, financial advisor, attorney, or other qualified professional.
+      </p>
+    </section>
+
+    <FAQSection title="Medical Cost FAQ" faqs={medicalFaqs} />
+  </main>
 </Layout>
