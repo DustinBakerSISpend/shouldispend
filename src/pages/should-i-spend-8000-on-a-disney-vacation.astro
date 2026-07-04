@@ -182,7 +182,7 @@ import WhenSpendingMakesSense from "../components/WhenSpendingMakesSense.astro";
           </div>
         </div>
 
-        <button id="vacationButton" type="button">
+        <button class="sis-action-button sis-calculate-button" id="vacationButton" type="button">
           Get Disney Vacation Verdict
         </button>
 
@@ -524,23 +524,23 @@ import WhenSpendingMakesSense from "../components/WhenSpendingMakesSense.astro";
 
       if (pressureScore <= 30) {
         guidance =
-          `This Disney trip appears manageable based on the numbers provided. The cost equals about ${monthlyIncomeImpact.toFixed(1)}% of one month’s income and ${savingsImpact.toFixed(1)}% of savings, so the main priority is keeping the full trip budget under control and avoiding high-interest debt.`;
+          `This Disney trip appears manageable based on the numbers provided. The cost equals about ${monthlyIncomeImpact.toFixed(1)}% of one month's income and ${savingsImpact.toFixed(1)}% of savings, so the main priority is keeping the full trip budget under control and avoiding high-interest debt.`;
       } else if (pressureScore <= 60) {
         guidance =
-          `This Disney trip may work, but it deserves caution. The cost equals about ${monthlyIncomeImpact.toFixed(1)}% of one month’s income and ${savingsImpact.toFixed(1)}% of savings, which means park tickets, hotels, meals, souvenirs, and add-ons should be capped before booking.`;
+          `This Disney trip may work, but it deserves caution. The cost equals about ${monthlyIncomeImpact.toFixed(1)}% of one month's income and ${savingsImpact.toFixed(1)}% of savings, which means park tickets, hotels, meals, souvenirs, and add-ons should be capped before booking.`;
       } else {
         guidance =
-          `This Disney trip could create real financial strain. The cost equals about ${monthlyIncomeImpact.toFixed(1)}% of one month’s income and ${savingsImpact.toFixed(1)}% of savings, so delaying, saving more, choosing fewer park days, or lowering the hotel and ticket budget would be safer.`;
+          `This Disney trip could create real financial strain. The cost equals about ${monthlyIncomeImpact.toFixed(1)}% of one month's income and ${savingsImpact.toFixed(1)}% of savings, so delaying, saving more, choosing fewer park days, or lowering the hotel and ticket budget would be safer.`;
       }
 
-      scoreEl.textContent = `${level.label} — ${pressureScore}/100`;
+      scoreEl.textContent = `${level.label}  -  ${pressureScore}/100`;
       barFill.style.width = `${pressureScore}%`;
       barFill.style.background = level.color;
 
       stressEl.innerHTML = `<strong>Pressure level:</strong> ${level.stress}`;
       savingsImpactEl.innerHTML = `<strong>Savings impact:</strong> ${savingsImpact.toFixed(1)}% of savings`;
       incomeImpactEl.innerHTML = `<strong>Annual income impact:</strong> ${annualIncomeImpact.toFixed(1)}% of annual income`;
-      monthlyIncomeImpactEl.innerHTML = `<strong>Monthly income impact:</strong> ${monthlyIncomeImpact.toFixed(1)}% of one month’s income`;
+      monthlyIncomeImpactEl.innerHTML = `<strong>Monthly income impact:</strong> ${monthlyIncomeImpact.toFixed(1)}% of one month's income`;
       debtRatioEl.innerHTML = `<strong>Debt ratio:</strong> ${debtRatio.toFixed(1)}% of annual income`;
       guidanceEl.textContent = `${guidance} Recommended next step: ${level.action}`;
     }

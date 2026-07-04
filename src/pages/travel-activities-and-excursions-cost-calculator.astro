@@ -1,0 +1,954 @@
+﻿---
+import Layout from "../layouts/Layout.astro";
+import CalculatorPageShell from "../components/CalculatorPageShell.astro";
+import FAQSection from "../components/FAQSection.astro";
+import RelatedCalculators from "../components/RelatedCalculators.astro";
+import MethodologySection from "../components/MethodologySection.astro";
+import CalculatorAssumptions from "../components/CalculatorAssumptions.astro";
+import KeyCostCategories from "../components/KeyCostCategories.astro";
+import ReduceCostTips from "../components/ReduceCostTips.astro";
+import { calculators } from "../data/calculators.js";
+
+const activitiesFaqs = [
+  {
+    question: "How do I estimate travel activities and excursion costs?",
+    answer:
+      "Add ticketed attractions, guided tours, excursions, rentals, equipment, activity transportation, tips, taxes, reservation fees, and a buffer. Subtract activity credits, gift cards, rewards, included tickets, or outside help to estimate the out-of-pocket activity budget.",
+  },
+  {
+    question: "Why do activities need their own travel calculator?",
+    answer:
+      "Activity costs are easy to underestimate because they are tied to the itinerary. A few museums, tours, theme parks, boat trips, rentals, or timed-entry tickets can change the daily cost and also make the trip feel overscheduled.",
+  },
+  {
+    question: "Should I include free activities?",
+    answer:
+      "Free activities do not add direct cost, but they matter because they reduce pressure. This calculator asks about free or low-cost days so the pressure score can account for itinerary balance, not only paid tickets.",
+  },
+  {
+    question: "Should I count nonrefundable activities differently?",
+    answer:
+      "Yes. Nonrefundable tours, tickets, and timed-entry reservations can create risk if weather, illness, travel delays, or schedule changes interfere. This calculator raises pressure when a large share of activity spending is nonrefundable.",
+  },
+  {
+    question: "Do activity credits or included tickets reduce pressure?",
+    answer:
+      "Yes. Gift cards, city passes, rewards, included resort activities, family help, and outside help reduce the out-of-pocket activity cost. If the full activity cost is covered and the household has no debt risk, the pressure score can reach zero.",
+  },
+];
+
+const relatedCalculators = calculators
+  .filter(
+    (calculator) =>
+      calculator.category === "Travel" &&
+      calculator.href !== "/travel-activities-and-excursions-cost-calculator"
+  )
+  .slice(0, 4);
+---
+
+<Layout
+  title="Travel Activities and Excursions Cost Calculator"
+  description="Estimate travel activity costs with tickets, tours, excursions, rentals, tips, transport, credits, schedule density, and affordability pressure."
+>
+  <style>
+    .container {
+      max-width: 940px;
+      margin: auto;
+    }
+
+    .calculator {
+      background: white;
+      padding: 40px;
+      border-radius: 24px;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.06);
+    }
+
+    .calculator h2 {
+      margin-top: 0;
+      font-size: 2rem;
+      margin-bottom: 18px;
+      color: #0f172a;
+    }
+
+    .calculator-intro {
+      color: #334155;
+      line-height: 1.8;
+      margin-bottom: 30px;
+      font-size: 1.05rem;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+    }
+
+    .field label {
+      display: block;
+      font-weight: 800;
+      margin-bottom: 10px;
+      color: #0f172a;
+    }
+
+    .field input,
+    .field select {
+      width: 100%;
+      padding: 16px;
+      border-radius: 12px;
+      border: 1px solid #cbd5e1;
+      font-size: 1rem;
+      box-sizing: border-box;
+      background: white;
+    }
+
+    .field-note {
+      display: block;
+      margin-top: 8px;
+      color: #64748b;
+      font-size: 0.9rem;
+      line-height: 1.5;
+    }
+
+    .button-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-top: 30px;
+    }
+
+    .results {
+      margin-top: 36px;
+      background: #f8fafc;
+      padding: 32px;
+      border-radius: 24px;
+      border: 1px solid var(--border);
+      box-shadow: 0 10px 24px rgba(15, 23, 42, 0.04);
+      display: none;
+    }
+
+    .results.visible {
+      display: block;
+    }
+
+    .result-label {
+      font-size: 1.15rem;
+      font-weight: 800;
+      color: #0f766e;
+      margin-bottom: 18px;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+    }
+
+    .total-price {
+      font-size: clamp(2.5rem, 6vw, 4rem);
+      font-weight: 900;
+      color: #0f172a;
+      line-height: 1.05;
+      margin-bottom: 10px;
+    }
+
+    .score-card {
+      margin: 24px 0;
+      padding: 22px;
+      border-radius: 18px;
+      background: white;
+      border: 1px solid #dbe4ee;
+    }
+
+    .score-line {
+      display: flex;
+      justify-content: space-between;
+      gap: 16px;
+      align-items: baseline;
+      margin-bottom: 12px;
+      color: #0f172a;
+      font-weight: 900;
+    }
+
+    .pressure-bar {
+      width: 100%;
+      height: 16px;
+      background: #e2e8f0;
+      border-radius: 999px;
+      overflow: hidden;
+      margin: 10px 0 16px;
+    }
+
+    .pressure-fill {
+      height: 100%;
+      width: 0%;
+      border-radius: 999px;
+      background: #16a34a;
+      transition: width 0.3s ease;
+    }
+
+    .result-details {
+      color: #334155;
+      line-height: 1.9;
+      font-size: 1.02rem;
+    }
+
+    .result-details p {
+      margin: 0 0 12px;
+    }
+
+    .mini-summary {
+      margin-top: 24px;
+      padding: 20px;
+      border-radius: 18px;
+      background: white;
+      border: 1px solid #dbe4ee;
+      color: #334155;
+      line-height: 1.8;
+    }
+
+    .disclaimer {
+      margin-top: 24px;
+      font-size: 0.9rem;
+      color: #64748b;
+    }
+
+    .content-section {
+      margin-top: 60px;
+    }
+
+    .content-section h2 {
+      font-size: 2rem;
+      margin-bottom: 20px;
+      color: #0f172a;
+    }
+
+    .content-section p,
+    .content-section li {
+      font-size: 1.1rem;
+      line-height: 1.9;
+      color: #334155;
+    }
+
+    .content-link {
+      color: #0f766e;
+      font-weight: 700;
+      text-decoration: none;
+    }
+
+    .content-link:hover {
+      text-decoration: underline;
+    }
+
+    .two-column-note {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 18px;
+      margin-top: 24px;
+    }
+
+    .note-card {
+      padding: 20px;
+      border: 1px solid #dbe4ee;
+      border-radius: 18px;
+      background: #ffffff;
+    }
+
+    .note-card strong {
+      display: block;
+      color: #0f172a;
+      margin-bottom: 8px;
+      font-size: 1.02rem;
+    }
+
+    @media (max-width: 768px) {
+      .calculator {
+        padding: 24px;
+      }
+
+      .grid {
+        grid-template-columns: 1fr;
+      }
+
+      .calculator h2,
+      .content-section h2 {
+        font-size: 1.7rem;
+      }
+
+      .results {
+        padding: 24px;
+      }
+
+      .score-line {
+        display: block;
+      }
+    }
+  </style>
+
+  <div class="container">
+    <CalculatorPageShell
+      eyebrow="Travel Activities and Excursions Cost Calculator"
+      title="Travel Activities and Excursions Cost Calculator"
+      description="Estimate the real cost of attractions, tours, excursions, rentals, tickets, tips, transport, credits, free-day balance, and activity-budget pressure."
+    >
+      <div class="calculator">
+        <h2>Estimate Your Activities and Excursions Budget</h2>
+
+        <p class="calculator-intro">
+          Activity costs are not just ticket prices. Use this calculator to plan
+          attractions, tours, excursions, rentals, tips, activity transportation,
+          reservation fees, nonrefundable bookings, free-day balance, credits,
+          cash set aside, and activity-budget pressure before the itinerary gets
+          too expensive or too crowded.
+        </p>
+
+        <form id="activitiesForm">
+          <div class="grid">
+            <div class="field">
+              <label for="tripStyle">Activity Style</label>
+              <select id="tripStyle">
+                <option value="" disabled selected>Choose activity style</option>
+                <option value="light">Mostly free or low-cost sightseeing</option>
+                <option value="balanced">Balanced mix of free and paid activities</option>
+                <option value="ticketed">Many ticketed attractions</option>
+                <option value="excursion">Tours and excursions are a major part of the trip</option>
+                <option value="premium">Premium, private, or once-in-a-lifetime activities</option>
+              </select>
+            </div>
+
+            <div class="field">
+              <label for="bookingFlex">Booking Flexibility</label>
+              <select id="bookingFlex">
+                <option value="" disabled selected>Choose booking flexibility</option>
+                <option value="flexible">Mostly flexible or refundable</option>
+                <option value="mixed">Mix of flexible and nonrefundable</option>
+                <option value="strict">Mostly strict or nonrefundable</option>
+                <option value="unknown">Not sure yet</option>
+              </select>
+            </div>
+
+            <div class="field">
+              <label for="travelers">Travelers Joining Activities</label>
+              <input id="travelers" type="number" placeholder="Example: 4" />
+            </div>
+
+            <div class="field">
+              <label for="tripDays">Trip Days</label>
+              <input id="tripDays" type="number" placeholder="Example: 6" />
+            </div>
+
+            <div class="field">
+              <label for="paidActivityDays">Days with Paid Activities</label>
+              <input id="paidActivityDays" type="number" step="0.1" placeholder="Example: 4" />
+              <span class="field-note">This helps estimate itinerary density, not just dollars.</span>
+            </div>
+
+            <div class="field">
+              <label for="freeActivityDays">Free or Low-Cost Days</label>
+              <input id="freeActivityDays" type="number" step="0.1" placeholder="Example: 2" />
+            </div>
+
+            <div class="field">
+              <label for="ticketedAttractions">Ticketed Attractions per Traveler</label>
+              <input id="ticketedAttractions" type="number" step="0.1" placeholder="Example: 3" />
+            </div>
+
+            <div class="field">
+              <label for="ticketCost">Average Ticket Cost per Attraction</label>
+              <input id="ticketCost" type="number" step="0.01" placeholder="Example: 38" />
+            </div>
+
+            <div class="field">
+              <label for="guidedTours">Guided Tours or Excursions per Traveler</label>
+              <input id="guidedTours" type="number" step="0.1" placeholder="Example: 1.5" />
+            </div>
+
+            <div class="field">
+              <label for="tourCost">Average Tour or Excursion Cost</label>
+              <input id="tourCost" type="number" step="0.01" placeholder="Example: 95" />
+            </div>
+
+            <div class="field">
+              <label for="rentalGearPerTraveler">Rentals, Gear, or Equipment per Traveler</label>
+              <input id="rentalGearPerTraveler" type="number" step="0.01" placeholder="Example: 40" />
+              <span class="field-note">Use this for bikes, boats, lockers, audio guides, beach gear, or equipment.</span>
+            </div>
+
+            <div class="field">
+              <label for="reservationFees">Reservation, Timed-Entry, or Service Fees</label>
+              <input id="reservationFees" type="number" step="0.01" placeholder="Example: 80" />
+            </div>
+
+            <div class="field">
+              <label for="activityTransport">Transportation to Activities</label>
+              <input id="activityTransport" type="number" step="0.01" placeholder="Example: 180" />
+              <span class="field-note">Use this for rideshares, parking, ferries, shuttles, trains, or transfers tied to activities.</span>
+            </div>
+
+            <div class="field">
+              <label for="tipsTaxPercent">Tips, Taxes, and Guide Gratuity Percent</label>
+              <input id="tipsTaxPercent" type="number" step="0.01" placeholder="Example: 18" />
+            </div>
+
+            <div class="field">
+              <label for="nonrefundableAmount">Nonrefundable Activity Amount</label>
+              <input id="nonrefundableAmount" type="number" step="0.01" placeholder="Example: 350" />
+              <span class="field-note">Use the amount you may not recover if weather, illness, or delays change plans.</span>
+            </div>
+
+            <div class="field">
+              <label for="bufferPercent">Activity Buffer Percent</label>
+              <input id="bufferPercent" type="number" step="0.01" placeholder="Example: 12" />
+            </div>
+
+            <div class="field">
+              <label for="activityCredits">Activity Credits, Passes, Gift Cards, or Outside Help</label>
+              <input id="activityCredits" type="number" step="0.01" placeholder="Example: 250" />
+            </div>
+
+            <div class="field">
+              <label for="cashSetAside">Cash Already Set Aside for Activities</label>
+              <input id="cashSetAside" type="number" step="0.01" placeholder="Example: 1000" />
+            </div>
+
+            <div class="field">
+              <label for="monthlyTakeHome">Monthly Take-Home Income</label>
+              <input id="monthlyTakeHome" type="number" step="0.01" placeholder="Example: 6500" />
+            </div>
+
+            <div class="field">
+              <label for="emergencySavings">Emergency Savings</label>
+              <input id="emergencySavings" type="number" step="0.01" placeholder="Example: 15000" />
+            </div>
+
+            <div class="field">
+              <label for="paymentPlan">How Will Activities Be Paid?</label>
+              <select id="paymentPlan">
+                <option value="" disabled selected>Choose payment method</option>
+                <option value="cash">Cash, debit, or already saved</option>
+                <option value="reimbursed">Temporary card charge, reimbursed soon</option>
+                <option value="partialCredit">Partly on credit card</option>
+                <option value="mostlyCredit">Mostly financed or carried as debt</option>
+              </select>
+            </div>
+
+            <div class="field">
+              <label for="priorityLevel">How Important Are These Activities?</label>
+              <select id="priorityLevel">
+                <option value="" disabled selected>Choose activity priority</option>
+                <option value="mustDo">Main reason for the trip</option>
+                <option value="important">Important but adjustable</option>
+                <option value="nice">Nice to have</option>
+                <option value="pressure">Mostly pressure or fear of missing out</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="button-row">
+            <button class="sis-action-button sis-calculate-button" id="activitiesButton" type="button">Calculate Activities Cost</button>
+            <button class="sis-action-button sis-reset-button" type="reset">Reset</button>
+          </div>
+        </form>
+
+        <div class="results" id="results">
+          <div class="result-label">Estimated Out-of-Pocket Activities Cost</div>
+
+          <div class="total-price" id="totalPrice"></div>
+
+          <div class="score-card">
+            <div class="score-line">
+              <span id="pressureLabel">Activities pressure score</span>
+              <span id="pressureScore">0/100</span>
+            </div>
+            <div class="pressure-bar">
+              <div class="pressure-fill" id="pressureFill"></div>
+            </div>
+            <div class="result-details" id="pressureDetails"></div>
+          </div>
+
+          <div class="result-details" id="resultDetails"></div>
+
+          <div class="mini-summary" id="activitySummary"></div>
+
+          <div class="disclaimer">
+            This estimate focuses on activities and excursions only. It does not
+            include flights, lodging, food, rental cars, travel insurance,
+            souvenirs, passports, or emergency travel costs.
+          </div>
+        </div>
+      </div>
+
+      <section class="content-section">
+        <h2>Why Activities Need More Than a Ticket Total</h2>
+
+        <p>
+          Activity costs are tied to both money and time. A trip can be affordable
+          on paper and still feel overloaded if every day requires paid tickets,
+          transportation, reservations, tips, and strict start times.
+        </p>
+
+        <p>
+          This calculator is built for the itinerary decision: how much the paid
+          activities cost, how much is nonrefundable, whether free days balance the
+          schedule, and whether the activity plan fits the household budget after
+          the major travel costs are already in motion.
+        </p>
+
+        <p>
+          For the full trip picture, compare this estimate with the
+          <a class="content-link" href="/rental-car-cost-calculator">rental car cost calculator</a>,
+          the
+          <a class="content-link" href="/vacation-food-budget-calculator">vacation food budget calculator</a>,
+          the
+          <a class="content-link" href="/hotel-and-lodging-cost-calculator">hotel and lodging cost calculator</a>,
+          and the
+          <a class="content-link" href="/travel-calculators">travel calculators hub</a>.
+        </p>
+      </section>
+
+      <KeyCostCategories
+        items={[
+          {
+            title: "Tickets and attractions",
+            description:
+              "Museums, theme parks, shows, timed-entry tickets, observation decks, and paid attractions multiply by traveler count.",
+          },
+          {
+            title: "Tours and excursions",
+            description:
+              "Guided tours, boat trips, food tours, adventure excursions, private guides, lessons, and day trips can become the largest activity category.",
+          },
+          {
+            title: "Rentals and activity transportation",
+            description:
+              "Gear rentals, lockers, bikes, boats, parking, ferries, rideshares, shuttles, and transfers belong in the activity budget.",
+          },
+          {
+            title: "Tips, taxes, and reservation fees",
+            description:
+              "Guide gratuities, service fees, timed-entry charges, taxes, and booking fees can make the final activity cost higher than the posted ticket price.",
+          },
+          {
+            title: "Nonrefundable risk and schedule density",
+            description:
+              "Strict bookings and too many paid days can create pressure when weather, illness, fatigue, delays, or kids change the itinerary.",
+          },
+        ]}
+      />
+
+      <ReduceCostTips
+        items={[
+          "Choose the activities that define the trip before filling every open day.",
+          "Mix paid activities with free walking, beach, park, pool, museum, or neighborhood time.",
+          "Check refund rules before booking weather-dependent tours or timed-entry tickets.",
+          "Price transportation to and from each activity before assuming the ticket is the full cost.",
+          "Use city passes, included resort activities, gift cards, rewards, or outside help to reduce out-of-pocket cost.",
+          "Leave one flexible block in the itinerary so a delayed flight, tired kid, or rainy day does not waste nonrefundable tickets.",
+        ]}
+      />
+
+      <CalculatorAssumptions
+        items={[
+          "Ticketed attraction cost equals travelers multiplied by ticketed attractions per traveler and average ticket cost.",
+          "Tour and excursion cost equals travelers multiplied by guided tours or excursions per traveler and average tour cost.",
+          "Rentals and gear are estimated per traveler.",
+          "Reservation fees and activity transportation are treated as group totals.",
+          "Tips, taxes, and guide gratuity percentage apply to tickets, tours, excursions, rentals, and activity transportation.",
+          "The activity buffer is applied after tips, taxes, and credits are considered.",
+          "Activity credits, passes, gift cards, rewards, included tickets, and outside help reduce the out-of-pocket estimate.",
+          "Pressure score is educational and considers income, emergency savings, cash set aside, payment method, priority, booking flexibility, nonrefundable risk, and itinerary density.",
+        ]}
+      />
+
+      <section class="content-section">
+        <h2>Paid Activities vs. Free Time: What Changes the Decision</h2>
+
+        <p>
+          The best activity budget is not always the cheapest or the fullest. A
+          trip can be better with fewer paid activities if that leaves money and
+          energy for the experiences that actually matter.
+        </p>
+
+        <div class="two-column-note">
+          <div class="note-card">
+            <strong>More paid activities can make sense when</strong>
+            <p>
+              They are the main reason for the trip, hard to do later, realistic
+              for the group, and affordable without weakening food, lodging,
+              transport, or return-home cash flow.
+            </p>
+          </div>
+
+          <div class="note-card">
+            <strong>Fewer paid activities can be better when</strong>
+            <p>
+              The schedule is already tight, the group needs rest, the weather is
+              uncertain, the trip is debt-funded, or free experiences are a major
+              part of the destination.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <div class="content-section">
+        <FAQSection title="Travel Activities and Excursions Cost Calculator FAQ" faqs={activitiesFaqs} />
+      </div>
+
+      <div class="content-section">
+        <RelatedCalculators calculators={relatedCalculators} />
+      </div>
+    </CalculatorPageShell>
+
+    <section id="FinancialRedFlags">
+      <h2>Activity Budget Red Flags</h2>
+
+      <p>
+        A travel activity budget deserves extra caution when the itinerary only
+        works if every booking goes perfectly and every traveler has the energy,
+        money, and schedule flexibility to keep up.
+      </p>
+
+      <ul>
+        <li>The activity budget depends on carrying credit card debt after the trip.</li>
+        <li>Most activity spending is strict, prepaid, or nonrefundable.</li>
+        <li>The budget ignores transportation, tips, taxes, booking fees, or gear rentals.</li>
+        <li>There are no free or flexible days built into the itinerary.</li>
+        <li>Paid activities crowd out food, lodging, transportation, or emergency cash.</li>
+        <li>The trip is being overloaded because of pressure, comparison, or fear of missing out.</li>
+      </ul>
+    </section>
+
+    <MethodologySection category="travel activities and excursions cost estimates" updated="July 2026" />
+  </div>
+
+  <script is:inline>
+    const getNumber = (id) => {
+      const rawValue = document.getElementById(id)?.value;
+      const value = Number(rawValue);
+      return Number.isFinite(value) && value >= 0 ? value : 0;
+    };
+
+    const getValue = (id) => document.getElementById(id)?.value || "";
+
+    function clamp(value, min, max) {
+      return Math.min(Math.max(value, min), max);
+    }
+
+    function formatMoney(value) {
+      return value.toLocaleString(undefined, {
+        style: "currency",
+        currency: "USD",
+        minimumFractionDigits: 0,
+        maximumFractionDigits: 0,
+      });
+    }
+
+    function scoreColor(score) {
+      if (score <= 35) return "#16a34a";
+      if (score <= 65) return "#ca8a04";
+      return "#dc2626";
+    }
+
+    function scoreLabel(score) {
+      if (score <= 35) return "Low activities pressure";
+      if (score <= 65) return "Moderate activities pressure";
+      return "High activities pressure";
+    }
+
+    function paymentAdjustment(paymentPlan) {
+      if (paymentPlan === "mostlyCredit") return 30;
+      if (paymentPlan === "partialCredit") return 16;
+      if (paymentPlan === "reimbursed") return 6;
+      return 0;
+    }
+
+    function priorityAdjustment(priorityLevel) {
+      if (priorityLevel === "mustDo") return -6;
+      if (priorityLevel === "important") return -2;
+      if (priorityLevel === "nice") return 4;
+      if (priorityLevel === "pressure") return 10;
+      return 3;
+    }
+
+    function bookingFlexAdjustment(bookingFlex) {
+      if (bookingFlex === "strict") return 12;
+      if (bookingFlex === "mixed") return 5;
+      if (bookingFlex === "unknown") return 7;
+      if (bookingFlex === "flexible") return -4;
+      return 4;
+    }
+
+    function styleAdjustment(tripStyle) {
+      if (tripStyle === "premium") return 8;
+      if (tripStyle === "excursion") return 5;
+      if (tripStyle === "ticketed") return 3;
+      if (tripStyle === "light") return -4;
+      return 0;
+    }
+
+    function calculateActivitiesCost() {
+      const tripStyle = getValue("tripStyle");
+      const bookingFlex = getValue("bookingFlex");
+      const travelers = Math.max(getNumber("travelers"), 0);
+      const tripDays = getNumber("tripDays");
+      const paidActivityDays = getNumber("paidActivityDays");
+      const freeActivityDays = getNumber("freeActivityDays");
+      const ticketedAttractions = getNumber("ticketedAttractions");
+      const ticketCost = getNumber("ticketCost");
+      const guidedTours = getNumber("guidedTours");
+      const tourCost = getNumber("tourCost");
+      const rentalGearPerTraveler = getNumber("rentalGearPerTraveler");
+      const reservationFees = getNumber("reservationFees");
+      const activityTransport = getNumber("activityTransport");
+      const tipsTaxPercent = getNumber("tipsTaxPercent");
+      const nonrefundableAmount = getNumber("nonrefundableAmount");
+      const bufferPercent = getNumber("bufferPercent");
+      const activityCredits = getNumber("activityCredits");
+      const cashSetAside = getNumber("cashSetAside");
+      const monthlyTakeHome = getNumber("monthlyTakeHome");
+      const emergencySavings = getNumber("emergencySavings");
+      const paymentPlan = getValue("paymentPlan");
+      const priorityLevel = getValue("priorityLevel");
+
+      const results = document.getElementById("results");
+      const totalPrice = document.getElementById("totalPrice");
+      const resultDetails = document.getElementById("resultDetails");
+      const activitySummary = document.getElementById("activitySummary");
+      const pressureScore = document.getElementById("pressureScore");
+      const pressureFill = document.getElementById("pressureFill");
+      const pressureLabel = document.getElementById("pressureLabel");
+      const pressureDetails = document.getElementById("pressureDetails");
+
+      results.classList.add("visible");
+
+      if (travelers <= 0 || tripDays <= 0) {
+        totalPrice.textContent = "$0";
+        pressureScore.textContent = "0/100";
+        pressureFill.style.width = "0%";
+        pressureFill.style.background = "#16a34a";
+        pressureLabel.textContent = "Enter activity details";
+        pressureDetails.innerHTML =
+          "<p>Enter travelers and trip days to estimate your activities and excursions budget.</p>";
+        resultDetails.innerHTML = "";
+        activitySummary.textContent = "";
+        return;
+      }
+
+      const ticketCostTotal = travelers * ticketedAttractions * ticketCost;
+      const tourCostTotal = travelers * guidedTours * tourCost;
+      const rentalGearTotal = travelers * rentalGearPerTraveler;
+      const taxableActivityCost =
+        ticketCostTotal + tourCostTotal + rentalGearTotal + activityTransport;
+      const tipsTaxCost = taxableActivityCost * (tipsTaxPercent / 100);
+      const preBufferActivityCost =
+        taxableActivityCost + reservationFees + tipsTaxCost;
+      const bufferCost = preBufferActivityCost * (bufferPercent / 100);
+      const grossActivityCost = preBufferActivityCost + bufferCost;
+      const appliedCredits = Math.min(activityCredits, grossActivityCost);
+      const outOfPocketCost = Math.max(0, grossActivityCost - appliedCredits);
+      const cashGap = Math.max(0, outOfPocketCost - cashSetAside);
+      const costPerTraveler = travelers > 0 ? outOfPocketCost / travelers : 0;
+      const costPerTravelerPerDay =
+        travelers > 0 && tripDays > 0 ? outOfPocketCost / travelers / tripDays : 0;
+      const paidDayShare = tripDays > 0 ? paidActivityDays / tripDays : 0;
+      const freeDayShare = tripDays > 0 ? freeActivityDays / tripDays : 0;
+      const nonrefundableShare =
+        grossActivityCost > 0 ? Math.min(nonrefundableAmount, grossActivityCost) / grossActivityCost : 0;
+      const emergencyAfterGap = Math.max(0, emergencySavings - cashGap);
+
+      /*
+        Activities pressure logic must make sense at both extremes:
+        - Near-zero income and no emergency savings should force high pressure when cost exists.
+        - Fully covered, no-debt, tiny-cost, strong-cushion cases should reach 0/100.
+        - Cash set aside helps, but it does not erase no-income, no-emergency, nonrefundable, schedule-density, or debt-financing risk.
+      */
+      const hasIncome = monthlyTakeHome >= 500;
+      const incomeToUse = hasIncome ? monthlyTakeHome : 0;
+      const costToIncomeRatio = incomeToUse > 0 ? outOfPocketCost / incomeToUse : Infinity;
+      const cashGapRatio = incomeToUse > 0 ? cashGap / incomeToUse : cashGap > 0 ? Infinity : 0;
+      const emergencyMonths = incomeToUse > 0 ? emergencySavings / incomeToUse : emergencySavings > 0 ? 99 : 0;
+      const emergencyAfterGapMonths =
+        incomeToUse > 0 ? emergencyAfterGap / incomeToUse : emergencyAfterGap > 0 ? 99 : 0;
+      const creditShare = grossActivityCost > 0 ? appliedCredits / grossActivityCost : 0;
+      const cashCoverage = outOfPocketCost > 0 ? cashSetAside / outOfPocketCost : 1;
+      const noDebtPayment =
+        paymentPlan === "cash" || paymentPlan === "reimbursed" || paymentPlan === "";
+      const fullyCovered = cashCoverage >= 1 || creditShare >= 1;
+      const tinyCostForIncome =
+        outOfPocketCost > 0 && monthlyTakeHome > 0 && outOfPocketCost <= monthlyTakeHome * 0.02;
+      const verySmallCostForIncome =
+        outOfPocketCost > 0 && monthlyTakeHome > 0 && outOfPocketCost <= monthlyTakeHome * 0.05;
+      const strongEmergencyCushion =
+        emergencySavings >= 10000 || emergencyMonths >= 3 || emergencySavings >= outOfPocketCost * 3;
+
+      let score = 0;
+
+      if (outOfPocketCost === 0) {
+        score = 0;
+      } else if (!hasIncome) {
+        score = 84;
+
+        if (cashGap > 0) score += 10;
+        if (emergencySavings <= 0) score += 10;
+        else if (emergencySavings < outOfPocketCost) score += 6;
+
+        if (cashCoverage >= 1) score -= 8;
+        if (creditShare >= 0.75) score -= 8;
+      } else {
+        if (costToIncomeRatio >= 1) score += 58;
+        else if (costToIncomeRatio >= 0.75) score += 48;
+        else if (costToIncomeRatio >= 0.5) score += 38;
+        else if (costToIncomeRatio >= 0.3) score += 28;
+        else if (costToIncomeRatio >= 0.15) score += 16;
+        else score += 8;
+
+        if (cashGapRatio >= 0.5) score += 24;
+        else if (cashGapRatio >= 0.25) score += 16;
+        else if (cashGapRatio > 0) score += 8;
+
+        if (emergencySavings <= 0) score += 22;
+        else if (emergencyAfterGapMonths < 1) score += 18;
+        else if (emergencyAfterGapMonths < 2) score += 10;
+        else if (emergencyAfterGapMonths >= 6) score -= 10;
+        else if (emergencyAfterGapMonths >= 3) score -= 6;
+
+        if (cashCoverage >= 1) score -= 10;
+        else if (cashCoverage >= 0.5) score -= 5;
+      }
+
+      score += paymentAdjustment(paymentPlan);
+      score += priorityAdjustment(priorityLevel);
+      score += bookingFlexAdjustment(bookingFlex);
+      score += styleAdjustment(tripStyle);
+
+      if (paidDayShare >= 0.9) score += 10;
+      else if (paidDayShare >= 0.7) score += 6;
+      else if (paidDayShare >= 0.5) score += 3;
+
+      if (freeDayShare >= 0.35) score -= 5;
+      else if (freeDayShare <= 0.1 && paidActivityDays > 0) score += 5;
+
+      if (nonrefundableShare >= 0.6) score += 12;
+      else if (nonrefundableShare >= 0.35) score += 7;
+      else if (nonrefundableShare >= 0.15) score += 4;
+
+      if (bufferPercent < 8 && outOfPocketCost > 0) score += 4;
+
+      if (creditShare >= 1 && grossActivityCost > 0) score -= 28;
+      else if (creditShare > 0) score -= clamp(creditShare * 18, 0, 18);
+
+      if (outOfPocketCost > 0 && monthlyTakeHome > 0 && outOfPocketCost > monthlyTakeHome * 2) {
+        score = Math.max(score, 90);
+      }
+
+      if (outOfPocketCost > 0 && monthlyTakeHome < 500 && emergencySavings <= 0) {
+        score = Math.max(score, 92);
+      }
+
+      if (outOfPocketCost > 0 && emergencySavings <= 0 && paymentPlan === "mostlyCredit") {
+        score = Math.max(score, 90);
+      }
+
+      if (
+        outOfPocketCost > 0 &&
+        fullyCovered &&
+        noDebtPayment &&
+        tinyCostForIncome &&
+        strongEmergencyCushion &&
+        nonrefundableShare < 0.5
+      ) {
+        score = 0;
+      } else if (
+        outOfPocketCost > 0 &&
+        monthlyTakeHome >= 10000 &&
+        emergencyMonths >= 6 &&
+        cashCoverage >= 1 &&
+        noDebtPayment
+      ) {
+        score = Math.min(score, 20);
+      } else if (
+        outOfPocketCost > 0 &&
+        fullyCovered &&
+        noDebtPayment &&
+        verySmallCostForIncome &&
+        strongEmergencyCushion
+      ) {
+        score = Math.min(score, 5);
+      }
+
+      score = Math.round(clamp(score, 0, 100));
+
+      const label = scoreLabel(score);
+      const color = scoreColor(score);
+
+      totalPrice.textContent = formatMoney(outOfPocketCost);
+      pressureScore.textContent = `${score}/100`;
+      pressureFill.style.width = `${score}%`;
+      pressureFill.style.background = color;
+      pressureLabel.textContent = label;
+
+      const styleText = tripStyle
+        ? tripStyle.replace(/([A-Z])/g, " $1").toLowerCase()
+        : "activities";
+
+      const incomeText = hasIncome
+        ? `The out-of-pocket activity cost equals about <strong>${(costToIncomeRatio * 100).toFixed(0)}%</strong> of one month of take-home income.`
+        : "Monthly take-home income is too low or missing, so the calculator treats this as a high-pressure activity decision.";
+
+      const emergencyText =
+        emergencySavings <= 0
+          ? "Emergency savings are entered as <strong>$0</strong>, which raises pressure even if activity cash is set aside."
+          : `Emergency savings equal about <strong>${emergencyMonths.toFixed(1)}</strong> months of take-home income before any activity cash gap.`;
+
+      const densityText =
+        paidDayShare >= 0.75
+          ? "The itinerary is activity-heavy, so the score includes extra schedule-density pressure."
+          : freeDayShare >= 0.35
+            ? "The itinerary includes meaningful free or low-cost time, which lowers pressure."
+            : "The itinerary density is moderate based on the paid and free days entered.";
+
+      pressureDetails.innerHTML = `
+        <p><strong>${label}:</strong> ${incomeText} ${emergencyText} ${densityText}</p>
+      `;
+
+      resultDetails.innerHTML = `
+        <p><strong>Ticketed attractions:</strong> ${formatMoney(ticketCostTotal)}.</p>
+
+        <p><strong>Guided tours and excursions:</strong> ${formatMoney(tourCostTotal)}.</p>
+
+        <p><strong>Rentals, gear, and equipment:</strong> ${formatMoney(rentalGearTotal)}.</p>
+
+        <p><strong>Activity transportation:</strong> ${formatMoney(activityTransport)}.</p>
+
+        <p><strong>Reservation and service fees:</strong> ${formatMoney(reservationFees)}.</p>
+
+        <p><strong>Tips, taxes, and guide gratuity:</strong> ${formatMoney(tipsTaxCost)}.</p>
+
+        <p><strong>Activity buffer:</strong> ${formatMoney(bufferCost)}.</p>
+
+        <p><strong>Activity credits and outside help applied:</strong> ${formatMoney(appliedCredits)}.</p>
+
+        <p><strong>Estimated cost per traveler:</strong> ${formatMoney(costPerTraveler)}.</p>
+
+        <p><strong>Estimated cost per traveler per day:</strong> ${formatMoney(costPerTravelerPerDay)}.</p>
+
+        <p><strong>Nonrefundable activity exposure:</strong> ${formatMoney(Math.min(nonrefundableAmount, grossActivityCost))}.</p>
+
+        <p><strong>Cash gap after activity money set aside:</strong> ${formatMoney(cashGap)}.</p>
+      `;
+
+      activitySummary.innerHTML = `
+        This ${styleText} plan is estimated at <strong>${formatMoney(grossActivityCost)}</strong> before credits.
+        After <strong>${formatMoney(appliedCredits)}</strong> in credits, passes, rewards, gift cards, included tickets, or outside help,
+        the estimated out-of-pocket activities cost is <strong>${formatMoney(outOfPocketCost)}</strong>.
+        The final activities pressure score is <strong>${score}/100</strong>.
+      `;
+    }
+
+    document
+      .getElementById("activitiesButton")
+      .addEventListener("click", calculateActivitiesCost);
+
+    document.getElementById("activitiesForm").addEventListener("reset", () => {
+      const results = document.getElementById("results");
+      setTimeout(() => {
+        results.classList.remove("visible");
+      }, 0);
+    });
+  </script>
+</Layout>

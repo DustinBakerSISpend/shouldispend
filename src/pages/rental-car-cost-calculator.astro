@@ -1,0 +1,981 @@
+﻿---
+import Layout from "../layouts/Layout.astro";
+import CalculatorPageShell from "../components/CalculatorPageShell.astro";
+import FAQSection from "../components/FAQSection.astro";
+import RelatedCalculators from "../components/RelatedCalculators.astro";
+import MethodologySection from "../components/MethodologySection.astro";
+import CalculatorAssumptions from "../components/CalculatorAssumptions.astro";
+import KeyCostCategories from "../components/KeyCostCategories.astro";
+import ReduceCostTips from "../components/ReduceCostTips.astro";
+import { calculators } from "../data/calculators.js";
+
+const rentalCarFaqs = [
+  {
+    question: "How do I calculate the real cost of a rental car?",
+    answer:
+      "Start with the daily rental quote and number of rental days, then add taxes, airport fees, insurance, extra driver fees, young driver fees, child seats, tolls, parking, fuel, one-way fees, and other rental charges. Subtract credits, rewards, reimbursements, or outside help to estimate out-of-pocket cost.",
+  },
+  {
+    question: "Why is this different from the price on Priceline or a rental car website?",
+    answer:
+      "Rental sites show the quoted reservation price. This calculator turns that quote into a trip budget decision by adding common driving costs, refundable holds, card/cash cushion, fuel, parking, tolls, credits, and affordability pressure.",
+  },
+  {
+    question: "Should I include the refundable rental car deposit or card hold?",
+    answer:
+      "Yes, but not as a final cost. A refundable hold usually comes back, but it can still tie up credit or cash during the trip. This calculator separates out-of-pocket rental cost from upfront card or cash pressure.",
+  },
+  {
+    question: "Should I compare a rental car with rideshare or transit?",
+    answer:
+      "Yes. A rental car can be worth it when it replaces multiple rideshares, gives flexibility, or reaches places transit cannot. It can be wasteful when parking, tolls, insurance, fuel, and fees cost more than rideshare or transit would.",
+  },
+  {
+    question: "Do travel credits or outside help reduce rental car pressure?",
+    answer:
+      "Yes. Credits, rewards, gift cards, reimbursements, and outside help reduce the out-of-pocket rental car cost. If they cover the full cost, the pressure score can drop to zero when no debt and a strong cushion are also present.",
+  },
+];
+
+const relatedCalculators = calculators
+  .filter(
+    (calculator) =>
+      calculator.category === "Travel" &&
+      calculator.href !== "/rental-car-cost-calculator"
+  )
+  .slice(0, 4);
+---
+
+<Layout
+  title="Rental Car Cost Calculator"
+  description="Estimate rental car trip cost with daily rate, taxes, insurance, fuel, tolls, parking, deposits, credits, alternatives, and affordability pressure."
+>
+  <style>
+    .container {
+      max-width: 940px;
+      margin: auto;
+    }
+
+    .calculator {
+      background: white;
+      padding: 40px;
+      border-radius: 24px;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.06);
+    }
+
+    .calculator h2 {
+      margin-top: 0;
+      font-size: 2rem;
+      margin-bottom: 18px;
+      color: #0f172a;
+    }
+
+    .calculator-intro {
+      color: #334155;
+      line-height: 1.8;
+      margin-bottom: 30px;
+      font-size: 1.05rem;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+    }
+
+    .field label {
+      display: block;
+      font-weight: 800;
+      margin-bottom: 10px;
+      color: #0f172a;
+    }
+
+    .field input,
+    .field select {
+      width: 100%;
+      padding: 16px;
+      border-radius: 12px;
+      border: 1px solid #cbd5e1;
+      font-size: 1rem;
+      box-sizing: border-box;
+      background: white;
+    }
+
+    .field-note {
+      display: block;
+      margin-top: 8px;
+      color: #64748b;
+      font-size: 0.9rem;
+      line-height: 1.5;
+    }
+
+    .button-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-top: 30px;
+    }
+
+    .results {
+      margin-top: 36px;
+      background: #f8fafc;
+      padding: 32px;
+      border-radius: 24px;
+      border: 1px solid var(--border);
+      box-shadow: 0 10px 24px rgba(15, 23, 42, 0.04);
+      display: none;
+    }
+
+    .results.visible {
+      display: block;
+    }
+
+    .result-label {
+      font-size: 1.15rem;
+      font-weight: 800;
+      color: #0f766e;
+      margin-bottom: 18px;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+    }
+
+    .total-price {
+      font-size: clamp(2.5rem, 6vw, 4rem);
+      font-weight: 900;
+      color: #0f172a;
+      line-height: 1.05;
+      margin-bottom: 10px;
+    }
+
+    .score-card {
+      margin: 24px 0;
+      padding: 22px;
+      border-radius: 18px;
+      background: white;
+      border: 1px solid #dbe4ee;
+    }
+
+    .score-line {
+      display: flex;
+      justify-content: space-between;
+      gap: 16px;
+      align-items: baseline;
+      margin-bottom: 12px;
+      color: #0f172a;
+      font-weight: 900;
+    }
+
+    .pressure-bar {
+      width: 100%;
+      height: 16px;
+      background: #e2e8f0;
+      border-radius: 999px;
+      overflow: hidden;
+      margin: 10px 0 16px;
+    }
+
+    .pressure-fill {
+      height: 100%;
+      width: 0%;
+      border-radius: 999px;
+      background: #16a34a;
+      transition: width 0.3s ease;
+    }
+
+    .result-details {
+      color: #334155;
+      line-height: 1.9;
+      font-size: 1.02rem;
+    }
+
+    .result-details p {
+      margin: 0 0 12px;
+    }
+
+    .mini-summary {
+      margin-top: 24px;
+      padding: 20px;
+      border-radius: 18px;
+      background: white;
+      border: 1px solid #dbe4ee;
+      color: #334155;
+      line-height: 1.8;
+    }
+
+    .disclaimer {
+      margin-top: 24px;
+      font-size: 0.9rem;
+      color: #64748b;
+    }
+
+    .content-section {
+      margin-top: 60px;
+    }
+
+    .content-section h2 {
+      font-size: 2rem;
+      margin-bottom: 20px;
+      color: #0f172a;
+    }
+
+    .content-section p,
+    .content-section li {
+      font-size: 1.1rem;
+      line-height: 1.9;
+      color: #334155;
+    }
+
+    .content-link {
+      color: #0f766e;
+      font-weight: 700;
+      text-decoration: none;
+    }
+
+    .content-link:hover {
+      text-decoration: underline;
+    }
+
+    .two-column-note {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 18px;
+      margin-top: 24px;
+    }
+
+    .note-card {
+      padding: 20px;
+      border: 1px solid #dbe4ee;
+      border-radius: 18px;
+      background: #ffffff;
+    }
+
+    .note-card strong {
+      display: block;
+      color: #0f172a;
+      margin-bottom: 8px;
+      font-size: 1.02rem;
+    }
+
+    @media (max-width: 768px) {
+      .calculator {
+        padding: 24px;
+      }
+
+      .grid {
+        grid-template-columns: 1fr;
+      }
+
+      .calculator h2,
+      .content-section h2 {
+        font-size: 1.7rem;
+      }
+
+      .results {
+        padding: 24px;
+      }
+
+      .score-line {
+        display: block;
+      }
+    }
+  </style>
+
+  <div class="container">
+    <CalculatorPageShell
+      eyebrow="Rental Car Cost Calculator"
+      title="Rental Car Cost Calculator"
+      description="Estimate the real rental car cost after daily rate, taxes, insurance, fuel, tolls, parking, deposits, credits, and alternative transportation pressure."
+    >
+      <div class="calculator">
+        <h2>Estimate Your Total Rental Car Cost</h2>
+
+        <p class="calculator-intro">
+          Rental car quotes rarely show the whole trip decision. Use this
+          calculator to add taxes, insurance, extra drivers, child seats, tolls,
+          parking, fuel, one-way fees, card holds, credits, and rideshare or
+          transit alternatives before deciding whether the car is worth it.
+        </p>
+
+        <form id="rentalCarForm">
+          <div class="grid">
+            <div class="field">
+              <label for="rentalPurpose">Rental Car Situation</label>
+              <select id="rentalPurpose">
+                <option value="" disabled selected>Choose rental situation</option>
+                <option value="airport">Airport rental</option>
+                <option value="city">City or neighborhood rental</option>
+                <option value="roadTrip">Road trip rental</option>
+                <option value="family">Family or group rental</option>
+                <option value="oneWay">One-way rental</option>
+                <option value="replacement">Temporary replacement car</option>
+              </select>
+            </div>
+
+            <div class="field">
+              <label for="vehicleClass">Vehicle Class</label>
+              <select id="vehicleClass">
+                <option value="" disabled selected>Choose vehicle class</option>
+                <option value="economy">Economy or compact</option>
+                <option value="midsize">Midsize or standard</option>
+                <option value="suv">SUV or minivan</option>
+                <option value="premium">Premium, luxury, or specialty</option>
+              </select>
+            </div>
+
+            <div class="field">
+              <label for="rentalDays">Rental Days</label>
+              <input id="rentalDays" type="number" placeholder="Example: 5" />
+            </div>
+
+            <div class="field">
+              <label for="dailyRate">Quoted Daily Rate</label>
+              <input id="dailyRate" type="number" step="0.01" placeholder="Example: 62" />
+              <span class="field-note">Use the base daily rate before taxes and add-ons.</span>
+            </div>
+
+            <div class="field">
+              <label for="taxFeePercent">Taxes and Required Fees Percent</label>
+              <input id="taxFeePercent" type="number" step="0.01" placeholder="Example: 28" />
+              <span class="field-note">Airport concession and facility fees can make this high.</span>
+            </div>
+
+            <div class="field">
+              <label for="insuranceDaily">Rental Insurance or Protection per Day</label>
+              <input id="insuranceDaily" type="number" step="0.01" placeholder="Example: 25" />
+            </div>
+
+            <div class="field">
+              <label for="extraDriverDaily">Extra Driver Fee per Day</label>
+              <input id="extraDriverDaily" type="number" step="0.01" placeholder="Example: 12" />
+            </div>
+
+            <div class="field">
+              <label for="youngDriverDaily">Young Driver Fee per Day</label>
+              <input id="youngDriverDaily" type="number" step="0.01" placeholder="Example: 30" />
+            </div>
+
+            <div class="field">
+              <label for="childSeatDaily">Car Seat, Booster, or Equipment per Day</label>
+              <input id="childSeatDaily" type="number" step="0.01" placeholder="Example: 15" />
+            </div>
+
+            <div class="field">
+              <label for="tollPassDaily">Toll Pass or Transponder Fee per Day</label>
+              <input id="tollPassDaily" type="number" step="0.01" placeholder="Example: 8" />
+            </div>
+
+            <div class="field">
+              <label for="parkingDaily">Parking Cost per Day</label>
+              <input id="parkingDaily" type="number" step="0.01" placeholder="Example: 35" />
+              <span class="field-note">Use hotel, city, event, beach, or resort parking tied to the car.</span>
+            </div>
+
+            <div class="field">
+              <label for="estimatedMiles">Estimated Miles Driven</label>
+              <input id="estimatedMiles" type="number" placeholder="Example: 420" />
+            </div>
+
+            <div class="field">
+              <label for="vehicleMpg">Estimated Vehicle MPG</label>
+              <input id="vehicleMpg" type="number" step="0.1" placeholder="Example: 28" />
+            </div>
+
+            <div class="field">
+              <label for="gasPrice">Gas Price per Gallon</label>
+              <input id="gasPrice" type="number" step="0.01" placeholder="Example: 3.75" />
+            </div>
+
+            <div class="field">
+              <label for="tollsTotal">Estimated Tolls Total</label>
+              <input id="tollsTotal" type="number" step="0.01" placeholder="Example: 60" />
+            </div>
+
+            <div class="field">
+              <label for="oneWayDropFee">One-Way, Drop-Off, or Location Fee</label>
+              <input id="oneWayDropFee" type="number" step="0.01" placeholder="Example: 150" />
+            </div>
+
+            <div class="field">
+              <label for="otherFees">Other Rental Car Fees</label>
+              <input id="otherFees" type="number" step="0.01" placeholder="Example: 75" />
+            </div>
+
+            <div class="field">
+              <label for="refundableHold">Refundable Deposit or Card Hold</label>
+              <input id="refundableHold" type="number" step="0.01" placeholder="Example: 300" />
+              <span class="field-note">This is separated from final cost, but it can affect card room during the trip.</span>
+            </div>
+
+            <div class="field">
+              <label for="availableCushion">Available Card or Cash Cushion During Trip</label>
+              <input id="availableCushion" type="number" step="0.01" placeholder="Example: 1500" />
+              <span class="field-note">Use available credit or cash that could absorb holds and surprises.</span>
+            </div>
+
+            <div class="field">
+              <label for="alternativeTransport">Rideshare, Transit, Shuttle, or Taxi Alternative Total</label>
+              <input id="alternativeTransport" type="number" step="0.01" placeholder="Example: 480" />
+            </div>
+
+            <div class="field">
+              <label for="creditsHelp">Rewards, Credits, Reimbursement, or Outside Help</label>
+              <input id="creditsHelp" type="number" step="0.01" placeholder="Example: 200" />
+            </div>
+
+            <div class="field">
+              <label for="cashSetAside">Cash Already Set Aside for the Rental Car</label>
+              <input id="cashSetAside" type="number" step="0.01" placeholder="Example: 700" />
+            </div>
+
+            <div class="field">
+              <label for="monthlyTakeHome">Monthly Take-Home Income</label>
+              <input id="monthlyTakeHome" type="number" step="0.01" placeholder="Example: 6500" />
+            </div>
+
+            <div class="field">
+              <label for="emergencySavings">Emergency Savings</label>
+              <input id="emergencySavings" type="number" step="0.01" placeholder="Example: 15000" />
+            </div>
+
+            <div class="field">
+              <label for="paymentPlan">How Will the Rental Be Paid?</label>
+              <select id="paymentPlan">
+                <option value="" disabled selected>Choose payment method</option>
+                <option value="cash">Cash, debit, or already saved</option>
+                <option value="reimbursed">Temporary card charge, reimbursed soon</option>
+                <option value="partialCredit">Partly on credit card</option>
+                <option value="mostlyCredit">Mostly financed or carried as debt</option>
+              </select>
+            </div>
+
+            <div class="field">
+              <label for="needLevel">How Necessary Is the Rental?</label>
+              <select id="needLevel">
+                <option value="" disabled selected>Choose rental need</option>
+                <option value="essential">Essential for the trip</option>
+                <option value="useful">Useful but not required</option>
+                <option value="convenience">Mostly convenience</option>
+                <option value="unclear">Not sure yet</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="button-row">
+            <button class="sis-action-button sis-calculate-button" id="rentalCarButton" type="button">Calculate Rental Car Cost</button>
+            <button class="sis-action-button sis-reset-button" type="reset">Reset</button>
+          </div>
+        </form>
+
+        <div class="results" id="results">
+          <div class="result-label">Estimated Out-of-Pocket Rental Car Cost</div>
+
+          <div class="total-price" id="totalPrice"></div>
+
+          <div class="score-card">
+            <div class="score-line">
+              <span id="pressureLabel">Rental car pressure score</span>
+              <span id="pressureScore">0/100</span>
+            </div>
+            <div class="pressure-bar">
+              <div class="pressure-fill" id="pressureFill"></div>
+            </div>
+            <div class="result-details" id="pressureDetails"></div>
+          </div>
+
+          <div class="result-details" id="resultDetails"></div>
+
+          <div class="mini-summary" id="rentalSummary"></div>
+
+          <div class="disclaimer">
+            This estimate focuses on rental car and ground-transportation costs
+            only. It does not include flights, lodging, food, activities, travel
+            insurance, passports, souvenirs, or emergency travel costs.
+          </div>
+        </div>
+      </div>
+
+      <section class="content-section">
+        <h2>Why Rental Car Cost Needs More Than a Reservation Quote</h2>
+
+        <p>
+          A rental car site can show the reservation price. It usually does not
+          show whether the car is the right ground-transportation decision after
+          insurance, fuel, parking, tolls, child seats, card holds, location fees,
+          credits, and rideshare or transit alternatives are included.
+        </p>
+
+        <p>
+          This calculator is built for the decision before booking: not just
+          "what does the car cost?" but "does the car make sense for this trip,
+          this cash cushion, and this household budget?"
+        </p>
+
+        <p>
+          For the full trip picture, compare this estimate with the
+          <a class="content-link" href="/flight-cost-calculator">flight cost calculator</a>,
+          the
+          <a class="content-link" href="/hotel-and-lodging-cost-calculator">hotel and lodging cost calculator</a>,
+          the
+          <a class="content-link" href="/vacation-food-budget-calculator">vacation food budget calculator</a>,
+          and the
+          <a class="content-link" href="/travel-calculators">travel calculators hub</a>.
+        </p>
+      </section>
+
+      <KeyCostCategories
+        items={[
+          {
+            title: "Reservation quote",
+            description:
+              "The base daily rate is multiplied by rental days before taxes, fees, and add-ons are layered in.",
+          },
+          {
+            title: "Insurance and driver fees",
+            description:
+              "Rental protection, extra drivers, young driver fees, and equipment rentals can change the true daily price.",
+          },
+          {
+            title: "Fuel, tolls, and parking",
+            description:
+              "A rental car can create costs every day through gas, hotel parking, city parking, tolls, and transponder fees.",
+          },
+          {
+            title: "Deposits and card holds",
+            description:
+              "Refundable holds may not be final costs, but they can tie up credit or cash during the trip.",
+          },
+          {
+            title: "Alternative transportation",
+            description:
+              "Rideshares, taxis, shuttles, transit, ferries, or hotel transfers may be cheaper if the car will sit parked most of the trip.",
+          },
+        ]}
+      />
+
+      <ReduceCostTips
+        items={[
+          "Compare the final rental counter cost, not only the base daily rate.",
+          "Check whether airport taxes and facility fees make an off-airport rental cheaper.",
+          "Confirm whether your credit card or auto policy already covers rental car protection.",
+          "Price parking before choosing a rental in a dense city, resort, or hotel area.",
+          "Compare rideshare, shuttle, transit, and taxi totals before renting a car that may sit unused.",
+          "Use rewards, credits, reimbursements, or outside help to reduce out-of-pocket rental cost.",
+        ]}
+      />
+
+      <CalculatorAssumptions
+        items={[
+          "Base rental cost equals quoted daily rate multiplied by rental days.",
+          "Taxes and required fees are estimated as a percentage of the base rental cost.",
+          "Insurance, extra driver fees, young driver fees, child seats, toll pass fees, and parking are treated as daily costs.",
+          "Fuel cost is estimated from miles driven, vehicle MPG, and gas price per gallon.",
+          "One-way, drop-off, location, toll, and other rental fees are treated as group totals.",
+          "Rewards, credits, reimbursements, gift cards, and outside help reduce the out-of-pocket rental car estimate.",
+          "Refundable deposits or card holds are excluded from final cost but included in upfront trip cash pressure.",
+          "Pressure score is educational and considers income, emergency savings, cash set aside, payment method, card or cash cushion, alternative transportation, and how necessary the rental is.",
+        ]}
+      />
+
+      <section class="content-section">
+        <h2>Rental Car vs. Rideshare: What Changes the Decision</h2>
+
+        <p>
+          The rental car can be the right choice when it replaces many rides,
+          handles luggage, gives access to places transit cannot reach, or protects
+          a family schedule. It can be the wrong choice when parking, tolls, fuel,
+          insurance, and card holds cost more than simply paying for rides as
+          needed.
+        </p>
+
+        <div class="two-column-note">
+          <div class="note-card">
+            <strong>A rental car works better when</strong>
+            <p>
+              The trip includes spread-out destinations, kids, luggage, grocery
+              runs, limited transit, rural areas, road trips, or multiple rides
+              every day.
+            </p>
+          </div>
+
+          <div class="note-card">
+            <strong>Rideshare or transit can be better when</strong>
+            <p>
+              The hotel is central, parking is expensive, the car would sit most
+              days, or the itinerary is mostly walkable, resort-based, or transit
+              friendly.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <div class="content-section">
+        <FAQSection title="Rental Car Cost Calculator FAQ" faqs={rentalCarFaqs} />
+      </div>
+
+      <div class="content-section">
+        <RelatedCalculators calculators={relatedCalculators} />
+      </div>
+    </CalculatorPageShell>
+
+    <section id="FinancialRedFlags">
+      <h2>Rental Car Budget Red Flags</h2>
+
+      <p>
+        A rental car decision deserves extra caution when the daily rate looks
+        manageable only because fuel, parking, insurance, tolls, deposits, and
+        alternatives are being ignored.
+      </p>
+
+      <ul>
+        <li>The rental requires carrying a credit card balance after the trip.</li>
+        <li>Parking, tolls, insurance, child seats, or extra driver fees were not included.</li>
+        <li>The refundable hold would tie up most of the available card or cash cushion.</li>
+        <li>Rideshare, transit, shuttles, or hotel transfers would be meaningfully cheaper.</li>
+        <li>The car will sit parked most of the trip while still creating daily costs.</li>
+        <li>The rental cost crowds out food, activities, lodging, or return-home cash flow.</li>
+      </ul>
+    </section>
+
+    <MethodologySection category="rental car cost estimates" updated="July 2026" />
+  </div>
+
+  <script is:inline>
+    const getNumber = (id) => {
+      const rawValue = document.getElementById(id)?.value;
+      const value = Number(rawValue);
+      return Number.isFinite(value) && value >= 0 ? value : 0;
+    };
+
+    const getValue = (id) => document.getElementById(id)?.value || "";
+
+    function clamp(value, min, max) {
+      return Math.min(Math.max(value, min), max);
+    }
+
+    function formatMoney(value) {
+      return value.toLocaleString(undefined, {
+        style: "currency",
+        currency: "USD",
+        minimumFractionDigits: 0,
+        maximumFractionDigits: 0,
+      });
+    }
+
+    function scoreColor(score) {
+      if (score <= 35) return "#16a34a";
+      if (score <= 65) return "#ca8a04";
+      return "#dc2626";
+    }
+
+    function scoreLabel(score) {
+      if (score <= 35) return "Low rental car pressure";
+      if (score <= 65) return "Moderate rental car pressure";
+      return "High rental car pressure";
+    }
+
+    function paymentAdjustment(paymentPlan) {
+      if (paymentPlan === "mostlyCredit") return 30;
+      if (paymentPlan === "partialCredit") return 16;
+      if (paymentPlan === "reimbursed") return 6;
+      return 0;
+    }
+
+    function needAdjustment(needLevel) {
+      if (needLevel === "essential") return -6;
+      if (needLevel === "useful") return 0;
+      if (needLevel === "convenience") return 8;
+      if (needLevel === "unclear") return 5;
+      return 3;
+    }
+
+    function purposeAdjustment(rentalPurpose) {
+      if (rentalPurpose === "oneWay") return 5;
+      if (rentalPurpose === "airport") return 4;
+      if (rentalPurpose === "family" || rentalPurpose === "roadTrip") return -2;
+      return 0;
+    }
+
+    function calculateRentalCarCost() {
+      const rentalPurpose = getValue("rentalPurpose");
+      const vehicleClass = getValue("vehicleClass");
+      const rentalDays = getNumber("rentalDays");
+      const dailyRate = getNumber("dailyRate");
+      const taxFeePercent = getNumber("taxFeePercent");
+      const insuranceDaily = getNumber("insuranceDaily");
+      const extraDriverDaily = getNumber("extraDriverDaily");
+      const youngDriverDaily = getNumber("youngDriverDaily");
+      const childSeatDaily = getNumber("childSeatDaily");
+      const tollPassDaily = getNumber("tollPassDaily");
+      const parkingDaily = getNumber("parkingDaily");
+      const estimatedMiles = getNumber("estimatedMiles");
+      const vehicleMpg = getNumber("vehicleMpg");
+      const gasPrice = getNumber("gasPrice");
+      const tollsTotal = getNumber("tollsTotal");
+      const oneWayDropFee = getNumber("oneWayDropFee");
+      const otherFees = getNumber("otherFees");
+      const refundableHold = getNumber("refundableHold");
+      const availableCushion = getNumber("availableCushion");
+      const alternativeTransport = getNumber("alternativeTransport");
+      const creditsHelp = getNumber("creditsHelp");
+      const cashSetAside = getNumber("cashSetAside");
+      const monthlyTakeHome = getNumber("monthlyTakeHome");
+      const emergencySavings = getNumber("emergencySavings");
+      const paymentPlan = getValue("paymentPlan");
+      const needLevel = getValue("needLevel");
+
+      const results = document.getElementById("results");
+      const totalPrice = document.getElementById("totalPrice");
+      const resultDetails = document.getElementById("resultDetails");
+      const rentalSummary = document.getElementById("rentalSummary");
+      const pressureScore = document.getElementById("pressureScore");
+      const pressureFill = document.getElementById("pressureFill");
+      const pressureLabel = document.getElementById("pressureLabel");
+      const pressureDetails = document.getElementById("pressureDetails");
+
+      results.classList.add("visible");
+
+      if (rentalDays <= 0 || dailyRate <= 0) {
+        totalPrice.textContent = "$0";
+        pressureScore.textContent = "0/100";
+        pressureFill.style.width = "0%";
+        pressureFill.style.background = "#16a34a";
+        pressureLabel.textContent = "Enter rental car details";
+        pressureDetails.innerHTML =
+          "<p>Enter rental days and quoted daily rate to estimate the real rental car cost.</p>";
+        resultDetails.innerHTML = "";
+        rentalSummary.textContent = "";
+        return;
+      }
+
+      const baseRentalCost = rentalDays * dailyRate;
+      const taxFeeCost = baseRentalCost * (taxFeePercent / 100);
+      const insuranceCost = rentalDays * insuranceDaily;
+      const driverFeeCost = rentalDays * (extraDriverDaily + youngDriverDaily);
+      const equipmentCost = rentalDays * (childSeatDaily + tollPassDaily);
+      const parkingCost = rentalDays * parkingDaily;
+      const fuelCost = vehicleMpg > 0 && gasPrice > 0 ? (estimatedMiles / vehicleMpg) * gasPrice : 0;
+      const addOnCost =
+        taxFeeCost +
+        insuranceCost +
+        driverFeeCost +
+        equipmentCost +
+        parkingCost +
+        fuelCost +
+        tollsTotal +
+        oneWayDropFee +
+        otherFees;
+      const grossRentalCost = baseRentalCost + addOnCost;
+      const appliedCredits = Math.min(creditsHelp, grossRentalCost);
+      const outOfPocketCost = Math.max(0, grossRentalCost - appliedCredits);
+      const upfrontCashPressure = outOfPocketCost + refundableHold;
+      const cashGap = Math.max(0, outOfPocketCost - cashSetAside);
+      const cushionGap = Math.max(0, upfrontCashPressure - availableCushion);
+      const costPerDay = rentalDays > 0 ? outOfPocketCost / rentalDays : 0;
+      const addOnShare = grossRentalCost > 0 ? addOnCost / grossRentalCost : 0;
+      const alternativeDifference =
+        alternativeTransport > 0 ? outOfPocketCost - alternativeTransport : 0;
+      const emergencyAfterGap = Math.max(0, emergencySavings - cashGap);
+
+      /*
+        Rental car pressure logic must make sense at both extremes:
+        - Near-zero income and no emergency savings should force high pressure when cost exists.
+        - Fully covered, no-debt, tiny-cost, strong-cushion cases should reach 0/100.
+        - Cash set aside helps, but it does not erase no-income, no-emergency, hold, or debt-financing risk.
+      */
+      const hasIncome = monthlyTakeHome >= 500;
+      const incomeToUse = hasIncome ? monthlyTakeHome : 0;
+      const costToIncomeRatio = incomeToUse > 0 ? outOfPocketCost / incomeToUse : Infinity;
+      const cashGapRatio = incomeToUse > 0 ? cashGap / incomeToUse : cashGap > 0 ? Infinity : 0;
+      const emergencyMonths = incomeToUse > 0 ? emergencySavings / incomeToUse : emergencySavings > 0 ? 99 : 0;
+      const emergencyAfterGapMonths =
+        incomeToUse > 0 ? emergencyAfterGap / incomeToUse : emergencyAfterGap > 0 ? 99 : 0;
+      const creditShare = grossRentalCost > 0 ? appliedCredits / grossRentalCost : 0;
+      const cashCoverage = outOfPocketCost > 0 ? cashSetAside / outOfPocketCost : 1;
+      const noDebtPayment =
+        paymentPlan === "cash" || paymentPlan === "reimbursed" || paymentPlan === "";
+      const fullyCovered = cashCoverage >= 1 || creditShare >= 1;
+      const tinyCostForIncome =
+        outOfPocketCost > 0 && monthlyTakeHome > 0 && outOfPocketCost <= monthlyTakeHome * 0.02;
+      const verySmallCostForIncome =
+        outOfPocketCost > 0 && monthlyTakeHome > 0 && outOfPocketCost <= monthlyTakeHome * 0.05;
+      const strongEmergencyCushion =
+        emergencySavings >= 10000 || emergencyMonths >= 3 || emergencySavings >= outOfPocketCost * 3;
+
+      let score = 0;
+
+      if (outOfPocketCost === 0) {
+        score = 0;
+      } else if (!hasIncome) {
+        score = 84;
+
+        if (cashGap > 0) score += 10;
+        if (emergencySavings <= 0) score += 10;
+        else if (emergencySavings < outOfPocketCost) score += 6;
+
+        if (cashCoverage >= 1) score -= 8;
+        if (creditShare >= 0.75) score -= 8;
+      } else {
+        if (costToIncomeRatio >= 1) score += 58;
+        else if (costToIncomeRatio >= 0.75) score += 48;
+        else if (costToIncomeRatio >= 0.5) score += 38;
+        else if (costToIncomeRatio >= 0.3) score += 28;
+        else if (costToIncomeRatio >= 0.15) score += 16;
+        else score += 8;
+
+        if (cashGapRatio >= 0.5) score += 24;
+        else if (cashGapRatio >= 0.25) score += 16;
+        else if (cashGapRatio > 0) score += 8;
+
+        if (emergencySavings <= 0) score += 22;
+        else if (emergencyAfterGapMonths < 1) score += 18;
+        else if (emergencyAfterGapMonths < 2) score += 10;
+        else if (emergencyAfterGapMonths >= 6) score -= 10;
+        else if (emergencyAfterGapMonths >= 3) score -= 6;
+
+        if (cashCoverage >= 1) score -= 10;
+        else if (cashCoverage >= 0.5) score -= 5;
+      }
+
+      score += paymentAdjustment(paymentPlan);
+      score += needAdjustment(needLevel);
+      score += purposeAdjustment(rentalPurpose);
+
+      if (addOnShare >= 0.45) score += 10;
+      else if (addOnShare >= 0.3) score += 6;
+
+      if (refundableHold > 0 && availableCushion > 0 && refundableHold > availableCushion * 0.5) {
+        score += 10;
+      } else if (cushionGap > 0) {
+        score += 14;
+      }
+
+      if (alternativeTransport > 0 && alternativeDifference > 0 && needLevel !== "essential") {
+        const altPremiumRatio = alternativeDifference / alternativeTransport;
+        if (altPremiumRatio >= 1) score += 12;
+        else if (altPremiumRatio >= 0.5) score += 8;
+        else if (altPremiumRatio >= 0.25) score += 4;
+      }
+
+      if (creditShare >= 1 && grossRentalCost > 0) score -= 28;
+      else if (creditShare > 0) score -= clamp(creditShare * 18, 0, 18);
+
+      if (outOfPocketCost > 0 && monthlyTakeHome > 0 && outOfPocketCost > monthlyTakeHome * 2) {
+        score = Math.max(score, 90);
+      }
+
+      if (outOfPocketCost > 0 && monthlyTakeHome < 500 && emergencySavings <= 0) {
+        score = Math.max(score, 92);
+      }
+
+      if (outOfPocketCost > 0 && emergencySavings <= 0 && paymentPlan === "mostlyCredit") {
+        score = Math.max(score, 90);
+      }
+
+      if (
+        outOfPocketCost > 0 &&
+        fullyCovered &&
+        noDebtPayment &&
+        tinyCostForIncome &&
+        strongEmergencyCushion &&
+        cushionGap === 0
+      ) {
+        score = 0;
+      } else if (
+        outOfPocketCost > 0 &&
+        monthlyTakeHome >= 10000 &&
+        emergencyMonths >= 6 &&
+        cashCoverage >= 1 &&
+        noDebtPayment &&
+        cushionGap === 0
+      ) {
+        score = Math.min(score, 20);
+      } else if (
+        outOfPocketCost > 0 &&
+        fullyCovered &&
+        noDebtPayment &&
+        verySmallCostForIncome &&
+        strongEmergencyCushion &&
+        cushionGap === 0
+      ) {
+        score = Math.min(score, 5);
+      }
+
+      score = Math.round(clamp(score, 0, 100));
+
+      const label = scoreLabel(score);
+      const color = scoreColor(score);
+
+      totalPrice.textContent = formatMoney(outOfPocketCost);
+      pressureScore.textContent = `${score}/100`;
+      pressureFill.style.width = `${score}%`;
+      pressureFill.style.background = color;
+      pressureLabel.textContent = label;
+
+      const purposeText = rentalPurpose
+        ? rentalPurpose.replace(/([A-Z])/g, " $1").toLowerCase()
+        : "rental car";
+
+      const incomeText = hasIncome
+        ? `The out-of-pocket rental car cost equals about <strong>${(costToIncomeRatio * 100).toFixed(0)}%</strong> of one month of take-home income.`
+        : "Monthly take-home income is too low or missing, so the calculator treats this as a high-pressure rental car decision.";
+
+      const emergencyText =
+        emergencySavings <= 0
+          ? "Emergency savings are entered as <strong>$0</strong>, which raises pressure even if rental car cash is set aside."
+          : `Emergency savings equal about <strong>${emergencyMonths.toFixed(1)}</strong> months of take-home income before any rental car cash gap.`;
+
+      const alternativeText =
+        alternativeTransport > 0
+          ? alternativeDifference > 0
+            ? `The rental car is about <strong>${formatMoney(alternativeDifference)}</strong> more than the entered rideshare, transit, shuttle, or taxi alternative.`
+            : `The rental car is about <strong>${formatMoney(Math.abs(alternativeDifference))}</strong> less than the entered rideshare, transit, shuttle, or taxi alternative.`
+          : "No alternative transportation total was entered.";
+
+      pressureDetails.innerHTML = `
+        <p><strong>${label}:</strong> ${incomeText} ${emergencyText} ${alternativeText}</p>
+      `;
+
+      resultDetails.innerHTML = `
+        <p><strong>Base rental quote:</strong> ${formatMoney(baseRentalCost)} for ${rentalDays.toFixed(0)} ${rentalDays === 1 ? "day" : "days"}.</p>
+
+        <p><strong>Estimated taxes and required fees:</strong> ${formatMoney(taxFeeCost)}.</p>
+
+        <p><strong>Insurance and driver fees:</strong> ${formatMoney(insuranceCost + driverFeeCost)}.</p>
+
+        <p><strong>Equipment, toll pass, and parking:</strong> ${formatMoney(equipmentCost + parkingCost)}.</p>
+
+        <p><strong>Estimated fuel cost:</strong> ${formatMoney(fuelCost)}.</p>
+
+        <p><strong>Tolls, one-way/drop fees, and other fees:</strong> ${formatMoney(tollsTotal + oneWayDropFee + otherFees)}.</p>
+
+        <p><strong>Credits, reimbursements, and outside help applied:</strong> ${formatMoney(appliedCredits)}.</p>
+
+        <p><strong>Estimated cost per rental day:</strong> ${formatMoney(costPerDay)} after credits.</p>
+
+        <p><strong>Upfront card or cash pressure:</strong> ${formatMoney(upfrontCashPressure)} including the refundable hold.</p>
+
+        <p><strong>Cash gap after rental car money set aside:</strong> ${formatMoney(cashGap)}.</p>
+
+        <p><strong>Card or cash cushion gap after hold:</strong> ${formatMoney(cushionGap)}.</p>
+      `;
+
+      rentalSummary.innerHTML = `
+        This ${purposeText} is estimated at <strong>${formatMoney(grossRentalCost)}</strong> before credits.
+        After <strong>${formatMoney(appliedCredits)}</strong> in rewards, credits, reimbursements, gift cards, or outside help,
+        the estimated out-of-pocket rental car cost is <strong>${formatMoney(outOfPocketCost)}</strong>.
+        The final rental car pressure score is <strong>${score}/100</strong>.
+      `;
+    }
+
+    document
+      .getElementById("rentalCarButton")
+      .addEventListener("click", calculateRentalCarCost);
+
+    document.getElementById("rentalCarForm").addEventListener("reset", () => {
+      const results = document.getElementById("results");
+      setTimeout(() => {
+        results.classList.remove("visible");
+      }, 0);
+    });
+  </script>
+</Layout>

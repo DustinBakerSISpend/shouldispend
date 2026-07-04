@@ -181,7 +181,7 @@ import WhenSpendingMakesSense from "../components/WhenSpendingMakesSense.astro";
           </div>
         </div>
 
-        <button id="vacationButton" type="button">
+        <button class="sis-action-button sis-calculate-button" id="vacationButton" type="button">
           Get Weekend Getaway Verdict
         </button>
 
@@ -537,26 +537,26 @@ import WhenSpendingMakesSense from "../components/WhenSpendingMakesSense.astro";
 
       if (pressureScore === 0) {
         guidance =
-          `This weekend getaway appears financially tiny relative to the numbers provided. The cost equals about ${monthlyIncomeImpact.toFixed(1)}% of one month’s income and ${savingsImpact.toFixed(1)}% of savings, so the decision is mainly about whether the trip is worth the time, logistics, and opportunity cost.`;
+          `This weekend getaway appears financially tiny relative to the numbers provided. The cost equals about ${monthlyIncomeImpact.toFixed(1)}% of one month's income and ${savingsImpact.toFixed(1)}% of savings, so the decision is mainly about whether the trip is worth the time, logistics, and opportunity cost.`;
       } else if (pressureScore <= 30) {
         guidance =
-          `This weekend getaway appears manageable based on the numbers provided. The cost equals about ${monthlyIncomeImpact.toFixed(1)}% of one month’s income and ${savingsImpact.toFixed(1)}% of savings, so the main priority is keeping hotel, transportation, meals, activities, fees, and extras inside the planned budget.`;
+          `This weekend getaway appears manageable based on the numbers provided. The cost equals about ${monthlyIncomeImpact.toFixed(1)}% of one month's income and ${savingsImpact.toFixed(1)}% of savings, so the main priority is keeping hotel, transportation, meals, activities, fees, and extras inside the planned budget.`;
       } else if (pressureScore <= 60) {
         guidance =
-          `This weekend getaway may work, but it deserves caution. The cost equals about ${monthlyIncomeImpact.toFixed(1)}% of one month’s income and ${savingsImpact.toFixed(1)}% of savings, which means hotel choice, restaurant spending, event tickets, and transportation should be capped before booking.`;
+          `This weekend getaway may work, but it deserves caution. The cost equals about ${monthlyIncomeImpact.toFixed(1)}% of one month's income and ${savingsImpact.toFixed(1)}% of savings, which means hotel choice, restaurant spending, event tickets, and transportation should be capped before booking.`;
       } else {
         guidance =
-          `This weekend getaway could create real financial strain. The cost equals about ${monthlyIncomeImpact.toFixed(1)}% of one month’s income and ${savingsImpact.toFixed(1)}% of savings, so a closer destination, cheaper hotel, fewer paid activities, or more time to save would likely be safer.`;
+          `This weekend getaway could create real financial strain. The cost equals about ${monthlyIncomeImpact.toFixed(1)}% of one month's income and ${savingsImpact.toFixed(1)}% of savings, so a closer destination, cheaper hotel, fewer paid activities, or more time to save would likely be safer.`;
       }
 
-      scoreEl.textContent = `${level.label} — ${pressureScore}/100`;
+      scoreEl.textContent = `${level.label}  -  ${pressureScore}/100`;
       barFill.style.width = `${pressureScore}%`;
       barFill.style.background = level.color;
 
       stressEl.innerHTML = `<strong>Pressure level:</strong> ${level.stress}`;
       savingsImpactEl.innerHTML = `<strong>Savings impact:</strong> ${savingsImpact.toFixed(1)}% of savings`;
       incomeImpactEl.innerHTML = `<strong>Annual income impact:</strong> ${annualIncomeImpact.toFixed(1)}% of annual income`;
-      monthlyIncomeImpactEl.innerHTML = `<strong>Monthly income impact:</strong> ${monthlyIncomeImpact.toFixed(1)}% of one month’s income`;
+      monthlyIncomeImpactEl.innerHTML = `<strong>Monthly income impact:</strong> ${monthlyIncomeImpact.toFixed(1)}% of one month's income`;
       debtRatioEl.innerHTML = `<strong>Debt ratio:</strong> ${debtRatio.toFixed(1)}% of annual income`;
       guidanceEl.textContent = `${guidance} Recommended next step: ${level.action}`;
     }

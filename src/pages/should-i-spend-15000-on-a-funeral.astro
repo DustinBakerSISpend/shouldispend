@@ -21,7 +21,7 @@ const funeralFaqs = [
   {
     question: "Is cremation better if burial costs reach $15,000?",
     answer:
-      "Cremation may reduce costs, especially direct cremation or cremation with a modest memorial. But the right choice also depends on the person’s wishes, religious needs, family values, and whether the burial plan would financially harm the people left behind.",
+      "Cremation may reduce costs, especially direct cremation or cremation with a modest memorial. But the right choice also depends on the person's wishes, religious needs, family values, and whether the burial plan would financially harm the people left behind.",
   },
   {
     question: "When does a $15,000 funeral make sense?",
@@ -79,12 +79,12 @@ const redFlags = [
   "The person signing the contract is relying on family reimbursement that is not confirmed.",
   "Insurance or estate money is expected but timing is unclear.",
   "The quote is not itemized enough to separate required costs from optional upgrades.",
-  "The funeral would drain emergency savings below the household’s minimum safe level.",
+  "The funeral would drain emergency savings below the household's minimum safe level.",
   "A surviving spouse, child, or dependent household would be financially weakened by the cost.",
   "The family is choosing the higher package mainly because a simpler funeral feels embarrassing.",
   "No one has compared cremation, direct cremation, graveside service, or a smaller memorial.",
   "Debt payments are already high before adding funeral financing.",
-  "The plan includes costly extras that do not clearly reflect the person’s wishes.",
+  "The plan includes costly extras that do not clearly reflect the person's wishes.",
 ];
 
 const assumptions = [
@@ -205,7 +205,7 @@ const relatedCalculators = [
     .link-card span, .info-card p, .mini-card p { display:block; margin:0; color:#334155; line-height:1.7; font-size:.96rem; }
     .check-list, .red-list { list-style:none; padding-left:0; }
     .check-list li, .red-list li { position:relative; padding-left:30px; margin-bottom:10px; }
-    .check-list li::before { content:"✓"; position:absolute; left:0; top:0; color:#0f766e; font-weight:950; }
+    .check-list li::before { content:"+"; position:absolute; left:0; top:0; color:#0f766e; font-weight:950; }
     .red-list li::before { content:"!"; position:absolute; left:0; top:2px; width:18px; height:18px; border-radius:999px; display:grid; place-items:center; background:#fee2e2; color:#b91c1c; font-weight:950; font-size:.8rem; }
     @media (max-width:760px) {
       .container { padding:54px 18px; }
@@ -296,7 +296,7 @@ const relatedCalculators = [
         </div>
       </div>
 
-      <button id="calculateButton" type="button">Check Funeral Affordability</button>
+      <button class="sis-action-button sis-calculate-button" id="calculateButton" type="button">Check Funeral Affordability</button>
 
       <div class="result" id="result">
         <div class="score" id="scoreText"></div>
@@ -324,7 +324,7 @@ const relatedCalculators = [
       <div class="callout decision-box">
         <p>
           A $15,000 funeral should be supported by real cash, real insurance, or
-          real family contributions — not only emotion, guilt, or assumptions.
+          real family contributions  -  not only emotion, guilt, or assumptions.
         </p>
       </div>
     </section>
@@ -376,7 +376,7 @@ const relatedCalculators = [
       <ul class="check-list">
         <li>Life insurance, prepaid arrangements, estate cash, or family help cover most of the bill.</li>
         <li>The service reflects clear wishes, religious expectations, or a deliberate family choice.</li>
-        <li>Emergency savings remain above the household’s minimum comfort level.</li>
+        <li>Emergency savings remain above the household's minimum comfort level.</li>
         <li>No high-interest debt is needed.</li>
         <li>The funeral home and cemetery costs are itemized separately.</li>
         <li>The person signing the contract is not relying on vague reimbursement promises.</li>
@@ -423,7 +423,7 @@ const relatedCalculators = [
             <tr>
               <td>Public viewing</td>
               <td>Viewing may add embalming, preparation, staff, facility, transportation, and product costs.</td>
-              <td>Would a private viewing, graveside service, or memorial meet the family’s needs?</td>
+              <td>Would a private viewing, graveside service, or memorial meet the family's needs?</td>
             </tr>
             <tr>
               <td>Upgraded products</td>
@@ -686,7 +686,7 @@ const relatedCalculators = [
       pressureScore = clamp(Math.round(pressureScore), 0, 100);
       const level = getPressureLevel(pressureScore);
 
-      scoreText.textContent = `${level.label} — ${pressureScore}/100`;
+      scoreText.textContent = `${level.label}  -  ${pressureScore}/100`;
       scoreFill.style.width = `${pressureScore}%`;
       scoreFill.className = `fill ${level.colorClass}`;
 
@@ -695,7 +695,7 @@ const relatedCalculators = [
         <div class="result-metric"><strong>Out-of-pocket cost</strong><span>${formatCurrency(outOfPocket)} after insurance, prepaid funds, estate cash, or family help.</span></div>
         <div class="result-metric"><strong>Savings after funeral</strong><span>${formatCurrency(savingsAfter)}</span></div>
         <div class="result-metric"><strong>Savings impact</strong><span>${savings > 0 ? `${savingsImpact.toFixed(1)}% of available liquid savings.` : "No liquid savings entered."}</span></div>
-        <div class="result-metric"><strong>Monthly income impact</strong><span>${income > 0 ? `${monthlyIncomeImpact.toFixed(1)}% of one month’s take-home income.` : "No monthly take-home income entered."}</span></div>
+        <div class="result-metric"><strong>Monthly income impact</strong><span>${income > 0 ? `${monthlyIncomeImpact.toFixed(1)}% of one month's take-home income.` : "No monthly take-home income entered."}</span></div>
         <div class="result-metric"><strong>Debt payment pressure</strong><span>${income > 0 ? `${debtPaymentRatio.toFixed(1)}% of monthly take-home income already goes to debt.` : "Enter income to estimate debt pressure."}</span></div>
         ${
           emergencyTargetRemaining !== null

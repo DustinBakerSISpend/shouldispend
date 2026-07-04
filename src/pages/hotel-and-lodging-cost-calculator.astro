@@ -1,0 +1,840 @@
+﻿---
+import Layout from "../layouts/Layout.astro";
+import CalculatorPageShell from "../components/CalculatorPageShell.astro";
+import FAQSection from "../components/FAQSection.astro";
+import RelatedCalculators from "../components/RelatedCalculators.astro";
+import MethodologySection from "../components/MethodologySection.astro";
+import CalculatorAssumptions from "../components/CalculatorAssumptions.astro";
+import KeyCostCategories from "../components/KeyCostCategories.astro";
+import ReduceCostTips from "../components/ReduceCostTips.astro";
+import { calculators } from "../data/calculators.js";
+
+const lodgingFaqs = [
+  {
+    question: "How do I calculate the real cost of a hotel stay?",
+    answer:
+      "Start with the nightly rate, then multiply by nights and rooms. Add hotel taxes, resort fees, cleaning fees, parking, service fees, and other required lodging charges. Subtract travel credits, gift cards, or points credits to estimate the out-of-pocket lodging cost.",
+  },
+  {
+    question: "Why is the final hotel price higher than the nightly rate?",
+    answer:
+      "The nightly rate often excludes taxes, resort fees, destination fees, parking, cleaning fees, service fees, extra guest fees, and refundable deposits. The checkout price is usually a better number than the advertised rate.",
+  },
+  {
+    question: "Should I include a refundable hotel deposit?",
+    answer:
+      "A refundable deposit is not part of the final trip cost if it is returned, but it can still affect cash flow. This calculator separates estimated lodging cost from upfront cash needed so you can see both numbers.",
+  },
+  {
+    question: "Do hotel points or travel credits make the trip affordable?",
+    answer:
+      "They can help if they reduce the out-of-pocket cost. This calculator subtracts rewards, credits, and gift cards before estimating pressure, but it still checks fees, deposits, cash set aside, emergency savings, and debt risk.",
+  },
+  {
+    question: "Is a vacation rental always cheaper than a hotel?",
+    answer:
+      "Not always. Vacation rentals can look cheaper by the night but become more expensive after cleaning fees, service fees, extra guest charges, parking, and stricter cancellation rules. Compare the full stay cost, not just the nightly price.",
+  },
+];
+
+const relatedCalculators = calculators
+  .filter(
+    (calculator) =>
+      calculator.category === "Travel" &&
+      calculator.href !== "/hotel-and-lodging-cost-calculator"
+  )
+  .slice(0, 4);
+---
+
+<Layout
+  title="Hotel and Lodging Cost Calculator"
+  description="Estimate hotel, resort, or vacation rental cost with nights, rooms, taxes, fees, parking, deposits, credits, and lodging affordability pressure."
+>
+  <style>
+    .container {
+      max-width: 940px;
+      margin: auto;
+    }
+
+    .calculator {
+      background: white;
+      padding: 40px;
+      border-radius: 24px;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.06);
+    }
+
+    .calculator h2 {
+      margin-top: 0;
+      font-size: 2rem;
+      margin-bottom: 18px;
+      color: #0f172a;
+    }
+
+    .calculator-intro {
+      color: #334155;
+      line-height: 1.8;
+      margin-bottom: 30px;
+      font-size: 1.05rem;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+    }
+
+    .field label {
+      display: block;
+      font-weight: 800;
+      margin-bottom: 10px;
+      color: #0f172a;
+    }
+
+    .field input,
+    .field select {
+      width: 100%;
+      padding: 16px;
+      border-radius: 12px;
+      border: 1px solid #cbd5e1;
+      font-size: 1rem;
+      box-sizing: border-box;
+      background: white;
+    }
+
+    .field-note {
+      display: block;
+      margin-top: 8px;
+      color: #64748b;
+      font-size: 0.9rem;
+      line-height: 1.5;
+    }
+
+    .button-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-top: 30px;
+    }
+
+    .results {
+      margin-top: 36px;
+      background: #f8fafc;
+      padding: 32px;
+      border-radius: 24px;
+      border: 1px solid var(--border);
+      box-shadow: 0 10px 24px rgba(15, 23, 42, 0.04);
+      display: none;
+    }
+
+    .results.visible {
+      display: block;
+    }
+
+    .result-label {
+      font-size: 1.15rem;
+      font-weight: 800;
+      color: #0f766e;
+      margin-bottom: 18px;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+    }
+
+    .total-price {
+      font-size: clamp(2.5rem, 6vw, 4rem);
+      font-weight: 900;
+      color: #0f172a;
+      line-height: 1.05;
+      margin-bottom: 10px;
+    }
+
+    .score-card {
+      margin: 24px 0;
+      padding: 22px;
+      border-radius: 18px;
+      background: white;
+      border: 1px solid #dbe4ee;
+    }
+
+    .score-line {
+      display: flex;
+      justify-content: space-between;
+      gap: 16px;
+      align-items: baseline;
+      margin-bottom: 12px;
+      color: #0f172a;
+      font-weight: 900;
+    }
+
+    .pressure-bar {
+      width: 100%;
+      height: 16px;
+      background: #e2e8f0;
+      border-radius: 999px;
+      overflow: hidden;
+      margin: 10px 0 16px;
+    }
+
+    .pressure-fill {
+      height: 100%;
+      width: 0%;
+      border-radius: 999px;
+      background: #16a34a;
+      transition: width 0.3s ease;
+    }
+
+    .result-details {
+      color: #334155;
+      line-height: 1.9;
+      font-size: 1.02rem;
+    }
+
+    .result-details p {
+      margin: 0 0 12px;
+    }
+
+    .mini-summary {
+      margin-top: 24px;
+      padding: 20px;
+      border-radius: 18px;
+      background: white;
+      border: 1px solid #dbe4ee;
+      color: #334155;
+      line-height: 1.8;
+    }
+
+    .disclaimer {
+      margin-top: 24px;
+      font-size: 0.9rem;
+      color: #64748b;
+    }
+
+    .content-section {
+      margin-top: 60px;
+    }
+
+    .content-section h2 {
+      font-size: 2rem;
+      margin-bottom: 20px;
+      color: #0f172a;
+    }
+
+    .content-section p,
+    .content-section li {
+      font-size: 1.1rem;
+      line-height: 1.9;
+      color: #334155;
+    }
+
+    .content-link {
+      color: #0f766e;
+      font-weight: 700;
+      text-decoration: none;
+    }
+
+    .content-link:hover {
+      text-decoration: underline;
+    }
+
+    .two-column-note {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 18px;
+      margin-top: 24px;
+    }
+
+    .note-card {
+      padding: 20px;
+      border: 1px solid #dbe4ee;
+      border-radius: 18px;
+      background: #ffffff;
+    }
+
+    .note-card strong {
+      display: block;
+      color: #0f172a;
+      margin-bottom: 8px;
+      font-size: 1.02rem;
+    }
+
+    @media (max-width: 768px) {
+      .calculator {
+        padding: 24px;
+      }
+
+      .grid {
+        grid-template-columns: 1fr;
+      }
+
+      .calculator h2,
+      .content-section h2 {
+        font-size: 1.7rem;
+      }
+
+      .results {
+        padding: 24px;
+      }
+
+      .score-line {
+        display: block;
+      }
+    }
+  </style>
+
+  <div class="container">
+    <CalculatorPageShell
+      eyebrow="Hotel and Lodging Cost Calculator"
+      title="Hotel and Lodging Cost Calculator"
+      description="Estimate the real cost of hotels, resorts, vacation rentals, cabins, or other lodging after taxes, fees, parking, deposits, and travel credits."
+    >
+      <div class="calculator">
+        <h2>Estimate Your Total Lodging Cost</h2>
+
+        <p class="calculator-intro">
+          The nightly rate is only the start. Use this calculator to estimate the
+          full lodging bill, subtract rewards or travel credits, and pressure-test
+          the out-of-pocket cost against cash set aside, emergency savings, and
+          financing risk.
+        </p>
+
+        <form id="lodgingForm">
+          <div class="grid">
+            <div class="field">
+              <label for="propertyType">Lodging Type</label>
+              <select id="propertyType">
+                <option value="" disabled selected>Choose lodging type</option>
+                <option value="hotel">Hotel</option>
+                <option value="resort">Resort</option>
+                <option value="vacationRental">Vacation rental</option>
+                <option value="cabin">Cabin or condo</option>
+                <option value="hostel">Hostel or budget stay</option>
+                <option value="mixed">Mixed lodging</option>
+              </select>
+            </div>
+
+            <div class="field">
+              <label for="nights">Number of Nights</label>
+              <input id="nights" type="number" placeholder="Example: 5" />
+            </div>
+
+            <div class="field">
+              <label for="rooms">Rooms or Units</label>
+              <input id="rooms" type="number" placeholder="Example: 1" />
+              <span class="field-note">Use 2 if your family needs two hotel rooms.</span>
+            </div>
+
+            <div class="field">
+              <label for="nightlyRate">Average Nightly Rate</label>
+              <input id="nightlyRate" type="number" step="0.01" placeholder="Example: 225" />
+            </div>
+
+            <div class="field">
+              <label for="travelers">Travelers Sharing the Stay</label>
+              <input id="travelers" type="number" placeholder="Example: 4" />
+            </div>
+
+            <div class="field">
+              <label for="taxRate">Hotel Tax Percent</label>
+              <input id="taxRate" type="number" step="0.01" placeholder="Example: 14" />
+              <span class="field-note">Use the lodging tax shown at checkout if you know it.</span>
+            </div>
+
+            <div class="field">
+              <label for="resortFeeNight">Resort or Amenity Fee per Night</label>
+              <input id="resortFeeNight" type="number" step="0.01" placeholder="Example: 45" />
+            </div>
+
+            <div class="field">
+              <label for="cleaningFee">Cleaning or Service Fees</label>
+              <input id="cleaningFee" type="number" step="0.01" placeholder="Example: 180" />
+            </div>
+
+            <div class="field">
+              <label for="parkingNight">Parking Cost per Night</label>
+              <input id="parkingNight" type="number" step="0.01" placeholder="Example: 35" />
+              <span class="field-note">Use the total nightly parking cost for your group.</span>
+            </div>
+
+            <div class="field">
+              <label for="otherFees">Other Required Lodging Fees</label>
+              <input id="otherFees" type="number" step="0.01" placeholder="Example: 120" />
+            </div>
+
+            <div class="field">
+              <label for="refundableDeposit">Refundable Deposit or Hold</label>
+              <input id="refundableDeposit" type="number" step="0.01" placeholder="Example: 300" />
+              <span class="field-note">This is separated from final cost, but it affects upfront cash.</span>
+            </div>
+
+            <div class="field">
+              <label for="rewardsCredit">Rewards, Gift Cards, or Travel Credits</label>
+              <input id="rewardsCredit" type="number" step="0.01" placeholder="Example: 500" />
+            </div>
+
+            <div class="field">
+              <label for="cashSetAside">Cash Already Set Aside for Lodging</label>
+              <input id="cashSetAside" type="number" step="0.01" placeholder="Example: 1200" />
+            </div>
+
+            <div class="field">
+              <label for="monthlyTakeHome">Monthly Take-Home Income</label>
+              <input id="monthlyTakeHome" type="number" step="0.01" placeholder="Example: 6500" />
+            </div>
+
+            <div class="field">
+              <label for="emergencySavings">Emergency Savings</label>
+              <input id="emergencySavings" type="number" step="0.01" placeholder="Example: 15000" />
+            </div>
+
+            <div class="field">
+              <label for="paymentPlan">How Will Lodging Be Paid?</label>
+              <select id="paymentPlan">
+                <option value="" disabled selected>Choose payment method</option>
+                <option value="cash">Cash, debit, or already saved</option>
+                <option value="reimbursed">Temporary card charge, reimbursed soon</option>
+                <option value="partialCredit">Partly on credit card</option>
+                <option value="mostlyCredit">Mostly financed or carried as debt</option>
+              </select>
+            </div>
+
+            <div class="field">
+              <label for="refundFlex">Cancellation Flexibility</label>
+              <select id="refundFlex">
+                <option value="" disabled selected>Choose refund flexibility</option>
+                <option value="flexible">Mostly refundable or flexible</option>
+                <option value="partial">Partly refundable</option>
+                <option value="strict">Strict or nonrefundable</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="button-row">
+            <button class="sis-action-button sis-calculate-button" id="lodgingButton" type="button">Calculate Lodging Cost</button>
+            <button class="sis-action-button sis-reset-button" type="reset">Reset</button>
+          </div>
+        </form>
+
+        <div class="results" id="results">
+          <div class="result-label">Estimated Out-of-Pocket Lodging Cost</div>
+
+          <div class="total-price" id="totalPrice"></div>
+
+          <div class="score-card">
+            <div class="score-line">
+              <span id="pressureLabel">Lodging pressure score</span>
+              <span id="pressureScore">0/100</span>
+            </div>
+            <div class="pressure-bar">
+              <div class="pressure-fill" id="pressureFill"></div>
+            </div>
+            <div class="result-details" id="pressureDetails"></div>
+          </div>
+
+          <div class="result-details" id="resultDetails"></div>
+
+          <div class="mini-summary" id="lodgingSummary"></div>
+
+          <div class="disclaimer">
+            This estimate focuses on lodging only. It does not include flights,
+            rental cars, meals, activities, insurance, passports, souvenirs, or
+            emergency travel costs.
+          </div>
+        </div>
+      </div>
+
+      <section class="content-section">
+        <h2>Why Lodging Costs Need Their Own Calculator</h2>
+
+        <p>
+          Lodging is not just a place to sleep. It can control the length of the
+          trip, the neighborhood, transportation choices, restaurant spending,
+          parking, cancellation risk, and how much cash is tied up before you even
+          leave home.
+        </p>
+
+        <p>
+          This calculator is different from a broad vacation affordability tool
+          because it isolates the lodging quote itself. The goal is to catch the
+          difference between the advertised nightly rate and the final door price:
+          taxes, resort fees, cleaning fees, service charges, parking, deposits,
+          and credits.
+        </p>
+
+        <p>
+          For the full trip picture, compare this lodging estimate with the
+          <a class="content-link" href="/travel-calculators">travel calculators hub</a>
+          and the
+          <a class="content-link" href="/how-much-vacation-can-i-afford">vacation affordability calculator</a>.
+        </p>
+      </section>
+
+      <KeyCostCategories
+        items={[
+          {
+            title: "Base lodging cost",
+            description:
+              "The nightly rate is multiplied by nights and rooms or units before taxes and fees are added.",
+          },
+          {
+            title: "Taxes and required fees",
+            description:
+              "Hotel taxes, resort fees, destination fees, cleaning fees, service fees, and required charges can materially change the final price.",
+          },
+          {
+            title: "Parking and location costs",
+            description:
+              "A cheaper room can become less useful if parking, transit, rideshares, or distance from the main itinerary are ignored.",
+          },
+          {
+            title: "Rewards and travel credits",
+            description:
+              "Credits, points reimbursements, gift cards, and outside help reduce the out-of-pocket cost and pressure score.",
+          },
+          {
+            title: "Deposits and cash holds",
+            description:
+              "Refundable deposits may come back later, but they still affect upfront cash and card availability during the trip.",
+          },
+        ]}
+      />
+
+      <ReduceCostTips
+        items={[
+          "Compare the final checkout price, not only the advertised nightly rate.",
+          "Check whether resort fees, parking, breakfast, cleaning fees, and taxes are included.",
+          "Price one fewer night before cutting the best part of the trip.",
+          "Compare a central location against a cheaper stay that requires more rideshares, parking, or rental car use.",
+          "Use points, credits, gift cards, or family help to reduce the actual out-of-pocket cost.",
+          "Avoid nonrefundable lodging if the trip timing, flights, work schedule, or family situation is uncertain.",
+        ]}
+      />
+
+      <CalculatorAssumptions
+        items={[
+          "Base lodging cost equals nightly rate multiplied by nights and rooms or units.",
+          "Hotel tax is estimated as a percentage of the base lodging cost.",
+          "Resort or amenity fees are multiplied by nights and rooms or units.",
+          "Parking is treated as a nightly group cost, not a per-room cost.",
+          "Rewards, gift cards, travel credits, and outside help reduce the out-of-pocket lodging estimate.",
+          "Refundable deposits are excluded from final lodging cost but included in upfront cash needed.",
+          "Pressure score is educational and considers income, cash set aside, emergency savings, payment method, refund flexibility, and fee load.",
+        ]}
+      />
+
+      <section class="content-section">
+        <h2>Hotel vs. Vacation Rental: What Changes the Math</h2>
+
+        <p>
+          Hotels often make the nightly rate easy to compare, but parking, resort
+          fees, breakfast, and taxes can change the real price. Vacation rentals
+          may help larger groups, but cleaning fees, service fees, stricter rules,
+          and minimum stays can make a short trip more expensive than expected.
+        </p>
+
+        <div class="two-column-note">
+          <div class="note-card">
+            <strong>Hotels can be better when</strong>
+            <p>
+              You need flexibility, front desk support, daily cleaning, included
+              breakfast, easier cancellation, or a central location that reduces
+              transportation costs.
+            </p>
+          </div>
+
+          <div class="note-card">
+            <strong>Vacation rentals can be better when</strong>
+            <p>
+              A group needs bedrooms, a kitchen, laundry, lower food costs, or
+              more space for a longer stay where fixed cleaning fees matter less.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <div class="content-section">
+        <FAQSection title="Hotel and Lodging Cost Calculator FAQ" faqs={lodgingFaqs} />
+      </div>
+
+      <div class="content-section">
+        <RelatedCalculators calculators={relatedCalculators} />
+      </div>
+    </CalculatorPageShell>
+
+    <section id="FinancialRedFlags">
+      <h2>Lodging Budget Red Flags</h2>
+
+      <p>
+        A lodging choice deserves extra caution when the final checkout price
+        looks manageable only because fees, deposits, parking, or post-trip cash
+        flow are being ignored.
+      </p>
+
+      <ul>
+        <li>The booking depends on carrying a credit card balance after the trip.</li>
+        <li>The advertised nightly rate is affordable but the checkout total is not.</li>
+        <li>Strict cancellation terms create risk if flights, work, school, or health plans change.</li>
+        <li>Deposits or card holds would leave too little cash during the trip.</li>
+        <li>Parking, resort fees, cleaning fees, or taxes were not included in the decision.</li>
+        <li>The lodging cost crowds out food, transportation, activities, or emergency cash.</li>
+      </ul>
+    </section>
+
+    <MethodologySection category="hotel and lodging cost estimates" updated="July 2026" />
+  </div>
+
+  <script is:inline>
+    const getNumber = (id) => {
+      const rawValue = document.getElementById(id)?.value;
+      const value = Number(rawValue);
+      return Number.isFinite(value) && value >= 0 ? value : 0;
+    };
+
+    const getValue = (id) => document.getElementById(id)?.value || "";
+
+    function clamp(value, min, max) {
+      return Math.min(Math.max(value, min), max);
+    }
+
+    function formatMoney(value) {
+      return value.toLocaleString(undefined, {
+        style: "currency",
+        currency: "USD",
+        minimumFractionDigits: 0,
+        maximumFractionDigits: 0,
+      });
+    }
+
+    function scoreColor(score) {
+      if (score <= 35) return "#16a34a";
+      if (score <= 65) return "#ca8a04";
+      return "#dc2626";
+    }
+
+    function scoreLabel(score) {
+      if (score <= 35) return "Low lodging pressure";
+      if (score <= 65) return "Moderate lodging pressure";
+      return "High lodging pressure";
+    }
+
+    function paymentAdjustment(paymentPlan) {
+      if (paymentPlan === "mostlyCredit") return 28;
+      if (paymentPlan === "partialCredit") return 15;
+      if (paymentPlan === "reimbursed") return 6;
+      return 0;
+    }
+
+    function refundAdjustment(refundFlex) {
+      if (refundFlex === "strict") return 12;
+      if (refundFlex === "partial") return 6;
+      if (refundFlex === "flexible") return -4;
+      return 4;
+    }
+
+    function calculateLodgingCost() {
+      const propertyType = getValue("propertyType");
+      const nights = getNumber("nights");
+      const rooms = getNumber("rooms");
+      const nightlyRate = getNumber("nightlyRate");
+      const travelers = Math.max(getNumber("travelers"), 1);
+      const taxRate = getNumber("taxRate");
+      const resortFeeNight = getNumber("resortFeeNight");
+      const cleaningFee = getNumber("cleaningFee");
+      const parkingNight = getNumber("parkingNight");
+      const otherFees = getNumber("otherFees");
+      const refundableDeposit = getNumber("refundableDeposit");
+      const rewardsCredit = getNumber("rewardsCredit");
+      const cashSetAside = getNumber("cashSetAside");
+      const monthlyTakeHome = getNumber("monthlyTakeHome");
+      const emergencySavings = getNumber("emergencySavings");
+      const paymentPlan = getValue("paymentPlan");
+      const refundFlex = getValue("refundFlex");
+
+      const results = document.getElementById("results");
+      const totalPrice = document.getElementById("totalPrice");
+      const resultDetails = document.getElementById("resultDetails");
+      const lodgingSummary = document.getElementById("lodgingSummary");
+      const pressureScore = document.getElementById("pressureScore");
+      const pressureFill = document.getElementById("pressureFill");
+      const pressureLabel = document.getElementById("pressureLabel");
+      const pressureDetails = document.getElementById("pressureDetails");
+
+      results.classList.add("visible");
+
+      if (nights <= 0 || rooms <= 0 || nightlyRate <= 0) {
+        totalPrice.textContent = "$0";
+        pressureScore.textContent = "0/100";
+        pressureFill.style.width = "0%";
+        pressureFill.style.background = "#16a34a";
+        pressureLabel.textContent = "Enter lodging details";
+        pressureDetails.innerHTML =
+          "<p>Enter nights, rooms or units, and average nightly rate to estimate the real lodging cost.</p>";
+        resultDetails.innerHTML = "";
+        lodgingSummary.textContent = "";
+        return;
+      }
+
+      const baseLodgingCost = nights * rooms * nightlyRate;
+      const taxCost = baseLodgingCost * (taxRate / 100);
+      const resortFees = nights * rooms * resortFeeNight;
+      const parkingCost = nights * parkingNight;
+      const requiredFees = resortFees + cleaningFee + parkingCost + otherFees;
+      const grossLodgingCost = baseLodgingCost + taxCost + requiredFees;
+      const appliedCredits = Math.min(rewardsCredit, grossLodgingCost);
+      const outOfPocketCost = Math.max(0, grossLodgingCost - appliedCredits);
+      const upfrontCashNeeded = outOfPocketCost + refundableDeposit;
+      const cashGap = Math.max(0, outOfPocketCost - cashSetAside);
+      const costPerNight = outOfPocketCost / nights;
+      const costPerTraveler = outOfPocketCost / travelers;
+      const feeLoad = grossLodgingCost > 0 ? requiredFees / grossLodgingCost : 0;
+      const emergencyAfterGap = Math.max(0, emergencySavings - cashGap);
+
+      /*
+        Lodging pressure logic must make sense at both extremes:
+        - Very low / missing income cannot be treated as safe just because the hotel has cash set aside.
+        - High income, strong emergency savings, no debt financing, and travel credits should reduce pressure.
+        - Cash set aside helps, but it does not erase the need for income and emergency cushion.
+      */
+      const hasIncome = monthlyTakeHome >= 500;
+      const incomeToUse = hasIncome ? monthlyTakeHome : 0;
+      const costToIncomeRatio = incomeToUse > 0 ? outOfPocketCost / incomeToUse : Infinity;
+      const cashGapRatio = incomeToUse > 0 ? cashGap / incomeToUse : cashGap > 0 ? Infinity : 0;
+      const emergencyMonths = incomeToUse > 0 ? emergencySavings / incomeToUse : emergencySavings > 0 ? 99 : 0;
+      const emergencyAfterGapMonths =
+        incomeToUse > 0 ? emergencyAfterGap / incomeToUse : emergencyAfterGap > 0 ? 99 : 0;
+      const creditShare = grossLodgingCost > 0 ? appliedCredits / grossLodgingCost : 0;
+      const cashCoverage = outOfPocketCost > 0 ? cashSetAside / outOfPocketCost : 1;
+
+      let score = 0;
+
+      if (outOfPocketCost === 0) {
+        score = 0;
+      } else if (!hasIncome) {
+        score = 82;
+
+        if (cashGap > 0) score += 10;
+        if (emergencySavings <= 0) score += 10;
+        else if (emergencySavings < outOfPocketCost) score += 6;
+
+        if (cashCoverage >= 1) score -= 8;
+        if (creditShare >= 0.75) score -= 8;
+      } else {
+        if (costToIncomeRatio >= 1) score += 58;
+        else if (costToIncomeRatio >= 0.75) score += 48;
+        else if (costToIncomeRatio >= 0.5) score += 38;
+        else if (costToIncomeRatio >= 0.3) score += 28;
+        else if (costToIncomeRatio >= 0.15) score += 16;
+        else score += 8;
+
+        if (cashGapRatio >= 0.5) score += 24;
+        else if (cashGapRatio >= 0.25) score += 16;
+        else if (cashGapRatio > 0) score += 8;
+
+        if (emergencySavings <= 0) score += 22;
+        else if (emergencyAfterGapMonths < 1) score += 18;
+        else if (emergencyAfterGapMonths < 2) score += 10;
+        else if (emergencyAfterGapMonths >= 6) score -= 10;
+        else if (emergencyAfterGapMonths >= 3) score -= 6;
+
+        if (cashCoverage >= 1) score -= 10;
+        else if (cashCoverage >= 0.5) score -= 5;
+      }
+
+      score += paymentAdjustment(paymentPlan);
+      score += refundAdjustment(refundFlex);
+
+      if (feeLoad >= 0.3) score += 10;
+      else if (feeLoad >= 0.18) score += 6;
+
+      if (refundableDeposit > 0 && hasIncome && refundableDeposit > monthlyTakeHome * 0.1) score += 5;
+
+      if (creditShare >= 1 && grossLodgingCost > 0) score -= 28;
+      else if (creditShare > 0) score -= clamp(creditShare * 18, 0, 18);
+
+      if (outOfPocketCost > 0 && monthlyTakeHome > 0 && outOfPocketCost > monthlyTakeHome * 2) {
+        score = Math.max(score, 90);
+      }
+
+      if (outOfPocketCost > 0 && monthlyTakeHome < 500 && emergencySavings <= 0) {
+        score = Math.max(score, 92);
+      }
+
+      if (outOfPocketCost > 0 && emergencySavings <= 0 && paymentPlan === "mostlyCredit") {
+        score = Math.max(score, 90);
+      }
+
+      if (
+        outOfPocketCost > 0 &&
+        monthlyTakeHome >= 10000 &&
+        emergencyMonths >= 6 &&
+        cashCoverage >= 1 &&
+        (paymentPlan === "cash" || paymentPlan === "reimbursed")
+      ) {
+        score = Math.min(score, 25);
+      }
+
+      score = Math.round(clamp(score, 0, 100));
+
+      const label = scoreLabel(score);
+      const color = scoreColor(score);
+
+      totalPrice.textContent = formatMoney(outOfPocketCost);
+      pressureScore.textContent = `${score}/100`;
+      pressureFill.style.width = `${score}%`;
+      pressureFill.style.background = color;
+      pressureLabel.textContent = label;
+
+      const propertyText = propertyType
+        ? propertyType.replace(/([A-Z])/g, " $1").toLowerCase()
+        : "lodging";
+
+      const incomeText = hasIncome
+        ? `The lodging cost equals about <strong>${(costToIncomeRatio * 100).toFixed(0)}%</strong> of one month of take-home income.`
+        : "Monthly take-home income is too low or missing, so the calculator treats this as a high-pressure lodging decision.";
+
+      const emergencyText =
+        emergencySavings <= 0
+          ? "Emergency savings are entered as <strong>$0</strong>, which raises pressure even if lodging cash is set aside."
+          : `Emergency savings equal about <strong>${emergencyMonths.toFixed(1)}</strong> months of take-home income before any lodging cash gap.`;
+
+      pressureDetails.innerHTML = `
+        <p><strong>${label}:</strong> ${incomeText} ${emergencyText}</p>
+      `;
+
+      resultDetails.innerHTML = `
+        <p><strong>Base lodging cost:</strong> ${formatMoney(baseLodgingCost)} before taxes and fees.</p>
+
+        <p><strong>Estimated taxes:</strong> ${formatMoney(taxCost)} using a ${taxRate.toFixed(1)}% tax rate.</p>
+
+        <p><strong>Required lodging fees:</strong> ${formatMoney(requiredFees)} including resort or amenity fees, cleaning or service fees, parking, and other required charges.</p>
+
+        <p><strong>Rewards and credits applied:</strong> ${formatMoney(appliedCredits)}.</p>
+
+        <p><strong>Estimated cost per night:</strong> ${formatMoney(costPerNight)} after credits.</p>
+
+        <p><strong>Estimated cost per traveler:</strong> ${formatMoney(costPerTraveler)} across ${travelers.toFixed(0)} ${travelers === 1 ? "traveler" : "travelers"}.</p>
+
+        <p><strong>Upfront cash needed:</strong> ${formatMoney(upfrontCashNeeded)} including the refundable deposit or hold.</p>
+
+        <p><strong>Cash gap after lodging money set aside:</strong> ${formatMoney(cashGap)}.</p>
+      `;
+
+      lodgingSummary.innerHTML = `
+        This ${propertyText} stay is estimated at <strong>${formatMoney(grossLodgingCost)}</strong> before credits.
+        After <strong>${formatMoney(appliedCredits)}</strong> in rewards, credits, gift cards, or outside help,
+        the estimated out-of-pocket lodging cost is <strong>${formatMoney(outOfPocketCost)}</strong>.
+        The final lodging pressure score is <strong>${score}/100</strong>.
+      `;
+    }
+
+    document
+      .getElementById("lodgingButton")
+      .addEventListener("click", calculateLodgingCost);
+
+    document.getElementById("lodgingForm").addEventListener("reset", () => {
+      const results = document.getElementById("results");
+      setTimeout(() => {
+        results.classList.remove("visible");
+      }, 0);
+    });
+  </script>
+</Layout>
+

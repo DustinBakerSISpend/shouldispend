@@ -100,7 +100,7 @@ import WhenSpendingMakesSense from "../components/WhenSpendingMakesSense.astro";
           </div>
         </div>
 
-        <button id="bracesButton" type="button">Calculate Financial Pressure</button>
+        <button class="sis-action-button sis-calculate-button" id="bracesButton" type="button">Calculate Financial Pressure</button>
 
         <div class="result" id="result">
           <div class="score" id="score"></div>
@@ -449,19 +449,19 @@ import WhenSpendingMakesSense from "../components/WhenSpendingMakesSense.astro";
 
       if (pressureScore === 0) {
         guidance =
-          `This braces expense appears to create essentially no financial pressure based on the numbers provided. The treatment equals about ${incomeImpact.toFixed(1)}% of one month’s take-home income, and the out-of-pocket cost is tiny relative to available savings.`;
+          `This braces expense appears to create essentially no financial pressure based on the numbers provided. The treatment equals about ${incomeImpact.toFixed(1)}% of one month's take-home income, and the out-of-pocket cost is tiny relative to available savings.`;
       } else if (pressureScore <= 30) {
         guidance =
-          `This braces expense appears financially manageable based on the numbers provided. The treatment equals about ${incomeImpact.toFixed(1)}% of one month’s take-home income, and your estimated emergency cushion remains around ${Math.max(emergencyMonths, 0).toFixed(1)} months after the out-of-pocket cost.`;
+          `This braces expense appears financially manageable based on the numbers provided. The treatment equals about ${incomeImpact.toFixed(1)}% of one month's take-home income, and your estimated emergency cushion remains around ${Math.max(emergencyMonths, 0).toFixed(1)} months after the out-of-pocket cost.`;
       } else if (pressureScore <= 60) {
         guidance =
-          `This braces expense may be workable, but it creates noticeable financial pressure. The treatment equals about ${incomeImpact.toFixed(1)}% of one month’s take-home income, and the out-of-pocket portion uses about ${savingsImpact.toFixed(1)}% of available savings.`;
+          `This braces expense may be workable, but it creates noticeable financial pressure. The treatment equals about ${incomeImpact.toFixed(1)}% of one month's take-home income, and the out-of-pocket portion uses about ${savingsImpact.toFixed(1)}% of available savings.`;
       } else {
         guidance =
-          `This braces expense could create real financial strain. The treatment equals about ${incomeImpact.toFixed(1)}% of one month’s take-home income, and the combination of savings impact, financing, debt, or monthly obligations suggests you should slow down before committing aggressively.`;
+          `This braces expense could create real financial strain. The treatment equals about ${incomeImpact.toFixed(1)}% of one month's take-home income, and the combination of savings impact, financing, debt, or monthly obligations suggests you should slow down before committing aggressively.`;
       }
 
-      scoreEl.textContent = `${level.label} — ${pressureScore}/100`;
+      scoreEl.textContent = `${level.label}  -  ${pressureScore}/100`;
       scoreEl.style.color = level.color;
       barFill.style.width = `${pressureScore}%`;
       barFill.style.background = level.color;

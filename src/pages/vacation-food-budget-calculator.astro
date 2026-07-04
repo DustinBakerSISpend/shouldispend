@@ -1,0 +1,911 @@
+﻿---
+import Layout from "../layouts/Layout.astro";
+import CalculatorPageShell from "../components/CalculatorPageShell.astro";
+import FAQSection from "../components/FAQSection.astro";
+import RelatedCalculators from "../components/RelatedCalculators.astro";
+import MethodologySection from "../components/MethodologySection.astro";
+import CalculatorAssumptions from "../components/CalculatorAssumptions.astro";
+import KeyCostCategories from "../components/KeyCostCategories.astro";
+import ReduceCostTips from "../components/ReduceCostTips.astro";
+import { calculators } from "../data/calculators.js";
+
+const foodFaqs = [
+  {
+    question: "How do I estimate a vacation food budget?",
+    answer:
+      "Estimate meals by traveler and day, then add snacks, airport meals, groceries, drinks, tips, taxes, delivery fees, and a buffer. Subtract included meals, dining credits, gift cards, or outside help to estimate the out-of-pocket vacation food budget.",
+  },
+  {
+    question: "Why does vacation food need its own calculator?",
+    answer:
+      "Food is one of the easiest travel categories to underestimate because it repeats every day. Flights and hotels are usually known before the trip, but coffee, snacks, airport food, drinks, tips, kids meals, groceries, delivery fees, and convenience spending can quietly grow.",
+  },
+  {
+    question: "Should I include groceries on vacation?",
+    answer:
+      "Yes. Groceries can lower restaurant spending when your lodging has a kitchen, fridge, or free breakfast. But groceries are still part of the trip budget and should be counted instead of treated as free.",
+  },
+  {
+    question: "Do included breakfasts or resort credits reduce the budget?",
+    answer:
+      "Yes. Included breakfasts, dining credits, gift cards, rewards, family help, or meal vouchers reduce the out-of-pocket food cost. This calculator subtracts them before scoring food-budget pressure.",
+  },
+  {
+    question: "Can a vacation food budget be too low?",
+    answer:
+      "Yes. A food budget can be too low if it ignores airport meals, tips, taxes, snacks, drinks, higher tourist-area prices, dietary needs, or the fact that travelers often spend more when tired, rushed, or far from a grocery store.",
+  },
+];
+
+const relatedCalculators = calculators
+  .filter(
+    (calculator) =>
+      calculator.category === "Travel" &&
+      calculator.href !== "/vacation-food-budget-calculator"
+  )
+  .slice(0, 4);
+---
+
+<Layout
+  title="Vacation Food Budget Calculator"
+  description="Estimate a vacation food budget with travelers, trip days, restaurants, groceries, snacks, airport meals, tips, credits, and affordability pressure."
+>
+  <style>
+    .container {
+      max-width: 940px;
+      margin: auto;
+    }
+
+    .calculator {
+      background: white;
+      padding: 40px;
+      border-radius: 24px;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.06);
+    }
+
+    .calculator h2 {
+      margin-top: 0;
+      font-size: 2rem;
+      margin-bottom: 18px;
+      color: #0f172a;
+    }
+
+    .calculator-intro {
+      color: #334155;
+      line-height: 1.8;
+      margin-bottom: 30px;
+      font-size: 1.05rem;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+    }
+
+    .field label {
+      display: block;
+      font-weight: 800;
+      margin-bottom: 10px;
+      color: #0f172a;
+    }
+
+    .field input,
+    .field select {
+      width: 100%;
+      padding: 16px;
+      border-radius: 12px;
+      border: 1px solid #cbd5e1;
+      font-size: 1rem;
+      box-sizing: border-box;
+      background: white;
+    }
+
+    .field-note {
+      display: block;
+      margin-top: 8px;
+      color: #64748b;
+      font-size: 0.9rem;
+      line-height: 1.5;
+    }
+
+    .button-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-top: 30px;
+    }
+
+    .results {
+      margin-top: 36px;
+      background: #f8fafc;
+      padding: 32px;
+      border-radius: 24px;
+      border: 1px solid var(--border);
+      box-shadow: 0 10px 24px rgba(15, 23, 42, 0.04);
+      display: none;
+    }
+
+    .results.visible {
+      display: block;
+    }
+
+    .result-label {
+      font-size: 1.15rem;
+      font-weight: 800;
+      color: #0f766e;
+      margin-bottom: 18px;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+    }
+
+    .total-price {
+      font-size: clamp(2.5rem, 6vw, 4rem);
+      font-weight: 900;
+      color: #0f172a;
+      line-height: 1.05;
+      margin-bottom: 10px;
+    }
+
+    .score-card {
+      margin: 24px 0;
+      padding: 22px;
+      border-radius: 18px;
+      background: white;
+      border: 1px solid #dbe4ee;
+    }
+
+    .score-line {
+      display: flex;
+      justify-content: space-between;
+      gap: 16px;
+      align-items: baseline;
+      margin-bottom: 12px;
+      color: #0f172a;
+      font-weight: 900;
+    }
+
+    .pressure-bar {
+      width: 100%;
+      height: 16px;
+      background: #e2e8f0;
+      border-radius: 999px;
+      overflow: hidden;
+      margin: 10px 0 16px;
+    }
+
+    .pressure-fill {
+      height: 100%;
+      width: 0%;
+      border-radius: 999px;
+      background: #16a34a;
+      transition: width 0.3s ease;
+    }
+
+    .result-details {
+      color: #334155;
+      line-height: 1.9;
+      font-size: 1.02rem;
+    }
+
+    .result-details p {
+      margin: 0 0 12px;
+    }
+
+    .mini-summary {
+      margin-top: 24px;
+      padding: 20px;
+      border-radius: 18px;
+      background: white;
+      border: 1px solid #dbe4ee;
+      color: #334155;
+      line-height: 1.8;
+    }
+
+    .disclaimer {
+      margin-top: 24px;
+      font-size: 0.9rem;
+      color: #64748b;
+    }
+
+    .content-section {
+      margin-top: 60px;
+    }
+
+    .content-section h2 {
+      font-size: 2rem;
+      margin-bottom: 20px;
+      color: #0f172a;
+    }
+
+    .content-section p,
+    .content-section li {
+      font-size: 1.1rem;
+      line-height: 1.9;
+      color: #334155;
+    }
+
+    .content-link {
+      color: #0f766e;
+      font-weight: 700;
+      text-decoration: none;
+    }
+
+    .content-link:hover {
+      text-decoration: underline;
+    }
+
+    .two-column-note {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 18px;
+      margin-top: 24px;
+    }
+
+    .note-card {
+      padding: 20px;
+      border: 1px solid #dbe4ee;
+      border-radius: 18px;
+      background: #ffffff;
+    }
+
+    .note-card strong {
+      display: block;
+      color: #0f172a;
+      margin-bottom: 8px;
+      font-size: 1.02rem;
+    }
+
+    @media (max-width: 768px) {
+      .calculator {
+        padding: 24px;
+      }
+
+      .grid {
+        grid-template-columns: 1fr;
+      }
+
+      .calculator h2,
+      .content-section h2 {
+        font-size: 1.7rem;
+      }
+
+      .results {
+        padding: 24px;
+      }
+
+      .score-line {
+        display: block;
+      }
+    }
+  </style>
+
+  <div class="container">
+    <CalculatorPageShell
+      eyebrow="Vacation Food Budget Calculator"
+      title="Vacation Food Budget Calculator"
+      description="Estimate the real food budget for a trip after restaurant meals, groceries, snacks, airport food, drinks, tips, credits, cash set aside, and debt risk."
+    >
+      <div class="calculator">
+        <h2>Estimate Your Vacation Food Budget</h2>
+
+        <p class="calculator-intro">
+          Vacation food is not one purchase. It repeats every day. Use this
+          calculator to estimate restaurant meals, groceries, snacks, drinks,
+          airport food, tips, taxes, dining credits, cash set aside, and food
+          budget pressure before the trip starts.
+        </p>
+
+        <form id="foodForm">
+          <div class="grid">
+            <div class="field">
+              <label for="tripStyle">Trip Food Style</label>
+              <select id="tripStyle">
+                <option value="" disabled selected>Choose trip food style</option>
+                <option value="budget">Budget-focused meals</option>
+                <option value="balanced">Balanced mix of groceries and restaurants</option>
+                <option value="restaurant">Mostly restaurants</option>
+                <option value="resort">Resort, theme park, or tourist-area food</option>
+                <option value="splurge">Food is a major part of the trip</option>
+              </select>
+            </div>
+
+            <div class="field">
+              <label for="lodgingSetup">Lodging Food Setup</label>
+              <select id="lodgingSetup">
+                <option value="" disabled selected>Choose lodging setup</option>
+                <option value="none">No kitchen and no included breakfast</option>
+                <option value="breakfast">Included breakfast</option>
+                <option value="fridge">Mini fridge or microwave</option>
+                <option value="kitchen">Kitchen or kitchenette</option>
+                <option value="allInclusive">Most meals already included</option>
+              </select>
+              <span class="field-note">This adjusts the suggested food risk, not your entered meal prices.</span>
+            </div>
+
+            <div class="field">
+              <label for="travelers">Travelers Eating on the Trip</label>
+              <input id="travelers" type="number" placeholder="Example: 4" />
+            </div>
+
+            <div class="field">
+              <label for="tripDays">Trip Days</label>
+              <input id="tripDays" type="number" placeholder="Example: 6" />
+            </div>
+
+            <div class="field">
+              <label for="restaurantMealsPerDay">Restaurant Meals per Day</label>
+              <input id="restaurantMealsPerDay" type="number" step="0.1" placeholder="Example: 1.5" />
+              <span class="field-note">Use the average number of paid restaurant meals per traveler per day.</span>
+            </div>
+
+            <div class="field">
+              <label for="restaurantMealCost">Average Restaurant Meal Cost per Person</label>
+              <input id="restaurantMealCost" type="number" step="0.01" placeholder="Example: 24" />
+            </div>
+
+            <div class="field">
+              <label for="quickMealsPerDay">Quick Meals, Coffee, or Snacks per Day</label>
+              <input id="quickMealsPerDay" type="number" step="0.1" placeholder="Example: 1.5" />
+            </div>
+
+            <div class="field">
+              <label for="quickMealCost">Average Quick Meal or Snack Cost per Person</label>
+              <input id="quickMealCost" type="number" step="0.01" placeholder="Example: 9" />
+            </div>
+
+            <div class="field">
+              <label for="groceryTotal">Groceries, Breakfast Items, and Room Snacks</label>
+              <input id="groceryTotal" type="number" step="0.01" placeholder="Example: 250" />
+            </div>
+
+            <div class="field">
+              <label for="airportFoodTotal">Airport, Gas Station, or Transit Food</label>
+              <input id="airportFoodTotal" type="number" step="0.01" placeholder="Example: 120" />
+            </div>
+
+            <div class="field">
+              <label for="drinksDessertsTotal">Drinks, Desserts, Treats, and Coffee Extras</label>
+              <input id="drinksDessertsTotal" type="number" step="0.01" placeholder="Example: 180" />
+            </div>
+
+            <div class="field">
+              <label for="splurgeMeals">Special or Splurge Meals</label>
+              <input id="splurgeMeals" type="number" step="0.01" placeholder="Example: 300" />
+              <span class="field-note">Use this for one nicer dinner, character dining, food tours, or celebration meals.</span>
+            </div>
+
+            <div class="field">
+              <label for="tipTaxPercent">Tips and Meal Tax Percent</label>
+              <input id="tipTaxPercent" type="number" step="0.01" placeholder="Example: 22" />
+            </div>
+
+            <div class="field">
+              <label for="bufferPercent">Food Buffer Percent</label>
+              <input id="bufferPercent" type="number" step="0.01" placeholder="Example: 15" />
+              <span class="field-note">Useful for tourist prices, tired kids, convenience food, or changed plans.</span>
+            </div>
+
+            <div class="field">
+              <label for="diningCredits">Dining Credits, Gift Cards, Rewards, or Outside Help</label>
+              <input id="diningCredits" type="number" step="0.01" placeholder="Example: 200" />
+            </div>
+
+            <div class="field">
+              <label for="cashSetAside">Cash Already Set Aside for Vacation Food</label>
+              <input id="cashSetAside" type="number" step="0.01" placeholder="Example: 900" />
+            </div>
+
+            <div class="field">
+              <label for="monthlyTakeHome">Monthly Take-Home Income</label>
+              <input id="monthlyTakeHome" type="number" step="0.01" placeholder="Example: 6500" />
+            </div>
+
+            <div class="field">
+              <label for="emergencySavings">Emergency Savings</label>
+              <input id="emergencySavings" type="number" step="0.01" placeholder="Example: 15000" />
+            </div>
+
+            <div class="field">
+              <label for="paymentPlan">How Will Vacation Food Be Paid?</label>
+              <select id="paymentPlan">
+                <option value="" disabled selected>Choose payment method</option>
+                <option value="cash">Cash, debit, or already saved</option>
+                <option value="reimbursed">Temporary card charge, reimbursed soon</option>
+                <option value="partialCredit">Partly on credit card</option>
+                <option value="mostlyCredit">Mostly financed or carried as debt</option>
+              </select>
+            </div>
+
+            <div class="field">
+              <label for="dietNeeds">Dietary or Convenience Pressure</label>
+              <select id="dietNeeds">
+                <option value="" disabled selected>Choose food complexity</option>
+                <option value="simple">Simple eaters and flexible plans</option>
+                <option value="moderate">Some picky eating, kids, allergies, or convenience needs</option>
+                <option value="high">Strict dietary needs, theme parks, resorts, or expensive destination</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="button-row">
+            <button class="sis-action-button sis-calculate-button" id="foodButton" type="button">Calculate Vacation Food Budget</button>
+            <button class="sis-action-button sis-reset-button" type="reset">Reset</button>
+          </div>
+        </form>
+
+        <div class="results" id="results">
+          <div class="result-label">Estimated Out-of-Pocket Vacation Food Budget</div>
+
+          <div class="total-price" id="totalPrice"></div>
+
+          <div class="score-card">
+            <div class="score-line">
+              <span id="pressureLabel">Food budget pressure score</span>
+              <span id="pressureScore">0/100</span>
+            </div>
+            <div class="pressure-bar">
+              <div class="pressure-fill" id="pressureFill"></div>
+            </div>
+            <div class="result-details" id="pressureDetails"></div>
+          </div>
+
+          <div class="result-details" id="resultDetails"></div>
+
+          <div class="mini-summary" id="foodSummary"></div>
+
+          <div class="disclaimer">
+            This estimate focuses on vacation food only. It does not include
+            flights, lodging, rental cars, activities, travel insurance,
+            souvenirs, passports, or emergency travel costs.
+          </div>
+        </div>
+      </div>
+
+      <section class="content-section">
+        <h2>Why Vacation Food Costs Deserve Their Own Calculator</h2>
+
+        <p>
+          Food is different from flights and hotels because it is a repeating
+          travel cost. A small daily miss becomes a large trip miss when it is
+          multiplied by travelers and days.
+        </p>
+
+        <p>
+          This calculator is built for the part of travel budgeting that booking
+          sites do not solve: daily meal rhythm, snacks, coffee, airport food,
+          groceries, tips, taxes, dining credits, and whether the food budget
+          creates pressure after the trip is already booked.
+        </p>
+
+        <p>
+          For the full trip picture, compare this estimate with the
+          <a class="content-link" href="/hotel-and-lodging-cost-calculator">hotel and lodging cost calculator</a>,
+          the
+          <a class="content-link" href="/flight-cost-calculator">flight cost calculator</a>,
+          and the
+          <a class="content-link" href="/travel-calculators">travel calculators hub</a>.
+        </p>
+      </section>
+
+      <KeyCostCategories
+        items={[
+          {
+            title: "Meal rhythm",
+            description:
+              "Restaurant meals, quick meals, snacks, and coffee repeat by traveler and day, so small daily choices compound quickly.",
+          },
+          {
+            title: "Groceries and lodging setup",
+            description:
+              "Breakfast, groceries, room snacks, kitchen access, and included meals can lower restaurant pressure but still belong in the budget.",
+          },
+          {
+            title: "Transit and convenience food",
+            description:
+              "Airport food, gas station stops, theme park snacks, late-night delivery, and rushed meals often cost more than planned.",
+          },
+          {
+            title: "Tips, taxes, and buffers",
+            description:
+              "Meal tax, tips, service charges, and a buffer help avoid underestimating tourist-area food costs.",
+          },
+          {
+            title: "Credits and outside help",
+            description:
+              "Dining credits, gift cards, rewards, included meals, and outside help reduce the out-of-pocket food budget and pressure score.",
+          },
+        ]}
+      />
+
+      <ReduceCostTips
+        items={[
+          "Plan the daily meal rhythm before the trip instead of guessing one total food number.",
+          "Use included breakfast, a fridge, or a kitchen to reduce restaurant pressure.",
+          "Bring or buy snacks early so airport, theme park, and convenience food do not control the budget.",
+          "Choose which meals are worth splurging on instead of upgrading every meal by accident.",
+          "Use dining credits, gift cards, grocery runs, or family help to reduce out-of-pocket food cost.",
+          "Keep food off credit cards when the trip is optional and emergency savings are thin.",
+        ]}
+      />
+
+      <CalculatorAssumptions
+        items={[
+          "Restaurant meals are estimated by travelers, trip days, restaurant meals per day, and average restaurant meal cost.",
+          "Quick meals and snacks are estimated by travelers, trip days, quick meals per day, and average quick meal cost.",
+          "Groceries, airport food, drinks, desserts, and splurge meals are treated as group totals.",
+          "Tips and meal taxes apply to restaurant meals, quick meals, drinks, desserts, and splurge meals, but not grocery totals.",
+          "Food buffer applies after tips, taxes, and credits are considered.",
+          "Dining credits, gift cards, rewards, included meal value, and outside help reduce the out-of-pocket food estimate.",
+          "Pressure score is educational and considers income, emergency savings, cash set aside, payment method, food complexity, lodging setup, and cost size.",
+        ]}
+      />
+
+      <section class="content-section">
+        <h2>Cheap Food Budget vs. Realistic Food Budget</h2>
+
+        <p>
+          The lowest food estimate is not always the safest. A budget can look
+          efficient on paper and still fail when travelers are hungry, tired,
+          rushed, traveling with kids, dealing with allergies, or staying far from
+          grocery options.
+        </p>
+
+        <div class="two-column-note">
+          <div class="note-card">
+            <strong>A lean food budget works better when</strong>
+            <p>
+              Lodging includes breakfast, there is a fridge or kitchen, travelers
+              are flexible, grocery stores are nearby, and the trip has downtime
+              for simple meals.
+            </p>
+          </div>
+
+          <div class="note-card">
+            <strong>A higher food budget can be reasonable when</strong>
+            <p>
+              The destination is expensive, meals are part of the experience,
+              travelers have dietary needs, the schedule is packed, or the trip
+              includes theme parks, resorts, tours, or celebration meals.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <div class="content-section">
+        <FAQSection title="Vacation Food Budget Calculator FAQ" faqs={foodFaqs} />
+      </div>
+
+      <div class="content-section">
+        <RelatedCalculators calculators={relatedCalculators} />
+      </div>
+    </CalculatorPageShell>
+
+    <section id="FinancialRedFlags">
+      <h2>Vacation Food Budget Red Flags</h2>
+
+      <p>
+        A vacation food budget deserves extra caution when the daily number only
+        works if everyone eats cheaply, nothing goes wrong, and no one buys
+        airport food, snacks, drinks, or convenience meals.
+      </p>
+
+      <ul>
+        <li>The food budget ignores tips, taxes, snacks, drinks, coffee, or airport meals.</li>
+        <li>The trip depends on carrying food spending as credit card debt.</li>
+        <li>Emergency savings are weak and the trip food plan has no buffer.</li>
+        <li>The lodging has no kitchen, but the plan assumes many cheap meals.</li>
+        <li>The budget does not account for kids, allergies, dietary needs, resorts, or tourist-area prices.</li>
+        <li>Food spending would crowd out transportation, activities, or return-home cash flow.</li>
+      </ul>
+    </section>
+
+    <MethodologySection category="vacation food budget estimates" updated="July 2026" />
+  </div>
+
+  <script is:inline>
+    const getNumber = (id) => {
+      const rawValue = document.getElementById(id)?.value;
+      const value = Number(rawValue);
+      return Number.isFinite(value) && value >= 0 ? value : 0;
+    };
+
+    const getValue = (id) => document.getElementById(id)?.value || "";
+
+    function clamp(value, min, max) {
+      return Math.min(Math.max(value, min), max);
+    }
+
+    function formatMoney(value) {
+      return value.toLocaleString(undefined, {
+        style: "currency",
+        currency: "USD",
+        minimumFractionDigits: 0,
+        maximumFractionDigits: 0,
+      });
+    }
+
+    function scoreColor(score) {
+      if (score <= 35) return "#16a34a";
+      if (score <= 65) return "#ca8a04";
+      return "#dc2626";
+    }
+
+    function scoreLabel(score) {
+      if (score <= 35) return "Low food budget pressure";
+      if (score <= 65) return "Moderate food budget pressure";
+      return "High food budget pressure";
+    }
+
+    function paymentAdjustment(paymentPlan) {
+      if (paymentPlan === "mostlyCredit") return 30;
+      if (paymentPlan === "partialCredit") return 16;
+      if (paymentPlan === "reimbursed") return 6;
+      return 0;
+    }
+
+    function complexityAdjustment(dietNeeds) {
+      if (dietNeeds === "high") return 10;
+      if (dietNeeds === "moderate") return 5;
+      if (dietNeeds === "simple") return -3;
+      return 4;
+    }
+
+    function lodgingAdjustment(lodgingSetup) {
+      if (lodgingSetup === "allInclusive") return -12;
+      if (lodgingSetup === "kitchen") return -7;
+      if (lodgingSetup === "breakfast" || lodgingSetup === "fridge") return -4;
+      if (lodgingSetup === "none") return 5;
+      return 0;
+    }
+
+    function calculateFoodBudget() {
+      const tripStyle = getValue("tripStyle");
+      const lodgingSetup = getValue("lodgingSetup");
+      const travelers = Math.max(getNumber("travelers"), 0);
+      const tripDays = getNumber("tripDays");
+      const restaurantMealsPerDay = getNumber("restaurantMealsPerDay");
+      const restaurantMealCost = getNumber("restaurantMealCost");
+      const quickMealsPerDay = getNumber("quickMealsPerDay");
+      const quickMealCost = getNumber("quickMealCost");
+      const groceryTotal = getNumber("groceryTotal");
+      const airportFoodTotal = getNumber("airportFoodTotal");
+      const drinksDessertsTotal = getNumber("drinksDessertsTotal");
+      const splurgeMeals = getNumber("splurgeMeals");
+      const tipTaxPercent = getNumber("tipTaxPercent");
+      const bufferPercent = getNumber("bufferPercent");
+      const diningCredits = getNumber("diningCredits");
+      const cashSetAside = getNumber("cashSetAside");
+      const monthlyTakeHome = getNumber("monthlyTakeHome");
+      const emergencySavings = getNumber("emergencySavings");
+      const paymentPlan = getValue("paymentPlan");
+      const dietNeeds = getValue("dietNeeds");
+
+      const results = document.getElementById("results");
+      const totalPrice = document.getElementById("totalPrice");
+      const resultDetails = document.getElementById("resultDetails");
+      const foodSummary = document.getElementById("foodSummary");
+      const pressureScore = document.getElementById("pressureScore");
+      const pressureFill = document.getElementById("pressureFill");
+      const pressureLabel = document.getElementById("pressureLabel");
+      const pressureDetails = document.getElementById("pressureDetails");
+
+      results.classList.add("visible");
+
+      if (travelers <= 0 || tripDays <= 0) {
+        totalPrice.textContent = "$0";
+        pressureScore.textContent = "0/100";
+        pressureFill.style.width = "0%";
+        pressureFill.style.background = "#16a34a";
+        pressureLabel.textContent = "Enter trip food details";
+        pressureDetails.innerHTML =
+          "<p>Enter travelers and trip days to estimate your vacation food budget.</p>";
+        resultDetails.innerHTML = "";
+        foodSummary.textContent = "";
+        return;
+      }
+
+      const restaurantCost =
+        travelers * tripDays * restaurantMealsPerDay * restaurantMealCost;
+      const quickFoodCost =
+        travelers * tripDays * quickMealsPerDay * quickMealCost;
+      const taxableFoodCost =
+        restaurantCost + quickFoodCost + drinksDessertsTotal + splurgeMeals;
+      const tipTaxCost = taxableFoodCost * (tipTaxPercent / 100);
+      const preBufferFoodCost =
+        taxableFoodCost +
+        groceryTotal +
+        airportFoodTotal +
+        tipTaxCost;
+      const bufferCost = preBufferFoodCost * (bufferPercent / 100);
+      const grossFoodCost = preBufferFoodCost + bufferCost;
+      const appliedCredits = Math.min(diningCredits, grossFoodCost);
+      const outOfPocketCost = Math.max(0, grossFoodCost - appliedCredits);
+      const cashGap = Math.max(0, outOfPocketCost - cashSetAside);
+      const costPerTraveler = travelers > 0 ? outOfPocketCost / travelers : 0;
+      const costPerTravelerPerDay =
+        travelers > 0 && tripDays > 0 ? outOfPocketCost / travelers / tripDays : 0;
+      const emergencyAfterGap = Math.max(0, emergencySavings - cashGap);
+
+      /*
+        Food pressure logic must make sense at both extremes:
+        - Near-zero income and no emergency savings should force high pressure when cost exists.
+        - Fully covered, no-debt, tiny-cost, strong-cushion cases should reach 0/100.
+        - Cash set aside helps, but it does not erase no-income, no-emergency, or debt-financing risk.
+      */
+      const hasIncome = monthlyTakeHome >= 500;
+      const incomeToUse = hasIncome ? monthlyTakeHome : 0;
+      const costToIncomeRatio = incomeToUse > 0 ? outOfPocketCost / incomeToUse : Infinity;
+      const cashGapRatio = incomeToUse > 0 ? cashGap / incomeToUse : cashGap > 0 ? Infinity : 0;
+      const emergencyMonths = incomeToUse > 0 ? emergencySavings / incomeToUse : emergencySavings > 0 ? 99 : 0;
+      const emergencyAfterGapMonths =
+        incomeToUse > 0 ? emergencyAfterGap / incomeToUse : emergencyAfterGap > 0 ? 99 : 0;
+      const creditShare = grossFoodCost > 0 ? appliedCredits / grossFoodCost : 0;
+      const cashCoverage = outOfPocketCost > 0 ? cashSetAside / outOfPocketCost : 1;
+      const noDebtPayment =
+        paymentPlan === "cash" || paymentPlan === "reimbursed" || paymentPlan === "";
+      const fullyCovered = cashCoverage >= 1 || creditShare >= 1;
+      const tinyCostForIncome =
+        outOfPocketCost > 0 && monthlyTakeHome > 0 && outOfPocketCost <= monthlyTakeHome * 0.02;
+      const verySmallCostForIncome =
+        outOfPocketCost > 0 && monthlyTakeHome > 0 && outOfPocketCost <= monthlyTakeHome * 0.05;
+      const strongEmergencyCushion =
+        emergencySavings >= 10000 || emergencyMonths >= 3 || emergencySavings >= outOfPocketCost * 3;
+
+      let score = 0;
+
+      if (outOfPocketCost === 0) {
+        score = 0;
+      } else if (!hasIncome) {
+        score = 84;
+
+        if (cashGap > 0) score += 10;
+        if (emergencySavings <= 0) score += 10;
+        else if (emergencySavings < outOfPocketCost) score += 6;
+
+        if (cashCoverage >= 1) score -= 8;
+        if (creditShare >= 0.75) score -= 8;
+      } else {
+        if (costToIncomeRatio >= 1) score += 58;
+        else if (costToIncomeRatio >= 0.75) score += 48;
+        else if (costToIncomeRatio >= 0.5) score += 38;
+        else if (costToIncomeRatio >= 0.3) score += 28;
+        else if (costToIncomeRatio >= 0.15) score += 16;
+        else score += 8;
+
+        if (cashGapRatio >= 0.5) score += 24;
+        else if (cashGapRatio >= 0.25) score += 16;
+        else if (cashGapRatio > 0) score += 8;
+
+        if (emergencySavings <= 0) score += 22;
+        else if (emergencyAfterGapMonths < 1) score += 18;
+        else if (emergencyAfterGapMonths < 2) score += 10;
+        else if (emergencyAfterGapMonths >= 6) score -= 10;
+        else if (emergencyAfterGapMonths >= 3) score -= 6;
+
+        if (cashCoverage >= 1) score -= 10;
+        else if (cashCoverage >= 0.5) score -= 5;
+      }
+
+      score += paymentAdjustment(paymentPlan);
+      score += complexityAdjustment(dietNeeds);
+      score += lodgingAdjustment(lodgingSetup);
+
+      if (tripStyle === "splurge") score += 5;
+      else if (tripStyle === "resort") score += 4;
+      else if (tripStyle === "budget") score -= 2;
+
+      if (bufferPercent < 8 && outOfPocketCost > 0) score += 5;
+      if (creditShare >= 1 && grossFoodCost > 0) score -= 28;
+      else if (creditShare > 0) score -= clamp(creditShare * 18, 0, 18);
+
+      if (outOfPocketCost > 0 && monthlyTakeHome > 0 && outOfPocketCost > monthlyTakeHome * 2) {
+        score = Math.max(score, 90);
+      }
+
+      if (outOfPocketCost > 0 && monthlyTakeHome < 500 && emergencySavings <= 0) {
+        score = Math.max(score, 92);
+      }
+
+      if (outOfPocketCost > 0 && emergencySavings <= 0 && paymentPlan === "mostlyCredit") {
+        score = Math.max(score, 90);
+      }
+
+      if (
+        outOfPocketCost > 0 &&
+        fullyCovered &&
+        noDebtPayment &&
+        tinyCostForIncome &&
+        strongEmergencyCushion
+      ) {
+        score = 0;
+      } else if (
+        outOfPocketCost > 0 &&
+        monthlyTakeHome >= 10000 &&
+        emergencyMonths >= 6 &&
+        cashCoverage >= 1 &&
+        noDebtPayment
+      ) {
+        score = Math.min(score, 20);
+      } else if (
+        outOfPocketCost > 0 &&
+        fullyCovered &&
+        noDebtPayment &&
+        verySmallCostForIncome &&
+        strongEmergencyCushion
+      ) {
+        score = Math.min(score, 5);
+      }
+
+      score = Math.round(clamp(score, 0, 100));
+
+      const label = scoreLabel(score);
+      const color = scoreColor(score);
+
+      totalPrice.textContent = formatMoney(outOfPocketCost);
+      pressureScore.textContent = `${score}/100`;
+      pressureFill.style.width = `${score}%`;
+      pressureFill.style.background = color;
+      pressureLabel.textContent = label;
+
+      const styleText = tripStyle
+        ? tripStyle.replace(/([A-Z])/g, " $1").toLowerCase()
+        : "vacation food";
+
+      const incomeText = hasIncome
+        ? `The out-of-pocket food budget equals about <strong>${(costToIncomeRatio * 100).toFixed(0)}%</strong> of one month of take-home income.`
+        : "Monthly take-home income is too low or missing, so the calculator treats this as a high-pressure food budget decision.";
+
+      const emergencyText =
+        emergencySavings <= 0
+          ? "Emergency savings are entered as <strong>$0</strong>, which raises pressure even if food cash is set aside."
+          : `Emergency savings equal about <strong>${emergencyMonths.toFixed(1)}</strong> months of take-home income before any food cash gap.`;
+
+      pressureDetails.innerHTML = `
+        <p><strong>${label}:</strong> ${incomeText} ${emergencyText}</p>
+      `;
+
+      resultDetails.innerHTML = `
+        <p><strong>Restaurant meals:</strong> ${formatMoney(restaurantCost)}.</p>
+
+        <p><strong>Quick meals, coffee, and snacks:</strong> ${formatMoney(quickFoodCost)}.</p>
+
+        <p><strong>Groceries and room food:</strong> ${formatMoney(groceryTotal)}.</p>
+
+        <p><strong>Airport, gas station, or transit food:</strong> ${formatMoney(airportFoodTotal)}.</p>
+
+        <p><strong>Drinks, desserts, treats, and splurge meals:</strong> ${formatMoney(drinksDessertsTotal + splurgeMeals)}.</p>
+
+        <p><strong>Estimated tips and meal taxes:</strong> ${formatMoney(tipTaxCost)}.</p>
+
+        <p><strong>Food buffer:</strong> ${formatMoney(bufferCost)}.</p>
+
+        <p><strong>Dining credits and outside help applied:</strong> ${formatMoney(appliedCredits)}.</p>
+
+        <p><strong>Estimated cost per traveler:</strong> ${formatMoney(costPerTraveler)}.</p>
+
+        <p><strong>Estimated cost per traveler per day:</strong> ${formatMoney(costPerTravelerPerDay)}.</p>
+
+        <p><strong>Cash gap after food money set aside:</strong> ${formatMoney(cashGap)}.</p>
+      `;
+
+      foodSummary.innerHTML = `
+        This ${styleText} plan is estimated at <strong>${formatMoney(grossFoodCost)}</strong> before credits.
+        After <strong>${formatMoney(appliedCredits)}</strong> in dining credits, gift cards, rewards, included meal value, or outside help,
+        the estimated out-of-pocket vacation food budget is <strong>${formatMoney(outOfPocketCost)}</strong>.
+        The final food budget pressure score is <strong>${score}/100</strong>.
+      `;
+    }
+
+    document
+      .getElementById("foodButton")
+      .addEventListener("click", calculateFoodBudget);
+
+    document.getElementById("foodForm").addEventListener("reset", () => {
+      const results = document.getElementById("results");
+      setTimeout(() => {
+        results.classList.remove("visible");
+      }, 0);
+    });
+  </script>
+</Layout>

@@ -314,7 +314,7 @@ const funeralFaqs = [
         </div>
       </div>
 
-      <button id="calculateButton" type="button">Check Funeral Debt Risk</button>
+      <button class="sis-action-button sis-calculate-button" id="calculateButton" type="button">Check Funeral Debt Risk</button>
 
       <div class="result" id="result">
         <div class="score" id="scoreText"></div>
@@ -709,7 +709,7 @@ const funeralFaqs = [
 
       const level = getPressureLevel(pressureScore);
 
-      scoreText.textContent = `${level.label} — ${pressureScore}/100`;
+      scoreText.textContent = `${level.label}  -  ${pressureScore}/100`;
       scoreFill.style.width = `${pressureScore}%`;
       scoreFill.className = `fill ${level.colorClass}`;
 
@@ -720,7 +720,7 @@ const funeralFaqs = [
         <p><strong>Remaining cost to cover:</strong> $${remainingCost.toLocaleString()}.</p>
         <p><strong>Savings impact:</strong> ${savings > 0 ? `${savingsImpact.toFixed(1)}% of available savings.` : "No available savings entered."}</p>
         <p><strong>Estimated savings after paying:</strong> $${savingsAfter.toLocaleString()}.</p>
-        <p><strong>Monthly income impact:</strong> ${monthlyIncomeImpact.toFixed(1)}% of one month’s take-home income.</p>
+        <p><strong>Monthly income impact:</strong> ${monthlyIncomeImpact.toFixed(1)}% of one month's take-home income.</p>
         <p><strong>Current debt payment pressure:</strong> ${debtPaymentRatio.toFixed(1)}% of monthly take-home income.</p>
         ${
           emergencyTargetRemaining !== null
@@ -737,7 +737,7 @@ const funeralFaqs = [
           `This plan has a clear funding gap because the remaining funeral cost is higher than available savings. Before borrowing, reduce the package, confirm family help, compare cremation or memorial options, and avoid high-interest debt. Recommended next step: ${level.action}`;
       } else if (pressureScore <= 30) {
         guidance.textContent =
-          `This funeral plan appears manageable without debt based on the numbers provided. The remaining cost equals about ${monthlyIncomeImpact.toFixed(1)}% of one month’s take-home income and ${savingsImpact.toFixed(1)}% of available savings. Recommended next step: ${level.action}`;
+          `This funeral plan appears manageable without debt based on the numbers provided. The remaining cost equals about ${monthlyIncomeImpact.toFixed(1)}% of one month's take-home income and ${savingsImpact.toFixed(1)}% of available savings. Recommended next step: ${level.action}`;
       } else if (pressureScore <= 60) {
         guidance.textContent =
           `This funeral plan may be possible without debt, but it deserves caution. The remaining cost would use ${savingsImpact.toFixed(1)}% of available savings, so lower-cost options and confirmed help matter. Recommended next step: ${level.action}`;

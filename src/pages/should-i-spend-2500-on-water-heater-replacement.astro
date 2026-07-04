@@ -191,9 +191,9 @@ import WhenSpendingMakesSense from "../components/WhenSpendingMakesSense.astro";
           <div>
             <label for="unitAge">Water Heater Age</label>
             <select id="unitAge">
-              <option value="newer">0–5 years</option>
-              <option value="middle" selected>6–9 years</option>
-              <option value="old">10–12 years</option>
+              <option value="newer">0 - 5 years</option>
+              <option value="middle" selected>6 - 9 years</option>
+              <option value="old">10 - 12 years</option>
               <option value="veryOld">13+ years</option>
             </select>
           </div>
@@ -201,17 +201,17 @@ import WhenSpendingMakesSense from "../components/WhenSpendingMakesSense.astro";
           <div>
             <label for="leakRisk">Leak / Failure Risk</label>
             <select id="leakRisk">
-              <option value="low">Low — working normally</option>
-              <option value="medium" selected>Moderate — inconsistent hot water or corrosion</option>
-              <option value="high">High — leaking, rust, noise, or active failure signs</option>
+              <option value="low">Low  -  working normally</option>
+              <option value="medium" selected>Moderate  -  inconsistent hot water or corrosion</option>
+              <option value="high">High  -  leaking, rust, noise, or active failure signs</option>
             </select>
           </div>
 
           <div>
             <label for="householdSize">Household Hot Water Need</label>
             <select id="householdSize">
-              <option value="low">1–2 people / low demand</option>
-              <option value="medium" selected>3–4 people / normal demand</option>
+              <option value="low">1 - 2 people / low demand</option>
+              <option value="medium" selected>3 - 4 people / normal demand</option>
               <option value="high">5+ people, frequent laundry, or high demand</option>
             </select>
           </div>
@@ -240,7 +240,7 @@ import WhenSpendingMakesSense from "../components/WhenSpendingMakesSense.astro";
           </div>
         </div>
 
-        <button id="waterHeaterButton" type="button">
+        <button class="sis-action-button sis-calculate-button" id="waterHeaterButton" type="button">
           Calculate Financial Pressure
         </button>
 
@@ -720,16 +720,16 @@ import WhenSpendingMakesSense from "../components/WhenSpendingMakesSense.astro";
           `This water heater replacement creates essentially no financial pressure based on the numbers provided. The out-of-pocket cost is small relative to your income, cash flow, or savings, and the project does not appear to threaten your emergency position.`;
       } else if (pressureScore <= 30) {
         guidance =
-          `This water heater replacement appears financially manageable. The cost equals about ${(incomeImpact * 100).toFixed(1)}% of one month’s take-home income, and your estimated emergency cushion remains around ${emergencyMonthsAfter.toFixed(1)} months after the out-of-pocket cost.`;
+          `This water heater replacement appears financially manageable. The cost equals about ${(incomeImpact * 100).toFixed(1)}% of one month's take-home income, and your estimated emergency cushion remains around ${emergencyMonthsAfter.toFixed(1)} months after the out-of-pocket cost.`;
       } else if (pressureScore <= 60) {
         guidance =
-          `This water heater replacement may work, but it creates noticeable financial pressure. The cost equals about ${(incomeImpact * 100).toFixed(1)}% of one month’s take-home income, and the out-of-pocket portion uses about ${(savingsImpact * 100).toFixed(1)}% of available savings.`;
+          `This water heater replacement may work, but it creates noticeable financial pressure. The cost equals about ${(incomeImpact * 100).toFixed(1)}% of one month's take-home income, and the out-of-pocket portion uses about ${(savingsImpact * 100).toFixed(1)}% of available savings.`;
       } else {
         guidance =
           `This water heater replacement could create real financial strain. The combination of savings impact, financing, debt, monthly obligations, or replacement urgency suggests you should slow down before committing aggressively unless the unit is actively failing.`;
       }
 
-      scoreEl.textContent = `${level.label} — ${pressureScore}/100`;
+      scoreEl.textContent = `${level.label}  -  ${pressureScore}/100`;
       scoreEl.style.color = level.color;
       barFill.style.width = `${pressureScore}%`;
       barFill.style.background = level.color;

@@ -206,7 +206,7 @@ const relatedCalculators = [
     .link-card span, .info-card p, .mini-card p { display:block; margin:0; color:#334155; line-height:1.7; font-size:.96rem; }
     .check-list, .red-list { list-style:none; padding-left:0; }
     .check-list li, .red-list li { position:relative; padding-left:30px; margin-bottom:10px; }
-    .check-list li::before { content:"✓"; position:absolute; left:0; top:0; color:#0f766e; font-weight:950; }
+    .check-list li::before { content:"+"; position:absolute; left:0; top:0; color:#0f766e; font-weight:950; }
     .red-list li::before { content:"!"; position:absolute; left:0; top:2px; width:18px; height:18px; border-radius:999px; display:grid; place-items:center; background:#fee2e2; color:#b91c1c; font-weight:950; font-size:.8rem; }
     @media (max-width:760px) {
       .container { padding:54px 18px; }
@@ -328,7 +328,7 @@ const relatedCalculators = [
         </div>
       </div>
 
-      <button id="calculateButton" type="button">Check Funeral Affordability</button>
+      <button class="sis-action-button sis-calculate-button" id="calculateButton" type="button">Check Funeral Affordability</button>
 
       <div class="result" id="result">
         <div class="score" id="scoreText"></div>
@@ -346,21 +346,21 @@ const relatedCalculators = [
         A funeral is affordable when the family can pay for it without creating
         a second crisis. That usually means the cost is covered by insurance,
         prepaid arrangements, family contributions, estate cash, or savings that
-        can be used without destroying the household’s emergency cushion.
+        can be used without destroying the household's emergency cushion.
       </p>
 
       <p>
         The same quote can be fine for one household and dangerous for another.
         A $12,000 funeral covered by insurance is different from a $12,000
-        funeral placed on one person’s credit card while they wait for relatives
+        funeral placed on one person's credit card while they wait for relatives
         to reimburse them.
       </p>
 
       <div class="callout decision-box">
         <p>
-          The right question is not only “Can we pay the invoice?” It is “Can we
+          The right question is not only "Can we pay the invoice?" It is "Can we
           honor this person without leaving the family financially exposed
-          afterward?”
+          afterward?"
         </p>
       </div>
     </section>
@@ -770,7 +770,7 @@ const relatedCalculators = [
 
       const level = getPressureLevel(pressureScore);
 
-      scoreText.textContent = `${level.label} — ${pressureScore}/100`;
+      scoreText.textContent = `${level.label}  -  ${pressureScore}/100`;
       scoreFill.style.width = `${pressureScore}%`;
       scoreFill.className = `fill ${level.colorClass}`;
 
@@ -779,7 +779,7 @@ const relatedCalculators = [
         <div class="result-metric"><strong>Funeral quote</strong><span>${formatMoney(cost)}</span></div>
         <div class="result-metric"><strong>Out-of-pocket cost</strong><span>${formatMoney(outOfPocket)} after insurance, prepaid funds, estate cash, or family help.</span></div>
         <div class="result-metric"><strong>Savings after funeral</strong><span>${formatMoney(savingsAfter)}</span></div>
-        <div class="result-metric"><strong>Monthly income impact</strong><span>${income > 0 ? `${monthlyIncomeImpact.toFixed(1)}% of one month’s take-home income.` : "No monthly take-home income entered."}</span></div>
+        <div class="result-metric"><strong>Monthly income impact</strong><span>${income > 0 ? `${monthlyIncomeImpact.toFixed(1)}% of one month's take-home income.` : "No monthly take-home income entered."}</span></div>
         <div class="result-metric"><strong>Savings impact</strong><span>${savings > 0 ? `${savingsImpact.toFixed(1)}% of available savings.` : "No available savings entered."}</span></div>
         <div class="result-metric"><strong>Debt payment pressure</strong><span>${income > 0 ? `${debtRatio.toFixed(1)}% of monthly take-home income.` : "Enter income to estimate debt pressure."}</span></div>
         <div class="result-metric"><strong>Essential bills pressure</strong><span>${income > 0 ? `${essentialsRatio.toFixed(1)}% of monthly take-home income.` : "Enter income to estimate essential-bill pressure."}</span></div>

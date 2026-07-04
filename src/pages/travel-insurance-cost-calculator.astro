@@ -1,0 +1,978 @@
+﻿---
+import Layout from "../layouts/Layout.astro";
+import CalculatorPageShell from "../components/CalculatorPageShell.astro";
+import FAQSection from "../components/FAQSection.astro";
+import RelatedCalculators from "../components/RelatedCalculators.astro";
+import MethodologySection from "../components/MethodologySection.astro";
+import CalculatorAssumptions from "../components/CalculatorAssumptions.astro";
+import KeyCostCategories from "../components/KeyCostCategories.astro";
+import ReduceCostTips from "../components/ReduceCostTips.astro";
+import { calculators } from "../data/calculators.js";
+
+const insuranceFaqs = [
+  {
+    question: "How do I calculate travel insurance cost?",
+    answer:
+      "Use the quoted premium if you already have one. If not, estimate the premium as a percentage of the insured trip cost, then add any extra medical, evacuation, rental car, baggage, or cancel-for-any-reason upgrades. Subtract credits, reimbursements, gift cards, or outside help to estimate the out-of-pocket insurance cost.",
+  },
+  {
+    question: "Why does travel insurance need its own calculator?",
+    answer:
+      "A travel insurance quote only shows the premium. This calculator compares that premium with nonrefundable trip exposure, destination risk, medical or evacuation gaps, existing credit card coverage, and household affordability pressure.",
+  },
+  {
+    question: "Should I insure refundable trip costs?",
+    answer:
+      "Usually the most important amount is the money you could actually lose. Refundable hotels, refundable flights, refundable tours, and credits may not need the same protection as prepaid nonrefundable costs.",
+  },
+  {
+    question: "Do credit card travel benefits reduce the need for insurance?",
+    answer:
+      "They can reduce the gap, but only if the benefits actually apply to your trip. This calculator lets you enter existing card or employer coverage so the unprotected exposure is not overstated.",
+  },
+  {
+    question: "Can travel insurance be too expensive?",
+    answer:
+      "Yes. The premium can be too expensive if it is high compared with the nonrefundable exposure, duplicates coverage you already have, or creates debt pressure. The calculator flags premium load and affordability pressure separately.",
+  },
+];
+
+const relatedCalculators = calculators
+  .filter(
+    (calculator) =>
+      calculator.category === "Travel" &&
+      calculator.href !== "/travel-insurance-cost-calculator"
+  )
+  .slice(0, 4);
+---
+
+<Layout
+  title="Travel Insurance Cost Calculator"
+  description="Estimate travel insurance cost with trip value, nonrefundable exposure, coverage type, medical risk, credits, cash set aside, and affordability pressure."
+>
+  <style>
+    .container {
+      max-width: 940px;
+      margin: auto;
+    }
+
+    .calculator {
+      background: white;
+      padding: 40px;
+      border-radius: 24px;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.06);
+    }
+
+    .calculator h2 {
+      margin-top: 0;
+      font-size: 2rem;
+      margin-bottom: 18px;
+      color: #0f172a;
+    }
+
+    .calculator-intro {
+      color: #334155;
+      line-height: 1.8;
+      margin-bottom: 30px;
+      font-size: 1.05rem;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+    }
+
+    .field label {
+      display: block;
+      font-weight: 800;
+      margin-bottom: 10px;
+      color: #0f172a;
+    }
+
+    .field input,
+    .field select {
+      width: 100%;
+      padding: 16px;
+      border-radius: 12px;
+      border: 1px solid #cbd5e1;
+      font-size: 1rem;
+      box-sizing: border-box;
+      background: white;
+    }
+
+    .field-note {
+      display: block;
+      margin-top: 8px;
+      color: #64748b;
+      font-size: 0.9rem;
+      line-height: 1.5;
+    }
+
+    .button-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-top: 30px;
+    }
+
+    .results {
+      margin-top: 36px;
+      background: #f8fafc;
+      padding: 32px;
+      border-radius: 24px;
+      border: 1px solid var(--border);
+      box-shadow: 0 10px 24px rgba(15, 23, 42, 0.04);
+      display: none;
+    }
+
+    .results.visible {
+      display: block;
+    }
+
+    .result-label {
+      font-size: 1.15rem;
+      font-weight: 800;
+      color: #0f766e;
+      margin-bottom: 18px;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+    }
+
+    .total-price {
+      font-size: clamp(2.5rem, 6vw, 4rem);
+      font-weight: 900;
+      color: #0f172a;
+      line-height: 1.05;
+      margin-bottom: 10px;
+    }
+
+    .score-card {
+      margin: 24px 0;
+      padding: 22px;
+      border-radius: 18px;
+      background: white;
+      border: 1px solid #dbe4ee;
+    }
+
+    .score-line {
+      display: flex;
+      justify-content: space-between;
+      gap: 16px;
+      align-items: baseline;
+      margin-bottom: 12px;
+      color: #0f172a;
+      font-weight: 900;
+    }
+
+    .pressure-bar {
+      width: 100%;
+      height: 16px;
+      background: #e2e8f0;
+      border-radius: 999px;
+      overflow: hidden;
+      margin: 10px 0 16px;
+    }
+
+    .pressure-fill {
+      height: 100%;
+      width: 0%;
+      border-radius: 999px;
+      background: #16a34a;
+      transition: width 0.3s ease;
+    }
+
+    .result-details {
+      color: #334155;
+      line-height: 1.9;
+      font-size: 1.02rem;
+    }
+
+    .result-details p {
+      margin: 0 0 12px;
+    }
+
+    .mini-summary {
+      margin-top: 24px;
+      padding: 20px;
+      border-radius: 18px;
+      background: white;
+      border: 1px solid #dbe4ee;
+      color: #334155;
+      line-height: 1.8;
+    }
+
+    .disclaimer {
+      margin-top: 24px;
+      font-size: 0.9rem;
+      color: #64748b;
+    }
+
+    .content-section {
+      margin-top: 60px;
+    }
+
+    .content-section h2 {
+      font-size: 2rem;
+      margin-bottom: 20px;
+      color: #0f172a;
+    }
+
+    .content-section p,
+    .content-section li {
+      font-size: 1.1rem;
+      line-height: 1.9;
+      color: #334155;
+    }
+
+    .content-link {
+      color: #0f766e;
+      font-weight: 700;
+      text-decoration: none;
+    }
+
+    .content-link:hover {
+      text-decoration: underline;
+    }
+
+    .two-column-note {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 18px;
+      margin-top: 24px;
+    }
+
+    .note-card {
+      padding: 20px;
+      border: 1px solid #dbe4ee;
+      border-radius: 18px;
+      background: #ffffff;
+    }
+
+    .note-card strong {
+      display: block;
+      color: #0f172a;
+      margin-bottom: 8px;
+      font-size: 1.02rem;
+    }
+
+    @media (max-width: 768px) {
+      .calculator {
+        padding: 24px;
+      }
+
+      .grid {
+        grid-template-columns: 1fr;
+      }
+
+      .calculator h2,
+      .content-section h2 {
+        font-size: 1.7rem;
+      }
+
+      .results {
+        padding: 24px;
+      }
+
+      .score-line {
+        display: block;
+      }
+    }
+  </style>
+
+  <div class="container">
+    <CalculatorPageShell
+      eyebrow="Travel Insurance Cost Calculator"
+      title="Travel Insurance Cost Calculator"
+      description="Estimate travel insurance cost and decide whether the premium makes sense against nonrefundable trip exposure, medical risk, existing coverage, credits, and budget pressure."
+    >
+      <div class="calculator">
+        <h2>Estimate Your Travel Insurance Cost</h2>
+
+        <p class="calculator-intro">
+          Travel insurance is not just a quote. Use this calculator to compare
+          the premium with nonrefundable trip costs, destination risk, medical
+          and evacuation gaps, existing card coverage, cancel-for-any-reason
+          upgrades, credits, cash set aside, and affordability pressure.
+        </p>
+
+        <form id="insuranceForm">
+          <div class="grid">
+            <div class="field">
+              <label for="tripType">Trip Type</label>
+              <select id="tripType">
+                <option value="" disabled selected>Choose trip type</option>
+                <option value="domestic">Domestic trip</option>
+                <option value="international">International trip</option>
+                <option value="cruise">Cruise</option>
+                <option value="adventure">Adventure or remote trip</option>
+                <option value="multiCountry">Multi-country trip</option>
+                <option value="family">Family or group trip</option>
+              </select>
+            </div>
+
+            <div class="field">
+              <label for="coverageType">Coverage Type</label>
+              <select id="coverageType">
+                <option value="" disabled selected>Choose coverage type</option>
+                <option value="basic">Basic cancellation/interruption</option>
+                <option value="comprehensive">Comprehensive policy</option>
+                <option value="medical">Medical and evacuation focused</option>
+                <option value="cfar">Cancel-for-any-reason upgrade</option>
+                <option value="annual">Annual travel policy</option>
+              </select>
+            </div>
+
+            <div class="field">
+              <label for="travelers">Travelers Covered</label>
+              <input id="travelers" type="number" placeholder="Example: 4" />
+            </div>
+
+            <div class="field">
+              <label for="tripDays">Trip Days</label>
+              <input id="tripDays" type="number" placeholder="Example: 10" />
+            </div>
+
+            <div class="field">
+              <label for="totalTripCost">Total Trip Cost</label>
+              <input id="totalTripCost" type="number" step="0.01" placeholder="Example: 8500" />
+              <span class="field-note">Use the full trip estimate across flights, lodging, cruise, tours, and prepaid costs.</span>
+            </div>
+
+            <div class="field">
+              <label for="nonrefundableCost">Nonrefundable or At-Risk Trip Cost</label>
+              <input id="nonrefundableCost" type="number" step="0.01" placeholder="Example: 5200" />
+              <span class="field-note">This is the amount you could realistically lose if the trip is canceled or interrupted.</span>
+            </div>
+
+            <div class="field">
+              <label for="knownPremium">Known Insurance Quote</label>
+              <input id="knownPremium" type="number" step="0.01" placeholder="Example: 420" />
+              <span class="field-note">Leave blank if you want the calculator to estimate a premium from percentage inputs.</span>
+            </div>
+
+            <div class="field">
+              <label for="premiumPercent">Estimated Premium Percent of Insured Trip Cost</label>
+              <input id="premiumPercent" type="number" step="0.01" placeholder="Example: 6" />
+              <span class="field-note">Used only if no known quote is entered.</span>
+            </div>
+
+            <div class="field">
+              <label for="medicalAddon">Extra Medical or Evacuation Add-On</label>
+              <input id="medicalAddon" type="number" step="0.01" placeholder="Example: 120" />
+            </div>
+
+            <div class="field">
+              <label for="baggageAddon">Baggage, Delay, Rental Car, or Other Add-Ons</label>
+              <input id="baggageAddon" type="number" step="0.01" placeholder="Example: 75" />
+            </div>
+
+            <div class="field">
+              <label for="cfarAddon">Cancel-for-Any-Reason Add-On</label>
+              <input id="cfarAddon" type="number" step="0.01" placeholder="Example: 180" />
+            </div>
+
+            <div class="field">
+              <label for="existingCoverage">Existing Card, Employer, or Health Coverage Value</label>
+              <input id="existingCoverage" type="number" step="0.01" placeholder="Example: 1500" />
+              <span class="field-note">Use only the part of existing coverage you believe actually applies to this trip.</span>
+            </div>
+
+            <div class="field">
+              <label for="expectedDeductible">Deductible, Exclusions, or Uncovered Gap</label>
+              <input id="expectedDeductible" type="number" step="0.01" placeholder="Example: 250" />
+            </div>
+
+            <div class="field">
+              <label for="riskLevel">Trip Risk Level</label>
+              <select id="riskLevel">
+                <option value="" disabled selected>Choose trip risk</option>
+                <option value="low">Low: refundable, short, easy to reschedule</option>
+                <option value="moderate">Moderate: some prepaid or schedule risk</option>
+                <option value="high">High: international, cruise, medical, weather, or tight schedule</option>
+                <option value="veryHigh">Very high: remote, expensive, medical, or once-in-a-lifetime trip</option>
+              </select>
+            </div>
+
+            <div class="field">
+              <label for="refundFlex">Trip Refund Flexibility</label>
+              <select id="refundFlex">
+                <option value="" disabled selected>Choose refund flexibility</option>
+                <option value="flexible">Mostly refundable or changeable</option>
+                <option value="mixed">Mixed refund rules</option>
+                <option value="strict">Mostly nonrefundable</option>
+                <option value="unknown">Not sure yet</option>
+              </select>
+            </div>
+
+            <div class="field">
+              <label for="creditsHelp">Insurance Credits, Reimbursements, Gift Cards, or Outside Help</label>
+              <input id="creditsHelp" type="number" step="0.01" placeholder="Example: 100" />
+            </div>
+
+            <div class="field">
+              <label for="cashSetAside">Cash Already Set Aside for Travel Insurance</label>
+              <input id="cashSetAside" type="number" step="0.01" placeholder="Example: 500" />
+            </div>
+
+            <div class="field">
+              <label for="monthlyTakeHome">Monthly Take-Home Income</label>
+              <input id="monthlyTakeHome" type="number" step="0.01" placeholder="Example: 6500" />
+            </div>
+
+            <div class="field">
+              <label for="emergencySavings">Emergency Savings</label>
+              <input id="emergencySavings" type="number" step="0.01" placeholder="Example: 15000" />
+            </div>
+
+            <div class="field">
+              <label for="paymentPlan">How Will Insurance Be Paid?</label>
+              <select id="paymentPlan">
+                <option value="" disabled selected>Choose payment method</option>
+                <option value="cash">Cash, debit, or already saved</option>
+                <option value="reimbursed">Temporary card charge, reimbursed soon</option>
+                <option value="partialCredit">Partly on credit card</option>
+                <option value="mostlyCredit">Mostly financed or carried as debt</option>
+              </select>
+            </div>
+
+            <div class="field">
+              <label for="skipComfort">If You Skipped Insurance, How Comfortable Would You Be?</label>
+              <select id="skipComfort">
+                <option value="" disabled selected>Choose comfort level</option>
+                <option value="comfortable">Comfortable self-insuring the risk</option>
+                <option value="uneasy">Uneasy but could absorb the loss</option>
+                <option value="worried">Worried about losing the trip cost</option>
+                <option value="cannotAbsorb">Could not absorb the loss</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="button-row">
+            <button class="sis-action-button sis-calculate-button" id="insuranceButton" type="button">Calculate Travel Insurance Cost</button>
+            <button class="sis-action-button sis-reset-button" type="reset">Reset</button>
+          </div>
+        </form>
+
+        <div class="results" id="results">
+          <div class="result-label">Estimated Out-of-Pocket Travel Insurance Cost</div>
+
+          <div class="total-price" id="totalPrice"></div>
+
+          <div class="score-card">
+            <div class="score-line">
+              <span id="pressureLabel">Insurance pressure score</span>
+              <span id="pressureScore">0/100</span>
+            </div>
+            <div class="pressure-bar">
+              <div class="pressure-fill" id="pressureFill"></div>
+            </div>
+            <div class="result-details" id="pressureDetails"></div>
+          </div>
+
+          <div class="result-details" id="resultDetails"></div>
+
+          <div class="mini-summary" id="insuranceSummary"></div>
+
+          <div class="disclaimer">
+            This estimate is educational and does not evaluate policy language,
+            exclusions, claim eligibility, medical advice, legal advice, or
+            insurance advice. Read policy terms before buying coverage.
+          </div>
+        </div>
+      </div>
+
+      <section class="content-section">
+        <h2>Why Travel Insurance Cost Needs More Than a Premium Quote</h2>
+
+        <p>
+          A travel insurance quote can tell you what the policy costs. It cannot
+          tell you whether the policy is worth the price for this trip, this
+          refund exposure, this medical risk, and this household budget.
+        </p>
+
+        <p>
+          This calculator is built around the decision point: how much the premium
+          costs out of pocket, how much trip money remains exposed, whether the
+          premium is high compared with the protected amount, and whether buying
+          or skipping coverage creates more pressure.
+        </p>
+
+        <p>
+          For the full trip picture, compare this estimate with the
+          <a class="content-link" href="/travel-activities-and-excursions-cost-calculator">activities and excursions cost calculator</a>,
+          the
+          <a class="content-link" href="/flight-cost-calculator">flight cost calculator</a>,
+          the
+          <a class="content-link" href="/hotel-and-lodging-cost-calculator">hotel and lodging cost calculator</a>,
+          and the
+          <a class="content-link" href="/travel-calculators">travel calculators hub</a>.
+        </p>
+      </section>
+
+      <KeyCostCategories
+        items={[
+          {
+            title: "Insured trip cost",
+            description:
+              "The calculator separates total trip cost from the nonrefundable or at-risk portion that actually needs protection.",
+          },
+          {
+            title: "Premium and add-ons",
+            description:
+              "Known quotes, estimated premium percentages, medical add-ons, evacuation coverage, baggage coverage, rental car add-ons, and CFAR upgrades are included.",
+          },
+          {
+            title: "Existing coverage",
+            description:
+              "Credit card, employer, health, or other travel benefits can reduce the uncovered exposure if they truly apply to the trip.",
+          },
+          {
+            title: "Unprotected exposure",
+            description:
+              "The calculator estimates how much trip cost could remain exposed after existing coverage and expected policy gaps.",
+          },
+          {
+            title: "Affordability pressure",
+            description:
+              "The pressure score considers the premium, income, savings, cash set aside, debt risk, risk level, refund flexibility, and ability to absorb the loss.",
+          },
+        ]}
+      />
+
+      <ReduceCostTips
+        items={[
+          "Insure the amount you could actually lose, not automatically every dollar of the trip.",
+          "Check whether your credit card, employer, health plan, airline, cruise line, or booking platform already provides useful coverage.",
+          "Compare the premium with the nonrefundable exposure, not only with the total trip cost.",
+          "Be careful with expensive add-ons if the trip is mostly refundable or easy to reschedule.",
+          "Consider stronger coverage for international, cruise, medical, remote, weather-sensitive, or once-in-a-lifetime trips.",
+          "Avoid financing insurance premiums for optional trips when emergency savings are already thin.",
+        ]}
+      />
+
+      <CalculatorAssumptions
+        items={[
+          "If a known insurance quote is entered, it is used as the base premium.",
+          "If no known quote is entered, the premium is estimated from nonrefundable trip cost and the entered premium percentage.",
+          "Medical, evacuation, baggage, delay, rental car, and cancel-for-any-reason add-ons are added to the base premium.",
+          "Credits, reimbursements, gift cards, rewards, and outside help reduce the out-of-pocket insurance cost.",
+          "Existing card, employer, health, or other coverage reduces the estimated unprotected exposure only up to the nonrefundable trip cost.",
+          "Expected deductibles, exclusions, or coverage gaps increase unprotected exposure.",
+          "Pressure score is educational and considers premium affordability, nonrefundable exposure, existing coverage, risk level, refund flexibility, cash set aside, emergency savings, payment method, and ability to absorb the loss.",
+        ]}
+      />
+
+      <section class="content-section">
+        <h2>Buying Insurance vs. Self-Insuring the Trip</h2>
+
+        <p>
+          Travel insurance can be more valuable when the trip is expensive,
+          nonrefundable, international, medical-sensitive, weather-sensitive,
+          cruise-based, or difficult to repeat. It may be less important when the
+          trip is cheap, refundable, domestic, easy to reschedule, or already
+          protected by coverage you trust.
+        </p>
+
+        <div class="two-column-note">
+          <div class="note-card">
+            <strong>Coverage can make more sense when</strong>
+            <p>
+              The trip has large nonrefundable costs, medical or evacuation risk,
+              international logistics, cruise rules, strict bookings, or a loss
+              you could not comfortably absorb.
+            </p>
+          </div>
+
+          <div class="note-card">
+            <strong>Self-insuring can make more sense when</strong>
+            <p>
+              The trip is mostly refundable, the premium is high, existing
+              coverage already applies, and losing the remaining exposed amount
+              would not damage emergency savings.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <div class="content-section">
+        <FAQSection title="Travel Insurance Cost Calculator FAQ" faqs={insuranceFaqs} />
+      </div>
+
+      <div class="content-section">
+        <RelatedCalculators calculators={relatedCalculators} />
+      </div>
+    </CalculatorPageShell>
+
+    <section id="FinancialRedFlags">
+      <h2>Travel Insurance Budget Red Flags</h2>
+
+      <p>
+        Travel insurance deserves extra caution when the premium feels affordable
+        but the policy may not cover the actual risk, or when skipping coverage
+        would leave a trip loss the household cannot absorb.
+      </p>
+
+      <ul>
+        <li>The trip has large nonrefundable costs and weak emergency savings.</li>
+        <li>The premium is being financed on a credit card for an optional trip.</li>
+        <li>The policy duplicates coverage that already applies through a card, employer, or health plan.</li>
+        <li>The trip is international, cruise-based, remote, or medical-sensitive with little medical or evacuation coverage.</li>
+        <li>Refund rules, exclusions, deductibles, or claim requirements have not been checked.</li>
+        <li>Skipping coverage would force debt if the trip were canceled, interrupted, or medically complicated.</li>
+      </ul>
+    </section>
+
+    <MethodologySection category="travel insurance cost estimates" updated="July 2026" />
+  </div>
+
+  <script is:inline>
+    const getNumber = (id) => {
+      const rawValue = document.getElementById(id)?.value;
+      const value = Number(rawValue);
+      return Number.isFinite(value) && value >= 0 ? value : 0;
+    };
+
+    const getValue = (id) => document.getElementById(id)?.value || "";
+
+    function clamp(value, min, max) {
+      return Math.min(Math.max(value, min), max);
+    }
+
+    function formatMoney(value) {
+      return value.toLocaleString(undefined, {
+        style: "currency",
+        currency: "USD",
+        minimumFractionDigits: 0,
+        maximumFractionDigits: 0,
+      });
+    }
+
+    function scoreColor(score) {
+      if (score <= 35) return "#16a34a";
+      if (score <= 65) return "#ca8a04";
+      return "#dc2626";
+    }
+
+    function scoreLabel(score) {
+      if (score <= 35) return "Low insurance pressure";
+      if (score <= 65) return "Moderate insurance pressure";
+      return "High insurance pressure";
+    }
+
+    function paymentAdjustment(paymentPlan) {
+      if (paymentPlan === "mostlyCredit") return 30;
+      if (paymentPlan === "partialCredit") return 16;
+      if (paymentPlan === "reimbursed") return 6;
+      return 0;
+    }
+
+    function riskAdjustment(riskLevel) {
+      if (riskLevel === "veryHigh") return -8;
+      if (riskLevel === "high") return -5;
+      if (riskLevel === "moderate") return 0;
+      if (riskLevel === "low") return 6;
+      return 2;
+    }
+
+    function refundAdjustment(refundFlex) {
+      if (refundFlex === "strict") return -6;
+      if (refundFlex === "mixed") return 0;
+      if (refundFlex === "unknown") return 4;
+      if (refundFlex === "flexible") return 7;
+      return 2;
+    }
+
+    function skipComfortAdjustment(skipComfort) {
+      if (skipComfort === "cannotAbsorb") return -8;
+      if (skipComfort === "worried") return -4;
+      if (skipComfort === "uneasy") return 0;
+      if (skipComfort === "comfortable") return 7;
+      return 2;
+    }
+
+    function coverageTypeAdjustment(coverageType) {
+      if (coverageType === "cfar") return 6;
+      if (coverageType === "annual") return 3;
+      if (coverageType === "comprehensive") return 1;
+      if (coverageType === "medical") return -2;
+      if (coverageType === "basic") return 0;
+      return 0;
+    }
+
+    function calculateInsuranceCost() {
+      const tripType = getValue("tripType");
+      const coverageType = getValue("coverageType");
+      const travelers = Math.max(getNumber("travelers"), 0);
+      const tripDays = getNumber("tripDays");
+      const totalTripCost = getNumber("totalTripCost");
+      const nonrefundableCost = getNumber("nonrefundableCost");
+      const knownPremium = getNumber("knownPremium");
+      const premiumPercent = getNumber("premiumPercent");
+      const medicalAddon = getNumber("medicalAddon");
+      const baggageAddon = getNumber("baggageAddon");
+      const cfarAddon = getNumber("cfarAddon");
+      const existingCoverage = getNumber("existingCoverage");
+      const expectedDeductible = getNumber("expectedDeductible");
+      const riskLevel = getValue("riskLevel");
+      const refundFlex = getValue("refundFlex");
+      const creditsHelp = getNumber("creditsHelp");
+      const cashSetAside = getNumber("cashSetAside");
+      const monthlyTakeHome = getNumber("monthlyTakeHome");
+      const emergencySavings = getNumber("emergencySavings");
+      const paymentPlan = getValue("paymentPlan");
+      const skipComfort = getValue("skipComfort");
+
+      const results = document.getElementById("results");
+      const totalPrice = document.getElementById("totalPrice");
+      const resultDetails = document.getElementById("resultDetails");
+      const insuranceSummary = document.getElementById("insuranceSummary");
+      const pressureScore = document.getElementById("pressureScore");
+      const pressureFill = document.getElementById("pressureFill");
+      const pressureLabel = document.getElementById("pressureLabel");
+      const pressureDetails = document.getElementById("pressureDetails");
+
+      results.classList.add("visible");
+
+      if (travelers <= 0 || tripDays <= 0 || (knownPremium <= 0 && premiumPercent <= 0)) {
+        totalPrice.textContent = "$0";
+        pressureScore.textContent = "0/100";
+        pressureFill.style.width = "0%";
+        pressureFill.style.background = "#16a34a";
+        pressureLabel.textContent = "Enter insurance details";
+        pressureDetails.innerHTML =
+          "<p>Enter travelers, trip days, and either a known quote or an estimated premium percent to calculate travel insurance cost.</p>";
+        resultDetails.innerHTML = "";
+        insuranceSummary.textContent = "";
+        return;
+      }
+
+      const insurableTripCost =
+        nonrefundableCost > 0 ? nonrefundableCost : totalTripCost;
+      const basePremium =
+        knownPremium > 0 ? knownPremium : insurableTripCost * (premiumPercent / 100);
+      const addonCost = medicalAddon + baggageAddon + cfarAddon;
+      const grossInsuranceCost = basePremium + addonCost;
+      const appliedCredits = Math.min(creditsHelp, grossInsuranceCost);
+      const outOfPocketCost = Math.max(0, grossInsuranceCost - appliedCredits);
+      const cashGap = Math.max(0, outOfPocketCost - cashSetAside);
+      const costPerTraveler = travelers > 0 ? outOfPocketCost / travelers : 0;
+      const costPerTripDay = tripDays > 0 ? outOfPocketCost / tripDays : 0;
+      const premiumLoad =
+        insurableTripCost > 0 ? grossInsuranceCost / insurableTripCost : 0;
+      const existingCoverageApplied = Math.min(existingCoverage, insurableTripCost);
+      const unprotectedExposure = Math.max(
+        0,
+        insurableTripCost - existingCoverageApplied + expectedDeductible
+      );
+      const unprotectedAfterBuying = Math.max(0, expectedDeductible);
+      const emergencyAfterGap = Math.max(0, emergencySavings - cashGap);
+
+      /*
+        Travel insurance pressure logic must make sense at both extremes:
+        - Near-zero income and no emergency savings should force high pressure when premium cost exists.
+        - Fully covered, no-debt, tiny-cost, strong-cushion cases should reach 0/100.
+        - The score must account for both affordability of the premium and whether skipping coverage would leave dangerous unprotected exposure.
+      */
+      const hasIncome = monthlyTakeHome >= 500;
+      const incomeToUse = hasIncome ? monthlyTakeHome : 0;
+      const costToIncomeRatio = incomeToUse > 0 ? outOfPocketCost / incomeToUse : Infinity;
+      const cashGapRatio = incomeToUse > 0 ? cashGap / incomeToUse : cashGap > 0 ? Infinity : 0;
+      const emergencyMonths = incomeToUse > 0 ? emergencySavings / incomeToUse : emergencySavings > 0 ? 99 : 0;
+      const emergencyAfterGapMonths =
+        incomeToUse > 0 ? emergencyAfterGap / incomeToUse : emergencyAfterGap > 0 ? 99 : 0;
+      const creditShare = grossInsuranceCost > 0 ? appliedCredits / grossInsuranceCost : 0;
+      const cashCoverage = outOfPocketCost > 0 ? cashSetAside / outOfPocketCost : 1;
+      const exposureToSavings =
+        emergencySavings > 0 ? unprotectedExposure / emergencySavings : unprotectedExposure > 0 ? Infinity : 0;
+      const noDebtPayment =
+        paymentPlan === "cash" || paymentPlan === "reimbursed" || paymentPlan === "";
+      const fullyCovered = cashCoverage >= 1 || creditShare >= 1;
+      const tinyCostForIncome =
+        outOfPocketCost > 0 && monthlyTakeHome > 0 && outOfPocketCost <= monthlyTakeHome * 0.02;
+      const verySmallCostForIncome =
+        outOfPocketCost > 0 && monthlyTakeHome > 0 && outOfPocketCost <= monthlyTakeHome * 0.05;
+      const strongEmergencyCushion =
+        emergencySavings >= 10000 || emergencyMonths >= 3 || emergencySavings >= outOfPocketCost * 3;
+      const meaningfulExposure =
+        unprotectedExposure > Math.max(1000, monthlyTakeHome * 0.25) ||
+        exposureToSavings >= 0.5;
+
+      let score = 0;
+
+      if (outOfPocketCost === 0) {
+        score = 0;
+      } else if (!hasIncome) {
+        score = 84;
+
+        if (cashGap > 0) score += 10;
+        if (emergencySavings <= 0) score += 10;
+        else if (emergencySavings < outOfPocketCost) score += 6;
+
+        if (cashCoverage >= 1) score -= 8;
+        if (creditShare >= 0.75) score -= 8;
+      } else {
+        if (costToIncomeRatio >= 1) score += 58;
+        else if (costToIncomeRatio >= 0.75) score += 48;
+        else if (costToIncomeRatio >= 0.5) score += 38;
+        else if (costToIncomeRatio >= 0.3) score += 28;
+        else if (costToIncomeRatio >= 0.15) score += 16;
+        else score += 8;
+
+        if (cashGapRatio >= 0.5) score += 24;
+        else if (cashGapRatio >= 0.25) score += 16;
+        else if (cashGapRatio > 0) score += 8;
+
+        if (emergencySavings <= 0) score += 22;
+        else if (emergencyAfterGapMonths < 1) score += 18;
+        else if (emergencyAfterGapMonths < 2) score += 10;
+        else if (emergencyAfterGapMonths >= 6) score -= 10;
+        else if (emergencyAfterGapMonths >= 3) score -= 6;
+
+        if (cashCoverage >= 1) score -= 10;
+        else if (cashCoverage >= 0.5) score -= 5;
+      }
+
+      score += paymentAdjustment(paymentPlan);
+      score += riskAdjustment(riskLevel);
+      score += refundAdjustment(refundFlex);
+      score += skipComfortAdjustment(skipComfort);
+      score += coverageTypeAdjustment(coverageType);
+
+      if (premiumLoad >= 0.18) score += 18;
+      else if (premiumLoad >= 0.12) score += 12;
+      else if (premiumLoad >= 0.08) score += 6;
+
+      if (tripType === "international" || tripType === "cruise" || tripType === "adventure" || tripType === "multiCountry") {
+        score -= 4;
+      }
+
+      if (existingCoverageApplied >= insurableTripCost && expectedDeductible <= 0 && grossInsuranceCost > 0) {
+        score += 14;
+      }
+
+      if (meaningfulExposure && (riskLevel === "high" || riskLevel === "veryHigh" || refundFlex === "strict")) {
+        score -= 8;
+      }
+
+      if (creditShare >= 1 && grossInsuranceCost > 0) score -= 28;
+      else if (creditShare > 0) score -= clamp(creditShare * 18, 0, 18);
+
+      if (outOfPocketCost > 0 && monthlyTakeHome > 0 && outOfPocketCost > monthlyTakeHome * 2) {
+        score = Math.max(score, 90);
+      }
+
+      if (outOfPocketCost > 0 && monthlyTakeHome < 500 && emergencySavings <= 0) {
+        score = Math.max(score, 92);
+      }
+
+      if (outOfPocketCost > 0 && emergencySavings <= 0 && paymentPlan === "mostlyCredit") {
+        score = Math.max(score, 90);
+      }
+
+      if (
+        outOfPocketCost > 0 &&
+        fullyCovered &&
+        noDebtPayment &&
+        tinyCostForIncome &&
+        strongEmergencyCushion &&
+        premiumLoad <= 0.1
+      ) {
+        score = 0;
+      } else if (
+        outOfPocketCost > 0 &&
+        monthlyTakeHome >= 10000 &&
+        emergencyMonths >= 6 &&
+        cashCoverage >= 1 &&
+        noDebtPayment
+      ) {
+        score = Math.min(score, 20);
+      } else if (
+        outOfPocketCost > 0 &&
+        fullyCovered &&
+        noDebtPayment &&
+        verySmallCostForIncome &&
+        strongEmergencyCushion
+      ) {
+        score = Math.min(score, 5);
+      }
+
+      score = Math.round(clamp(score, 0, 100));
+
+      const label = scoreLabel(score);
+      const color = scoreColor(score);
+
+      totalPrice.textContent = formatMoney(outOfPocketCost);
+      pressureScore.textContent = `${score}/100`;
+      pressureFill.style.width = `${score}%`;
+      pressureFill.style.background = color;
+      pressureLabel.textContent = label;
+
+      const typeText = tripType
+        ? tripType.replace(/([A-Z])/g, " $1").toLowerCase()
+        : "trip";
+
+      const incomeText = hasIncome
+        ? `The out-of-pocket insurance cost equals about <strong>${(costToIncomeRatio * 100).toFixed(0)}%</strong> of one month of take-home income.`
+        : "Monthly take-home income is too low or missing, so the calculator treats this as a high-pressure insurance decision.";
+
+      const emergencyText =
+        emergencySavings <= 0
+          ? "Emergency savings are entered as <strong>$0</strong>, which raises pressure even if insurance cash is set aside."
+          : `Emergency savings equal about <strong>${emergencyMonths.toFixed(1)}</strong> months of take-home income before any insurance cash gap.`;
+
+      const exposureText =
+        unprotectedExposure > 0
+          ? `Estimated unprotected trip exposure before buying coverage is <strong>${formatMoney(unprotectedExposure)}</strong>.`
+          : "Existing coverage and refundable costs appear to cover the entered trip exposure.";
+
+      pressureDetails.innerHTML = `
+        <p><strong>${label}:</strong> ${incomeText} ${emergencyText} ${exposureText}</p>
+      `;
+
+      resultDetails.innerHTML = `
+        <p><strong>Insurable trip cost used:</strong> ${formatMoney(insurableTripCost)}.</p>
+
+        <p><strong>Base premium:</strong> ${formatMoney(basePremium)} ${knownPremium > 0 ? "from your entered quote" : "from the estimated premium percent"}.</p>
+
+        <p><strong>Medical, evacuation, baggage, rental car, and CFAR add-ons:</strong> ${formatMoney(addonCost)}.</p>
+
+        <p><strong>Gross insurance cost before credits:</strong> ${formatMoney(grossInsuranceCost)}.</p>
+
+        <p><strong>Credits, reimbursements, gift cards, or outside help applied:</strong> ${formatMoney(appliedCredits)}.</p>
+
+        <p><strong>Premium load:</strong> ${(premiumLoad * 100).toFixed(1)}% of the insurable trip cost.</p>
+
+        <p><strong>Existing coverage applied:</strong> ${formatMoney(existingCoverageApplied)}.</p>
+
+        <p><strong>Estimated unprotected exposure before buying coverage:</strong> ${formatMoney(unprotectedExposure)}.</p>
+
+        <p><strong>Estimated uncovered gap after buying coverage:</strong> ${formatMoney(unprotectedAfterBuying)}.</p>
+
+        <p><strong>Estimated cost per traveler:</strong> ${formatMoney(costPerTraveler)}.</p>
+
+        <p><strong>Estimated cost per trip day:</strong> ${formatMoney(costPerTripDay)}.</p>
+
+        <p><strong>Cash gap after insurance money set aside:</strong> ${formatMoney(cashGap)}.</p>
+      `;
+
+      insuranceSummary.innerHTML = `
+        This ${typeText} insurance estimate is <strong>${formatMoney(grossInsuranceCost)}</strong> before credits.
+        After <strong>${formatMoney(appliedCredits)}</strong> in credits, reimbursements, gift cards, rewards, or outside help,
+        the estimated out-of-pocket travel insurance cost is <strong>${formatMoney(outOfPocketCost)}</strong>.
+        The final insurance pressure score is <strong>${score}/100</strong>.
+      `;
+    }
+
+    document
+      .getElementById("insuranceButton")
+      .addEventListener("click", calculateInsuranceCost);
+
+    document.getElementById("insuranceForm").addEventListener("reset", () => {
+      const results = document.getElementById("results");
+      setTimeout(() => {
+        results.classList.remove("visible");
+      }, 0);
+    });
+  </script>
+</Layout>

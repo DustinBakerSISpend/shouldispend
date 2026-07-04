@@ -181,7 +181,7 @@ import WhenSpendingMakesSense from "../components/WhenSpendingMakesSense.astro";
           </div>
         </div>
 
-        <button id="vacationButton" type="button">
+        <button class="sis-action-button sis-calculate-button" id="vacationButton" type="button">
           Get Disney Vacation Verdict
         </button>
 
@@ -551,19 +551,19 @@ import WhenSpendingMakesSense from "../components/WhenSpendingMakesSense.astro";
 
       if (pressureScore === 0) {
         guidance =
-          `This Disney vacation appears financially tiny relative to the numbers provided. The planned trip equals about ${monthlyIncomeImpact.toFixed(1)}% of one month’s income and ${savingsImpact.toFixed(1)}% of savings, so the decision is mainly about trip value, timing, family priorities, and whether the Disney experience is worth the opportunity cost.`;
+          `This Disney vacation appears financially tiny relative to the numbers provided. The planned trip equals about ${monthlyIncomeImpact.toFixed(1)}% of one month's income and ${savingsImpact.toFixed(1)}% of savings, so the decision is mainly about trip value, timing, family priorities, and whether the Disney experience is worth the opportunity cost.`;
       } else if (pressureScore <= 30) {
         guidance =
-          `This Disney vacation appears manageable based on the numbers provided. The planned trip equals about ${monthlyIncomeImpact.toFixed(1)}% of one month’s income and ${savingsImpact.toFixed(1)}% of savings, so the main priority is keeping tickets, hotel, transportation, food, Lightning Lane, souvenirs, and backup costs inside the planned budget.`;
+          `This Disney vacation appears manageable based on the numbers provided. The planned trip equals about ${monthlyIncomeImpact.toFixed(1)}% of one month's income and ${savingsImpact.toFixed(1)}% of savings, so the main priority is keeping tickets, hotel, transportation, food, Lightning Lane, souvenirs, and backup costs inside the planned budget.`;
       } else if (pressureScore <= 60) {
         guidance =
-          `This Disney vacation may work, but it deserves caution. The planned trip equals about ${monthlyIncomeImpact.toFixed(1)}% of one month’s income and ${savingsImpact.toFixed(1)}% of savings, which means resort choice, park days, dining, paid add-ons, and souvenir spending should be capped before booking.`;
+          `This Disney vacation may work, but it deserves caution. The planned trip equals about ${monthlyIncomeImpact.toFixed(1)}% of one month's income and ${savingsImpact.toFixed(1)}% of savings, which means resort choice, park days, dining, paid add-ons, and souvenir spending should be capped before booking.`;
       } else {
         guidance =
-          `This Disney vacation could create real financial strain. The planned trip equals about ${monthlyIncomeImpact.toFixed(1)}% of one month’s income and ${savingsImpact.toFixed(1)}% of savings, so fewer park days, cheaper lodging, off-site hotels, fewer paid add-ons, or more time to save would likely be safer.`;
+          `This Disney vacation could create real financial strain. The planned trip equals about ${monthlyIncomeImpact.toFixed(1)}% of one month's income and ${savingsImpact.toFixed(1)}% of savings, so fewer park days, cheaper lodging, off-site hotels, fewer paid add-ons, or more time to save would likely be safer.`;
       }
 
-      scoreEl.textContent = `${level.label} — ${pressureScore}/100`;
+      scoreEl.textContent = `${level.label}  -  ${pressureScore}/100`;
       barFill.style.width = `${pressureScore}%`;
       barFill.style.background = level.color;
 
@@ -571,7 +571,7 @@ import WhenSpendingMakesSense from "../components/WhenSpendingMakesSense.astro";
       recommendedBudgetEl.innerHTML = `<strong>Estimated Disney range:</strong> ${formatMoney(conservativeBudget)} conservative / ${formatMoney(flexibleBudget)} flexible / ${formatMoney(stretchBudget)} stretch`;
       savingsImpactEl.innerHTML = `<strong>Savings impact:</strong> ${savingsImpact.toFixed(1)}% of savings`;
       incomeImpactEl.innerHTML = `<strong>Annual income impact:</strong> ${annualIncomeImpact.toFixed(1)}% of annual income`;
-      monthlyIncomeImpactEl.innerHTML = `<strong>Monthly income impact:</strong> ${monthlyIncomeImpact.toFixed(1)}% of one month’s income`;
+      monthlyIncomeImpactEl.innerHTML = `<strong>Monthly income impact:</strong> ${monthlyIncomeImpact.toFixed(1)}% of one month's income`;
       debtRatioEl.innerHTML = `<strong>Debt ratio:</strong> ${debtRatio.toFixed(1)}% of annual income`;
       guidanceEl.textContent = `${guidance} Recommended next step: ${level.action}`;
     }

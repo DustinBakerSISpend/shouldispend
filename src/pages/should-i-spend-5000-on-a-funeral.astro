@@ -67,7 +67,7 @@ const reduceCostTips = [
   "Ask for an itemized price list before choosing a funeral package.",
   "Compare direct cremation, cremation with memorial, simple burial, and memorial-only options.",
   "Avoid upgrading the urn, casket, flowers, programs, or keepsakes out of guilt.",
-  "Hold the gathering at home, church, a community room, or a family member’s house.",
+  "Hold the gathering at home, church, a community room, or a family member's house.",
   "Let relatives cover specific costs such as food, flowers, obituary, music, or travel.",
   "Delay optional headstone upgrades, keepsakes, or larger memorial events until cash is available.",
   "Use photos, stories, music, and a shared meal to create meaning without overspending.",
@@ -76,7 +76,7 @@ const reduceCostTips = [
 
 const redFlags = [
   "The $5,000 cost still requires high-interest credit card debt.",
-  "The funeral would drain savings below the household’s emergency floor.",
+  "The funeral would drain savings below the household's emergency floor.",
   "The family is choosing upgrades because a simple service feels embarrassing.",
   "One person is signing the contract while others only vaguely promise to help.",
   "The quote is not itemized or the family does not understand what is included.",
@@ -91,7 +91,7 @@ const assumptions = [
   "Liquid savings means cash available without missing essential bills or selling long-term assets.",
   "The emergency target is the minimum cushion the household wants left after paying the funeral cost.",
   "The calculator estimates financial pressure, not the emotional worth of the service.",
-  "A simple funeral can still be respectful when it reflects the person’s wishes and protects the family.",
+  "A simple funeral can still be respectful when it reflects the person's wishes and protects the family.",
   "A score of 0 is allowed when the cost is fully covered or tiny compared with income and savings.",
 ];
 
@@ -203,7 +203,7 @@ const relatedCalculators = [
     .link-card span, .info-card p, .mini-card p { display:block; margin:0; color:#334155; line-height:1.7; font-size:.96rem; }
     .check-list, .red-list { list-style:none; padding-left:0; }
     .check-list li, .red-list li { position:relative; padding-left:30px; margin-bottom:10px; }
-    .check-list li::before { content:"✓"; position:absolute; left:0; top:0; color:#0f766e; font-weight:950; }
+    .check-list li::before { content:"+"; position:absolute; left:0; top:0; color:#0f766e; font-weight:950; }
     .red-list li::before { content:"!"; position:absolute; left:0; top:2px; width:18px; height:18px; border-radius:999px; display:grid; place-items:center; background:#fee2e2; color:#b91c1c; font-weight:950; font-size:.8rem; }
     @media (max-width:760px) {
       .container { padding:54px 18px; }
@@ -293,7 +293,7 @@ const relatedCalculators = [
         </div>
       </div>
 
-      <button id="calculateButton" type="button">Check Funeral Affordability</button>
+      <button class="sis-action-button sis-calculate-button" id="calculateButton" type="button">Check Funeral Affordability</button>
 
       <div class="result" id="result">
         <div class="score" id="scoreText"></div>
@@ -320,7 +320,7 @@ const relatedCalculators = [
       <div class="callout decision-box">
         <p>
           The best $5,000 funeral plan is clear, intentional, itemized, and paid
-          without damaging the surviving household’s basic stability.
+          without damaging the surviving household's basic stability.
         </p>
       </div>
     </section>
@@ -369,10 +369,10 @@ const relatedCalculators = [
       <ul class="check-list">
         <li>The family wants a simple cremation, modest memorial, or small gathering.</li>
         <li>Insurance, prepaid funds, savings, or family help cover most of the bill.</li>
-        <li>Emergency savings remain above the household’s minimum comfort level.</li>
+        <li>Emergency savings remain above the household's minimum comfort level.</li>
         <li>No high-interest debt is needed.</li>
         <li>The quote is itemized and the family understands what is included.</li>
-        <li>The service reflects the person’s wishes without unnecessary upgrades.</li>
+        <li>The service reflects the person's wishes without unnecessary upgrades.</li>
       </ul>
     </section>
 
@@ -455,7 +455,7 @@ const relatedCalculators = [
       </ul>
       <div class="callout warning-box">
         <p>
-          Be careful when a “small” funeral still requires borrowing. The budget
+          Be careful when a "small" funeral still requires borrowing. The budget
           is only modest if the payment method is safe.
         </p>
       </div>
@@ -661,7 +661,7 @@ const relatedCalculators = [
       pressureScore = clamp(Math.round(pressureScore), 0, 100);
       const level = getPressureLevel(pressureScore);
 
-      scoreText.textContent = `${level.label} — ${pressureScore}/100`;
+      scoreText.textContent = `${level.label}  -  ${pressureScore}/100`;
       scoreFill.style.width = `${pressureScore}%`;
       scoreFill.className = `fill ${level.colorClass}`;
 
@@ -670,7 +670,7 @@ const relatedCalculators = [
         <div class="result-metric"><strong>Out-of-pocket cost</strong><span>${formatCurrency(outOfPocket)} after insurance, prepaid funds, or family help.</span></div>
         <div class="result-metric"><strong>Savings after funeral</strong><span>${formatCurrency(savingsAfter)}</span></div>
         <div class="result-metric"><strong>Savings impact</strong><span>${savings > 0 ? `${savingsImpact.toFixed(1)}% of available liquid savings.` : "No liquid savings entered."}</span></div>
-        <div class="result-metric"><strong>Monthly income impact</strong><span>${income > 0 ? `${monthlyIncomeImpact.toFixed(1)}% of one month’s take-home income.` : "No monthly take-home income entered."}</span></div>
+        <div class="result-metric"><strong>Monthly income impact</strong><span>${income > 0 ? `${monthlyIncomeImpact.toFixed(1)}% of one month's take-home income.` : "No monthly take-home income entered."}</span></div>
         <div class="result-metric"><strong>Debt payment pressure</strong><span>${income > 0 ? `${debtPaymentRatio.toFixed(1)}% of monthly take-home income already goes to debt.` : "Enter income to estimate debt pressure."}</span></div>
         ${
           emergencyTargetRemaining !== null

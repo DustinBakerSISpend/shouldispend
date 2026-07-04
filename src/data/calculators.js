@@ -1,4 +1,46 @@
-﻿export const calculators = [
+﻿export const calculators = [  {
+    title: "Hotel and Lodging Cost Calculator",
+    description:
+      "Estimate hotel, resort, or vacation rental costs with nights, rooms, taxes, fees, parking, deposits, travel credits, and lodging pressure.",
+    href: "/hotel-and-lodging-cost-calculator",
+    category: "Travel",
+  },
+  {
+    title: "Flight Cost Calculator",
+    description:
+      "Estimate total flight cost with travelers, airfare, baggage, seat fees, airport costs, travel credits, and flight pressure.",
+    href: "/flight-cost-calculator",
+    category: "Travel",
+  },
+  {
+    title: "Vacation Food Budget Calculator",
+    description:
+      "Estimate vacation food costs with travelers, trip days, restaurants, groceries, snacks, airport food, tips, credits, and pressure.",
+    href: "/vacation-food-budget-calculator",
+    category: "Travel",
+  },
+  {
+    title: "Rental Car Cost Calculator",
+    description:
+      "Estimate rental car costs with daily rate, taxes, insurance, fuel, tolls, parking, deposits, credits, alternatives, and pressure.",
+    href: "/rental-car-cost-calculator",
+    category: "Travel",
+  },
+  {
+    title: "Travel Activities and Excursions Cost Calculator",
+    description:
+      "Estimate travel activity costs with tickets, tours, excursions, rentals, tips, transport, credits, itinerary density, and pressure.",
+    href: "/travel-activities-and-excursions-cost-calculator",
+    category: "Travel",
+  },
+  {
+    title: "Travel Insurance Cost Calculator",
+    description:
+      "Estimate travel insurance cost with trip value, nonrefundable exposure, medical risk, existing coverage, credits, and pressure.",
+    href: "/travel-insurance-cost-calculator",
+    category: "Travel",
+  },
+
   {
     title: "Wedding Catering Cost Calculator",
     description:
@@ -404,7 +446,7 @@
 },
 {
   id: "road-trip-calculator",
-  category: "Cars",
+  category: "Travel",
   title: "Road Trip Calculator",
   description:
     "Estimate road trip fuel cost using miles, MPG, gas price, round trip choice, and passengers for a quick per-person travel budget.",
@@ -1677,6 +1719,14 @@
 },
 
 ];
+
+
+
+
+
+
+
+
 
 
 

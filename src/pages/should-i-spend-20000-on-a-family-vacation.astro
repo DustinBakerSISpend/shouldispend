@@ -181,7 +181,7 @@ import WhenSpendingMakesSense from "../components/WhenSpendingMakesSense.astro";
           </div>
         </div>
 
-        <button id="vacationButton" type="button">
+        <button class="sis-action-button sis-calculate-button" id="vacationButton" type="button">
           Get Family Vacation Verdict
         </button>
 
@@ -524,23 +524,23 @@ import WhenSpendingMakesSense from "../components/WhenSpendingMakesSense.astro";
 
       if (pressureScore <= 30) {
         guidance =
-          `This family vacation appears manageable based on the numbers provided. The cost equals about ${monthlyIncomeImpact.toFixed(1)}% of one month’s income and ${savingsImpact.toFixed(1)}% of savings, so the main priority is keeping flights, lodging, food, activities, souvenirs, and backup costs inside the planned budget.`;
+          `This family vacation appears manageable based on the numbers provided. The cost equals about ${monthlyIncomeImpact.toFixed(1)}% of one month's income and ${savingsImpact.toFixed(1)}% of savings, so the main priority is keeping flights, lodging, food, activities, souvenirs, and backup costs inside the planned budget.`;
       } else if (pressureScore <= 60) {
         guidance =
-          `This family vacation may work, but it deserves caution. The cost equals about ${monthlyIncomeImpact.toFixed(1)}% of one month’s income and ${savingsImpact.toFixed(1)}% of savings, which means travel dates, hotel choices, flights, activities, and daily spending should be capped before booking.`;
+          `This family vacation may work, but it deserves caution. The cost equals about ${monthlyIncomeImpact.toFixed(1)}% of one month's income and ${savingsImpact.toFixed(1)}% of savings, which means travel dates, hotel choices, flights, activities, and daily spending should be capped before booking.`;
       } else {
         guidance =
-          `This family vacation could create real financial strain. The cost equals about ${monthlyIncomeImpact.toFixed(1)}% of one month’s income and ${savingsImpact.toFixed(1)}% of savings, so fewer travel days, cheaper lodging, driving instead of flying, or more time to save would likely be safer.`;
+          `This family vacation could create real financial strain. The cost equals about ${monthlyIncomeImpact.toFixed(1)}% of one month's income and ${savingsImpact.toFixed(1)}% of savings, so fewer travel days, cheaper lodging, driving instead of flying, or more time to save would likely be safer.`;
       }
 
-      scoreEl.textContent = `${level.label} — ${pressureScore}/100`;
+      scoreEl.textContent = `${level.label}  -  ${pressureScore}/100`;
       barFill.style.width = `${pressureScore}%`;
       barFill.style.background = level.color;
 
       stressEl.innerHTML = `<strong>Pressure level:</strong> ${level.stress}`;
       savingsImpactEl.innerHTML = `<strong>Savings impact:</strong> ${savingsImpact.toFixed(1)}% of savings`;
       incomeImpactEl.innerHTML = `<strong>Annual income impact:</strong> ${annualIncomeImpact.toFixed(1)}% of annual income`;
-      monthlyIncomeImpactEl.innerHTML = `<strong>Monthly income impact:</strong> ${monthlyIncomeImpact.toFixed(1)}% of one month’s income`;
+      monthlyIncomeImpactEl.innerHTML = `<strong>Monthly income impact:</strong> ${monthlyIncomeImpact.toFixed(1)}% of one month's income`;
       debtRatioEl.innerHTML = `<strong>Debt ratio:</strong> ${debtRatio.toFixed(1)}% of annual income`;
       guidanceEl.textContent = `${guidance} Recommended next step: ${level.action}`;
     }

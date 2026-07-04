@@ -16,7 +16,7 @@ const funeralFaqs = [
   {
     question: "Should I choose cremation to save money?",
     answer:
-      "Cremation can reduce financial pressure, especially when burial would create debt or drain savings. But family wishes, faith, culture, and the person’s preferences also matter. The safest choice is the one that honors the person without harming the surviving household.",
+      "Cremation can reduce financial pressure, especially when burial would create debt or drain savings. But family wishes, faith, culture, and the person's preferences also matter. The safest choice is the one that honors the person without harming the surviving household.",
   },
   {
     question: "What is the cheapest respectful funeral option?",
@@ -26,7 +26,7 @@ const funeralFaqs = [
   {
     question: "When is burial worth the extra cost?",
     answer:
-      "Burial may be worth the extra cost when it reflects the person’s clear wishes, religious practice, cemetery ownership, family tradition, or prepaid planning, and when the family can pay without high-interest debt or emergency-savings damage.",
+      "Burial may be worth the extra cost when it reflects the person's clear wishes, religious practice, cemetery ownership, family tradition, or prepaid planning, and when the family can pay without high-interest debt or emergency-savings damage.",
   },
 ];
 
@@ -81,7 +81,7 @@ const redFlags = [
   "The cremation quote excludes memorial, urn, obituary, travel, or family-gathering costs.",
   "One person is signing the contract while others only vaguely promise to contribute.",
   "The family is choosing the more expensive option mainly because of guilt or fear of judgment.",
-  "Emergency savings would fall below the household’s minimum safe level.",
+  "Emergency savings would fall below the household's minimum safe level.",
   "The quote is not itemized enough to compare required costs and optional upgrades.",
   "Both options create pressure, but the family has not compared a smaller memorial or delayed gathering.",
 ];
@@ -204,7 +204,7 @@ const relatedCalculators = [
     .link-card span, .info-card p, .mini-card p { display:block; margin:0; color:#334155; line-height:1.7; font-size:.96rem; }
     .check-list, .red-list { list-style:none; padding-left:0; }
     .check-list li, .red-list li { position:relative; padding-left:30px; margin-bottom:10px; }
-    .check-list li::before { content:"✓"; position:absolute; left:0; top:0; color:#0f766e; font-weight:950; }
+    .check-list li::before { content:"+"; position:absolute; left:0; top:0; color:#0f766e; font-weight:950; }
     .red-list li::before { content:"!"; position:absolute; left:0; top:2px; width:18px; height:18px; border-radius:999px; display:grid; place-items:center; background:#fee2e2; color:#b91c1c; font-weight:950; font-size:.8rem; }
     @media (max-width:760px) {
       .container { padding:54px 18px; }
@@ -300,7 +300,7 @@ const relatedCalculators = [
         </div>
       </div>
 
-      <button id="calculateButton" type="button">Compare Funeral Options</button>
+      <button class="sis-action-button sis-calculate-button" id="calculateButton" type="button">Compare Funeral Options</button>
 
       <div class="result" id="result">
         <div class="score" id="scoreText"></div>
@@ -316,7 +316,7 @@ const relatedCalculators = [
 
       <p>
         The financial difference between burial and cremation can be large, but
-        the decision is not purely mathematical. The person’s wishes, faith,
+        the decision is not purely mathematical. The person's wishes, faith,
         family tradition, cemetery ownership, culture, and emotional needs all
         matter. The money question is whether those preferences can be honored
         without leaving the surviving household exposed.
@@ -459,7 +459,7 @@ const relatedCalculators = [
       <h2>When burial may still be worth the cost</h2>
 
       <p>
-        Burial may be worth the higher cost when it reflects the person’s clear
+        Burial may be worth the higher cost when it reflects the person's clear
         wishes, religious practice, family tradition, cemetery ownership, a
         prepaid arrangement, or insurance money specifically intended for that
         purpose.
@@ -477,7 +477,7 @@ const relatedCalculators = [
 
       <p>
         If the calculator shows moderate or high pressure, the next step is not
-        automatically “choose the cheapest option.” The next step is to compare
+        automatically "choose the cheapest option." The next step is to compare
         the specific line items and keep the parts that matter most.
       </p>
 
@@ -540,7 +540,7 @@ const relatedCalculators = [
       <div class="info-grid">
         <div class="info-card">
           <h3>Both options are low pressure</h3>
-          <p>The decision can focus more on the person’s wishes, faith, family needs, and emotional preference.</p>
+          <p>The decision can focus more on the person's wishes, faith, family needs, and emotional preference.</p>
         </div>
 
         <div class="info-card">
@@ -596,7 +596,7 @@ const relatedCalculators = [
           stress: "Low pressure",
           colorClass: "safe",
           action:
-            "Choose the option that fits the person’s wishes while keeping the plan itemized and controlled.",
+            "Choose the option that fits the person's wishes while keeping the plan itemized and controlled.",
         };
       }
 
@@ -762,7 +762,7 @@ const relatedCalculators = [
       const recommendedScore = Math.min(burialScore, cremationScore);
       const level = getPressureLevel(recommendedScore);
 
-      scoreText.textContent = `${level.label} — ${recommendedScore}/100`;
+      scoreText.textContent = `${level.label}  -  ${recommendedScore}/100`;
       scoreFill.style.width = `${recommendedScore}%`;
       scoreFill.className = `fill ${level.colorClass}`;
 
@@ -792,7 +792,7 @@ const relatedCalculators = [
           `The traditional funeral or burial plan appears to create less pressure in this scenario because of the numbers entered. Confirm that all cemetery and service costs are included before relying on that result. Recommended next step: ${level.action}`;
       } else if (burialScore <= 30 && cremationScore <= 30) {
         guidance.textContent =
-          `Both options appear financially manageable based on the numbers provided. The decision may come down more to the person’s wishes, family needs, faith, culture, and emotional preference than strict affordability. Recommended next step: ${level.action}`;
+          `Both options appear financially manageable based on the numbers provided. The decision may come down more to the person's wishes, family needs, faith, culture, and emotional preference than strict affordability. Recommended next step: ${level.action}`;
       } else if (recommendedScore <= 60) {
         guidance.textContent =
           `The lower-cost option may be workable, but it still deserves caution. Compare itemized prices, protect emergency savings, and avoid letting family pressure push the plan beyond what the household can absorb. Recommended next step: ${level.action}`;

@@ -1,0 +1,895 @@
+﻿---
+import Layout from "../layouts/Layout.astro";
+import CalculatorPageShell from "../components/CalculatorPageShell.astro";
+import FAQSection from "../components/FAQSection.astro";
+import RelatedCalculators from "../components/RelatedCalculators.astro";
+import MethodologySection from "../components/MethodologySection.astro";
+import CalculatorAssumptions from "../components/CalculatorAssumptions.astro";
+import KeyCostCategories from "../components/KeyCostCategories.astro";
+import ReduceCostTips from "../components/ReduceCostTips.astro";
+import { calculators } from "../data/calculators.js";
+
+const flightFaqs = [
+  {
+    question: "What should I include in a flight cost estimate?",
+    answer:
+      "Start with the ticket price per traveler, then add checked bags, carry-on fees, seat selection, priority boarding, flexibility upgrades, airport parking, airport transfers, and other airline fees. Subtract points, credits, vouchers, gift cards, or outside help to estimate the out-of-pocket flight cost.",
+  },
+  {
+    question: "Why is this different from checking prices on Google Flights or an airline website?",
+    answer:
+      "Flight search sites show fares. This calculator turns the fare into a budget decision by adding common flight-related costs and comparing the out-of-pocket amount with cash set aside, take-home income, emergency savings, and debt risk.",
+  },
+  {
+    question: "Should I include baggage and seat fees?",
+    answer:
+      "Yes. For families and groups, baggage and seat fees can add hundreds of dollars to a flight quote. Basic economy fares can look cheaper until carry-ons, checked bags, seat assignments, and flexibility are included.",
+  },
+  {
+    question: "Do points, vouchers, or travel credits reduce the pressure score?",
+    answer:
+      "Yes. The calculator subtracts rewards, vouchers, gift cards, travel credits, and outside help from the gross flight cost before scoring pressure. If credits cover the full cost, the pressure score can fall to zero.",
+  },
+  {
+    question: "Can a cheap flight still be a bad budget decision?",
+    answer:
+      "Yes. A cheap fare can still create pressure if it is financed, paid from weak savings, booked with strict cancellation rules, or paired with baggage, seat, airport, and transfer costs the traveler has not planned.",
+  },
+];
+
+const relatedCalculators = calculators
+  .filter(
+    (calculator) =>
+      calculator.category === "Travel" &&
+      calculator.href !== "/flight-cost-calculator"
+  )
+  .slice(0, 4);
+---
+
+<Layout
+  title="Flight Cost Calculator"
+  description="Estimate total flight cost with travelers, airfare, baggage, seat fees, airport costs, travel credits, and flight affordability pressure."
+>
+  <style>
+    .container {
+      max-width: 940px;
+      margin: auto;
+    }
+
+    .calculator {
+      background: white;
+      padding: 40px;
+      border-radius: 24px;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.06);
+    }
+
+    .calculator h2 {
+      margin-top: 0;
+      font-size: 2rem;
+      margin-bottom: 18px;
+      color: #0f172a;
+    }
+
+    .calculator-intro {
+      color: #334155;
+      line-height: 1.8;
+      margin-bottom: 30px;
+      font-size: 1.05rem;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+    }
+
+    .field label {
+      display: block;
+      font-weight: 800;
+      margin-bottom: 10px;
+      color: #0f172a;
+    }
+
+    .field input,
+    .field select {
+      width: 100%;
+      padding: 16px;
+      border-radius: 12px;
+      border: 1px solid #cbd5e1;
+      font-size: 1rem;
+      box-sizing: border-box;
+      background: white;
+    }
+
+    .field-note {
+      display: block;
+      margin-top: 8px;
+      color: #64748b;
+      font-size: 0.9rem;
+      line-height: 1.5;
+    }
+
+    .button-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-top: 30px;
+    }
+
+    .results {
+      margin-top: 36px;
+      background: #f8fafc;
+      padding: 32px;
+      border-radius: 24px;
+      border: 1px solid var(--border);
+      box-shadow: 0 10px 24px rgba(15, 23, 42, 0.04);
+      display: none;
+    }
+
+    .results.visible {
+      display: block;
+    }
+
+    .result-label {
+      font-size: 1.15rem;
+      font-weight: 800;
+      color: #0f766e;
+      margin-bottom: 18px;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+    }
+
+    .total-price {
+      font-size: clamp(2.5rem, 6vw, 4rem);
+      font-weight: 900;
+      color: #0f172a;
+      line-height: 1.05;
+      margin-bottom: 10px;
+    }
+
+    .score-card {
+      margin: 24px 0;
+      padding: 22px;
+      border-radius: 18px;
+      background: white;
+      border: 1px solid #dbe4ee;
+    }
+
+    .score-line {
+      display: flex;
+      justify-content: space-between;
+      gap: 16px;
+      align-items: baseline;
+      margin-bottom: 12px;
+      color: #0f172a;
+      font-weight: 900;
+    }
+
+    .pressure-bar {
+      width: 100%;
+      height: 16px;
+      background: #e2e8f0;
+      border-radius: 999px;
+      overflow: hidden;
+      margin: 10px 0 16px;
+    }
+
+    .pressure-fill {
+      height: 100%;
+      width: 0%;
+      border-radius: 999px;
+      background: #16a34a;
+      transition: width 0.3s ease;
+    }
+
+    .result-details {
+      color: #334155;
+      line-height: 1.9;
+      font-size: 1.02rem;
+    }
+
+    .result-details p {
+      margin: 0 0 12px;
+    }
+
+    .mini-summary {
+      margin-top: 24px;
+      padding: 20px;
+      border-radius: 18px;
+      background: white;
+      border: 1px solid #dbe4ee;
+      color: #334155;
+      line-height: 1.8;
+    }
+
+    .disclaimer {
+      margin-top: 24px;
+      font-size: 0.9rem;
+      color: #64748b;
+    }
+
+    .content-section {
+      margin-top: 60px;
+    }
+
+    .content-section h2 {
+      font-size: 2rem;
+      margin-bottom: 20px;
+      color: #0f172a;
+    }
+
+    .content-section p,
+    .content-section li {
+      font-size: 1.1rem;
+      line-height: 1.9;
+      color: #334155;
+    }
+
+    .content-link {
+      color: #0f766e;
+      font-weight: 700;
+      text-decoration: none;
+    }
+
+    .content-link:hover {
+      text-decoration: underline;
+    }
+
+    .two-column-note {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 18px;
+      margin-top: 24px;
+    }
+
+    .note-card {
+      padding: 20px;
+      border: 1px solid #dbe4ee;
+      border-radius: 18px;
+      background: #ffffff;
+    }
+
+    .note-card strong {
+      display: block;
+      color: #0f172a;
+      margin-bottom: 8px;
+      font-size: 1.02rem;
+    }
+
+    @media (max-width: 768px) {
+      .calculator {
+        padding: 24px;
+      }
+
+      .grid {
+        grid-template-columns: 1fr;
+      }
+
+      .calculator h2,
+      .content-section h2 {
+        font-size: 1.7rem;
+      }
+
+      .results {
+        padding: 24px;
+      }
+
+      .score-line {
+        display: block;
+      }
+    }
+  </style>
+
+  <div class="container">
+    <CalculatorPageShell
+      eyebrow="Flight Cost Calculator"
+      title="Flight Cost Calculator"
+      description="Estimate the real flight budget for a trip after airfare, baggage, seat fees, airport costs, credits, savings, and debt risk."
+    >
+      <div class="calculator">
+        <h2>Estimate Your Total Flight Cost</h2>
+
+        <p class="calculator-intro">
+          Flight search tools show fares. This calculator shows what the flight
+          decision does to your budget after travelers, baggage, seat selection,
+          airport costs, credits, cash set aside, emergency savings, and payment
+          method are included.
+        </p>
+
+        <form id="flightForm">
+          <div class="grid">
+            <div class="field">
+              <label for="tripType">Flight Type</label>
+              <select id="tripType">
+                <option value="" disabled selected>Choose flight type</option>
+                <option value="domestic">Domestic flight</option>
+                <option value="international">International flight</option>
+                <option value="multiCity">Multi-city or open-jaw flight</option>
+                <option value="holiday">Holiday or peak-date flight</option>
+                <option value="family">Family or group flight</option>
+              </select>
+            </div>
+
+            <div class="field">
+              <label for="directions">Trip Direction</label>
+              <select id="directions">
+                <option value="" disabled selected>Choose trip direction</option>
+                <option value="oneway">One-way</option>
+                <option value="roundtrip">Round trip</option>
+              </select>
+              <span class="field-note">Use round trip when baggage and seat fees apply both ways.</span>
+            </div>
+
+            <div class="field">
+              <label for="travelers">Ticketed Travelers</label>
+              <input id="travelers" type="number" placeholder="Example: 4" />
+            </div>
+
+            <div class="field">
+              <label for="ticketPrice">Average Ticket Price per Traveler</label>
+              <input id="ticketPrice" type="number" step="0.01" placeholder="Example: 425" />
+              <span class="field-note">Use the fare shown by the airline or flight search site.</span>
+            </div>
+
+            <div class="field">
+              <label for="checkedBags">Checked Bags</label>
+              <input id="checkedBags" type="number" placeholder="Example: 2" />
+            </div>
+
+            <div class="field">
+              <label for="checkedBagFee">Checked Bag Fee per Bag Each Way</label>
+              <input id="checkedBagFee" type="number" step="0.01" placeholder="Example: 35" />
+            </div>
+
+            <div class="field">
+              <label for="paidCarryOns">Paid Carry-Ons</label>
+              <input id="paidCarryOns" type="number" placeholder="Example: 2" />
+              <span class="field-note">Useful for basic economy or low-cost carriers.</span>
+            </div>
+
+            <div class="field">
+              <label for="carryOnFee">Carry-On Fee per Bag Each Way</label>
+              <input id="carryOnFee" type="number" step="0.01" placeholder="Example: 45" />
+            </div>
+
+            <div class="field">
+              <label for="seatFee">Seat Selection Cost per Traveler Each Way</label>
+              <input id="seatFee" type="number" step="0.01" placeholder="Example: 25" />
+            </div>
+
+            <div class="field">
+              <label for="upgradeFee">Flexibility, Priority, or Upgrade Cost per Traveler</label>
+              <input id="upgradeFee" type="number" step="0.01" placeholder="Example: 80" />
+              <span class="field-note">Use this for refundable fare upgrades, priority boarding, or bundled add-ons.</span>
+            </div>
+
+            <div class="field">
+              <label for="airportParking">Airport Parking Total</label>
+              <input id="airportParking" type="number" step="0.01" placeholder="Example: 120" />
+            </div>
+
+            <div class="field">
+              <label for="airportTransfers">Airport Transfers Total</label>
+              <input id="airportTransfers" type="number" step="0.01" placeholder="Example: 160" />
+              <span class="field-note">Use this for rideshare, shuttle, train, taxi, or drop-off costs tied to flying.</span>
+            </div>
+
+            <div class="field">
+              <label for="otherFlightFees">Other Flight-Related Fees</label>
+              <input id="otherFlightFees" type="number" step="0.01" placeholder="Example: 90" />
+            </div>
+
+            <div class="field">
+              <label for="rewardsCredit">Points Value, Vouchers, or Travel Credits</label>
+              <input id="rewardsCredit" type="number" step="0.01" placeholder="Example: 600" />
+            </div>
+
+            <div class="field">
+              <label for="cashSetAside">Cash Already Set Aside for Flights</label>
+              <input id="cashSetAside" type="number" step="0.01" placeholder="Example: 1800" />
+            </div>
+
+            <div class="field">
+              <label for="monthlyTakeHome">Monthly Take-Home Income</label>
+              <input id="monthlyTakeHome" type="number" step="0.01" placeholder="Example: 6500" />
+            </div>
+
+            <div class="field">
+              <label for="emergencySavings">Emergency Savings</label>
+              <input id="emergencySavings" type="number" step="0.01" placeholder="Example: 15000" />
+            </div>
+
+            <div class="field">
+              <label for="paymentPlan">How Will Flights Be Paid?</label>
+              <select id="paymentPlan">
+                <option value="" disabled selected>Choose payment method</option>
+                <option value="cash">Cash, debit, or already saved</option>
+                <option value="reimbursed">Temporary card charge, reimbursed soon</option>
+                <option value="partialCredit">Partly on credit card</option>
+                <option value="mostlyCredit">Mostly financed or carried as debt</option>
+              </select>
+            </div>
+
+            <div class="field">
+              <label for="fareFlex">Fare Flexibility</label>
+              <select id="fareFlex">
+                <option value="" disabled selected>Choose fare flexibility</option>
+                <option value="flexible">Refundable or highly flexible</option>
+                <option value="standard">Standard fare or airline credit if changed</option>
+                <option value="basic">Basic economy or strict fare</option>
+                <option value="uncertain">Not sure yet</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="button-row">
+            <button class="sis-action-button sis-calculate-button" id="flightButton" type="button">Calculate Flight Cost</button>
+            <button class="sis-action-button sis-reset-button" type="reset">Reset</button>
+          </div>
+        </form>
+
+        <div class="results" id="results">
+          <div class="result-label">Estimated Out-of-Pocket Flight Cost</div>
+
+          <div class="total-price" id="totalPrice"></div>
+
+          <div class="score-card">
+            <div class="score-line">
+              <span id="pressureLabel">Flight pressure score</span>
+              <span id="pressureScore">0/100</span>
+            </div>
+            <div class="pressure-bar">
+              <div class="pressure-fill" id="pressureFill"></div>
+            </div>
+            <div class="result-details" id="pressureDetails"></div>
+          </div>
+
+          <div class="result-details" id="resultDetails"></div>
+
+          <div class="mini-summary" id="flightSummary"></div>
+
+          <div class="disclaimer">
+            This estimate focuses on flight-related costs only. It does not
+            include lodging, food, rental cars, activities, travel insurance,
+            passports, souvenirs, or emergency travel costs.
+          </div>
+        </div>
+      </div>
+
+      <section class="content-section">
+        <h2>Why Flight Cost Needs More Than an Airfare Search</h2>
+
+        <p>
+          A flight quote tells you what the ticket costs. It does not tell you
+          whether the flight choice works for your household after baggage, seats,
+          carry-ons, airport transportation, credits, emergency savings, and
+          financing risk are included.
+        </p>
+
+        <p>
+          This calculator is designed for the moment after you find a fare but
+          before you book. It turns the flight quote into a real travel-budget
+          decision by showing the out-of-pocket cost, the per-traveler cost, the
+          cash gap, and a pressure score.
+        </p>
+
+        <p>
+          For the full trip picture, compare this flight estimate with the
+          <a class="content-link" href="/hotel-and-lodging-cost-calculator">hotel and lodging cost calculator</a>,
+          the
+          <a class="content-link" href="/travel-calculators">travel calculators hub</a>,
+          and the
+          <a class="content-link" href="/how-much-vacation-can-i-afford">vacation affordability calculator</a>.
+        </p>
+      </section>
+
+      <KeyCostCategories
+        items={[
+          {
+            title: "Ticket multiplier",
+            description:
+              "The fare is multiplied by the number of ticketed travelers, which is why family flights can become expensive quickly.",
+          },
+          {
+            title: "Baggage and carry-on fees",
+            description:
+              "Checked bags, paid carry-ons, and low-cost carrier fees can materially change the real cost of a flight.",
+          },
+          {
+            title: "Seat and flexibility costs",
+            description:
+              "Seat selection, priority boarding, refundable fare upgrades, and bundled add-ons can make the cheapest fare less cheap.",
+          },
+          {
+            title: "Airport access costs",
+            description:
+              "Parking, rideshares, taxis, shuttles, or train costs tied to the airport should be included in the flight budget.",
+          },
+          {
+            title: "Credits and points value",
+            description:
+              "Travel credits, vouchers, points value, gift cards, and outside help reduce the out-of-pocket flight cost and pressure score.",
+          },
+        ]}
+      />
+
+      <ReduceCostTips
+        items={[
+          "Compare the final checkout price, not only the first fare shown in search results.",
+          "Check baggage and carry-on rules before choosing a basic economy or low-cost carrier fare.",
+          "Price seat selection before assuming a family can sit together without extra cost.",
+          "Use points, vouchers, travel credits, or outside help to reduce the actual out-of-pocket cost.",
+          "Compare nearby airports only after adding parking, transfers, gas, hotels, and time pressure.",
+          "Avoid financing flights when the trip is optional and emergency savings are thin.",
+        ]}
+      />
+
+      <CalculatorAssumptions
+        items={[
+          "Base ticket cost equals average ticket price per traveler multiplied by ticketed travelers.",
+          "Checked bag and paid carry-on fees are multiplied by trip direction, so round trips count each-way fees twice.",
+          "Seat selection cost is estimated per traveler each way.",
+          "Flexibility, priority, and upgrade costs are treated as per-traveler add-ons.",
+          "Airport parking, airport transfers, and other flight-related fees are added as group costs.",
+          "Rewards, points value, vouchers, travel credits, gift cards, and outside help reduce the out-of-pocket flight cost.",
+          "Pressure score is educational and considers income, emergency savings, cash set aside, payment method, fare flexibility, and fee load.",
+        ]}
+      />
+
+      <section class="content-section">
+        <h2>Cheap Fare vs. Better Flight: What Changes the Decision</h2>
+
+        <p>
+          The lowest fare is not always the best flight budget. A cheaper ticket
+          can become worse if bags cost more, seats are separate, the airport is
+          farther away, the cancellation rules are strict, or the timing forces
+          extra hotel, meal, or rideshare costs.
+        </p>
+
+        <div class="two-column-note">
+          <div class="note-card">
+            <strong>The cheaper fare can be better when</strong>
+            <p>
+              Bags are included, airport access is easy, seat assignments do not
+              matter, the schedule is realistic, and the savings do not create
+              extra costs somewhere else.
+            </p>
+          </div>
+
+          <div class="note-card">
+            <strong>The better flight can be worth more when</strong>
+            <p>
+              It reduces missed-connection risk, protects family seating, avoids
+              overnight complications, improves refund flexibility, or saves
+              meaningful time on a short trip.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <div class="content-section">
+        <FAQSection title="Flight Cost Calculator FAQ" faqs={flightFaqs} />
+      </div>
+
+      <div class="content-section">
+        <RelatedCalculators calculators={relatedCalculators} />
+      </div>
+    </CalculatorPageShell>
+
+    <section id="FinancialRedFlags">
+      <h2>Flight Budget Red Flags</h2>
+
+      <p>
+        A flight decision deserves extra caution when the fare looks manageable
+        only because baggage, seats, airport costs, refund rules, or post-trip
+        cash flow are being ignored.
+      </p>
+
+      <ul>
+        <li>The tickets depend on carrying a credit card balance after the trip.</li>
+        <li>The fare is cheap, but baggage, seats, and airport costs erase the savings.</li>
+        <li>Basic economy rules create risk for a trip that may change.</li>
+        <li>Emergency savings are weak and the trip is optional.</li>
+        <li>The flight cost crowds out lodging, food, transportation, or activities.</li>
+        <li>The traveler is counting on future overtime, bonuses, reimbursements, or tax refunds to cover the flight.</li>
+      </ul>
+    </section>
+
+    <MethodologySection category="flight cost estimates" updated="July 2026" />
+  </div>
+
+  <script is:inline>
+    const getNumber = (id) => {
+      const rawValue = document.getElementById(id)?.value;
+      const value = Number(rawValue);
+      return Number.isFinite(value) && value >= 0 ? value : 0;
+    };
+
+    const getValue = (id) => document.getElementById(id)?.value || "";
+
+    function clamp(value, min, max) {
+      return Math.min(Math.max(value, min), max);
+    }
+
+    function formatMoney(value) {
+      return value.toLocaleString(undefined, {
+        style: "currency",
+        currency: "USD",
+        minimumFractionDigits: 0,
+        maximumFractionDigits: 0,
+      });
+    }
+
+    function scoreColor(score) {
+      if (score <= 35) return "#16a34a";
+      if (score <= 65) return "#ca8a04";
+      return "#dc2626";
+    }
+
+    function scoreLabel(score) {
+      if (score <= 35) return "Low flight pressure";
+      if (score <= 65) return "Moderate flight pressure";
+      return "High flight pressure";
+    }
+
+    function paymentAdjustment(paymentPlan) {
+      if (paymentPlan === "mostlyCredit") return 30;
+      if (paymentPlan === "partialCredit") return 16;
+      if (paymentPlan === "reimbursed") return 6;
+      return 0;
+    }
+
+    function fareFlexAdjustment(fareFlex) {
+      if (fareFlex === "basic") return 12;
+      if (fareFlex === "uncertain") return 8;
+      if (fareFlex === "standard") return 4;
+      if (fareFlex === "flexible") return -5;
+      return 5;
+    }
+
+    function calculateFlightCost() {
+      const tripType = getValue("tripType");
+      const directions = getValue("directions");
+      const travelers = Math.max(getNumber("travelers"), 0);
+      const ticketPrice = getNumber("ticketPrice");
+      const checkedBags = getNumber("checkedBags");
+      const checkedBagFee = getNumber("checkedBagFee");
+      const paidCarryOns = getNumber("paidCarryOns");
+      const carryOnFee = getNumber("carryOnFee");
+      const seatFee = getNumber("seatFee");
+      const upgradeFee = getNumber("upgradeFee");
+      const airportParking = getNumber("airportParking");
+      const airportTransfers = getNumber("airportTransfers");
+      const otherFlightFees = getNumber("otherFlightFees");
+      const rewardsCredit = getNumber("rewardsCredit");
+      const cashSetAside = getNumber("cashSetAside");
+      const monthlyTakeHome = getNumber("monthlyTakeHome");
+      const emergencySavings = getNumber("emergencySavings");
+      const paymentPlan = getValue("paymentPlan");
+      const fareFlex = getValue("fareFlex");
+
+      const results = document.getElementById("results");
+      const totalPrice = document.getElementById("totalPrice");
+      const resultDetails = document.getElementById("resultDetails");
+      const flightSummary = document.getElementById("flightSummary");
+      const pressureScore = document.getElementById("pressureScore");
+      const pressureFill = document.getElementById("pressureFill");
+      const pressureLabel = document.getElementById("pressureLabel");
+      const pressureDetails = document.getElementById("pressureDetails");
+
+      results.classList.add("visible");
+
+      if (travelers <= 0 || ticketPrice <= 0) {
+        totalPrice.textContent = "$0";
+        pressureScore.textContent = "0/100";
+        pressureFill.style.width = "0%";
+        pressureFill.style.background = "#16a34a";
+        pressureLabel.textContent = "Enter flight details";
+        pressureDetails.innerHTML =
+          "<p>Enter ticketed travelers and average ticket price per traveler to estimate your flight cost.</p>";
+        resultDetails.innerHTML = "";
+        flightSummary.textContent = "";
+        return;
+      }
+
+      const directionMultiplier = directions === "oneway" ? 1 : 2;
+      const baseTicketCost = travelers * ticketPrice;
+      const checkedBagCost = checkedBags * checkedBagFee * directionMultiplier;
+      const carryOnCost = paidCarryOns * carryOnFee * directionMultiplier;
+      const seatCost = travelers * seatFee * directionMultiplier;
+      const upgradeCost = travelers * upgradeFee;
+      const airportCost = airportParking + airportTransfers;
+      const addOnCost =
+        checkedBagCost +
+        carryOnCost +
+        seatCost +
+        upgradeCost +
+        airportCost +
+        otherFlightFees;
+      const grossFlightCost = baseTicketCost + addOnCost;
+      const appliedCredits = Math.min(rewardsCredit, grossFlightCost);
+      const outOfPocketCost = Math.max(0, grossFlightCost - appliedCredits);
+      const cashGap = Math.max(0, outOfPocketCost - cashSetAside);
+      const costPerTraveler = travelers > 0 ? outOfPocketCost / travelers : 0;
+      const addOnShare = grossFlightCost > 0 ? addOnCost / grossFlightCost : 0;
+      const emergencyAfterGap = Math.max(0, emergencySavings - cashGap);
+
+      /*
+        Flight pressure logic must make sense at both extremes:
+        - Very low / missing income cannot be treated as safe because tickets are cash-set-aside.
+        - High income, strong emergency savings, no debt financing, and travel credits should reduce pressure.
+        - Cash set aside helps, but it does not erase no-income, no-emergency, or debt-financing risk.
+      */
+      const hasIncome = monthlyTakeHome >= 500;
+      const incomeToUse = hasIncome ? monthlyTakeHome : 0;
+      const costToIncomeRatio = incomeToUse > 0 ? outOfPocketCost / incomeToUse : Infinity;
+      const cashGapRatio = incomeToUse > 0 ? cashGap / incomeToUse : cashGap > 0 ? Infinity : 0;
+      const emergencyMonths = incomeToUse > 0 ? emergencySavings / incomeToUse : emergencySavings > 0 ? 99 : 0;
+      const emergencyAfterGapMonths =
+        incomeToUse > 0 ? emergencyAfterGap / incomeToUse : emergencyAfterGap > 0 ? 99 : 0;
+      const creditShare = grossFlightCost > 0 ? appliedCredits / grossFlightCost : 0;
+      const cashCoverage = outOfPocketCost > 0 ? cashSetAside / outOfPocketCost : 1;
+
+      let score = 0;
+
+      if (outOfPocketCost === 0) {
+        score = 0;
+      } else if (!hasIncome) {
+        score = 84;
+
+        if (cashGap > 0) score += 10;
+        if (emergencySavings <= 0) score += 10;
+        else if (emergencySavings < outOfPocketCost) score += 6;
+
+        if (cashCoverage >= 1) score -= 8;
+        if (creditShare >= 0.75) score -= 8;
+      } else {
+        if (costToIncomeRatio >= 1) score += 58;
+        else if (costToIncomeRatio >= 0.75) score += 48;
+        else if (costToIncomeRatio >= 0.5) score += 38;
+        else if (costToIncomeRatio >= 0.3) score += 28;
+        else if (costToIncomeRatio >= 0.15) score += 16;
+        else score += 8;
+
+        if (cashGapRatio >= 0.5) score += 24;
+        else if (cashGapRatio >= 0.25) score += 16;
+        else if (cashGapRatio > 0) score += 8;
+
+        if (emergencySavings <= 0) score += 22;
+        else if (emergencyAfterGapMonths < 1) score += 18;
+        else if (emergencyAfterGapMonths < 2) score += 10;
+        else if (emergencyAfterGapMonths >= 6) score -= 10;
+        else if (emergencyAfterGapMonths >= 3) score -= 6;
+
+        if (cashCoverage >= 1) score -= 10;
+        else if (cashCoverage >= 0.5) score -= 5;
+      }
+
+      score += paymentAdjustment(paymentPlan);
+      score += fareFlexAdjustment(fareFlex);
+
+      if (addOnShare >= 0.35) score += 8;
+      else if (addOnShare >= 0.2) score += 5;
+
+      if (directions === "roundtrip" && travelers >= 4 && outOfPocketCost > 0) {
+        score += 3;
+      }
+
+      if (creditShare >= 1 && grossFlightCost > 0) score -= 28;
+      else if (creditShare > 0) score -= clamp(creditShare * 18, 0, 18);
+
+      if (outOfPocketCost > 0 && monthlyTakeHome > 0 && outOfPocketCost > monthlyTakeHome * 2) {
+        score = Math.max(score, 90);
+      }
+
+      if (outOfPocketCost > 0 && monthlyTakeHome < 500 && emergencySavings <= 0) {
+        score = Math.max(score, 92);
+      }
+
+      if (outOfPocketCost > 0 && emergencySavings <= 0 && paymentPlan === "mostlyCredit") {
+        score = Math.max(score, 90);
+      }
+
+      const noDebtPayment =
+        paymentPlan === "cash" || paymentPlan === "reimbursed" || paymentPlan === "";
+      const fullyCovered = cashCoverage >= 1 || creditShare >= 1;
+      const tinyCostForIncome =
+        outOfPocketCost > 0 && monthlyTakeHome > 0 && outOfPocketCost <= monthlyTakeHome * 0.02;
+      const verySmallCostForIncome =
+        outOfPocketCost > 0 && monthlyTakeHome > 0 && outOfPocketCost <= monthlyTakeHome * 0.05;
+      const strongEmergencyCushion =
+        emergencySavings >= 10000 || emergencyMonths >= 3 || emergencySavings >= outOfPocketCost * 3;
+
+      if (
+        outOfPocketCost > 0 &&
+        fullyCovered &&
+        noDebtPayment &&
+        tinyCostForIncome &&
+        strongEmergencyCushion
+      ) {
+        score = 0;
+      } else if (
+        outOfPocketCost > 0 &&
+        monthlyTakeHome >= 10000 &&
+        emergencyMonths >= 6 &&
+        cashCoverage >= 1 &&
+        noDebtPayment
+      ) {
+        score = Math.min(score, 20);
+      } else if (
+        outOfPocketCost > 0 &&
+        fullyCovered &&
+        noDebtPayment &&
+        verySmallCostForIncome &&
+        strongEmergencyCushion
+      ) {
+        score = Math.min(score, 5);
+      }
+
+      score = Math.round(clamp(score, 0, 100));
+
+      const label = scoreLabel(score);
+      const color = scoreColor(score);
+
+      totalPrice.textContent = formatMoney(outOfPocketCost);
+      pressureScore.textContent = `${score}/100`;
+      pressureFill.style.width = `${score}%`;
+      pressureFill.style.background = color;
+      pressureLabel.textContent = label;
+
+      const tripText = tripType
+        ? tripType.replace(/([A-Z])/g, " $1").toLowerCase()
+        : "flight";
+
+      const incomeText = hasIncome
+        ? `The out-of-pocket flight cost equals about <strong>${(costToIncomeRatio * 100).toFixed(0)}%</strong> of one month of take-home income.`
+        : "Monthly take-home income is too low or missing, so the calculator treats this as a high-pressure flight decision.";
+
+      const emergencyText =
+        emergencySavings <= 0
+          ? "Emergency savings are entered as <strong>$0</strong>, which raises pressure even if flight cash is set aside."
+          : `Emergency savings equal about <strong>${emergencyMonths.toFixed(1)}</strong> months of take-home income before any flight cash gap.`;
+
+      pressureDetails.innerHTML = `
+        <p><strong>${label}:</strong> ${incomeText} ${emergencyText}</p>
+      `;
+
+      resultDetails.innerHTML = `
+        <p><strong>Base ticket cost:</strong> ${formatMoney(baseTicketCost)} for ${travelers.toFixed(0)} ${travelers === 1 ? "traveler" : "travelers"}.</p>
+
+        <p><strong>Baggage and carry-on fees:</strong> ${formatMoney(checkedBagCost + carryOnCost)}.</p>
+
+        <p><strong>Seat selection and upgrade costs:</strong> ${formatMoney(seatCost + upgradeCost)}.</p>
+
+        <p><strong>Airport parking and transfers:</strong> ${formatMoney(airportCost)}.</p>
+
+        <p><strong>Other flight-related fees:</strong> ${formatMoney(otherFlightFees)}.</p>
+
+        <p><strong>Rewards and credits applied:</strong> ${formatMoney(appliedCredits)}.</p>
+
+        <p><strong>Estimated cost per traveler:</strong> ${formatMoney(costPerTraveler)} after credits.</p>
+
+        <p><strong>Cash gap after flight money set aside:</strong> ${formatMoney(cashGap)}.</p>
+      `;
+
+      flightSummary.innerHTML = `
+        This ${tripText} is estimated at <strong>${formatMoney(grossFlightCost)}</strong> before credits.
+        After <strong>${formatMoney(appliedCredits)}</strong> in points value, vouchers, travel credits, gift cards, or outside help,
+        the estimated out-of-pocket flight cost is <strong>${formatMoney(outOfPocketCost)}</strong>.
+        The final flight pressure score is <strong>${score}/100</strong>.
+      `;
+    }
+
+    document
+      .getElementById("flightButton")
+      .addEventListener("click", calculateFlightCost);
+
+    document.getElementById("flightForm").addEventListener("reset", () => {
+      const results = document.getElementById("results");
+      setTimeout(() => {
+        results.classList.remove("visible");
+      }, 0);
+    });
+  </script>
+</Layout>
+

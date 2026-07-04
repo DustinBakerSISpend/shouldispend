@@ -311,7 +311,7 @@ const relatedCalculators = calculators
           </div>
         </div>
 
-        <button id="insuranceButton" type="button">Calculate Premium Range</button>
+        <button class="sis-action-button sis-calculate-button" id="insuranceButton" type="button">Calculate Premium Range</button>
 
         <div class="results" id="results">
           <div class="result-label">Recommended Monthly Premium Range</div>
@@ -550,7 +550,7 @@ const relatedCalculators = calculators
     results.classList.add("visible");
 
     if (funeralCost <= 0 || monthlyIncome <= 0) {
-      totalPrice.textContent = "$0–$0";
+      totalPrice.textContent = "$0 - $0";
       resultDetails.innerHTML =
         "<p>Enter an expected funeral cost and monthly take-home income.</p>";
       priceSummary.textContent = "";
@@ -568,7 +568,7 @@ const relatedCalculators = calculators
     const essentialsRatio = essentialBills / monthlyIncome;
 
     if (fundingGap <= 0 || usefulCoverage <= 0) {
-      totalPrice.textContent = "$0–$0";
+      totalPrice.textContent = "$0 - $0";
       resultDetails.innerHTML = `
         <p><strong>Recommended monthly premium:</strong> $0.</p>
         <p><strong>Expected funeral cost:</strong> ${formatMoney(funeralCost)}.</p>
@@ -606,10 +606,10 @@ const relatedCalculators = calculators
 
     const selfFundMonths = monthlyFlex > 0 ? fundingGap / monthlyFlex : 999;
 
-    totalPrice.textContent = `${formatMoney(lowPremium)}–${formatMoney(highPremium)}`;
+    totalPrice.textContent = `${formatMoney(lowPremium)} - ${formatMoney(highPremium)}`;
 
     resultDetails.innerHTML = `
-      <p><strong>Recommended monthly premium range:</strong> ${formatMoney(lowPremium)}–${formatMoney(highPremium)}.</p>
+      <p><strong>Recommended monthly premium range:</strong> ${formatMoney(lowPremium)} - ${formatMoney(highPremium)}.</p>
       <p><strong>Expected funeral cost:</strong> ${formatMoney(funeralCost)}.</p>
       <p><strong>Existing funeral funding:</strong> ${formatMoney(existingFunding)}.</p>
       <p><strong>Remaining funding gap:</strong> ${formatMoney(fundingGap)}.</p>
@@ -629,7 +629,7 @@ const relatedCalculators = calculators
 
     priceSummary.innerHTML = `
       Based on the actual funding gap and monthly budget, a reasonable funeral
-      insurance premium is about <strong>${formatMoney(lowPremium)}–${formatMoney(highPremium)} per month</strong>.
+      insurance premium is about <strong>${formatMoney(lowPremium)} - ${formatMoney(highPremium)} per month</strong>.
     `;
   }
 
