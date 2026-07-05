@@ -1,0 +1,254 @@
+---
+import Layout from "../layouts/Layout.astro";
+
+const emergencyCalculators = [
+  {
+    title: "How Much Emergency Savings Should I Have?",
+    href: "/how-much-emergency-savings-should-i-have",
+    type: "Guide",
+    button: "Read Guide",
+    text: "Estimate the broader emergency savings target to keep before major purchases, life changes, or long-term money decisions.",
+  },
+  {
+    title: "Starter Emergency Fund Calculator",
+    href: "/starter-emergency-fund-calculator",
+    type: "Calculator",
+    button: "Open Calculator",
+    text: "Calculate the first realistic cash cushion, starter range, savings gap, monthly plan, and next milestone.",
+  },
+  {
+    title: "3-Month Emergency Fund Calculator",
+    href: "/3-month-emergency-fund-calculator",
+    type: "Calculator",
+    button: "Open Calculator",
+    text: "Calculate a 3-month emergency fund target from essential expenses, current savings, shortfall, and savings timeline.",
+  },
+  {
+    title: "6-Month Emergency Fund Calculator",
+    href: "/6-month-emergency-fund-calculator",
+    type: "Calculator",
+    button: "Open Calculator",
+    text: "Build a longer runway for contractors, one-income households, homeowners, dependents, medical risk, and unstable income.",
+  },
+  {
+    title: "Emergency Fund vs Debt Payoff Calculator",
+    href: "/emergency-fund-vs-debt-payoff-calculator",
+    type: "Calculator",
+    button: "Open Calculator",
+    text: "Decide whether extra cash should build emergency savings, pay down debt, or split between both.",
+  },
+  {
+    title: "Should I Use My Emergency Fund?",
+    href: "/should-i-use-my-emergency-fund",
+    type: "Calculator",
+    button: "Open Calculator",
+    text: "Decide whether a surprise expense is a real emergency, urgent but plannable, or optional.",
+  },
+  {
+    title: "Emergency Fund After Big Purchase Calculator",
+    href: "/emergency-fund-after-big-purchase-calculator",
+    type: "Calculator",
+    button: "Open Calculator",
+    text: "See how much cushion remains after travel, repairs, a wedding, a home project, a car cost, or another big expense.",
+  },
+];
+---
+
+<Layout
+  title="Emergency Savings Calculators | ShouldISpend"
+  description="Use emergency savings calculators for starter funds, 3-month and 6-month targets, debt payoff decisions, emergency fund use, and post-purchase cushion."
+>
+  <style>
+    .container {
+      max-width: 1040px;
+      margin: 0 auto;
+      padding: 80px 24px;
+    }
+
+    .eyebrow {
+      color: var(--accent);
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      font-size: 0.8rem;
+      font-weight: 700;
+      margin-bottom: 16px;
+    }
+
+    h1 {
+      font-size: clamp(2.6rem, 7vw, 4.5rem);
+      line-height: 1;
+      margin-bottom: 24px;
+      max-width: 900px;
+    }
+
+    .intro {
+      max-width: 790px;
+      color: var(--muted);
+      font-size: 1.15rem;
+      line-height: 1.8;
+      margin-bottom: 40px;
+    }
+
+    .quick-guide {
+      border: 1px solid var(--border);
+      background: var(--card);
+      border-radius: 24px;
+      padding: 26px;
+      margin: 34px 0 52px;
+      max-width: 900px;
+    }
+
+    .quick-guide strong {
+      color: var(--text);
+    }
+
+    .quick-guide p {
+      margin: 0;
+      color: var(--muted);
+      line-height: 1.8;
+    }
+
+    .card-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 18px;
+      margin-top: 22px;
+    }
+
+    .tool-card {
+      border: 1px solid var(--border);
+      background: var(--card);
+      border-radius: 18px;
+      padding: 22px;
+      min-height: 238px;
+      display: flex;
+      flex-direction: column;
+      text-decoration: none;
+      color: inherit;
+      transition: transform 0.15s ease, border-color 0.15s ease;
+    }
+
+    .tool-card:hover {
+      transform: translateY(-2px);
+      border-color: rgba(0, 102, 85, 0.35);
+    }
+
+    .card-type {
+      color: var(--accent);
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      font-size: 0.72rem;
+      font-weight: 800;
+      margin-bottom: 18px;
+    }
+
+    .tool-card h2 {
+      color: var(--text);
+      font-size: 1.55rem;
+      line-height: 1.15;
+      margin: 0 0 16px;
+    }
+
+    .tool-card p {
+      color: var(--muted);
+      line-height: 1.65;
+      font-size: 0.95rem;
+      margin: 0 0 22px;
+    }
+
+    .card-button {
+      align-self: flex-start;
+      margin-top: auto;
+      background: var(--primary);
+      color: white;
+      border-radius: 10px;
+      padding: 12px 16px;
+      font-size: 0.88rem;
+      font-weight: 800;
+    }
+
+    .section {
+      margin-top: 70px;
+      max-width: 880px;
+    }
+
+    .section h2 {
+      font-size: 2rem;
+      line-height: 1.2;
+      margin-bottom: 18px;
+    }
+
+    .section p,
+    .section li {
+      color: var(--muted);
+      line-height: 1.8;
+      margin-bottom: 18px;
+    }
+
+    @media (max-width: 900px) {
+      .card-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+    }
+
+    @media (max-width: 620px) {
+      .card-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .container {
+        padding: 56px 18px;
+      }
+    }
+  </style>
+
+  <main class="container">
+    <div class="eyebrow">Emergency Savings Calculators</div>
+
+    <h1>Emergency Savings Calculators</h1>
+
+    <p class="intro">
+      Build the right cash cushion for the decision in front of you. These tools
+      cover starter emergency funds, 3-month and 6-month targets, debt payoff
+      tradeoffs, emergency fund use, and the cash left after a major purchase.
+    </p>
+
+    <div class="quick-guide">
+      <p>
+        <strong>Start here:</strong> use the starter fund calculator if you have
+        little or no cash cushion. Use the 3-month and 6-month calculators to
+        build targets. Use the debt payoff calculator for allocation decisions.
+        Use the emergency fund use calculator for a specific surprise. Use the
+        after-purchase calculator before a major planned cost changes the cushion.
+      </p>
+    </div>
+
+    <div class="card-grid">
+      {emergencyCalculators.map((calculator) => (
+        <a class="tool-card" href={calculator.href}>
+          <div class="card-type">{calculator.type}</div>
+          <h2>{calculator.title}</h2>
+          <p>{calculator.text}</p>
+          <span class="card-button">{calculator.button}</span>
+        </a>
+      ))}
+    </div>
+
+    <section class="section">
+      <h2>Which emergency savings calculator should you use first?</h2>
+
+      <p>
+        If you are starting from zero, the starter calculator gives you the first
+        practical cash floor. Once that is covered, the 3-month and 6-month
+        calculators help you build the right emergency fund target.
+      </p>
+
+      <p>
+        If the question is about a specific bill, use the emergency fund use
+        calculator. If the question is about a major purchase you are planning,
+        use the after-purchase calculator to see what emergency savings will
+        remain after the decision.
+      </p>
+    </section>
+  </main>
+</Layout>

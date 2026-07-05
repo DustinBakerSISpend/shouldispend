@@ -1,0 +1,787 @@
+---
+import Layout from "../layouts/Layout.astro";
+import FAQSection from "../components/FAQSection.astro";
+
+const sixMonthEmergencyFundFaqs = [
+  {
+    question: "How do I calculate a 6-month emergency fund?",
+    answer:
+      "Add the essential monthly expenses your household would still need during an income disruption, then multiply that number by six. Include housing, utilities, food, transportation, insurance, childcare, basic medical needs, and minimum debt payments.",
+  },
+  {
+    question: "Who needs a 6-month emergency fund?",
+    answer:
+      "A 6-month fund is especially useful for single-income households, contractors, freelancers, homeowners, families with dependents, people with medical exposure, and workers whose jobs may take longer to replace.",
+  },
+  {
+    question: "Is a 6-month emergency fund too much cash?",
+    answer:
+      "It can be too much for some stable households with low obligations, but it can be appropriate when losing income would be hard to recover from quickly. This calculator frames six months as a protection target for higher-risk households.",
+  },
+  {
+    question: "Should I build a 3-month or 6-month emergency fund first?",
+    answer:
+      "The 3-month fund is usually the core baseline. The 6-month fund is the stronger cushion. If you have little saved, build a starter fund first, then one month, then three months, then six months if your household risk calls for it.",
+  },
+  {
+    question: "Does a 6-month fund include lifestyle spending?",
+    answer:
+      "Usually no. A 6-month emergency fund should focus on essential expenses and recovery costs, not normal lifestyle spending. Flexible spending can usually be paused during a disruption.",
+  },
+];
+---
+
+<Layout
+  title="6-Month Emergency Fund Calculator | ShouldISpend"
+  description="Calculate a 6-month emergency fund target, current savings gap, runway, timeline, and risk-based reasons a larger cushion may matter."
+>
+  <style>
+    .container {
+      max-width: 920px;
+      margin: 0 auto;
+      padding: 80px 24px;
+    }
+
+    .eyebrow {
+      color: var(--accent);
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      font-size: 0.8rem;
+      font-weight: 700;
+      margin-bottom: 16px;
+    }
+
+    h1 {
+      font-size: clamp(2.55rem, 7vw, 4.45rem);
+      line-height: 1;
+      margin-bottom: 24px;
+      max-width: 860px;
+    }
+
+    .intro {
+      max-width: 800px;
+      color: var(--muted);
+      font-size: 1.15rem;
+      line-height: 1.8;
+      margin-bottom: 48px;
+    }
+
+    section {
+      margin-top: 64px;
+    }
+
+    h2 {
+      font-size: 2rem;
+      margin-bottom: 18px;
+      line-height: 1.2;
+    }
+
+    h3 {
+      font-size: 1.25rem;
+      margin-top: 30px;
+      margin-bottom: 10px;
+    }
+
+    p,
+    li {
+      color: var(--muted);
+      line-height: 1.8;
+      margin-bottom: 18px;
+    }
+
+    a {
+      color: var(--primary);
+    }
+
+    .calculator {
+      border: 1px solid var(--border);
+      background: var(--card);
+      border-radius: 24px;
+      padding: 30px;
+      margin: 44px 0;
+    }
+
+    .calc-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 20px;
+    }
+
+    .calc-field {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .calc-field label {
+      font-weight: 700;
+      margin-bottom: 10px;
+      color: var(--text);
+    }
+
+    .calc-field input,
+    .calc-field select {
+      padding: 14px;
+      border-radius: 12px;
+      border: 1px solid var(--border);
+      font-size: 1rem;
+    }
+
+    .calc-button {
+      margin-top: 26px;
+      background: var(--primary);
+      color: white;
+      border: none;
+      border-radius: 14px;
+      padding: 15px 22px;
+      font-size: 1rem;
+      font-weight: 800;
+      cursor: pointer;
+    }
+
+    .calc-button:hover {
+      opacity: 0.92;
+    }
+
+    .calc-results {
+      margin-top: 28px;
+      border: 1px solid #dbe4ee;
+      background: #f8fafc;
+      border-radius: 20px;
+      padding: 28px;
+      display: none;
+    }
+
+    .calc-results.active {
+      display: block;
+    }
+
+    .calc-verdict {
+      font-size: 1.8rem;
+      font-weight: 800;
+      color: var(--primary);
+      margin-bottom: 14px;
+    }
+
+    .calc-stat {
+      font-size: 1.05rem;
+      margin-bottom: 12px;
+      color: var(--text);
+      line-height: 1.6;
+    }
+
+    .calc-analysis {
+      color: var(--muted);
+      line-height: 1.8;
+      margin-top: 18px;
+    }
+
+    .callout {
+      border: 1px solid var(--border);
+      background: var(--card);
+      border-radius: 24px;
+      padding: 26px;
+      margin: 36px 0;
+    }
+
+    .callout strong {
+      color: var(--text);
+    }
+
+    .info-grid,
+    .link-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 16px;
+      margin-top: 22px;
+    }
+
+    .info-card,
+    .link-card {
+      display: block;
+      border: 1px solid var(--border);
+      background: var(--card);
+      border-radius: 18px;
+      padding: 18px;
+      text-decoration: none;
+      color: inherit;
+    }
+
+    .link-card {
+      transition: transform 0.15s ease;
+    }
+
+    .link-card:hover {
+      transform: translateY(-2px);
+    }
+
+    .info-card h3,
+    .link-card strong {
+      display: block;
+      margin: 0 0 8px;
+      color: var(--text);
+      line-height: 1.3;
+    }
+
+    .info-card p,
+    .link-card span {
+      color: var(--muted);
+      line-height: 1.6;
+      font-size: 0.95rem;
+      margin: 0;
+    }
+  </style>
+
+  <main class="container">
+    <div class="eyebrow">6-Month Emergency Fund Calculator</div>
+
+    <h1>6-Month Emergency Fund Calculator</h1>
+
+    <p class="intro">
+      A 6-month emergency fund is the stronger cushion for households where
+      income could take longer to replace or disruption would be harder to absorb.
+      This calculator builds a six-month target from essential expenses, then
+      shows your gap, runway, timeline, and why a larger cushion may matter.
+    </p>
+
+    <div class="calculator">
+      <div class="calc-grid">
+        <div class="calc-field">
+          <label for="housing">Monthly Housing and Utilities ($)</label>
+          <input type="number" id="housing" placeholder="1900" min="0" inputmode="decimal" />
+        </div>
+
+        <div class="calc-field">
+          <label for="basics">Food, Transportation, and Household Basics ($)</label>
+          <input type="number" id="basics" placeholder="1300" min="0" inputmode="decimal" />
+        </div>
+
+        <div class="calc-field">
+          <label for="care">Insurance, Medical, Childcare, and Family Needs ($)</label>
+          <input type="number" id="care" placeholder="850" min="0" inputmode="decimal" />
+        </div>
+
+        <div class="calc-field">
+          <label for="debtMinimums">Minimum Debt Payments ($)</label>
+          <input type="number" id="debtMinimums" placeholder="400" min="0" inputmode="decimal" />
+        </div>
+
+        <div class="calc-field">
+          <label for="savings">Current Emergency Savings ($)</label>
+          <input type="number" id="savings" placeholder="6000" min="0" inputmode="decimal" />
+        </div>
+
+        <div class="calc-field">
+          <label for="monthlySavings">Amount You Can Save Per Month ($)</label>
+          <input type="number" id="monthlySavings" placeholder="500" min="0" inputmode="decimal" />
+        </div>
+
+        <div class="calc-field">
+          <label for="timeline">Target Timeline</label>
+          <select id="timeline">
+            <option value="" disabled selected>Select timeline</option>
+            <option value="12">12 months</option>
+            <option value="18">18 months</option>
+            <option value="24">24 months</option>
+            <option value="36">36 months</option>
+          </select>
+        </div>
+
+        <div class="calc-field">
+          <label for="incomeType">Income Structure</label>
+          <select id="incomeType">
+            <option value="" disabled selected>Select income structure</option>
+            <option value="twoStable">Two stable incomes</option>
+            <option value="oneStable">One stable main income</option>
+            <option value="variable">Variable, freelance, commission, or contract income</option>
+            <option value="atRisk">Income is unstable or job is at risk</option>
+          </select>
+        </div>
+
+        <div class="calc-field">
+          <label for="replacementTime">Expected Time to Replace Income</label>
+          <select id="replacementTime">
+            <option value="" disabled selected>Select replacement time</option>
+            <option value="quick">Likely under 2 months</option>
+            <option value="normal">Likely 2 to 4 months</option>
+            <option value="slow">Could take 4 to 6 months</option>
+            <option value="long">Could take longer than 6 months</option>
+          </select>
+        </div>
+
+        <div class="calc-field">
+          <label for="riskLoad">Household Risk Load</label>
+          <select id="riskLoad">
+            <option value="" disabled selected>Select household risk</option>
+            <option value="low">Low: few dependents, low repair risk</option>
+            <option value="moderate">Moderate: dependents, car need, or rent pressure</option>
+            <option value="high">High: dependents, homeowner, medical risk, or one income</option>
+            <option value="veryHigh">Very high: multiple risks at once</option>
+          </select>
+        </div>
+      </div>
+
+      <button class="calc-button sis-action-button sis-calculate-button" id="calculateSixMonthFund">
+        Calculate 6-Month Emergency Fund
+      </button>
+
+      <div class="calc-results" id="calcResults">
+        <div class="calc-verdict" id="calcVerdict"></div>
+        <div id="calcTarget"></div>
+        <div class="calc-stat" id="calcRunway"></div>
+        <div class="calc-stat" id="calcGap"></div>
+        <div class="calc-stat" id="calcTimeline"></div>
+        <div class="calc-stat" id="calcCheckpoint"></div>
+        <div class="calc-analysis" id="calcAnalysis"></div>
+      </div>
+    </div>
+
+    <div class="callout">
+      <p>
+        <strong>6-month rule:</strong> this is not just a bigger version of the
+        starter fund. It is a risk cushion for households where income recovery
+        could take time.
+      </p>
+    </div>
+
+    <section>
+      <h2>What This 6-Month Emergency Fund Calculator Does Differently</h2>
+
+      <p>
+        The 3-month calculator builds the core baseline from essential expenses.
+        This calculator is for households where that baseline may not be enough:
+        one-income families, contractors, freelancers, homeowners, people with
+        dependents, people with medical risk, and workers in jobs that could take
+        longer to replace.
+      </p>
+
+      <p>
+        The unique job here is not only multiplying expenses by six. The
+        calculator also looks at income structure, replacement time, and
+        household risk load. That makes the result a long-runway planning number,
+        not a generic savings slogan.
+      </p>
+
+      <p>
+        The main output is a large six-month dollar target. The supporting output
+        shows current runway, savings gap, build timeline, and whether the
+        3-month mark should be treated as a checkpoint on the way to six months.
+      </p>
+    </section>
+
+    <section>
+      <h2>When a 6-Month Emergency Fund Matters Most</h2>
+
+      <p>
+        A 6-month fund is most useful when the household cannot count on a fast
+        recovery after income disruption. If similar work is hard to find, income
+        varies, one person supports the household, or several people depend on
+        the same paycheck, more cash can buy time and reduce forced decisions.
+      </p>
+
+      <div class="info-grid">
+        <div class="info-card">
+          <h3>Income may take longer to replace</h3>
+          <p>
+            Specialized work, contract gaps, seasonal income, layoffs, commissions,
+            and small-business income can make a longer runway useful.
+          </p>
+        </div>
+
+        <div class="info-card">
+          <h3>Other people depend on the income</h3>
+          <p>
+            Children, family support, childcare, school costs, pets, or shared
+            household bills can make a short cushion less forgiving.
+          </p>
+        </div>
+
+        <div class="info-card">
+          <h3>Housing or repair risk is higher</h3>
+          <p>
+            Homeownership, older vehicles, high rent, maintenance exposure, and
+            insurance deductibles can create large surprise costs.
+          </p>
+        </div>
+
+        <div class="info-card">
+          <h3>Medical or care costs are unpredictable</h3>
+          <p>
+            Prescriptions, appointments, dental work, therapy, caregiving, or
+            family health needs can make a larger cushion safer.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <h2>6 Months Is a Runway, Not a Spending Permission Slip</h2>
+
+      <p>
+        A six-month target can make a household safer, but it should not be used
+        to justify every optional purchase once the number is reached. Emergency
+        savings are protection against disruption. They are not the same as a
+        vacation fund, wedding fund, furniture fund, or home upgrade bucket.
+      </p>
+
+      <p>
+        The safer way to use the number is as a floor. If a major purchase would
+        pull the household far below the six-month target, the question becomes
+        whether the purchase is urgent, whether the 3-month checkpoint remains
+        protected, and how fast the fund can be rebuilt.
+      </p>
+    </section>
+
+    <section>
+      <h2>How to Build From 3 Months to 6 Months</h2>
+
+      <p>
+        The move from three months to six months can feel slow because the number
+        is large. Treat it as a second phase instead of a single giant task. The
+        3-month amount protects the core baseline. The 6-month amount adds time,
+        flexibility, and recovery room.
+      </p>
+
+      <p>
+        If the 6-month target is far away, keep the 3-month mark visible. Once
+        that checkpoint is covered, every additional month of essentials gives
+        the household more time to replace income without using credit cards or
+        selling assets under pressure.
+      </p>
+    </section>
+
+    <section>
+      <h2>When a Smaller Fund May Be Reasonable</h2>
+
+      <p>
+        Not every household needs six months in cash before making progress on
+        other goals. A stable two-income household with low debt, low housing
+        costs, no dependents, strong insurance, and easy job replacement may be
+        comfortable with a smaller cushion.
+      </p>
+
+      <p>
+        The point is not to make six months a universal rule. The point is to
+        identify when the extra cash runway solves a real risk problem.
+      </p>
+    </section>
+
+    <section id="FinancialRedFlags">
+      <h2>6-Month Emergency Fund Red Flags</h2>
+
+      <ul>
+        <li>You have one main income and no plan beyond a starter or 3-month cushion.</li>
+        <li>Your work could take several months to replace, but your emergency fund assumes a quick rebound.</li>
+        <li>You own a home or older car and have no repair cushion beyond normal bills.</li>
+        <li>You have dependents, medical risk, or care costs and only a thin cash buffer.</li>
+        <li>You are counting planned purchase savings as emergency savings.</li>
+        <li>You would need credit cards to survive a second emergency during an income gap.</li>
+      </ul>
+    </section>
+
+    <section id="CalculatorAssumptions">
+      <h2>6-Month Emergency Fund Calculator Assumptions</h2>
+
+      <p>
+        This calculator treats a 6-month emergency fund as six months of
+        essential expenses, not six months of normal lifestyle spending. The
+        target is built from required household costs that would still matter
+        during an income disruption.
+      </p>
+
+      <p>
+        The calculator also assumes current emergency savings are truly available
+        for emergencies. Money already assigned to a trip, wedding, house project,
+        car purchase, tax bill, or another planned cost should not be counted
+        unless you would actually use it for an emergency.
+      </p>
+    </section>
+
+    <section id="MethodologySection">
+      <h2>How ShouldISpend Calculates a 6-Month Emergency Fund</h2>
+
+      <p>
+        ShouldISpend adds monthly housing and utilities, food and transportation,
+        care and insurance, and minimum debt payments to estimate essential
+        monthly expenses. The calculator multiplies that number by six, subtracts
+        current emergency savings, and compares the gap with your monthly savings
+        ability and target timeline.
+      </p>
+
+      <p>
+        The result is intentionally different from the 3-month calculator. The
+        3-month tool is the core baseline. This 6-month tool is the longer runway
+        for households with income replacement risk, dependents, home repair
+        exposure, medical exposure, or multiple financial risks at once.
+      </p>
+    </section>
+
+    <section id="RelatedCalculators">
+      <h2>Emergency Savings Calculators</h2>
+
+      <div class="link-grid">
+        <a class="link-card" href="/emergency-savings-calculators">
+          <strong>Emergency Savings Calculators</strong>
+          <span>
+            See the full emergency savings cluster, from starter cushions to
+            3-month, 6-month, debt, and post-purchase emergency fund decisions.
+          </span>
+        </a>
+
+        <a class="link-card" href="/starter-emergency-fund-calculator">
+          <strong>Starter Emergency Fund Calculator</strong>
+          <span>
+            Build the first realistic cash cushion before chasing a full
+            emergency fund.
+          </span>
+        </a>
+
+        <a class="link-card" href="/3-month-emergency-fund-calculator">
+          <strong>3-Month Emergency Fund Calculator</strong>
+          <span>
+            Build the core emergency fund baseline from essential monthly
+            expenses.
+          </span>
+        </a>
+
+        <a class="link-card" href="/emergency-fund-vs-debt-payoff-calculator">
+          <strong>Emergency Fund vs Debt Payoff Calculator</strong>
+          <span>
+            Decide whether the next dollar should build savings, attack debt,
+            or split between both.
+          </span>
+        </a>
+
+        <a class="link-card" href="/should-i-use-my-emergency-fund">
+          <strong>Should I Use My Emergency Fund?</strong>
+          <span>
+            Decide whether a surprise expense is a true emergency, urgent but
+            plannable, or optional.
+          </span>
+        </a>
+
+        <a class="link-card" href="/emergency-fund-after-big-purchase-calculator">
+          <strong>Emergency Fund After Big Purchase Calculator</strong>
+          <span>
+            See how much cushion remains after a trip, repair, wedding, home
+            project, car cost, or other major purchase.
+          </span>
+        </a>
+      </div>
+    </section>
+
+    <FAQSection title="6-Month Emergency Fund FAQ" faqs={sixMonthEmergencyFundFaqs} />
+  </main>
+
+  <script is:inline>
+    document.addEventListener("DOMContentLoaded", function () {
+      const button = document.getElementById("calculateSixMonthFund");
+
+      if (!button) return;
+
+      const moneyLabelStyle =
+        "color: var(--muted); font-size: 0.82rem; font-weight: 800; letter-spacing: 0.04em; text-transform: uppercase; margin-bottom: 6px;";
+
+      const moneyValueStyle =
+        "color: var(--primary); font-size: clamp(2.45rem, 6vw, 3.75rem); font-weight: 950; line-height: 1.02; letter-spacing: -0.055em; margin: 4px 0 16px; display: block;";
+
+      const moneySubtextStyle =
+        "color: var(--text); font-size: 1.05rem; font-weight: 800; line-height: 1.55; margin-bottom: 14px;";
+
+      function money(value) {
+        return "$" + Math.round(value).toLocaleString("en-US");
+      }
+
+      function cleanNumber(id) {
+        const element = document.getElementById(id);
+        if (!element) return 0;
+        const value = Number(element.value);
+        return Number.isFinite(value) && value > 0 ? value : 0;
+      }
+
+      function monthWord(months) {
+        return months === 1 ? "month" : "months";
+      }
+
+      button.addEventListener("click", function () {
+        const housing = cleanNumber("housing");
+        const basics = cleanNumber("basics");
+        const care = cleanNumber("care");
+        const debtMinimums = cleanNumber("debtMinimums");
+        const savings = cleanNumber("savings");
+        const monthlySavings = cleanNumber("monthlySavings");
+
+        const timelineValue = document.getElementById("timeline").value;
+        const incomeType = document.getElementById("incomeType").value;
+        const replacementTime = document.getElementById("replacementTime").value;
+        const riskLoad = document.getElementById("riskLoad").value;
+
+        const results = document.getElementById("calcResults");
+        const verdictEl = document.getElementById("calcVerdict");
+        const targetEl = document.getElementById("calcTarget");
+        const runwayEl = document.getElementById("calcRunway");
+        const gapEl = document.getElementById("calcGap");
+        const timelineEl = document.getElementById("calcTimeline");
+        const checkpointEl = document.getElementById("calcCheckpoint");
+        const analysisEl = document.getElementById("calcAnalysis");
+
+        results.classList.add("active");
+
+        const monthlyEssentials = housing + basics + care + debtMinimums;
+
+        if (
+          monthlyEssentials <= 0 ||
+          !timelineValue ||
+          !incomeType ||
+          !replacementTime ||
+          !riskLoad
+        ) {
+          verdictEl.innerText = "Add the missing details";
+          targetEl.innerHTML =
+            "<div style=\"" +
+            moneyLabelStyle +
+            "\">6-month target</div><div style=\"" +
+            moneyValueStyle +
+            "\">Need details</div><div style=\"" +
+            moneySubtextStyle +
+            "\">Enter essential expenses, a timeline, income structure, replacement time, and household risk to calculate the 6-month target.</div>";
+          runwayEl.innerText = "";
+          gapEl.innerText = "";
+          timelineEl.innerText = "";
+          checkpointEl.innerText = "";
+          analysisEl.innerText =
+            "Current savings, debt minimums, and monthly savings can be zero, but the calculator needs at least one essential expense plus the dropdown details.";
+          return;
+        }
+
+        const target = monthlyEssentials * 6;
+        const threeMonthCheckpoint = monthlyEssentials * 3;
+        const gap = Math.max(0, target - savings);
+        const checkpointGap = Math.max(0, threeMonthCheckpoint - savings);
+        const monthsCovered = savings / monthlyEssentials;
+        const timelineMonths = Number(timelineValue);
+        const requiredMonthly = gap > 0 ? gap / timelineMonths : 0;
+
+        let riskPoints = 0;
+
+        if (incomeType === "oneStable") riskPoints += 1;
+        if (incomeType === "variable") riskPoints += 2;
+        if (incomeType === "atRisk") riskPoints += 3;
+
+        if (replacementTime === "normal") riskPoints += 1;
+        if (replacementTime === "slow") riskPoints += 2;
+        if (replacementTime === "long") riskPoints += 3;
+
+        if (riskLoad === "moderate") riskPoints += 1;
+        if (riskLoad === "high") riskPoints += 2;
+        if (riskLoad === "veryHigh") riskPoints += 3;
+
+        let verdict = "";
+        let analysis = "";
+
+        if (gap === 0) {
+          verdict = "6-Month Fund Covered";
+          analysis =
+            "Your current emergency savings cover at least six months of essential expenses. This is a strong long-runway cushion if the money is truly reserved for emergencies.";
+        } else if (monthsCovered >= 3) {
+          verdict = "Past the 3-Month Checkpoint";
+          analysis =
+            "You have cleared the core 3-month baseline, but the stronger 6-month runway is not fully covered yet.";
+        } else if (monthsCovered >= 1) {
+          verdict = "Build from Baseline to Runway";
+          analysis =
+            "You have some emergency runway, but the household is not yet protected at the 3-month or 6-month level.";
+        } else if (savings > 0) {
+          verdict = "Below One Month of Runway";
+          analysis =
+            "You have started, but less than one month of essential expenses is protected. Build the early checkpoints first while keeping the 6-month number visible.";
+        } else {
+          verdict = "No Long-Runway Cushion Yet";
+          analysis =
+            "With no emergency savings, the 6-month target can look large. Treat it as the long-runway destination, then build the starter, one-month, and 3-month checkpoints in order.";
+        }
+
+        if (riskPoints >= 6) {
+          analysis +=
+            " Your income and household risk profile makes a 6-month target especially relevant.";
+        } else if (riskPoints >= 3) {
+          analysis +=
+            " Your risk profile gives the 6-month target real value, especially if a disruption would take time to recover from.";
+        } else {
+          analysis +=
+            " Your risk profile looks steadier, so the 6-month target may be a conservative goal rather than an urgent requirement.";
+        }
+
+        targetEl.innerHTML =
+          "<div style=\"" +
+          moneyLabelStyle +
+          "\">6-month emergency fund target</div><div style=\"" +
+          moneyValueStyle +
+          "\">" +
+          money(target) +
+          "</div><div style=\"" +
+          moneySubtextStyle +
+          "\">Current runway: about " +
+          monthsCovered.toFixed(1) +
+          " months of essential expenses.</div>";
+
+        runwayEl.innerText =
+          "Monthly essentials used in this target: " +
+          money(monthlyEssentials) +
+          ". The 3-month checkpoint is " +
+          money(threeMonthCheckpoint) +
+          ", and the 6-month target is " +
+          money(target) +
+          ".";
+
+        if (gap === 0) {
+          gapEl.innerText =
+            "Current shortfall: $0. Your current emergency savings are at or above the 6-month target.";
+        } else {
+          gapEl.innerText =
+            "Current shortfall: " +
+            money(gap) +
+            " to reach the 6-month target.";
+        }
+
+        if (gap === 0) {
+          timelineEl.innerText =
+            "Savings plan: new emergency savings can be directed to other protected goals, as long as the 6-month floor stays intact.";
+        } else if (monthlySavings > 0) {
+          const monthsAtCurrentSavings = Math.ceil(gap / monthlySavings);
+          timelineEl.innerText =
+            "Savings plan: at " +
+            money(monthlySavings) +
+            " per month, the 6-month target would take about " +
+            monthsAtCurrentSavings +
+            " " +
+            monthWord(monthsAtCurrentSavings) +
+            ". To hit your selected " +
+            timelineMonths +
+            "-month timeline, you would need about " +
+            money(requiredMonthly) +
+            " per month.";
+        } else {
+          timelineEl.innerText =
+            "Savings plan: to hit your selected " +
+            timelineMonths +
+            "-month timeline, you would need about " +
+            money(requiredMonthly) +
+            " per month. Add your monthly savings ability to compare it with your current plan.";
+        }
+
+        if (checkpointGap === 0) {
+          checkpointEl.innerText =
+            "Checkpoint: your 3-month baseline is already covered. The remaining focus is the long-runway gap between three and six months.";
+        } else {
+          checkpointEl.innerText =
+            "Checkpoint: before chasing the full 6-month target, the gap to a 3-month baseline is " +
+            money(checkpointGap) +
+            ".";
+        }
+
+        verdictEl.innerText = verdict;
+        analysisEl.innerText = analysis;
+      });
+    });
+  </script>
+</Layout>

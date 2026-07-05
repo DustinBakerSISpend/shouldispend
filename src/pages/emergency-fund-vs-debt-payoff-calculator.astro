@@ -1,0 +1,810 @@
+---
+import Layout from "../layouts/Layout.astro";
+import FAQSection from "../components/FAQSection.astro";
+
+const emergencyFundVsDebtFaqs = [
+  {
+    question: "Should I build emergency savings or pay off debt first?",
+    answer:
+      "Many households need both. If emergency savings are zero or below a basic starter cushion, building cash first can prevent the next surprise from becoming new debt. Once a starter cushion exists, high-interest debt may deserve a larger share of extra money.",
+  },
+  {
+    question: "Should I pay off credit cards before building a full emergency fund?",
+    answer:
+      "Often yes, but not before keeping at least some cash cushion. Credit card interest is expensive, but having no emergency savings can cause new credit card debt the next time a car repair, medical bill, or income gap hits.",
+  },
+  {
+    question: "How much emergency fund should I keep while paying debt?",
+    answer:
+      "A common sequence is starter cushion first, then one month of essentials, then a split between emergency savings and high-interest debt depending on interest rate, income stability, and household risk.",
+  },
+  {
+    question: "What debt should I prioritize before emergency savings?",
+    answer:
+      "High-interest credit cards, personal loans, payday loans, and expensive revolving balances usually compete most strongly with emergency savings. Low-interest debt may not require the same urgency.",
+  },
+  {
+    question: "Is this a debt snowball or avalanche calculator?",
+    answer:
+      "No. This calculator is focused on the first split between cash cushion and debt payoff. Once your emergency cash floor is safe, a separate debt payoff method can decide which balance to attack first.",
+  },
+];
+---
+
+<Layout
+  title="Emergency Fund vs Debt Payoff Calculator | ShouldISpend"
+  description="Decide whether extra money should go to emergency savings, debt payoff, or a split based on cash cushion, interest rate, debt balance, and household risk."
+>
+  <style>
+    .container {
+      max-width: 920px;
+      margin: 0 auto;
+      padding: 80px 24px;
+    }
+
+    .eyebrow {
+      color: var(--accent);
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      font-size: 0.8rem;
+      font-weight: 700;
+      margin-bottom: 16px;
+    }
+
+    h1 {
+      font-size: clamp(2.55rem, 7vw, 4.45rem);
+      line-height: 1;
+      margin-bottom: 24px;
+      max-width: 860px;
+    }
+
+    .intro {
+      max-width: 800px;
+      color: var(--muted);
+      font-size: 1.15rem;
+      line-height: 1.8;
+      margin-bottom: 48px;
+    }
+
+    section {
+      margin-top: 64px;
+    }
+
+    h2 {
+      font-size: 2rem;
+      margin-bottom: 18px;
+      line-height: 1.2;
+    }
+
+    h3 {
+      font-size: 1.25rem;
+      margin-top: 30px;
+      margin-bottom: 10px;
+    }
+
+    p,
+    li {
+      color: var(--muted);
+      line-height: 1.8;
+      margin-bottom: 18px;
+    }
+
+    a {
+      color: var(--primary);
+    }
+
+    .calculator {
+      border: 1px solid var(--border);
+      background: var(--card);
+      border-radius: 24px;
+      padding: 30px;
+      margin: 44px 0;
+    }
+
+    .calc-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 20px;
+    }
+
+    .calc-field {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .calc-field label {
+      font-weight: 700;
+      margin-bottom: 10px;
+      color: var(--text);
+    }
+
+    .calc-field input,
+    .calc-field select {
+      padding: 14px;
+      border-radius: 12px;
+      border: 1px solid var(--border);
+      font-size: 1rem;
+    }
+
+    .calc-button {
+      margin-top: 26px;
+      background: var(--primary);
+      color: white;
+      border: none;
+      border-radius: 14px;
+      padding: 15px 22px;
+      font-size: 1rem;
+      font-weight: 800;
+      cursor: pointer;
+    }
+
+    .calc-button:hover {
+      opacity: 0.92;
+    }
+
+    .calc-results {
+      margin-top: 28px;
+      border: 1px solid #dbe4ee;
+      background: #f8fafc;
+      border-radius: 20px;
+      padding: 28px;
+      display: none;
+    }
+
+    .calc-results.active {
+      display: block;
+    }
+
+    .calc-verdict {
+      font-size: 1.8rem;
+      font-weight: 800;
+      color: var(--primary);
+      margin-bottom: 14px;
+    }
+
+    .calc-stat {
+      font-size: 1.05rem;
+      margin-bottom: 12px;
+      color: var(--text);
+      line-height: 1.6;
+    }
+
+    .calc-analysis {
+      color: var(--muted);
+      line-height: 1.8;
+      margin-top: 18px;
+    }
+
+    .callout {
+      border: 1px solid var(--border);
+      background: var(--card);
+      border-radius: 24px;
+      padding: 26px;
+      margin: 36px 0;
+    }
+
+    .callout strong {
+      color: var(--text);
+    }
+
+    .info-grid,
+    .link-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 16px;
+      margin-top: 22px;
+    }
+
+    .info-card,
+    .link-card {
+      display: block;
+      border: 1px solid var(--border);
+      background: var(--card);
+      border-radius: 18px;
+      padding: 18px;
+      text-decoration: none;
+      color: inherit;
+    }
+
+    .link-card {
+      transition: transform 0.15s ease;
+    }
+
+    .link-card:hover {
+      transform: translateY(-2px);
+    }
+
+    .info-card h3,
+    .link-card strong {
+      display: block;
+      margin: 0 0 8px;
+      color: var(--text);
+      line-height: 1.3;
+    }
+
+    .info-card p,
+    .link-card span {
+      color: var(--muted);
+      line-height: 1.6;
+      font-size: 0.95rem;
+      margin: 0;
+    }
+  </style>
+
+  <main class="container">
+    <div class="eyebrow">Emergency Fund vs Debt Payoff Calculator</div>
+
+    <h1>Emergency Fund vs Debt Payoff Calculator</h1>
+
+    <p class="intro">
+      This calculator answers a different question than a 3-month or 6-month
+      emergency fund tool. It does not ask how large your final cushion should
+      be. It asks where the next extra dollars should go: emergency savings,
+      debt payoff, or a split between both.
+    </p>
+
+    <div class="calculator">
+      <div class="calc-grid">
+        <div class="calc-field">
+          <label for="extraCash">Extra Money Available This Month ($)</label>
+          <input type="number" id="extraCash" placeholder="500" min="0" inputmode="decimal" />
+        </div>
+
+        <div class="calc-field">
+          <label for="essentials">Monthly Essential Expenses ($)</label>
+          <input type="number" id="essentials" placeholder="3600" min="0" inputmode="decimal" />
+        </div>
+
+        <div class="calc-field">
+          <label for="savings">Current Emergency Savings ($)</label>
+          <input type="number" id="savings" placeholder="800" min="0" inputmode="decimal" />
+        </div>
+
+        <div class="calc-field">
+          <label for="debtBalance">High-Interest Debt Balance ($)</label>
+          <input type="number" id="debtBalance" placeholder="6500" min="0" inputmode="decimal" />
+        </div>
+
+        <div class="calc-field">
+          <label for="debtApr">Debt Interest Rate APR (%)</label>
+          <input type="number" id="debtApr" placeholder="24" min="0" inputmode="decimal" />
+        </div>
+
+        <div class="calc-field">
+          <label for="minimumPayments">Required Monthly Debt Payments ($)</label>
+          <input type="number" id="minimumPayments" placeholder="225" min="0" inputmode="decimal" />
+        </div>
+
+        <div class="calc-field">
+          <label for="incomeStability">Income Stability</label>
+          <select id="incomeStability">
+            <option value="" disabled selected>Select income stability</option>
+            <option value="stable">Stable paycheck</option>
+            <option value="average">Somewhat stable</option>
+            <option value="unstable">Irregular, freelance, commission, or at risk</option>
+          </select>
+        </div>
+
+        <div class="calc-field">
+          <label for="householdRisk">Household Risk</label>
+          <select id="householdRisk">
+            <option value="" disabled selected>Select household risk</option>
+            <option value="low">Low: few dependents, low repair risk</option>
+            <option value="moderate">Moderate: dependents, car need, rent pressure, or repair risk</option>
+            <option value="high">High: one income, dependents, medical risk, or home repair risk</option>
+          </select>
+        </div>
+
+        <div class="calc-field">
+          <label for="debtType">Debt Type</label>
+          <select id="debtType">
+            <option value="" disabled selected>Select debt type</option>
+            <option value="creditCard">Credit card or revolving debt</option>
+            <option value="personalLoan">Personal loan or installment debt</option>
+            <option value="medical">Medical debt or negotiated bill</option>
+            <option value="lowInterest">Lower-interest loan</option>
+          </select>
+        </div>
+
+        <div class="calc-field">
+          <label for="nextEmergency">Likelihood of Another Surprise Soon</label>
+          <select id="nextEmergency">
+            <option value="" disabled selected>Select likelihood</option>
+            <option value="low">Low</option>
+            <option value="medium">Medium</option>
+            <option value="high">High</option>
+          </select>
+        </div>
+      </div>
+
+      <button class="calc-button sis-action-button sis-calculate-button" id="calculateDebtVsFund">
+        Calculate Savings vs Debt Split
+      </button>
+
+      <div class="calc-results" id="calcResults">
+        <div class="calc-verdict" id="calcVerdict"></div>
+        <div id="calcSplit"></div>
+        <div class="calc-stat" id="calcMilestones"></div>
+        <div class="calc-stat" id="calcDebtCost"></div>
+        <div class="calc-stat" id="calcNextStep"></div>
+        <div class="calc-analysis" id="calcAnalysis"></div>
+      </div>
+    </div>
+
+    <div class="callout">
+      <p>
+        <strong>Next-dollar rule:</strong> if your cash cushion is empty, the
+        next emergency can create more debt. If your debt interest is high, extra
+        cash sitting idle can also be expensive. This calculator weighs both.
+      </p>
+    </div>
+
+    <section>
+      <h2>What This Calculator Does Differently</h2>
+
+      <p>
+        The starter, 3-month, and 6-month calculators are emergency fund target
+        calculators. This one is not. It is an allocation calculator. It takes
+        the extra money available right now and recommends how much should go to
+        emergency savings versus debt payoff.
+      </p>
+
+      <p>
+        That makes the page useful when both answers feel correct. Building cash
+        reduces the chance of new debt. Paying down high-interest balances
+        reduces interest cost. The best answer often depends on whether the
+        household has any cash floor yet, how expensive the debt is, and how
+        likely another surprise is.
+      </p>
+
+      <p>
+        The main output is a large dollar split, such as money to savings and
+        money to debt. The supporting output explains the starter cushion gap,
+        the one-month cushion gap, estimated monthly interest, and the next
+        milestone.
+      </p>
+    </section>
+
+    <section>
+      <h2>The Order Usually Matters</h2>
+
+      <p>
+        Many households do not need a perfect emergency fund before paying debt,
+        but they do need some cash. Without a starter cushion, every small
+        surprise can restart the debt cycle. Once the starter cushion is in
+        place, expensive debt can deserve a much larger share of extra money.
+      </p>
+
+      <div class="info-grid">
+        <div class="info-card">
+          <h3>Cash floor first</h3>
+          <p>
+            If emergency savings are zero or very thin, the first job is often
+            building enough cash to avoid new debt from the next small surprise.
+          </p>
+        </div>
+
+        <div class="info-card">
+          <h3>High-interest debt next</h3>
+          <p>
+            Credit card and expensive personal debt can grow quickly. Once a
+            starter cushion exists, interest rate becomes more important.
+          </p>
+        </div>
+
+        <div class="info-card">
+          <h3>Split during the messy middle</h3>
+          <p>
+            Many households are between milestones. A split can keep savings
+            growing while still reducing interest cost.
+          </p>
+        </div>
+
+        <div class="info-card">
+          <h3>Risk changes the split</h3>
+          <p>
+            Dependents, unstable income, medical exposure, home repairs, or car
+            dependence can justify keeping more cash while paying debt.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <h2>Why This Is Not Just a Debt Payoff Calculator</h2>
+
+      <p>
+        A standard debt payoff calculator usually asks which balance should be
+        attacked first. That is useful once the cash cushion decision is already
+        handled. This tool sits one step earlier. It asks whether the next extra
+        dollars should go into cash, debt, or both.
+      </p>
+
+      <p>
+        That distinction matters because paying debt down to zero while holding
+        no emergency savings can backfire. One repair or medical bill may put the
+        balance right back on the card. On the other hand, keeping too much cash
+        while paying high credit card interest can slow recovery. The split is
+        the decision.
+      </p>
+    </section>
+
+    <section>
+      <h2>How to Read the Result</h2>
+
+      <h3>If savings get most of the split</h3>
+      <p>
+        That usually means the cash floor is too thin relative to household risk.
+        The goal is to prevent a normal surprise from creating new debt while
+        minimum payments continue.
+      </p>
+
+      <h3>If debt gets most of the split</h3>
+      <p>
+        That usually means a starter cushion or one-month cushion already exists,
+        and the interest rate is high enough that extra debt payoff has strong
+        value.
+      </p>
+
+      <h3>If the result is a balanced split</h3>
+      <p>
+        That usually means the household is in the middle: not fully protected by
+        cash, but also paying enough interest that debt cannot be ignored.
+      </p>
+    </section>
+
+    <section>
+      <h2>When to Ignore the Default Split</h2>
+
+      <p>
+        Some situations require judgment beyond a calculator. If a bill is
+        urgent, a payment plan is expiring, a credit card account is past due, a
+        utility could be disconnected, or housing is at risk, that immediate
+        need may override the normal savings versus debt split.
+      </p>
+
+      <p>
+        The same is true if a major emergency is likely soon. A known car repair,
+        medical bill, childcare gap, or income interruption can justify holding
+        more cash temporarily even when debt interest is high.
+      </p>
+    </section>
+
+    <section id="FinancialRedFlags">
+      <h2>Emergency Fund vs Debt Payoff Red Flags</h2>
+
+      <ul>
+        <li>You have no emergency savings and are sending every extra dollar to debt.</li>
+        <li>You have high-interest debt but keep adding to it after each surprise expense.</li>
+        <li>You are counting credit cards as your emergency fund.</li>
+        <li>You have dependents, home repair risk, or unstable income with no cash floor.</li>
+        <li>You are building a large cash cushion while very high-interest debt keeps growing.</li>
+        <li>You are making extra payments but missing minimums, insurance, rent, or utility obligations.</li>
+      </ul>
+    </section>
+
+    <section id="CalculatorAssumptions">
+      <h2>Emergency Fund vs Debt Payoff Calculator Assumptions</h2>
+
+      <p>
+        This calculator assumes minimum required payments are still being made.
+        The split applies only to extra money available after essentials and
+        required minimum debt payments. It is not meant to replace required
+        payments, rent, insurance, utilities, food, or transportation.
+      </p>
+
+      <p>
+        The calculator treats starter savings, one month of essentials, and high
+        interest debt as competing priorities. It gives more weight to emergency
+        savings when the cash floor is thin, and more weight to debt payoff when
+        savings are safer and the interest rate is high.
+      </p>
+    </section>
+
+    <section id="MethodologySection">
+      <h2>How ShouldISpend Calculates the Split</h2>
+
+      <p>
+        ShouldISpend estimates a starter cash floor, one month of essential
+        expenses, and current savings runway. It then weighs the debt interest
+        rate, debt balance, income stability, household risk, and the likelihood
+        of another surprise. The result is a practical split of the extra cash
+        available this month.
+      </p>
+
+      <p>
+        The result is intentionally different from the 3-month and 6-month
+        emergency fund calculators. Those pages calculate target amounts. This
+        page decides how to divide the next available dollars when savings and
+        debt are both competing for attention.
+      </p>
+    </section>
+
+    <section id="RelatedCalculators">
+      <h2>Emergency Savings Calculators</h2>
+
+      <div class="link-grid">
+        <a class="link-card" href="/emergency-savings-calculators">
+          <strong>Emergency Savings Calculators</strong>
+          <span>
+            See the full emergency savings cluster, from starter cushions to
+            3-month, 6-month, debt, and post-purchase emergency fund decisions.
+          </span>
+        </a>
+
+        <a class="link-card" href="/starter-emergency-fund-calculator">
+          <strong>Starter Emergency Fund Calculator</strong>
+          <span>
+            Build the first realistic cash cushion before chasing a full
+            emergency fund.
+          </span>
+        </a>
+
+        <a class="link-card" href="/3-month-emergency-fund-calculator">
+          <strong>3-Month Emergency Fund Calculator</strong>
+          <span>
+            Build the core emergency fund baseline from essential monthly
+            expenses.
+          </span>
+        </a>
+
+        <a class="link-card" href="/6-month-emergency-fund-calculator">
+          <strong>6-Month Emergency Fund Calculator</strong>
+          <span>
+            Build a stronger long-runway cushion for households with higher risk.
+          </span>
+        </a>
+
+        <a class="link-card" href="/should-i-use-my-emergency-fund">
+          <strong>Should I Use My Emergency Fund?</strong>
+          <span>
+            Decide whether a surprise expense is a true emergency, urgent but
+            plannable, or optional.
+          </span>
+        </a>
+
+        <a class="link-card" href="/emergency-fund-after-big-purchase-calculator">
+          <strong>Emergency Fund After Big Purchase Calculator</strong>
+          <span>
+            See how much cushion remains after a trip, repair, wedding, home
+            project, car cost, or other major purchase.
+          </span>
+        </a>
+      </div>
+    </section>
+
+    <FAQSection title="Emergency Fund vs Debt Payoff FAQ" faqs={emergencyFundVsDebtFaqs} />
+  </main>
+
+  <script is:inline>
+    document.addEventListener("DOMContentLoaded", function () {
+      const button = document.getElementById("calculateDebtVsFund");
+
+      if (!button) return;
+
+      const moneyLabelStyle =
+        "color: var(--muted); font-size: 0.82rem; font-weight: 800; letter-spacing: 0.04em; text-transform: uppercase; margin-bottom: 6px;";
+
+      const moneyValueStyle =
+        "color: var(--primary); font-size: clamp(2.25rem, 5.6vw, 3.45rem); font-weight: 950; line-height: 1.04; letter-spacing: -0.055em; margin: 4px 0 16px; display: block;";
+
+      const moneySubtextStyle =
+        "color: var(--text); font-size: 1.05rem; font-weight: 800; line-height: 1.55; margin-bottom: 14px;";
+
+      function money(value) {
+        return "$" + Math.round(value).toLocaleString("en-US");
+      }
+
+      function cleanNumber(id) {
+        const element = document.getElementById(id);
+        if (!element) return 0;
+        const value = Number(element.value);
+        return Number.isFinite(value) && value > 0 ? value : 0;
+      }
+
+      function clamp(value, min, max) {
+        return Math.max(min, Math.min(max, value));
+      }
+
+      button.addEventListener("click", function () {
+        const extraCash = cleanNumber("extraCash");
+        const essentials = cleanNumber("essentials");
+        const savings = cleanNumber("savings");
+        const debtBalance = cleanNumber("debtBalance");
+        const debtApr = cleanNumber("debtApr");
+        const minimumPayments = cleanNumber("minimumPayments");
+
+        const incomeStability = document.getElementById("incomeStability").value;
+        const householdRisk = document.getElementById("householdRisk").value;
+        const debtType = document.getElementById("debtType").value;
+        const nextEmergency = document.getElementById("nextEmergency").value;
+
+        const results = document.getElementById("calcResults");
+        const verdictEl = document.getElementById("calcVerdict");
+        const splitEl = document.getElementById("calcSplit");
+        const milestonesEl = document.getElementById("calcMilestones");
+        const debtCostEl = document.getElementById("calcDebtCost");
+        const nextStepEl = document.getElementById("calcNextStep");
+        const analysisEl = document.getElementById("calcAnalysis");
+
+        results.classList.add("active");
+
+        if (
+          extraCash <= 0 ||
+          essentials <= 0 ||
+          !incomeStability ||
+          !householdRisk ||
+          !debtType ||
+          !nextEmergency
+        ) {
+          verdictEl.innerText = "Add the missing details";
+          splitEl.innerHTML =
+            "<div style=\"" +
+            moneyLabelStyle +
+            "\">Recommended split</div><div style=\"" +
+            moneyValueStyle +
+            "\">Need details</div><div style=\"" +
+            moneySubtextStyle +
+            "\">Enter extra cash, monthly essentials, and the dropdown details to calculate the savings versus debt split.</div>";
+          milestonesEl.innerText = "";
+          debtCostEl.innerText = "";
+          nextStepEl.innerText = "";
+          analysisEl.innerText =
+            "Current savings, debt balance, APR, and minimum payments can be zero, but the calculator needs extra cash, essential expenses, and household risk details.";
+          return;
+        }
+
+        const starterFloor = Math.max(500, Math.min(1000, essentials * 0.25));
+        const oneMonthTarget = essentials;
+        const starterGap = Math.max(0, starterFloor - savings);
+        const oneMonthGap = Math.max(0, oneMonthTarget - savings);
+        const monthsCovered = savings / essentials;
+        const monthlyInterest = debtBalance * (debtApr / 100) / 12;
+
+        let savingsPercent = 50;
+
+        if (savings < starterFloor) {
+          savingsPercent = 85;
+        } else if (savings < oneMonthTarget) {
+          savingsPercent = 65;
+        } else {
+          savingsPercent = 35;
+        }
+
+        if (debtBalance <= 0 || debtApr <= 0) {
+          savingsPercent = 100;
+        } else {
+          if (debtApr >= 25) savingsPercent -= 25;
+          else if (debtApr >= 18) savingsPercent -= 18;
+          else if (debtApr >= 10) savingsPercent -= 8;
+          else if (debtApr < 6) savingsPercent += 10;
+
+          if (debtType === "creditCard") savingsPercent -= 8;
+          if (debtType === "personalLoan") savingsPercent -= 4;
+          if (debtType === "medical") savingsPercent += 8;
+          if (debtType === "lowInterest") savingsPercent += 12;
+        }
+
+        if (incomeStability === "unstable") savingsPercent += 15;
+        if (incomeStability === "average") savingsPercent += 6;
+
+        if (householdRisk === "high") savingsPercent += 15;
+        if (householdRisk === "moderate") savingsPercent += 7;
+
+        if (nextEmergency === "high") savingsPercent += 12;
+        if (nextEmergency === "medium") savingsPercent += 5;
+
+        if (savings <= 0) {
+          savingsPercent = Math.max(savingsPercent, 80);
+        }
+
+        if (savings < starterFloor && debtApr >= 30 && debtBalance > 0) {
+          savingsPercent = clamp(savingsPercent, 65, 85);
+        } else if (savings < starterFloor) {
+          savingsPercent = clamp(savingsPercent, 75, 100);
+        } else if (savings >= oneMonthTarget && debtApr >= 18 && debtBalance > 0) {
+          savingsPercent = clamp(savingsPercent, 10, 45);
+        } else {
+          savingsPercent = clamp(savingsPercent, 0, 100);
+        }
+
+        const roundedSavingsPercent = Math.round(savingsPercent / 5) * 5;
+        const debtPercent = 100 - roundedSavingsPercent;
+
+        const savingsAmount = extraCash * roundedSavingsPercent / 100;
+        const debtAmount = extraCash - savingsAmount;
+
+        let verdict = "";
+        let analysis = "";
+
+        if (debtBalance <= 0 || debtApr <= 0) {
+          verdict = "Build Emergency Savings";
+          analysis =
+            "Because no active interest-bearing debt was entered, the extra money should go toward emergency savings or another protected savings bucket.";
+        } else if (roundedSavingsPercent >= 75) {
+          verdict = "Build the Cash Floor First";
+          analysis =
+            "Your emergency cushion is thin enough that most extra money should build cash before aggressive extra debt payoff.";
+        } else if (roundedSavingsPercent >= 55) {
+          verdict = "Savings First, Debt Still Matters";
+          analysis =
+            "The cash cushion still needs work, but the debt is meaningful enough that some extra payoff should happen at the same time.";
+        } else if (roundedSavingsPercent >= 35) {
+          verdict = "Split the Extra Cash";
+          analysis =
+            "This is the messy middle. Savings are not finished, but the debt interest cost is large enough that a balanced split makes sense.";
+        } else if (roundedSavingsPercent > 0) {
+          verdict = "Lean Toward Debt Payoff";
+          analysis =
+            "Your cash cushion is stronger or the debt is expensive enough that most extra money should attack the balance.";
+        } else {
+          verdict = "Attack the Debt";
+          analysis =
+            "Your emergency cushion appears strong enough relative to the inputs that the extra money can focus on debt payoff.";
+        }
+
+        if (minimumPayments > 0) {
+          analysis +=
+            " This assumes required monthly debt payments are already being made before this extra split is applied.";
+        }
+
+        splitEl.innerHTML =
+          "<div style=\"" +
+          moneyLabelStyle +
+          "\">Recommended next-dollar split</div><div style=\"" +
+          moneyValueStyle +
+          "\">" +
+          money(savingsAmount) +
+          " savings / " +
+          money(debtAmount) +
+          " debt</div><div style=\"" +
+          moneySubtextStyle +
+          "\">That is about " +
+          roundedSavingsPercent +
+          "% to emergency savings and " +
+          debtPercent +
+          "% to extra debt payoff.</div>";
+
+        milestonesEl.innerText =
+          "Emergency milestones: starter floor is about " +
+          money(starterFloor) +
+          ", one month of essentials is " +
+          money(oneMonthTarget) +
+          ", and current savings cover about " +
+          monthsCovered.toFixed(1) +
+          " months.";
+
+        if (debtBalance > 0 && debtApr > 0) {
+          debtCostEl.innerText =
+            "Estimated interest drag: about " +
+            money(monthlyInterest) +
+            " per month before considering minimum payments, new charges, or compounding details.";
+        } else {
+          debtCostEl.innerText =
+            "Estimated interest drag: $0 based on the debt balance and APR entered.";
+        }
+
+        if (starterGap > 0) {
+          nextStepEl.innerText =
+            "Next milestone: close the starter cash gap of " +
+            money(starterGap) +
+            " while keeping required debt payments current.";
+        } else if (oneMonthGap > 0) {
+          nextStepEl.innerText =
+            "Next milestone: build toward one month of essentials. Current gap to one month is " +
+            money(oneMonthGap) +
+            ".";
+        } else if (debtBalance > 0) {
+          nextStepEl.innerText =
+            "Next milestone: because one month of essentials is covered, extra payoff can focus more heavily on the debt balance.";
+        } else {
+          nextStepEl.innerText =
+            "Next milestone: with no interest-bearing debt entered, keep building toward a 3-month or 6-month emergency fund.";
+        }
+
+        verdictEl.innerText = verdict;
+        analysisEl.innerText = analysis;
+      });
+    });
+  </script>
+</Layout>

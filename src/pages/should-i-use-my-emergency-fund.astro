@@ -1,0 +1,1004 @@
+---
+import Layout from "../layouts/Layout.astro";
+import FAQSection from "../components/FAQSection.astro";
+
+const useEmergencyFundFaqs = [
+  {
+    question: "When should I use my emergency fund?",
+    answer:
+      "Use emergency savings for urgent, necessary expenses that protect health, safety, housing, transportation, income, or essential family needs. Avoid using it for optional upgrades, trips, shopping, or costs that can wait.",
+  },
+  {
+    question: "Should I use my emergency fund if the expense is optional?",
+    answer:
+      "Usually no. If the expense is optional, it should normally come from planned savings, not emergency savings. If your savings are extremely strong and the cost is tiny, the financial pressure may be low, but it still may not be a true emergency.",
+  },
+  {
+    question: "What if using my emergency fund leaves me with nothing?",
+    answer:
+      "If the expense is essential, using the fund may still be necessary, but the pressure is high and you need a rebuild plan. If the expense can wait, draining the emergency fund is usually a warning sign.",
+  },
+  {
+    question: "Should I use emergency savings or a credit card?",
+    answer:
+      "Emergency savings are usually safer than high-interest credit card debt, but draining all cash can create risk too. The better answer depends on urgency, remaining cushion, debt cost, income stability, and how quickly savings can be rebuilt.",
+  },
+  {
+    question: "How much emergency fund should remain after I use it?",
+    answer:
+      "At minimum, many households should try to keep a starter cushion or one month of essentials. Higher-risk households may need more. This calculator estimates the after-use cushion and whether the expense breaches the safety floor.",
+  },
+];
+---
+
+<Layout
+  title="Should I Use My Emergency Fund for This? | ShouldISpend"
+  description="Decide whether to use emergency savings for a surprise expense using urgency, expense type, remaining cushion, debt need, and rebuild plan."
+>
+  <style>
+    .container {
+      max-width: 920px;
+      margin: 0 auto;
+      padding: 80px 24px;
+    }
+
+    .eyebrow {
+      color: var(--accent);
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      font-size: 0.8rem;
+      font-weight: 700;
+      margin-bottom: 16px;
+    }
+
+    h1 {
+      font-size: clamp(2.55rem, 7vw, 4.45rem);
+      line-height: 1;
+      margin-bottom: 24px;
+      max-width: 860px;
+    }
+
+    .intro {
+      max-width: 800px;
+      color: var(--muted);
+      font-size: 1.15rem;
+      line-height: 1.8;
+      margin-bottom: 48px;
+    }
+
+    section {
+      margin-top: 64px;
+    }
+
+    h2 {
+      font-size: 2rem;
+      margin-bottom: 18px;
+      line-height: 1.2;
+    }
+
+    h3 {
+      font-size: 1.25rem;
+      margin-top: 30px;
+      margin-bottom: 10px;
+    }
+
+    p,
+    li {
+      color: var(--muted);
+      line-height: 1.8;
+      margin-bottom: 18px;
+    }
+
+    a {
+      color: var(--primary);
+    }
+
+    .calculator {
+      border: 1px solid var(--border);
+      background: var(--card);
+      border-radius: 24px;
+      padding: 30px;
+      margin: 44px 0;
+    }
+
+    .calc-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 20px;
+    }
+
+    .calc-field {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .calc-field label {
+      font-weight: 700;
+      margin-bottom: 10px;
+      color: var(--text);
+    }
+
+    .calc-field input,
+    .calc-field select {
+      padding: 14px;
+      border-radius: 12px;
+      border: 1px solid var(--border);
+      font-size: 1rem;
+    }
+
+    .calc-button {
+      margin-top: 26px;
+      background: var(--primary);
+      color: white;
+      border: none;
+      border-radius: 14px;
+      padding: 15px 22px;
+      font-size: 1rem;
+      font-weight: 800;
+      cursor: pointer;
+    }
+
+    .calc-button:hover {
+      opacity: 0.92;
+    }
+
+    .calc-results {
+      margin-top: 28px;
+      border: 1px solid #dbe4ee;
+      background: #f8fafc;
+      border-radius: 20px;
+      padding: 28px;
+      display: none;
+    }
+
+    .calc-results.active {
+      display: block;
+    }
+
+    .calc-verdict {
+      font-size: 1.8rem;
+      font-weight: 800;
+      color: var(--primary);
+      margin-bottom: 14px;
+    }
+
+    .pressure-wrap {
+      margin: 18px 0 22px;
+    }
+
+    .pressure-topline {
+      display: flex;
+      justify-content: space-between;
+      gap: 18px;
+      align-items: baseline;
+      margin-bottom: 10px;
+      color: var(--text);
+      font-weight: 800;
+    }
+
+    .pressure-score {
+      font-size: 1.15rem;
+      color: var(--primary);
+    }
+
+    .pressure-track {
+      width: 100%;
+      height: 18px;
+      border-radius: 999px;
+      background: #e5e7eb;
+      overflow: hidden;
+      border: 1px solid #d1d5db;
+    }
+
+    .pressure-fill {
+      width: 0%;
+      height: 100%;
+      border-radius: 999px;
+      background: #0f766e;
+      transition: width 0.2s ease;
+    }
+
+    .calc-stat {
+      font-size: 1.05rem;
+      margin-bottom: 12px;
+      color: var(--text);
+      line-height: 1.6;
+    }
+
+    .calc-analysis {
+      color: var(--muted);
+      line-height: 1.8;
+      margin-top: 18px;
+    }
+
+    .callout {
+      border: 1px solid var(--border);
+      background: var(--card);
+      border-radius: 24px;
+      padding: 26px;
+      margin: 36px 0;
+    }
+
+    .callout strong {
+      color: var(--text);
+    }
+
+    .info-grid,
+    .link-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 16px;
+      margin-top: 22px;
+    }
+
+    .info-card,
+    .link-card {
+      display: block;
+      border: 1px solid var(--border);
+      background: var(--card);
+      border-radius: 18px;
+      padding: 18px;
+      text-decoration: none;
+      color: inherit;
+    }
+
+    .link-card {
+      transition: transform 0.15s ease;
+    }
+
+    .link-card:hover {
+      transform: translateY(-2px);
+    }
+
+    .info-card h3,
+    .link-card strong {
+      display: block;
+      margin: 0 0 8px;
+      color: var(--text);
+      line-height: 1.3;
+    }
+
+    .info-card p,
+    .link-card span {
+      color: var(--muted);
+      line-height: 1.6;
+      font-size: 0.95rem;
+      margin: 0;
+    }
+  </style>
+
+  <main class="container">
+    <div class="eyebrow">Emergency Fund Use Calculator</div>
+
+    <h1>Should I Use My Emergency Fund for This?</h1>
+
+    <p class="intro">
+      Emergency savings are for real disruptions, but not every surprise is the
+      same. This calculator judges the expense itself, the urgency, the cushion
+      left afterward, whether debt would be needed, and how quickly the fund can
+      be rebuilt.
+    </p>
+
+    <div class="calculator">
+      <div class="calc-grid">
+        <div class="calc-field">
+          <label for="expenseAmount">Expense Amount ($)</label>
+          <input type="number" id="expenseAmount" placeholder="1200" min="0" inputmode="decimal" />
+        </div>
+
+        <div class="calc-field">
+          <label for="confirmedHelp">Confirmed Help or Reimbursement ($)</label>
+          <input type="number" id="confirmedHelp" placeholder="300" min="0" inputmode="decimal" />
+        </div>
+
+        <div class="calc-field">
+          <label for="savings">Current Emergency Savings ($)</label>
+          <input type="number" id="savings" placeholder="3500" min="0" inputmode="decimal" />
+        </div>
+
+        <div class="calc-field">
+          <label for="income">Monthly Take-Home Income ($)</label>
+          <input type="number" id="income" placeholder="5200" min="0" inputmode="decimal" />
+        </div>
+
+        <div class="calc-field">
+          <label for="essentials">Monthly Essential Expenses ($)</label>
+          <input type="number" id="essentials" placeholder="3800" min="0" inputmode="decimal" />
+        </div>
+
+        <div class="calc-field">
+          <label for="rebuildMonthly">Amount You Can Rebuild Per Month ($)</label>
+          <input type="number" id="rebuildMonthly" placeholder="400" min="0" inputmode="decimal" />
+        </div>
+
+        <div class="calc-field">
+          <label for="expenseType">Expense Type</label>
+          <select id="expenseType">
+            <option value="" disabled selected>Select expense type</option>
+            <option value="safety">Safety, housing, utility, or essential repair</option>
+            <option value="medical">Medical, dental, prescription, or health need</option>
+            <option value="transportation">Car repair or transportation needed for work</option>
+            <option value="income">Income protection, work tool, or required license</option>
+            <option value="family">Childcare, dependent, pet, or family care need</option>
+            <option value="important">Important but not immediately essential</option>
+            <option value="optional">Optional want, upgrade, shopping, or convenience</option>
+            <option value="travel">Travel, entertainment, event, or experience</option>
+          </select>
+        </div>
+
+        <div class="calc-field">
+          <label for="urgency">Urgency</label>
+          <select id="urgency">
+            <option value="" disabled selected>Select urgency</option>
+            <option value="now">Must be handled now</option>
+            <option value="week">Needed within a week</option>
+            <option value="month">Needed this month</option>
+            <option value="wait">Can wait or be planned</option>
+            <option value="optional">Fully optional</option>
+          </select>
+        </div>
+
+        <div class="calc-field">
+          <label for="debtPlan">If Savings Are Short</label>
+          <select id="debtPlan">
+            <option value="" disabled selected>Select backup plan</option>
+            <option value="none">No debt needed</option>
+            <option value="smallCard">Small credit card balance or payment plan</option>
+            <option value="paymentPlan">Structured payment plan</option>
+            <option value="highInterest">High-interest credit card or loan</option>
+            <option value="noPlan">No clear way to cover the shortfall</option>
+          </select>
+        </div>
+
+        <div class="calc-field">
+          <label for="incomeStability">Income Stability</label>
+          <select id="incomeStability">
+            <option value="" disabled selected>Select income stability</option>
+            <option value="stable">Stable paycheck</option>
+            <option value="average">Somewhat stable</option>
+            <option value="unstable">Irregular, freelance, commission, or at risk</option>
+          </select>
+        </div>
+
+        <div class="calc-field">
+          <label for="householdRisk">Household Risk</label>
+          <select id="householdRisk">
+            <option value="" disabled selected>Select household risk</option>
+            <option value="low">Low: few dependents, low repair risk</option>
+            <option value="moderate">Moderate: dependents, car need, rent pressure, or repair risk</option>
+            <option value="high">High: one income, dependents, medical risk, or home repair risk</option>
+          </select>
+        </div>
+      </div>
+
+      <button class="calc-button sis-action-button sis-calculate-button" id="calculateEmergencyUse">
+        Calculate Emergency Fund Pressure
+      </button>
+
+      <div class="calc-results" id="calcResults">
+        <div class="calc-verdict" id="calcVerdict"></div>
+
+        <div class="pressure-wrap">
+          <div class="pressure-topline">
+            <span>Emergency fund pressure</span>
+            <span class="pressure-score" id="pressureScore">0/100</span>
+          </div>
+          <div class="pressure-track">
+            <div class="pressure-fill" id="pressureFill"></div>
+          </div>
+        </div>
+
+        <div class="calc-stat" id="calcStatus"></div>
+        <div class="calc-stat" id="calcAfterUse"></div>
+        <div class="calc-stat" id="calcSafeUse"></div>
+        <div class="calc-stat" id="calcDebt"></div>
+        <div class="calc-stat" id="calcRebuild"></div>
+        <div class="calc-analysis" id="calcAnalysis"></div>
+      </div>
+    </div>
+
+    <div class="callout">
+      <p>
+        <strong>Key question:</strong> the issue is not only whether you can pay.
+        It is whether the expense is a real emergency and what your safety net
+        looks like after the money is gone.
+      </p>
+    </div>
+
+    <section>
+      <h2>What This Calculator Does Differently</h2>
+
+      <p>
+        The starter, 3-month, and 6-month calculators build savings targets. The
+        debt payoff calculator allocates extra cash. This page has a different
+        job: it judges whether a specific expense deserves emergency fund money.
+      </p>
+
+      <p>
+        That makes the logic more like a decision screen than a savings target.
+        A medical bill, car repair, utility problem, or housing issue can be a
+        real emergency even when the pressure is high. A vacation, upgrade, or
+        optional purchase can have low financial pressure for a wealthy household
+        but still fail the emergency test.
+      </p>
+
+      <p>
+        The output is a 0 to 100 pressure score, a use-or-wait verdict, the
+        after-use cushion, the safe amount available before breaching a cash
+        floor, and the rebuild timeline.
+      </p>
+    </section>
+
+    <section>
+      <h2>What Counts as a Real Emergency?</h2>
+
+      <p>
+        A real emergency usually protects basic stability. It keeps the household
+        safe, housed, mobile, employed, healthy, or able to care for dependents.
+        The expense may still create pressure, but the reason for using the fund
+        is stronger.
+      </p>
+
+      <div class="info-grid">
+        <div class="info-card">
+          <h3>Usually emergency fund eligible</h3>
+          <p>
+            Urgent medical care, essential car repair, housing problems, utility
+            shutoff risk, safety repairs, childcare gaps, or income protection.
+          </p>
+        </div>
+
+        <div class="info-card">
+          <h3>Sometimes eligible</h3>
+          <p>
+            Important repairs, family needs, pet care, dental work, travel for a
+            serious family need, or costs that prevent larger damage.
+          </p>
+        </div>
+
+        <div class="info-card">
+          <h3>Usually not eligible</h3>
+          <p>
+            Vacations, entertainment, shopping, upgrades, furniture wants,
+            optional events, convenience purchases, or costs that can wait.
+          </p>
+        </div>
+
+        <div class="info-card">
+          <h3>Always check the after-use cushion</h3>
+          <p>
+            Even a real emergency can leave the household exposed. The rebuild
+            plan matters when savings drop below one month of essentials.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <h2>How the Extreme Cases Should Behave</h2>
+
+      <p>
+        A good emergency fund calculator cannot punish a household that is
+        clearly safe. If the cost is fully covered, no debt is needed, emergency
+        savings remain strong, income is stable, and the expense is tiny relative
+        to the household, the pressure should be zero or very close to zero.
+      </p>
+
+      <p>
+        It also cannot understate danger. If income is near zero, emergency
+        savings are empty, the expense is real, and the only path is high-interest
+        debt or no clear plan, pressure should reach the top of the scale. That
+        does not mean the need is fake. It means the financial situation is
+        critical and the household may need outside help, a payment plan, or a
+        lower-cost option.
+      </p>
+    </section>
+
+    <section>
+      <h2>How to Read the Result</h2>
+
+      <h3>Low pressure</h3>
+      <p>
+        Low pressure means the expense can be handled without seriously damaging
+        the emergency cushion. If the expense is optional, the better wording may
+        still be planned spending rather than emergency spending.
+      </p>
+
+      <h3>Moderate pressure</h3>
+      <p>
+        Moderate pressure means using the fund may be reasonable, but the
+        household needs a rebuild plan and should avoid stacking another optional
+        purchase on top of it.
+      </p>
+
+      <h3>High pressure</h3>
+      <p>
+        High pressure means the expense drains too much cash, creates debt, or
+        leaves the household below a safety floor. Essential needs may still have
+        to be paid, but the recovery plan matters immediately.
+      </p>
+    </section>
+
+    <section>
+      <h2>When Not to Use the Emergency Fund</h2>
+
+      <p>
+        Do not use emergency savings just because the purchase feels urgent in
+        the moment. A discount, sale, invitation, vacation deadline, furniture
+        upgrade, entertainment event, or preferred version of a purchase is not
+        usually an emergency.
+      </p>
+
+      <p>
+        If the cost can wait, a planned savings bucket is safer. That protects
+        the real emergency fund for the events that cannot wait.
+      </p>
+    </section>
+
+    <section id="FinancialRedFlags">
+      <h2>Emergency Fund Use Red Flags</h2>
+
+      <ul>
+        <li>The expense is optional, but it would drain emergency savings.</li>
+        <li>You would need high-interest debt after using the emergency fund.</li>
+        <li>Using the fund would leave less than a starter cushion or one month of essentials.</li>
+        <li>You have unstable income and no rebuild plan.</li>
+        <li>You are using emergency savings for planned purchases repeatedly.</li>
+        <li>A second normal emergency would require credit cards immediately.</li>
+      </ul>
+    </section>
+
+    <section id="CalculatorAssumptions">
+      <h2>Should I Use My Emergency Fund Calculator Assumptions</h2>
+
+      <p>
+        This calculator assumes emergency savings are money actually available
+        for emergencies, not money already assigned to a trip, wedding, home
+        project, car purchase, tax bill, or another planned cost.
+      </p>
+
+      <p>
+        The calculator gives lower pressure when the cost is covered, debt is not
+        needed, savings remain strong afterward, income is stable, and the cost
+        is small relative to the household. It gives higher pressure when the
+        expense is optional, debt is needed, income is unstable, savings are thin,
+        or the household would fall below a basic safety floor.
+      </p>
+    </section>
+
+    <section id="MethodologySection">
+      <h2>How ShouldISpend Calculates Emergency Fund Pressure</h2>
+
+      <p>
+        ShouldISpend starts with the uncovered cost after confirmed help. It then
+        looks at the expense type, urgency, emergency savings before and after
+        the payment, debt needed, monthly essentials, income stability, household
+        risk, and rebuild ability.
+      </p>
+
+      <p>
+        The result is intentionally different from the target calculators. This
+        page does not ask how much emergency savings you should eventually have.
+        It asks whether this specific expense should use the fund and how exposed
+        the household would be afterward.
+      </p>
+    </section>
+
+    <section id="RelatedCalculators">
+      <h2>Emergency Savings Calculators</h2>
+
+      <div class="link-grid">
+        <a class="link-card" href="/emergency-savings-calculators">
+          <strong>Emergency Savings Calculators</strong>
+          <span>
+            See the full emergency savings cluster, from starter cushions to
+            3-month, 6-month, debt, emergency fund use, and post-purchase decisions.
+          </span>
+        </a>
+
+        <a class="link-card" href="/starter-emergency-fund-calculator">
+          <strong>Starter Emergency Fund Calculator</strong>
+          <span>
+            Build the first realistic cash cushion before chasing a full
+            emergency fund.
+          </span>
+        </a>
+
+        <a class="link-card" href="/3-month-emergency-fund-calculator">
+          <strong>3-Month Emergency Fund Calculator</strong>
+          <span>
+            Build the core emergency fund baseline from essential monthly
+            expenses.
+          </span>
+        </a>
+
+        <a class="link-card" href="/6-month-emergency-fund-calculator">
+          <strong>6-Month Emergency Fund Calculator</strong>
+          <span>
+            Build a stronger long-runway cushion for households with higher risk.
+          </span>
+        </a>
+
+        <a class="link-card" href="/emergency-fund-vs-debt-payoff-calculator">
+          <strong>Emergency Fund vs Debt Payoff Calculator</strong>
+          <span>
+            Decide whether extra cash should build emergency savings, pay down
+            debt, or split between both.
+          </span>
+        </a>
+
+        <a class="link-card" href="/emergency-fund-after-big-purchase-calculator">
+          <strong>Emergency Fund After Big Purchase Calculator</strong>
+          <span>
+            See how much cushion remains after a trip, repair, wedding, home
+            project, car cost, or other major purchase.
+          </span>
+        </a>
+      </div>
+    </section>
+
+    <FAQSection title="Should I Use My Emergency Fund FAQ" faqs={useEmergencyFundFaqs} />
+  </main>
+
+  <script is:inline>
+    document.addEventListener("DOMContentLoaded", function () {
+      const button = document.getElementById("calculateEmergencyUse");
+
+      if (!button) return;
+
+      function money(value) {
+        return "$" + Math.round(value).toLocaleString("en-US");
+      }
+
+      function cleanNumber(id) {
+        const element = document.getElementById(id);
+        if (!element) return 0;
+        const value = Number(element.value);
+        return Number.isFinite(value) && value > 0 ? value : 0;
+      }
+
+      function clamp(value, min, max) {
+        return Math.max(min, Math.min(max, value));
+      }
+
+      function monthWord(months) {
+        return months === 1 ? "month" : "months";
+      }
+
+      function isOptionalType(type) {
+        return type === "optional" || type === "travel";
+      }
+
+      function isEssentialType(type) {
+        return (
+          type === "safety" ||
+          type === "medical" ||
+          type === "transportation" ||
+          type === "income" ||
+          type === "family"
+        );
+      }
+
+      button.addEventListener("click", function () {
+        const expenseAmount = cleanNumber("expenseAmount");
+        const confirmedHelp = cleanNumber("confirmedHelp");
+        const savings = cleanNumber("savings");
+        const income = cleanNumber("income");
+        const essentials = cleanNumber("essentials");
+        const rebuildMonthly = cleanNumber("rebuildMonthly");
+
+        const expenseType = document.getElementById("expenseType").value;
+        const urgency = document.getElementById("urgency").value;
+        const debtPlan = document.getElementById("debtPlan").value;
+        const incomeStability = document.getElementById("incomeStability").value;
+        const householdRisk = document.getElementById("householdRisk").value;
+
+        const results = document.getElementById("calcResults");
+        const verdictEl = document.getElementById("calcVerdict");
+        const scoreEl = document.getElementById("pressureScore");
+        const fillEl = document.getElementById("pressureFill");
+        const statusEl = document.getElementById("calcStatus");
+        const afterUseEl = document.getElementById("calcAfterUse");
+        const safeUseEl = document.getElementById("calcSafeUse");
+        const debtEl = document.getElementById("calcDebt");
+        const rebuildEl = document.getElementById("calcRebuild");
+        const analysisEl = document.getElementById("calcAnalysis");
+
+        results.classList.add("active");
+
+        if (
+          expenseAmount <= 0 ||
+          essentials <= 0 ||
+          !expenseType ||
+          !urgency ||
+          !debtPlan ||
+          !incomeStability ||
+          !householdRisk
+        ) {
+          verdictEl.innerText = "Add the missing details";
+          scoreEl.innerText = "0/100";
+          fillEl.style.width = "0%";
+          fillEl.style.background = "#0f766e";
+          statusEl.innerText =
+            "Enter an expense amount, monthly essentials, and the dropdown details to calculate emergency fund pressure.";
+          afterUseEl.innerText = "";
+          safeUseEl.innerText = "";
+          debtEl.innerText = "";
+          rebuildEl.innerText = "";
+          analysisEl.innerText =
+            "Current savings, confirmed help, income, and rebuild amount can be zero, but the calculator needs the cost, essentials, expense type, urgency, debt plan, and household risk details.";
+          return;
+        }
+
+        const uncoveredCost = Math.max(0, expenseAmount - confirmedHelp);
+        const usedFromSavings = Math.min(uncoveredCost, savings);
+        const debtNeeded = Math.max(0, uncoveredCost - savings);
+        const savingsAfter = Math.max(0, savings - uncoveredCost);
+        const afterMonths = savingsAfter / essentials;
+        const beforeMonths = savings / essentials;
+        const costIncomeRatio = income > 0 ? uncoveredCost / income : 9;
+        const starterFloor = Math.max(500, Math.min(1000, essentials * 0.25));
+
+        let protectionFloor = starterFloor;
+
+        if (householdRisk === "moderate" || incomeStability === "unstable") {
+          protectionFloor = essentials;
+        }
+
+        if (householdRisk === "high") {
+          protectionFloor = essentials * 1.5;
+        }
+
+        const cashSafeAmount = Math.max(0, savings - protectionFloor);
+        const floorGapAfterUse = Math.max(0, protectionFloor - savingsAfter);
+        const rebuildTarget = Math.max(protectionFloor, savings);
+        const rebuildGap = Math.max(0, rebuildTarget - savingsAfter);
+
+        let score = 35;
+
+        if (uncoveredCost <= 0) {
+          score = 0;
+        } else {
+          if (afterMonths >= 6) score += 0;
+          else if (afterMonths >= 3) score += 5;
+          else if (afterMonths >= 1) score += 25;
+          else if (afterMonths > 0) score += 45;
+          else score += 65;
+
+          if (debtNeeded > 0) {
+            if (debtPlan === "highInterest") score += 35;
+            else if (debtPlan === "noPlan") score += 40;
+            else if (debtPlan === "smallCard") score += 25;
+            else if (debtPlan === "paymentPlan") score += 15;
+            else score += 20;
+          }
+
+          if (isOptionalType(expenseType)) score += 25;
+          else if (expenseType === "important") score += 12;
+          else if (isEssentialType(expenseType)) score -= 6;
+
+          if (urgency === "optional") score += 22;
+          else if (urgency === "wait") score += 16;
+          else if (urgency === "month") score += 6;
+          else if (urgency === "now" || urgency === "week") score -= 4;
+
+          if (costIncomeRatio >= 1) score += 30;
+          else if (costIncomeRatio >= 0.5) score += 20;
+          else if (costIncomeRatio <= 0.05) score -= 15;
+
+          if (incomeStability === "unstable") score += 12;
+          else if (incomeStability === "average") score += 5;
+          else score -= 5;
+
+          if (householdRisk === "high") score += 12;
+          else if (householdRisk === "moderate") score += 6;
+          else score -= 4;
+
+          if (floorGapAfterUse > 0) score += 12;
+
+          if (rebuildMonthly > 0 && rebuildGap > 0) {
+            const rebuildMonths = Math.ceil(rebuildGap / rebuildMonthly);
+            if (rebuildMonths <= 3) score -= 6;
+            else if (rebuildMonths >= 12) score += 10;
+          }
+
+          score = clamp(score, 0, 100);
+        }
+
+        const costIsTinyForIncome =
+          income > 0 && uncoveredCost / income <= 0.01;
+
+        const costIsVerySmallForIncome =
+          income > 0 && uncoveredCost / income <= 0.05;
+
+        const afterUseIsComfortable =
+          afterMonths >= 3 ||
+          savingsAfter >= protectionFloor * 3 ||
+          (income >= essentials * 8 && savingsAfter >= protectionFloor);
+
+        const afterUseIsVeryStrong =
+          afterMonths >= 6 ||
+          savingsAfter >= protectionFloor * 6;
+
+        const fullyCoveredNoDebt =
+          uncoveredCost <= 0 ||
+          (savings >= uncoveredCost && debtNeeded === 0);
+
+        const noStressBasics =
+          fullyCoveredNoDebt &&
+          incomeStability !== "unstable" &&
+          householdRisk !== "high";
+
+        const zeroPressureCase =
+          uncoveredCost <= 0 ||
+          (
+            noStressBasics &&
+            (
+              afterUseIsVeryStrong ||
+              (afterUseIsComfortable && costIsTinyForIncome) ||
+              (income >= 250000 && savingsAfter >= protectionFloor) ||
+              (savingsAfter >= 100000 && costIsVerySmallForIncome)
+            )
+          );
+
+        const ultraCritical =
+          uncoveredCost > 0 &&
+          savings <= 0 &&
+          debtNeeded > 0 &&
+          (
+            income <= 0 ||
+            income <= essentials ||
+            essentials >= income * 0.9 ||
+            debtPlan === "highInterest" ||
+            debtPlan === "noPlan"
+          );
+
+        const optionalCritical =
+          isOptionalType(expenseType) &&
+          debtNeeded > 0 &&
+          savings <= 0 &&
+          (debtPlan === "highInterest" || debtPlan === "noPlan");
+
+        if (zeroPressureCase) {
+          score = 0;
+        }
+
+        if (ultraCritical || optionalCritical) {
+          score = 100;
+        }
+
+        score = Math.round(clamp(score, 0, 100));
+
+        let verdict = "";
+        let status = "";
+        let analysis = "";
+
+        if (score === 0) {
+          if (uncoveredCost <= 0) {
+            verdict = "Covered Without Emergency Fund Pressure";
+            status =
+              "Confirmed help or reimbursement covers the cost, so the emergency fund does not need to absorb it.";
+          } else if (isOptionalType(expenseType)) {
+            verdict = "Zero Financial Pressure, Not a True Emergency";
+            status =
+              "The household appears strong enough to cover the cost with no emergency-fund strain, but the expense still looks optional rather than emergency-fund eligible.";
+          } else {
+            verdict = "Zero Emergency Fund Pressure";
+            status =
+              "The cost is covered, no debt is needed, and either income or remaining emergency savings makes the financial pressure effectively zero.";
+          }
+        } else if (score <= 20) {
+          verdict = isOptionalType(expenseType)
+            ? "Not an Emergency, but Low Financial Harm"
+            : "Low Pressure to Use the Fund";
+          status =
+            "Using emergency savings appears financially manageable based on the remaining cushion and debt need.";
+        } else if (score <= 45) {
+          verdict = "Use Carefully and Rebuild";
+          status =
+            "Using the fund may be reasonable, but the after-use cushion and rebuild plan matter.";
+        } else if (score <= 70) {
+          verdict = "High Caution";
+          status =
+            "This use would create meaningful pressure by reducing the emergency cushion, requiring debt, or slowing recovery.";
+        } else if (score <= 89) {
+          verdict = isEssentialType(expenseType)
+            ? "Use Only Because It Is Essential"
+            : "Avoid Unless It Cannot Wait";
+          status =
+            "The expense puts the safety net under serious strain. If it is not essential, waiting is safer.";
+        } else {
+          verdict = "Critical Emergency Fund Pressure";
+          status =
+            "The expense would leave the household highly exposed or dependent on risky debt. Look for outside help, a lower-cost option, or a payment plan if possible.";
+        }
+
+        if (isEssentialType(expenseType)) {
+          analysis =
+            "This looks closer to a real emergency because it protects health, safety, housing, transportation, income, or essential family stability.";
+        } else if (expenseType === "important") {
+          analysis =
+            "This may be important, but it is not automatically an emergency. The timing and after-use cushion should decide how aggressive you are.";
+        } else {
+          analysis =
+            "This looks optional. Even when the score is low, planned savings are usually the cleaner bucket than emergency savings.";
+        }
+
+        if (debtNeeded > 0) {
+          analysis +=
+            " Savings do not fully cover the uncovered cost, so the backup plan matters.";
+        }
+
+        if (afterMonths < 1 && uncoveredCost > 0) {
+          analysis +=
+            " After the expense, savings would be below one month of essentials.";
+        }
+
+        if (score === 100) {
+          analysis +=
+            " This is the extreme high-pressure case: little or no cash cushion, a real uncovered cost, and either risky debt or no clear way to absorb the bill.";
+        }
+
+        scoreEl.innerText = score + "/100";
+        fillEl.style.width = score + "%";
+
+        if (score <= 30) {
+          fillEl.style.background = "#0f766e";
+        } else if (score <= 65) {
+          fillEl.style.background = "#d97706";
+        } else {
+          fillEl.style.background = "#b91c1c";
+        }
+
+        statusEl.innerText = status;
+
+        afterUseEl.innerText =
+          "After-use cushion: " +
+          money(savingsAfter) +
+          " left, or about " +
+          afterMonths.toFixed(1) +
+          " months of essential expenses. Current cushion before the expense is about " +
+          beforeMonths.toFixed(1) +
+          " months.";
+
+        safeUseEl.innerText =
+          "Cash-safe amount before dipping below your protection floor: " +
+          money(cashSafeAmount) +
+          ". The protection floor used here is " +
+          money(protectionFloor) +
+          ".";
+
+        if (debtNeeded > 0) {
+          debtEl.innerText =
+            "Debt or uncovered shortfall if paid now: " +
+            money(debtNeeded) +
+            ".";
+        } else {
+          debtEl.innerText =
+            "Debt or uncovered shortfall if paid now: $0.";
+        }
+
+        if (rebuildGap === 0) {
+          rebuildEl.innerText =
+            "Rebuild plan: the selected protection floor remains covered after the expense.";
+        } else if (rebuildMonthly > 0) {
+          const monthsToRebuild = Math.ceil(rebuildGap / rebuildMonthly);
+          rebuildEl.innerText =
+            "Rebuild plan: at " +
+            money(rebuildMonthly) +
+            " per month, restoring the protection floor would take about " +
+            monthsToRebuild +
+            " " +
+            monthWord(monthsToRebuild) +
+            ".";
+        } else {
+          rebuildEl.innerText =
+            "Rebuild plan: add a monthly rebuild amount to estimate how long it would take to restore the protection floor.";
+        }
+
+        verdictEl.innerText = verdict;
+        analysisEl.innerText = analysis;
+      });
+    });
+  </script>
+</Layout>

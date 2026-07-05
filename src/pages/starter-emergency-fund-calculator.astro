@@ -1,0 +1,847 @@
+---
+import Layout from "../layouts/Layout.astro";
+import FAQSection from "../components/FAQSection.astro";
+
+const starterEmergencyFundFaqs = [
+  {
+    question: "How much should a starter emergency fund be?",
+    answer:
+      "A starter emergency fund is usually a realistic first cash range, not a perfect full emergency fund. Many households start with a floor around $500 to $1,000, then adjust upward based on essential expenses, income stability, dependents, debt, and the surprise expense most likely to hit them.",
+  },
+  {
+    question: "Is a starter emergency fund the same as a full emergency fund?",
+    answer:
+      "No. A starter emergency fund is the first cash buffer that helps prevent smaller surprises from becoming credit card debt. A full emergency fund is usually several months of essential expenses.",
+  },
+  {
+    question: "Should I build a starter emergency fund before paying extra toward debt?",
+    answer:
+      "Many households should build a small cash cushion before making extra debt payments. Without any emergency savings, one car repair, medical bill, or income gap can push the household right back into debt.",
+  },
+  {
+    question: "What if I can only save a small amount each month?",
+    answer:
+      "That is exactly when a starter target helps. The goal is not to shame you with a huge 3-6 month number. The goal is to create the first realistic cash floor and a monthly plan that can actually happen.",
+  },
+  {
+    question: "When should I move from a starter emergency fund to a 3-month fund?",
+    answer:
+      "Once the starter range is covered, the next milestone is usually one month of essential expenses. After that, a 3-month or 6-month fund can make sense depending on job stability, dependents, housing risk, medical exposure, and household obligations.",
+  },
+];
+---
+
+<Layout
+  title="Starter Emergency Fund Calculator | ShouldISpend"
+  description="Calculate a realistic starter emergency fund range, first cash cushion, savings gap, and monthly plan before chasing a full 3-6 month emergency fund."
+>
+  <style>
+    .container {
+      max-width: 920px;
+      margin: 0 auto;
+      padding: 80px 24px;
+    }
+
+    .eyebrow {
+      color: var(--accent);
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      font-size: 0.8rem;
+      font-weight: 700;
+      margin-bottom: 16px;
+    }
+
+    h1 {
+      font-size: clamp(2.55rem, 7vw, 4.45rem);
+      line-height: 1;
+      margin-bottom: 24px;
+      max-width: 860px;
+    }
+
+    .intro {
+      max-width: 800px;
+      color: var(--muted);
+      font-size: 1.15rem;
+      line-height: 1.8;
+      margin-bottom: 48px;
+    }
+
+    section {
+      margin-top: 64px;
+    }
+
+    h2 {
+      font-size: 2rem;
+      margin-bottom: 18px;
+      line-height: 1.2;
+    }
+
+    h3 {
+      font-size: 1.25rem;
+      margin-top: 30px;
+      margin-bottom: 10px;
+    }
+
+    p,
+    li {
+      color: var(--muted);
+      line-height: 1.8;
+      margin-bottom: 18px;
+    }
+
+    a {
+      color: var(--primary);
+    }
+
+    .calculator {
+      border: 1px solid var(--border);
+      background: var(--card);
+      border-radius: 24px;
+      padding: 30px;
+      margin: 44px 0;
+    }
+
+    .calc-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 20px;
+    }
+
+    .calc-field {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .calc-field label {
+      font-weight: 700;
+      margin-bottom: 10px;
+      color: var(--text);
+    }
+
+    .calc-field input,
+    .calc-field select {
+      padding: 14px;
+      border-radius: 12px;
+      border: 1px solid var(--border);
+      font-size: 1rem;
+    }
+
+    .calc-button {
+      margin-top: 26px;
+      background: var(--primary);
+      color: white;
+      border: none;
+      border-radius: 14px;
+      padding: 15px 22px;
+      font-size: 1rem;
+      font-weight: 800;
+      cursor: pointer;
+    }
+
+    .calc-button:hover {
+      opacity: 0.92;
+    }
+
+    $128px;
+      display: none;
+    }
+
+    .calc-results.active {
+      display: block;
+    }
+
+    .calc-verdict {
+      font-size: 1.8rem;
+      font-weight: 800;
+      color: var(--primary);
+      margin-bottom: 14px;
+    }
+
+    .calc-money-label {
+      color: var(--muted);
+      font-size: 0.86rem;
+      font-weight: 800;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      margin-bottom: 6px;
+    }
+
+    .calc-money-range {
+      color: var(--primary);
+      font-size: clamp(2.2rem, 5.4vw, 3.35rem);
+      font-weight: 900;
+      line-height: 1.05;
+      letter-spacing: -0.04em;
+      margin: 4px 0 14px;
+    }
+
+    .calc-saved-text {
+      color: var(--text);
+      font-size: 1.02rem;
+      font-weight: 700;
+      line-height: 1.55;
+      margin-bottom: 14px;
+    }
+
+    .calc-stat {
+      font-size: 1.05rem;
+      margin-bottom: 12px;
+      color: var(--text);
+      line-height: 1.6;
+    }
+
+    .calc-analysis {
+      color: var(--muted);
+      line-height: 1.8;
+      margin-top: 18px;
+    }
+
+    .callout {
+      border: 1px solid var(--border);
+      background: var(--card);
+      border-radius: 24px;
+      padding: 26px;
+      margin: 36px 0;
+    }
+
+    .callout strong {
+      color: var(--text);
+    }
+
+    .info-grid,
+    .link-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 16px;
+      margin-top: 22px;
+    }
+
+    .info-card,
+    .link-card {
+      display: block;
+      border: 1px solid var(--border);
+      background: var(--card);
+      border-radius: 18px;
+      padding: 18px;
+      text-decoration: none;
+      color: inherit;
+    }
+
+    .link-card {
+      transition: transform 0.15s ease;
+    }
+
+    .link-card:hover {
+      transform: translateY(-2px);
+    }
+
+    .info-card h3,
+    .link-card strong {
+      display: block;
+      margin: 0 0 8px;
+      color: var(--text);
+      line-height: 1.3;
+    }
+
+    .info-card p,
+    .link-card span {
+      color: var(--muted);
+      line-height: 1.6;
+      font-size: 0.95rem;
+      margin: 0;
+    }
+  </style>
+
+  <main class="container">
+    <div class="eyebrow">Starter Emergency Fund Calculator</div>
+
+    <h1>Starter Emergency Fund Calculator</h1>
+
+    <p class="intro">
+      A full emergency fund can feel impossible when money is tight. This
+      calculator does not jump straight to a giant 3-6 month target. It estimates
+      a realistic starter emergency fund range, shows the first cash floor to hit,
+      and gives you a monthly savings plan for getting there.
+    </p>
+
+    <div class="calculator">
+      <div class="calc-grid">
+        <div class="calc-field">
+          <label for="income">Monthly Take-Home Income ($)</label>
+          <input type="number" id="income" placeholder="4200" min="0" inputmode="decimal" />
+        </div>
+
+        <div class="calc-field">
+          <label for="essentials">Monthly Essential Expenses ($)</label>
+          <input type="number" id="essentials" placeholder="3100" min="0" inputmode="decimal" />
+        </div>
+
+        <div class="calc-field">
+          <label for="savings">Current Emergency Savings ($)</label>
+          <input type="number" id="savings" placeholder="250" min="0" inputmode="decimal" />
+        </div>
+
+        <div class="calc-field">
+          <label for="monthlySavings">Amount You Can Save Per Month ($)</label>
+          <input type="number" id="monthlySavings" placeholder="150" min="0" inputmode="decimal" />
+        </div>
+
+        <div class="calc-field">
+          <label for="stability">Income Stability</label>
+          <select id="stability">
+            <option value="" disabled selected>Select income stability</option>
+            <option value="stable">Stable paycheck</option>
+            <option value="variable">Somewhat variable</option>
+            <option value="unstable">Irregular, freelance, seasonal, or at risk</option>
+          </select>
+        </div>
+
+        <div class="calc-field">
+          <label for="debt">High-Interest Debt Level</label>
+          <select id="debt">
+            <option value="" disabled selected>Select debt level</option>
+            <option value="none">None or very low</option>
+            <option value="moderate">Moderate balance</option>
+            <option value="high">High or growing balance</option>
+          </select>
+        </div>
+
+        <div class="calc-field">
+          <label for="dependents">Dependents</label>
+          <select id="dependents">
+            <option value="" disabled selected>Select dependents</option>
+            <option value="0">No dependents</option>
+            <option value="1">1-2 dependents</option>
+            <option value="2">3 or more dependents</option>
+          </select>
+        </div>
+
+        <div class="calc-field">
+          <label for="surpriseRisk">Most Likely Surprise Expense</label>
+          <select id="surpriseRisk">
+            <option value="" disabled selected>Select likely surprise</option>
+            <option value="basic">Basic bill timing issue</option>
+            <option value="vehicle">Car repair or transportation problem</option>
+            <option value="home">Home repair, appliance, or housing issue</option>
+            <option value="medical">Medical, dental, pet, or family expense</option>
+            <option value="incomeGap">Missed paycheck, reduced hours, or late payment</option>
+          </select>
+        </div>
+      </div>
+
+      <button class="calc-button sis-action-button sis-calculate-button" id="calculateStarterFund">
+        Calculate Starter Emergency Fund
+      </button>
+
+      <div class="calc-results" id="calcResults">
+        <div class="calc-verdict" id="calcVerdict"></div>
+        <div id="calcRange"></div>
+        <div class="calc-stat" id="calcGap"></div>
+        <div class="calc-stat" id="calcTimeline"></div>
+        <div class="calc-stat" id="calcNextMilestone"></div>
+        <div class="calc-analysis" id="calcAnalysis"></div>
+      </div>
+    </div>
+
+    <div class="callout">
+      <p>
+        <strong>Starter fund rule:</strong> your first goal is not perfection.
+        It is building enough cash that a normal surprise does not automatically
+        become credit card debt.
+      </p>
+    </div>
+
+    <section>
+      <h2>What This Starter Emergency Fund Calculator Does Differently</h2>
+
+      <p>
+        Many emergency fund calculators start with three to six months of
+        expenses. That is useful later, but it can be too big to help someone who
+        is starting from zero, paying down debt, or living with tight monthly
+        cash flow.
+      </p>
+
+      <p>
+        This calculator focuses on the first usable layer of protection. It
+        estimates a starter range that is large enough to matter, but not so
+        large that it becomes discouraging. The output is a dollar range, a
+        current savings gap, a monthly timeline, and the next milestone after
+        the starter fund is covered.
+      </p>
+
+      <p>
+        That makes this page different from the larger emergency savings tools.
+        The goal here is not to answer the final emergency fund question. The
+        goal is to find the first cash cushion worth building right now.
+      </p>
+    </section>
+
+    <section>
+      <h2>The Starter Fund Ladder</h2>
+
+      <p>
+        A starter emergency fund works best as a ladder. Each step makes the
+        next emergency less likely to wreck the budget.
+      </p>
+
+      <div class="info-grid">
+        <div class="info-card">
+          <h3>Step 1: First Cash Floor</h3>
+          <p>
+            A small buffer for a bill timing issue, prescription, minor repair,
+            or small family expense without using a credit card.
+          </p>
+        </div>
+
+        <div class="info-card">
+          <h3>Step 2: Starter Target</h3>
+          <p>
+            A stronger range based on essential expenses, household risk,
+            dependents, debt level, and income stability.
+          </p>
+        </div>
+
+        <div class="info-card">
+          <h3>Step 3: One Month of Essentials</h3>
+          <p>
+            The next milestone after the starter fund. This gives you enough
+            cash to absorb a bigger disruption without immediately borrowing.
+          </p>
+        </div>
+
+        <div class="info-card">
+          <h3>Step 4: Full Emergency Fund</h3>
+          <p>
+            A larger 3-month or 6-month cushion for households with more risk,
+            dependents, home repairs, medical costs, or unstable income.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <h2>Why a Starter Emergency Fund Is Not Low-Value Advice</h2>
+
+      <p>
+        A starter emergency fund solves a different problem than a full emergency
+        fund. It helps with the small and medium surprises that push people into
+        high-interest debt. The point is not to pretend $500 or $1,000 can fix a
+        job loss. The point is to stop every small problem from becoming a new
+        balance.
+      </p>
+
+      <p>
+        This matters most when the household has no cushion at all. If savings
+        are zero, even a small emergency can create fees, missed payments,
+        credit card interest, family borrowing, or overdraft pressure. A starter
+        fund creates a small amount of breathing room before the bigger emergency
+        fund is possible.
+      </p>
+
+      <p>
+        The right starter amount should feel reachable. If the number is too
+        small, it will not protect much. If the number is too large, it may never
+        get built. That is why this calculator returns a range instead of one
+        universal answer.
+      </p>
+    </section>
+
+    <section>
+      <h2>How to Choose Your Starter Emergency Fund Target</h2>
+
+      <h3>Start with essential expenses</h3>
+      <p>
+        Essential expenses are the bills you would still need to pay if money got
+        tight: rent or mortgage, groceries, utilities, insurance, transportation,
+        childcare, minimum debt payments, and basic medical needs.
+      </p>
+
+      <h3>Keep the first target achievable</h3>
+      <p>
+        If income is low or high-interest debt is already growing, a huge target
+        can be counterproductive. In that case, the starter fund should usually
+        be enough to prevent the next emergency from becoming new debt, while
+        still allowing progress on bills and debt payoff.
+      </p>
+
+      <h3>Raise the range when household risk is higher</h3>
+      <p>
+        Dependents, irregular income, car dependency, home repair exposure,
+        medical costs, and late payments all make a starter cushion more
+        valuable. A household with more risk may need a larger starter range
+        before moving aggressively toward optional spending or extra debt payoff.
+      </p>
+
+      <div class="callout">
+        <p>
+          <strong>Good starter test:</strong> if a normal surprise happened this
+          month, would this fund let you handle it without creating a new debt
+          problem?
+        </p>
+      </div>
+    </section>
+
+    <section>
+      <h2>What Counts as a Starter Emergency?</h2>
+
+      <p>
+        A starter emergency fund is for real disruptions, not planned purchases.
+        It should protect basic stability. That can include a car repair needed
+        for work, a medical or dental bill, a prescription, a utility issue, a
+        small home repair, a childcare gap, or a missed paycheck problem.
+      </p>
+
+      <p>
+        It should not usually be used for vacations, shopping, upgrades,
+        furniture wants, holiday spending, entertainment, or a purchase that can
+        wait. If the expense is optional, it belongs in a planned savings bucket,
+        not the emergency fund.
+      </p>
+    </section>
+
+    <section>
+      <h2>When the Starter Fund Is Covered</h2>
+
+      <p>
+        Once the starter range is covered, the next step is usually one month of
+        essential expenses. That gives you more protection against bigger
+        problems, such as reduced hours, insurance deductibles, appliance
+        failure, larger car repairs, or a short income gap.
+      </p>
+
+      <p>
+        From there, the right next target depends on risk. A stable household may
+        move toward a 3-month emergency fund. A household with irregular income,
+        one earner, dependents, homeownership, or medical exposure may need a
+        6-month emergency fund before making large optional spending decisions.
+      </p>
+    </section>
+
+    <section id="FinancialRedFlags">
+      <h2>Starter Emergency Fund Red Flags</h2>
+
+      <ul>
+        <li>You have $0 saved and would need a credit card for the next small emergency.</li>
+        <li>Your essential bills use most of your take-home income.</li>
+        <li>You are paying high-interest debt, but new emergencies keep adding to the balance.</li>
+        <li>You depend on a car for work, but have no cash for a repair.</li>
+        <li>Your income is irregular and you do not have a paycheck-gap cushion.</li>
+        <li>You are counting vacation, shopping, or home upgrade savings as emergency savings.</li>
+      </ul>
+    </section>
+
+    <section id="CalculatorAssumptions">
+      <h2>Starter Emergency Fund Calculator Assumptions</h2>
+
+      <p>
+        This calculator estimates a starter emergency fund range using monthly
+        take-home income, essential expenses, current emergency savings, monthly
+        savings ability, income stability, dependents, high-interest debt, and
+        likely surprise expense risk.
+      </p>
+
+      <p>
+        The calculator intentionally caps the starter target below a full
+        emergency fund. If income is low or high-interest debt is already a
+        problem, it keeps the starter range more achievable instead of turning
+        the result into a giant number that delays progress everywhere else.
+      </p>
+    </section>
+
+    <section id="MethodologySection">
+      <h2>How ShouldISpend Calculates a Starter Emergency Fund</h2>
+
+      <p>
+        ShouldISpend treats a starter emergency fund as the first practical cash
+        layer. The calculator starts with a small first cash floor, then raises
+        the upper end of the range when the household has more risk, such as
+        unstable income, dependents, transportation exposure, home repair risk,
+        medical risk, or paycheck timing risk.
+      </p>
+
+      <p>
+        This is not the same method used for a 3-month or 6-month emergency fund.
+        Those calculators are about larger long-term cushions. This calculator is
+        about the first realistic target that helps prevent the next normal
+        emergency from becoming new debt.
+      </p>
+    </section>
+
+    <section id="RelatedCalculators">
+      <h2>Emergency Savings Calculators</h2>
+
+      <div class="link-grid">
+        <a class="link-card" href="/emergency-savings-calculators">
+          <strong>Emergency Savings Calculators</strong>
+          <span>
+            See the full emergency savings cluster, from starter cushions to
+            3-month, 6-month, debt, and post-purchase emergency fund decisions.
+          </span>
+        </a>
+
+        <a class="link-card" href="/how-much-emergency-savings-should-i-have">
+          <strong>How Much Emergency Savings Should I Have?</strong>
+          <span>
+            Estimate a broader emergency savings target before major purchases
+            or long-term financial decisions.
+          </span>
+        </a>
+
+        <a class="link-card" href="/3-month-emergency-fund-calculator">
+          <strong>3-Month Emergency Fund Calculator</strong>
+          <span>
+            Calculate a 3-month emergency fund using essential expenses and
+            current savings.
+          </span>
+        </a>
+
+        <a class="link-card" href="/6-month-emergency-fund-calculator">
+          <strong>6-Month Emergency Fund Calculator</strong>
+          <span>
+            Build a stronger cushion for one-income households, contractors,
+            homeowners, dependents, or unstable income.
+          </span>
+        </a>
+
+        <a class="link-card" href="/emergency-fund-vs-debt-payoff-calculator">
+          <strong>Emergency Fund vs Debt Payoff Calculator</strong>
+          <span>
+            Decide whether the next dollar should build savings, attack debt,
+            or split between both.
+          </span>
+        </a>
+
+        <a class="link-card" href="/should-i-use-my-emergency-fund">
+          <strong>Should I Use My Emergency Fund?</strong>
+          <span>
+            Decide whether a surprise expense is a true emergency, urgent but
+            plannable, or optional.
+          </span>
+        </a>
+
+        <a class="link-card" href="/emergency-fund-after-big-purchase-calculator">
+          <strong>Emergency Fund After Big Purchase Calculator</strong>
+          <span>
+            See how much cushion remains after a trip, repair, wedding, home
+            project, car cost, or other major purchase.
+          </span>
+        </a>
+      </div>
+    </section>
+
+    <FAQSection title="Starter Emergency Fund FAQ" faqs={starterEmergencyFundFaqs} />
+  </main>
+
+  <script is:inline>
+    document.addEventListener("DOMContentLoaded", function () {
+      const button = document.getElementById("calculateStarterFund");
+
+      if (!button) return;
+
+      function money(value) {
+        return "$" + Math.round(value).toLocaleString("en-US");
+      }
+
+      function cleanNumber(id) {
+        const element = document.getElementById(id);
+        if (!element) return 0;
+        const value = Number(element.value);
+        return Number.isFinite(value) && value > 0 ? value : 0;
+      }
+
+      function roundTo50(value) {
+        return Math.round(value / 50) * 50;
+      }
+
+      function monthWord(months) {
+        return months === 1 ? "month" : "months";
+      }
+
+      button.addEventListener("click", function () {
+        const income = cleanNumber("income");
+        const essentials = cleanNumber("essentials");
+        const savings = cleanNumber("savings");
+        const monthlySavings = cleanNumber("monthlySavings");
+
+        const stability = document.getElementById("stability").value;
+        const debt = document.getElementById("debt").value;
+        const dependents = document.getElementById("dependents").value;
+        const surpriseRisk = document.getElementById("surpriseRisk").value;
+
+        const results = document.getElementById("calcResults");
+        const verdictEl = document.getElementById("calcVerdict");
+        const rangeEl = document.getElementById("calcRange");
+        const gapEl = document.getElementById("calcGap");
+        const timelineEl = document.getElementById("calcTimeline");
+        const nextMilestoneEl = document.getElementById("calcNextMilestone");
+        const analysisEl = document.getElementById("calcAnalysis");
+
+        results.classList.add("active");
+
+        if (
+          income <= 0 ||
+          essentials <= 0 ||
+          !stability ||
+          !debt ||
+          !dependents ||
+          !surpriseRisk
+        ) {
+          verdictEl.innerText = "Add the missing details";
+          rangeEl.innerHTML =
+            "<div style=\"color: var(--muted); font-size: 0.82rem; font-weight: 800; letter-spacing: 0.04em; text-transform: uppercase; margin-bottom: 6px;\">Starter range</div>" +
+            "<div style=\"color: var(--primary); font-size: clamp(2.45rem, 6vw, 3.75rem); font-weight: 950; line-height: 1.02; letter-spacing: -0.055em; margin: 4px 0 16px; display: block;\">Need details</div>" +
+            "<div style=\"color: var(--text); font-size: 1.05rem; font-weight: 800; line-height: 1.55; margin-bottom: 14px;\">Enter take-home income, essential expenses, and the dropdown details to calculate a starter emergency fund range.</div>";
+          gapEl.innerText = "";
+          timelineEl.innerText = "";
+          nextMilestoneEl.innerText = "";
+          analysisEl.innerText =
+            "Current emergency savings and monthly savings can be zero, but the calculator needs your income, essential expenses, and household risk details to produce a useful range.";
+          return;
+        }
+
+        let lowerTarget = Math.max(500, Math.min(1000, essentials * 0.25));
+        let targetFraction = 0.4;
+
+        if (stability === "variable") targetFraction += 0.1;
+        if (stability === "unstable") targetFraction += 0.2;
+
+        if (dependents === "1") targetFraction += 0.1;
+        if (dependents === "2") targetFraction += 0.2;
+
+        if (surpriseRisk === "vehicle") targetFraction += 0.1;
+        if (surpriseRisk === "home") targetFraction += 0.1;
+        if (surpriseRisk === "medical") targetFraction += 0.15;
+        if (surpriseRisk === "incomeGap") targetFraction += 0.2;
+
+        const essentialLoad = essentials / income;
+        const highStrain = essentialLoad >= 0.75;
+
+        if (debt === "high") targetFraction -= 0.05;
+
+        if (highStrain || debt === "high") {
+          targetFraction = Math.min(targetFraction, 0.55);
+        }
+
+        if (income < 2500) {
+          targetFraction = Math.min(targetFraction, 0.5);
+        }
+
+        targetFraction = Math.max(0.3, Math.min(targetFraction, 1));
+
+        let upperTarget = Math.max(1000, essentials * targetFraction);
+        upperTarget = Math.min(upperTarget, essentials);
+        upperTarget = Math.max(upperTarget, lowerTarget);
+
+        lowerTarget = roundTo50(lowerTarget);
+        upperTarget = roundTo50(upperTarget);
+
+        const gapToFloor = Math.max(0, lowerTarget - savings);
+        const gapToTop = Math.max(0, upperTarget - savings);
+        const oneMonthGap = Math.max(0, essentials - savings);
+        const monthsSaved = essentials > 0 ? savings / essentials : 0;
+
+        let verdict = "";
+        let analysis = "";
+
+        if (savings >= upperTarget) {
+          verdict = "Starter Fund Covered";
+          analysis =
+            "Your starter emergency fund appears covered. The next useful milestone is one month of essential expenses, then a larger 3-month or 6-month fund if your household risk calls for it.";
+        } else if (savings >= lowerTarget) {
+          verdict = "First Cushion Built";
+          analysis =
+            "You have cleared the first cash floor. The next step is building toward the top of your starter range so a normal surprise is less likely to become new debt.";
+        } else if (savings > 0) {
+          verdict = "Build the First Cash Floor";
+          analysis =
+            "You have started, but your first cash floor is not covered yet. Focus on reaching the lower end of the starter range before chasing a full emergency fund.";
+        } else {
+          verdict = "Start with a Realistic Cushion";
+          analysis =
+            "With no emergency savings, the first goal is not a perfect 3-6 month fund. The first goal is a reachable starter cushion that can handle a normal surprise without creating new debt.";
+        }
+
+        let rangeDisplay = "";
+        let rangeLabel = "";
+
+        if (lowerTarget === upperTarget) {
+          rangeDisplay = money(upperTarget);
+          rangeLabel = "Suggested starter target";
+        } else {
+          rangeDisplay = money(lowerTarget) + " to " + money(upperTarget);
+          rangeLabel = "Suggested starter range";
+        }
+
+        const savedText =
+          "Current cushion: about " +
+          monthsSaved.toFixed(1) +
+          " months of essential expenses.";
+
+        rangeEl.innerHTML =
+          "<div style=\"color: var(--muted); font-size: 0.82rem; font-weight: 800; letter-spacing: 0.04em; text-transform: uppercase; margin-bottom: 6px;\">" +
+          rangeLabel +
+          "</div><div style=\"color: var(--primary); font-size: clamp(2.45rem, 6vw, 3.75rem); font-weight: 950; line-height: 1.02; letter-spacing: -0.055em; margin: 4px 0 16px; display: block;\">" +
+          rangeDisplay +
+          "</div><div style=\"color: var(--text); font-size: 1.05rem; font-weight: 800; line-height: 1.55; margin-bottom: 14px;\">" +
+          savedText +
+          "</div>";
+
+        let gapText = "";
+        if (gapToTop === 0) {
+          gapText =
+            "Starter savings gap: $0. You are at or above the top of the starter range.";
+        } else if (gapToFloor > 0) {
+          gapText =
+            "Starter savings gap: " +
+            money(gapToFloor) +
+            " to reach the first cash floor, or " +
+            money(gapToTop) +
+            " to reach the top of the starter range.";
+        } else {
+          gapText =
+            "Starter savings gap: " +
+            money(gapToTop) +
+            " to reach the top of the starter range.";
+        }
+
+        let timelineText = "";
+        if (gapToTop === 0) {
+          timelineText =
+            "Monthly plan: direct new emergency savings toward the next milestone instead of the starter target.";
+        } else if (monthlySavings > 0) {
+          const monthsToTop = Math.ceil(gapToTop / monthlySavings);
+          timelineText =
+            "Monthly plan: at " +
+            money(monthlySavings) +
+            " per month, the top of the starter range would take about " +
+            monthsToTop +
+            " " +
+            monthWord(monthsToTop) +
+            ".";
+        } else {
+          timelineText =
+            "Monthly plan: add a monthly savings amount to estimate how long the starter range will take.";
+        }
+
+        let nextMilestoneText = "";
+        if (oneMonthGap === 0) {
+          nextMilestoneText =
+            "Next milestone: one month of essentials is already covered. Consider a 3-month or 6-month emergency fund next.";
+        } else {
+          nextMilestoneText =
+            "Next milestone after the starter fund: one month of essentials, or " +
+            money(essentials) +
+            ". Current gap to that milestone: " +
+            money(oneMonthGap) +
+            ".";
+        }
+
+        verdictEl.innerText = verdict;
+        gapEl.innerText = gapText;
+        timelineEl.innerText = timelineText;
+        nextMilestoneEl.innerText = nextMilestoneText;
+        analysisEl.innerText = analysis;
+      });
+    });
+  </script>
+</Layout>

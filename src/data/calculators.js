@@ -1,4 +1,40 @@
-﻿export const calculators = [  {
+export const calculators = [
+  {
+    title: "Starter Emergency Fund Calculator",
+    slug: "/starter-emergency-fund-calculator",
+    category: "Budget Rules",
+    description: "Calculate a realistic starter emergency fund range, first cash floor, savings gap, and monthly plan before chasing a full 3-6 month cushion.",
+  },
+  {
+    title: "3-Month Emergency Fund Calculator",
+    href: "/3-month-emergency-fund-calculator",
+    category: "Emergency Savings",
+    description: "Calculate a 3-month emergency fund target from essential expenses, current savings, shortfall, and monthly savings plan.",
+  },
+  {
+    title: "6-Month Emergency Fund Calculator",
+    href: "/6-month-emergency-fund-calculator",
+    category: "Emergency Savings",
+    description: "Calculate a 6-month emergency fund target, savings gap, runway, timeline, and risk-based reasons a larger cushion may matter.",
+  },
+  {
+    title: "Emergency Fund vs Debt Payoff Calculator",
+    href: "/emergency-fund-vs-debt-payoff-calculator",
+    category: "Emergency Savings",
+    description: "Decide whether extra money should go to emergency savings, debt payoff, or a split based on cash cushion, interest rate, and household risk.",
+  },
+  {
+    title: "Should I Use My Emergency Fund?",
+    href: "/should-i-use-my-emergency-fund",
+    category: "Emergency Savings",
+    description: "Decide whether a surprise expense should use emergency savings based on urgency, remaining cushion, debt need, and rebuild plan.",
+  },
+  {
+    title: "Emergency Fund After Big Purchase Calculator",
+    href: "/emergency-fund-after-big-purchase-calculator",
+    category: "Emergency Savings",
+    description: "See how much emergency savings remains after a big purchase, whether the safety floor survives, and how long rebuilding may take.",
+  },  {
     title: "Hotel and Lodging Cost Calculator",
     description:
       "Estimate hotel, resort, or vacation rental costs with nights, rooms, taxes, fees, parking, deposits, travel credits, and lodging pressure.",

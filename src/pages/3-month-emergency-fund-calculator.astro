@@ -1,0 +1,752 @@
+---
+import Layout from "../layouts/Layout.astro";
+import FAQSection from "../components/FAQSection.astro";
+
+const threeMonthEmergencyFundFaqs = [
+  {
+    question: "How do I calculate a 3-month emergency fund?",
+    answer:
+      "Add the essential monthly expenses you would still need during an income disruption, then multiply that number by three. Include housing, utilities, food, transportation, insurance, childcare, basic medical needs, and minimum debt payments.",
+  },
+  {
+    question: "Should lifestyle spending be included in a 3-month emergency fund?",
+    answer:
+      "Usually no. A 3-month emergency fund should focus on essential expenses, not normal lifestyle spending. Dining out, subscriptions, travel, entertainment, upgrades, and shopping should usually be excluded from the core target.",
+  },
+  {
+    question: "Is a 3-month emergency fund enough?",
+    answer:
+      "A 3-month fund can be a strong baseline for many households with stable income and manageable obligations. Households with unstable income, dependents, one earner, home repair risk, or medical exposure may need a 6-month fund.",
+  },
+  {
+    question: "What if I already have a starter emergency fund?",
+    answer:
+      "A starter fund is the first cash floor. A 3-month fund is the next larger milestone. Once the starter cushion is covered, this calculator shows the gap between current savings and three months of essential expenses.",
+  },
+  {
+    question: "How fast should I build a 3-month emergency fund?",
+    answer:
+      "The timeline depends on your current savings gap and monthly savings ability. This calculator shows the monthly amount required to hit your chosen timeline and compares it with what you can currently save.",
+  },
+];
+---
+
+<Layout
+  title="3-Month Emergency Fund Calculator | ShouldISpend"
+  description="Calculate a 3-month emergency fund target using essential monthly expenses, current savings, savings gap, timeline, and monthly savings plan."
+>
+  <style>
+    .container {
+      max-width: 920px;
+      margin: 0 auto;
+      padding: 80px 24px;
+    }
+
+    .eyebrow {
+      color: var(--accent);
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      font-size: 0.8rem;
+      font-weight: 700;
+      margin-bottom: 16px;
+    }
+
+    h1 {
+      font-size: clamp(2.55rem, 7vw, 4.45rem);
+      line-height: 1;
+      margin-bottom: 24px;
+      max-width: 860px;
+    }
+
+    .intro {
+      max-width: 800px;
+      color: var(--muted);
+      font-size: 1.15rem;
+      line-height: 1.8;
+      margin-bottom: 48px;
+    }
+
+    section {
+      margin-top: 64px;
+    }
+
+    h2 {
+      font-size: 2rem;
+      margin-bottom: 18px;
+      line-height: 1.2;
+    }
+
+    h3 {
+      font-size: 1.25rem;
+      margin-top: 30px;
+      margin-bottom: 10px;
+    }
+
+    p,
+    li {
+      color: var(--muted);
+      line-height: 1.8;
+      margin-bottom: 18px;
+    }
+
+    a {
+      color: var(--primary);
+    }
+
+    .calculator {
+      border: 1px solid var(--border);
+      background: var(--card);
+      border-radius: 24px;
+      padding: 30px;
+      margin: 44px 0;
+    }
+
+    .calc-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 20px;
+    }
+
+    .calc-field {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .calc-field label {
+      font-weight: 700;
+      margin-bottom: 10px;
+      color: var(--text);
+    }
+
+    .calc-field input,
+    .calc-field select {
+      padding: 14px;
+      border-radius: 12px;
+      border: 1px solid var(--border);
+      font-size: 1rem;
+    }
+
+    .calc-button {
+      margin-top: 26px;
+      background: var(--primary);
+      color: white;
+      border: none;
+      border-radius: 14px;
+      padding: 15px 22px;
+      font-size: 1rem;
+      font-weight: 800;
+      cursor: pointer;
+    }
+
+    .calc-button:hover {
+      opacity: 0.92;
+    }
+
+    .calc-results {
+      margin-top: 28px;
+      border: 1px solid #dbe4ee;
+      background: #f8fafc;
+      border-radius: 20px;
+      padding: 28px;
+      display: none;
+    }
+
+    .calc-results.active {
+      display: block;
+    }
+
+    .calc-verdict {
+      font-size: 1.8rem;
+      font-weight: 800;
+      color: var(--primary);
+      margin-bottom: 14px;
+    }
+
+    .calc-stat {
+      font-size: 1.05rem;
+      margin-bottom: 12px;
+      color: var(--text);
+      line-height: 1.6;
+    }
+
+    .calc-analysis {
+      color: var(--muted);
+      line-height: 1.8;
+      margin-top: 18px;
+    }
+
+    .callout {
+      border: 1px solid var(--border);
+      background: var(--card);
+      border-radius: 24px;
+      padding: 26px;
+      margin: 36px 0;
+    }
+
+    .callout strong {
+      color: var(--text);
+    }
+
+    .info-grid,
+    .link-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 16px;
+      margin-top: 22px;
+    }
+
+    .info-card,
+    .link-card {
+      display: block;
+      border: 1px solid var(--border);
+      background: var(--card);
+      border-radius: 18px;
+      padding: 18px;
+      text-decoration: none;
+      color: inherit;
+    }
+
+    .link-card {
+      transition: transform 0.15s ease;
+    }
+
+    .link-card:hover {
+      transform: translateY(-2px);
+    }
+
+    .info-card h3,
+    .link-card strong {
+      display: block;
+      margin: 0 0 8px;
+      color: var(--text);
+      line-height: 1.3;
+    }
+
+    .info-card p,
+    .link-card span {
+      color: var(--muted);
+      line-height: 1.6;
+      font-size: 0.95rem;
+      margin: 0;
+    }
+  </style>
+
+  <main class="container">
+    <div class="eyebrow">3-Month Emergency Fund Calculator</div>
+
+    <h1>3-Month Emergency Fund Calculator</h1>
+
+    <p class="intro">
+      A 3-month emergency fund is not the same as a starter cushion. This
+      calculator builds the target from essential monthly expenses only, shows
+      your current shortfall, and turns the gap into a monthly savings plan.
+    </p>
+
+    <div class="calculator">
+      <div class="calc-grid">
+        <div class="calc-field">
+          <label for="housing">Monthly Housing and Utilities ($)</label>
+          <input type="number" id="housing" placeholder="1800" min="0" inputmode="decimal" />
+        </div>
+
+        <div class="calc-field">
+          <label for="basics">Food, Household, and Transportation ($)</label>
+          <input type="number" id="basics" placeholder="1200" min="0" inputmode="decimal" />
+        </div>
+
+        <div class="calc-field">
+          <label for="care">Insurance, Medical, Childcare, and Family Basics ($)</label>
+          <input type="number" id="care" placeholder="700" min="0" inputmode="decimal" />
+        </div>
+
+        <div class="calc-field">
+          <label for="debtMinimums">Minimum Debt Payments ($)</label>
+          <input type="number" id="debtMinimums" placeholder="350" min="0" inputmode="decimal" />
+        </div>
+
+        <div class="calc-field">
+          <label for="optional">Monthly Lifestyle Spending Excluded from Target ($)</label>
+          <input type="number" id="optional" placeholder="600" min="0" inputmode="decimal" />
+        </div>
+
+        <div class="calc-field">
+          <label for="savings">Current Emergency Savings ($)</label>
+          <input type="number" id="savings" placeholder="2500" min="0" inputmode="decimal" />
+        </div>
+
+        <div class="calc-field">
+          <label for="monthlySavings">Amount You Can Save Per Month ($)</label>
+          <input type="number" id="monthlySavings" placeholder="400" min="0" inputmode="decimal" />
+        </div>
+
+        <div class="calc-field">
+          <label for="timeline">Target Timeline</label>
+          <select id="timeline">
+            <option value="" disabled selected>Select timeline</option>
+            <option value="6">6 months</option>
+            <option value="12">12 months</option>
+            <option value="18">18 months</option>
+            <option value="24">24 months</option>
+          </select>
+        </div>
+
+        <div class="calc-field">
+          <label for="stability">Income Stability</label>
+          <select id="stability">
+            <option value="" disabled selected>Select income stability</option>
+            <option value="stable">Stable paycheck</option>
+            <option value="average">Somewhat stable</option>
+            <option value="unstable">Irregular, freelance, seasonal, or at risk</option>
+          </select>
+        </div>
+
+        <div class="calc-field">
+          <label for="householdRisk">Household Risk</label>
+          <select id="householdRisk">
+            <option value="" disabled selected>Select household risk</option>
+            <option value="low">Low: few dependents, low repair risk</option>
+            <option value="moderate">Moderate: dependents, car need, or rent pressure</option>
+            <option value="high">High: one income, dependents, homeowner, or medical risk</option>
+          </select>
+        </div>
+      </div>
+
+      <button class="calc-button sis-action-button sis-calculate-button" id="calculateThreeMonthFund">
+        Calculate 3-Month Emergency Fund
+      </button>
+
+      <div class="calc-results" id="calcResults">
+        <div class="calc-verdict" id="calcVerdict"></div>
+        <div id="calcTarget"></div>
+        <div class="calc-stat" id="calcEssentials"></div>
+        <div class="calc-stat" id="calcGap"></div>
+        <div class="calc-stat" id="calcTimeline"></div>
+        <div class="calc-stat" id="calcExcluded"></div>
+        <div class="calc-analysis" id="calcAnalysis"></div>
+      </div>
+    </div>
+
+    <div class="callout">
+      <p>
+        <strong>3-month rule:</strong> this target should cover the bills you
+        would still need during a disruption, not the lifestyle spending you
+        would pause first.
+      </p>
+    </div>
+
+    <section>
+      <h2>What This 3-Month Emergency Fund Calculator Does Differently</h2>
+
+      <p>
+        The starter calculator answers a smaller question: what first cash floor
+        keeps a normal surprise from becoming new debt? This calculator answers
+        the next question: what amount would cover three months of the household
+        essentials that cannot easily be paused?
+      </p>
+
+      <p>
+        The unique value is the split between essential spending and lifestyle
+        spending. A 3-month emergency fund should not usually protect the exact
+        same month you live during normal times. It should protect the leaner
+        version of the month you would need during a job loss, reduced hours,
+        delayed payment, illness, repair, or family disruption.
+      </p>
+
+      <p>
+        That is why this page produces a 3-month target, current gap, months
+        already covered, and savings timeline. It does not return a color-score verdict.
+        The main output is the cash target.
+      </p>
+    </section>
+
+    <section>
+      <h2>What to Include in a 3-Month Emergency Fund</h2>
+
+      <p>
+        Count the costs that would still matter if income was interrupted. The
+        exact list differs by household, but the target should usually include
+        the essentials that keep housing, food, transportation, insurance,
+        childcare, minimum debt payments, and basic health needs stable.
+      </p>
+
+      <div class="info-grid">
+        <div class="info-card">
+          <h3>Housing and utilities</h3>
+          <p>
+            Rent or mortgage, electricity, heat, water, internet needed for work,
+            and the basic costs required to stay housed.
+          </p>
+        </div>
+
+        <div class="info-card">
+          <h3>Food and transportation</h3>
+          <p>
+            Groceries, household basics, fuel, required transit, and the minimum
+            transportation needed for work, school, or family needs.
+          </p>
+        </div>
+
+        <div class="info-card">
+          <h3>Insurance and care</h3>
+          <p>
+            Health insurance, prescriptions, childcare, pet essentials, family
+            support, and basic medical or dental needs.
+          </p>
+        </div>
+
+        <div class="info-card">
+          <h3>Minimum debt payments</h3>
+          <p>
+            Required minimum payments that protect credit, keep accounts current,
+            and avoid late fees during a disruption.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <h2>What Not to Include</h2>
+
+      <p>
+        This is where many emergency fund targets become too high or too vague.
+        A 3-month emergency fund is not supposed to preserve every normal habit.
+        It is supposed to protect stability while the household gets through a
+        temporary disruption.
+      </p>
+
+      <p>
+        Dining out, subscriptions, travel, entertainment, shopping, upgrades,
+        extra debt payments, and flexible hobby spending can usually be reduced
+        before the emergency fund has to cover them. Separating those costs makes
+        the target more realistic and easier to act on.
+      </p>
+    </section>
+
+    <section>
+      <h2>How to Read the Result</h2>
+
+      <h3>If the 3-month target is already covered</h3>
+      <p>
+        The household has a strong baseline cushion. The next question is whether
+        a 6-month target is necessary because of dependents, unstable income,
+        homeownership, medical exposure, or one-income risk.
+      </p>
+
+      <h3>If one to two months are covered</h3>
+      <p>
+        The emergency fund is meaningful, but not finished. The target is no
+        longer a vague idea. The gap can be divided by a monthly savings amount
+        and turned into a build plan.
+      </p>
+
+      <h3>If less than one month is covered</h3>
+      <p>
+        Consider whether the starter emergency fund is the better immediate
+        milestone. A 3-month target is still useful, but the first job may be
+        getting one month of essentials protected.
+      </p>
+    </section>
+
+    <section>
+      <h2>When 3 Months May Not Be Enough</h2>
+
+      <p>
+        Three months can be a solid baseline, but some households should treat it
+        as the middle step rather than the finish line. If income is irregular,
+        one person supports the household, dependents rely on the income, home
+        repairs are likely, medical costs are high, or finding similar work could
+        take longer, a 6-month emergency fund may be the better target.
+      </p>
+
+      <p>
+        That does not make the 3-month target useless. It makes it the checkpoint
+        between the starter fund and the more conservative cushion.
+      </p>
+    </section>
+
+    <section id="FinancialRedFlags">
+      <h2>3-Month Emergency Fund Red Flags</h2>
+
+      <ul>
+        <li>You are including lifestyle spending that would be paused during an emergency.</li>
+        <li>You have less than one month of essentials saved and no starter fund plan.</li>
+        <li>Your income is unstable, but you are treating three months as the final target.</li>
+        <li>You have dependents or one income and no plan to continue toward six months.</li>
+        <li>Your emergency fund target ignores minimum debt payments or insurance costs.</li>
+        <li>You are using the same savings bucket for vacations, home upgrades, and emergencies.</li>
+      </ul>
+    </section>
+
+    <section id="CalculatorAssumptions">
+      <h2>3-Month Emergency Fund Calculator Assumptions</h2>
+
+      <p>
+        This calculator treats a 3-month emergency fund as three months of
+        essential expenses, not three months of full lifestyle spending. It
+        includes required bills and basic stability costs while excluding normal
+        optional spending that could be paused during a disruption.
+      </p>
+
+      <p>
+        The calculator also assumes current emergency savings are truly available
+        for emergencies. Money already assigned to a vacation, wedding, home
+        project, car purchase, tax bill, or planned expense should not be counted
+        unless you would actually use it for an emergency.
+      </p>
+    </section>
+
+    <section id="MethodologySection">
+      <h2>How ShouldISpend Calculates a 3-Month Emergency Fund</h2>
+
+      <p>
+        ShouldISpend adds monthly housing and utilities, food and transportation,
+        care and insurance, and minimum debt payments to estimate monthly
+        essentials. The calculator multiplies that essential number by three,
+        subtracts current emergency savings, and compares the gap with your
+        monthly savings ability and target timeline.
+      </p>
+
+      <p>
+        The result is intentionally different from a starter fund and a 6-month
+        fund. The starter fund is the first cash floor. The 3-month fund is the
+        core baseline. The 6-month fund is the more conservative target for
+        households with higher risk.
+      </p>
+    </section>
+
+    <section id="RelatedCalculators">
+      <h2>Emergency Savings Calculators</h2>
+
+      <div class="link-grid">
+        <a class="link-card" href="/emergency-savings-calculators">
+          <strong>Emergency Savings Calculators</strong>
+          <span>
+            See the full emergency savings cluster, from starter cushions to
+            3-month, 6-month, debt, and post-purchase emergency fund decisions.
+          </span>
+        </a>
+
+        <a class="link-card" href="/starter-emergency-fund-calculator">
+          <strong>Starter Emergency Fund Calculator</strong>
+          <span>
+            Build the first realistic cash cushion before chasing a full
+            emergency fund.
+          </span>
+        </a>
+
+        <a class="link-card" href="/6-month-emergency-fund-calculator">
+          <strong>6-Month Emergency Fund Calculator</strong>
+          <span>
+            Build a stronger cushion for one-income households, contractors,
+            homeowners, dependents, or unstable income.
+          </span>
+        </a>
+
+        <a class="link-card" href="/emergency-fund-vs-debt-payoff-calculator">
+          <strong>Emergency Fund vs Debt Payoff Calculator</strong>
+          <span>
+            Decide whether the next dollar should build savings, attack debt,
+            or split between both.
+          </span>
+        </a>
+
+        <a class="link-card" href="/should-i-use-my-emergency-fund">
+          <strong>Should I Use My Emergency Fund?</strong>
+          <span>
+            Decide whether a surprise expense is a true emergency, urgent but
+            plannable, or optional.
+          </span>
+        </a>
+
+        <a class="link-card" href="/emergency-fund-after-big-purchase-calculator">
+          <strong>Emergency Fund After Big Purchase Calculator</strong>
+          <span>
+            See how much cushion remains after a trip, repair, wedding, home
+            project, car cost, or other major purchase.
+          </span>
+        </a>
+      </div>
+    </section>
+
+    <FAQSection title="3-Month Emergency Fund FAQ" faqs={threeMonthEmergencyFundFaqs} />
+  </main>
+
+  <script is:inline>
+    document.addEventListener("DOMContentLoaded", function () {
+      const button = document.getElementById("calculateThreeMonthFund");
+
+      if (!button) return;
+
+      const moneyLabelStyle =
+        "color: var(--muted); font-size: 0.82rem; font-weight: 800; letter-spacing: 0.04em; text-transform: uppercase; margin-bottom: 6px;";
+
+      const moneyValueStyle =
+        "color: var(--primary); font-size: clamp(2.45rem, 6vw, 3.75rem); font-weight: 950; line-height: 1.02; letter-spacing: -0.055em; margin: 4px 0 16px; display: block;";
+
+      const moneySubtextStyle =
+        "color: var(--text); font-size: 1.05rem; font-weight: 800; line-height: 1.55; margin-bottom: 14px;";
+
+      function money(value) {
+        return "$" + Math.round(value).toLocaleString("en-US");
+      }
+
+      function cleanNumber(id) {
+        const element = document.getElementById(id);
+        if (!element) return 0;
+        const value = Number(element.value);
+        return Number.isFinite(value) && value > 0 ? value : 0;
+      }
+
+      function monthWord(months) {
+        return months === 1 ? "month" : "months";
+      }
+
+      button.addEventListener("click", function () {
+        const housing = cleanNumber("housing");
+        const basics = cleanNumber("basics");
+        const care = cleanNumber("care");
+        const debtMinimums = cleanNumber("debtMinimums");
+        const optional = cleanNumber("optional");
+        const savings = cleanNumber("savings");
+        const monthlySavings = cleanNumber("monthlySavings");
+
+        const timelineValue = document.getElementById("timeline").value;
+        const stability = document.getElementById("stability").value;
+        const householdRisk = document.getElementById("householdRisk").value;
+
+        const results = document.getElementById("calcResults");
+        const verdictEl = document.getElementById("calcVerdict");
+        const targetEl = document.getElementById("calcTarget");
+        const essentialsEl = document.getElementById("calcEssentials");
+        const gapEl = document.getElementById("calcGap");
+        const timelineEl = document.getElementById("calcTimeline");
+        const excludedEl = document.getElementById("calcExcluded");
+        const analysisEl = document.getElementById("calcAnalysis");
+
+        results.classList.add("active");
+
+        const monthlyEssentials = housing + basics + care + debtMinimums;
+
+        if (monthlyEssentials <= 0 || !timelineValue || !stability || !householdRisk) {
+          verdictEl.innerText = "Add the missing details";
+          targetEl.innerHTML =
+            "<div style=\"" +
+            moneyLabelStyle +
+            "\">3-month target</div><div style=\"" +
+            moneyValueStyle +
+            "\">Need details</div><div style=\"" +
+            moneySubtextStyle +
+            "\">Enter essential expenses, a timeline, income stability, and household risk to calculate the 3-month target.</div>";
+          essentialsEl.innerText = "";
+          gapEl.innerText = "";
+          timelineEl.innerText = "";
+          excludedEl.innerText = "";
+          analysisEl.innerText =
+            "Current savings, optional spending, debt minimums, and monthly savings can be zero, but the calculator needs at least one essential expense plus the dropdown details.";
+          return;
+        }
+
+        const target = monthlyEssentials * 3;
+        const gap = Math.max(0, target - savings);
+        const monthsCovered = savings / monthlyEssentials;
+        const timelineMonths = Number(timelineValue);
+        const requiredMonthly = gap > 0 ? gap / timelineMonths : 0;
+
+        let verdict = "";
+        let analysis = "";
+
+        if (gap === 0) {
+          verdict = "3-Month Fund Covered";
+          analysis =
+            "Your current emergency savings cover at least three months of essential expenses. The next question is whether your household risk calls for a larger 6-month target.";
+        } else if (monthsCovered >= 2) {
+          verdict = "Close to 3 Months";
+          analysis =
+            "You have a meaningful emergency cushion, but the 3-month baseline is not fully covered yet. The remaining gap is specific enough to turn into a monthly savings plan.";
+        } else if (monthsCovered >= 1) {
+          verdict = "One Month Covered";
+          analysis =
+            "You have moved beyond the starter stage, but the 3-month fund still needs work. Focus on building the gap without counting lifestyle spending as essential.";
+        } else if (savings > 0) {
+          verdict = "Below One Month";
+          analysis =
+            "You have some emergency savings, but less than one month of essentials is protected. The starter fund may be the short-term milestone while the 3-month number remains the next larger target.";
+        } else {
+          verdict = "No 3-Month Cushion Yet";
+          analysis =
+            "With no emergency savings, the 3-month target can look large. Treat it as the baseline destination, then use a starter fund or one-month cushion as the first checkpoint.";
+        }
+
+        if (stability === "unstable" || householdRisk === "high") {
+          analysis +=
+            " Because income or household risk is elevated, three months may be a checkpoint rather than the final emergency fund target.";
+        } else if (stability === "stable" && householdRisk === "low") {
+          analysis +=
+            " Because income and household risk look steadier, a 3-month fund may be a reasonable baseline before deciding whether more cash is needed.";
+        }
+
+        targetEl.innerHTML =
+          "<div style=\"" +
+          moneyLabelStyle +
+          "\">3-month emergency fund target</div><div style=\"" +
+          moneyValueStyle +
+          "\">" +
+          money(target) +
+          "</div><div style=\"" +
+          moneySubtextStyle +
+          "\">Current cushion: about " +
+          monthsCovered.toFixed(1) +
+          " months of essential expenses.</div>";
+
+        essentialsEl.innerText =
+          "Monthly essentials used in this target: " +
+          money(monthlyEssentials) +
+          ". This excludes normal lifestyle spending that could be paused during a disruption.";
+
+        if (gap === 0) {
+          gapEl.innerText =
+            "Current shortfall: $0. Your current emergency savings are at or above the 3-month target.";
+        } else {
+          gapEl.innerText =
+            "Current shortfall: " +
+            money(gap) +
+            " to reach the 3-month target.";
+        }
+
+        if (gap === 0) {
+          timelineEl.innerText =
+            "Savings plan: new emergency savings can go toward a 6-month target or another protected savings bucket.";
+        } else if (monthlySavings > 0) {
+          const monthsAtCurrentSavings = Math.ceil(gap / monthlySavings);
+          timelineEl.innerText =
+            "Savings plan: at " +
+            money(monthlySavings) +
+            " per month, the 3-month target would take about " +
+            monthsAtCurrentSavings +
+            " " +
+            monthWord(monthsAtCurrentSavings) +
+            ". To hit your selected " +
+            timelineMonths +
+            "-month timeline, you would need about " +
+            money(requiredMonthly) +
+            " per month.";
+        } else {
+          timelineEl.innerText =
+            "Savings plan: to hit your selected " +
+            timelineMonths +
+            "-month timeline, you would need about " +
+            money(requiredMonthly) +
+            " per month. Add your monthly savings ability to compare it with your current plan.";
+        }
+
+        excludedEl.innerText =
+          "Lifestyle spending excluded from the emergency target: " +
+          money(optional) +
+          ". Excluding flexible spending keeps the 3-month fund focused on survival costs, not a normal full month.";
+
+        verdictEl.innerText = verdict;
+        analysisEl.innerText = analysis;
+      });
+    });
+  </script>
+</Layout>

@@ -1,0 +1,1066 @@
+---
+import Layout from "../layouts/Layout.astro";
+import FAQSection from "../components/FAQSection.astro";
+
+const emergencyFundAfterPurchaseFaqs = [
+  {
+    question: "How do I know if a big purchase leaves enough emergency savings?",
+    answer:
+      "Compare emergency savings before and after the purchase against monthly essential expenses. A safer purchase leaves at least a starter cushion, and many households should protect one to three months of essentials or more.",
+  },
+  {
+    question: "Should I count money saved for the purchase as emergency savings?",
+    answer:
+      "No. Money already assigned to the purchase is not emergency savings. This calculator separates purchase funds and confirmed help from true emergency savings so the after-purchase cushion is clearer.",
+  },
+  {
+    question: "Is it okay to use emergency savings for a big purchase?",
+    answer:
+      "It depends on the purchase. An urgent repair, medical need, move, or safety issue may justify using emergency savings. A vacation, upgrade, event, or optional purchase should usually come from planned savings instead.",
+  },
+  {
+    question: "What if the purchase is fully covered by outside help or purchase savings?",
+    answer:
+      "If the purchase is fully covered without using emergency savings, no debt is needed, and the emergency cushion remains strong, the purchase should create little or no emergency fund pressure.",
+  },
+  {
+    question: "What if financing keeps my emergency fund intact?",
+    answer:
+      "Financing can protect cash today while creating monthly pressure later. This calculator looks at both after-purchase emergency savings and any new monthly payment attached to the purchase.",
+  },
+];
+---
+
+<Layout
+  title="Emergency Fund After Big Purchase Calculator | ShouldISpend"
+  description="Calculate emergency savings after a big purchase, after-purchase cushion, pressure score, financing risk, and rebuild timeline."
+>
+  <style>
+    .container {
+      max-width: 920px;
+      margin: 0 auto;
+      padding: 80px 24px;
+    }
+
+    .eyebrow {
+      color: var(--accent);
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      font-size: 0.8rem;
+      font-weight: 700;
+      margin-bottom: 16px;
+    }
+
+    h1 {
+      font-size: clamp(2.55rem, 7vw, 4.45rem);
+      line-height: 1;
+      margin-bottom: 24px;
+      max-width: 860px;
+    }
+
+    .intro {
+      max-width: 800px;
+      color: var(--muted);
+      font-size: 1.15rem;
+      line-height: 1.8;
+      margin-bottom: 48px;
+    }
+
+    section {
+      margin-top: 64px;
+    }
+
+    h2 {
+      font-size: 2rem;
+      margin-bottom: 18px;
+      line-height: 1.2;
+    }
+
+    h3 {
+      font-size: 1.25rem;
+      margin-top: 30px;
+      margin-bottom: 10px;
+    }
+
+    p,
+    li {
+      color: var(--muted);
+      line-height: 1.8;
+      margin-bottom: 18px;
+    }
+
+    a {
+      color: var(--primary);
+    }
+
+    .calculator {
+      border: 1px solid var(--border);
+      background: var(--card);
+      border-radius: 24px;
+      padding: 30px;
+      margin: 44px 0;
+    }
+
+    .calc-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 20px;
+    }
+
+    .calc-field {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .calc-field label {
+      font-weight: 700;
+      margin-bottom: 10px;
+      color: var(--text);
+    }
+
+    .calc-field input,
+    .calc-field select {
+      padding: 14px;
+      border-radius: 12px;
+      border: 1px solid var(--border);
+      font-size: 1rem;
+    }
+
+    .calc-button {
+      margin-top: 26px;
+      background: var(--primary);
+      color: white;
+      border: none;
+      border-radius: 14px;
+      padding: 15px 22px;
+      font-size: 1rem;
+      font-weight: 800;
+      cursor: pointer;
+    }
+
+    .calc-button:hover {
+      opacity: 0.92;
+    }
+
+    .calc-results {
+      margin-top: 28px;
+      border: 1px solid #dbe4ee;
+      background: #f8fafc;
+      border-radius: 20px;
+      padding: 28px;
+      display: none;
+    }
+
+    .calc-results.active {
+      display: block;
+    }
+
+    .calc-verdict {
+      font-size: 1.8rem;
+      font-weight: 800;
+      color: var(--primary);
+      margin-bottom: 14px;
+    }
+
+    .pressure-wrap {
+      margin: 18px 0 22px;
+    }
+
+    .pressure-topline {
+      display: flex;
+      justify-content: space-between;
+      gap: 18px;
+      align-items: baseline;
+      margin-bottom: 10px;
+      color: var(--text);
+      font-weight: 800;
+    }
+
+    .pressure-score {
+      font-size: 1.15rem;
+      color: var(--primary);
+    }
+
+    .pressure-track {
+      width: 100%;
+      height: 18px;
+      border-radius: 999px;
+      background: #e5e7eb;
+      overflow: hidden;
+      border: 1px solid #d1d5db;
+    }
+
+    .pressure-fill {
+      width: 0%;
+      height: 100%;
+      border-radius: 999px;
+      background: #0f766e;
+      transition: width 0.2s ease;
+    }
+
+    .calc-stat {
+      font-size: 1.05rem;
+      margin-bottom: 12px;
+      color: var(--text);
+      line-height: 1.6;
+    }
+
+    .calc-analysis {
+      color: var(--muted);
+      line-height: 1.8;
+      margin-top: 18px;
+    }
+
+    .callout {
+      border: 1px solid var(--border);
+      background: var(--card);
+      border-radius: 24px;
+      padding: 26px;
+      margin: 36px 0;
+    }
+
+    .callout strong {
+      color: var(--text);
+    }
+
+    .info-grid,
+    .link-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 16px;
+      margin-top: 22px;
+    }
+
+    .info-card,
+    .link-card {
+      display: block;
+      border: 1px solid var(--border);
+      background: var(--card);
+      border-radius: 18px;
+      padding: 18px;
+      text-decoration: none;
+      color: inherit;
+    }
+
+    .link-card {
+      transition: transform 0.15s ease;
+    }
+
+    .link-card:hover {
+      transform: translateY(-2px);
+    }
+
+    .info-card h3,
+    .link-card strong {
+      display: block;
+      margin: 0 0 8px;
+      color: var(--text);
+      line-height: 1.3;
+    }
+
+    .info-card p,
+    .link-card span {
+      color: var(--muted);
+      line-height: 1.6;
+      font-size: 0.95rem;
+      margin: 0;
+    }
+  </style>
+
+  <main class="container">
+    <div class="eyebrow">Emergency Fund After Big Purchase Calculator</div>
+
+    <h1>Emergency Fund After Big Purchase Calculator</h1>
+
+    <p class="intro">
+      A big purchase can look affordable before the money leaves. This calculator
+      answers the after-purchase question: how much emergency savings remain,
+      how many months of essentials are still protected, whether new debt is
+      created, and how long the cushion would take to rebuild.
+    </p>
+
+    <div class="calculator">
+      <div class="calc-grid">
+        <div class="calc-field">
+          <label for="purchaseCost">Total Big Purchase Cost ($)</label>
+          <input type="number" id="purchaseCost" placeholder="8500" min="0" inputmode="decimal" />
+        </div>
+
+        <div class="calc-field">
+          <label for="purchaseFunds">Purchase Savings, Credits, or Confirmed Help ($)</label>
+          <input type="number" id="purchaseFunds" placeholder="3000" min="0" inputmode="decimal" />
+        </div>
+
+        <div class="calc-field">
+          <label for="emergencySavings">Current Emergency Savings ($)</label>
+          <input type="number" id="emergencySavings" placeholder="12000" min="0" inputmode="decimal" />
+        </div>
+
+        <div class="calc-field">
+          <label for="plannedEmergencyUse">Emergency Savings You Plan to Use ($)</label>
+          <input type="number" id="plannedEmergencyUse" placeholder="2500" min="0" inputmode="decimal" />
+        </div>
+
+        <div class="calc-field">
+          <label for="essentials">Monthly Essential Expenses ($)</label>
+          <input type="number" id="essentials" placeholder="4200" min="0" inputmode="decimal" />
+        </div>
+
+        <div class="calc-field">
+          <label for="income">Monthly Take-Home Income ($)</label>
+          <input type="number" id="income" placeholder="6500" min="0" inputmode="decimal" />
+        </div>
+
+        <div class="calc-field">
+          <label for="newPayment">New Monthly Payment After Purchase ($)</label>
+          <input type="number" id="newPayment" placeholder="0" min="0" inputmode="decimal" />
+        </div>
+
+        <div class="calc-field">
+          <label for="rebuildMonthly">Amount You Can Rebuild Per Month ($)</label>
+          <input type="number" id="rebuildMonthly" placeholder="500" min="0" inputmode="decimal" />
+        </div>
+
+        <div class="calc-field">
+          <label for="purchaseType">Purchase Type</label>
+          <select id="purchaseType">
+            <option value="" disabled selected>Select purchase type</option>
+            <option value="urgentRepair">Urgent repair, safety, medical, or essential need</option>
+            <option value="necessary">Necessary move, work need, car need, or family obligation</option>
+            <option value="planned">Planned major purchase</option>
+            <option value="homeProject">Home project, renovation, or maintenance</option>
+            <option value="event">Wedding, funeral, family event, or travel obligation</option>
+            <option value="vacation">Vacation, trip, entertainment, or experience</option>
+            <option value="optional">Optional upgrade, furniture, shopping, or preference purchase</option>
+          </select>
+        </div>
+
+        <div class="calc-field">
+          <label for="timing">Timing</label>
+          <select id="timing">
+            <option value="" disabled selected>Select timing</option>
+            <option value="now">Must happen now</option>
+            <option value="soon">Needed soon</option>
+            <option value="planned">Planned timing</option>
+            <option value="canWait">Can wait</option>
+            <option value="optional">Fully optional</option>
+          </select>
+        </div>
+
+        <div class="calc-field">
+          <label for="financing">Financing or Gap Plan</label>
+          <select id="financing">
+            <option value="" disabled selected>Select financing plan</option>
+            <option value="none">No debt or unpaid gap</option>
+            <option value="zeroApr">0% APR or very short payment plan</option>
+            <option value="lowInterest">Low-interest financing</option>
+            <option value="highInterest">High-interest credit card or loan</option>
+            <option value="noPlan">No clear way to cover the remaining gap</option>
+          </select>
+        </div>
+
+        <div class="calc-field">
+          <label for="incomeStability">Income Stability</label>
+          <select id="incomeStability">
+            <option value="" disabled selected>Select income stability</option>
+            <option value="stable">Stable paycheck</option>
+            <option value="average">Somewhat stable</option>
+            <option value="unstable">Irregular, freelance, commission, or at risk</option>
+          </select>
+        </div>
+
+        <div class="calc-field">
+          <label for="householdRisk">Household Risk</label>
+          <select id="householdRisk">
+            <option value="" disabled selected>Select household risk</option>
+            <option value="low">Low: few dependents, low repair risk</option>
+            <option value="moderate">Moderate: dependents, car need, rent pressure, or repair risk</option>
+            <option value="high">High: one income, dependents, medical risk, or home repair risk</option>
+          </select>
+        </div>
+      </div>
+
+      <button class="calc-button sis-action-button sis-calculate-button" id="calculateAfterPurchase">
+        Calculate After-Purchase Cushion
+      </button>
+
+      <div class="calc-results" id="calcResults">
+        <div class="calc-verdict" id="calcVerdict"></div>
+        <div id="calcAfterCushion"></div>
+
+        <div class="pressure-wrap">
+          <div class="pressure-topline">
+            <span>After-purchase pressure</span>
+            <span class="pressure-score" id="pressureScore">0/100</span>
+          </div>
+          <div class="pressure-track">
+            <div class="pressure-fill" id="pressureFill"></div>
+          </div>
+        </div>
+
+        <div class="calc-stat" id="calcCoverage"></div>
+        <div class="calc-stat" id="calcFunding"></div>
+        <div class="calc-stat" id="calcFloor"></div>
+        <div class="calc-stat" id="calcPayment"></div>
+        <div class="calc-stat" id="calcRebuild"></div>
+        <div class="calc-analysis" id="calcAnalysis"></div>
+      </div>
+    </div>
+
+    <div class="callout">
+      <p>
+        <strong>After-purchase rule:</strong> a purchase is safer when the
+        emergency fund still protects normal life after the payment, not just
+        before it.
+      </p>
+    </div>
+
+    <section>
+      <h2>What This Calculator Does Differently</h2>
+
+      <p>
+        The 3-month and 6-month calculators build emergency fund targets. The
+        emergency fund use calculator asks whether one specific bill deserves
+        emergency savings. This calculator looks at a different moment: after a
+        major purchase is made.
+      </p>
+
+      <p>
+        That makes the output practical for travel, repairs, weddings, home
+        projects, cars, moves, family events, medical costs, and other large
+        decisions. The main number is not the purchase price. The main number is
+        the emergency savings left after the purchase.
+      </p>
+
+      <p>
+        The supporting output shows how much of the cost is covered without the
+        emergency fund, how much cash is used, whether a financing gap remains,
+        how many months of essentials are still protected, and how long the
+        cushion may take to rebuild.
+      </p>
+    </section>
+
+    <section>
+      <h2>The After-Purchase Cushion Matters More Than the Sticker Price</h2>
+
+      <p>
+        A household can afford the same purchase in very different ways. A cost
+        covered by dedicated savings, confirmed help, credits, or reimbursement
+        may leave the emergency fund untouched. The same cost paid from emergency
+        savings can create real exposure if another surprise hits soon after.
+      </p>
+
+      <div class="info-grid">
+        <div class="info-card">
+          <h3>Best case</h3>
+          <p>
+            Purchase funds or confirmed help cover the cost, no debt is created,
+            and emergency savings still protect several months of essentials.
+          </p>
+        </div>
+
+        <div class="info-card">
+          <h3>Middle case</h3>
+          <p>
+            The purchase uses some emergency savings, but a starter or one-month
+            floor remains and the rebuild timeline is realistic.
+          </p>
+        </div>
+
+        <div class="info-card">
+          <h3>Risky case</h3>
+          <p>
+            The purchase drains the fund, adds monthly payments, or leaves the
+            household below its safety floor.
+          </p>
+        </div>
+
+        <div class="info-card">
+          <h3>Critical case</h3>
+          <p>
+            The purchase leaves no emergency savings, creates high-interest debt,
+            and the household has little room to recover.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <h2>Why This Is Not the Same as a Purchase Affordability Calculator</h2>
+
+      <p>
+        A normal affordability calculator often asks whether the payment fits
+        this month. That is not enough for a big purchase. The better question is
+        whether the household can still handle a second problem after the first
+        check clears.
+      </p>
+
+      <p>
+        That is why this calculator gives more weight to emergency savings after
+        the purchase, new monthly payments, income stability, household risk, and
+        rebuild speed. It is built for the aftershock, not just the swipe.
+      </p>
+    </section>
+
+    <section>
+      <h2>How to Read the Result</h2>
+
+      <h3>Low pressure</h3>
+      <p>
+        Low pressure means the purchase leaves a strong enough emergency cushion,
+        does not create risky debt, and can be rebuilt without crowding normal
+        essentials.
+      </p>
+
+      <h3>Moderate pressure</h3>
+      <p>
+        Moderate pressure means the purchase may work, but the emergency fund is
+        thinner afterward. The rebuild plan and any new payment should be clear
+        before moving forward.
+      </p>
+
+      <h3>High pressure</h3>
+      <p>
+        High pressure means the purchase damages the safety net, creates debt, or
+        leaves the household too exposed to a second emergency. If the purchase
+        can wait, waiting is usually the safer move.
+      </p>
+    </section>
+
+    <section>
+      <h2>How the Extreme Cases Should Behave</h2>
+
+      <p>
+        If a purchase is fully covered by dedicated purchase savings, confirmed
+        help, credits, or reimbursement, no debt is needed, emergency savings
+        remain strong, and the cost is small relative to the household, pressure
+        should be zero.
+      </p>
+
+      <p>
+        If the household has no emergency savings, low or no income, the purchase
+        is not fully covered, and the only plan is high-interest debt or no clear
+        plan, pressure should reach 100. A calculator should not hide that risk
+        just because the purchase feels important.
+      </p>
+    </section>
+
+    <section id="FinancialRedFlags">
+      <h2>Emergency Fund After Big Purchase Red Flags</h2>
+
+      <ul>
+        <li>The purchase would leave less than a starter cushion or one month of essentials.</li>
+        <li>You are counting money saved for the purchase as emergency savings.</li>
+        <li>The purchase depends on high-interest debt or an unclear payment plan.</li>
+        <li>The new monthly payment makes the normal budget tight.</li>
+        <li>You have unstable income and no rebuild plan.</li>
+        <li>The purchase is optional but would drain the emergency fund.</li>
+      </ul>
+    </section>
+
+    <section id="CalculatorAssumptions">
+      <h2>Emergency Fund After Big Purchase Calculator Assumptions</h2>
+
+      <p>
+        This calculator separates dedicated purchase funds from emergency savings.
+        Purchase savings, credits, outside help, and reimbursement reduce the
+        uncovered cost before emergency savings are touched.
+      </p>
+
+      <p>
+        The calculator gives lower pressure when the purchase is covered without
+        debt, the emergency fund remains strong afterward, income is stable, and
+        the rebuild path is realistic. It gives higher pressure when the purchase
+        drains emergency savings, adds risky debt, creates monthly payment strain,
+        or leaves the household below a safety floor.
+      </p>
+    </section>
+
+    <section id="MethodologySection">
+      <h2>How ShouldISpend Calculates After-Purchase Pressure</h2>
+
+      <p>
+        ShouldISpend starts with the purchase cost, then subtracts purchase
+        savings, confirmed help, credits, and reimbursement. It then looks at
+        planned emergency fund use, emergency savings after the purchase, monthly
+        essentials, new monthly payments, financing risk, income stability,
+        household risk, and rebuild ability.
+      </p>
+
+      <p>
+        The result is intentionally different from the 6-month emergency fund
+        calculator. The 6-month tool builds a long-runway target. This calculator
+        stress-tests what remains after a specific major purchase.
+      </p>
+    </section>
+
+    <section id="RelatedCalculators">
+      <h2>Emergency Savings Calculators</h2>
+
+      <div class="link-grid">
+        <a class="link-card" href="/emergency-savings-calculators">
+          <strong>Emergency Savings Calculators</strong>
+          <span>
+            See the full emergency savings cluster, from starter cushions to
+            3-month, 6-month, debt, emergency fund use, and post-purchase decisions.
+          </span>
+        </a>
+
+        <a class="link-card" href="/starter-emergency-fund-calculator">
+          <strong>Starter Emergency Fund Calculator</strong>
+          <span>
+            Build the first realistic cash cushion before chasing a full
+            emergency fund.
+          </span>
+        </a>
+
+        <a class="link-card" href="/3-month-emergency-fund-calculator">
+          <strong>3-Month Emergency Fund Calculator</strong>
+          <span>
+            Build the core emergency fund baseline from essential monthly
+            expenses.
+          </span>
+        </a>
+
+        <a class="link-card" href="/6-month-emergency-fund-calculator">
+          <strong>6-Month Emergency Fund Calculator</strong>
+          <span>
+            Build a stronger long-runway cushion for households with higher risk.
+          </span>
+        </a>
+
+        <a class="link-card" href="/emergency-fund-vs-debt-payoff-calculator">
+          <strong>Emergency Fund vs Debt Payoff Calculator</strong>
+          <span>
+            Decide whether extra cash should build emergency savings, pay down
+            debt, or split between both.
+          </span>
+        </a>
+
+        <a class="link-card" href="/should-i-use-my-emergency-fund">
+          <strong>Should I Use My Emergency Fund?</strong>
+          <span>
+            Decide whether a surprise expense should use the emergency fund.
+          </span>
+        </a>
+      </div>
+    </section>
+
+    <FAQSection title="Emergency Fund After Big Purchase FAQ" faqs={emergencyFundAfterPurchaseFaqs} />
+  </main>
+
+  <script is:inline>
+    document.addEventListener("DOMContentLoaded", function () {
+      const button = document.getElementById("calculateAfterPurchase");
+
+      if (!button) return;
+
+      const moneyLabelStyle =
+        "color: var(--muted); font-size: 0.82rem; font-weight: 800; letter-spacing: 0.04em; text-transform: uppercase; margin-bottom: 6px;";
+
+      const moneyValueStyle =
+        "color: var(--primary); font-size: clamp(2.45rem, 6vw, 3.75rem); font-weight: 950; line-height: 1.02; letter-spacing: -0.055em; margin: 4px 0 16px; display: block;";
+
+      const moneySubtextStyle =
+        "color: var(--text); font-size: 1.05rem; font-weight: 800; line-height: 1.55; margin-bottom: 14px;";
+
+      function money(value) {
+        return "$" + Math.round(value).toLocaleString("en-US");
+      }
+
+      function cleanNumber(id) {
+        const element = document.getElementById(id);
+        if (!element) return 0;
+        const value = Number(element.value);
+        return Number.isFinite(value) && value > 0 ? value : 0;
+      }
+
+      function clamp(value, min, max) {
+        return Math.max(min, Math.min(max, value));
+      }
+
+      function monthWord(months) {
+        return months === 1 ? "month" : "months";
+      }
+
+      function isOptionalPurchase(type) {
+        return type === "vacation" || type === "optional";
+      }
+
+      function isEssentialPurchase(type) {
+        return type === "urgentRepair" || type === "necessary";
+      }
+
+      button.addEventListener("click", function () {
+        const purchaseCost = cleanNumber("purchaseCost");
+        const purchaseFunds = cleanNumber("purchaseFunds");
+        const emergencySavings = cleanNumber("emergencySavings");
+        const plannedEmergencyUse = cleanNumber("plannedEmergencyUse");
+        const essentials = cleanNumber("essentials");
+        const income = cleanNumber("income");
+        const newPayment = cleanNumber("newPayment");
+        const rebuildMonthly = cleanNumber("rebuildMonthly");
+
+        const purchaseType = document.getElementById("purchaseType").value;
+        const timing = document.getElementById("timing").value;
+        const financing = document.getElementById("financing").value;
+        const incomeStability = document.getElementById("incomeStability").value;
+        const householdRisk = document.getElementById("householdRisk").value;
+
+        const results = document.getElementById("calcResults");
+        const verdictEl = document.getElementById("calcVerdict");
+        const afterCushionEl = document.getElementById("calcAfterCushion");
+        const scoreEl = document.getElementById("pressureScore");
+        const fillEl = document.getElementById("pressureFill");
+        const coverageEl = document.getElementById("calcCoverage");
+        const fundingEl = document.getElementById("calcFunding");
+        const floorEl = document.getElementById("calcFloor");
+        const paymentEl = document.getElementById("calcPayment");
+        const rebuildEl = document.getElementById("calcRebuild");
+        const analysisEl = document.getElementById("calcAnalysis");
+
+        results.classList.add("active");
+
+        if (
+          purchaseCost <= 0 ||
+          essentials <= 0 ||
+          !purchaseType ||
+          !timing ||
+          !financing ||
+          !incomeStability ||
+          !householdRisk
+        ) {
+          verdictEl.innerText = "Add the missing details";
+          afterCushionEl.innerHTML =
+            "<div style=\"" +
+            moneyLabelStyle +
+            "\">Emergency savings after purchase</div><div style=\"" +
+            moneyValueStyle +
+            "\">Need details</div><div style=\"" +
+            moneySubtextStyle +
+            "\">Enter the purchase cost, monthly essentials, and the dropdown details to calculate the after-purchase cushion.</div>";
+          scoreEl.innerText = "0/100";
+          fillEl.style.width = "0%";
+          fillEl.style.background = "#0f766e";
+          coverageEl.innerText = "";
+          fundingEl.innerText = "";
+          floorEl.innerText = "";
+          paymentEl.innerText = "";
+          rebuildEl.innerText = "";
+          analysisEl.innerText =
+            "Purchase savings, emergency savings, emergency fund use, income, new payment, and rebuild amount can be zero, but the calculator needs the cost, essentials, purchase type, timing, financing plan, and household risk details.";
+          return;
+        }
+
+        const coveredByPurchaseFunds = Math.min(purchaseCost, purchaseFunds);
+        const remainingAfterPurchaseFunds = Math.max(0, purchaseCost - coveredByPurchaseFunds);
+        const emergencyUse = Math.min(plannedEmergencyUse, emergencySavings, remainingAfterPurchaseFunds);
+        const remainingGap = Math.max(0, remainingAfterPurchaseFunds - emergencyUse);
+        const savingsAfter = Math.max(0, emergencySavings - emergencyUse);
+        const monthsBefore = emergencySavings / essentials;
+        const monthsAfter = savingsAfter / essentials;
+        const costIncomeRatio = income > 0 ? purchaseCost / income : 9;
+        const paymentRatio = income > 0 ? newPayment / income : 9;
+
+        const starterFloor = Math.max(500, Math.min(1000, essentials * 0.25));
+        let protectionFloor = essentials;
+
+        if (householdRisk === "moderate" || incomeStability === "unstable") {
+          protectionFloor = essentials * 3;
+        }
+
+        if (householdRisk === "high") {
+          protectionFloor = essentials * 6;
+        }
+
+        if (incomeStability === "stable" && householdRisk === "low") {
+          protectionFloor = Math.max(starterFloor, essentials);
+        }
+
+        const floorGap = Math.max(0, protectionFloor - savingsAfter);
+        const safeSpendBeforeFloor = Math.max(0, emergencySavings - protectionFloor);
+        const rebuildGap = Math.max(0, protectionFloor - savingsAfter);
+
+        let score = 25;
+
+        if (purchaseFunds >= purchaseCost && emergencyUse === 0 && remainingGap === 0 && newPayment === 0) {
+          score = 0;
+        } else {
+          if (monthsAfter >= 6) score += 0;
+          else if (monthsAfter >= 3) score += 8;
+          else if (monthsAfter >= 1) score += 28;
+          else if (monthsAfter > 0) score += 48;
+          else score += 70;
+
+          const savingsUseRatio = emergencySavings > 0 ? emergencyUse / emergencySavings : 1;
+
+          if (emergencyUse > 0) {
+            if (savingsUseRatio >= 0.9) score += 28;
+            else if (savingsUseRatio >= 0.5) score += 20;
+            else if (savingsUseRatio >= 0.25) score += 12;
+            else if (savingsUseRatio <= 0.05) score -= 8;
+          }
+
+          if (remainingGap > 0) {
+            if (financing === "highInterest") score += 35;
+            else if (financing === "noPlan") score += 40;
+            else if (financing === "lowInterest") score += 15;
+            else if (financing === "zeroApr") score += 8;
+            else score += 20;
+          }
+
+          if (newPayment > 0) {
+            if (paymentRatio >= 0.15) score += 25;
+            else if (paymentRatio >= 0.1) score += 18;
+            else if (paymentRatio >= 0.05) score += 10;
+            else score += 4;
+          }
+
+          if (isOptionalPurchase(purchaseType)) score += 24;
+          else if (purchaseType === "event" || purchaseType === "homeProject" || purchaseType === "planned") score += 10;
+          else if (isEssentialPurchase(purchaseType)) score -= 8;
+
+          if (timing === "optional") score += 22;
+          else if (timing === "canWait") score += 16;
+          else if (timing === "planned") score += 6;
+          else if (timing === "now") score -= 6;
+
+          if (costIncomeRatio >= 2) score += 25;
+          else if (costIncomeRatio >= 1) score += 18;
+          else if (costIncomeRatio <= 0.05) score -= 12;
+
+          if (incomeStability === "unstable") score += 12;
+          else if (incomeStability === "average") score += 5;
+          else score -= 5;
+
+          if (householdRisk === "high") score += 12;
+          else if (householdRisk === "moderate") score += 6;
+          else score -= 4;
+
+          if (floorGap > 0) score += 14;
+
+          if (rebuildMonthly > 0 && rebuildGap > 0) {
+            const rebuildMonths = Math.ceil(rebuildGap / rebuildMonthly);
+            if (rebuildMonths <= 3) score -= 6;
+            else if (rebuildMonths >= 12) score += 10;
+          }
+
+          if (purchaseFunds >= purchaseCost && emergencyUse === 0 && remainingGap === 0) {
+            score -= 25;
+          }
+
+          score = clamp(score, 0, 100);
+        }
+
+        const purchaseCoveredWithoutEmergency =
+          purchaseFunds >= purchaseCost &&
+          emergencyUse === 0 &&
+          remainingGap === 0 &&
+          newPayment === 0;
+
+        const tinyCostForIncome =
+          income > 0 && purchaseCost / income <= 0.01;
+
+        const smallCostForIncome =
+          income > 0 && purchaseCost / income <= 0.05;
+
+        const badFinancing =
+          financing === "highInterest" || financing === "noPlan";
+
+        const harmlessFinancing =
+          remainingGap === 0 ||
+          financing === "none" ||
+          financing === "zeroApr" ||
+          financing === "lowInterest";
+
+        const paymentIsTinyForIncome =
+          income > 0 && newPayment / income <= 0.01;
+
+        const paymentIsCoveredByCash =
+          savingsAfter >= 100000 || savingsAfter >= newPayment * 12;
+
+        const strongAfterCushion =
+          monthsAfter >= 6 ||
+          savingsAfter >= protectionFloor * 2 ||
+          savingsAfter >= 100000;
+
+        const veryHighIncomeSafe =
+          income >= 250000 &&
+          tinyCostForIncome &&
+          savingsAfter >= starterFloor &&
+          harmlessFinancing &&
+          !badFinancing &&
+          (newPayment === 0 || paymentIsTinyForIncome || paymentIsCoveredByCash);
+
+        const hugeSavingsSafe =
+          savingsAfter >= 100000 &&
+          monthsAfter >= 6 &&
+          !badFinancing &&
+          (remainingGap === 0 || remainingGap <= savingsAfter * 0.05) &&
+          (newPayment === 0 || paymentIsCoveredByCash || newPayment <= savingsAfter * 0.01);
+
+        const fullyCoveredSafe =
+          purchaseCoveredWithoutEmergency &&
+          (
+            strongAfterCushion ||
+            (tinyCostForIncome && savingsAfter >= starterFloor) ||
+            (smallCostForIncome && savingsAfter >= protectionFloor)
+          );
+
+        const zeroPressureCase =
+          incomeStability !== "unstable" &&
+          (
+            fullyCoveredSafe ||
+            veryHighIncomeSafe ||
+            hugeSavingsSafe
+          );
+
+        const ultraCritical =
+          purchaseCost > 0 &&
+          emergencySavings <= 0 &&
+          remainingAfterPurchaseFunds > 0 &&
+          (
+            income <= 0 ||
+            income <= essentials ||
+            financing === "highInterest" ||
+            financing === "noPlan"
+          );
+
+        const optionalCritical =
+          isOptionalPurchase(purchaseType) &&
+          (remainingGap > 0 || emergencyUse > 0) &&
+          savingsAfter < starterFloor &&
+          (financing === "highInterest" || financing === "noPlan");
+
+        if (zeroPressureCase) {
+          score = 0;
+        }
+
+        if (ultraCritical || optionalCritical) {
+          score = 100;
+        }
+
+        score = Math.round(clamp(score, 0, 100));
+
+        let verdict = "";
+        let analysis = "";
+
+        if (score === 0) {
+          verdict = "Zero After-Purchase Pressure";
+          analysis =
+            "The purchase appears to create no real after-purchase strain because income, remaining savings, financing risk, and the emergency cushion are strong enough for the cost.";
+        } else if (score <= 20) {
+          verdict = "Low After-Purchase Pressure";
+          analysis =
+            "The purchase appears manageable because the emergency cushion remains strong, debt risk is low, or the cost is small relative to the household.";
+        } else if (score <= 45) {
+          verdict = "Manageable with a Rebuild Plan";
+          analysis =
+            "The purchase may work, but the emergency fund is thinner afterward. The rebuild plan should be clear before committing.";
+        } else if (score <= 70) {
+          verdict = "High Caution";
+          analysis =
+            "The purchase creates meaningful pressure by reducing the safety net, adding a payment, or leaving the household below a preferred floor.";
+        } else if (score <= 89) {
+          verdict = isEssentialPurchase(purchaseType)
+            ? "High Pressure, Possibly Necessary"
+            : "Delay if Possible";
+          analysis =
+            "The purchase would leave the household exposed after the money is gone. If it can wait, waiting is safer.";
+        } else {
+          verdict = "Critical After-Purchase Pressure";
+          analysis =
+            "The purchase would leave the household highly exposed, dependent on risky debt, or without a clear way to recover.";
+        }
+
+        if (isOptionalPurchase(purchaseType)) {
+          analysis +=
+            " Because the purchase looks optional, planned savings are usually safer than emergency savings.";
+        } else if (isEssentialPurchase(purchaseType)) {
+          analysis +=
+            " Because the purchase looks necessary or urgent, higher pressure may still require action, but the recovery plan matters immediately.";
+        }
+
+        scoreEl.innerText = score + "/100";
+        fillEl.style.width = score + "%";
+
+        if (score <= 30) {
+          fillEl.style.background = "#0f766e";
+        } else if (score <= 65) {
+          fillEl.style.background = "#d97706";
+        } else {
+          fillEl.style.background = "#b91c1c";
+        }
+
+        afterCushionEl.innerHTML =
+          "<div style=\"" +
+          moneyLabelStyle +
+          "\">Emergency savings after purchase</div><div style=\"" +
+          moneyValueStyle +
+          "\">" +
+          money(savingsAfter) +
+          "</div><div style=\"" +
+          moneySubtextStyle +
+          "\">That leaves about " +
+          monthsAfter.toFixed(1) +
+          " months of essential expenses protected after the purchase.</div>";
+
+        coverageEl.innerText =
+          "Before the purchase, emergency savings covered about " +
+          monthsBefore.toFixed(1) +
+          " months of essentials. After the purchase, they cover about " +
+          monthsAfter.toFixed(1) +
+          " months.";
+
+        fundingEl.innerText =
+          "Purchase funding: " +
+          money(coveredByPurchaseFunds) +
+          " covered by purchase savings, credits, or confirmed help; " +
+          money(emergencyUse) +
+          " from emergency savings; " +
+          money(remainingGap) +
+          " left for financing or another plan.";
+
+        floorEl.innerText =
+          "Safety floor used here: " +
+          money(protectionFloor) +
+          ". Cash available from emergency savings before dipping below that floor: " +
+          money(safeSpendBeforeFloor) +
+          ".";
+
+        if (newPayment > 0) {
+          paymentEl.innerText =
+            "New monthly payment: " +
+            money(newPayment) +
+            ", or about " +
+            (paymentRatio * 100).toFixed(1) +
+            "% of monthly take-home income.";
+        } else {
+          paymentEl.innerText =
+            "New monthly payment: $0 based on the input.";
+        }
+
+        if (rebuildGap === 0) {
+          rebuildEl.innerText =
+            "Rebuild plan: the selected safety floor remains covered after the purchase.";
+        } else if (rebuildMonthly > 0) {
+          const monthsToRebuild = Math.ceil(rebuildGap / rebuildMonthly);
+          rebuildEl.innerText =
+            "Rebuild plan: at " +
+            money(rebuildMonthly) +
+            " per month, restoring the safety floor would take about " +
+            monthsToRebuild +
+            " " +
+            monthWord(monthsToRebuild) +
+            ".";
+        } else {
+          rebuildEl.innerText =
+            "Rebuild plan: add a monthly rebuild amount to estimate how long restoring the safety floor would take.";
+        }
+
+        verdictEl.innerText = verdict;
+        analysisEl.innerText = analysis;
+      });
+    });
+  </script>
+</Layout>

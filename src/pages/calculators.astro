@@ -1,4 +1,4 @@
-﻿---
+---
 import Layout from "../layouts/Layout.astro";
 import CalculatorCard from "../components/CalculatorCard.astro";
 import FAQSection from "../components/FAQSection.astro";
@@ -85,9 +85,10 @@ const categories = [
   {
     name: "Emergency Savings",
     title: "Emergency Savings Calculators",
+    count: 7,
     description:
       "How much cash cushion you need before, during, and after a major spending decision.",
-    hub: "/how-much-emergency-savings-should-i-have",
+    hub: "/emergency-savings-calculators",
   },
   {
     name: "Home Improvement",
@@ -114,9 +115,12 @@ const featuredCalculators = featuredHrefs
   .filter(Boolean);
 
 const categorySummaries = categories.map((category) => {
-  const count = calculators.filter(
+  const calculatedCount = calculators.filter(
     (calculator) => calculator.category === category.name
   ).length;
+
+  const count =
+    typeof category.count === "number" ? category.count : calculatedCount;
 
   return {
     ...category,
@@ -236,7 +240,7 @@ const relatedGuides = [
       "Use percentage rules as starting points for rent, debt, car payments, and major spending decisions.",
   },
   {
-    href: "/how-much-emergency-savings-should-i-have",
+    href: "/emergency-savings-calculators",
     title: "Emergency Savings Calculator",
     text:
       "Estimate how much cash cushion you may need before and after major expenses.",
