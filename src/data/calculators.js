@@ -1,8 +1,9 @@
 export const calculators = [
   {
     title: "Starter Emergency Fund Calculator",
+    href: "/starter-emergency-fund-calculator",
     slug: "/starter-emergency-fund-calculator",
-    category: "Budget Rules",
+    category: "Emergency Savings",
     description: "Calculate a realistic starter emergency fund range, first cash floor, savings gap, and monthly plan before chasing a full 3-6 month cushion.",
   },
   {
