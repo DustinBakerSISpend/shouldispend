@@ -1,0 +1,1000 @@
+---
+import Layout from "../layouts/Layout.astro";
+import FAQSection from "../components/FAQSection.astro";
+
+const cashVsFinanceFaqs = [
+  {
+    question: "Is it better to pay cash or finance a car?",
+    answer:
+      "Paying cash can be better when it does not drain emergency savings or block other priorities. Financing can be better when paying cash would leave the household exposed, but the payment, APR, and loan term still fit safely.",
+  },
+  {
+    question: "Should I pay cash for a car if I have the money?",
+    answer:
+      "Not always. If paying cash would wipe out your emergency fund, delay urgent savings goals, or leave no room for repairs, a partial-finance approach may be safer.",
+  },
+  {
+    question: "When does financing a car make sense?",
+    answer:
+      "Financing can make sense when the APR is reasonable, the term is not stretched, the payment fits easily, and keeping cash protects your emergency fund or other near-term needs.",
+  },
+  {
+    question: "What is the biggest risk of paying cash for a car?",
+    answer:
+      "The biggest risk is turning a vehicle purchase into a cash drain. A paid-off car is useful, but not if the purchase leaves no emergency cushion for repairs, medical bills, job disruption, or insurance deductibles.",
+  },
+  {
+    question: "What is the biggest risk of financing a car?",
+    answer:
+      "The biggest risk is creating a payment that quietly crowds out savings, debt payoff, insurance, maintenance, and normal monthly flexibility.",
+  },
+];
+---
+
+<Layout
+  title="Cash vs Finance Car Calculator | ShouldISpend"
+  description="Decide whether to pay cash, finance part of a car, finance carefully, or wait based on cash left, emergency savings, APR, loan term, payment pressure, and income stability."
+>
+  <style>
+    .container {
+      max-width: 940px;
+      margin: 0 auto;
+      padding: 80px 24px;
+    }
+
+    .eyebrow {
+      color: var(--primary);
+      text-transform: uppercase;
+      letter-spacing: 1.8px;
+      font-size: 0.78rem;
+      font-weight: 800;
+      margin-bottom: 16px;
+    }
+
+    h1 {
+      font-size: clamp(2.55rem, 7vw, 4.55rem);
+      line-height: 1;
+      letter-spacing: -0.055em;
+      margin: 0 0 24px;
+      max-width: 900px;
+      color: var(--text);
+    }
+
+    h2 {
+      font-size: clamp(1.8rem, 4vw, 2.45rem);
+      line-height: 1.12;
+      letter-spacing: -0.035em;
+      margin: 0 0 18px;
+      color: var(--text);
+    }
+
+    h3 {
+      font-size: 1.22rem;
+      line-height: 1.3;
+      margin: 28px 0 10px;
+      color: var(--text);
+    }
+
+    p,
+    li {
+      color: var(--muted);
+      line-height: 1.82;
+      font-size: 1.04rem;
+      margin-bottom: 18px;
+    }
+
+    a {
+      color: var(--primary);
+    }
+
+    section {
+      margin-top: 68px;
+    }
+
+    .intro {
+      max-width: 830px;
+      color: var(--muted);
+      font-size: 1.14rem;
+      line-height: 1.85;
+      margin-bottom: 42px;
+    }
+
+    .calculator {
+      border: 1px solid var(--border);
+      background: var(--card);
+      border-radius: 24px;
+      padding: 30px;
+      margin: 44px 0;
+      box-shadow: var(--shadow-soft);
+    }
+
+    .calc-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(235px, 1fr));
+      gap: 20px;
+    }
+
+    .calc-field {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .calc-field label {
+      font-weight: 800;
+      margin-bottom: 10px;
+      color: var(--text);
+      line-height: 1.35;
+    }
+
+    .calc-field input,
+    .calc-field select {
+      padding: 14px;
+      border-radius: 12px;
+      border: 1px solid var(--border);
+      font-size: 1rem;
+      background: #ffffff;
+      color: var(--text);
+    }
+
+    .calc-button {
+      margin-top: 26px;
+      background: var(--primary);
+      color: #ffffff;
+      border: none;
+      border-radius: 14px;
+      padding: 15px 22px;
+      font-size: 1rem;
+      font-weight: 900;
+      cursor: pointer;
+    }
+
+    .calc-button:hover {
+      opacity: 0.92;
+    }
+
+    .calc-results {
+      margin-top: 28px;
+      border: 1px solid #dbe4ee;
+      background: #f8fafc;
+      border-radius: 20px;
+      padding: 28px;
+      display: none;
+    }
+
+    .calc-results.active {
+      display: block;
+    }
+
+    .calc-verdict {
+      font-size: 1.8rem;
+      font-weight: 900;
+      color: var(--primary);
+      margin-bottom: 16px;
+      line-height: 1.18;
+    }
+
+    .calc-stat {
+      font-size: 1.03rem;
+      margin-bottom: 12px;
+      color: var(--text);
+      line-height: 1.65;
+    }
+
+    .calc-analysis {
+      color: var(--muted);
+      line-height: 1.82;
+      margin-top: 18px;
+    }
+
+    .callout {
+      border: 1px solid var(--border);
+      background: var(--card);
+      border-radius: 24px;
+      padding: 26px;
+      margin: 36px 0;
+      box-shadow: var(--shadow-soft);
+    }
+
+    .callout strong {
+      color: var(--text);
+    }
+
+    .info-grid,
+    .link-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 16px;
+      margin-top: 24px;
+    }
+
+    .info-card,
+    .link-card {
+      display: block;
+      border: 1px solid var(--border);
+      background: var(--card);
+      border-radius: 18px;
+      padding: 20px;
+      text-decoration: none;
+      color: inherit;
+    }
+
+    .link-card {
+      transition:
+        transform 0.15s ease,
+        border-color 0.15s ease,
+        box-shadow 0.15s ease;
+    }
+
+    .link-card:hover {
+      transform: translateY(-2px);
+      border-color: var(--primary);
+      box-shadow: var(--shadow-soft);
+    }
+
+    .info-card h3,
+    .link-card strong {
+      display: block;
+      margin: 0 0 8px;
+      color: var(--text);
+      line-height: 1.3;
+      font-size: 1.08rem;
+    }
+
+    .info-card p,
+    .link-card span {
+      color: var(--muted);
+      line-height: 1.65;
+      font-size: 0.95rem;
+      margin: 0;
+    }
+
+    .red-flag-list {
+      margin: 22px 0 0;
+      padding: 0;
+      list-style: none;
+      display: grid;
+      gap: 12px;
+    }
+
+    .red-flag-list li {
+      margin: 0;
+      padding: 15px 16px;
+      border-radius: 16px;
+      border: 1px solid #fecaca;
+      background: #fff7f7;
+      color: #7f1d1d;
+      line-height: 1.55;
+      font-size: 0.96rem;
+    }
+
+    @media (max-width: 720px) {
+      .container {
+        padding: 58px 20px;
+      }
+
+      .calculator {
+        padding: 22px;
+      }
+
+      h1 {
+        font-size: 2.55rem;
+      }
+    }
+  </style>
+
+  <main class="container">
+    <div class="eyebrow">Cash vs Finance Car Calculator</div>
+
+    <h1>Cash vs Finance Car Calculator</h1>
+
+    <p class="intro">
+      Paying cash can eliminate a car payment, but it can also drain the cash cushion.
+      Financing can protect savings, but it can also create years of monthly pressure.
+      This calculator compares both paths and recommends paying cash, financing part,
+      financing carefully, or waiting.
+    </p>
+
+    <div class="calculator">
+      <div class="calc-grid">
+        <div class="calc-field">
+          <label for="vehiclePrice">Vehicle Price ($)</label>
+          <input type="number" id="vehiclePrice" placeholder="32000" min="0" inputmode="decimal" />
+        </div>
+
+        <div class="calc-field">
+          <label for="taxesFees">Taxes, Fees, Registration, and Add-Ons ($)</label>
+          <input type="number" id="taxesFees" placeholder="3200" min="0" inputmode="decimal" />
+        </div>
+
+        <div class="calc-field">
+          <label for="credits">Trade-In Equity, Rebate, Gift, or Outside Help ($)</label>
+          <input type="number" id="credits" placeholder="2500" min="0" inputmode="decimal" />
+        </div>
+
+        <div class="calc-field">
+          <label for="cashAvailable">Cash Available for the Car ($)</label>
+          <input type="number" id="cashAvailable" placeholder="18000" min="0" inputmode="decimal" />
+        </div>
+
+        <div class="calc-field">
+          <label for="emergencySavings">Current Emergency Savings ($)</label>
+          <input type="number" id="emergencySavings" placeholder="14000" min="0" inputmode="decimal" />
+        </div>
+
+        <div class="calc-field">
+          <label for="savingsGoal">Minimum Cash Cushion You Want After Purchase ($)</label>
+          <input type="number" id="savingsGoal" placeholder="10000" min="0" inputmode="decimal" />
+        </div>
+
+        <div class="calc-field">
+          <label for="plannedDownPayment">Planned Down Payment if Financing ($)</label>
+          <input type="number" id="plannedDownPayment" placeholder="8000" min="0" inputmode="decimal" />
+        </div>
+
+        <div class="calc-field">
+          <label for="apr">Loan APR (%)</label>
+          <input type="number" id="apr" placeholder="7.5" min="0" inputmode="decimal" />
+        </div>
+
+        <div class="calc-field">
+          <label for="termMonths">Loan Term (Months)</label>
+          <input type="number" id="termMonths" placeholder="60" min="0" inputmode="numeric" />
+        </div>
+
+        <div class="calc-field">
+          <label for="expectedPayment">Expected Monthly Payment if Known ($)</label>
+          <input type="number" id="expectedPayment" placeholder="525" min="0" inputmode="decimal" />
+        </div>
+
+        <div class="calc-field">
+          <label for="income">Monthly Take-Home Income ($)</label>
+          <input type="number" id="income" placeholder="7000" min="0" inputmode="decimal" />
+        </div>
+
+        <div class="calc-field">
+          <label for="essentials">Monthly Essential Expenses Before New Car Payment ($)</label>
+          <input type="number" id="essentials" placeholder="3900" min="0" inputmode="decimal" />
+        </div>
+
+        <div class="calc-field">
+          <label for="otherDebt">Other Monthly Debt Payments ($)</label>
+          <input type="number" id="otherDebt" placeholder="500" min="0" inputmode="decimal" />
+        </div>
+
+        <div class="calc-field">
+          <label for="highInterestDebt">High-Interest Debt Balance ($)</label>
+          <input type="number" id="highInterestDebt" placeholder="2500" min="0" inputmode="decimal" />
+        </div>
+
+        <div class="calc-field">
+          <label for="incomeStability">Income Stability</label>
+          <select id="incomeStability">
+            <option value="" disabled selected>Select income stability</option>
+            <option value="stable">Stable paycheck</option>
+            <option value="variable">Somewhat variable</option>
+            <option value="unstable">Irregular, commission, freelance, or at risk</option>
+          </select>
+        </div>
+
+        <div class="calc-field">
+          <label for="vehicleNeed">Vehicle Need</label>
+          <select id="vehicleNeed">
+            <option value="" disabled selected>Select vehicle need</option>
+            <option value="essential">Essential for work, safety, family, or basic transportation</option>
+            <option value="normal">Useful replacement or upgrade</option>
+            <option value="optional">Mostly optional, luxury, or preference upgrade</option>
+          </select>
+        </div>
+      </div>
+
+      <button class="calc-button sis-action-button sis-calculate-button" id="calculateCashFinance">
+        Calculate Cash vs Finance
+      </button>
+
+      <div class="calc-results" id="calcResults">
+        <div class="calc-verdict" id="calcVerdict"></div>
+        <div id="recommendationBlock"></div>
+        <div id="pressureResult"></div>
+        <div class="calc-stat" id="cashMath"></div>
+        <div class="calc-stat" id="financeMath"></div>
+        <div class="calc-stat" id="monthlyMath"></div>
+        <div class="calc-analysis" id="calcAnalysis"></div>
+      </div>
+    </div>
+
+    <div class="callout">
+      <p>
+        <strong>Cash-protection rule:</strong> the best car payment is not automatically
+        zero. A paid-off car can still be a bad move if paying cash leaves no emergency
+        fund for repairs, deductibles, income gaps, or the first expensive surprise.
+      </p>
+    </div>
+
+    <section>
+      <h2>What This Calculator Does Differently</h2>
+
+      <p>
+        This is not a repair calculator, a total ownership calculator, or a negative
+        equity calculator. It answers a narrower question: should the car be paid for
+        with cash, financed, partly financed, or delayed?
+      </p>
+
+      <p>
+        The main output is a recommendation, not just a payment or a pressure score.
+        The calculator compares the cash-left-after-purchase path with the monthly-payment
+        path, then checks the result against emergency savings, savings goals, APR, loan
+        term, debt, income stability, and monthly room.
+      </p>
+    </section>
+
+    <section>
+      <h2>Why Cash vs Finance Is Not Just Interest Math</h2>
+
+      <p>
+        Paying cash avoids interest and removes a monthly payment. That is powerful. But
+        cash has a job too. It protects the household when the car needs tires, insurance
+        deductibles appear, income changes, or another emergency happens right after the
+        purchase.
+      </p>
+
+      <p>
+        Financing keeps cash in the household, but the payment must be small enough to
+        survive the rest of the budget. A low monthly payment can still be risky if it
+        requires a long loan, high APR, or a stretched household budget.
+      </p>
+    </section>
+
+    <section>
+      <h2>What the Calculator Checks</h2>
+
+      <div class="info-grid">
+        <div class="info-card">
+          <h3>Net purchase cost</h3>
+          <p>Trade-in equity, rebates, gifts, credits, and outside help reduce the car cost before pressure is calculated.</p>
+        </div>
+
+        <div class="info-card">
+          <h3>Cash left after buying</h3>
+          <p>The cash path is safer when the emergency fund and savings goal survive the purchase.</p>
+        </div>
+
+        <div class="info-card">
+          <h3>Payment pressure</h3>
+          <p>The finance path is tested against take-home income, essentials, other debt, and monthly room.</p>
+        </div>
+
+        <div class="info-card">
+          <h3>Interest cost</h3>
+          <p>Financing may protect cash, but a high APR can make the protection expensive.</p>
+        </div>
+
+        <div class="info-card">
+          <h3>Loan term risk</h3>
+          <p>A longer loan can make the payment look easy while keeping the debt around too long.</p>
+        </div>
+
+        <div class="info-card">
+          <h3>Income stability</h3>
+          <p>Variable income makes both strategies more sensitive because cash cushion matters more.</p>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <h2>How to Read the Recommendation</h2>
+
+      <h3>Pay cash</h3>
+      <p>
+        This usually means the vehicle can be bought without damaging emergency savings
+        or savings goals, and financing would mainly add interest and paperwork.
+      </p>
+
+      <h3>Finance part</h3>
+      <p>
+        This usually means paying all cash would cut too deeply into the cash cushion, but
+        a smaller loan can preserve savings without creating heavy monthly pressure.
+      </p>
+
+      <h3>Finance carefully</h3>
+      <p>
+        This usually means financing may be the less dangerous option than draining cash,
+        but the payment, APR, term, or income stability still deserves caution.
+      </p>
+
+      <h3>Do not buy yet</h3>
+      <p>
+        This usually means both paths are weak: paying cash drains the household, while
+        financing creates too much monthly pressure or debt risk.
+      </p>
+    </section>
+
+    <section id="FinancialRedFlags">
+      <h2>Cash vs Finance Car Red Flags</h2>
+
+      <ul class="red-flag-list">
+        <li>Paying cash would leave less than one month of essential expenses in reserve.</li>
+        <li>Financing only works by stretching the loan to 72, 84, or 96 months.</li>
+        <li>The payment fits only before insurance, maintenance, repairs, and fuel are included.</li>
+        <li>High-interest debt remains while cash is used for a vehicle upgrade.</li>
+        <li>The household is using emergency savings for an optional trim, luxury feature, or impulse upgrade.</li>
+        <li>The APR is high and the buyer is financing to protect cash without a clear plan.</li>
+        <li>The purchase depends on future overtime, bonuses, raises, or a second job.</li>
+      </ul>
+    </section>
+
+    <section id="CalculatorAssumptions">
+      <h2>Cash vs Finance Calculator Assumptions</h2>
+
+      <p>
+        This calculator treats trade-in equity, rebates, gifts, credits, and outside help
+        as reductions to the purchase cost before comparing cash and financing. It assumes
+        cash available for the car can be used before touching emergency savings.
+      </p>
+
+      <p>
+        The finance payment uses the expected payment if one is entered. If no expected
+        payment is entered, it estimates payment from financed amount, APR, and term. The
+        estimate does not replace a lender quote and does not include every possible
+        insurance, tax, registration, fee, or add-on unless those amounts are entered.
+      </p>
+    </section>
+
+    <section id="MethodologySection">
+      <h2>How ShouldISpend Calculates Cash vs Finance Pressure</h2>
+
+      <p>
+        ShouldISpend calculates net purchase cost, cash shortfall, emergency savings used
+        by a cash purchase, cash left after purchase, financed amount, estimated payment,
+        estimated interest, monthly room, and savings runway. It then chooses the safer
+        path based on cash protection and monthly payment pressure.
+      </p>
+
+      <p>
+        The pressure score can reach zero when the household can pay cash or finance a
+        small amount while still keeping a very strong cash cushion, low debt, stable
+        income, and plenty of monthly room. It can reach 100 when paying cash drains the
+        household and financing creates unaffordable monthly pressure.
+      </p>
+    </section>
+
+    <section id="RelatedCalculators">
+      <h2>Related Car Calculators</h2>
+
+      <div class="link-grid">
+        <a class="link-card" href="/car-calculators">
+          <strong>Car Payment Calculators</strong>
+          <span>See the full car calculator cluster for payments, insurance, repairs, loan length, and ownership pressure.</span>
+        </a>
+
+        <a class="link-card" href="/total-cost-of-car-ownership-calculator">
+          <strong>Total Cost of Car Ownership Calculator</strong>
+          <span>See the real monthly cost after payment, insurance, fuel, maintenance, repairs, fees, and depreciation.</span>
+        </a>
+
+        <a class="link-card" href="/negative-equity-car-loan-calculator">
+          <strong>Negative Equity Car Loan Calculator</strong>
+          <span>Check whether old vehicle debt would roll into the next car loan.</span>
+        </a>
+
+        <a class="link-card" href="/how-much-should-i-put-down-on-a-car">
+          <strong>How Much Should I Put Down on a Car?</strong>
+          <span>Choose a down payment that lowers risk without draining the household cash cushion.</span>
+        </a>
+
+        <a class="link-card" href="/should-i-finance-a-car-for-84-months">
+          <strong>84-Month Car Loan Calculator</strong>
+          <span>Test whether a long loan is lowering the payment while raising interest and underwater risk.</span>
+        </a>
+
+        <a class="link-card" href="/emergency-fund-after-big-purchase-calculator">
+          <strong>Emergency Fund After Big Purchase Calculator</strong>
+          <span>See how much cushion remains after a car purchase or another major expense.</span>
+        </a>
+      </div>
+    </section>
+
+    <FAQSection title="Cash vs Finance Car FAQ" faqs={cashVsFinanceFaqs} />
+  </main>
+
+  <script is:inline>
+    document.addEventListener("DOMContentLoaded", function () {
+      const button = document.getElementById("calculateCashFinance");
+
+      if (!button) return;
+
+      const labelStyle =
+        "color: var(--muted); font-size: 0.82rem; font-weight: 900; letter-spacing: 0.04em; text-transform: uppercase; margin-bottom: 6px;";
+
+      const valueStyle =
+        "color: var(--primary); font-size: clamp(2.2rem, 5.6vw, 3.45rem); font-weight: 950; line-height: 1.04; letter-spacing: -0.055em; margin: 4px 0 16px; display: block;";
+
+      const subtextStyle =
+        "color: var(--text); font-size: 1.05rem; font-weight: 850; line-height: 1.55; margin-bottom: 16px;";
+
+      function cleanNumber(id) {
+        const element = document.getElementById(id);
+        if (!element) return 0;
+        const value = Number(element.value);
+        return Number.isFinite(value) && value > 0 ? value : 0;
+      }
+
+      function money(value) {
+        const sign = value < 0 ? "-" : "";
+        return sign + "$" + Math.round(Math.abs(value)).toLocaleString("en-US");
+      }
+
+      function clamp(value, min, max) {
+        return Math.max(min, Math.min(max, value));
+      }
+
+      function estimatePayment(principal, apr, months) {
+        if (principal <= 0 || months <= 0) return 0;
+        const monthlyRate = apr / 100 / 12;
+        if (monthlyRate <= 0) return principal / months;
+        return principal * monthlyRate / (1 - Math.pow(1 + monthlyRate, -months));
+      }
+
+      function pressureColor(score) {
+        if (score <= 24) return "#16a34a";
+        if (score <= 49) return "#ca8a04";
+        if (score <= 74) return "#ea580c";
+        return "#dc2626";
+      }
+
+      button.addEventListener("click", function () {
+        const vehiclePrice = cleanNumber("vehiclePrice");
+        const taxesFees = cleanNumber("taxesFees");
+        const credits = cleanNumber("credits");
+        const cashAvailable = cleanNumber("cashAvailable");
+        const emergencySavings = cleanNumber("emergencySavings");
+        const savingsGoal = cleanNumber("savingsGoal");
+        const plannedDownPayment = cleanNumber("plannedDownPayment");
+        const apr = cleanNumber("apr");
+        const termMonths = cleanNumber("termMonths");
+        const expectedPayment = cleanNumber("expectedPayment");
+        const income = cleanNumber("income");
+        const essentials = cleanNumber("essentials");
+        const otherDebt = cleanNumber("otherDebt");
+        const highInterestDebt = cleanNumber("highInterestDebt");
+
+        const incomeStability = document.getElementById("incomeStability").value;
+        const vehicleNeed = document.getElementById("vehicleNeed").value;
+
+        const results = document.getElementById("calcResults");
+        const verdictEl = document.getElementById("calcVerdict");
+        const recommendationEl = document.getElementById("recommendationBlock");
+        const pressureEl = document.getElementById("pressureResult");
+        const cashMathEl = document.getElementById("cashMath");
+        const financeMathEl = document.getElementById("financeMath");
+        const monthlyMathEl = document.getElementById("monthlyMath");
+        const analysisEl = document.getElementById("calcAnalysis");
+
+        results.classList.add("active");
+
+        if (
+          vehiclePrice <= 0 ||
+          income <= 0 ||
+          essentials <= 0 ||
+          !incomeStability ||
+          !vehicleNeed
+        ) {
+          verdictEl.innerText = "Add the missing details";
+          recommendationEl.innerHTML =
+            "<div style=\"" +
+            labelStyle +
+            "\">Cash vs finance recommendation</div><div style=\"" +
+            valueStyle +
+            "\">Need details</div><div style=\"" +
+            subtextStyle +
+            "\">Enter vehicle price, monthly take-home income, essential expenses, and the dropdown details to compare paying cash with financing.</div>";
+          pressureEl.innerHTML = "";
+          cashMathEl.innerText = "";
+          financeMathEl.innerText = "";
+          monthlyMathEl.innerText = "";
+          analysisEl.innerText =
+            "Taxes, credits, cash available, emergency savings, APR, term, expected payment, debt, and savings goal can be zero, but the calculator needs the core purchase and household details.";
+          return;
+        }
+
+        const netPurchaseCost = Math.max(0, vehiclePrice + taxesFees - credits);
+        const householdCash = cashAvailable + emergencySavings;
+        const cashShortfall = Math.max(0, netPurchaseCost - cashAvailable);
+        const emergencyUsedForCash = Math.min(emergencySavings, cashShortfall);
+        const cashLeftAfterCashPurchase = householdCash - netPurchaseCost;
+        const emergencyLeftAfterCashPurchase = emergencySavings - emergencyUsedForCash;
+        const cashGoal = Math.max(savingsGoal, essentials);
+        const cashPurchasePossible = householdCash >= netPurchaseCost;
+
+        const downPaymentUsed = Math.min(plannedDownPayment, netPurchaseCost);
+        const financedAmount = Math.max(0, netPurchaseCost - downPaymentUsed);
+        const estimatedPayment = expectedPayment > 0 ? expectedPayment : estimatePayment(financedAmount, apr, termMonths);
+        const estimatedInterest = termMonths > 0 ? Math.max(0, estimatedPayment * termMonths - financedAmount) : 0;
+        const paymentShare = estimatedPayment / income;
+        const obligationsWithFinance = essentials + otherDebt + estimatedPayment;
+        const monthlyRoomWithFinance = income - obligationsWithFinance;
+        const obligationShare = obligationsWithFinance / income;
+        const savingsMonthsNow = emergencySavings / Math.max(1, essentials);
+        const savingsMonthsAfterCash = cashLeftAfterCashPurchase / Math.max(1, essentials);
+        const emergencyMonthsAfterCash = emergencyLeftAfterCashPurchase / Math.max(1, essentials);
+        const debtShare = otherDebt / income;
+        const highInterestDebtPressure = highInterestDebt > 0 ? highInterestDebt / Math.max(1, income) : 0;
+
+        let cashScore = 0;
+
+        if (!cashPurchasePossible) {
+          cashScore = 85;
+        } else if (emergencyLeftAfterCashPurchase >= cashGoal && cashLeftAfterCashPurchase >= cashGoal) {
+          cashScore = 8;
+        } else if (emergencyLeftAfterCashPurchase >= essentials) {
+          cashScore = 30;
+        } else if (emergencyLeftAfterCashPurchase >= essentials * 0.5) {
+          cashScore = 55;
+        } else {
+          cashScore = 78;
+        }
+
+        if (cashLeftAfterCashPurchase < 0) cashScore += 20;
+        if (highInterestDebt > 0 && cashAvailable > 0) cashScore += 8;
+        if (incomeStability === "variable") cashScore += 8;
+        if (incomeStability === "unstable") cashScore += 18;
+        if (vehicleNeed === "optional" && emergencyLeftAfterCashPurchase < cashGoal) cashScore += 12;
+        if (emergencyMonthsAfterCash >= 24 && cashPurchasePossible) cashScore -= 25;
+        else if (emergencyMonthsAfterCash >= 6 && cashPurchasePossible) cashScore -= 12;
+
+        let financeScore = 0;
+
+        if (financedAmount <= 0) {
+          financeScore = 5;
+        } else if (paymentShare <= 0.06) {
+          financeScore = 14;
+        } else if (paymentShare <= 0.10) {
+          financeScore = 28;
+        } else if (paymentShare <= 0.15) {
+          financeScore = 45;
+        } else if (paymentShare <= 0.20) {
+          financeScore = 65;
+        } else {
+          financeScore = 86;
+        }
+
+        if (apr >= 15) financeScore += 20;
+        else if (apr >= 10) financeScore += 12;
+        else if (apr >= 7) financeScore += 6;
+        else if (apr > 0 && apr <= 4) financeScore -= 6;
+
+        if (termMonths >= 85) financeScore += 18;
+        else if (termMonths >= 73) financeScore += 12;
+        else if (termMonths >= 61) financeScore += 6;
+        else if (termMonths > 0 && termMonths <= 48) financeScore -= 4;
+
+        if (obligationShare > 0.85) financeScore += 22;
+        else if (obligationShare > 0.70) financeScore += 14;
+        else if (obligationShare > 0.55) financeScore += 7;
+        else if (obligationShare < 0.35) financeScore -= 7;
+
+        if (monthlyRoomWithFinance < 0) financeScore += 30;
+        else if (monthlyRoomWithFinance < income * 0.08) financeScore += 12;
+
+        if (savingsMonthsNow < 0.5) financeScore += 16;
+        else if (savingsMonthsNow < 1) financeScore += 10;
+        else if (savingsMonthsNow >= 24) financeScore -= 22;
+        else if (savingsMonthsNow >= 6) financeScore -= 12;
+
+        if (debtShare > 0.20) financeScore += 10;
+        else if (debtShare > 0.12) financeScore += 5;
+
+        if (highInterestDebtPressure >= 1) financeScore += 10;
+        else if (highInterestDebtPressure > 0) financeScore += 5;
+
+        if (incomeStability === "variable") financeScore += 6;
+        if (incomeStability === "unstable") financeScore += 15;
+        if (vehicleNeed === "optional") financeScore += 8;
+        if (vehicleNeed === "essential") financeScore -= 4;
+
+        cashScore = Math.round(clamp(cashScore, 0, 100));
+        financeScore = Math.round(clamp(financeScore, 0, 100));
+
+        let recommendation = "Finance Part";
+        let chosenScore = Math.min(cashScore, financeScore);
+        let summary = "";
+        let analysis = "";
+
+        const cashClearlySafe =
+          cashPurchasePossible &&
+          emergencyLeftAfterCashPurchase >= cashGoal &&
+          cashLeftAfterCashPurchase >= cashGoal &&
+          emergencyMonthsAfterCash >= 3 &&
+          incomeStability === "stable";
+
+        const cashFortressAfterPurchase =
+          cashPurchasePossible &&
+          emergencyLeftAfterCashPurchase >= income * 12 &&
+          cashLeftAfterCashPurchase >= netPurchaseCost * 2 &&
+          incomeStability === "stable";
+
+        const financeClearlySafe =
+          financedAmount > 0 &&
+          paymentShare <= 0.08 &&
+          obligationShare <= 0.45 &&
+          savingsMonthsNow >= 6 &&
+          apr <= 7 &&
+          termMonths <= 60 &&
+          incomeStability === "stable";
+
+        const bothBad =
+          (!cashPurchasePossible || emergencyLeftAfterCashPurchase < essentials * 0.5) &&
+          (paymentShare >= 0.18 || monthlyRoomWithFinance < income * 0.08 || apr >= 15 || incomeStability === "unstable");
+
+        if (bothBad) {
+          recommendation = "Do Not Buy Yet";
+          chosenScore = Math.max(cashScore, financeScore, 85);
+          summary =
+            "Both paths are weak. Paying cash drains the household, while financing creates too much payment, APR, or income-stability pressure.";
+          analysis =
+            "This is the clearest wait signal. A cheaper vehicle, more cash saved, lower APR, shorter term, or lower payment would change the decision more than moving money between cash and financing.";
+        } else if (cashClearlySafe && (apr >= 6 || financeScore >= cashScore)) {
+          recommendation = "Pay Cash";
+          chosenScore = cashScore;
+          summary =
+            "Paying cash leaves the cash cushion intact enough that avoiding the payment and interest is the cleaner move.";
+          analysis =
+            "The cash path works because the household still has useful protection after the purchase. Keep a maintenance and repair reserve afterward so the next repair does not restart the same decision.";
+        } else if (cashFortressAfterPurchase) {
+          recommendation = "Pay Cash";
+          chosenScore = 0;
+          summary =
+            "The household remains cash-strong even after buying the car outright.";
+          analysis =
+            "With this much cushion remaining, financing mainly adds complexity unless the APR is unusually low and the cash has a better specific use.";
+        } else if (financeClearlySafe && !cashClearlySafe) {
+          recommendation = "Finance Part";
+          chosenScore = financeScore;
+          summary =
+            "Financing part of the car protects the cash cushion while keeping the payment small enough to fit.";
+          analysis =
+            "This is the middle answer. Do not finance more than needed just because the payment is approved. The goal is to preserve cash without turning the car into long-term payment pressure.";
+        } else if (financeScore + 10 < cashScore) {
+          recommendation = financeScore >= 55 ? "Finance Carefully" : "Finance Part";
+          chosenScore = financeScore;
+          summary =
+            "Financing is less damaging than draining cash, but the payment and loan terms still need control.";
+          analysis =
+            "The finance path is safer than emptying savings, but it should still be kept short, affordable, and free of unnecessary add-ons.";
+        } else if (cashScore <= financeScore && cashPurchasePossible) {
+          recommendation = cashScore >= 55 ? "Finance Carefully" : "Pay Cash";
+          chosenScore = cashScore;
+          summary =
+            "The cash path looks at least as safe as the finance path based on the entered cushion and payment details.";
+          analysis =
+            "Cash only wins if the emergency fund survives. If the purchase would create anxiety about the next repair or income gap, use a smaller cash amount and finance part instead.";
+        } else {
+          recommendation = "Finance Carefully";
+          chosenScore = financeScore;
+          summary =
+            "The answer is mixed. Financing may preserve cash, but the payment, APR, term, or debt load keeps the decision from being clean.";
+          analysis =
+            "This is not a simple yes. Try a cheaper car, larger down payment, shorter term, lower APR, or a delay until the payment and cash cushion both look safer.";
+        }
+
+        const hugeSavingsAndSafe =
+          emergencySavings >= income * 12 &&
+          savingsMonthsNow >= 24 &&
+          obligationShare <= 0.50 &&
+          paymentShare <= 0.12 &&
+          debtShare <= 0.12 &&
+          incomeStability === "stable";
+
+        const zeroPressureCash =
+          cashPurchasePossible &&
+          emergencyLeftAfterCashPurchase >= income * 12 &&
+          cashLeftAfterCashPurchase >= netPurchaseCost &&
+          debtShare <= 0.10 &&
+          highInterestDebt <= income * 0.25 &&
+          incomeStability === "stable";
+
+        if (zeroPressureCash || (hugeSavingsAndSafe && chosenScore <= 20)) {
+          chosenScore = 0;
+          if (cashPurchasePossible) {
+            recommendation = "Pay Cash";
+            summary =
+              "Financial pressure is effectively zero because the car can be bought without weakening the household cash position.";
+          }
+        }
+
+        const richIncomeAndSafe =
+          income >= Math.max(netPurchaseCost, financedAmount, highInterestDebt, 100000) * 50 &&
+          obligationShare <= 0.10 &&
+          paymentShare <= 0.03 &&
+          debtShare <= 0.05 &&
+          highInterestDebt <= Math.max(income * 0.02, emergencySavings * 0.01) &&
+          incomeStability === "stable";
+
+        if (richIncomeAndSafe) {
+          chosenScore = 0;
+          summary =
+            "Financial pressure is effectively zero because the car cost is tiny relative to income and does not threaten the household.";
+        }
+
+
+
+        if (
+          (!cashPurchasePossible && monthlyRoomWithFinance < 0 && savingsMonthsNow < 1) ||
+          (paymentShare >= 0.30 && savingsMonthsNow < 1) ||
+          (emergencyLeftAfterCashPurchase < 0 && paymentShare >= 0.24) ||
+          (incomeStability === "unstable" && paymentShare >= 0.22 && savingsMonthsNow < 1)
+        ) {
+          chosenScore = 100;
+          recommendation = "Do Not Buy Yet";
+          summary =
+            "The cash path and finance path both create maximum pressure.";
+          analysis =
+            "The inputs show maximum pressure. The safer move is to lower the vehicle price, wait, improve the cash cushion, or avoid adding a new payment.";
+        }
+
+        chosenScore = Math.round(clamp(chosenScore, 0, 100));
+        const color = pressureColor(chosenScore);
+
+        verdictEl.innerText = recommendation;
+
+        recommendationEl.innerHTML =
+          "<div style=\"" +
+          labelStyle +
+          "\">Cash vs finance recommendation</div><div style=\"" +
+          valueStyle +
+          "\">" +
+          recommendation +
+          "</div><div style=\"" +
+          subtextStyle +
+          "\">" +
+          summary +
+          "</div>";
+
+        pressureEl.innerHTML =
+          "<div style=\"margin: 18px 0 18px;\"><div style=\"display: flex; justify-content: space-between; gap: 12px; align-items: center; margin-bottom: 8px;\"><strong style=\"color: var(--text);\">Cash vs finance pressure score</strong><strong style=\"color:" +
+          color +
+          ";\">" +
+          chosenScore +
+          "/100</strong></div><div style=\"height: 14px; border-radius: 999px; background: #e5e7eb; overflow: hidden;\"><div style=\"height: 100%; width:" +
+          chosenScore +
+          "%; background:" +
+          color +
+          ";\"></div></div></div>";
+
+        cashMathEl.innerText =
+          "Cash path: net purchase cost is " +
+          money(netPurchaseCost) +
+          " after " +
+          money(credits) +
+          " of trade-in equity, rebate, gift, credit, or outside help. Paying cash would leave about " +
+          money(cashLeftAfterCashPurchase) +
+          " of total cash and about " +
+          money(emergencyLeftAfterCashPurchase) +
+          " of emergency savings.";
+
+        financeMathEl.innerText =
+          "Finance path: financed amount is about " +
+          money(financedAmount) +
+          " after a planned down payment of " +
+          money(downPaymentUsed) +
+          ". Estimated monthly payment is " +
+          money(estimatedPayment) +
+          ", with estimated interest of about " +
+          money(estimatedInterest) +
+          " over " +
+          Math.round(termMonths) +
+          " months.";
+
+        monthlyMathEl.innerText =
+          "Monthly test: the payment equals about " +
+          (paymentShare * 100).toFixed(1) +
+          "% of take-home income. Monthly room after essentials, other debt, and the car payment is about " +
+          money(monthlyRoomWithFinance) +
+          ". Current emergency savings cover about " +
+          savingsMonthsNow.toFixed(1) +
+          " months of essential expenses.";
+
+        analysisEl.innerText = analysis;
+      });
+    });
+  </script>
+</Layout>

@@ -1,0 +1,909 @@
+---
+import Layout from "../layouts/Layout.astro";
+import FAQSection from "../components/FAQSection.astro";
+
+const totalCostOfCarOwnershipFaqs = [
+  {
+    question: "What is included in total cost of car ownership?",
+    answer:
+      "Total ownership cost includes the loan or lease payment, insurance, gas or charging, maintenance, repairs, tires, registration, parking, tolls, and a depreciation or replacement buffer.",
+  },
+  {
+    question: "Is total car cost different from a car payment?",
+    answer:
+      "Yes. The car payment is only one line item. A vehicle can have a manageable payment but still be expensive once insurance, fuel, repairs, tires, fees, and depreciation are included.",
+  },
+  {
+    question: "How much of my income should go to total car costs?",
+    answer:
+      "There is no single rule for every household, but total transportation pressure rises when the full monthly vehicle cost moves above about 15% to 20% of take-home income, especially with thin savings or other debt.",
+  },
+  {
+    question: "Should depreciation be counted as a monthly cost?",
+    answer:
+      "Depreciation is not a monthly bill, but it is still a real ownership cost. Including a depreciation or replacement buffer helps show how much the vehicle is really costing over time.",
+  },
+  {
+    question: "Why does this calculator include a pressure score?",
+    answer:
+      "The main output is the real monthly cost. The pressure score adds context by checking that cost against income, savings, other debt, financing risk, and household flexibility.",
+  },
+];
+---
+
+<Layout
+  title="Total Cost of Car Ownership Calculator | ShouldISpend"
+  description="Calculate the real monthly cost of owning a car after payment, insurance, gas, maintenance, repairs, fees, parking, tires, and depreciation."
+>
+  <style>
+    .container {
+      max-width: 940px;
+      margin: 0 auto;
+      padding: 80px 24px;
+    }
+
+    .eyebrow {
+      color: var(--primary);
+      text-transform: uppercase;
+      letter-spacing: 1.8px;
+      font-size: 0.78rem;
+      font-weight: 800;
+      margin-bottom: 16px;
+    }
+
+    h1 {
+      font-size: clamp(2.55rem, 7vw, 4.55rem);
+      line-height: 1;
+      letter-spacing: -0.055em;
+      margin: 0 0 24px;
+      max-width: 880px;
+      color: var(--text);
+    }
+
+    h2 {
+      font-size: clamp(1.8rem, 4vw, 2.45rem);
+      line-height: 1.12;
+      letter-spacing: -0.035em;
+      margin: 0 0 18px;
+      color: var(--text);
+    }
+
+    h3 {
+      font-size: 1.22rem;
+      line-height: 1.3;
+      margin: 28px 0 10px;
+      color: var(--text);
+    }
+
+    p,
+    li {
+      color: var(--muted);
+      line-height: 1.82;
+      font-size: 1.04rem;
+      margin-bottom: 18px;
+    }
+
+    a {
+      color: var(--primary);
+    }
+
+    section {
+      margin-top: 68px;
+    }
+
+    .intro {
+      max-width: 820px;
+      color: var(--muted);
+      font-size: 1.14rem;
+      line-height: 1.85;
+      margin-bottom: 42px;
+    }
+
+    .calculator {
+      border: 1px solid var(--border);
+      background: var(--card);
+      border-radius: 24px;
+      padding: 30px;
+      margin: 44px 0;
+      box-shadow: var(--shadow-soft);
+    }
+
+    .calc-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(235px, 1fr));
+      gap: 20px;
+    }
+
+    .calc-field {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .calc-field label {
+      font-weight: 800;
+      margin-bottom: 10px;
+      color: var(--text);
+      line-height: 1.35;
+    }
+
+    .calc-field input,
+    .calc-field select {
+      padding: 14px;
+      border-radius: 12px;
+      border: 1px solid var(--border);
+      font-size: 1rem;
+      background: #ffffff;
+      color: var(--text);
+    }
+
+    .calc-button {
+      margin-top: 26px;
+      background: var(--primary);
+      color: #ffffff;
+      border: none;
+      border-radius: 14px;
+      padding: 15px 22px;
+      font-size: 1rem;
+      font-weight: 900;
+      cursor: pointer;
+    }
+
+    .calc-button:hover {
+      opacity: 0.92;
+    }
+
+    .calc-results {
+      margin-top: 28px;
+      border: 1px solid #dbe4ee;
+      background: #f8fafc;
+      border-radius: 20px;
+      padding: 28px;
+      display: none;
+    }
+
+    .calc-results.active {
+      display: block;
+    }
+
+    .calc-verdict {
+      font-size: 1.8rem;
+      font-weight: 900;
+      color: var(--primary);
+      margin-bottom: 16px;
+      line-height: 1.18;
+    }
+
+    .calc-stat {
+      font-size: 1.03rem;
+      margin-bottom: 12px;
+      color: var(--text);
+      line-height: 1.65;
+    }
+
+    .calc-analysis {
+      color: var(--muted);
+      line-height: 1.82;
+      margin-top: 18px;
+    }
+
+    .callout {
+      border: 1px solid var(--border);
+      background: var(--card);
+      border-radius: 24px;
+      padding: 26px;
+      margin: 36px 0;
+      box-shadow: var(--shadow-soft);
+    }
+
+    .callout strong {
+      color: var(--text);
+    }
+
+    .info-grid,
+    .link-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 16px;
+      margin-top: 24px;
+    }
+
+    .info-card,
+    .link-card {
+      display: block;
+      border: 1px solid var(--border);
+      background: var(--card);
+      border-radius: 18px;
+      padding: 20px;
+      text-decoration: none;
+      color: inherit;
+    }
+
+    .link-card {
+      transition:
+        transform 0.15s ease,
+        border-color 0.15s ease,
+        box-shadow 0.15s ease;
+    }
+
+    .link-card:hover {
+      transform: translateY(-2px);
+      border-color: var(--primary);
+      box-shadow: var(--shadow-soft);
+    }
+
+    .info-card h3,
+    .link-card strong {
+      display: block;
+      margin: 0 0 8px;
+      color: var(--text);
+      line-height: 1.3;
+      font-size: 1.08rem;
+    }
+
+    .info-card p,
+    .link-card span {
+      color: var(--muted);
+      line-height: 1.65;
+      font-size: 0.95rem;
+      margin: 0;
+    }
+
+    .red-flag-list {
+      margin: 22px 0 0;
+      padding: 0;
+      list-style: none;
+      display: grid;
+      gap: 12px;
+    }
+
+    .red-flag-list li {
+      margin: 0;
+      padding: 15px 16px;
+      border-radius: 16px;
+      border: 1px solid #fecaca;
+      background: #fff7f7;
+      color: #7f1d1d;
+      line-height: 1.55;
+      font-size: 0.96rem;
+    }
+
+    @media (max-width: 720px) {
+      .container {
+        padding: 58px 20px;
+      }
+
+      .calculator {
+        padding: 22px;
+      }
+
+      h1 {
+        font-size: 2.55rem;
+      }
+    }
+  </style>
+
+  <main class="container">
+    <div class="eyebrow">Total Cost of Car Ownership Calculator</div>
+
+    <h1>Total Cost of Car Ownership Calculator</h1>
+
+    <p class="intro">
+      A car payment can look reasonable while the real driveway cost is much higher.
+      This calculator adds the monthly payment, insurance, gas or charging, service,
+      repairs, tires, registration, parking, tolls, and depreciation buffer so you can
+      see the actual monthly cost of keeping the vehicle.
+    </p>
+
+    <div class="calculator">
+      <div class="calc-grid">
+        <div class="calc-field">
+          <label for="payment">Monthly Loan or Lease Payment ($)</label>
+          <input type="number" id="payment" placeholder="650" min="0" inputmode="decimal" />
+        </div>
+
+        <div class="calc-field">
+          <label for="insurance">Monthly Insurance Cost ($)</label>
+          <input type="number" id="insurance" placeholder="180" min="0" inputmode="decimal" />
+        </div>
+
+        <div class="calc-field">
+          <label for="fuel">Monthly Gas or Charging Cost ($)</label>
+          <input type="number" id="fuel" placeholder="220" min="0" inputmode="decimal" />
+        </div>
+
+        <div class="calc-field">
+          <label for="maintenance">Monthly Maintenance Reserve ($)</label>
+          <input type="number" id="maintenance" placeholder="90" min="0" inputmode="decimal" />
+        </div>
+
+        <div class="calc-field">
+          <label for="repairReserve">Monthly Repair and Tire Reserve ($)</label>
+          <input type="number" id="repairReserve" placeholder="125" min="0" inputmode="decimal" />
+        </div>
+
+        <div class="calc-field">
+          <label for="registration">Registration, Taxes, and Fees per Month ($)</label>
+          <input type="number" id="registration" placeholder="45" min="0" inputmode="decimal" />
+        </div>
+
+        <div class="calc-field">
+          <label for="parking">Parking, Tolls, and Other Monthly Costs ($)</label>
+          <input type="number" id="parking" placeholder="80" min="0" inputmode="decimal" />
+        </div>
+
+        <div class="calc-field">
+          <label for="depreciation">Monthly Depreciation or Replacement Buffer ($)</label>
+          <input type="number" id="depreciation" placeholder="300" min="0" inputmode="decimal" />
+        </div>
+
+        <div class="calc-field">
+          <label for="income">Monthly Take-Home Income ($)</label>
+          <input type="number" id="income" placeholder="6500" min="0" inputmode="decimal" />
+        </div>
+
+        <div class="calc-field">
+          <label for="housing">Monthly Housing Cost ($)</label>
+          <input type="number" id="housing" placeholder="1900" min="0" inputmode="decimal" />
+        </div>
+
+        <div class="calc-field">
+          <label for="otherDebt">Other Monthly Debt Payments ($)</label>
+          <input type="number" id="otherDebt" placeholder="450" min="0" inputmode="decimal" />
+        </div>
+
+        <div class="calc-field">
+          <label for="emergencySavings">Current Emergency Savings ($)</label>
+          <input type="number" id="emergencySavings" placeholder="12000" min="0" inputmode="decimal" />
+        </div>
+
+        <div class="calc-field">
+          <label for="financingType">Vehicle Financing Structure</label>
+          <select id="financingType">
+            <option value="" disabled selected>Select financing structure</option>
+            <option value="owned">Owned with no payment or no risky vehicle debt</option>
+            <option value="standard">Standard loan or lease</option>
+            <option value="long">Long loan, small down payment, or possible negative equity</option>
+            <option value="risky">High-interest debt, credit card, or rolled negative equity</option>
+          </select>
+        </div>
+
+        <div class="calc-field">
+          <label for="vehicleRole">Why This Vehicle Is Needed</label>
+          <select id="vehicleRole">
+            <option value="" disabled selected>Select vehicle need</option>
+            <option value="essential">Essential for work, safety, family, or disability access</option>
+            <option value="normal">Useful transportation upgrade</option>
+            <option value="optional">Mostly optional, luxury, status, or preference upgrade</option>
+          </select>
+        </div>
+
+        <div class="calc-field">
+          <label for="incomeStability">Income Stability</label>
+          <select id="incomeStability">
+            <option value="" disabled selected>Select income stability</option>
+            <option value="stable">Stable paycheck</option>
+            <option value="variable">Somewhat variable</option>
+            <option value="unstable">Irregular, commission, freelance, or at risk</option>
+          </select>
+        </div>
+      </div>
+
+      <button class="calc-button sis-action-button sis-calculate-button" id="calculateTotalCarCost">
+        Calculate Total Ownership Cost
+      </button>
+
+      <div class="calc-results" id="calcResults">
+        <div class="calc-verdict" id="calcVerdict"></div>
+        <div id="bigMoneyResult"></div>
+        <div id="pressureResult"></div>
+        <div class="calc-stat" id="costBreakdown"></div>
+        <div class="calc-stat" id="incomeShare"></div>
+        <div class="calc-stat" id="savingsReadout"></div>
+        <div class="calc-analysis" id="calcAnalysis"></div>
+      </div>
+    </div>
+
+    <div class="callout">
+      <p>
+        <strong>Driveway-cost rule:</strong> the number that matters is not only the
+        payment. It is the full monthly cost of keeping the car after every normal
+        ownership cost is added.
+      </p>
+    </div>
+
+    <section>
+      <h2>What This Calculator Does Differently</h2>
+
+      <p>
+        Most car calculators start with the loan payment. This one starts after the
+        car is already in your driveway. It asks what the vehicle actually costs each
+        month once the payment is joined by insurance, fuel, maintenance, repair risk,
+        tires, registration, parking, tolls, and depreciation.
+      </p>
+
+      <p>
+        That makes this calculator different from a car payment calculator, a new vs
+        used calculator, or a refinance calculator. The main output is the real
+        monthly ownership cost. The pressure score is secondary and exists to show
+        whether that total cost fits the household after income, savings, housing,
+        debt, and financing risk are included.
+      </p>
+    </section>
+
+    <section>
+      <h2>Why the Payment Can Understate the Real Cost</h2>
+
+      <p>
+        A monthly payment can be only half the story. Insurance can change after the
+        vehicle is quoted. Gas can rise with commute distance. Tires, brakes, oil,
+        batteries, diagnostics, registration, and deductibles do not care whether the
+        payment looked good at the dealership.
+      </p>
+
+      <p>
+        Depreciation is also easy to ignore because it is not a bill that arrives each
+        month. But it still matters. A vehicle that loses value quickly can quietly
+        raise the true cost of ownership, especially if the loan balance falls more
+        slowly than the vehicle value.
+      </p>
+    </section>
+
+    <section>
+      <h2>Costs Included in the Total Ownership Number</h2>
+
+      <div class="info-grid">
+        <div class="info-card">
+          <h3>Payment</h3>
+          <p>The loan or lease payment is included, but it is not treated as the full cost.</p>
+        </div>
+
+        <div class="info-card">
+          <h3>Insurance</h3>
+          <p>Premiums can rise with vehicle value, coverage requirements, claims risk, and lender rules.</p>
+        </div>
+
+        <div class="info-card">
+          <h3>Fuel or charging</h3>
+          <p>Commute distance, road trips, electricity rates, fuel economy, and gas prices all matter.</p>
+        </div>
+
+        <div class="info-card">
+          <h3>Maintenance and repairs</h3>
+          <p>Oil, filters, brakes, tires, diagnostics, parts, deductibles, and surprise repairs need room.</p>
+        </div>
+
+        <div class="info-card">
+          <h3>Fees and parking</h3>
+          <p>Registration, taxes, tolls, parking, permits, and inspections can add up quietly.</p>
+        </div>
+
+        <div class="info-card">
+          <h3>Depreciation buffer</h3>
+          <p>This is the monthly amount you assign to lost value or future replacement cost.</p>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <h2>How to Read the Result</h2>
+
+      <h3>If the hidden cost is small</h3>
+      <p>
+        The payment may be close to the real monthly ownership cost. That is more
+        common with low insurance, low mileage, newer tires, warranty coverage, and
+        low parking or fee costs.
+      </p>
+
+      <h3>If the hidden cost is large</h3>
+      <p>
+        The vehicle is more expensive than the payment suggests. This can happen with
+        luxury vehicles, trucks, older used cars, long commutes, high insurance, paid
+        parking, big tires, or vehicles with repair risk.
+      </p>
+
+      <h3>If the pressure score is low</h3>
+      <p>
+        The total cost appears to fit the household because income is strong, savings
+        are protected, other debt is manageable, and the financing structure is not
+        adding extra risk.
+      </p>
+
+      <h3>If the pressure score is high</h3>
+      <p>
+        The total cost may be crowding out savings, housing, debt payments, or monthly
+        flexibility. In that case, reducing the vehicle price or delaying the purchase
+        may be safer than focusing only on the payment.
+      </p>
+    </section>
+
+    <section id="FinancialRedFlags">
+      <h2>Total Cost of Car Ownership Red Flags</h2>
+
+      <ul class="red-flag-list">
+        <li>The payment looks affordable only because insurance, repairs, and fuel were ignored.</li>
+        <li>The total monthly vehicle cost is above 20% of take-home income.</li>
+        <li>The household has less than one month of essential obligations in emergency savings.</li>
+        <li>The loan is long, high-interest, or includes negative equity from a previous car.</li>
+        <li>The vehicle requires premium fuel, expensive tires, specialty parts, or higher insurance.</li>
+        <li>The budget assumes repairs will be zero because the payment is already high.</li>
+        <li>The purchase depends on overtime, bonuses, future raises, or a second job that is not guaranteed.</li>
+      </ul>
+    </section>
+
+    <section id="CalculatorAssumptions">
+      <h2>Total Cost of Car Ownership Calculator Assumptions</h2>
+
+      <p>
+        This calculator uses monthly take-home income, not gross income. It treats
+        payment, insurance, fuel, maintenance, repairs, fees, parking, tolls, and
+        depreciation as part of the same ownership cost. Some numbers are actual
+        bills, while others are reserves or buffers for predictable future costs.
+      </p>
+
+      <p>
+        The pressure score is not a lender approval and not a prediction of whether
+        the car will break. It is a household pressure test. The score gets safer when
+        total cost is small relative to income, emergency savings are strong, other
+        debt is low, and the financing structure is not risky.
+      </p>
+    </section>
+
+    <section id="MethodologySection">
+      <h2>How ShouldISpend Calculates Total Ownership Cost</h2>
+
+      <p>
+        ShouldISpend adds the monthly payment, insurance, fuel or charging, maintenance
+        reserve, repair and tire reserve, registration and fees, parking and tolls,
+        and depreciation buffer. It then compares the full monthly cost with take-home
+        income and estimates the hidden ownership cost beyond the payment.
+      </p>
+
+      <p>
+        The pressure score looks at transportation share of income, remaining monthly
+        room after housing and debt, emergency savings runway, financing risk, income
+        stability, and whether the vehicle solves a real need. The score can reach
+        zero when the total cost is tiny, savings are strong, debt is low, and no risky
+        vehicle debt is being used. It can reach 100 when the vehicle overwhelms income,
+        savings are thin, and the financing structure adds major risk.
+      </p>
+    </section>
+
+    <section id="RelatedCalculators">
+      <h2>Related Car Calculators</h2>
+
+      <div class="link-grid">
+        <a class="link-card" href="/car-calculators">
+          <strong>Car Payment Calculators</strong>
+          <span>See the full car calculator cluster for payments, insurance, loan length, affordability, and ownership pressure.</span>
+        </a>
+
+        <a class="link-card" href="/how-much-car-can-i-afford">
+          <strong>How Much Car Can I Afford?</strong>
+          <span>Build a vehicle budget from income, savings, debt, insurance, loan structure, and monthly pressure.</span>
+        </a>
+
+        <a class="link-card" href="/how-much-car-insurance-is-too-much">
+          <strong>How Much Car Insurance Is Too Much?</strong>
+          <span>Pressure-test the insurance part of the ownership cost before signing for the car.</span>
+        </a>
+
+        <a class="link-card" href="/should-i-finance-a-car-for-84-months">
+          <strong>84-Month Car Loan Calculator</strong>
+          <span>See whether a long loan lowers the payment too much while raising interest and negative-equity risk.</span>
+        </a>
+
+        <a class="link-card" href="/should-i-spend-1000-on-a-car-payment">
+          <strong>$1,000 Car Payment Calculator</strong>
+          <span>Test whether a high monthly vehicle payment fits your household after savings and debt are included.</span>
+        </a>
+
+        <a class="link-card" href="/emergency-fund-after-big-purchase-calculator">
+          <strong>Emergency Fund After Big Purchase Calculator</strong>
+          <span>See how much cushion remains after a major vehicle purchase or another large expense.</span>
+        </a>
+      </div>
+    </section>
+
+    <FAQSection title="Total Cost of Car Ownership FAQ" faqs={totalCostOfCarOwnershipFaqs} />
+  </main>
+
+  <script is:inline>
+    document.addEventListener("DOMContentLoaded", function () {
+      const button = document.getElementById("calculateTotalCarCost");
+
+      if (!button) return;
+
+      const moneyLabelStyle =
+        "color: var(--muted); font-size: 0.82rem; font-weight: 900; letter-spacing: 0.04em; text-transform: uppercase; margin-bottom: 6px;";
+
+      const moneyValueStyle =
+        "color: var(--primary); font-size: clamp(2.45rem, 6vw, 3.75rem); font-weight: 950; line-height: 1.04; letter-spacing: -0.055em; margin: 4px 0 16px; display: block;";
+
+      const moneySubtextStyle =
+        "color: var(--text); font-size: 1.05rem; font-weight: 850; line-height: 1.55; margin-bottom: 16px;";
+
+      function cleanNumber(id) {
+        const element = document.getElementById(id);
+        if (!element) return 0;
+        const value = Number(element.value);
+        return Number.isFinite(value) && value > 0 ? value : 0;
+      }
+
+      function money(value) {
+        return "$" + Math.round(value).toLocaleString("en-US");
+      }
+
+      function clamp(value, min, max) {
+        return Math.max(min, Math.min(max, value));
+      }
+
+      function pressureLabel(score) {
+        if (score <= 0) return "No ownership pressure";
+        if (score <= 24) return "Low ownership pressure";
+        if (score <= 49) return "Moderate ownership pressure";
+        if (score <= 74) return "High ownership pressure";
+        if (score < 100) return "Severe ownership pressure";
+        return "Maximum ownership pressure";
+      }
+
+      function pressureColor(score) {
+        if (score <= 24) return "#16a34a";
+        if (score <= 49) return "#ca8a04";
+        if (score <= 74) return "#ea580c";
+        return "#dc2626";
+      }
+
+      button.addEventListener("click", function () {
+        const payment = cleanNumber("payment");
+        const insurance = cleanNumber("insurance");
+        const fuel = cleanNumber("fuel");
+        const maintenance = cleanNumber("maintenance");
+        const repairReserve = cleanNumber("repairReserve");
+        const registration = cleanNumber("registration");
+        const parking = cleanNumber("parking");
+        const depreciation = cleanNumber("depreciation");
+        const income = cleanNumber("income");
+        const housing = cleanNumber("housing");
+        const otherDebt = cleanNumber("otherDebt");
+        const emergencySavings = cleanNumber("emergencySavings");
+
+        const financingType = document.getElementById("financingType").value;
+        const vehicleRole = document.getElementById("vehicleRole").value;
+        const incomeStability = document.getElementById("incomeStability").value;
+
+        const results = document.getElementById("calcResults");
+        const verdictEl = document.getElementById("calcVerdict");
+        const bigMoneyEl = document.getElementById("bigMoneyResult");
+        const pressureEl = document.getElementById("pressureResult");
+        const breakdownEl = document.getElementById("costBreakdown");
+        const incomeShareEl = document.getElementById("incomeShare");
+        const savingsEl = document.getElementById("savingsReadout");
+        const analysisEl = document.getElementById("calcAnalysis");
+
+        results.classList.add("active");
+
+        const totalMonthlyCost =
+          payment +
+          insurance +
+          fuel +
+          maintenance +
+          repairReserve +
+          registration +
+          parking +
+          depreciation;
+
+        if (
+          totalMonthlyCost <= 0 ||
+          income <= 0 ||
+          !financingType ||
+          !vehicleRole ||
+          !incomeStability
+        ) {
+          verdictEl.innerText = "Add the missing details";
+          bigMoneyEl.innerHTML =
+            "<div style=\"" +
+            moneyLabelStyle +
+            "\">Real monthly ownership cost</div><div style=\"" +
+            moneyValueStyle +
+            "\">Need details</div><div style=\"" +
+            moneySubtextStyle +
+            "\">Enter at least one vehicle cost, monthly take-home income, and the dropdown details to calculate total ownership cost.</div>";
+          pressureEl.innerHTML = "";
+          breakdownEl.innerText = "";
+          incomeShareEl.innerText = "";
+          savingsEl.innerText = "";
+          analysisEl.innerText =
+            "Payment can be zero if the vehicle is owned outright, but the calculator still needs income and the risk details to judge the result.";
+          return;
+        }
+
+        const hiddenCost = Math.max(0, totalMonthlyCost - payment);
+        const annualCost = totalMonthlyCost * 12;
+        const transportationShare = totalMonthlyCost / income;
+        const totalObligations = housing + otherDebt + totalMonthlyCost;
+        const obligationShare = totalObligations / income;
+        const monthlyRoom = income - totalObligations;
+        const essentialRunwayBase = Math.max(1, housing + otherDebt + totalMonthlyCost);
+        const savingsMonths = emergencySavings / essentialRunwayBase;
+        const otherDebtShare = otherDebt / income;
+
+        let score = 0;
+
+        if (transportationShare <= 0.06) score = 5;
+        else if (transportationShare <= 0.10) score = 15;
+        else if (transportationShare <= 0.14) score = 28;
+        else if (transportationShare <= 0.18) score = 43;
+        else if (transportationShare <= 0.22) score = 58;
+        else if (transportationShare <= 0.30) score = 76;
+        else score = 92;
+
+        if (hiddenCost > payment && payment > 0) score += 10;
+        else if (hiddenCost > payment * 0.65 && payment > 0) score += 5;
+
+        if (obligationShare > 0.85) score += 20;
+        else if (obligationShare > 0.70) score += 12;
+        else if (obligationShare > 0.55) score += 6;
+        else if (obligationShare < 0.35) score -= 8;
+
+        if (monthlyRoom < 0) score += 25;
+        else if (monthlyRoom < income * 0.08) score += 10;
+        else if (monthlyRoom > income * 0.30) score -= 8;
+
+        if (savingsMonths < 0.5) score += 22;
+        else if (savingsMonths < 1) score += 15;
+        else if (savingsMonths < 3) score += 7;
+        else if (savingsMonths >= 6) score -= 16;
+        else if (savingsMonths >= 3) score -= 8;
+
+        if (financingType === "owned") score -= 10;
+        if (financingType === "long") score += 12;
+        if (financingType === "risky") score += 25;
+
+        if (vehicleRole === "essential") score -= 5;
+        if (vehicleRole === "optional") score += 8;
+
+        if (incomeStability === "variable") score += 6;
+        if (incomeStability === "unstable") score += 14;
+
+        const tinyCostAndSafe =
+          transportationShare <= 0.06 &&
+          savingsMonths >= 6 &&
+          obligationShare <= 0.35 &&
+          otherDebtShare <= 0.05 &&
+          financingType !== "risky" &&
+          incomeStability === "stable";
+
+        const hugeSavingsAndSafe =
+          savingsMonths >= 24 &&
+          transportationShare <= 0.20 &&
+          obligationShare <= 0.55 &&
+          otherDebtShare <= 0.15 &&
+          financingType !== "risky" &&
+          incomeStability === "stable";
+
+        const cashFortressAndSafe =
+          emergencySavings >= annualCost * 3 &&
+          emergencySavings >= income * 12 &&
+          transportationShare <= 0.20 &&
+          obligationShare <= 0.55 &&
+          financingType !== "risky" &&
+          incomeStability === "stable";
+
+        if (tinyCostAndSafe || hugeSavingsAndSafe || cashFortressAndSafe) {
+          score = 0;
+        }
+
+        const richIncomeAndSafe =
+          income >= Math.max(totalMonthlyCost * 100, totalObligations * 20, otherDebt * 50, 100000) &&
+          transportationShare <= 0.02 &&
+          obligationShare <= 0.10 &&
+          financingType !== "risky" &&
+          incomeStability === "stable";
+
+        if (richIncomeAndSafe) {
+          score = 0;
+        }
+
+
+
+        if (
+          income <= 0 ||
+          (transportationShare >= 0.50 && savingsMonths < 1) ||
+          (monthlyRoom <= 0 && savingsMonths < 1) ||
+          (financingType === "risky" && transportationShare >= 0.30 && savingsMonths < 1)
+        ) {
+          score = 100;
+        }
+
+        score = Math.round(clamp(score, 0, 100));
+
+        let verdict = pressureLabel(score);
+        let analysis = "";
+
+        if (score === 0) {
+          analysis =
+            "The full ownership cost is tiny relative to income, emergency savings look strong, other debt pressure is low, and no risky vehicle debt is being used. This is the kind of case where the ownership pressure can fall all the way to zero.";
+        } else if (score <= 24) {
+          analysis =
+            "The total vehicle cost appears manageable based on the inputs. The payment is not the only cost, but the full monthly ownership number still leaves room in the household budget.";
+        } else if (score <= 49) {
+          analysis =
+            "The vehicle is not automatically unsafe, but the hidden costs beyond the payment deserve attention. Insurance, fuel, repairs, and depreciation are now meaningful parts of the decision.";
+        } else if (score <= 74) {
+          analysis =
+            "The full monthly ownership cost is putting real pressure on the household. The deal may need a cheaper vehicle, lower insurance, more cash down, or a delay until savings are stronger.";
+        } else if (score < 100) {
+          analysis =
+            "The car looks financially heavy after the full ownership cost is included. This is the danger zone where the payment can seem approved while the total driveway cost crowds out savings and flexibility.";
+        } else {
+          analysis =
+            "The inputs show maximum pressure. The full vehicle cost overwhelms the household picture, savings are too thin, or the financing structure is too risky. Do not treat lender approval as proof this is affordable.";
+        }
+
+        const color = pressureColor(score);
+
+        bigMoneyEl.innerHTML =
+          "<div style=\"" +
+          moneyLabelStyle +
+          "\">Real monthly ownership cost</div><div style=\"" +
+          moneyValueStyle +
+          "\">" +
+          money(totalMonthlyCost) +
+          " per month</div><div style=\"" +
+          moneySubtextStyle +
+          "\">That is about " +
+          money(annualCost) +
+          " per year, including " +
+          money(hiddenCost) +
+          " per month beyond the payment.</div>";
+
+        pressureEl.innerHTML =
+          "<div style=\"margin: 18px 0 18px;\"><div style=\"display: flex; justify-content: space-between; gap: 12px; align-items: center; margin-bottom: 8px;\"><strong style=\"color: var(--text);\">Ownership pressure score</strong><strong style=\"color:" +
+          color +
+          ";\">" +
+          score +
+          "/100</strong></div><div style=\"height: 14px; border-radius: 999px; background: #e5e7eb; overflow: hidden;\"><div style=\"height: 100%; width:" +
+          score +
+          "%; background:" +
+          color +
+          ";\"></div></div></div>";
+
+        breakdownEl.innerText =
+          "Cost breakdown: payment " +
+          money(payment) +
+          ", insurance " +
+          money(insurance) +
+          ", fuel or charging " +
+          money(fuel) +
+          ", maintenance " +
+          money(maintenance) +
+          ", repairs and tires " +
+          money(repairReserve) +
+          ", registration and fees " +
+          money(registration) +
+          ", parking and tolls " +
+          money(parking) +
+          ", and depreciation buffer " +
+          money(depreciation) +
+          ".";
+
+        incomeShareEl.innerText =
+          "Income test: total vehicle cost equals about " +
+          (transportationShare * 100).toFixed(1) +
+          "% of monthly take-home income. Total entered obligations after housing, debt, and car costs equal about " +
+          (obligationShare * 100).toFixed(1) +
+          "% of take-home income.";
+
+        savingsEl.innerText =
+          "Savings runway: emergency savings cover about " +
+          savingsMonths.toFixed(1) +
+          " months of the entered housing, debt, and vehicle obligations. Monthly room after those obligations is about " +
+          money(monthlyRoom) +
+          ".";
+
+        verdictEl.innerText = verdict;
+        analysisEl.innerText = analysis;
+      });
+    });
+  </script>
+</Layout>

@@ -1,0 +1,944 @@
+---
+import Layout from "../layouts/Layout.astro";
+import FAQSection from "../components/FAQSection.astro";
+
+const negativeEquityFaqs = [
+  {
+    question: "What is negative equity on a car loan?",
+    answer:
+      "Negative equity means the loan payoff is higher than the vehicle trade-in value or sale value. If you owe $22,000 and the car is worth $17,000, the negative equity is $5,000.",
+  },
+  {
+    question: "Is it bad to roll negative equity into a new car loan?",
+    answer:
+      "It can be risky because the new loan starts higher than the new vehicle price. That can increase the payment, raise interest cost, and keep the borrower underwater for longer.",
+  },
+  {
+    question: "Can a down payment fix negative equity?",
+    answer:
+      "Yes, if the down payment or outside cash is used to cover the underwater amount. The safest version is paying off the negative equity before it becomes part of the new loan.",
+  },
+  {
+    question: "What is loan-to-value on a car loan?",
+    answer:
+      "Loan-to-value compares the new loan amount with the vehicle price before taxes and fees. A loan above the vehicle price can signal rolled negative equity, high fees, or a thin down payment.",
+  },
+  {
+    question: "When should I wait instead of trading an underwater car?",
+    answer:
+      "Waiting can make sense when the current car still works, the negative equity is large, the new loan would be long or high-interest, and cash savings are thin.",
+  },
+];
+---
+
+<Layout
+  title="Negative Equity Car Loan Calculator | ShouldISpend"
+  description="Calculate how much negative equity would roll into a new car loan and pressure-test the payment, loan amount, loan-to-value, savings, and debt risk."
+>
+  <style>
+    .container {
+      max-width: 940px;
+      margin: 0 auto;
+      padding: 80px 24px;
+    }
+
+    .eyebrow {
+      color: var(--primary);
+      text-transform: uppercase;
+      letter-spacing: 1.8px;
+      font-size: 0.78rem;
+      font-weight: 800;
+      margin-bottom: 16px;
+    }
+
+    h1 {
+      font-size: clamp(2.55rem, 7vw, 4.55rem);
+      line-height: 1;
+      letter-spacing: -0.055em;
+      margin: 0 0 24px;
+      max-width: 900px;
+      color: var(--text);
+    }
+
+    h2 {
+      font-size: clamp(1.8rem, 4vw, 2.45rem);
+      line-height: 1.12;
+      letter-spacing: -0.035em;
+      margin: 0 0 18px;
+      color: var(--text);
+    }
+
+    h3 {
+      font-size: 1.22rem;
+      line-height: 1.3;
+      margin: 28px 0 10px;
+      color: var(--text);
+    }
+
+    p,
+    li {
+      color: var(--muted);
+      line-height: 1.82;
+      font-size: 1.04rem;
+      margin-bottom: 18px;
+    }
+
+    a {
+      color: var(--primary);
+    }
+
+    section {
+      margin-top: 68px;
+    }
+
+    .intro {
+      max-width: 830px;
+      color: var(--muted);
+      font-size: 1.14rem;
+      line-height: 1.85;
+      margin-bottom: 42px;
+    }
+
+    .calculator {
+      border: 1px solid var(--border);
+      background: var(--card);
+      border-radius: 24px;
+      padding: 30px;
+      margin: 44px 0;
+      box-shadow: var(--shadow-soft);
+    }
+
+    .calc-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(235px, 1fr));
+      gap: 20px;
+    }
+
+    .calc-field {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .calc-field label {
+      font-weight: 800;
+      margin-bottom: 10px;
+      color: var(--text);
+      line-height: 1.35;
+    }
+
+    .calc-field input,
+    .calc-field select {
+      padding: 14px;
+      border-radius: 12px;
+      border: 1px solid var(--border);
+      font-size: 1rem;
+      background: #ffffff;
+      color: var(--text);
+    }
+
+    .calc-button {
+      margin-top: 26px;
+      background: var(--primary);
+      color: #ffffff;
+      border: none;
+      border-radius: 14px;
+      padding: 15px 22px;
+      font-size: 1rem;
+      font-weight: 900;
+      cursor: pointer;
+    }
+
+    .calc-button:hover {
+      opacity: 0.92;
+    }
+
+    .calc-results {
+      margin-top: 28px;
+      border: 1px solid #dbe4ee;
+      background: #f8fafc;
+      border-radius: 20px;
+      padding: 28px;
+      display: none;
+    }
+
+    .calc-results.active {
+      display: block;
+    }
+
+    .calc-verdict {
+      font-size: 1.8rem;
+      font-weight: 900;
+      color: var(--primary);
+      margin-bottom: 16px;
+      line-height: 1.18;
+    }
+
+    .calc-stat {
+      font-size: 1.03rem;
+      margin-bottom: 12px;
+      color: var(--text);
+      line-height: 1.65;
+    }
+
+    .calc-analysis {
+      color: var(--muted);
+      line-height: 1.82;
+      margin-top: 18px;
+    }
+
+    .callout {
+      border: 1px solid var(--border);
+      background: var(--card);
+      border-radius: 24px;
+      padding: 26px;
+      margin: 36px 0;
+      box-shadow: var(--shadow-soft);
+    }
+
+    .callout strong {
+      color: var(--text);
+    }
+
+    .info-grid,
+    .link-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 16px;
+      margin-top: 24px;
+    }
+
+    .info-card,
+    .link-card {
+      display: block;
+      border: 1px solid var(--border);
+      background: var(--card);
+      border-radius: 18px;
+      padding: 20px;
+      text-decoration: none;
+      color: inherit;
+    }
+
+    .link-card {
+      transition:
+        transform 0.15s ease,
+        border-color 0.15s ease,
+        box-shadow 0.15s ease;
+    }
+
+    .link-card:hover {
+      transform: translateY(-2px);
+      border-color: var(--primary);
+      box-shadow: var(--shadow-soft);
+    }
+
+    .info-card h3,
+    .link-card strong {
+      display: block;
+      margin: 0 0 8px;
+      color: var(--text);
+      line-height: 1.3;
+      font-size: 1.08rem;
+    }
+
+    .info-card p,
+    .link-card span {
+      color: var(--muted);
+      line-height: 1.65;
+      font-size: 0.95rem;
+      margin: 0;
+    }
+
+    .red-flag-list {
+      margin: 22px 0 0;
+      padding: 0;
+      list-style: none;
+      display: grid;
+      gap: 12px;
+    }
+
+    .red-flag-list li {
+      margin: 0;
+      padding: 15px 16px;
+      border-radius: 16px;
+      border: 1px solid #fecaca;
+      background: #fff7f7;
+      color: #7f1d1d;
+      line-height: 1.55;
+      font-size: 0.96rem;
+    }
+
+    @media (max-width: 720px) {
+      .container {
+        padding: 58px 20px;
+      }
+
+      .calculator {
+        padding: 22px;
+      }
+
+      h1 {
+        font-size: 2.55rem;
+      }
+    }
+  </style>
+
+  <main class="container">
+    <div class="eyebrow">Negative Equity Car Loan Calculator</div>
+
+    <h1>Negative Equity Car Loan Calculator</h1>
+
+    <p class="intro">
+      Rolling an underwater car balance into a new loan can make the new payment look
+      clean while the debt underneath gets worse. This calculator shows how much negative
+      equity would be rolled into the new loan, estimates the new payment, and tests the
+      loan-to-value, savings, insurance change, term length, APR, and monthly pressure.
+    </p>
+
+    <div class="calculator">
+      <div class="calc-grid">
+        <div class="calc-field">
+          <label for="currentPayoff">Current Loan Payoff ($)</label>
+          <input type="number" id="currentPayoff" placeholder="24000" min="0" inputmode="decimal" />
+        </div>
+
+        <div class="calc-field">
+          <label for="tradeValue">Trade-In or Sale Value ($)</label>
+          <input type="number" id="tradeValue" placeholder="18000" min="0" inputmode="decimal" />
+        </div>
+
+        <div class="calc-field">
+          <label for="cashToCover">Cash, Rebate, or Outside Help Used Against Negative Equity ($)</label>
+          <input type="number" id="cashToCover" placeholder="3000" min="0" inputmode="decimal" />
+        </div>
+
+        <div class="calc-field">
+          <label for="newCarPrice">New Vehicle Price Before Taxes and Fees ($)</label>
+          <input type="number" id="newCarPrice" placeholder="36000" min="0" inputmode="decimal" />
+        </div>
+
+        <div class="calc-field">
+          <label for="taxesFees">Taxes, Fees, Warranty, and Add-Ons ($)</label>
+          <input type="number" id="taxesFees" placeholder="3500" min="0" inputmode="decimal" />
+        </div>
+
+        <div class="calc-field">
+          <label for="downPayment">Down Payment on New Vehicle ($)</label>
+          <input type="number" id="downPayment" placeholder="4000" min="0" inputmode="decimal" />
+        </div>
+
+        <div class="calc-field">
+          <label for="apr">New Loan APR (%)</label>
+          <input type="number" id="apr" placeholder="8.5" min="0" inputmode="decimal" />
+        </div>
+
+        <div class="calc-field">
+          <label for="termMonths">New Loan Term (Months)</label>
+          <input type="number" id="termMonths" placeholder="72" min="0" inputmode="numeric" />
+        </div>
+
+        <div class="calc-field">
+          <label for="income">Monthly Take-Home Income ($)</label>
+          <input type="number" id="income" placeholder="7000" min="0" inputmode="decimal" />
+        </div>
+
+        <div class="calc-field">
+          <label for="essentials">Monthly Essential Expenses Before Car Payment ($)</label>
+          <input type="number" id="essentials" placeholder="3900" min="0" inputmode="decimal" />
+        </div>
+
+        <div class="calc-field">
+          <label for="otherDebt">Other Monthly Debt Payments ($)</label>
+          <input type="number" id="otherDebt" placeholder="500" min="0" inputmode="decimal" />
+        </div>
+
+        <div class="calc-field">
+          <label for="emergencySavings">Current Emergency Savings ($)</label>
+          <input type="number" id="emergencySavings" placeholder="12000" min="0" inputmode="decimal" />
+        </div>
+
+        <div class="calc-field">
+          <label for="insuranceChange">Monthly Insurance Increase on New Vehicle ($)</label>
+          <input type="number" id="insuranceChange" placeholder="90" min="0" inputmode="decimal" />
+        </div>
+
+        <div class="calc-field">
+          <label for="currentCarNeed">Current Vehicle Situation</label>
+          <select id="currentCarNeed">
+            <option value="" disabled selected>Select current vehicle situation</option>
+            <option value="works">Current car still works and can be kept longer</option>
+            <option value="costly">Current car works but repairs or reliability are getting costly</option>
+            <option value="urgent">Replacement is urgent for safety, work, or basic transportation</option>
+          </select>
+        </div>
+
+        <div class="calc-field">
+          <label for="loanStructure">New Loan Structure</label>
+          <select id="loanStructure">
+            <option value="" disabled selected>Select loan structure</option>
+            <option value="clean">Short or normal term with clean down payment</option>
+            <option value="stretched">Long term or very small down payment</option>
+            <option value="risky">Long term plus add-ons, high APR, or rolled balances</option>
+          </select>
+        </div>
+
+        <div class="calc-field">
+          <label for="incomeStability">Income Stability</label>
+          <select id="incomeStability">
+            <option value="" disabled selected>Select income stability</option>
+            <option value="stable">Stable paycheck</option>
+            <option value="variable">Somewhat variable</option>
+            <option value="unstable">Irregular, commission, freelance, or at risk</option>
+          </select>
+        </div>
+      </div>
+
+      <button class="calc-button sis-action-button sis-calculate-button" id="calculateNegativeEquity">
+        Calculate Negative Equity Risk
+      </button>
+
+      <div class="calc-results" id="calcResults">
+        <div class="calc-verdict" id="calcVerdict"></div>
+        <div id="bigMoneyResult"></div>
+        <div id="pressureResult"></div>
+        <div class="calc-stat" id="loanMath"></div>
+        <div class="calc-stat" id="paymentMath"></div>
+        <div class="calc-stat" id="savingsMath"></div>
+        <div class="calc-analysis" id="calcAnalysis"></div>
+      </div>
+    </div>
+
+    <div class="callout">
+      <p>
+        <strong>Underwater rule:</strong> if the old loan balance is moved into the new
+        loan, the new car starts with old debt attached. The payment may be new, but part
+        of the loan belongs to a vehicle you no longer own.
+      </p>
+    </div>
+
+    <section>
+      <h2>What This Calculator Does Differently</h2>
+
+      <p>
+        This calculator is not a repair decision, a total ownership estimate, or a general
+        car affordability page. It focuses on one specific risk: rolling negative equity
+        from the current car into the next car loan.
+      </p>
+
+      <p>
+        The main output is the amount of negative equity rolled into the new loan after
+        trade value, cash, rebates, reimbursement, or outside help are applied. The
+        secondary outputs show the estimated new loan amount, payment, loan-to-value, and
+        pressure score.
+      </p>
+    </section>
+
+    <section>
+      <h2>Why Negative Equity Is So Easy to Miss</h2>
+
+      <p>
+        A dealer can make an underwater trade feel simple because the old payoff gets
+        handled inside the new deal. The danger is that the borrower may leave with a
+        higher loan balance than the new vehicle is worth from the start.
+      </p>
+
+      <p>
+        That matters because a high loan-to-value position can limit refinancing options,
+        make the car harder to sell, increase gap-insurance need, and keep the next trade-in
+        stuck in the same cycle.
+      </p>
+    </section>
+
+    <section>
+      <h2>What the Calculator Checks</h2>
+
+      <div class="info-grid">
+        <div class="info-card">
+          <h3>Current payoff gap</h3>
+          <p>The difference between payoff and trade value shows the raw underwater amount.</p>
+        </div>
+
+        <div class="info-card">
+          <h3>Cash used to fix it</h3>
+          <p>Cash, rebates, reimbursement, or outside help can reduce the negative equity before it is financed.</p>
+        </div>
+
+        <div class="info-card">
+          <h3>New loan amount</h3>
+          <p>The new loan includes vehicle price, fees, add-ons, taxes, and any remaining rolled balance.</p>
+        </div>
+
+        <div class="info-card">
+          <h3>Loan-to-value</h3>
+          <p>A loan above the new vehicle price can signal old debt, high fees, or too little down payment.</p>
+        </div>
+
+        <div class="info-card">
+          <h3>Payment pressure</h3>
+          <p>The estimated payment is tested against take-home income, essentials, debt, and insurance change.</p>
+        </div>
+
+        <div class="info-card">
+          <h3>Savings runway</h3>
+          <p>Cash used to escape negative equity is safer when emergency savings remain strong afterward.</p>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <h2>How to Read the Result</h2>
+
+      <h3>If rolled negative equity is zero</h3>
+      <p>
+        The trade is not carrying old vehicle debt into the new loan. The decision still
+        needs a normal car affordability check, but the negative-equity problem is not
+        the main issue.
+      </p>
+
+      <h3>If rolled negative equity is small</h3>
+      <p>
+        A small rolled balance can still be risky if the term is long, APR is high, or
+        savings are thin. The payment may be manageable while the loan position remains weak.
+      </p>
+
+      <h3>If rolled negative equity is large</h3>
+      <p>
+        Large negative equity can turn a new vehicle into a debt reset. In that case,
+        keeping the current car longer, selling privately, saving cash, or choosing a much
+        cheaper replacement may be safer.
+      </p>
+    </section>
+
+    <section id="FinancialRedFlags">
+      <h2>Negative Equity Car Loan Red Flags</h2>
+
+      <ul class="red-flag-list">
+        <li>The new loan amount is higher than the new vehicle price before taxes and fees.</li>
+        <li>The old car is still drivable but the trade is being rushed to escape boredom or payment fatigue.</li>
+        <li>The loan term is 72, 84, or 96 months because the rolled balance makes the payment too high.</li>
+        <li>The APR is high and negative equity is being financed instead of paid down.</li>
+        <li>Emergency savings are thin after cash is used for the new deal.</li>
+        <li>The replacement payment only works before the insurance increase is included.</li>
+        <li>Add-ons, warranties, fees, and old debt are all being packed into one larger loan.</li>
+      </ul>
+    </section>
+
+    <section id="CalculatorAssumptions">
+      <h2>Negative Equity Calculator Assumptions</h2>
+
+      <p>
+        This calculator estimates negative equity by subtracting trade-in or sale value
+        from the current payoff, then subtracting cash, rebate, reimbursement, or outside
+        help used specifically to cover the gap. Any remaining gap is treated as rolled
+        negative equity.
+      </p>
+
+      <p>
+        The estimated payment uses the loan amount, APR, and term entered. It is not a
+        lender quote and does not include every possible tax, title, registration, fee,
+        add-on, insurance premium, or dealer product unless those amounts are entered.
+      </p>
+    </section>
+
+    <section id="MethodologySection">
+      <h2>How ShouldISpend Calculates Negative Equity Pressure</h2>
+
+      <p>
+        ShouldISpend calculates raw negative equity, covered negative equity, rolled
+        negative equity, new loan amount, estimated payment, loan-to-value, payment share
+        of income, emergency savings after cash used, and monthly room after essentials,
+        other debt, insurance change, and the new payment.
+      </p>
+
+      <p>
+        The pressure score can reach zero when there is no rolled negative equity or the
+        negative equity is fully covered while emergency savings remain objectively strong.
+        It can reach 100 when large negative equity is rolled into a long or high-APR loan
+        with thin savings, high monthly pressure, and little room to recover.
+      </p>
+    </section>
+
+    <section id="RelatedCalculators">
+      <h2>Related Car Calculators</h2>
+
+      <div class="link-grid">
+        <a class="link-card" href="/car-calculators">
+          <strong>Car Payment Calculators</strong>
+          <span>See the full car calculator cluster for payments, repairs, insurance, loan length, and ownership pressure.</span>
+        </a>
+
+        <a class="link-card" href="/car-repair-vs-replace-calculator">
+          <strong>Car Repair vs Replace Calculator</strong>
+          <span>Decide whether to repair, replace, or get another quote before rolling old debt into a new vehicle.</span>
+        </a>
+
+        <a class="link-card" href="/total-cost-of-car-ownership-calculator">
+          <strong>Total Cost of Car Ownership Calculator</strong>
+          <span>See the real monthly cost after payment, insurance, fuel, maintenance, repairs, fees, and depreciation.</span>
+        </a>
+
+        <a class="link-card" href="/should-i-trade-in-my-car-or-keep-it">
+          <strong>Should I Trade In My Car or Keep It?</strong>
+          <span>Compare keeping a vehicle with trading it in before making a larger ownership decision.</span>
+        </a>
+
+        <a class="link-card" href="/should-i-finance-a-car-for-84-months">
+          <strong>84-Month Car Loan Calculator</strong>
+          <span>Test whether a long loan is lowering the payment while raising interest and underwater risk.</span>
+        </a>
+
+        <a class="link-card" href="/how-much-car-can-i-afford">
+          <strong>How Much Car Can I Afford?</strong>
+          <span>Build a vehicle budget from income, savings, debt, insurance, loan structure, and monthly pressure.</span>
+        </a>
+      </div>
+    </section>
+
+    <FAQSection title="Negative Equity Car Loan FAQ" faqs={negativeEquityFaqs} />
+  </main>
+
+  <script is:inline>
+    document.addEventListener("DOMContentLoaded", function () {
+      const button = document.getElementById("calculateNegativeEquity");
+
+      if (!button) return;
+
+      const moneyLabelStyle =
+        "color: var(--muted); font-size: 0.82rem; font-weight: 900; letter-spacing: 0.04em; text-transform: uppercase; margin-bottom: 6px;";
+
+      const moneyValueStyle =
+        "color: var(--primary); font-size: clamp(2.45rem, 6vw, 3.75rem); font-weight: 950; line-height: 1.04; letter-spacing: -0.055em; margin: 4px 0 16px; display: block;";
+
+      const moneySubtextStyle =
+        "color: var(--text); font-size: 1.05rem; font-weight: 850; line-height: 1.55; margin-bottom: 16px;";
+
+      function cleanNumber(id) {
+        const element = document.getElementById(id);
+        if (!element) return 0;
+        const value = Number(element.value);
+        return Number.isFinite(value) && value > 0 ? value : 0;
+      }
+
+      function money(value) {
+        const sign = value < 0 ? "-" : "";
+        return sign + "$" + Math.round(Math.abs(value)).toLocaleString("en-US");
+      }
+
+      function clamp(value, min, max) {
+        return Math.max(min, Math.min(max, value));
+      }
+
+      function estimatePayment(principal, apr, months) {
+        if (principal <= 0 || months <= 0) return 0;
+        const monthlyRate = apr / 100 / 12;
+        if (monthlyRate <= 0) return principal / months;
+        return principal * monthlyRate / (1 - Math.pow(1 + monthlyRate, -months));
+      }
+
+      function pressureColor(score) {
+        if (score <= 24) return "#16a34a";
+        if (score <= 49) return "#ca8a04";
+        if (score <= 74) return "#ea580c";
+        return "#dc2626";
+      }
+
+      function pressureLabel(score) {
+        if (score <= 0) return "No negative-equity pressure";
+        if (score <= 24) return "Low negative-equity pressure";
+        if (score <= 49) return "Moderate negative-equity pressure";
+        if (score <= 74) return "High negative-equity pressure";
+        if (score < 100) return "Severe negative-equity pressure";
+        return "Maximum negative-equity pressure";
+      }
+
+      button.addEventListener("click", function () {
+        const currentPayoff = cleanNumber("currentPayoff");
+        const tradeValue = cleanNumber("tradeValue");
+        const cashToCover = cleanNumber("cashToCover");
+        const newCarPrice = cleanNumber("newCarPrice");
+        const taxesFees = cleanNumber("taxesFees");
+        const downPayment = cleanNumber("downPayment");
+        const apr = cleanNumber("apr");
+        const termMonths = cleanNumber("termMonths");
+        const income = cleanNumber("income");
+        const essentials = cleanNumber("essentials");
+        const otherDebt = cleanNumber("otherDebt");
+        const emergencySavings = cleanNumber("emergencySavings");
+        const insuranceChange = cleanNumber("insuranceChange");
+
+        const currentCarNeed = document.getElementById("currentCarNeed").value;
+        const loanStructure = document.getElementById("loanStructure").value;
+        const incomeStability = document.getElementById("incomeStability").value;
+
+        const results = document.getElementById("calcResults");
+        const verdictEl = document.getElementById("calcVerdict");
+        const bigMoneyEl = document.getElementById("bigMoneyResult");
+        const pressureEl = document.getElementById("pressureResult");
+        const loanMathEl = document.getElementById("loanMath");
+        const paymentMathEl = document.getElementById("paymentMath");
+        const savingsMathEl = document.getElementById("savingsMath");
+        const analysisEl = document.getElementById("calcAnalysis");
+
+        results.classList.add("active");
+
+        if (
+          currentPayoff <= 0 ||
+          newCarPrice <= 0 ||
+          income <= 0 ||
+          termMonths <= 0 ||
+          !currentCarNeed ||
+          !loanStructure ||
+          !incomeStability
+        ) {
+          verdictEl.innerText = "Add the missing details";
+          bigMoneyEl.innerHTML =
+            "<div style=\"" +
+            moneyLabelStyle +
+            "\">Negative equity rolled into new loan</div><div style=\"" +
+            moneyValueStyle +
+            "\">Need details</div><div style=\"" +
+            moneySubtextStyle +
+            "\">Enter current payoff, new vehicle price, income, loan term, and the dropdown details to calculate rolled negative equity.</div>";
+          pressureEl.innerHTML = "";
+          loanMathEl.innerText = "";
+          paymentMathEl.innerText = "";
+          savingsMathEl.innerText = "";
+          analysisEl.innerText =
+            "Trade value, cash to cover negative equity, fees, down payment, APR, essentials, debt, savings, and insurance change can be zero, but the calculator needs the core loan details.";
+          return;
+        }
+
+        const rawNegativeEquity = Math.max(0, currentPayoff - tradeValue);
+        const coveredNegativeEquity = Math.min(rawNegativeEquity, cashToCover);
+        const rolledNegativeEquity = Math.max(0, rawNegativeEquity - coveredNegativeEquity);
+        const cashLeftAfterCover = Math.max(0, emergencySavings - coveredNegativeEquity);
+        const taxableDealBeforeDown = newCarPrice + taxesFees + rolledNegativeEquity;
+        const newLoanAmount = Math.max(0, taxableDealBeforeDown - downPayment);
+        const payment = estimatePayment(newLoanAmount, apr, termMonths);
+        const loanToValue = newCarPrice > 0 ? newLoanAmount / newCarPrice : 0;
+        const paymentShare = payment / income;
+        const paymentPlusInsuranceShare = (payment + insuranceChange) / income;
+        const obligations = essentials + otherDebt + payment + insuranceChange;
+        const obligationShare = obligations / income;
+        const monthlyRoom = income - obligations;
+        const savingsMonthsAfter = essentials > 0 ? cashLeftAfterCover / Math.max(1, essentials) : 0;
+        const negativeEquityShare = rolledNegativeEquity / Math.max(1, newCarPrice);
+        const debtShare = otherDebt / income;
+
+        let score = 0;
+
+        if (rolledNegativeEquity <= 0) score = 5;
+        else if (negativeEquityShare <= 0.05) score = 22;
+        else if (negativeEquityShare <= 0.10) score = 38;
+        else if (negativeEquityShare <= 0.20) score = 58;
+        else if (negativeEquityShare <= 0.35) score = 76;
+        else score = 92;
+
+        if (loanToValue > 1.35) score += 18;
+        else if (loanToValue > 1.20) score += 12;
+        else if (loanToValue > 1.10) score += 7;
+        else if (loanToValue <= 0.90) score -= 8;
+
+        if (paymentPlusInsuranceShare > 0.24) score += 18;
+        else if (paymentPlusInsuranceShare > 0.18) score += 10;
+        else if (paymentPlusInsuranceShare > 0.12) score += 5;
+        else if (paymentPlusInsuranceShare <= 0.08) score -= 6;
+
+        if (termMonths >= 85) score += 16;
+        else if (termMonths >= 73) score += 12;
+        else if (termMonths >= 61) score += 6;
+        else if (termMonths <= 48) score -= 4;
+
+        if (apr >= 15) score += 18;
+        else if (apr >= 10) score += 10;
+        else if (apr >= 7) score += 5;
+        else if (apr > 0 && apr <= 4) score -= 5;
+
+        if (cashLeftAfterCover <= 0 && coveredNegativeEquity > 0) score += 24;
+        else if (savingsMonthsAfter < 0.5) score += 18;
+        else if (savingsMonthsAfter < 1) score += 12;
+        else if (savingsMonthsAfter < 3) score += 6;
+        else if (savingsMonthsAfter >= 24) score -= 22;
+        else if (savingsMonthsAfter >= 6) score -= 14;
+        else if (savingsMonthsAfter >= 3) score -= 7;
+
+        if (obligationShare > 0.85) score += 18;
+        else if (obligationShare > 0.70) score += 12;
+        else if (obligationShare > 0.55) score += 6;
+        else if (obligationShare < 0.35) score -= 6;
+
+        if (monthlyRoom < 0) score += 25;
+        else if (monthlyRoom < income * 0.08) score += 10;
+
+        if (debtShare > 0.20) score += 10;
+        else if (debtShare > 0.12) score += 5;
+
+        if (loanStructure === "clean") score -= 7;
+        if (loanStructure === "stretched") score += 10;
+        if (loanStructure === "risky") score += 22;
+
+        if (currentCarNeed === "works") score += 7;
+        if (currentCarNeed === "urgent") score -= 4;
+
+        if (incomeStability === "variable") score += 6;
+        if (incomeStability === "unstable") score += 15;
+
+        const noRolledDebtSafe =
+          rolledNegativeEquity <= 0 &&
+          savingsMonthsAfter >= 3 &&
+          paymentPlusInsuranceShare <= 0.12 &&
+          loanToValue <= 1.05 &&
+          loanStructure !== "risky" &&
+          incomeStability === "stable";
+
+        const fullyCoveredWithStrongSavings =
+          rolledNegativeEquity <= 0 &&
+          rawNegativeEquity > 0 &&
+          savingsMonthsAfter >= 6 &&
+          paymentPlusInsuranceShare <= 0.14 &&
+          loanToValue <= 1.10 &&
+          loanStructure !== "risky" &&
+          incomeStability === "stable";
+
+        const hugeSavingsAndSafe =
+          cashLeftAfterCover >= income * 12 &&
+          savingsMonthsAfter >= 24 &&
+          paymentPlusInsuranceShare <= 0.16 &&
+          obligationShare <= 0.55 &&
+          rolledNegativeEquity <= Math.max(newCarPrice * 0.10, income * 2) &&
+          loanStructure !== "risky" &&
+          incomeStability === "stable";
+
+        const cashFortressAndSafe =
+          emergencySavings >= income * 12 &&
+          emergencySavings >= newLoanAmount * 2 &&
+          cashLeftAfterCover >= income * 6 &&
+          paymentPlusInsuranceShare <= 0.16 &&
+          loanStructure !== "risky" &&
+          incomeStability === "stable";
+
+        if (noRolledDebtSafe || fullyCoveredWithStrongSavings || hugeSavingsAndSafe || cashFortressAndSafe) {
+          score = 0;
+        }
+
+        const richIncomeAndSafe =
+          income >= Math.max(newLoanAmount, rolledNegativeEquity, newCarPrice, 100000) * 50 &&
+          paymentPlusInsuranceShare <= 0.03 &&
+          obligationShare <= 0.10 &&
+          debtShare <= 0.05 &&
+          loanStructure !== "risky" &&
+          incomeStability === "stable";
+
+        if (richIncomeAndSafe) {
+          score = 0;
+        }
+
+
+
+        if (
+          income <= 0 ||
+          (rolledNegativeEquity >= newCarPrice * 0.30 && termMonths >= 72 && savingsMonthsAfter < 1) ||
+          (monthlyRoom < 0 && rolledNegativeEquity > 0 && savingsMonthsAfter < 1) ||
+          (loanStructure === "risky" && loanToValue >= 1.35 && savingsMonthsAfter < 1) ||
+          (paymentPlusInsuranceShare >= 0.35 && savingsMonthsAfter < 1)
+        ) {
+          score = 100;
+        }
+
+        score = Math.round(clamp(score, 0, 100));
+
+        const color = pressureColor(score);
+        const pressureName = pressureLabel(score);
+        let verdict = pressureName;
+        let analysis = "";
+
+        if (score === 0) {
+          analysis =
+            "The negative-equity problem is either gone or safely covered, savings remain objectively strong, and the new payment does not create meaningful pressure. This is the kind of case where pressure should fall to zero.";
+        } else if (rolledNegativeEquity <= 0) {
+          analysis =
+            "No negative equity is being rolled into the new loan based on the inputs. The next step is still to pressure-test the normal car payment, insurance, and total ownership cost.";
+        } else if (score <= 24) {
+          analysis =
+            "The rolled balance appears manageable, but it is still old debt attached to a new vehicle. Keep the loan term and add-ons under control.";
+        } else if (score <= 49) {
+          analysis =
+            "The deal has moderate underwater risk. The payment may work, but loan-to-value, term length, and cash cushion should be checked before signing.";
+        } else if (score <= 74) {
+          analysis =
+            "The trade is creating high pressure. Consider paying down the current loan, selling privately, choosing a cheaper replacement, or waiting longer.";
+        } else if (score < 100) {
+          analysis =
+            "The negative equity is severe enough that the new loan may begin in a weak position. This can keep the next car underwater and make the following trade harder.";
+        } else {
+          analysis =
+            "The inputs show maximum pressure. Large rolled debt, thin savings, high monthly burden, or risky loan structure make this a deal to avoid or rebuild from scratch.";
+        }
+
+        verdictEl.innerText = verdict;
+
+        bigMoneyEl.innerHTML =
+          "<div style=\"" +
+          moneyLabelStyle +
+          "\">Negative equity rolled into new loan</div><div style=\"" +
+          moneyValueStyle +
+          "\">" +
+          money(rolledNegativeEquity) +
+          "</div><div style=\"" +
+          moneySubtextStyle +
+          "\">Raw negative equity is " +
+          money(rawNegativeEquity) +
+          ". Cash, rebate, reimbursement, or outside help covers " +
+          money(coveredNegativeEquity) +
+          " before the new loan is built.</div>";
+
+        pressureEl.innerHTML =
+          "<div style=\"margin: 18px 0 18px;\"><div style=\"display: flex; justify-content: space-between; gap: 12px; align-items: center; margin-bottom: 8px;\"><strong style=\"color: var(--text);\">Negative-equity pressure score</strong><strong style=\"color:" +
+          color +
+          ";\">" +
+          score +
+          "/100</strong></div><div style=\"height: 14px; border-radius: 999px; background: #e5e7eb; overflow: hidden;\"><div style=\"height: 100%; width:" +
+          score +
+          "%; background:" +
+          color +
+          ";\"></div></div></div>";
+
+        loanMathEl.innerText =
+          "Loan math: new loan amount is about " +
+          money(newLoanAmount) +
+          " after vehicle price " +
+          money(newCarPrice) +
+          ", taxes and fees " +
+          money(taxesFees) +
+          ", rolled negative equity " +
+          money(rolledNegativeEquity) +
+          ", and down payment " +
+          money(downPayment) +
+          ". Loan-to-value is about " +
+          (loanToValue * 100).toFixed(1) +
+          "% of the new vehicle price.";
+
+        paymentMathEl.innerText =
+          "Payment test: estimated new payment is about " +
+          money(payment) +
+          " per month at " +
+          apr.toFixed(2) +
+          "% APR for " +
+          Math.round(termMonths) +
+          " months. Payment plus insurance increase equals about " +
+          (paymentPlusInsuranceShare * 100).toFixed(1) +
+          "% of take-home income.";
+
+        savingsMathEl.innerText =
+          "Savings test: cash left after covering negative equity is about " +
+          money(cashLeftAfterCover) +
+          ", covering about " +
+          savingsMonthsAfter.toFixed(1) +
+          " months of essential expenses. Monthly room after essentials, other debt, new payment, and insurance change is about " +
+          money(monthlyRoom) +
+          ".";
+
+        analysisEl.innerText = analysis;
+      });
+    });
+  </script>
+</Layout>

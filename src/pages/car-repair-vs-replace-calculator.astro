@@ -1,0 +1,940 @@
+---
+import Layout from "../layouts/Layout.astro";
+import FAQSection from "../components/FAQSection.astro";
+
+const repairVsReplaceFaqs = [
+  {
+    question: "How do I know if a car repair is worth it?",
+    answer:
+      "A repair is usually easier to justify when the uncovered cost is small compared with the car value, the repair restores reliability, emergency savings remain intact, and expected future repairs are manageable.",
+  },
+  {
+    question: "What repair-to-value ratio is too high?",
+    answer:
+      "There is no universal cutoff, but repairs above 30% of the vehicle value deserve caution. Repairs above 50% of the value often require a second quote and a realistic replacement comparison.",
+  },
+  {
+    question: "Should I repair a car that still has a loan?",
+    answer:
+      "Sometimes yes. If the car is worth less than the loan balance, replacing it can create negative equity. A repair may be the safer bridge if it restores reliability and does not wipe out savings.",
+  },
+  {
+    question: "When should I replace the car instead of repairing it?",
+    answer:
+      "Replacement may be smarter when the repair is very large, the car remains unreliable after the repair, safety is at risk, future repairs are likely, and the replacement payment fits without draining savings.",
+  },
+  {
+    question: "Why does this calculator ask about future repairs?",
+    answer:
+      "One repair quote is not the whole story. A $1,500 repair on a solid car is different from a $1,500 repair followed by tires, brakes, transmission risk, and another diagnostic visit.",
+  },
+];
+---
+
+<Layout
+  title="Car Repair vs Replace Calculator | ShouldISpend"
+  description="Decide whether to repair your car, repair carefully, replace it, or get another quote based on repair cost, car value, loan balance, savings, and reliability risk."
+>
+  <style>
+    .container {
+      max-width: 940px;
+      margin: 0 auto;
+      padding: 80px 24px;
+    }
+
+    .eyebrow {
+      color: var(--primary);
+      text-transform: uppercase;
+      letter-spacing: 1.8px;
+      font-size: 0.78rem;
+      font-weight: 800;
+      margin-bottom: 16px;
+    }
+
+    h1 {
+      font-size: clamp(2.55rem, 7vw, 4.55rem);
+      line-height: 1;
+      letter-spacing: -0.055em;
+      margin: 0 0 24px;
+      max-width: 880px;
+      color: var(--text);
+    }
+
+    h2 {
+      font-size: clamp(1.8rem, 4vw, 2.45rem);
+      line-height: 1.12;
+      letter-spacing: -0.035em;
+      margin: 0 0 18px;
+      color: var(--text);
+    }
+
+    h3 {
+      font-size: 1.22rem;
+      line-height: 1.3;
+      margin: 28px 0 10px;
+      color: var(--text);
+    }
+
+    p,
+    li {
+      color: var(--muted);
+      line-height: 1.82;
+      font-size: 1.04rem;
+      margin-bottom: 18px;
+    }
+
+    a {
+      color: var(--primary);
+    }
+
+    section {
+      margin-top: 68px;
+    }
+
+    .intro {
+      max-width: 820px;
+      color: var(--muted);
+      font-size: 1.14rem;
+      line-height: 1.85;
+      margin-bottom: 42px;
+    }
+
+    .calculator {
+      border: 1px solid var(--border);
+      background: var(--card);
+      border-radius: 24px;
+      padding: 30px;
+      margin: 44px 0;
+      box-shadow: var(--shadow-soft);
+    }
+
+    .calc-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(235px, 1fr));
+      gap: 20px;
+    }
+
+    .calc-field {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .calc-field label {
+      font-weight: 800;
+      margin-bottom: 10px;
+      color: var(--text);
+      line-height: 1.35;
+    }
+
+    .calc-field input,
+    .calc-field select {
+      padding: 14px;
+      border-radius: 12px;
+      border: 1px solid var(--border);
+      font-size: 1rem;
+      background: #ffffff;
+      color: var(--text);
+    }
+
+    .calc-button {
+      margin-top: 26px;
+      background: var(--primary);
+      color: #ffffff;
+      border: none;
+      border-radius: 14px;
+      padding: 15px 22px;
+      font-size: 1rem;
+      font-weight: 900;
+      cursor: pointer;
+    }
+
+    .calc-button:hover {
+      opacity: 0.92;
+    }
+
+    .calc-results {
+      margin-top: 28px;
+      border: 1px solid #dbe4ee;
+      background: #f8fafc;
+      border-radius: 20px;
+      padding: 28px;
+      display: none;
+    }
+
+    .calc-results.active {
+      display: block;
+    }
+
+    .calc-verdict {
+      font-size: 1.8rem;
+      font-weight: 900;
+      color: var(--primary);
+      margin-bottom: 16px;
+      line-height: 1.18;
+    }
+
+    .calc-stat {
+      font-size: 1.03rem;
+      margin-bottom: 12px;
+      color: var(--text);
+      line-height: 1.65;
+    }
+
+    .calc-analysis {
+      color: var(--muted);
+      line-height: 1.82;
+      margin-top: 18px;
+    }
+
+    .callout {
+      border: 1px solid var(--border);
+      background: var(--card);
+      border-radius: 24px;
+      padding: 26px;
+      margin: 36px 0;
+      box-shadow: var(--shadow-soft);
+    }
+
+    .callout strong {
+      color: var(--text);
+    }
+
+    .info-grid,
+    .link-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 16px;
+      margin-top: 24px;
+    }
+
+    .info-card,
+    .link-card {
+      display: block;
+      border: 1px solid var(--border);
+      background: var(--card);
+      border-radius: 18px;
+      padding: 20px;
+      text-decoration: none;
+      color: inherit;
+    }
+
+    .link-card {
+      transition:
+        transform 0.15s ease,
+        border-color 0.15s ease,
+        box-shadow 0.15s ease;
+    }
+
+    .link-card:hover {
+      transform: translateY(-2px);
+      border-color: var(--primary);
+      box-shadow: var(--shadow-soft);
+    }
+
+    .info-card h3,
+    .link-card strong {
+      display: block;
+      margin: 0 0 8px;
+      color: var(--text);
+      line-height: 1.3;
+      font-size: 1.08rem;
+    }
+
+    .info-card p,
+    .link-card span {
+      color: var(--muted);
+      line-height: 1.65;
+      font-size: 0.95rem;
+      margin: 0;
+    }
+
+    .red-flag-list {
+      margin: 22px 0 0;
+      padding: 0;
+      list-style: none;
+      display: grid;
+      gap: 12px;
+    }
+
+    .red-flag-list li {
+      margin: 0;
+      padding: 15px 16px;
+      border-radius: 16px;
+      border: 1px solid #fecaca;
+      background: #fff7f7;
+      color: #7f1d1d;
+      line-height: 1.55;
+      font-size: 0.96rem;
+    }
+
+    @media (max-width: 720px) {
+      .container {
+        padding: 58px 20px;
+      }
+
+      .calculator {
+        padding: 22px;
+      }
+
+      h1 {
+        font-size: 2.55rem;
+      }
+    }
+  </style>
+
+  <main class="container">
+    <div class="eyebrow">Car Repair vs Replace Calculator</div>
+
+    <h1>Car Repair vs Replace Calculator</h1>
+
+    <p class="intro">
+      A repair decision is not the same as a car payment decision. This calculator
+      compares the repair quote with the car value, loan balance, expected future
+      repairs, replacement payment, emergency savings, and reliability risk so you can
+      decide whether to repair it, repair carefully, replace it, or pause for another quote.
+    </p>
+
+    <div class="calculator">
+      <div class="calc-grid">
+        <div class="calc-field">
+          <label for="repairQuote">Repair Quote ($)</label>
+          <input type="number" id="repairQuote" placeholder="2400" min="0" inputmode="decimal" />
+        </div>
+
+        <div class="calc-field">
+          <label for="coverage">Warranty, Insurance, or Reimbursement Coverage ($)</label>
+          <input type="number" id="coverage" placeholder="500" min="0" inputmode="decimal" />
+        </div>
+
+        <div class="calc-field">
+          <label for="carValue">Current Vehicle Value ($)</label>
+          <input type="number" id="carValue" placeholder="9000" min="0" inputmode="decimal" />
+        </div>
+
+        <div class="calc-field">
+          <label for="loanBalance">Current Loan Balance ($)</label>
+          <input type="number" id="loanBalance" placeholder="6500" min="0" inputmode="decimal" />
+        </div>
+
+        <div class="calc-field">
+          <label for="currentPayment">Current Monthly Car Payment ($)</label>
+          <input type="number" id="currentPayment" placeholder="325" min="0" inputmode="decimal" />
+        </div>
+
+        <div class="calc-field">
+          <label for="futureRepairs">Expected Repairs in Next 12 Months ($)</label>
+          <input type="number" id="futureRepairs" placeholder="1200" min="0" inputmode="decimal" />
+        </div>
+
+        <div class="calc-field">
+          <label for="replacementPayment">Replacement Monthly Payment Estimate ($)</label>
+          <input type="number" id="replacementPayment" placeholder="625" min="0" inputmode="decimal" />
+        </div>
+
+        <div class="calc-field">
+          <label for="replacementCash">Cash Needed to Replace Up Front ($)</label>
+          <input type="number" id="replacementCash" placeholder="2500" min="0" inputmode="decimal" />
+        </div>
+
+        <div class="calc-field">
+          <label for="income">Monthly Take-Home Income ($)</label>
+          <input type="number" id="income" placeholder="6500" min="0" inputmode="decimal" />
+        </div>
+
+        <div class="calc-field">
+          <label for="essentials">Monthly Essential Expenses ($)</label>
+          <input type="number" id="essentials" placeholder="3900" min="0" inputmode="decimal" />
+        </div>
+
+        <div class="calc-field">
+          <label for="emergencySavings">Current Emergency Savings ($)</label>
+          <input type="number" id="emergencySavings" placeholder="8000" min="0" inputmode="decimal" />
+        </div>
+
+        <div class="calc-field">
+          <label for="otherDebt">Other Monthly Debt Payments ($)</label>
+          <input type="number" id="otherDebt" placeholder="450" min="0" inputmode="decimal" />
+        </div>
+
+        <div class="calc-field">
+          <label for="repairResult">After This Repair, the Car Should Be</label>
+          <select id="repairResult">
+            <option value="" disabled selected>Select expected result</option>
+            <option value="solid">Solid and reliable for a while</option>
+            <option value="mixed">Better, but still has known issues</option>
+            <option value="uncertain">Uncertain even after the repair</option>
+            <option value="unsafe">Still unsafe or unreliable</option>
+          </select>
+        </div>
+
+        <div class="calc-field">
+          <label for="repairUrgency">Repair Urgency</label>
+          <select id="repairUrgency">
+            <option value="" disabled selected>Select repair urgency</option>
+            <option value="minor">Minor annoyance or convenience repair</option>
+            <option value="important">Important for normal driving</option>
+            <option value="critical">Critical for safety, work, or basic transportation</option>
+          </select>
+        </div>
+
+        <div class="calc-field">
+          <label for="quoteConfidence">Quote Confidence</label>
+          <select id="quoteConfidence">
+            <option value="" disabled selected>Select quote confidence</option>
+            <option value="confirmed">Second quote or trusted mechanic confirmed it</option>
+            <option value="single">Only one quote so far</option>
+            <option value="unclear">Diagnosis is unclear or the shop is guessing</option>
+          </select>
+        </div>
+      </div>
+
+      <button class="calc-button sis-action-button sis-calculate-button" id="calculateRepairReplace">
+        Calculate Repair vs Replace
+      </button>
+
+      <div class="calc-results" id="calcResults">
+        <div class="calc-verdict" id="calcVerdict"></div>
+        <div id="decisionBlock"></div>
+        <div id="pressureResult"></div>
+        <div class="calc-stat" id="repairMath"></div>
+        <div class="calc-stat" id="savingsReadout"></div>
+        <div class="calc-stat" id="replacementReadout"></div>
+        <div class="calc-analysis" id="calcAnalysis"></div>
+      </div>
+    </div>
+
+    <div class="callout">
+      <p>
+        <strong>Money-pit rule:</strong> one repair can be normal. A repair quote plus
+        low value, thin savings, future repairs, and uncertain reliability is a different
+        decision.
+      </p>
+    </div>
+
+    <section>
+      <h2>What This Calculator Does Differently</h2>
+
+      <p>
+        This is not a trade-in calculator and not a monthly payment calculator. It is
+        a repair decision tool. The main output is a practical verdict: repair it,
+        repair carefully, replace may be smarter, or pause and get another quote.
+      </p>
+
+      <p>
+        The calculator looks at the uncovered repair cost after warranty, insurance,
+        reimbursement, or outside coverage. It then compares that cost with vehicle
+        value, remaining loan balance, emergency savings, expected future repairs, and
+        the monthly pressure of a replacement vehicle.
+      </p>
+    </section>
+
+    <section>
+      <h2>Why Repair vs Replace Is Usually Messier Than It Looks</h2>
+
+      <p>
+        A repair quote can feel too expensive because it arrives all at once. A replacement
+        vehicle can feel easier because the cost is spread into a payment. That monthly
+        payment can hide taxes, insurance, interest, depreciation, and the risk of rolling
+        negative equity into the next vehicle.
+      </p>
+
+      <p>
+        The better question is not simply whether the repair is annoying. The better
+        question is whether paying the repair buys enough reliable transportation to justify
+        the cash, or whether the car is becoming a repeat-expense problem.
+      </p>
+    </section>
+
+    <section>
+      <h2>What the Calculator Checks</h2>
+
+      <div class="info-grid">
+        <div class="info-card">
+          <h3>Uncovered repair cost</h3>
+          <p>Coverage, reimbursement, warranty help, or insurance payouts reduce the repair before pressure is calculated.</p>
+        </div>
+
+        <div class="info-card">
+          <h3>Repair-to-value ratio</h3>
+          <p>A $2,000 repair means something different on a $4,000 car than it does on a $16,000 car.</p>
+        </div>
+
+        <div class="info-card">
+          <h3>Loan balance</h3>
+          <p>If the loan balance is higher than the car value, replacing the vehicle can make the next deal riskier.</p>
+        </div>
+
+        <div class="info-card">
+          <h3>Future repair risk</h3>
+          <p>The current quote is only one part of the decision if more repairs are likely soon.</p>
+        </div>
+
+        <div class="info-card">
+          <h3>Replacement pressure</h3>
+          <p>A replacement can be smarter mechanically but still too expensive for the monthly budget.</p>
+        </div>
+
+        <div class="info-card">
+          <h3>Emergency savings after repair</h3>
+          <p>The repair is safer when it does not drain the cash cushion below a useful floor.</p>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <h2>How to Read the Verdict</h2>
+
+      <h3>Repair it</h3>
+      <p>
+        The uncovered repair is small relative to the car value, savings remain healthy,
+        the quote is trusted, and the vehicle should be reliable afterward.
+      </p>
+
+      <h3>Repair carefully</h3>
+      <p>
+        The repair may still be the right bridge, but the car has enough value, loan,
+        savings, or future repair risk that you should control the next move carefully.
+      </p>
+
+      <h3>Replace may be smarter</h3>
+      <p>
+        The car may be turning into a money pit. This result is more likely when the
+        repair is large compared with value, future repairs are likely, and a replacement
+        payment is not extreme.
+      </p>
+
+      <h3>Pause and get another quote</h3>
+      <p>
+        This usually means the repair is too large or too uncertain to approve based on
+        one estimate. A second diagnosis can be worth more than trying to perfect the
+        spreadsheet.
+      </p>
+    </section>
+
+    <section id="FinancialRedFlags">
+      <h2>Car Repair vs Replace Red Flags</h2>
+
+      <ul class="red-flag-list">
+        <li>The repair quote is more than 30% of the car value and only one shop has seen it.</li>
+        <li>The repair would drain emergency savings below one month of essential expenses.</li>
+        <li>The car will still be unsafe, unreliable, or hard to trust after the repair.</li>
+        <li>You are underwater on the current loan and planning to roll that balance into a replacement.</li>
+        <li>The replacement payment looks manageable only because insurance, taxes, and repairs are ignored.</li>
+        <li>Several repairs are stacked together and each one is treated as a one-time surprise.</li>
+        <li>The repair requires high-interest debt because there is no cash cushion.</li>
+      </ul>
+    </section>
+
+    <section id="CalculatorAssumptions">
+      <h2>Car Repair vs Replace Calculator Assumptions</h2>
+
+      <p>
+        This calculator assumes the repair quote is an estimate, not a guaranteed final
+        bill. It reduces the repair by warranty coverage, insurance payouts, reimbursement,
+        or outside help before judging pressure. It treats emergency savings as real
+        protection and does not penalize a household just because savings would be touched
+        if the household remains objectively safe afterward.
+      </p>
+
+      <p>
+        Replacement payment estimates are used only as a pressure test. A real replacement
+        decision should also include insurance, taxes, registration, interest rate, loan
+        length, down payment, trade-in value, and negative-equity risk.
+      </p>
+    </section>
+
+    <section id="MethodologySection">
+      <h2>How ShouldISpend Calculates Repair vs Replace</h2>
+
+      <p>
+        ShouldISpend calculates the uncovered repair cost, repair-to-value ratio, current
+        equity or negative equity, cash cushion after repair, expected future repair load,
+        and replacement payment pressure. The verdict weighs whether the repair buys real
+        reliability or simply delays the next expensive problem.
+      </p>
+
+      <p>
+        The pressure score can reach zero when the repair is covered, tiny, or easily
+        absorbed by a very strong cash position and the car should be reliable afterward.
+        It can reach 100 when the repair is large, savings are gone, future repairs are
+        likely, income is thin, and the replacement option is not clean either.
+      </p>
+    </section>
+
+    <section id="RelatedCalculators">
+      <h2>Related Car Calculators</h2>
+
+      <div class="link-grid">
+        <a class="link-card" href="/car-calculators">
+          <strong>Car Payment Calculators</strong>
+          <span>See the full car calculator cluster for payments, insurance, repairs, loan length, and ownership pressure.</span>
+        </a>
+
+        <a class="link-card" href="/total-cost-of-car-ownership-calculator">
+          <strong>Total Cost of Car Ownership Calculator</strong>
+          <span>See the real monthly cost after payment, insurance, fuel, maintenance, repairs, fees, and depreciation.</span>
+        </a>
+
+        <a class="link-card" href="/should-i-trade-in-my-car-or-keep-it">
+          <strong>Should I Trade In My Car or Keep It?</strong>
+          <span>Compare keeping a vehicle with trading it in before making a larger ownership decision.</span>
+        </a>
+
+        <a class="link-card" href="/how-much-car-can-i-afford">
+          <strong>How Much Car Can I Afford?</strong>
+          <span>Build a vehicle budget from income, savings, debt, insurance, loan structure, and monthly pressure.</span>
+        </a>
+
+        <a class="link-card" href="/how-much-car-insurance-is-too-much">
+          <strong>How Much Car Insurance Is Too Much?</strong>
+          <span>Pressure-test the insurance side of a replacement vehicle before signing.</span>
+        </a>
+
+        <a class="link-card" href="/emergency-fund-after-big-purchase-calculator">
+          <strong>Emergency Fund After Big Purchase Calculator</strong>
+          <span>See how much cushion remains after a repair, vehicle purchase, trip, wedding, or other major cost.</span>
+        </a>
+      </div>
+    </section>
+
+    <FAQSection title="Car Repair vs Replace FAQ" faqs={repairVsReplaceFaqs} />
+  </main>
+
+  <script is:inline>
+    document.addEventListener("DOMContentLoaded", function () {
+      const button = document.getElementById("calculateRepairReplace");
+
+      if (!button) return;
+
+      const verdictLabelStyle =
+        "color: var(--muted); font-size: 0.82rem; font-weight: 900; letter-spacing: 0.04em; text-transform: uppercase; margin-bottom: 6px;";
+
+      const verdictValueStyle =
+        "color: var(--primary); font-size: clamp(2.2rem, 5.6vw, 3.45rem); font-weight: 950; line-height: 1.04; letter-spacing: -0.055em; margin: 4px 0 16px; display: block;";
+
+      const verdictSubtextStyle =
+        "color: var(--text); font-size: 1.05rem; font-weight: 850; line-height: 1.55; margin-bottom: 16px;";
+
+      function cleanNumber(id) {
+        const element = document.getElementById(id);
+        if (!element) return 0;
+        const value = Number(element.value);
+        return Number.isFinite(value) && value > 0 ? value : 0;
+      }
+
+      function money(value) {
+        return "$" + Math.round(value).toLocaleString("en-US");
+      }
+
+      function clamp(value, min, max) {
+        return Math.max(min, Math.min(max, value));
+      }
+
+      function pressureColor(score) {
+        if (score <= 24) return "#16a34a";
+        if (score <= 49) return "#ca8a04";
+        if (score <= 74) return "#ea580c";
+        return "#dc2626";
+      }
+
+      button.addEventListener("click", function () {
+        const repairQuote = cleanNumber("repairQuote");
+        const coverage = cleanNumber("coverage");
+        const carValue = cleanNumber("carValue");
+        const loanBalance = cleanNumber("loanBalance");
+        const currentPayment = cleanNumber("currentPayment");
+        const futureRepairs = cleanNumber("futureRepairs");
+        const replacementPayment = cleanNumber("replacementPayment");
+        const replacementCash = cleanNumber("replacementCash");
+        const income = cleanNumber("income");
+        const essentials = cleanNumber("essentials");
+        const emergencySavings = cleanNumber("emergencySavings");
+        const otherDebt = cleanNumber("otherDebt");
+
+        const repairResult = document.getElementById("repairResult").value;
+        const repairUrgency = document.getElementById("repairUrgency").value;
+        const quoteConfidence = document.getElementById("quoteConfidence").value;
+
+        const results = document.getElementById("calcResults");
+        const verdictEl = document.getElementById("calcVerdict");
+        const decisionEl = document.getElementById("decisionBlock");
+        const pressureEl = document.getElementById("pressureResult");
+        const repairMathEl = document.getElementById("repairMath");
+        const savingsEl = document.getElementById("savingsReadout");
+        const replacementEl = document.getElementById("replacementReadout");
+        const analysisEl = document.getElementById("calcAnalysis");
+
+        results.classList.add("active");
+
+        if (
+          repairQuote <= 0 ||
+          carValue <= 0 ||
+          income <= 0 ||
+          essentials <= 0 ||
+          !repairResult ||
+          !repairUrgency ||
+          !quoteConfidence
+        ) {
+          verdictEl.innerText = "Add the missing details";
+          decisionEl.innerHTML =
+            "<div style=\"" +
+            verdictLabelStyle +
+            "\">Repair vs replace verdict</div><div style=\"" +
+            verdictValueStyle +
+            "\">Need details</div><div style=\"" +
+            verdictSubtextStyle +
+            "\">Enter the repair quote, vehicle value, income, essential expenses, and the dropdown details to calculate the repair decision.</div>";
+          pressureEl.innerHTML = "";
+          repairMathEl.innerText = "";
+          savingsEl.innerText = "";
+          replacementEl.innerText = "";
+          analysisEl.innerText =
+            "Coverage, loan balance, payments, future repairs, replacement payment, and other debt can be zero. The core repair, value, income, and risk details are required.";
+          return;
+        }
+
+        const uncoveredRepair = Math.max(0, repairQuote - coverage);
+        const repairToValue = uncoveredRepair / carValue;
+        const futureRepairRatio = futureRepairs / carValue;
+        const equity = carValue - loanBalance;
+        const afterRepairSavings = emergencySavings - uncoveredRepair;
+        const savingsMonthsAfter = afterRepairSavings / essentials;
+        const replacementPaymentShare = replacementPayment > 0 ? replacementPayment / income : 0;
+        const currentPaymentShare = currentPayment / income;
+        const replacementIncrease = Math.max(0, replacementPayment - currentPayment);
+        const keepCost12 = uncoveredRepair + futureRepairs + currentPayment * 12;
+        const replaceCost12 = replacementCash + replacementPayment * 12;
+        const debtShare = otherDebt / income;
+
+        let score = 0;
+
+        if (repairToValue <= 0.05) score = 8;
+        else if (repairToValue <= 0.15) score = 20;
+        else if (repairToValue <= 0.30) score = 40;
+        else if (repairToValue <= 0.50) score = 62;
+        else score = 82;
+
+        if (futureRepairRatio > 0.30) score += 18;
+        else if (futureRepairRatio > 0.20) score += 12;
+        else if (futureRepairRatio > 0.10) score += 6;
+
+        if (afterRepairSavings < 0) score += 28;
+        else if (savingsMonthsAfter < 0.5) score += 22;
+        else if (savingsMonthsAfter < 1) score += 15;
+        else if (savingsMonthsAfter < 3) score += 7;
+        else if (savingsMonthsAfter >= 24) score -= 24;
+        else if (savingsMonthsAfter >= 6) score -= 16;
+        else if (savingsMonthsAfter >= 3) score -= 8;
+
+        if (equity < 0) score += 8;
+        if (debtShare > 0.20) score += 10;
+        else if (debtShare > 0.12) score += 5;
+
+        if (replacementPaymentShare > 0.22) score += 10;
+        else if (replacementPaymentShare > 0.16) score += 6;
+
+        if (repairResult === "solid") score -= 10;
+        if (repairResult === "mixed") score += 6;
+        if (repairResult === "uncertain") score += 15;
+        if (repairResult === "unsafe") score += 25;
+
+        if (repairUrgency === "minor") score -= 4;
+        if (repairUrgency === "critical") score += 8;
+
+        if (quoteConfidence === "single") score += 10;
+        if (quoteConfidence === "unclear") score += 20;
+        if (quoteConfidence === "confirmed") score -= 5;
+
+        const fullyCoveredSafe =
+          uncoveredRepair <= 0 &&
+          repairResult === "solid" &&
+          quoteConfidence !== "unclear";
+
+        const tinyRepairSafe =
+          uncoveredRepair <= Math.max(income * 0.01, carValue * 0.03) &&
+          savingsMonthsAfter >= 6 &&
+          repairResult === "solid" &&
+          quoteConfidence !== "unclear";
+
+        const hugeSavingsAndSafe =
+          savingsMonthsAfter >= 24 &&
+          emergencySavings >= Math.max(income * 12, (uncoveredRepair + futureRepairs + 1) * 10) &&
+          repairToValue <= 0.50 &&
+          repairResult !== "unsafe" &&
+          quoteConfidence !== "unclear";
+
+        const cashFortressAndSafe =
+          emergencySavings >= income * 12 &&
+          emergencySavings >= carValue * 3 &&
+          emergencySavings >= (uncoveredRepair + futureRepairs + replacementCash + 1) * 8 &&
+          repairResult !== "unsafe" &&
+          quoteConfidence !== "unclear";
+
+        if (fullyCoveredSafe || tinyRepairSafe || hugeSavingsAndSafe || cashFortressAndSafe) {
+          score = 0;
+        }
+
+        const richIncomeAndSafe =
+          income >= Math.max(uncoveredRepair + futureRepairs + replacementCash, carValue, 100000) * 50 &&
+          replacementPaymentShare <= 0.03 &&
+          debtShare <= 0.05 &&
+          repairResult !== "unsafe" &&
+          quoteConfidence !== "unclear";
+
+        if (richIncomeAndSafe) {
+          score = 0;
+        }
+
+
+
+        if (
+          income <= 0 ||
+          (afterRepairSavings < 0 && repairToValue >= 0.60 && futureRepairRatio >= 0.25) ||
+          (afterRepairSavings < 0 && repairResult === "unsafe") ||
+          (savingsMonthsAfter < 0.25 && repairToValue >= 0.75)
+        ) {
+          score = 100;
+        }
+
+        score = Math.round(clamp(score, 0, 100));
+
+        let verdict = "Repair Carefully";
+        let decisionSubtext = "";
+        let analysis = "";
+
+        const replacementLooksManageable =
+          replacementPayment > 0 &&
+          replacementPaymentShare <= 0.16 &&
+          replacementIncrease <= income * 0.08 &&
+          replacementCash <= emergencySavings * 0.50;
+
+        if (
+          quoteConfidence !== "confirmed" &&
+          uncoveredRepair >= Math.max(1500, carValue * 0.15) &&
+          repairResult !== "unsafe"
+        ) {
+          verdict = "Pause and Get Another Quote";
+          decisionSubtext =
+            "The quote is large enough relative to the car that a second diagnosis could change the decision.";
+          analysis =
+            "This result does not mean the repair is wrong. It means the estimate is too meaningful to accept blindly, especially before choosing between repair money and replacement debt.";
+        } else if (
+          repairResult === "unsafe" ||
+          (repairToValue >= 0.50 && futureRepairRatio >= 0.20 && replacementLooksManageable) ||
+          (uncoveredRepair + futureRepairs >= carValue * 0.70 && replacementLooksManageable)
+        ) {
+          verdict = "Replace May Be Smarter";
+          decisionSubtext =
+            "The repair may not buy enough reliable life from the car compared with a manageable replacement.";
+          analysis =
+            "This car is showing money-pit signs. Before replacing it, price insurance, taxes, fees, interest, and any negative equity so the next vehicle does not create a new problem.";
+        } else if (
+          repairToValue <= 0.15 &&
+          savingsMonthsAfter >= 1 &&
+          futureRepairRatio <= 0.15 &&
+          repairResult === "solid" &&
+          quoteConfidence === "confirmed"
+        ) {
+          verdict = "Repair It";
+          decisionSubtext =
+            "The repair is modest relative to value, savings survive, and the car should be reliable afterward.";
+          analysis =
+            "This looks like a normal repair rather than a replacement trigger. Keep a maintenance reserve afterward so the next repair does not restart the same decision.";
+        } else if (
+          equity < 0 ||
+          replacementPaymentShare > 0.18 ||
+          replacementIncrease > income * 0.10
+        ) {
+          verdict = "Repair Carefully";
+          decisionSubtext =
+            "Repairing may be the safer bridge because replacing the car could create higher payment pressure or negative-equity risk.";
+          analysis =
+            "The repair is not free, but the replacement option has its own pressure. Use the repair to buy time only if the car will be dependable enough after the work.";
+        } else {
+          verdict = "Repair Carefully";
+          decisionSubtext =
+            "The answer is mixed. The repair may be reasonable, but the car has enough risk that you should plan the next 12 months before approving it.";
+          analysis =
+            "This is the middle zone. Compare the quote with future repairs, your cash cushion after the repair, and the true cost of a replacement before deciding.";
+        }
+
+        if (score === 0) {
+          decisionSubtext =
+            "Financial pressure is effectively zero because the repair is covered, tiny, or easily absorbed by a very strong cash cushion.";
+          if (verdict === "Pause and Get Another Quote") {
+            verdict = "Repair It";
+          }
+        }
+
+        const color = pressureColor(score);
+
+        verdictEl.innerText = verdict;
+
+        decisionEl.innerHTML =
+          "<div style=\"" +
+          verdictLabelStyle +
+          "\">Repair vs replace verdict</div><div style=\"" +
+          verdictValueStyle +
+          "\">" +
+          verdict +
+          "</div><div style=\"" +
+          verdictSubtextStyle +
+          "\">" +
+          decisionSubtext +
+          "</div>";
+
+        pressureEl.innerHTML =
+          "<div style=\"margin: 18px 0 18px;\"><div style=\"display: flex; justify-content: space-between; gap: 12px; align-items: center; margin-bottom: 8px;\"><strong style=\"color: var(--text);\">Repair pressure score</strong><strong style=\"color:" +
+          color +
+          ";\">" +
+          score +
+          "/100</strong></div><div style=\"height: 14px; border-radius: 999px; background: #e5e7eb; overflow: hidden;\"><div style=\"height: 100%; width:" +
+          score +
+          "%; background:" +
+          color +
+          ";\"></div></div></div>";
+
+        repairMathEl.innerText =
+          "Repair math: uncovered repair is " +
+          money(uncoveredRepair) +
+          " after " +
+          money(coverage) +
+          " of coverage. That equals about " +
+          (repairToValue * 100).toFixed(1) +
+          "% of the car value. Expected future repairs add another " +
+          money(futureRepairs) +
+          " over the next 12 months.";
+
+        savingsEl.innerText =
+          "Savings after repair: emergency savings would be about " +
+          money(afterRepairSavings) +
+          ", covering about " +
+          savingsMonthsAfter.toFixed(1) +
+          " months of essential expenses. Current equity is about " +
+          money(equity) +
+          ".";
+
+        replacementEl.innerText =
+          "Replacement test: estimated replacement payment is " +
+          money(replacementPayment) +
+          " per month, about " +
+          (replacementPaymentShare * 100).toFixed(1) +
+          "% of take-home income. First-year keep cost is about " +
+          money(keepCost12) +
+          " versus about " +
+          money(replaceCost12) +
+          " in replacement cash and payments.";
+
+        if (score === 100) {
+          analysis =
+            "The inputs show maximum pressure. The repair is large, savings do not survive, future risk is high, or the car remains unsafe. Slow down before putting money into the repair or rolling into another expensive vehicle.";
+        } else if (score === 0) {
+          analysis =
+            "The repair does not create meaningful financial pressure based on the inputs. This does not guarantee the car is mechanically perfect, but the household can clearly absorb the decision.";
+        }
+
+        analysisEl.innerText = analysis;
+      });
+    });
+  </script>
+</Layout>

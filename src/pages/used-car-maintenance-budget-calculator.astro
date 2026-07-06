@@ -1,0 +1,938 @@
+---
+import Layout from "../layouts/Layout.astro";
+import FAQSection from "../components/FAQSection.astro";
+
+const usedCarMaintenanceFaqs = [
+  {
+    question: "How much should I budget monthly for used car maintenance?",
+    answer:
+      "A used car maintenance budget depends on age, mileage, warranty status, annual miles, reliability, tires, brakes, and current repair backlog. Many households need a monthly reserve, not just a one-time repair fund.",
+  },
+  {
+    question: "Is a used car maintenance budget different from emergency savings?",
+    answer:
+      "Yes. Emergency savings protects the whole household. A used car maintenance reserve is a dedicated car bucket for predictable wear items, repair surprises, tires, brakes, diagnostics, and service visits.",
+  },
+  {
+    question: "Should I save more for an older high-mileage car?",
+    answer:
+      "Usually yes. Older and higher-mileage vehicles tend to have more wear items and less warranty protection, so the monthly reserve should be higher than it would be for a newer used car.",
+  },
+  {
+    question: "What if my car already needs repairs?",
+    answer:
+      "Known repair backlog should be handled separately from the normal monthly reserve. This calculator estimates both the ongoing reserve and the catch-up amount needed to close the current repair gap.",
+  },
+  {
+    question: "Can this calculator tell me whether to replace the car?",
+    answer:
+      "No. This calculator builds a monthly maintenance reserve. If the repair backlog is large or the car is unreliable, use the repair vs replace calculator to decide whether keeping the vehicle still makes sense.",
+  },
+];
+---
+
+<Layout
+  title="Used Car Maintenance Budget Calculator | ShouldISpend"
+  description="Build a monthly maintenance reserve for a used car based on age, mileage, warranty status, reliability, tires, brakes, annual miles, backlog, savings, and monthly room."
+>
+  <style>
+    .container {
+      max-width: 940px;
+      margin: 0 auto;
+      padding: 80px 24px;
+    }
+
+    .eyebrow {
+      color: var(--primary);
+      text-transform: uppercase;
+      letter-spacing: 1.8px;
+      font-size: 0.78rem;
+      font-weight: 800;
+      margin-bottom: 16px;
+    }
+
+    h1 {
+      font-size: clamp(2.55rem, 7vw, 4.55rem);
+      line-height: 1;
+      letter-spacing: -0.055em;
+      margin: 0 0 24px;
+      max-width: 900px;
+      color: var(--text);
+    }
+
+    h2 {
+      font-size: clamp(1.8rem, 4vw, 2.45rem);
+      line-height: 1.12;
+      letter-spacing: -0.035em;
+      margin: 0 0 18px;
+      color: var(--text);
+    }
+
+    h3 {
+      font-size: 1.22rem;
+      line-height: 1.3;
+      margin: 28px 0 10px;
+      color: var(--text);
+    }
+
+    p,
+    li {
+      color: var(--muted);
+      line-height: 1.82;
+      font-size: 1.04rem;
+      margin-bottom: 18px;
+    }
+
+    a {
+      color: var(--primary);
+    }
+
+    section {
+      margin-top: 68px;
+    }
+
+    .intro {
+      max-width: 830px;
+      color: var(--muted);
+      font-size: 1.14rem;
+      line-height: 1.85;
+      margin-bottom: 42px;
+    }
+
+    .calculator {
+      border: 1px solid var(--border);
+      background: var(--card);
+      border-radius: 24px;
+      padding: 30px;
+      margin: 44px 0;
+      box-shadow: var(--shadow-soft);
+    }
+
+    .calc-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(235px, 1fr));
+      gap: 20px;
+    }
+
+    .calc-field {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .calc-field label {
+      font-weight: 800;
+      margin-bottom: 10px;
+      color: var(--text);
+      line-height: 1.35;
+    }
+
+    .calc-field input,
+    .calc-field select {
+      padding: 14px;
+      border-radius: 12px;
+      border: 1px solid var(--border);
+      font-size: 1rem;
+      background: #ffffff;
+      color: var(--text);
+    }
+
+    .calc-button {
+      margin-top: 26px;
+      background: var(--primary);
+      color: #ffffff;
+      border: none;
+      border-radius: 14px;
+      padding: 15px 22px;
+      font-size: 1rem;
+      font-weight: 900;
+      cursor: pointer;
+    }
+
+    .calc-button:hover {
+      opacity: 0.92;
+    }
+
+    .calc-results {
+      margin-top: 28px;
+      border: 1px solid #dbe4ee;
+      background: #f8fafc;
+      border-radius: 20px;
+      padding: 28px;
+      display: none;
+    }
+
+    .calc-results.active {
+      display: block;
+    }
+
+    .calc-verdict {
+      font-size: 1.8rem;
+      font-weight: 900;
+      color: var(--primary);
+      margin-bottom: 16px;
+      line-height: 1.18;
+    }
+
+    .calc-stat {
+      font-size: 1.03rem;
+      margin-bottom: 12px;
+      color: var(--text);
+      line-height: 1.65;
+    }
+
+    .calc-analysis {
+      color: var(--muted);
+      line-height: 1.82;
+      margin-top: 18px;
+    }
+
+    .callout {
+      border: 1px solid var(--border);
+      background: var(--card);
+      border-radius: 24px;
+      padding: 26px;
+      margin: 36px 0;
+      box-shadow: var(--shadow-soft);
+    }
+
+    .callout strong {
+      color: var(--text);
+    }
+
+    .info-grid,
+    .link-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 16px;
+      margin-top: 24px;
+    }
+
+    .info-card,
+    .link-card {
+      display: block;
+      border: 1px solid var(--border);
+      background: var(--card);
+      border-radius: 18px;
+      padding: 20px;
+      text-decoration: none;
+      color: inherit;
+    }
+
+    .link-card {
+      transition:
+        transform 0.15s ease,
+        border-color 0.15s ease,
+        box-shadow 0.15s ease;
+    }
+
+    .link-card:hover {
+      transform: translateY(-2px);
+      border-color: var(--primary);
+      box-shadow: var(--shadow-soft);
+    }
+
+    .info-card h3,
+    .link-card strong {
+      display: block;
+      margin: 0 0 8px;
+      color: var(--text);
+      line-height: 1.3;
+      font-size: 1.08rem;
+    }
+
+    .info-card p,
+    .link-card span {
+      color: var(--muted);
+      line-height: 1.65;
+      font-size: 0.95rem;
+      margin: 0;
+    }
+
+    .red-flag-list {
+      margin: 22px 0 0;
+      padding: 0;
+      list-style: none;
+      display: grid;
+      gap: 12px;
+    }
+
+    .red-flag-list li {
+      margin: 0;
+      padding: 15px 16px;
+      border-radius: 16px;
+      border: 1px solid #fecaca;
+      background: #fff7f7;
+      color: #7f1d1d;
+      line-height: 1.55;
+      font-size: 0.96rem;
+    }
+
+    @media (max-width: 720px) {
+      .container {
+        padding: 58px 20px;
+      }
+
+      .calculator {
+        padding: 22px;
+      }
+
+      h1 {
+        font-size: 2.55rem;
+      }
+    }
+  </style>
+
+  <main class="container">
+    <div class="eyebrow">Used Car Maintenance Budget Calculator</div>
+
+    <h1>Used Car Maintenance Budget Calculator</h1>
+
+    <p class="intro">
+      A used car does not only need gas and insurance. It needs a maintenance reserve
+      for oil, brakes, tires, diagnostics, batteries, belts, fluids, suspension work,
+      and surprise repairs. This calculator builds a monthly used car maintenance budget
+      and shows whether the reserve is already funded or needs catch-up money.
+    </p>
+
+    <div class="calculator">
+      <div class="calc-grid">
+        <div class="calc-field">
+          <label for="vehicleAge">Vehicle Age (Years)</label>
+          <input type="number" id="vehicleAge" placeholder="9" min="0" inputmode="numeric" />
+        </div>
+
+        <div class="calc-field">
+          <label for="mileage">Current Mileage</label>
+          <input type="number" id="mileage" placeholder="118000" min="0" inputmode="numeric" />
+        </div>
+
+        <div class="calc-field">
+          <label for="annualMiles">Expected Miles Driven per Year</label>
+          <input type="number" id="annualMiles" placeholder="14000" min="0" inputmode="numeric" />
+        </div>
+
+        <div class="calc-field">
+          <label for="repairBacklog">Known Repair or Maintenance Backlog ($)</label>
+          <input type="number" id="repairBacklog" placeholder="1200" min="0" inputmode="decimal" />
+        </div>
+
+        <div class="calc-field">
+          <label for="currentReserve">Current Car Maintenance Reserve Saved ($)</label>
+          <input type="number" id="currentReserve" placeholder="600" min="0" inputmode="decimal" />
+        </div>
+
+        <div class="calc-field">
+          <label for="monthlyIncome">Monthly Take-Home Income ($)</label>
+          <input type="number" id="monthlyIncome" placeholder="6500" min="0" inputmode="decimal" />
+        </div>
+
+        <div class="calc-field">
+          <label for="essentials">Monthly Essential Expenses ($)</label>
+          <input type="number" id="essentials" placeholder="3900" min="0" inputmode="decimal" />
+        </div>
+
+        <div class="calc-field">
+          <label for="carPayment">Current Monthly Car Payment ($)</label>
+          <input type="number" id="carPayment" placeholder="325" min="0" inputmode="decimal" />
+        </div>
+
+        <div class="calc-field">
+          <label for="otherDebt">Other Monthly Debt Payments ($)</label>
+          <input type="number" id="otherDebt" placeholder="450" min="0" inputmode="decimal" />
+        </div>
+
+        <div class="calc-field">
+          <label for="emergencySavings">Current Emergency Savings ($)</label>
+          <input type="number" id="emergencySavings" placeholder="10000" min="0" inputmode="decimal" />
+        </div>
+
+        <div class="calc-field">
+          <label for="reliability">Make and Model Reliability</label>
+          <select id="reliability">
+            <option value="" disabled selected>Select reliability</option>
+            <option value="excellent">Excellent or known low-cost model</option>
+            <option value="average">Average reliability</option>
+            <option value="poor">Below-average reliability or expensive parts</option>
+            <option value="luxury">Luxury, European, performance, diesel, or specialty vehicle</option>
+          </select>
+        </div>
+
+        <div class="calc-field">
+          <label for="warranty">Warranty Status</label>
+          <select id="warranty">
+            <option value="" disabled selected>Select warranty status</option>
+            <option value="full">Active bumper-to-bumper or strong extended warranty</option>
+            <option value="powertrain">Powertrain warranty only</option>
+            <option value="expired">Warranty recently expired</option>
+            <option value="none">No warranty protection</option>
+          </select>
+        </div>
+
+        <div class="calc-field">
+          <label for="wearItems">Tires, Brakes, and Battery Status</label>
+          <select id="wearItems">
+            <option value="" disabled selected>Select wear item status</option>
+            <option value="fresh">Mostly fresh or recently replaced</option>
+            <option value="oneSoon">One major item due soon</option>
+            <option value="multipleSoon">Tires, brakes, or battery likely due soon</option>
+            <option value="unknown">Unknown, deferred, or not inspected</option>
+          </select>
+        </div>
+
+        <div class="calc-field">
+          <label for="carDependence">How Critical This Car Is</label>
+          <select id="carDependence">
+            <option value="" disabled selected>Select car dependence</option>
+            <option value="low">Low: backup transportation exists</option>
+            <option value="normal">Normal: useful daily transportation</option>
+            <option value="high">High: required for work, family, school, or medical needs</option>
+          </select>
+        </div>
+      </div>
+
+      <button class="calc-button sis-action-button sis-calculate-button" id="calculateUsedCarReserve">
+        Calculate Maintenance Budget
+      </button>
+
+      <div class="calc-results" id="calcResults">
+        <div class="calc-verdict" id="calcVerdict"></div>
+        <div id="bigMoneyResult"></div>
+        <div id="pressureResult"></div>
+        <div class="calc-stat" id="annualReserve"></div>
+        <div class="calc-stat" id="catchUpReadout"></div>
+        <div class="calc-stat" id="monthlyRoomReadout"></div>
+        <div class="calc-analysis" id="calcAnalysis"></div>
+      </div>
+    </div>
+
+    <div class="callout">
+      <p>
+        <strong>Reserve rule:</strong> a used car maintenance budget is not the same
+        as an emergency fund. It is a dedicated car bucket for predictable wear, service
+        visits, and the repairs that are not really surprises anymore.
+      </p>
+    </div>
+
+    <section>
+      <h2>What This Calculator Does Differently</h2>
+
+      <p>
+        This is not a total cost of ownership calculator, a repair vs replace calculator,
+        or a payment calculator. It does one job: build a monthly maintenance reserve
+        for a used car.
+      </p>
+
+      <p>
+        The main output is a monthly maintenance budget. The secondary outputs show the
+        annual reserve, vehicle risk tier, catch-up amount if the current maintenance fund
+        is short, and a pressure score that tests whether the reserve actually fits the
+        household budget.
+      </p>
+    </section>
+
+    <section>
+      <h2>Why Used Cars Need a Separate Maintenance Bucket</h2>
+
+      <p>
+        Used cars can be excellent financial decisions, but they often move costs from
+        payment and depreciation into maintenance and repair timing. The problem is not
+        only whether the car will need work. The problem is whether the household is
+        ready when the work arrives.
+      </p>
+
+      <p>
+        A dedicated reserve turns irregular car costs into a monthly plan. Instead of
+        treating every battery, brake job, tire set, fluid service, or diagnostic visit
+        as a crisis, the car slowly funds its own future repairs.
+      </p>
+    </section>
+
+    <section>
+      <h2>What the Calculator Checks</h2>
+
+      <div class="info-grid">
+        <div class="info-card">
+          <h3>Age and mileage</h3>
+          <p>Older and higher-mileage cars usually need a larger monthly reserve than newer used cars.</p>
+        </div>
+
+        <div class="info-card">
+          <h3>Reliability and parts cost</h3>
+          <p>A simple reliable sedan is not the same budget problem as a luxury, performance, diesel, or specialty vehicle.</p>
+        </div>
+
+        <div class="info-card">
+          <h3>Warranty status</h3>
+          <p>Warranty protection can reduce reserve needs, while no warranty shifts more risk to the household.</p>
+        </div>
+
+        <div class="info-card">
+          <h3>Tires, brakes, and battery</h3>
+          <p>Large wear items can dominate the next year of maintenance even when the car is otherwise fine.</p>
+        </div>
+
+        <div class="info-card">
+          <h3>Current backlog</h3>
+          <p>Known repairs are treated separately from the normal monthly reserve so they do not disappear inside averages.</p>
+        </div>
+
+        <div class="info-card">
+          <h3>Monthly room</h3>
+          <p>The reserve only works if the household can actually set the money aside without creating new pressure.</p>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <h2>How to Read the Result</h2>
+
+      <h3>If the reserve is low</h3>
+      <p>
+        The car may be newer, lower-mileage, under warranty, or already current on wear
+        items. Keep the reserve active anyway so small service costs do not hit the card.
+      </p>
+
+      <h3>If the reserve is moderate</h3>
+      <p>
+        This is the normal used-car zone. The vehicle is not necessarily a problem, but
+        it needs a dedicated monthly line item for repairs and wear.
+      </p>
+
+      <h3>If the reserve is high</h3>
+      <p>
+        A high reserve does not automatically mean replace the car. It means the car is
+        carrying age, mileage, parts, warranty, backlog, or wear-item risk that deserves
+        a real cash plan.
+      </p>
+    </section>
+
+    <section id="FinancialRedFlags">
+      <h2>Used Car Maintenance Budget Red Flags</h2>
+
+      <ul class="red-flag-list">
+        <li>The car has no maintenance reserve and no emergency savings.</li>
+        <li>Tires, brakes, battery, and repairs are all being treated as future surprises.</li>
+        <li>The car is high-mileage, out of warranty, and has a known repair backlog.</li>
+        <li>The monthly budget has no room for the reserve without adding credit card debt.</li>
+        <li>The vehicle is essential for work or family logistics but the repair fund is empty.</li>
+        <li>The car payment is low, but repairs are repeatedly wiping out monthly cash flow.</li>
+        <li>Deferred maintenance is being used to make the car look cheaper than it is.</li>
+      </ul>
+    </section>
+
+    <section id="CalculatorAssumptions">
+      <h2>Used Car Maintenance Budget Calculator Assumptions</h2>
+
+      <p>
+        This calculator estimates a monthly maintenance reserve from vehicle age, mileage,
+        annual miles, reliability, warranty status, wear-item status, and known repair
+        backlog. The result is a planning number, not a mechanic diagnosis or a guarantee
+        that a specific part will fail.
+      </p>
+
+      <p>
+        Known repair backlog is separated from the normal reserve. That prevents a current
+        problem from being hidden inside an average monthly budget. The calculator also
+        checks whether the current reserve is already funded and whether the household has
+        enough monthly room to build the reserve without creating new debt.
+      </p>
+    </section>
+
+    <section id="MethodologySection">
+      <h2>How ShouldISpend Calculates Used Car Maintenance Reserve</h2>
+
+      <p>
+        ShouldISpend starts with a base reserve from age and mileage, adjusts it for annual
+        miles, reliability, warranty protection, and wear-item status, then rounds the result
+        into a practical monthly number. It also builds a target maintenance fund from the
+        annual reserve and known backlog.
+      </p>
+
+      <p>
+        The pressure score can reach zero when the reserve is already funded, the car risk
+        is low, emergency savings are strong, and monthly room is healthy. It can reach 100
+        when the car is older, high-mileage, out of warranty, has backlog, has no dedicated
+        reserve, and the household has no room to fund repairs.
+      </p>
+    </section>
+
+    <section id="RelatedCalculators">
+      <h2>Related Car Calculators</h2>
+
+      <div class="link-grid">
+        <a class="link-card" href="/car-calculators">
+          <strong>Car Payment Calculators</strong>
+          <span>See the full car calculator cluster for payments, insurance, repairs, loan length, and ownership pressure.</span>
+        </a>
+
+        <a class="link-card" href="/total-cost-of-car-ownership-calculator">
+          <strong>Total Cost of Car Ownership Calculator</strong>
+          <span>See the real monthly cost after payment, insurance, fuel, maintenance, repairs, fees, and depreciation.</span>
+        </a>
+
+        <a class="link-card" href="/car-repair-vs-replace-calculator">
+          <strong>Car Repair vs Replace Calculator</strong>
+          <span>Decide whether a repair is worth doing or whether the car is becoming a money pit.</span>
+        </a>
+
+        <a class="link-card" href="/should-i-buy-new-or-used-car">
+          <strong>Should I Buy New or Used Car?</strong>
+          <span>Compare new and used vehicle tradeoffs before choosing a price and maintenance profile.</span>
+        </a>
+
+        <a class="link-card" href="/should-i-trade-in-my-car-or-keep-it">
+          <strong>Should I Trade In My Car or Keep It?</strong>
+          <span>Pressure-test whether keeping the current vehicle still makes sense.</span>
+        </a>
+
+        <a class="link-card" href="/emergency-fund-after-big-purchase-calculator">
+          <strong>Emergency Fund After Big Purchase Calculator</strong>
+          <span>See how much cushion remains after a repair, vehicle purchase, or other major expense.</span>
+        </a>
+      </div>
+    </section>
+
+    <FAQSection title="Used Car Maintenance Budget FAQ" faqs={usedCarMaintenanceFaqs} />
+  </main>
+
+  <script is:inline>
+    document.addEventListener("DOMContentLoaded", function () {
+      const button = document.getElementById("calculateUsedCarReserve");
+
+      if (!button) return;
+
+      const moneyLabelStyle =
+        "color: var(--muted); font-size: 0.82rem; font-weight: 900; letter-spacing: 0.04em; text-transform: uppercase; margin-bottom: 6px;";
+
+      const moneyValueStyle =
+        "color: var(--primary); font-size: clamp(2.45rem, 6vw, 3.75rem); font-weight: 950; line-height: 1.04; letter-spacing: -0.055em; margin: 4px 0 16px; display: block;";
+
+      const moneySubtextStyle =
+        "color: var(--text); font-size: 1.05rem; font-weight: 850; line-height: 1.55; margin-bottom: 16px;";
+
+      function cleanNumber(id) {
+        const element = document.getElementById(id);
+        if (!element) return 0;
+        const value = Number(element.value);
+        return Number.isFinite(value) && value > 0 ? value : 0;
+      }
+
+      function money(value) {
+        return "$" + Math.round(value).toLocaleString("en-US");
+      }
+
+      function clamp(value, min, max) {
+        return Math.max(min, Math.min(max, value));
+      }
+
+      function roundToFive(value) {
+        return Math.round(value / 5) * 5;
+      }
+
+      function pressureColor(score) {
+        if (score <= 24) return "#16a34a";
+        if (score <= 49) return "#ca8a04";
+        if (score <= 74) return "#ea580c";
+        return "#dc2626";
+      }
+
+      button.addEventListener("click", function () {
+        const vehicleAge = cleanNumber("vehicleAge");
+        const mileage = cleanNumber("mileage");
+        const annualMiles = cleanNumber("annualMiles");
+        const repairBacklog = cleanNumber("repairBacklog");
+        const currentReserve = cleanNumber("currentReserve");
+        const monthlyIncome = cleanNumber("monthlyIncome");
+        const essentials = cleanNumber("essentials");
+        const carPayment = cleanNumber("carPayment");
+        const otherDebt = cleanNumber("otherDebt");
+        const emergencySavings = cleanNumber("emergencySavings");
+
+        const reliability = document.getElementById("reliability").value;
+        const warranty = document.getElementById("warranty").value;
+        const wearItems = document.getElementById("wearItems").value;
+        const carDependence = document.getElementById("carDependence").value;
+
+        const results = document.getElementById("calcResults");
+        const verdictEl = document.getElementById("calcVerdict");
+        const bigMoneyEl = document.getElementById("bigMoneyResult");
+        const pressureEl = document.getElementById("pressureResult");
+        const annualReserveEl = document.getElementById("annualReserve");
+        const catchUpEl = document.getElementById("catchUpReadout");
+        const monthlyRoomEl = document.getElementById("monthlyRoomReadout");
+        const analysisEl = document.getElementById("calcAnalysis");
+
+        results.classList.add("active");
+
+        if (
+          monthlyIncome <= 0 ||
+          essentials <= 0 ||
+          !reliability ||
+          !warranty ||
+          !wearItems ||
+          !carDependence
+        ) {
+          verdictEl.innerText = "Add the missing details";
+          bigMoneyEl.innerHTML =
+            "<div style=\"" +
+            moneyLabelStyle +
+            "\">Recommended monthly maintenance reserve</div><div style=\"" +
+            moneyValueStyle +
+            "\">Need details</div><div style=\"" +
+            moneySubtextStyle +
+            "\">Enter income, essential expenses, and the dropdown details to build a used car maintenance budget.</div>";
+          pressureEl.innerHTML = "";
+          annualReserveEl.innerText = "";
+          catchUpEl.innerText = "";
+          monthlyRoomEl.innerText = "";
+          analysisEl.innerText =
+            "Age, mileage, annual miles, repair backlog, reserve saved, car payment, other debt, and emergency savings can be zero, but the calculator needs the household and vehicle-risk details.";
+          return;
+        }
+
+        let baseMonthly = 35 + vehicleAge * 11 + mileage / 1000 * 0.42;
+
+        if (annualMiles >= 20000) baseMonthly += 70;
+        else if (annualMiles >= 15000) baseMonthly += 45;
+        else if (annualMiles >= 10000) baseMonthly += 20;
+        else if (annualMiles > 0 && annualMiles <= 6000) baseMonthly -= 10;
+
+        let multiplier = 1;
+        let riskPoints = 0;
+
+        if (reliability === "excellent") {
+          multiplier *= 0.78;
+          riskPoints += 4;
+        } else if (reliability === "average") {
+          multiplier *= 1;
+          riskPoints += 14;
+        } else if (reliability === "poor") {
+          multiplier *= 1.35;
+          riskPoints += 26;
+        } else if (reliability === "luxury") {
+          multiplier *= 1.60;
+          riskPoints += 34;
+        }
+
+        if (warranty === "full") {
+          multiplier *= 0.55;
+          riskPoints -= 8;
+        } else if (warranty === "powertrain") {
+          multiplier *= 0.75;
+          riskPoints += 2;
+        } else if (warranty === "expired") {
+          multiplier *= 1.05;
+          riskPoints += 12;
+        } else if (warranty === "none") {
+          multiplier *= 1.15;
+          riskPoints += 18;
+        }
+
+        let wearAdd = 0;
+        if (wearItems === "fresh") {
+          wearAdd = -15;
+          riskPoints -= 5;
+        } else if (wearItems === "oneSoon") {
+          wearAdd = 35;
+          riskPoints += 10;
+        } else if (wearItems === "multipleSoon") {
+          wearAdd = 80;
+          riskPoints += 22;
+        } else if (wearItems === "unknown") {
+          wearAdd = 55;
+          riskPoints += 16;
+        }
+
+        if (vehicleAge >= 12) riskPoints += 12;
+        else if (vehicleAge >= 8) riskPoints += 7;
+        else if (vehicleAge <= 3) riskPoints -= 4;
+
+        if (mileage >= 180000) riskPoints += 18;
+        else if (mileage >= 120000) riskPoints += 10;
+        else if (mileage >= 80000) riskPoints += 5;
+
+        if (repairBacklog > 0) riskPoints += 10;
+        if (repairBacklog >= monthlyIncome * 0.50) riskPoints += 12;
+
+        if (carDependence === "high") riskPoints += 8;
+        if (carDependence === "low") riskPoints -= 4;
+
+        const monthlyReserve = Math.max(25, roundToFive(baseMonthly * multiplier + wearAdd));
+        const annualReserveAmount = monthlyReserve * 12;
+        const targetMaintenanceFund = Math.max(annualReserveAmount, repairBacklog + monthlyReserve * 4);
+        const catchUpNeeded = Math.max(0, targetMaintenanceFund - currentReserve);
+        const catchUpMonths = catchUpNeeded > 0 ? (repairBacklog > 0 ? 6 : 12) : 0;
+        const catchUpMonthly = catchUpMonths > 0 ? Math.ceil(catchUpNeeded / catchUpMonths) : 0;
+        const totalMonthlyCarReserve = monthlyReserve + catchUpMonthly;
+
+        const fundedRatio = targetMaintenanceFund > 0 ? currentReserve / targetMaintenanceFund : 1;
+        const emergencyMonths = emergencySavings / Math.max(1, essentials);
+        const monthlyRoomAfterReserve =
+          monthlyIncome - essentials - carPayment - otherDebt - totalMonthlyCarReserve;
+        const reserveShare = totalMonthlyCarReserve / monthlyIncome;
+        const paymentAndReserveShare = (carPayment + totalMonthlyCarReserve) / monthlyIncome;
+
+        let score = clamp(riskPoints, 0, 60);
+
+        if (fundedRatio >= 1) score -= 18;
+        else if (fundedRatio >= 0.50) score -= 6;
+        else if (fundedRatio <= 0.10) score += 16;
+        else score += 8;
+
+        if (emergencyMonths < 0.5) score += 22;
+        else if (emergencyMonths < 1) score += 15;
+        else if (emergencyMonths < 3) score += 7;
+        else if (emergencyMonths >= 24) score -= 22;
+        else if (emergencyMonths >= 6) score -= 14;
+        else if (emergencyMonths >= 3) score -= 7;
+
+        if (monthlyRoomAfterReserve < 0) score += 28;
+        else if (monthlyRoomAfterReserve < monthlyIncome * 0.08) score += 12;
+        else if (monthlyRoomAfterReserve > monthlyIncome * 0.25) score -= 8;
+
+        if (reserveShare > 0.08) score += 10;
+        else if (reserveShare <= 0.025) score -= 4;
+
+        if (paymentAndReserveShare > 0.22) score += 8;
+
+        const lowVehicleRisk =
+          riskPoints <= 12 &&
+          monthlyReserve <= Math.max(100, monthlyIncome * 0.025) &&
+          repairBacklog <= 0 &&
+          wearItems === "fresh" &&
+          warranty !== "none";
+
+        const reserveAlreadyFundedSafe =
+          fundedRatio >= 1 &&
+          emergencyMonths >= 6 &&
+          monthlyRoomAfterReserve >= monthlyIncome * 0.20 &&
+          riskPoints <= 24;
+
+        const hugeSavingsAndSafe =
+          emergencySavings >= monthlyIncome * 12 &&
+          emergencyMonths >= 24 &&
+          currentReserve >= targetMaintenanceFund &&
+          monthlyRoomAfterReserve >= monthlyIncome * 0.10 &&
+          riskPoints <= 45;
+
+        const cashFortressAndSafe =
+          emergencySavings >= monthlyIncome * 12 &&
+          emergencySavings >= targetMaintenanceFund * 10 &&
+          currentReserve >= Math.max(annualReserveAmount, repairBacklog) &&
+          monthlyRoomAfterReserve >= 0 &&
+          riskPoints <= 50;
+
+        if ((lowVehicleRisk && reserveAlreadyFundedSafe) || hugeSavingsAndSafe || cashFortressAndSafe) {
+          score = 0;
+        }
+
+        const richIncomeAndSafe =
+          monthlyIncome >= Math.max(targetMaintenanceFund, totalMonthlyCarReserve * 12, repairBacklog, 100000) * 50 &&
+          monthlyRoomAfterReserve >= monthlyIncome * 0.10 &&
+          reserveShare <= 0.01 &&
+          riskPoints <= 60;
+
+        if (richIncomeAndSafe) {
+          score = 0;
+        }
+
+
+
+        if (
+          monthlyIncome <= 0 ||
+          (repairBacklog > 0 && currentReserve <= 0 && emergencyMonths < 0.5 && monthlyRoomAfterReserve < 0) ||
+          (warranty === "none" && mileage >= 180000 && vehicleAge >= 12 && currentReserve <= 0 && monthlyRoomAfterReserve < 0) ||
+          (riskPoints >= 75 && emergencyMonths < 1 && currentReserve <= 0)
+        ) {
+          score = 100;
+        }
+
+        score = Math.round(clamp(score, 0, 100));
+
+        let riskTier = "Low maintenance risk";
+        if (riskPoints >= 60) riskTier = "Severe maintenance risk";
+        else if (riskPoints >= 42) riskTier = "High maintenance risk";
+        else if (riskPoints >= 24) riskTier = "Moderate maintenance risk";
+
+        let verdict = riskTier;
+        let analysis = "";
+
+        if (score === 0) {
+          verdict = "Maintenance Reserve Already Safe";
+          analysis =
+            "The reserve is already funded, emergency savings are strong, and the monthly budget can absorb the car's maintenance needs. This is a zero-pressure maintenance case.";
+        } else if (score <= 24) {
+          analysis =
+            "The maintenance reserve looks manageable. Keep the monthly transfer active so future service and repairs do not become credit card events.";
+        } else if (score <= 49) {
+          analysis =
+            "The car needs a real maintenance line item. This is not a replacement signal by itself, but the reserve should become part of the monthly budget.";
+        } else if (score <= 74) {
+          analysis =
+            "The reserve need is creating real pressure. The car may still be worth keeping, but deferred maintenance and weak cash flow could turn normal repairs into emergencies.";
+        } else if (score < 100) {
+          analysis =
+            "The maintenance budget is in the danger zone. High vehicle risk, low funding, or tight monthly room means the next repair could force a bigger decision.";
+        } else {
+          analysis =
+            "The inputs show maximum pressure. The car has too much repair exposure for the current savings and monthly room. Use the repair vs replace calculator before pouring money into backlog.";
+        }
+
+        const color = pressureColor(score);
+
+        verdictEl.innerText = verdict;
+
+        bigMoneyEl.innerHTML =
+          "<div style=\"" +
+          moneyLabelStyle +
+          "\">Recommended monthly maintenance reserve</div><div style=\"" +
+          moneyValueStyle +
+          "\">" +
+          money(monthlyReserve) +
+          " per month</div><div style=\"" +
+          moneySubtextStyle +
+          "\">That is the ongoing reserve before catch-up funding. With catch-up included, the short-term car reserve plan is about " +
+          money(totalMonthlyCarReserve) +
+          " per month.</div>";
+
+        pressureEl.innerHTML =
+          "<div style=\"margin: 18px 0 18px;\"><div style=\"display: flex; justify-content: space-between; gap: 12px; align-items: center; margin-bottom: 8px;\"><strong style=\"color: var(--text);\">Maintenance pressure score</strong><strong style=\"color:" +
+          color +
+          ";\">" +
+          score +
+          "/100</strong></div><div style=\"height: 14px; border-radius: 999px; background: #e5e7eb; overflow: hidden;\"><div style=\"height: 100%; width:" +
+          score +
+          "%; background:" +
+          color +
+          ";\"></div></div></div>";
+
+        annualReserveEl.innerText =
+          "Annual reserve: the ongoing used car maintenance budget is about " +
+          money(annualReserveAmount) +
+          " per year. Vehicle risk tier: " +
+          riskTier +
+          ".";
+
+        catchUpEl.innerText =
+          "Catch-up funding: target maintenance fund is about " +
+          money(targetMaintenanceFund) +
+          ". Current reserve is " +
+          money(currentReserve) +
+          ", leaving a catch-up gap of " +
+          money(catchUpNeeded) +
+          ". Suggested catch-up amount is about " +
+          money(catchUpMonthly) +
+          " per month.";
+
+        monthlyRoomEl.innerText =
+          "Budget test: after essentials, car payment, other debt, maintenance reserve, and catch-up funding, monthly room is about " +
+          money(monthlyRoomAfterReserve) +
+          ". Emergency savings cover about " +
+          emergencyMonths.toFixed(1) +
+          " months of essential expenses.";
+
+        analysisEl.innerText = analysis;
+      });
+    });
+  </script>
+</Layout>

@@ -1,0 +1,965 @@
+---
+import Layout from "../layouts/Layout.astro";
+import FAQSection from "../components/FAQSection.astro";
+
+const earlyPayoffFaqs = [
+  {
+    question: "Should I pay off my car loan early?",
+    answer:
+      "Paying off a car loan early can make sense when the APR is meaningful, emergency savings are strong, higher-interest debt is handled, and there is no large prepayment penalty.",
+  },
+  {
+    question: "When should I not pay off a car loan early?",
+    answer:
+      "Do not rush car payoff if it drains emergency savings, leaves high-interest debt untouched, creates monthly cash-flow pressure, or saves less interest than the prepayment penalty costs.",
+  },
+  {
+    question: "Should I pay off my car before credit card debt?",
+    answer:
+      "Usually no. If credit card debt or other high-interest debt has a much higher APR than the car loan, the higher-interest debt usually deserves priority.",
+  },
+  {
+    question: "Does paying off a car loan early save interest?",
+    answer:
+      "Usually yes, if the loan allows extra principal payments and the prepayment penalty is small or zero. The exact savings depend on balance, APR, payment, months left, lump sum, and extra monthly payment.",
+  },
+  {
+    question: "Should I use emergency savings to pay off my car?",
+    answer:
+      "Be careful. A paid-off car does not replace emergency savings. If the payoff leaves the household exposed to job loss, repairs, medical bills, or deductibles, savings may need priority.",
+  },
+];
+---
+
+<Layout
+  title="Car Loan Early Payoff Calculator | ShouldISpend"
+  description="Estimate car loan early payoff interest savings and decide whether extra cash should go to the car loan, emergency savings, or higher-interest debt first."
+>
+  <style>
+    .container {
+      max-width: 940px;
+      margin: 0 auto;
+      padding: 80px 24px;
+    }
+
+    .eyebrow {
+      color: var(--primary);
+      text-transform: uppercase;
+      letter-spacing: 1.8px;
+      font-size: 0.78rem;
+      font-weight: 800;
+      margin-bottom: 16px;
+    }
+
+    h1 {
+      font-size: clamp(2.55rem, 7vw, 4.55rem);
+      line-height: 1;
+      letter-spacing: -0.055em;
+      margin: 0 0 24px;
+      max-width: 900px;
+      color: var(--text);
+    }
+
+    h2 {
+      font-size: clamp(1.8rem, 4vw, 2.45rem);
+      line-height: 1.12;
+      letter-spacing: -0.035em;
+      margin: 0 0 18px;
+      color: var(--text);
+    }
+
+    h3 {
+      font-size: 1.22rem;
+      line-height: 1.3;
+      margin: 28px 0 10px;
+      color: var(--text);
+    }
+
+    p,
+    li {
+      color: var(--muted);
+      line-height: 1.82;
+      font-size: 1.04rem;
+      margin-bottom: 18px;
+    }
+
+    a {
+      color: var(--primary);
+    }
+
+    section {
+      margin-top: 68px;
+    }
+
+    .intro {
+      max-width: 830px;
+      color: var(--muted);
+      font-size: 1.14rem;
+      line-height: 1.85;
+      margin-bottom: 42px;
+    }
+
+    .calculator {
+      border: 1px solid var(--border);
+      background: var(--card);
+      border-radius: 24px;
+      padding: 30px;
+      margin: 44px 0;
+      box-shadow: var(--shadow-soft);
+    }
+
+    .calc-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(235px, 1fr));
+      gap: 20px;
+    }
+
+    .calc-field {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .calc-field label {
+      font-weight: 800;
+      margin-bottom: 10px;
+      color: var(--text);
+      line-height: 1.35;
+    }
+
+    .calc-field input,
+    .calc-field select {
+      padding: 14px;
+      border-radius: 12px;
+      border: 1px solid var(--border);
+      font-size: 1rem;
+      background: #ffffff;
+      color: var(--text);
+    }
+
+    .calc-button {
+      margin-top: 26px;
+      background: var(--primary);
+      color: #ffffff;
+      border: none;
+      border-radius: 14px;
+      padding: 15px 22px;
+      font-size: 1rem;
+      font-weight: 900;
+      cursor: pointer;
+    }
+
+    .calc-button:hover {
+      opacity: 0.92;
+    }
+
+    .calc-results {
+      margin-top: 28px;
+      border: 1px solid #dbe4ee;
+      background: #f8fafc;
+      border-radius: 20px;
+      padding: 28px;
+      display: none;
+    }
+
+    .calc-results.active {
+      display: block;
+    }
+
+    .calc-verdict {
+      font-size: 1.8rem;
+      font-weight: 900;
+      color: var(--primary);
+      margin-bottom: 16px;
+      line-height: 1.18;
+    }
+
+    .calc-stat {
+      font-size: 1.03rem;
+      margin-bottom: 12px;
+      color: var(--text);
+      line-height: 1.65;
+    }
+
+    .calc-analysis {
+      color: var(--muted);
+      line-height: 1.82;
+      margin-top: 18px;
+    }
+
+    .callout {
+      border: 1px solid var(--border);
+      background: var(--card);
+      border-radius: 24px;
+      padding: 26px;
+      margin: 36px 0;
+      box-shadow: var(--shadow-soft);
+    }
+
+    .callout strong {
+      color: var(--text);
+    }
+
+    .info-grid,
+    .link-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 16px;
+      margin-top: 24px;
+    }
+
+    .info-card,
+    .link-card {
+      display: block;
+      border: 1px solid var(--border);
+      background: var(--card);
+      border-radius: 18px;
+      padding: 20px;
+      text-decoration: none;
+      color: inherit;
+    }
+
+    .link-card {
+      transition:
+        transform 0.15s ease,
+        border-color 0.15s ease,
+        box-shadow 0.15s ease;
+    }
+
+    .link-card:hover {
+      transform: translateY(-2px);
+      border-color: var(--primary);
+      box-shadow: var(--shadow-soft);
+    }
+
+    .info-card h3,
+    .link-card strong {
+      display: block;
+      margin: 0 0 8px;
+      color: var(--text);
+      line-height: 1.3;
+      font-size: 1.08rem;
+    }
+
+    .info-card p,
+    .link-card span {
+      color: var(--muted);
+      line-height: 1.65;
+      font-size: 0.95rem;
+      margin: 0;
+    }
+
+    .red-flag-list {
+      margin: 22px 0 0;
+      padding: 0;
+      list-style: none;
+      display: grid;
+      gap: 12px;
+    }
+
+    .red-flag-list li {
+      margin: 0;
+      padding: 15px 16px;
+      border-radius: 16px;
+      border: 1px solid #fecaca;
+      background: #fff7f7;
+      color: #7f1d1d;
+      line-height: 1.55;
+      font-size: 0.96rem;
+    }
+
+    @media (max-width: 720px) {
+      .container {
+        padding: 58px 20px;
+      }
+
+      .calculator {
+        padding: 22px;
+      }
+
+      h1 {
+        font-size: 2.55rem;
+      }
+    }
+  </style>
+
+  <main class="container">
+    <div class="eyebrow">Car Loan Early Payoff Calculator</div>
+
+    <h1>Car Loan Early Payoff Calculator</h1>
+
+    <p class="intro">
+      Paying off a car early can save interest and free up cash flow, but it is not
+      always the smartest use of extra money. This calculator estimates interest saved,
+      months saved, and whether the extra money should go to the car loan, emergency
+      savings, higher-interest debt, or a split plan.
+    </p>
+
+    <div class="calculator">
+      <div class="calc-grid">
+        <div class="calc-field">
+          <label for="loanBalance">Current Car Loan Balance ($)</label>
+          <input type="number" id="loanBalance" placeholder="18500" min="0" inputmode="decimal" />
+        </div>
+
+        <div class="calc-field">
+          <label for="apr">Car Loan APR (%)</label>
+          <input type="number" id="apr" placeholder="7.9" min="0" inputmode="decimal" />
+        </div>
+
+        <div class="calc-field">
+          <label for="monthlyPayment">Current Monthly Car Payment ($)</label>
+          <input type="number" id="monthlyPayment" placeholder="475" min="0" inputmode="decimal" />
+        </div>
+
+        <div class="calc-field">
+          <label for="monthsLeft">Months Left on Loan</label>
+          <input type="number" id="monthsLeft" placeholder="46" min="0" inputmode="numeric" />
+        </div>
+
+        <div class="calc-field">
+          <label for="extraCash">Extra Cash Available Now ($)</label>
+          <input type="number" id="extraCash" placeholder="5000" min="0" inputmode="decimal" />
+        </div>
+
+        <div class="calc-field">
+          <label for="extraMonthly">Extra Monthly Payment Toward Car ($)</label>
+          <input type="number" id="extraMonthly" placeholder="150" min="0" inputmode="decimal" />
+        </div>
+
+        <div class="calc-field">
+          <label for="prepaymentPenalty">Prepayment Penalty or Payoff Fee ($)</label>
+          <input type="number" id="prepaymentPenalty" placeholder="0" min="0" inputmode="decimal" />
+        </div>
+
+        <div class="calc-field">
+          <label for="emergencySavings">Current Emergency Savings ($)</label>
+          <input type="number" id="emergencySavings" placeholder="12000" min="0" inputmode="decimal" />
+        </div>
+
+        <div class="calc-field">
+          <label for="monthlyIncome">Monthly Take-Home Income ($)</label>
+          <input type="number" id="monthlyIncome" placeholder="7000" min="0" inputmode="decimal" />
+        </div>
+
+        <div class="calc-field">
+          <label for="essentials">Monthly Essential Expenses ($)</label>
+          <input type="number" id="essentials" placeholder="3900" min="0" inputmode="decimal" />
+        </div>
+
+        <div class="calc-field">
+          <label for="otherDebtPayment">Other Monthly Debt Payments ($)</label>
+          <input type="number" id="otherDebtPayment" placeholder="450" min="0" inputmode="decimal" />
+        </div>
+
+        <div class="calc-field">
+          <label for="highInterestDebt">High-Interest Debt Balance ($)</label>
+          <input type="number" id="highInterestDebt" placeholder="3500" min="0" inputmode="decimal" />
+        </div>
+
+        <div class="calc-field">
+          <label for="highDebtApr">High-Interest Debt APR (%)</label>
+          <input type="number" id="highDebtApr" placeholder="22" min="0" inputmode="decimal" />
+        </div>
+
+        <div class="calc-field">
+          <label for="extraCashSource">Extra Cash Source</label>
+          <select id="extraCashSource">
+            <option value="" disabled selected>Select extra cash source</option>
+            <option value="surplus">Separate surplus cash outside emergency savings</option>
+            <option value="mixed">Mixed savings and surplus cash</option>
+            <option value="emergency">Emergency savings would be used</option>
+          </select>
+        </div>
+
+        <div class="calc-field">
+          <label for="payoffGoal">Main Payoff Goal</label>
+          <select id="payoffGoal">
+            <option value="" disabled selected>Select payoff goal</option>
+            <option value="interest">Reduce interest cost</option>
+            <option value="cashflow">Free up monthly cash flow</option>
+            <option value="title">Own the car outright or clear the title</option>
+            <option value="stress">Reduce debt stress</option>
+          </select>
+        </div>
+
+        <div class="calc-field">
+          <label for="incomeStability">Income Stability</label>
+          <select id="incomeStability">
+            <option value="" disabled selected>Select income stability</option>
+            <option value="stable">Stable paycheck</option>
+            <option value="variable">Somewhat variable</option>
+            <option value="unstable">Irregular, commission, freelance, or at risk</option>
+          </select>
+        </div>
+      </div>
+
+      <button class="calc-button sis-action-button sis-calculate-button" id="calculateEarlyPayoff">
+        Calculate Early Payoff
+      </button>
+
+      <div class="calc-results" id="calcResults">
+        <div class="calc-verdict" id="calcVerdict"></div>
+        <div id="bigMoneyResult"></div>
+        <div id="pressureResult"></div>
+        <div class="calc-stat" id="payoffMath"></div>
+        <div class="calc-stat" id="allocationMath"></div>
+        <div class="calc-stat" id="savingsMath"></div>
+        <div class="calc-analysis" id="calcAnalysis"></div>
+      </div>
+    </div>
+
+    <div class="callout">
+      <p>
+        <strong>Priority rule:</strong> paying off a car early is strongest when it
+        saves real interest without weakening emergency savings or ignoring more expensive
+        debt.
+      </p>
+    </div>
+
+    <section>
+      <h2>What This Calculator Does Differently</h2>
+
+      <p>
+        This is not a refinance calculator, a negative-equity calculator, or a payment
+        affordability calculator. It answers a different question: where should extra
+        money go after the car loan already exists?
+      </p>
+
+      <p>
+        The main output is the estimated net interest saved by the early payoff plan.
+        The recommendation then checks whether that payoff is actually the best use of
+        cash compared with emergency savings and higher-interest debt.
+      </p>
+    </section>
+
+    <section>
+      <h2>Why Early Payoff Is Not Always the Best Move</h2>
+
+      <p>
+        A smaller car balance feels good. A paid-off title feels even better. But money
+        used on a car loan cannot also rebuild the emergency fund, cover a repair, or
+        attack a credit card charging a much higher APR.
+      </p>
+
+      <p>
+        This is why the calculator does not only estimate interest saved. It also checks
+        emergency savings, high-interest debt, prepayment penalties, extra monthly pressure,
+        income stability, and monthly room after the plan.
+      </p>
+    </section>
+
+    <section>
+      <h2>What the Calculator Checks</h2>
+
+      <div class="info-grid">
+        <div class="info-card">
+          <h3>Interest saved</h3>
+          <p>The payoff plan is compared with the current payment schedule to estimate interest and months saved.</p>
+        </div>
+
+        <div class="info-card">
+          <h3>Prepayment penalty</h3>
+          <p>A payoff fee can reduce or erase the benefit of sending extra principal early.</p>
+        </div>
+
+        <div class="info-card">
+          <h3>Emergency savings</h3>
+          <p>Using emergency money for a car loan can trade one risk for another.</p>
+        </div>
+
+        <div class="info-card">
+          <h3>Higher-interest debt</h3>
+          <p>Credit cards and personal loans can deserve priority when their APR is much higher than the car APR.</p>
+        </div>
+
+        <div class="info-card">
+          <h3>Monthly room</h3>
+          <p>Extra monthly payments only work if they do not break the regular budget.</p>
+        </div>
+
+        <div class="info-card">
+          <h3>Cash-flow goal</h3>
+          <p>Some households value freeing up a payment soon more than maximizing interest math.</p>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <h2>How to Read the Recommendation</h2>
+
+      <h3>Pay Car Loan Early</h3>
+      <p>
+        The car APR is meaningful, the payoff saves enough interest, savings remain
+        strong, and higher-interest debt is not the obvious better target.
+      </p>
+
+      <h3>Attack Higher-Interest Debt First</h3>
+      <p>
+        The car payoff may save money, but another debt has a much higher APR and should
+        probably be handled before the car loan.
+      </p>
+
+      <h3>Build Savings First</h3>
+      <p>
+        The payoff plan would leave the household too exposed. Savings should be rebuilt
+        before extra principal payments become the priority.
+      </p>
+
+      <h3>Split Cash</h3>
+      <p>
+        The car payoff has a benefit, but savings or other debt also need money. Splitting
+        the extra cash may be safer than sending everything to one place.
+      </p>
+    </section>
+
+    <section id="FinancialRedFlags">
+      <h2>Car Loan Early Payoff Red Flags</h2>
+
+      <ul class="red-flag-list">
+        <li>The payoff money would come from emergency savings and leave less than one month of expenses.</li>
+        <li>Credit card or other high-interest debt remains while a lower-APR car loan gets extra money.</li>
+        <li>The prepayment penalty erases most of the interest savings.</li>
+        <li>The extra monthly payment creates negative monthly cash flow.</li>
+        <li>The household is chasing a paid-off car while ignoring repairs, insurance, or basic savings.</li>
+        <li>The car loan APR is low and the payoff mainly creates emotional relief, not financial improvement.</li>
+        <li>Income is unstable and the payoff would reduce flexibility.</li>
+      </ul>
+    </section>
+
+    <section id="CalculatorAssumptions">
+      <h2>Car Loan Early Payoff Calculator Assumptions</h2>
+
+      <p>
+        This calculator assumes extra payments are applied to principal and that the loan
+        permits early payoff unless a prepayment penalty is entered. It estimates the
+        current payoff path from balance, APR, payment, and months left.
+      </p>
+
+      <p>
+        The result is a planning estimate, not a lender payoff quote. Actual payoff numbers
+        can change with daily interest, fees, payment posting dates, loan rules, and whether
+        the lender automatically applies extra payments to principal.
+      </p>
+    </section>
+
+    <section id="MethodologySection">
+      <h2>How ShouldISpend Calculates Early Payoff Pressure</h2>
+
+      <p>
+        ShouldISpend compares the current payoff schedule with an accelerated payoff using
+        the entered lump sum, extra monthly payment, APR, months left, and prepayment penalty.
+        It estimates interest saved, net benefit, months saved, emergency runway after the
+        cash move, and monthly room after the extra payment.
+      </p>
+
+      <p>
+        The pressure score can reach zero when the payoff is easily absorbed, emergency
+        savings are very strong, monthly room is healthy, and higher-interest debt is not
+        the better target. It can reach 100 when payoff money drains savings, ignores much
+        higher-interest debt, creates negative cash flow, or saves less than the penalty costs.
+      </p>
+    </section>
+
+    <section id="RelatedCalculators">
+      <h2>Related Car Calculators</h2>
+
+      <div class="link-grid">
+        <a class="link-card" href="/car-calculators">
+          <strong>Car Payment Calculators</strong>
+          <span>See the full car calculator cluster for payments, insurance, repairs, loan length, and ownership pressure.</span>
+        </a>
+
+        <a class="link-card" href="/should-i-refinance-my-car-loan">
+          <strong>Should I Refinance My Car Loan?</strong>
+          <span>Compare refinancing with paying extra on the existing loan.</span>
+        </a>
+
+        <a class="link-card" href="/negative-equity-car-loan-calculator">
+          <strong>Negative Equity Car Loan Calculator</strong>
+          <span>Check whether old vehicle debt would roll into a new car loan.</span>
+        </a>
+
+        <a class="link-card" href="/cash-vs-finance-car-calculator">
+          <strong>Cash vs Finance Car Calculator</strong>
+          <span>Compare using cash with taking or keeping a vehicle loan.</span>
+        </a>
+
+        <a class="link-card" href="/emergency-fund-vs-debt-payoff-calculator">
+          <strong>Emergency Fund vs Debt Payoff Calculator</strong>
+          <span>Decide whether extra cash should build savings or attack debt first.</span>
+        </a>
+
+        <a class="link-card" href="/how-much-debt-is-too-much">
+          <strong>How Much Debt Is Too Much?</strong>
+          <span>Pressure-test debt load before sending extra money to one loan.</span>
+        </a>
+      </div>
+    </section>
+
+    <FAQSection title="Car Loan Early Payoff FAQ" faqs={earlyPayoffFaqs} />
+  </main>
+
+  <script is:inline>
+    document.addEventListener("DOMContentLoaded", function () {
+      const button = document.getElementById("calculateEarlyPayoff");
+
+      if (!button) return;
+
+      const moneyLabelStyle =
+        "color: var(--muted); font-size: 0.82rem; font-weight: 900; letter-spacing: 0.04em; text-transform: uppercase; margin-bottom: 6px;";
+
+      const moneyValueStyle =
+        "color: var(--primary); font-size: clamp(2.45rem, 6vw, 3.75rem); font-weight: 950; line-height: 1.04; letter-spacing: -0.055em; margin: 4px 0 16px; display: block;";
+
+      const moneySubtextStyle =
+        "color: var(--text); font-size: 1.05rem; font-weight: 850; line-height: 1.55; margin-bottom: 16px;";
+
+      function cleanNumber(id) {
+        const element = document.getElementById(id);
+        if (!element) return 0;
+        const value = Number(element.value);
+        return Number.isFinite(value) && value > 0 ? value : 0;
+      }
+
+      function money(value) {
+        const sign = value < 0 ? "-" : "";
+        return sign + "$" + Math.round(Math.abs(value)).toLocaleString("en-US");
+      }
+
+      function clamp(value, min, max) {
+        return Math.max(min, Math.min(max, value));
+      }
+
+      function pressureColor(score) {
+        if (score <= 24) return "#16a34a";
+        if (score <= 49) return "#ca8a04";
+        if (score <= 74) return "#ea580c";
+        return "#dc2626";
+      }
+
+      function simulateLoan(balance, apr, monthlyPayment, extraMonthly, maxMonths) {
+        const monthlyRate = apr / 100 / 12;
+        let remaining = balance;
+        let totalInterest = 0;
+        let months = 0;
+        const payment = monthlyPayment + extraMonthly;
+        const cap = Math.max(maxMonths, 1);
+
+        while (remaining > 0.5 && months < cap) {
+          const interest = remaining * monthlyRate;
+          const principal = payment - interest;
+
+          if (payment <= 0 || principal <= 0) {
+            return {
+              months: cap,
+              interest: Number.POSITIVE_INFINITY,
+              remaining: remaining,
+              paidOff: false,
+            };
+          }
+
+          totalInterest += interest;
+          remaining = Math.max(0, remaining - principal);
+          months += 1;
+        }
+
+        return {
+          months: months,
+          interest: totalInterest,
+          remaining: remaining,
+          paidOff: remaining <= 0.5,
+        };
+      }
+
+      button.addEventListener("click", function () {
+        const loanBalance = cleanNumber("loanBalance");
+        const apr = cleanNumber("apr");
+        const monthlyPayment = cleanNumber("monthlyPayment");
+        const monthsLeft = cleanNumber("monthsLeft");
+        const extraCash = cleanNumber("extraCash");
+        const extraMonthly = cleanNumber("extraMonthly");
+        const prepaymentPenalty = cleanNumber("prepaymentPenalty");
+        const emergencySavings = cleanNumber("emergencySavings");
+        const monthlyIncome = cleanNumber("monthlyIncome");
+        const essentials = cleanNumber("essentials");
+        const otherDebtPayment = cleanNumber("otherDebtPayment");
+        const highInterestDebt = cleanNumber("highInterestDebt");
+        const highDebtApr = cleanNumber("highDebtApr");
+
+        const extraCashSource = document.getElementById("extraCashSource").value;
+        const payoffGoal = document.getElementById("payoffGoal").value;
+        const incomeStability = document.getElementById("incomeStability").value;
+
+        const results = document.getElementById("calcResults");
+        const verdictEl = document.getElementById("calcVerdict");
+        const bigMoneyEl = document.getElementById("bigMoneyResult");
+        const pressureEl = document.getElementById("pressureResult");
+        const payoffMathEl = document.getElementById("payoffMath");
+        const allocationMathEl = document.getElementById("allocationMath");
+        const savingsMathEl = document.getElementById("savingsMath");
+        const analysisEl = document.getElementById("calcAnalysis");
+
+        results.classList.add("active");
+
+        if (
+          loanBalance <= 0 ||
+          apr <= 0 ||
+          monthlyPayment <= 0 ||
+          monthsLeft <= 0 ||
+          monthlyIncome <= 0 ||
+          essentials <= 0 ||
+          !extraCashSource ||
+          !payoffGoal ||
+          !incomeStability
+        ) {
+          verdictEl.innerText = "Add the missing details";
+          bigMoneyEl.innerHTML =
+            "<div style=\"" +
+            moneyLabelStyle +
+            "\">Estimated net interest saved</div><div style=\"" +
+            moneyValueStyle +
+            "\">Need details</div><div style=\"" +
+            moneySubtextStyle +
+            "\">Enter loan balance, APR, payment, months left, income, essentials, and the dropdown details to calculate an early payoff plan.</div>";
+          pressureEl.innerHTML = "";
+          payoffMathEl.innerText = "";
+          allocationMathEl.innerText = "";
+          savingsMathEl.innerText = "";
+          analysisEl.innerText =
+            "Extra cash, extra monthly payment, prepayment penalty, emergency savings, other debt, and high-interest debt can be zero. The core loan and household details are required.";
+          return;
+        }
+
+        const baseline = simulateLoan(loanBalance, apr, monthlyPayment, 0, Math.max(monthsLeft, 1));
+        const principalFromCash = Math.min(loanBalance, Math.max(0, extraCash - prepaymentPenalty));
+        const acceleratedStartingBalance = Math.max(0, loanBalance - principalFromCash);
+        const accelerated = simulateLoan(acceleratedStartingBalance, apr, monthlyPayment, extraMonthly, 600);
+
+        const baselineInterest = Number.isFinite(baseline.interest) ? baseline.interest : 0;
+        const acceleratedInterest = Number.isFinite(accelerated.interest) ? accelerated.interest : baselineInterest;
+        const grossInterestSaved = Math.max(0, baselineInterest - acceleratedInterest);
+        const netInterestSaved = grossInterestSaved - prepaymentPenalty;
+        const monthsSaved = Math.max(0, baseline.months - accelerated.months);
+        const payoffSoon = acceleratedStartingBalance <= 0;
+
+        let emergencyReduction = 0;
+        if (extraCashSource === "emergency") emergencyReduction = extraCash;
+        else if (extraCashSource === "mixed") emergencyReduction = extraCash * 0.5;
+
+        const emergencyAfterPlan = Math.max(0, emergencySavings - emergencyReduction);
+        const emergencyMonthsAfter = emergencyAfterPlan / Math.max(1, essentials);
+        const emergencyMonthsNow = emergencySavings / Math.max(1, essentials);
+        const monthlyRoomAfterExtra =
+          monthlyIncome - essentials - otherDebtPayment - monthlyPayment - extraMonthly;
+        const payoffPaymentShare = (monthlyPayment + extraMonthly) / monthlyIncome;
+        const obligationShare =
+          (essentials + otherDebtPayment + monthlyPayment + extraMonthly) / monthlyIncome;
+
+        const highDebtBetterTarget =
+          highInterestDebt > 0 && highDebtApr >= apr + 4;
+        const penaltyErasesSavings =
+          prepaymentPenalty > 0 && prepaymentPenalty >= grossInterestSaved * 0.75;
+        const payoffBenefitStrong =
+          netInterestSaved >= Math.max(250, loanBalance * 0.02) || monthsSaved >= 6 || payoffSoon;
+
+        let score = 35;
+
+        if (netInterestSaved <= 0) score += 18;
+        else if (netInterestSaved >= loanBalance * 0.08) score -= 14;
+        else if (netInterestSaved >= loanBalance * 0.04) score -= 8;
+        else if (netInterestSaved >= 250) score -= 4;
+
+        if (monthsSaved >= 18) score -= 10;
+        else if (monthsSaved >= 6) score -= 5;
+
+        if (highDebtBetterTarget) score += 25;
+        else if (highInterestDebt > 0 && highDebtApr > apr) score += 10;
+
+        if (penaltyErasesSavings) score += 20;
+        else if (prepaymentPenalty > 0) score += 6;
+
+        if (extraCashSource === "emergency") score += 16;
+        else if (extraCashSource === "mixed") score += 8;
+
+        if (emergencyMonthsAfter < 0.5) score += 26;
+        else if (emergencyMonthsAfter < 1) score += 18;
+        else if (emergencyMonthsAfter < 3) score += 9;
+        else if (emergencyMonthsAfter >= 24) score -= 24;
+        else if (emergencyMonthsAfter >= 6) score -= 14;
+        else if (emergencyMonthsAfter >= 3) score -= 7;
+
+        if (monthlyRoomAfterExtra < 0) score += 26;
+        else if (monthlyRoomAfterExtra < monthlyIncome * 0.08) score += 12;
+        else if (monthlyRoomAfterExtra > monthlyIncome * 0.25) score -= 8;
+
+        if (payoffPaymentShare > 0.20) score += 10;
+        else if (payoffPaymentShare <= 0.08) score -= 4;
+
+        if (incomeStability === "variable") score += 7;
+        if (incomeStability === "unstable") score += 18;
+
+        if (payoffGoal === "title" && payoffSoon && emergencyMonthsAfter >= 3) score -= 6;
+        if (payoffGoal === "cashflow" && monthsSaved >= 12) score -= 5;
+
+        const highSavingsNoBetterDebt =
+          emergencyMonthsAfter >= 24 &&
+          emergencySavings >= monthlyIncome * 12 &&
+          !highDebtBetterTarget &&
+          monthlyRoomAfterExtra >= monthlyIncome * 0.10 &&
+          incomeStability === "stable";
+
+        const carPayoffClearlySafe =
+          highSavingsNoBetterDebt &&
+          payoffBenefitStrong &&
+          !penaltyErasesSavings;
+
+        const cashFortressAndSafe =
+          emergencySavings >= monthlyIncome * 12 &&
+          emergencySavings >= loanBalance * 2 &&
+          emergencyMonthsAfter >= 12 &&
+          !highDebtBetterTarget &&
+          monthlyRoomAfterExtra >= 0 &&
+          incomeStability === "stable";
+
+        if (carPayoffClearlySafe || cashFortressAndSafe) {
+          score = 0;
+        }
+
+        const highInterestDebtTrivial =
+          highInterestDebt <= Math.max(monthlyIncome * 0.02, emergencySavings * 0.01);
+
+        const richIncomeAndSafe =
+          monthlyIncome >= Math.max(loanBalance, highInterestDebt, extraCash, 100000) * 50 &&
+          monthlyRoomAfterExtra >= monthlyIncome * 0.10 &&
+          payoffPaymentShare <= 0.03 &&
+          highInterestDebtTrivial &&
+          !penaltyErasesSavings &&
+          incomeStability === "stable";
+
+        const richSavingsAndSafe =
+          emergencySavings >= Math.max(monthlyIncome * 12, loanBalance * 10, highInterestDebt * 10) &&
+          emergencyMonthsAfter >= 12 &&
+          highInterestDebtTrivial &&
+          !penaltyErasesSavings &&
+          incomeStability === "stable";
+
+        if (richIncomeAndSafe || richSavingsAndSafe) {
+          score = 0;
+        }
+
+
+
+        if (
+          (extraCashSource === "emergency" && emergencyMonthsAfter < 0.5 && highDebtBetterTarget) ||
+          (monthlyRoomAfterExtra < 0 && emergencyMonthsAfter < 1) ||
+          (penaltyErasesSavings && emergencyMonthsAfter < 1) ||
+          (incomeStability === "unstable" && emergencyMonthsAfter < 1 && monthlyRoomAfterExtra < monthlyIncome * 0.05)
+        ) {
+          score = 100;
+        }
+
+        score = Math.round(clamp(score, 0, 100));
+
+        let recommendation = "Split Cash";
+        let analysis = "";
+
+        if (score === 100) {
+          recommendation = "Do Not Rush Payoff";
+          analysis =
+            "The payoff plan creates maximum pressure. It drains savings, creates monthly stress, ignores higher-interest debt, or loses too much value to penalties.";
+        } else if (emergencyMonthsAfter < 3 && extraCashSource !== "surplus") {
+          recommendation = "Build Savings First";
+          analysis =
+            "The car payoff may save interest, but the plan weakens the household cushion too much. Rebuild emergency savings before sending aggressive money to the car.";
+        } else if (highDebtBetterTarget) {
+          recommendation = "Attack Higher-Interest Debt First";
+          analysis =
+            "The car payoff saves some money, but the higher-interest debt is the more expensive target. Put the extra money where the APR is doing the most damage.";
+        } else if (penaltyErasesSavings) {
+          recommendation = "Do Not Rush Payoff";
+          analysis =
+            "The prepayment penalty takes too much of the benefit. Keep making regular payments or ask the lender how extra principal payments are handled before moving money.";
+        } else if (score === 0 || (payoffBenefitStrong && emergencyMonthsAfter >= 6 && monthlyRoomAfterExtra >= 0)) {
+          recommendation = "Pay Car Loan Early";
+          analysis =
+            "The payoff plan has a real benefit and does not weaken the household. Keep enough cash for repairs and verify that the lender applies extra money to principal.";
+        } else {
+          recommendation = "Split Cash";
+          analysis =
+            "The payoff has value, but savings or other debt still deserve part of the money. A split plan can reduce interest without making the household less flexible.";
+        }
+
+        if (score === 0) {
+          recommendation = "Pay Car Loan Early";
+          analysis =
+            "The payoff is easily absorbed, savings remain objectively strong, and higher-interest debt is not the better target. This is a zero-pressure early payoff case.";
+        }
+
+        const color = pressureColor(score);
+
+        verdictEl.innerText = recommendation;
+
+        bigMoneyEl.innerHTML =
+          "<div style=\"" +
+          moneyLabelStyle +
+          "\">Estimated net interest saved</div><div style=\"" +
+          moneyValueStyle +
+          "\">" +
+          money(netInterestSaved) +
+          "</div><div style=\"" +
+          moneySubtextStyle +
+          "\">Gross interest saved is about " +
+          money(grossInterestSaved) +
+          " before a prepayment penalty or payoff fee of " +
+          money(prepaymentPenalty) +
+          ".</div>";
+
+        pressureEl.innerHTML =
+          "<div style=\"margin: 18px 0 18px;\"><div style=\"display: flex; justify-content: space-between; gap: 12px; align-items: center; margin-bottom: 8px;\"><strong style=\"color: var(--text);\">Early payoff pressure score</strong><strong style=\"color:" +
+          color +
+          ";\">" +
+          score +
+          "/100</strong></div><div style=\"height: 14px; border-radius: 999px; background: #e5e7eb; overflow: hidden;\"><div style=\"height: 100%; width:" +
+          score +
+          "%; background:" +
+          color +
+          ";\"></div></div></div>";
+
+        payoffMathEl.innerText =
+          "Payoff math: the current schedule estimates about " +
+          money(baselineInterest) +
+          " of remaining interest over " +
+          Math.round(baseline.months) +
+          " months. The early payoff plan estimates about " +
+          money(acceleratedInterest) +
+          " of interest over " +
+          Math.round(accelerated.months) +
+          " months, saving about " +
+          Math.round(monthsSaved) +
+          " months.";
+
+        allocationMathEl.innerText =
+          "Allocation test: " +
+          money(principalFromCash) +
+          " of the lump sum reaches car principal after payoff fees. High-interest debt entered is " +
+          money(highInterestDebt) +
+          " at " +
+          highDebtApr.toFixed(2) +
+          "% APR, compared with the car loan at " +
+          apr.toFixed(2) +
+          "% APR.";
+
+        savingsMathEl.innerText =
+          "Savings test: emergency savings after the plan are about " +
+          money(emergencyAfterPlan) +
+          ", covering about " +
+          emergencyMonthsAfter.toFixed(1) +
+          " months of essential expenses. Monthly room after essentials, other debt, current car payment, and extra car payment is about " +
+          money(monthlyRoomAfterExtra) +
+          ".";
+
+        analysisEl.innerText = analysis;
+      });
+    });
+  </script>
+</Layout>

@@ -1,5 +1,49 @@
 export const calculators = [
   {
+    title: "Car Loan Early Payoff Calculator",
+    description:
+      "Estimate interest saved from paying off a car loan early and decide whether extra cash should go to the car, savings, or higher-interest debt first.",
+    href: "/car-loan-early-payoff-calculator",
+    category: "Cars",
+  },
+
+  {
+    title: "Used Car Maintenance Budget Calculator",
+    description:
+      "Build a monthly maintenance reserve for a used car based on age, mileage, warranty status, reliability, repair backlog, savings, and monthly room.",
+    href: "/used-car-maintenance-budget-calculator",
+    category: "Cars",
+  },
+
+  {
+    title: "Cash vs Finance Car Calculator",
+    description:
+      "Decide whether to pay cash, finance part of a car, finance carefully, or wait based on cash left, emergency savings, payment pressure, APR, and loan term.",
+    href: "/cash-vs-finance-car-calculator",
+    category: "Cars",
+  },
+  {
+    title: "Negative Equity Car Loan Calculator",
+    description:
+      "Calculate how much underwater balance would roll into a new car loan and pressure-test the payment, loan amount, loan-to-value, savings, and term risk.",
+    href: "/negative-equity-car-loan-calculator",
+    category: "Cars",
+  },
+  {
+    title: "Car Repair vs Replace Calculator",
+    description:
+      "Decide whether to repair your car, repair carefully, replace it, or get another quote based on repair cost, value, savings, loan balance, and reliability risk.",
+    href: "/car-repair-vs-replace-calculator",
+    category: "Cars",
+  },
+  {
+    title: "Total Cost of Car Ownership Calculator",
+    description:
+      "Calculate the real monthly cost of owning a vehicle after payment, insurance, fuel, maintenance, repairs, fees, parking, and depreciation.",
+    href: "/total-cost-of-car-ownership-calculator",
+    category: "Cars",
+  },
+  {
     title: "Starter Emergency Fund Calculator",
     href: "/starter-emergency-fund-calculator",
     slug: "/starter-emergency-fund-calculator",
