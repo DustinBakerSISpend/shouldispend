@@ -1,0 +1,158 @@
+---
+const {
+  title = "Worked examples",
+  intro = "These examples show how the same cost can feel very different depending on savings, income, debt, timing, and risk.",
+  useCases = [],
+  examples = [],
+  notEnough = [],
+  commonMistake = "",
+  nextStep = "Use the calculator as a pressure test, then compare the result with your actual monthly cash flow before making the decision.",
+} = Astro.props;
+---
+
+<section class="core-examples-block" aria-label="Worked examples and limits">
+  <div class="core-examples-eyebrow">Crawlable examples</div>
+  <h2>{title}</h2>
+  <p class="core-examples-intro">{intro}</p>
+
+  {useCases.length > 0 && (
+    <div class="core-examples-grid">
+      <div class="core-examples-card">
+        <h3>When to use this page</h3>
+        <ul>
+          {useCases.map((item) => <li>{item}</li>)}
+        </ul>
+      </div>
+
+      <div class="core-examples-card">
+        <h3>When this is not enough</h3>
+        <ul>
+          {notEnough.map((item) => <li>{item}</li>)}
+        </ul>
+      </div>
+    </div>
+  )}
+
+  {examples.length > 0 && (
+    <div class="core-example-list">
+      {examples.map((example) => (
+        <article class="core-example-item">
+          <h3>{example.label}</h3>
+          <p>{example.takeaway}</p>
+        </article>
+      ))}
+    </div>
+  )}
+
+  {(commonMistake || nextStep) && (
+    <div class="core-examples-note">
+      {commonMistake && <p><strong>Common mistake:</strong> {commonMistake}</p>}
+      {nextStep && <p><strong>Next step:</strong> {nextStep}</p>}
+    </div>
+  )}
+</section>
+
+<style>
+  .core-examples-block {
+    margin: 34px 0 46px;
+    padding: 28px;
+    border: 1px solid var(--border);
+    border-radius: 24px;
+    background: linear-gradient(180deg, rgba(255,255,255,0.86), rgba(255,255,255,0.68));
+    box-shadow: var(--shadow-soft);
+  }
+
+  .core-examples-eyebrow {
+    color: var(--primary);
+    font-size: 0.74rem;
+    font-weight: 900;
+    letter-spacing: 1.6px;
+    margin-bottom: 10px;
+    text-transform: uppercase;
+  }
+
+  .core-examples-block h2 {
+    margin: 0 0 12px;
+    font-size: clamp(1.6rem, 3vw, 2.25rem);
+    line-height: 1.1;
+    color: var(--text);
+  }
+
+  .core-examples-intro,
+  .core-examples-block p,
+  .core-examples-block li {
+    color: var(--muted);
+    font-size: 1rem;
+    line-height: 1.75;
+  }
+
+  .core-examples-intro {
+    margin: 0 0 20px;
+  }
+
+  .core-examples-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 16px;
+    margin: 20px 0;
+  }
+
+  .core-examples-card,
+  .core-example-item,
+  .core-examples-note {
+    border: 1px solid var(--border);
+    border-radius: 18px;
+    background: rgba(255, 255, 255, 0.78);
+    padding: 18px;
+  }
+
+  .core-examples-card h3,
+  .core-example-item h3 {
+    margin: 0 0 10px;
+    color: var(--text);
+    font-size: 1.05rem;
+    line-height: 1.25;
+  }
+
+  .core-examples-card ul {
+    margin: 0;
+    padding-left: 1.15rem;
+  }
+
+  .core-examples-card li + li {
+    margin-top: 8px;
+  }
+
+  .core-example-list {
+    display: grid;
+    gap: 14px;
+    margin-top: 18px;
+  }
+
+  .core-example-item p,
+  .core-examples-note p {
+    margin: 0;
+  }
+
+  .core-examples-note {
+    margin-top: 18px;
+  }
+
+  .core-examples-note p + p {
+    margin-top: 10px;
+  }
+
+  .core-examples-note strong {
+    color: var(--text);
+  }
+
+  @media (max-width: 760px) {
+    .core-examples-block {
+      padding: 22px;
+    }
+
+    .core-examples-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>
