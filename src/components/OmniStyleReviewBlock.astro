@@ -1,0 +1,84 @@
+---
+const {
+  pageName = "this calculator",
+  pageType = "calculator",
+  decisionFocus = "cost, take-home income, savings, debt, monthly breathing room, outside help, and risk factors",
+  reviewLabel = "Last reviewed: July 2026",
+  methodologyHref = "/methodology/",
+  editorialHref = "/editorial-policy/",
+  disclaimerHref = "/disclaimer/",
+} = Astro.props;
+
+const pluralType = pageType === "guide" ? "guides" : "calculators";
+---
+
+<section class="omni-review-block" aria-label="Review and methodology note">
+  <div class="omni-review-eyebrow">Reviewed decision support</div>
+  <h2>How {pageName} is maintained</h2>
+
+  <p>
+    <strong>Written and maintained by Dustin Baker.</strong> {reviewLabel}.
+  </p>
+
+  <p>
+    ShouldISpend {pluralType} are built for educational planning and spending-pressure testing.
+    This page looks at {decisionFocus}. It is designed to show financial pressure, not to
+    approve or deny a purchase.
+  </p>
+
+  <p>
+    For more detail, read the
+    <a href={methodologyHref}>methodology</a>,
+    <a href={editorialHref}>editorial policy</a>, and
+    <a href={disclaimerHref}>disclaimer</a>.
+  </p>
+</section>
+
+<style>
+  .omni-review-block {
+    margin: 32px 0 42px;
+    padding: 24px;
+    border: 1px solid var(--border);
+    border-radius: 22px;
+    background: rgba(255, 255, 255, 0.74);
+    box-shadow: var(--shadow-soft);
+  }
+
+  .omni-review-eyebrow {
+    color: var(--primary);
+    font-size: 0.74rem;
+    font-weight: 900;
+    letter-spacing: 1.6px;
+    margin-bottom: 10px;
+    text-transform: uppercase;
+  }
+
+  .omni-review-block h2 {
+    margin: 0 0 12px;
+    font-size: clamp(1.5rem, 3vw, 2.1rem);
+    line-height: 1.12;
+    color: var(--text);
+  }
+
+  .omni-review-block p {
+    margin: 0 0 12px;
+    color: var(--muted);
+    font-size: 1rem;
+    line-height: 1.75;
+  }
+
+  .omni-review-block p:last-child {
+    margin-bottom: 0;
+  }
+
+  .omni-review-block strong {
+    color: var(--text);
+  }
+
+  .omni-review-block a {
+    color: var(--primary);
+    font-weight: 800;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+</style>
