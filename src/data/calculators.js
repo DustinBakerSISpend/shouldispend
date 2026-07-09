@@ -387,7 +387,7 @@ export const calculators = [
   title: "Should I Invite This Many Wedding Guests?",
   description:
     "Estimate whether your guest list creates manageable wedding pressure or pushes catering, venue, bar, lodging, and family expectations beyond your budget.",
-  href: "/wedding-guest-count/",
+  href: "/wedding-calculators/",
 },
 {
   id: "open-bar",
@@ -395,7 +395,7 @@ export const calculators = [
   title: "Should I Pay for an Open Bar?",
   description:
     "Evaluate whether an open bar fits your wedding budget using guest count, bar package cost, venue rules, savings cushion, debt pressure, and hospitality priorities.",
-  href: "/open-bar/",
+  href: "/wedding-calculators/",
 },
 {
   id: "wedding-dress",
@@ -403,7 +403,7 @@ export const calculators = [
   title: "Should I Spend This Much on a Wedding Dress?",
   description:
     "Decide whether a wedding dress budget is reasonable after alterations, accessories, photography value, savings impact, debt pressure, and total wedding costs.",
-  href: "/wedding-dress/",
+  href: "/wedding-calculators/",
 },
 {
   id: "pay-for-wedding-ourselves",
@@ -411,7 +411,7 @@ export const calculators = [
   title: "Should We Pay for the Wedding Ourselves?",
   description:
     "Evaluate whether self-funding your wedding protects independence or creates too much pressure on savings, debt payoff, housing goals, and emergency reserves.",
-  href: "/pay-for-wedding-ourselves/",
+  href: "/how-to-budget-for-a-wedding-without-going-into-debt/",
 },
 {
   id: "engagement-ring-5000",
@@ -547,7 +547,7 @@ export const calculators = [
   title: "Should I Spend $500 on a Car Payment?",
   description:
     "Estimate whether a $500 monthly car payment fits your income, insurance costs, debt load, savings, and monthly flexibility.",
-  href: "/should-i-spend-500-on-a-car-payment/",
+  href: "/how-much-car-can-i-afford/",
 },
 {
   id: "car-payment-700",
@@ -587,7 +587,7 @@ export const calculators = [
   title: "Should I Spend $1,500 on a Car Payment?",
   description:
     "Estimate whether a luxury SUV or truck payment creates financial pressure after insurance, debt, housing, and savings.",
-  href: "/should-i-spend-1500-on-a-car-payment/",
+  href: "/how-much-car-can-i-afford/",
 },
 {
   id: "car-loan-84-months",
@@ -782,7 +782,7 @@ export const calculators = [
   title: "Should I Spend $1,000 on Rent?",
   description:
     "Evaluate whether a $1,000 monthly rent payment fits your income, savings, debt, utilities, bills, and monthly breathing room.",
-  href: "/should-i-spend-1000-on-rent/",
+  href: "/how-much-rent-can-i-afford/",
 },
 {
   id: "rent-1500",
@@ -790,7 +790,7 @@ export const calculators = [
   title: "Should I Spend $1,500 on Rent?",
   description:
     "Evaluate whether a $1,500 monthly rent payment fits your take-home pay, savings, debt, utilities, move-in costs, and monthly breathing room.",
-  href: "/should-i-spend-1500-on-rent/",
+  href: "/how-much-rent-can-i-afford/",
 },
 {
   id: "rent-2000",
@@ -798,7 +798,7 @@ export const calculators = [
   title: "Should I Spend $2,000 on Rent?",
   description:
     "Evaluate whether a $2,000 monthly rent payment fits your take-home income, savings, debt, utilities, and flexibility.",
-  href: "/should-i-spend-2000-on-rent/",
+  href: "/how-much-rent-can-i-afford/",
 },
 {
   id: "rent-2500",
@@ -806,7 +806,7 @@ export const calculators = [
   title: "Should I Spend $2,500 on Rent?",
   description:
     "Evaluate whether a $2,500 monthly rent payment fits your take-home income, savings, debt, utilities, and flexibility.",
-  href: "/should-i-spend-2500-on-rent/",
+  href: "/how-much-rent-can-i-afford/",
 },
 {
   id: "rent-3000",
@@ -814,7 +814,7 @@ export const calculators = [
   title: "Should I Spend $3,000 on Rent?",
   description:
     "Evaluate whether a $3,000 monthly rent payment fits your take-home income, savings, debt, utilities, and flexibility.",
-  href: "/should-i-spend-3000-on-rent/",
+  href: "/how-much-rent-can-i-afford/",
 },
 {
   id: "rent-4000",
@@ -822,7 +822,7 @@ export const calculators = [
   title: "Should I Spend $4,000 on Rent?",
   description:
     "Analyze whether a $4,000 monthly rent payment creates safe housing flexibility or serious pressure based on income, savings, debt, utilities, and bills.",
-  href: "/should-i-spend-4000-on-rent/",
+  href: "/how-much-rent-can-i-afford/",
 },
 {
   id: "rent-5000",
@@ -830,7 +830,7 @@ export const calculators = [
   title: "Should I Spend $5,000 on Rent?",
   description:
     "Analyze whether a $5,000 monthly rent payment is affordable based on income, savings, debt, utilities, location costs, and long-term flexibility.",
-  href: "/should-i-spend-5000-on-rent/",
+  href: "/how-much-rent-can-i-afford/",
 },
 
 // Rent by income percentage
@@ -840,7 +840,7 @@ export const calculators = [
   title: "Should I Spend 25% of My Income on Rent?",
   description:
     "Check whether spending 25% of income on rent creates healthy flexibility for savings, utilities, debt payments, and normal monthly expenses.",
-  href: "/should-i-spend-25-percent-income-on-rent/",
+  href: "/how-much-rent-can-i-afford/",
 },
 {
   id: "rent-30-percent",
@@ -848,7 +848,7 @@ export const calculators = [
   title: "Should I Spend 30% of My Income on Rent?",
   description:
     "Check whether the classic 30% rent rule works for your income, take-home pay, debt, utilities, emergency savings, and monthly obligations.",
-  href: "/should-i-spend-30-percent-income-on-rent/",
+  href: "/how-much-rent-can-i-afford/",
 },
 {
   id: "rent-35-percent",
@@ -856,7 +856,7 @@ export const calculators = [
   title: "Should I Spend 35% of My Income on Rent?",
   description:
     "Evaluate whether spending 35% of income on rent is still manageable or starting to pressure savings, debt payoff, utilities, and flexibility.",
-  href: "/should-i-spend-35-percent-income-on-rent/",
+  href: "/how-much-rent-can-i-afford/",
 },
 {
   id: "rent-40-percent",
@@ -864,7 +864,7 @@ export const calculators = [
   title: "Should I Spend 40% of My Income on Rent?",
   description:
     "See whether a 40% rent ratio leaves enough room for savings, debt payments, utilities, and normal expenses.",
-  href: "/should-i-spend-40-percent-income-on-rent/",
+  href: "/how-much-rent-can-i-afford/",
 },
 {
   id: "rent-50-percent",
@@ -872,7 +872,7 @@ export const calculators = [
   title: "Should I Spend 50% of My Income on Rent?",
   description:
     "Analyze whether spending half your income on housing creates financial pressure, debt risk, or long-term budget strain.",
-  href: "/should-i-spend-50-percent-income-on-rent/",
+  href: "/how-much-rent-can-i-afford/",
 },
 {
   id: "rent-60-percent",
@@ -880,7 +880,7 @@ export const calculators = [
   title: "Should I Spend 60% of My Income on Rent?",
   description:
     "Estimate whether spending 60% of income on rent creates dangerous housing pressure, savings risk, debt strain, or a survivable high-income exception.",
-  href: "/should-i-spend-60-percent-income-on-rent/",
+  href: "/how-much-rent-can-i-afford/",
 },
 {
   id: "rent-70-percent",
@@ -888,7 +888,7 @@ export const calculators = [
   title: "Should I Spend 70% of My Income on Rent?",
   description:
     "Estimate whether spending 70% of income on rent creates extreme housing pressure, debt risk, savings depletion, or a rare high-income exception.",
-  href: "/should-i-spend-70-percent-income-on-rent/",
+  href: "/how-much-rent-can-i-afford/",
 },
   {
     id: "house-affordability-guide",
@@ -1065,7 +1065,7 @@ export const calculators = [
   title: "Should I Spend $300 on Groceries Per Month?",
   description:
     "Estimate whether a $300 monthly grocery budget is realistic for your household size, income, savings, debt, and overall financial flexibility.",
-  href: "/should-i-spend-300-on-groceries-per-month/",
+  href: "/should-i-spend-this-much-on-groceries-per-month/",
 },
 
 {
@@ -1074,7 +1074,7 @@ export const calculators = [
   title: "Should I Spend $800 on Groceries Per Month?",
   description:
     "Evaluate whether an $800 monthly grocery budget fits your income, household size, savings, debt, eating-out habits, and flexibility.",
-  href: "/should-i-spend-800-on-groceries-per-month/",
+  href: "/should-i-spend-this-much-on-groceries-per-month/",
 },
 
 {
@@ -1083,7 +1083,7 @@ export const calculators = [
   title: "Should I Spend $1,000 on Groceries Per Month?",
   description:
     "Evaluate whether spending $1,000 per month on groceries fits your income, household size, debt, savings, eating-out habits, and monthly flexibility.",
-  href: "/should-i-spend-1000-on-groceries-per-month/",
+  href: "/should-i-spend-this-much-on-groceries-per-month/",
 },
 
 {
@@ -1101,7 +1101,7 @@ export const calculators = [
   title: "Should I Spend $2,000 on Groceries Per Month?",
   description:
     "Estimate whether a $2,000 monthly grocery budget fits your income, household size, savings, debt, and overall food spending pressure.",
-  href: "/should-i-spend-2000-on-groceries-per-month/",
+  href: "/should-i-spend-this-much-on-groceries-per-month/",
 },
 
 {
@@ -1110,7 +1110,7 @@ export const calculators = [
   title: "Should I Spend $2,500 on Groceries Per Month?",
   description:
     "Evaluate whether a $2,500 monthly grocery budget fits your household size, income, savings, debt, food inflation, and overall flexibility.",
-  href: "/should-i-spend-2500-on-groceries-per-month/",
+  href: "/should-i-spend-this-much-on-groceries-per-month/",
 },
 
 {
@@ -1155,7 +1155,7 @@ export const calculators = [
   title: "Should I Spend $300 Eating Out Per Month?",
   description:
     "Estimate whether spending $300 per month on restaurants, takeout, coffee, and delivery fits your income, groceries, debt, savings, and flexibility.",
-  href: "/should-i-spend-300-eating-out-per-month/",
+  href: "/should-i-spend-this-much-eating-out-per-month/",
 },
 
 {
@@ -1164,7 +1164,7 @@ export const calculators = [
   title: "Should I Spend $500 Eating Out Per Month?",
   description:
     "Use this restaurant and dining-out calculator to decide whether spending $500 monthly on takeout, restaurants, coffee, and delivery fits your budget.",
-  href: "/should-i-spend-500-eating-out-per-month/",
+  href: "/should-i-spend-this-much-eating-out-per-month/",
 },
 
 {
@@ -1173,7 +1173,7 @@ export const calculators = [
   title: "Should I Spend $1,000 Eating Out Per Month?",
   description:
     "Evaluate whether spending $1,000 per month on restaurants, delivery, takeout, and coffee creates financial pressure or fits your income comfortably.",
-  href: "/should-i-spend-1000-eating-out-per-month/",
+  href: "/should-i-spend-this-much-eating-out-per-month/",
 },
 
 {
@@ -1216,7 +1216,7 @@ export const calculators = [
   title: "Should I Use Emergency Savings for Medical Bills?",
   description:
     "Evaluate whether using emergency savings for healthcare costs creates financial pressure or protects long-term stability.",
-  href: "/should-i-use-emergency-savings-for-medical-bills/",
+  href: "/should-i-spend-this-much-on-medical-bills/",
 },
 {
   id: "emergency-savings-dental-work",
@@ -1224,7 +1224,7 @@ export const calculators = [
   title: "Should I Use Emergency Savings for Dental Work?",
   description:
     "Evaluate whether paying for dental work from emergency savings protects your finances or leaves you exposed afterward.",
-  href: "/should-i-use-emergency-savings-for-dental-work/",
+  href: "/medical-calculators/",
 },
 {
   id: "er-bill-2500",
@@ -1232,7 +1232,7 @@ export const calculators = [
   title: "Should I Spend $2,500 on an ER Bill?",
   description:
     "Evaluate whether a large emergency room bill fits your savings, payment plan options, debt pressure, and monthly cash flow.",
-  href: "/should-i-spend-2500-on-an-er-bill/",
+  href: "/should-i-spend-this-much-on-medical-bills/",
 },
 {
   id: "dental-work-5000",
@@ -1240,7 +1240,7 @@ export const calculators = [
   title: "Should I Spend $5,000 on Dental Work?",
   description:
     "Evaluate $5,000 in dental work using urgency, insurance coverage, savings, financing, monthly cash flow, and debt pressure.",
-  href: "/should-i-spend-5000-on-dental-work/",
+  href: "/medical-calculators/",
 },
 {
   id: "dental-work-10000",
@@ -1248,7 +1248,7 @@ export const calculators = [
   title: "Should I Spend $10,000 on Dental Work?",
   description:
     "Evaluate major dental work using insurance gaps, financing risk, treatment urgency, emergency savings, and monthly flexibility.",
-  href: "/should-i-spend-10000-on-dental-work/",
+  href: "/medical-calculators/",
 },
 {
   id: "dental-implant-4000",
@@ -1256,7 +1256,7 @@ export const calculators = [
   title: "Should I Spend $4,000 on a Dental Implant?",
   description:
     "Analyze dental implant affordability using income, emergency savings, financing, insurance gaps, and debt pressure.",
-  href: "/should-i-spend-4000-on-a-dental-implant/",
+  href: "/medical-calculators/",
 },
 {
   id: "root-canal-3000",
@@ -1264,7 +1264,7 @@ export const calculators = [
   title: "Should I Spend $3,000 on a Root Canal?",
   description:
     "Evaluate root canal affordability using savings, monthly cash flow, dental financing, and overall financial flexibility.",
-  href: "/should-i-spend-3000-on-a-root-canal/",
+  href: "/medical-calculators/",
 },
 {
   id: "braces-5000",
@@ -1272,7 +1272,7 @@ export const calculators = [
   title: "Should I Spend $5,000 on Braces?",
   description:
     "Evaluate braces affordability using insurance coverage, payment plans, household cash flow, savings, and competing priorities.",
-  href: "/should-i-spend-5000-on-braces/",
+  href: "/medical-calculators/",
 },
 {
   id: "invisalign-8000",
@@ -1280,7 +1280,7 @@ export const calculators = [
   title: "Should I Spend $8,000 on Invisalign?",
   description:
     "Evaluate Invisalign affordability using insurance coverage, savings, financing, monthly cash flow, and debt pressure.",
-  href: "/should-i-spend-8000-on-invisalign/",
+  href: "/medical-calculators/",
 },
 {
   id: "lasik-5000",
@@ -1288,7 +1288,7 @@ export const calculators = [
   title: "Should I Spend $5,000 on LASIK?",
   description:
     "Evaluate LASIK affordability using income, emergency savings, debt, financing, monthly expenses, and financial flexibility.",
-  href: "/should-i-spend-5000-on-lasik/",
+  href: "/medical-calculators/",
 },
 {
   id: "hearing-aids-7000",
@@ -1296,7 +1296,7 @@ export const calculators = [
   title: "Should I Spend $7,000 on Hearing Aids?",
   description:
     "Evaluate hearing aid affordability using insurance coverage, savings, financing, replacement costs, and monthly flexibility.",
-  href: "/should-i-spend-7000-on-hearing-aids/",
+  href: "/medical-calculators/",
 },
 {
   id: "fertility-treatments-6000",
@@ -1304,7 +1304,7 @@ export const calculators = [
   title: "Should I Spend $6,000 on Fertility Treatments?",
   description:
     "Evaluate fertility treatment costs using savings, insurance gaps, repeat-cycle risk, financing, and monthly cash flow.",
-  href: "/should-i-spend-6000-on-fertility-treatments/",
+  href: "/medical-calculators/",
 },
 {
   id: "ivf-10000",
@@ -1312,7 +1312,7 @@ export const calculators = [
   title: "Should I Spend $10,000 on IVF?",
   description:
     "Evaluate IVF affordability using insurance coverage, savings, repeat-cycle risk, financing, and household financial pressure.",
-  href: "/should-i-spend-10000-on-ivf/",
+  href: "/medical-calculators/",
 },
 {
   id: "dermatology-treatment-2500",
@@ -1320,7 +1320,7 @@ export const calculators = [
   title: "Should I Spend $2,500 on Dermatology Treatment?",
   description:
     "Evaluate dermatology treatment affordability using insurance coverage, savings, procedure type, financing, and debt pressure.",
-  href: "/should-i-spend-2500-on-dermatology-treatment/",
+  href: "/medical-calculators/",
 },
 {
   id: "mental-health-therapy-5000",
@@ -1328,7 +1328,7 @@ export const calculators = [
   title: "Should I Spend $5,000 on Mental Health Therapy?",
   description:
     "Evaluate therapy affordability using session costs, insurance coverage, savings, monthly cash flow, and long-term care needs.",
-  href: "/should-i-spend-5000-on-mental-health-therapy/",
+  href: "/medical-calculators/",
 },
 
 {
@@ -1355,7 +1355,7 @@ export const calculators = [
   title: "Should I Spend $10,000 on a Roof Replacement?",
   description:
     "Evaluate roof replacement affordability using insurance coverage, emergency savings, financing pressure, debt load, and monthly cash flow.",
-  href: "/should-i-spend-10000-on-a-roof-replacement/",
+  href: "/should-i-spend-this-much-on-home-repairs/",
 },
 
 {
@@ -1364,7 +1364,7 @@ export const calculators = [
   title: "Should I Spend $12,000 on New Windows?",
   description:
     "Evaluate window replacement affordability using energy savings, emergency reserves, financing costs, debt pressure, and long-term home value.",
-  href: "/should-i-spend-12000-on-new-windows/",
+  href: "/should-i-spend-this-much-on-home-repairs/",
 },
 
 {
@@ -1373,7 +1373,7 @@ export const calculators = [
   title: "Should I Spend $8,000 on HVAC Replacement?",
   description:
     "Evaluate HVAC replacement affordability using repair urgency, emergency savings, financing risk, debt pressure, and monthly cash flow.",
-  href: "/should-i-spend-8000-on-hvac-replacement/",
+  href: "/should-i-spend-this-much-on-home-repairs/",
 },
 
 {
@@ -1409,7 +1409,7 @@ export const calculators = [
   title: "Should I Spend $5,000 on Plumbing Repairs?",
   description:
     "Evaluate plumbing repair affordability using repair urgency, insurance help, emergency savings, debt pressure, and monthly flexibility.",
-  href: "/should-i-spend-5000-on-plumbing-repairs/",
+  href: "/should-i-spend-this-much-on-home-repairs/",
 },
 
 {
@@ -1427,7 +1427,7 @@ export const calculators = [
   title: "Should I Spend $3,000 on Tree Removal?",
   description:
     "Evaluate tree removal affordability using safety risk, insurance exposure, emergency savings, debt pressure, and monthly cash flow.",
-  href: "/should-i-spend-3000-on-tree-removal/",
+  href: "/should-i-spend-this-much-on-home-repairs/",
 },
 
 {
@@ -1454,7 +1454,7 @@ export const calculators = [
   title: "Should I Spend $15,000 on Foundation Repair?",
   description:
     "Evaluate foundation repair affordability using structural risk, emergency savings, financing pressure, debt load, and long-term home stability.",
-  href: "/should-i-spend-15000-on-foundation-repair/",
+  href: "/should-i-spend-this-much-on-home-repairs/",
 },
 
 {
