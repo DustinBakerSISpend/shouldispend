@@ -550,30 +550,6 @@ export const calculators = [
   href: "/how-much-car-can-i-afford/",
 },
 {
-  id: "car-payment-700",
-  category: "Cars",
-  title: "Should I Spend $700 on a Car Payment?",
-  description:
-    "Evaluate whether your monthly vehicle payment is realistic for your income, debt load, and savings cushion.",
-  href: "/should-i-spend-700-on-a-car-payment/",
-},
-{
-  id: "car-payment-800",
-  category: "Cars",
-  title: "Should I Spend $800 on a Car Payment?",
-  description:
-    "Estimate whether an $800 monthly car payment fits your income, insurance costs, debt load, savings, and monthly flexibility.",
-  href: "/should-i-spend-800-on-a-car-payment/",
-},
-{
-  id: "car-payment-900",
-  category: "Cars",
-  title: "Should I Spend $900 on a Car Payment?",
-  description:
-    "Evaluate whether a $900 monthly car payment creates pressure after insurance, debt, housing, savings, and everyday expenses.",
-  href: "/should-i-spend-900-on-a-car-payment/",
-},
-{
   id: "car-payment-1000",
   category: "Cars",
   title: "Should I Spend $1,000 on a Car Payment?",
