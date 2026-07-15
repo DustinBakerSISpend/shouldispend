@@ -7,9 +7,11 @@ const excludedFiles = new Set([
   "404.astro",
   "about.astro",
   "contact.astro",
-  "privacy-policy.astro",
+  "privacy.astro",
   "disclaimer.astro",
+  "editorial-policy.astro",
   "methodology.astro",
+  "terms.astro",
   "index.astro",
 ]);
 
