@@ -413,70 +413,14 @@ export const calculators = [
     "Evaluate whether self-funding your wedding protects independence or creates too much pressure on savings, debt payoff, housing goals, and emergency reserves.",
   href: "/how-to-budget-for-a-wedding-without-going-into-debt/",
 },
-{
-  id: "engagement-ring-5000",
-  category: "Weddings",
-  title: "Should I Spend $5,000 on an Engagement Ring?",
-  description:
-    "Evaluate whether a $5,000 engagement ring fits your income, savings, debt, emergency fund, wedding plans, and financial comfort.",
-  href: "/should-i-spend-5000-on-an-engagement-ring/",
-},
-{
-  id: "wedding-15000",
-  category: "Weddings",
-  title: "Should I Spend $15,000 on a Wedding?",
-  description:
-    "Evaluate whether a smaller wedding budget fits your income, savings, debt, emergency cushion, and overall financial comfort.",
-  href: "/should-i-spend-15000-on-a-wedding/",
-},
-{
-  id: "honeymoon-8000",
-  category: "Weddings",
-  title: "Should I Spend $8,000 on a Honeymoon?",
-  description:
-    "Estimate whether an $8,000 honeymoon fits your income, savings, debt, travel priorities, wedding costs, and emergency cushion.",
-  href: "/should-i-spend-8000-on-a-honeymoon/",
-},
-{
-  id: "destination-wedding-10000",
-  category: "Weddings",
-  title: "Should I Spend $10,000 on a Destination Wedding?",
-  description:
-    "Analyze whether a $10,000 destination wedding fits your savings, travel costs, guest plans, income, debt, and post-wedding flexibility.",
-  href: "/should-i-spend-10000-on-a-destination-wedding/",
-},
-{
-  id: "wedding-venue-20000",
-  category: "Weddings",
-  title: "Should I Spend $20,000 on a Wedding Venue?",
-  description:
-    "Decide whether a $20,000 wedding venue creates manageable celebration value or too much pressure on the rest of your wedding budget.",
-  href: "/should-i-spend-20000-on-a-wedding-venue/",
-},
-{
-  id: "wedding-30000",
-  category: "Weddings",
-  title: "Should I Spend $30,000 on a Wedding?",
-  description:
-    "Analyze wedding affordability based on income, savings, debt, emergency cushion, financial stress, and long-term flexibility.",
-  href: "/should-i-spend-30000-on-a-wedding/",
-},
-{
-  id: "wedding-40000",
-  category: "Weddings",
-  title: "Should I Spend $40,000 on a Wedding?",
-  description:
-    "Evaluate whether a $40,000 wedding budget is a meaningful stretch or a risky expense based on income, savings, debt, and tradeoffs.",
-  href: "/should-i-spend-40000-on-a-wedding/",
-},
-{
-  id: "wedding-50000",
-  category: "Weddings",
-  title: "Should I Spend $50,000 on a Wedding?",
-  description:
-    "Analyze whether a high-end wedding budget creates financial pressure based on savings, income, debt, emergency cushion, and tradeoffs.",
-  href: "/should-i-spend-50000-on-a-wedding/",
-},
+
+
+
+
+
+
+
+
   {
   id: "car-affordability-guide",
   category: "Cars",
@@ -600,90 +544,20 @@ export const calculators = [
 },
 
 // General vacation calculators
-{
-  id: "weekend-getaway-3000",
-  category: "Travel",
-  title: "Should I Spend $3,000 on a Weekend Getaway?",
-  description:
-    "Pressure-test a short trip, concert weekend, city escape, or couples getaway against income, savings, debt, and impulse-spending risk.",
-  href: "/should-i-spend-3000-on-a-weekend-getaway/",
-},
-{
-  id: "vacation-5000",
-  category: "Travel",
-  title: "Should I Spend $5,000 on a Vacation?",
-  description:
-    "Evaluate whether a moderate vacation expense fits your income, savings, debt load, and long-term flexibility.",
-  href: "/should-i-spend-5000-on-a-vacation/",
-},
-{
-  id: "all-inclusive-vacation-7500",
-  category: "Travel",
-  title: "Should I Spend $7,500 on an All-Inclusive Vacation?",
-  description:
-    "Evaluate all-inclusive vacation affordability across resort price, flights, upgrades, excursions, savings, debt, and post-trip flexibility.",
-  href: "/should-i-spend-7500-on-an-all-inclusive-vacation/",
-},
+
+
+
 
 // Destination-specific trip calculators
-{
-  id: "mexico-vacation-4000",
-  category: "Travel",
-  title: "Should I Spend $4,000 on a Mexico Vacation?",
-  description:
-    "Evaluate Mexico vacation affordability across flights, resort costs, food, excursions, savings, debt, and post-trip flexibility.",
-  href: "/should-i-spend-4000-on-a-mexico-vacation/",
-},
-{
-  id: "europe-trip-10000",
-  category: "Travel",
-  title: "Should I Spend $10,000 on a Europe Trip?",
-  description:
-    "Evaluate whether a major Europe trip fits your savings, income, debt load, travel costs, and long-term goals.",
-  href: "/should-i-spend-10000-on-a-europe-trip/",
-},
-{
-  id: "italy-trip-15000",
-  category: "Travel",
-  title: "Should I Spend $15,000 on an Italy Trip?",
-  description:
-    "Evaluate Italy trip affordability across airfare, hotels, trains, food, tours, family size, savings, debt, and post-trip flexibility.",
-  href: "/should-i-spend-15000-on-an-italy-trip/",
-},
-{
-  id: "japan-trip-15000",
-  category: "Travel",
-  title: "Should I Spend $15,000 on a Japan Trip?",
-  description:
-    "Evaluate Japan trip affordability across airfare, hotels, trains, food, tours, family size, savings, debt, and post-trip flexibility.",
-  href: "/should-i-spend-15000-on-a-japan-trip/",
-},
-{
-  id: "hawaii-vacation-12000",
-  category: "Travel",
-  title: "Should I Spend $12,000 on a Hawaii Vacation?",
-  description:
-    "Evaluate Hawaii vacation affordability across flights, lodging, rental cars, resort fees, food, excursions, savings, and debt.",
-  href: "/should-i-spend-12000-on-a-hawaii-vacation/",
-},
+
+
+
+
+
 
 // Cruise calculators
-{
-  id: "cruise-4000",
-  category: "Travel",
-  title: "Should I Spend $4,000 on a Cruise?",
-  description:
-    "Evaluate cruise affordability across fare, gratuities, excursions, flights, onboard spending, savings, debt, and post-trip flexibility.",
-  href: "/should-i-spend-4000-on-a-cruise/",
-},
-{
-  id: "cruise-12000",
-  category: "Travel",
-  title: "Should I Spend $12,000 on a Cruise?",
-  description:
-    "Evaluate cruise affordability across fare, gratuities, excursions, flights, onboard spending, savings, and debt.",
-  href: "/should-i-spend-12000-on-a-cruise/",
-},
+
+
 
 // Family, honeymoon, and premium travel calculators
 {
@@ -694,46 +568,11 @@ export const calculators = [
     "Estimate a realistic Disney vacation budget using tickets, hotels, meals, flights, add-ons, savings, debt, and family cash flow.",
   href: "/how-much-disney-vacation-can-i-afford/",
 },
-{
-  id: "disney-vacation-8000",
-  category: "Travel",
-  title: "Should I Spend $8,000 on a Disney Vacation?",
-  description:
-    "Analyze Disney trip affordability across tickets, lodging, meals, add-ons, savings, debt, and family budget pressure.",
-  href: "/should-i-spend-8000-on-a-disney-vacation/",
-},
-{
-  id: "honeymoon-15000",
-  category: "Travel",
-  title: "Should I Spend $15,000 on a Honeymoon?",
-  description:
-    "Evaluate honeymoon affordability based on post-wedding savings, income, debt, travel costs, and first-year cash flow.",
-  href: "/should-i-spend-15000-on-a-honeymoon/",
-},
-{
-  id: "family-vacation-20000",
-  category: "Travel",
-  title: "Should I Spend $20,000 on a Family Vacation?",
-  description:
-    "Evaluate whether a major family vacation fits your income, savings, debt, airfare, lodging, meals, and activities.",
-  href: "/should-i-spend-20000-on-a-family-vacation/",
-},
-{
-  id: "african-safari-20000",
-  category: "Travel",
-  title: "Should I Spend $20,000 on an African Safari?",
-  description:
-    "Evaluate African safari affordability across flights, lodges, guides, park fees, insurance, savings, debt, and post-trip flexibility.",
-  href: "/should-i-spend-20000-on-an-african-safari/",
-},
-{
-  id: "luxury-vacation-25000",
-  category: "Travel",
-  title: "Should I Spend $25,000 on a Luxury Vacation?",
-  description:
-    "Evaluate luxury vacation pressure across premium hotels, business-class flights, private tours, savings impact, debt, and opportunity cost.",
-  href: "/should-i-spend-25000-on-a-luxury-vacation/",
-},
+
+
+
+
+
   {
   id: "rent-affordability-guide",
   category: "Rent",
@@ -890,7 +729,7 @@ export const calculators = [
       "Learn which monthly obligations usually count as debt when using affordability calculators and budget rules.",
     href: "/what-counts-as-debt/",
   },
-  
+
 {
   id: "funeral-price",
   category: "Funeral Costs",
@@ -1062,14 +901,7 @@ export const calculators = [
   href: "/should-i-spend-this-much-on-groceries-per-month/",
 },
 
-{
-  id: "groceries-1500",
-  category: "Groceries",
-  title: "Should I Spend $1,500 on Groceries Per Month?",
-  description:
-    "Evaluate whether spending $1,500 per month on groceries fits your income, household size, debt, savings, and overall financial flexibility.",
-  href: "/should-i-spend-1500-on-groceries-per-month/",
-},
+
 
 {
   id: "groceries-2000",
@@ -1352,32 +1184,11 @@ export const calculators = [
   href: "/should-i-spend-this-much-on-home-repairs/",
 },
 
-{
-  id: "water-heater-replacement-2500",
-  category: "Home Improvement",
-  title: "Should I Spend $2,500 on Water Heater Replacement?",
-  description:
-    "Evaluate water heater replacement affordability using age, leak risk, household need, repair history, emergency savings, financing pressure, and monthly cash flow.",
-  href: "/should-i-spend-2500-on-water-heater-replacement/",
-},
 
-{
-  id: "basement-waterproofing-7000",
-  category: "Home Improvement",
-  title: "Should I Spend $7,000 on Basement Waterproofing?",
-  description:
-    "Evaluate basement waterproofing affordability using water damage risk, emergency savings, debt pressure, financing costs, and home protection value.",
-  href: "/should-i-spend-7000-on-basement-waterproofing/",
-},
 
-{
-  id: "electrical-panel-6000",
-  category: "Home Improvement",
-  title: "Should I Spend $6,000 on Electrical Panel Replacement?",
-  description:
-    "Evaluate electrical panel replacement affordability using safety risk, emergency savings, financing pressure, debt load, and future repair exposure.",
-  href: "/should-i-spend-6000-on-electrical-panel-replacement/",
-},
+
+
+
 
 {
   id: "plumbing-repairs-5000",
@@ -1388,14 +1199,7 @@ export const calculators = [
   href: "/should-i-spend-this-much-on-home-repairs/",
 },
 
-{
-  id: "mold-remediation-4000",
-  category: "Home Improvement",
-  title: "Should I Spend $4,000 on Mold Remediation?",
-  description:
-    "Evaluate mold remediation affordability using health risk, repair urgency, emergency savings, debt pressure, and long-term home damage exposure.",
-  href: "/should-i-spend-4000-on-mold-remediation/",
-},
+
 
 {
   id: "tree-removal-3000",
@@ -1406,23 +1210,9 @@ export const calculators = [
   href: "/should-i-spend-this-much-on-home-repairs/",
 },
 
-{
-  id: "garage-door-replacement-3000",
-  category: "Home Improvement",
-  title: "Should I Spend $3,000 on Garage Door Replacement?",
-  description:
-    "Evaluate garage door replacement affordability using safety risk, opener condition, insulation value, repair history, curb appeal, emergency savings, and debt pressure.",
-  href: "/should-i-spend-3000-on-garage-door-replacement/",
-},
 
-{
-  id: "driveway-repair-6000",
-  category: "Home Improvement",
-  title: "Should I Spend $6,000 on Driveway Repair?",
-  description:
-    "Evaluate driveway repair affordability using cracking severity, drainage issues, safety risk, curb appeal, emergency savings, home value, and repair urgency.",
-  href: "/should-i-spend-6000-on-driveway-repair/",
-},
+
+
 
 {
   id: "foundation-repair-15000",
@@ -1433,68 +1223,19 @@ export const calculators = [
   href: "/should-i-spend-this-much-on-home-repairs/",
 },
 
-{
-  id: "fence-replacement-8000",
-  category: "Home Improvement",
-  title: "Should I Spend $8,000 on Fence Replacement?",
-  description:
-    "Evaluate fence replacement affordability using damage severity, safety and privacy need, HOA pressure, property line risk, emergency savings, financing, and home value.",
-  href: "/should-i-spend-8000-on-fence-replacement/",
-},
 
-{
-  id: "deck-repair-8000",
-  category: "Home Improvement",
-  title: "Should I Spend $8,000 on Deck Repair?",
-  description:
-    "Evaluate deck repair affordability using structural risk, rot, safety concerns, entertainment use, emergency savings, financing pressure, urgency, and home value.",
-  href: "/should-i-spend-8000-on-deck-repair/",
-},
 
-{
-  id: "kitchen-remodel-20000",
-  category: "Home Improvement",
-  title: "Should I Spend $20,000 on a Kitchen Remodel?",
-  description:
-    "Evaluate kitchen remodel affordability using savings, financing costs, debt pressure, resale value, and long-term financial flexibility.",
-  href: "/should-i-spend-20000-on-a-kitchen-remodel/",
-},
 
-{
-  id: "bathroom-remodel-25000",
-  category: "Home Improvement",
-  title: "Should I Spend $25,000 on a Bathroom Remodel?",
-  description:
-    "Evaluate bathroom remodel affordability using savings, financing pressure, debt load, resale value, and monthly cash flow stability.",
-  href: "/should-i-spend-25000-on-a-bathroom-remodel/",
-},
 
-{
-  id: "college-20000",
-  category: "College",
-  title: "Should I Spend $20,000 on College?",
-  description:
-    "Evaluate a moderate college expense using tuition, savings, student loan risk, expected payoff, emergency reserves, and monthly flexibility.",
-  href: "/should-i-spend-20000-on-college/",
-},
 
-{
-  id: "college-50000",
-  category: "College",
-  title: "Should I Spend $50,000 on College?",
-  description:
-    "Evaluate a larger college expense using debt exposure, savings depletion, expected salary gains, repayment pressure, and long-term flexibility.",
-  href: "/should-i-spend-50000-on-college/",
-},
 
-{
-  id: "college-100000",
-  category: "College",
-  title: "Should I Spend $100,000 on College?",
-  description:
-    "Evaluate a six-figure college cost using total debt risk, expected career payoff, savings depletion, repayment pressure, and income recovery power.",
-  href: "/should-i-spend-100000-on-college/",
-},
+
+
+
+
+
+
+
 
 {
   id: "student-loans",
@@ -1532,23 +1273,9 @@ export const calculators = [
   href: "/ideal-tuition-cost-calculator/",
 },
 
-{
-  id: "out-of-state-tuition-15000",
-  category: "College",
-  title: "Should I Spend $15,000 More on Out-of-State Tuition?",
-  description:
-    "Evaluate an out-of-state tuition premium using residency rules, aid gaps, program strength, career upside, savings, debt risk, and family help.",
-  href: "/should-i-spend-15000-on-out-of-state-tuition/",
-},
 
-{
-  id: "campus-housing-12000",
-  category: "College",
-  title: "Should I Spend $12,000 on Campus Housing?",
-  description:
-    "Evaluate campus housing using dorm cost, commute alternatives, safety, independence, aid coverage, meal plans, savings, income, and debt pressure.",
-  href: "/should-i-spend-12000-on-campus-housing/",
-},
+
+
 
 {
   id: "college-meal-plan-5000",
@@ -1559,23 +1286,9 @@ export const calculators = [
   href: "/should-i-spend-5000-on-college-meal-plan/",
 },
 
-{
-  id: "study-abroad-10000",
-  category: "College",
-  title: "Should I Spend $10,000 on Study Abroad?",
-  description:
-    "Evaluate study abroad using degree relevance, career value, scholarships, travel costs, safety, opportunity cost, savings, income, and debt risk.",
-  href: "/should-i-spend-10000-on-study-abroad/",
-},
 
-{
-  id: "college-laptop-supplies-3000",
-  category: "College",
-  title: "Should I Spend $3,000 on a College Laptop and Supplies?",
-  description:
-    "Evaluate laptop and supply costs using major requirements, specs, used options, financial aid refunds, savings, income, debt, and necessity.",
-  href: "/should-i-spend-3000-on-college-laptop-and-supplies/",
-},
+
+
 
 {
   id: "degree-roi",
@@ -1685,14 +1398,7 @@ export const calculators = [
   href: "/can-we-afford-to-have-a-baby/",
 },
 
-{
-  id: "baby-first-year-20000",
-  category: "Baby & Parenting",
-  title: "Should I Spend $20,000 on a Baby's First Year?",
-  description:
-    "Pressure-test first-year baby costs using childcare, diapers, formula, medical bills, gear, savings, debt, and monthly cash flow.",
-  href: "/should-i-spend-20000-on-a-babys-first-year/",
-},
+
 
 {
   id: "childcare-cost",
@@ -1712,14 +1418,7 @@ export const calculators = [
   href: "/should-i-use-savings-for-maternity-leave/",
 },
 
-{
-  id: "baby-gear-5000",
-  category: "Baby & Parenting",
-  title: "Should I Spend $5,000 on Baby Gear?",
-  description:
-    "Evaluate baby gear spending using stroller, crib, car seat, nursery, registry help, savings, debt, and first-year budget pressure.",
-  href: "/should-i-spend-5000-on-baby-gear/",
-},
+
 
 {
   id: "one-parent-stay-home",
