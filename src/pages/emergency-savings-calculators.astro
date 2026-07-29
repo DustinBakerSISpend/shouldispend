@@ -54,11 +54,150 @@ const emergencyCalculators = [
     text: "See how much cushion remains after travel, repairs, a wedding, a home project, a car cost, or another big expense.",
   },
 ];
+
+const emergencySavingsPressureFactors = [
+  {
+    title: "Essential monthly expenses",
+    text:
+      "A useful emergency fund starts with rent or mortgage, utilities, groceries, insurance, transportation, minimum debt payments, childcare, medicine, and other bills that cannot stop during a crisis.",
+  },
+  {
+    title: "Income stability",
+    text:
+      "A two-income salaried household, a commission worker, a contractor, and a one-income family do not need the same cushion. Less predictable income usually needs more months of protection.",
+  },
+  {
+    title: "Dependents and obligations",
+    text:
+      "Children, caregiving, pets, medical needs, shared housing, and family support obligations can raise the cost of being wrong about the cushion.",
+  },
+  {
+    title: "Debt pressure",
+    text:
+      "Emergency savings and debt payoff compete for the same dollars. High-interest debt matters, but having no cash cushion can send the next surprise right back onto a card.",
+  },
+  {
+    title: "Housing and transportation risk",
+    text:
+      "Homeowners, renters with moving risk, older vehicles, long commutes, and limited public transit all change how much cash should stay liquid.",
+  },
+  {
+    title: "Upcoming planned spending",
+    text:
+      "A vacation, repair, move, wedding, medical bill, or car purchase may be affordable only if the emergency fund still survives after the payment.",
+  },
+];
+
+const emergencySavingsTargets = [
+  {
+    title: "Starter fund",
+    text:
+      "A starter emergency fund is the first cash floor. It is useful when savings are near zero and the immediate goal is to stop small surprises from becoming new debt.",
+  },
+  {
+    title: "Three-month fund",
+    text:
+      "A three-month target can fit households with stable income, lower fixed bills, good benefits, and backup options, especially after high-interest debt is under control.",
+  },
+  {
+    title: "Six-month fund",
+    text:
+      "A six-month target is safer for one-income households, contractors, homeowners, parents, people with medical risk, or anyone whose job loss would be hard to replace quickly.",
+  },
+  {
+    title: "After-purchase cushion",
+    text:
+      "The right emergency fund before a big purchase depends on what remains afterward. A purchase can be paid in cash and still be risky if it leaves no recovery room.",
+  },
+];
+
+const emergencySavingsRedFlags = [
+  "The savings target is based on gross income instead of essential expenses.",
+  "A planned purchase would leave less than one month of essential bills in cash.",
+  "Credit cards are the backup plan for rent, groceries, childcare, or medical bills.",
+  "Income is unstable, but the household is using a short emergency-fund target.",
+  "Debt payoff is so aggressive that one surprise would create new high-interest debt.",
+  "The budget ignores insurance deductibles, car repairs, home repairs, or job-search time.",
+  "The emergency fund is invested, locked up, or hard to access quickly.",
+];
+
+const emergencySavingsSaferSteps = [
+  {
+    title: "Define essentials first",
+    text:
+      "Use essential monthly bills as the base. Lifestyle spending can be cut in a crisis, but housing, food, utilities, transportation, insurance, medicine, childcare, and minimum debt payments usually cannot disappear.",
+  },
+  {
+    title: "Separate emergency cash from spending cash",
+    text:
+      "Keep the emergency fund visible but not mixed with regular checking. The goal is to avoid accidentally treating the cushion as everyday money.",
+  },
+  {
+    title: "Build the first floor before optimizing",
+    text:
+      "A small starter fund can matter more than chasing the perfect target. The first cushion gives the household time to make better decisions when something breaks.",
+  },
+  {
+    title: "Match the target to risk",
+    text:
+      "Stable income, strong benefits, low fixed bills, and family support can lower the needed cushion. One income, dependents, health risk, or variable pay usually raises it.",
+  },
+  {
+    title: "Check the after-purchase balance",
+    text:
+      "Before a large planned expense, compare the cost with the emergency fund left afterward. The leftover cushion is often more important than the purchase price alone.",
+  },
+  {
+    title: "Avoid all-or-nothing debt payoff",
+    text:
+      "Paying down high-interest debt is important, but draining cash to zero can make the next emergency more expensive. A split plan is often safer.",
+  },
+];
+
+const relatedEmergencyPlanningLinks = [
+  {
+    href: "/budget-rule-calculators/",
+    title: "Budget Rule Calculators",
+    text:
+      "Compare emergency savings with rent ratios, debt pressure, and broader affordability rules.",
+  },
+  {
+    href: "/how-much-debt-is-too-much/",
+    title: "How Much Debt Is Too Much?",
+    text:
+      "Check whether debt payments leave enough room to build and protect an emergency fund.",
+  },
+  {
+    href: "/what-counts-as-debt/",
+    title: "What Counts as Debt?",
+    text:
+      "Clarify which obligations should be included when judging monthly debt pressure.",
+  },
+  {
+    href: "/rent-calculators/",
+    title: "Rent Calculators",
+    text:
+      "Compare emergency savings with housing costs, deposits, utilities, and monthly rent pressure.",
+  },
+  {
+    href: "/medical-calculators/",
+    title: "Medical Cost Calculators",
+    text:
+      "Plan around deductibles, payment plans, medical bills, and healthcare-related cash risk.",
+  },
+  {
+    href: "/calculators/",
+    title: "All ShouldISpend Calculators",
+    text:
+      "Browse the full calculator library by spending category and financial pressure point.",
+  },
+];
+
 ---
 
 <Layout
-  title="Emergency Savings Calculators | ShouldISpend"
-  description="Use emergency savings calculators for starter funds, 3-month and 6-month targets, debt payoff decisions, emergency fund use, and post-purchase cushion."
+  title="Emergency Savings Calculators | Cash Cushion and Debt Pressure"
+  description="Use emergency savings calculators to compare starter funds, 3-month and 6-month targets, debt payoff tradeoffs, emergency fund use, and post-purchase cushion."
 >
   <style>
     .container {
@@ -174,6 +313,94 @@ const emergencyCalculators = [
       max-width: 880px;
     }
 
+    .wide-section {
+      margin-top: 76px;
+    }
+
+    .info-grid,
+    .link-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 22px;
+      margin-top: 28px;
+    }
+
+    .info-card,
+    .link-card,
+    .callout {
+      border: 1px solid var(--border);
+      background: var(--card);
+      border-radius: 22px;
+      padding: 26px;
+      box-shadow: var(--shadow-soft);
+    }
+
+    .info-card h3,
+    .link-card strong {
+      display: block;
+      color: var(--text);
+      font-size: 1.08rem;
+      line-height: 1.3;
+      margin: 0 0 10px;
+    }
+
+    .info-card p,
+    .link-card span,
+    .callout p,
+    .wide-section p {
+      color: var(--muted);
+      line-height: 1.75;
+      margin: 0;
+    }
+
+    .link-card {
+      display: block;
+      text-decoration: none;
+      color: inherit;
+      transition:
+        transform 0.15s ease,
+        border-color 0.15s ease,
+        box-shadow 0.15s ease;
+    }
+
+    .link-card:hover {
+      transform: translateY(-2px);
+      border-color: var(--primary);
+    }
+
+    .check-list,
+    .red-flag-list {
+      color: var(--muted);
+      line-height: 1.8;
+      margin: 22px 0 0;
+      padding-left: 22px;
+    }
+
+    .check-list li,
+    .red-flag-list li {
+      margin-bottom: 12px;
+    }
+
+    .red-flag-list li::marker {
+      color: #b91c1c;
+    }
+
+    .dark-callout {
+      background: var(--primary-dark);
+      border-color: var(--primary-dark);
+      color: #ffffff;
+    }
+
+    .dark-callout h2,
+    .dark-callout .eyebrow {
+      color: #ffffff;
+    }
+
+    .dark-callout p {
+      color: #e7eadf;
+    }
+
+
     .section h2 {
       font-size: 2rem;
       line-height: 1.2;
@@ -207,12 +434,18 @@ const emergencyCalculators = [
   <main class="container">
     <div class="eyebrow">Emergency Savings Calculators</div>
 
-    <h1>Emergency Savings Calculators</h1>
+    <h1>Emergency savings is not one number for every household.</h1>
 
     <p class="intro">
       Build the right cash cushion for the decision in front of you. These tools
       cover starter emergency funds, 3-month and 6-month targets, debt payoff
       tradeoffs, emergency fund use, and the cash left after a major purchase.
+    </p>
+
+    <p class="intro">
+      The right target depends on essential bills, income stability, dependents,
+      debt pressure, insurance exposure, housing risk, and whether a planned
+      purchase would leave enough cash to recover from the next surprise.
     </p>
 
     <div class="quick-guide">
@@ -347,6 +580,102 @@ const emergencyCalculators = [
         obligations, taxes, medical treatment, insurance disputes, unstable income,
         major debt, family obligations, or a situation where the lowest-cost option
         could create larger harm later.
+      </p>
+    </section>
+
+    <section class="wide-section">
+      <div class="eyebrow">Pressure factors</div>
+      <h2>What changes the right emergency savings target?</h2>
+
+      <p>
+        Emergency savings is not one universal number. The safer target depends on
+        what the household must keep paying, how reliable income is, who depends on
+        the cash, and what would happen if the next surprise arrived after a planned
+        purchase.
+      </p>
+
+      <div class="info-grid">
+        {emergencySavingsPressureFactors.map((factor) => (
+          <div class="info-card">
+            <h3>{factor.title}</h3>
+            <p>{factor.text}</p>
+          </div>
+        ))}
+      </div>
+    </section>
+
+    <section class="wide-section">
+      <div class="eyebrow">Savings targets</div>
+      <h2>Starter, three-month, six-month, and after-purchase targets answer different questions.</h2>
+
+      <p>
+        A starter fund helps stop small emergencies from becoming debt. A three-month
+        or six-month fund protects against larger income shocks. An after-purchase
+        check asks whether a planned expense leaves enough cash to recover.
+      </p>
+
+      <div class="info-grid">
+        {emergencySavingsTargets.map((target) => (
+          <div class="info-card">
+            <h3>{target.title}</h3>
+            <p>{target.text}</p>
+          </div>
+        ))}
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="eyebrow">Warning signs</div>
+      <h2>Emergency savings red flags</h2>
+
+      <p>
+        These warning signs do not mean the household has failed. They mean the
+        savings target, purchase timing, or debt payoff plan needs more protection
+        before the cushion is treated as safe.
+      </p>
+
+      <ul class="red-flag-list">
+        {emergencySavingsRedFlags.map((flag) => <li>{flag}</li>)}
+      </ul>
+    </section>
+
+    <section class="wide-section">
+      <div class="eyebrow">Lower the risk</div>
+      <h2>Ways to make an emergency fund plan safer</h2>
+
+      <div class="info-grid">
+        {emergencySavingsSaferSteps.map((step) => (
+          <div class="info-card">
+            <h3>{step.title}</h3>
+            <p>{step.text}</p>
+          </div>
+        ))}
+      </div>
+    </section>
+
+    <section class="wide-section">
+      <div class="eyebrow">Related tools</div>
+      <h2>Other calculators that connect to emergency savings</h2>
+
+      <div class="link-grid">
+        {relatedEmergencyPlanningLinks.map((link) => (
+          <a class="link-card" href={link.href}>
+            <strong>{link.title}</strong>
+            <span>{link.text}</span>
+          </a>
+        ))}
+      </div>
+    </section>
+
+    <section class="callout dark-callout">
+      <div class="eyebrow">Use these as pressure tests</div>
+      <h2>An emergency fund should protect the next decision, not just satisfy a rule.</h2>
+
+      <p>
+        ShouldISpend emergency savings calculators are educational tools. They are
+        designed to help readers compare cash cushion, debt payoff, essential bills,
+        income risk, and the savings left after major purchases. They are not
+        personalized financial, legal, tax, insurance, investment, or crisis advice.
       </p>
     </section>
 
