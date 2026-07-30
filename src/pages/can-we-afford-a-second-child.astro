@@ -16,7 +16,7 @@ import WhenSpendingMakesSense from "../components/WhenSpendingMakesSense.astro";
 
 <Layout
   title="Can We Afford a Second Child?"
-  description="Estimate whether a second child fits your income, childcare, medical costs, savings, debt, housing, and monthly flexibility."
+  description="Estimate whether your household can afford a second child by testing childcare, housing, food, medical costs, income, savings, debt, sibling overlap, and monthly pressure."
 >
 
 
@@ -40,12 +40,74 @@ import WhenSpendingMakesSense from "../components/WhenSpendingMakesSense.astro";
     .helper-link { margin-top: 10px; font-size: 0.9rem; }
     .helper-link a { color: var(--primary); font-weight: 600; }
     .content-section p, .content-section li { line-height: 1.8; }
+
+    .second-child-grid,
+    .second-child-link-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 22px;
+      margin-top: 28px;
+    }
+
+    .second-child-card,
+    .second-child-link-card,
+    .second-child-callout {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 22px;
+      padding: 24px;
+    }
+
+    .second-child-link-card {
+      display: block;
+      color: inherit;
+      text-decoration: none;
+      transition:
+        transform 0.15s ease,
+        border-color 0.15s ease,
+        box-shadow 0.15s ease;
+    }
+
+    .second-child-link-card:hover {
+      transform: translateY(-2px);
+      border-color: var(--primary);
+      box-shadow: var(--shadow-soft);
+    }
+
+    .second-child-card h3,
+    .second-child-link-card strong {
+      display: block;
+      color: var(--text);
+      font-size: 1.08rem;
+      line-height: 1.3;
+      margin: 0 0 10px;
+    }
+
+    .second-child-card p,
+    .second-child-link-card span,
+    .second-child-callout p {
+      color: var(--muted);
+      line-height: 1.75;
+      margin: 0;
+    }
+
+    .second-child-check-list {
+      color: var(--muted);
+      line-height: 1.8;
+      margin: 22px 0 0;
+      padding-left: 22px;
+    }
+
+    .second-child-check-list li {
+      margin-bottom: 12px;
+    }
+
   </style>
 
   <div class="container">
     <CalculatorPageShell
       eyebrow="Baby & Parenting Calculator"
-      title="Can We Afford a Second Child?"
+      title="Can We Afford a Second Child Without Overstretching the Budget?"
       description="Estimate the financial pressure of having another baby by adding childcare, medical bills, supplies, housing changes, leave gaps, savings impact, and monthly cash flow."
     >
       <div class="card">
@@ -169,7 +231,7 @@ import WhenSpendingMakesSense from "../components/WhenSpendingMakesSense.astro";
         </p>
       </div>
 
-      
+
 
 <OmniStyleReviewBlock
       pageName="the second child affordability calculator"
@@ -308,6 +370,205 @@ import WhenSpendingMakesSense from "../components/WhenSpendingMakesSense.astro";
           "Very high income or very large savings can produce a true 0/100 pressure score when second-child costs are tiny relative to household resources.",
         ]}
       />
+
+
+      <div id="SecondChildAffordabilityDifference" class="content-section">
+        <h2>A second child changes the budget differently than a first child.</h2>
+
+        <p>
+          A second child is not just a repeat of the first baby budget. Some costs can
+          be reused, such as clothes, gear, furniture, toys, and household routines.
+          Other costs can stack quickly, especially childcare, health insurance, food,
+          transportation, housing, and lost flexibility when two children need care at
+          the same time.
+        </p>
+
+        <p>
+          This page treats the second-child decision as a pressure test. The key
+          question is whether the household can absorb the overlapping costs without
+          draining emergency savings, relying on credit cards, or making the first
+          child's existing needs harder to support.
+        </p>
+      </div>
+
+      <div id="SecondChildPressureDrivers" class="content-section">
+        <h2>The biggest second-child pressure usually comes from overlap.</h2>
+
+        <div class="second-child-grid">
+          <div class="second-child-card">
+            <h3>Two childcare bills</h3>
+            <p>
+              The most important number is often the period when daycare, preschool,
+              after-school care, summer care, or backup care overlaps for both children.
+              A sibling discount helps, but it rarely makes the second slot free.
+            </p>
+          </div>
+
+          <div class="second-child-card">
+            <h3>Housing and bedroom pressure</h3>
+            <p>
+              A second child can trigger a move, higher rent, a larger mortgage, more
+              utilities, storage needs, or a vehicle change. Those costs matter more
+              when they become permanent monthly commitments.
+            </p>
+          </div>
+
+          <div class="second-child-card">
+            <h3>Medical and leave timing</h3>
+            <p>
+              Delivery costs, deductibles, insurance tiers, unpaid leave, reduced
+              hours, and postpartum care can hit while the first child's expenses are
+              still active.
+            </p>
+          </div>
+
+          <div class="second-child-card">
+            <h3>Less margin for surprises</h3>
+            <p>
+              With two children, sick days, car repairs, medical bills, school fees,
+              and schedule disruptions can create more pressure because there is less
+              spare time and cash to absorb them.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <div id="SecondChildSavingsCushion" class="content-section">
+        <h2>The post-birth cushion matters more than the pre-birth estimate.</h2>
+
+        <p>
+          It is easy to focus on whether the household can pay the first wave of costs.
+          The safer question is what remains after those costs are paid. A second-child
+          budget is stronger when emergency savings still cover the household after
+          leave gaps, medical bills, childcare deposits, and setup costs.
+        </p>
+
+        <ul class="second-child-check-list">
+          <li>Estimate the first-year cost, then subtract any gear you can safely reuse.</li>
+          <li>Add the highest expected childcare-overlap months instead of using only the long-term average.</li>
+          <li>Include health insurance changes, deductible exposure, prescriptions, and pediatric visits.</li>
+          <li>Check whether rent, transportation, groceries, and household costs rise permanently.</li>
+          <li>Keep enough savings for the first child's needs after the second child arrives.</li>
+        </ul>
+      </div>
+
+      <div id="SecondChildScenarioPlanning" class="content-section">
+        <h2>Run the decision through three second-child scenarios.</h2>
+
+        <p>
+          A single estimate can hide the timing risk. A stronger plan compares a
+          manageable version, a realistic version, and a stressful version before
+          committing to major housing, childcare, or vehicle changes.
+        </p>
+
+        <div class="second-child-grid">
+          <div class="second-child-card">
+            <h3>Manageable scenario</h3>
+            <p>
+              Paid leave covers most income gaps, childcare overlap is short, medical
+              bills stay near the expected amount, and reusable gear keeps setup costs
+              low.
+            </p>
+          </div>
+
+          <div class="second-child-card">
+            <h3>Realistic scenario</h3>
+            <p>
+              Some unpaid leave, normal delivery bills, higher groceries, two care
+              payments for a while, and a smaller but still usable emergency fund.
+            </p>
+          </div>
+
+          <div class="second-child-card">
+            <h3>Stress scenario</h3>
+            <p>
+              Higher medical costs, delayed childcare availability, reduced income,
+              a car or housing change, and less monthly room than expected.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <div id="SecondChildRedFlags" class="content-section">
+        <h2>Second-child affordability red flags</h2>
+
+        <p>
+          A second child may still be the right family decision even when the money is
+          tight. These red flags do not make the answer automatic, but they do mean the
+          plan needs more protection before expensive commitments are made.
+        </p>
+
+        <ul class="second-child-check-list">
+          <li>The second childcare payment would require credit cards or missed savings every month.</li>
+          <li>The plan only works if medical bills, leave timing, and childcare availability are all best-case.</li>
+          <li>Emergency savings would be mostly gone before the baby is home.</li>
+          <li>A move or vehicle change would create a larger permanent payment with no fallback plan.</li>
+          <li>Existing debt payments already make the current monthly budget feel tight.</li>
+          <li>The first child's care, school, medical, or activity costs are being understated.</li>
+        </ul>
+      </div>
+
+      <div id="SecondChildTradeoffs" class="content-section">
+        <h2>Separate reusable items from recurring pressure.</h2>
+
+        <p>
+          Hand-me-down clothes, reused furniture, shared toys, and existing routines
+          can lower the second-child setup cost. That does not eliminate the recurring
+          cost. Childcare, food, health insurance, transportation, utilities, diapers,
+          formula, and lost income can still create a new monthly load.
+        </p>
+
+        <div class="second-child-callout">
+          <p>
+            The safest second-child plan does not need every detail solved. It needs a
+            realistic childcare-overlap estimate, enough cash after birth, honest debt
+            and housing numbers, and a stress scenario that does not depend on credit
+            cards to survive.
+          </p>
+        </div>
+      </div>
+
+      <div id="SecondChildRelatedTools" class="content-section">
+        <h2>Related tools for second-child planning</h2>
+
+        <p>
+          The second-child decision connects to childcare, emergency savings, debt,
+          groceries, housing, medical bills, and the broader family budget. These
+          stable tools help test the surrounding pressure.
+        </p>
+
+        <div class="second-child-link-grid">
+          <a class="second-child-link-card" href="/baby-parenting-calculators/">
+            <strong>Baby & Parenting Calculators</strong>
+            <span>Browse the full family planning cluster for baby costs, childcare, leave, and parent budget pressure.</span>
+          </a>
+
+          <a class="second-child-link-card" href="/can-we-afford-to-have-a-baby/">
+            <strong>Can We Afford to Have a Baby?</strong>
+            <span>Compare the broader first-baby affordability framework with the second-child pressure test.</span>
+          </a>
+
+          <a class="second-child-link-card" href="/baby-cost-calculator/">
+            <strong>Baby Cost Calculator</strong>
+            <span>Estimate first-year baby costs, setup costs, recurring needs, and savings impact.</span>
+          </a>
+
+          <a class="second-child-link-card" href="/emergency-savings-calculators/">
+            <strong>Emergency Savings Calculators</strong>
+            <span>Check whether cash reserves survive the second-child timeline and overlapping costs.</span>
+          </a>
+
+          <a class="second-child-link-card" href="/what-counts-as-debt/">
+            <strong>What Counts as Debt?</strong>
+            <span>Decide which payments belong in the debt field before judging family affordability.</span>
+          </a>
+
+          <a class="second-child-link-card" href="/grocery-calculators/">
+            <strong>Grocery Budget Calculators</strong>
+            <span>Pressure-test food and household spending as the family grows.</span>
+          </a>
+        </div>
+      </div>
 
       <FAQSection
         title="Second Child Affordability FAQ"
