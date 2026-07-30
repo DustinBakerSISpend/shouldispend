@@ -16,7 +16,7 @@ import WhenSpendingMakesSense from "../components/WhenSpendingMakesSense.astro";
 
 <Layout
   title="Can We Afford to Have a Baby?"
-  description="Evaluate whether income, savings, childcare, medical bills, parental leave, debt, and monthly cash flow can support a baby."
+  description="Estimate whether your household can afford a baby by testing income, savings, childcare, medical bills, parental leave, debt, cash flow, and first-year pressure."
 >
 
 
@@ -40,12 +40,74 @@ import WhenSpendingMakesSense from "../components/WhenSpendingMakesSense.astro";
     .helper-link { margin-top: 10px; font-size: 0.9rem; }
     .helper-link a { color: var(--primary); font-weight: 600; }
     .content-section p, .content-section li { line-height: 1.8; }
+
+    .baby-decision-grid,
+    .baby-link-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 22px;
+      margin-top: 28px;
+    }
+
+    .baby-card,
+    .baby-link-card,
+    .baby-callout {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 22px;
+      padding: 24px;
+    }
+
+    .baby-link-card {
+      display: block;
+      color: inherit;
+      text-decoration: none;
+      transition:
+        transform 0.15s ease,
+        border-color 0.15s ease,
+        box-shadow 0.15s ease;
+    }
+
+    .baby-link-card:hover {
+      transform: translateY(-2px);
+      border-color: var(--primary);
+      box-shadow: var(--shadow-soft);
+    }
+
+    .baby-card h3,
+    .baby-link-card strong {
+      display: block;
+      color: var(--text);
+      font-size: 1.08rem;
+      line-height: 1.3;
+      margin: 0 0 10px;
+    }
+
+    .baby-card p,
+    .baby-link-card span,
+    .baby-callout p {
+      color: var(--muted);
+      line-height: 1.75;
+      margin: 0;
+    }
+
+    .baby-check-list {
+      color: var(--muted);
+      line-height: 1.8;
+      margin: 22px 0 0;
+      padding-left: 22px;
+    }
+
+    .baby-check-list li {
+      margin-bottom: 12px;
+    }
+
   </style>
 
   <div class="container">
     <CalculatorPageShell
       eyebrow="Baby & Parenting Calculator"
-      title="Can We Afford to Have a Baby?"
+      title="Can We Afford to Have a Baby Without Breaking the Budget?"
       description="Estimate whether your household can financially handle a baby by weighing income, savings, medical bills, childcare, parental leave, baby gear, debt, and monthly cash flow."
     >
       <div class="card">
@@ -281,6 +343,198 @@ import WhenSpendingMakesSense from "../components/WhenSpendingMakesSense.astro";
           "Very high income or very large savings can produce a true 0/100 pressure score when baby-related costs are tiny relative to available resources.",
         ]}
       />
+
+
+      <div id="BabyAffordabilityTiming" class="content-section">
+        <h2>Baby affordability is mostly a timing question.</h2>
+
+        <p>
+          The same baby budget can be manageable in one season and stressful in
+          another. A household with paid leave, a confirmed daycare spot, protected
+          emergency savings, and stable income may be ready sooner than a household
+          facing the same baby costs during a job change, medical deductible year,
+          rent increase, or debt payoff crunch.
+        </p>
+
+        <p>
+          That is why this calculator focuses on pressure instead of a single income
+          rule. The question is not whether a baby is "worth it." The question is
+          whether the household can absorb the costs without turning normal family
+          expenses into high-interest debt or draining the cushion needed after the
+          baby arrives.
+        </p>
+      </div>
+
+      <div id="BabyCostPressureDrivers" class="content-section">
+        <h2>Four costs usually decide whether the baby budget is safe.</h2>
+
+        <div class="baby-decision-grid">
+          <div class="baby-card">
+            <h3>Childcare after leave</h3>
+            <p>
+              Daycare, nanny care, backup care, deposits, waitlists, and schedule
+              gaps often create the largest recurring pressure. A baby plan is weaker
+              when childcare is guessed instead of quoted.
+            </p>
+          </div>
+
+          <div class="baby-card">
+            <h3>Medical and insurance exposure</h3>
+            <p>
+              Deductibles, coinsurance, delivery bills, prescriptions, postpartum
+              care, pediatric visits, and insurance changes can make the first year
+              harder than the nursery budget suggests.
+            </p>
+          </div>
+
+          <div class="baby-card">
+            <h3>Parental leave income gap</h3>
+            <p>
+              Unpaid leave, partial pay, reduced hours, job protection rules, and
+              return-to-work timing can matter as much as diapers or baby gear.
+            </p>
+          </div>
+
+          <div class="baby-card">
+            <h3>Emergency savings after setup</h3>
+            <p>
+              A baby budget is safer when savings still cover surprises after medical
+              bills, gear, deposits, and leave gaps are paid. The leftover cushion is
+              part of the affordability answer.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <div id="BabyBudgetScenarios" class="content-section">
+        <h2>Use scenarios instead of one perfect estimate.</h2>
+
+        <p>
+          Baby planning has too many unknowns for one exact number. A stronger plan
+          compares a lower-pressure scenario, a realistic middle scenario, and a
+          stressful scenario before committing to expensive gear, housing changes, or
+          childcare contracts.
+        </p>
+
+        <ul class="baby-check-list">
+          <li>Low-pressure scenario: paid leave, manageable delivery bill, confirmed childcare, and enough savings left afterward.</li>
+          <li>Middle scenario: some unpaid leave, normal medical bills, recurring childcare, and a smaller but still usable emergency fund.</li>
+          <li>Stress scenario: high deductible, delayed childcare opening, unpaid leave, extra formula or medical costs, and less monthly room than expected.</li>
+          <li>Decision test: the plan is stronger if the household can survive the middle scenario without credit cards and has a plan for the stress scenario.</li>
+        </ul>
+      </div>
+
+      <div id="BabyBudgetBeforeTrying" class="content-section">
+        <h2>What to check before relying on the result</h2>
+
+        <p>
+          A calculator can organize the money side, but baby planning also depends on
+          benefits, insurance, health, employment, childcare availability, family help,
+          and personal timing. Before treating any result as safe, confirm the real
+          numbers behind the largest assumptions.
+        </p>
+
+        <div class="baby-decision-grid">
+          <div class="baby-card">
+            <h3>Confirm leave benefits</h3>
+            <p>
+              Check how many weeks are paid, how many are unpaid, when benefits start,
+              and whether health insurance premiums change while someone is away from work.
+            </p>
+          </div>
+
+          <div class="baby-card">
+            <h3>Price childcare early</h3>
+            <p>
+              Ask about tuition, deposits, registration fees, sibling policies, part-time
+              options, backup care, and when a slot would actually be available.
+            </p>
+          </div>
+
+          <div class="baby-card">
+            <h3>Estimate medical exposure</h3>
+            <p>
+              Review deductible, out-of-pocket maximum, likely delivery costs, specialist
+              coverage, prescriptions, pediatric visits, and whether the baby changes the plan tier.
+            </p>
+          </div>
+
+          <div class="baby-card">
+            <h3>Protect the post-birth cushion</h3>
+            <p>
+              Keep cash available for job changes, car repairs, medical surprises,
+              childcare gaps, and household needs after the baby is home.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <div id="BabyBudgetTradeoffs" class="content-section">
+        <h2>Baby spending should separate needs, timing, and preferences.</h2>
+
+        <p>
+          Some baby costs are hard to delay: safe sleep, medical care, feeding needs,
+          childcare, transportation safety, and basic supplies. Other costs are more
+          flexible: premium strollers, matching furniture, decor, extra gadgets, and a
+          full nursery before every real need is known.
+        </p>
+
+        <p>
+          The safest budget pays for the non-negotiables first, keeps recurring costs
+          visible, and waits on preferences until emergency savings and cash flow still
+          look stable.
+        </p>
+
+        <div class="baby-callout">
+          <p>
+            A baby plan does not need to be perfect to be responsible. It needs enough
+            monthly room, a realistic childcare plan, a medical-cost estimate, and a
+            cushion that survives the first round of bills.
+          </p>
+        </div>
+      </div>
+
+      <div id="BabyAffordabilityRelatedTools" class="content-section">
+        <h2>Related tools for baby planning</h2>
+
+        <p>
+          Baby affordability connects to emergency savings, debt, childcare, groceries,
+          medical bills, and the broader family budget. These stable tools help test
+          the surrounding pressure.
+        </p>
+
+        <div class="baby-link-grid">
+          <a class="baby-link-card" href="/baby-parenting-calculators/">
+            <strong>Baby & Parenting Calculators</strong>
+            <span>Browse the full baby planning cluster for childcare, first-year costs, leave, and family budget pressure.</span>
+          </a>
+
+          <a class="baby-link-card" href="/baby-cost-calculator/">
+            <strong>Baby Cost Calculator</strong>
+            <span>Estimate first-year baby expenses, recurring costs, setup costs, medical bills, and savings impact.</span>
+          </a>
+
+          <a class="baby-link-card" href="/emergency-savings-calculators/">
+            <strong>Emergency Savings Calculators</strong>
+            <span>Check how much cash cushion remains before and after major baby-related expenses.</span>
+          </a>
+
+          <a class="baby-link-card" href="/what-counts-as-debt/">
+            <strong>What Counts as Debt?</strong>
+            <span>Decide which payments belong in the debt field before judging baby affordability.</span>
+          </a>
+
+          <a class="baby-link-card" href="/grocery-calculators/">
+            <strong>Grocery Budget Calculators</strong>
+            <span>Pressure-test food and household spending as family size and recurring needs change.</span>
+          </a>
+
+          <a class="baby-link-card" href="/medical-calculators/">
+            <strong>Medical Cost Calculators</strong>
+            <span>Compare bills, deductibles, payment plans, and healthcare cash pressure with the baby budget.</span>
+          </a>
+        </div>
+      </div>
 
       <FAQSection
         title="Can We Afford to Have a Baby FAQ"
