@@ -68,7 +68,7 @@ const related = [
 
 <Layout
   title="Can I Afford to Move Out? | Moving Out Calculator"
-  description="Estimate whether rent, deposits, utilities, furniture, moving costs, savings, debt, help, and bills make moving realistic."
+  description="Use this move-out calculator to compare rent, deposits, utilities, furniture, moving costs, debt, emergency savings, and first-month cash-flow pressure."
 >
   <style>
     .container { max-width: 1100px; margin: 0 auto; padding: 76px 24px 96px; }
@@ -102,12 +102,74 @@ const related = [
     li { margin-bottom: 10px; }
     .red-list li::marker { color: #b91c1c; }
     .note { background: #f8fafc; border: 1px solid var(--border); border-radius: 16px; padding: 18px; color: var(--muted); line-height: 1.7; margin-top: 20px; }
+
+    .move-out-grid,
+    .move-out-link-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 22px;
+      margin-top: 28px;
+    }
+
+    .move-out-card,
+    .move-out-link-card,
+    .move-out-callout {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 22px;
+      padding: 24px;
+    }
+
+    .move-out-link-card {
+      display: block;
+      color: inherit;
+      text-decoration: none;
+      transition:
+        transform 0.15s ease,
+        border-color 0.15s ease,
+        box-shadow 0.15s ease;
+    }
+
+    .move-out-link-card:hover {
+      transform: translateY(-2px);
+      border-color: var(--primary);
+      box-shadow: var(--shadow-soft);
+    }
+
+    .move-out-card h3,
+    .move-out-link-card strong {
+      display: block;
+      color: var(--text);
+      font-size: 1.08rem;
+      line-height: 1.3;
+      margin: 0 0 10px;
+    }
+
+    .move-out-card p,
+    .move-out-link-card span,
+    .move-out-callout p {
+      color: var(--muted);
+      line-height: 1.75;
+      margin: 0;
+    }
+
+    .move-out-check-list {
+      color: var(--muted);
+      line-height: 1.8;
+      margin: 22px 0 0;
+      padding-left: 22px;
+    }
+
+    .move-out-check-list li {
+      margin-bottom: 12px;
+    }
+
   </style>
 
   <main class="container">
     <div class="eyebrow">Moving Out Calculator</div>
 
-    <h1>Can I Afford to Move Out?</h1>
+    <h1>Can I Afford to Move Out? Rent, Deposits, and First-Month Costs</h1>
 
     <p class="intro">
       Moving out is not just a rent or mortgage decision. This calculator estimates whether
@@ -391,7 +453,408 @@ const related = [
       </div>
     </section>
 
-    <FAQSection id="FAQSection" faqs={faqs} />
+
+      <section id="MoveOutDecisionPath" class="content-section">
+        <h2>Start with the first three months, not only the first rent payment.</h2>
+
+        <p>
+          Moving out is not just a question of whether one rent payment fits. The safer
+          test is whether the first three months can work after deposits, application
+          fees, first month's rent, utilities, furniture, moving costs, groceries, debt
+          payments, transportation, and emergency savings are counted together.
+        </p>
+
+        <p>
+          This page is built for the moment when the move looks possible but the cash
+          picture is still unclear. A move can feel affordable on paper if the rent line
+          is isolated, then become risky once move-in cash drains savings or the first
+          normal month starts with no cushion.
+        </p>
+
+        <div class="move-out-grid">
+          <div class="move-out-card">
+            <h3>Monthly rent decision</h3>
+            <p>
+              Use this when the main question is whether rent, utilities, internet,
+              renter insurance, groceries, transportation, debt, and savings can fit
+              every month after moving out.
+            </p>
+          </div>
+
+          <div class="move-out-card">
+            <h3>Move-in cash decision</h3>
+            <p>
+              Use this when the hard part is the upfront pile: deposit, first month's
+              rent, application fees, utility setup, movers, truck rental, furniture,
+              supplies, and starter household items.
+            </p>
+          </div>
+
+          <div class="move-out-card">
+            <h3>Emergency-cushion decision</h3>
+            <p>
+              Use this when the move is technically possible but would leave little cash
+              for a repair, medical bill, income disruption, roommate problem, or sudden
+              need to move again.
+            </p>
+          </div>
+
+          <div class="move-out-card">
+            <h3>Debt and timing decision</h3>
+            <p>
+              Use this when debt payments, credit-card balances, car costs, student
+              loans, or irregular income could make a lease harder to carry after the
+              excitement of moving out fades.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <section id="MoveOutCostBuckets" class="content-section">
+        <h2>Separate move-in costs from ongoing monthly costs.</h2>
+
+        <p>
+          A clean move-out plan has two budgets, not one. The first is the cash needed
+          before and during move-in. The second is the recurring monthly budget after
+          the lease starts. Mixing those together can hide the real risk.
+        </p>
+
+        <ul class="move-out-check-list">
+          <li>Count deposit, first month's rent, application fees, utility setup, movers, truck rental, boxes, furniture, and starter supplies as move-in costs.</li>
+          <li>Count rent, utilities, internet, renter insurance, parking, laundry, groceries, transportation, debt, and savings as ongoing costs.</li>
+          <li>Do not use the entire emergency fund just to make the move possible.</li>
+          <li>Build in the first grocery trip, cleaning supplies, small repairs, replacement items, and meals during the move.</li>
+          <li>Include existing debt payments before deciding whether the lease is affordable.</li>
+          <li>Use a stricter target if income is variable, the lease is long, or help from family or roommates is uncertain.</li>
+        </ul>
+      </section>
+
+      <section id="MoveOutRiskDrivers" class="content-section">
+        <h2>The risky move-out plan is the one that needs everything to go right.</h2>
+
+        <p>
+          Moving out can be a good financial and personal decision, but it should not
+          depend on a perfect month. The risk rises when the move requires credit-card
+          debt, drains the emergency fund, assumes unusually low utilities, ignores
+          transportation changes, or depends on a roommate or income source that is not
+          stable.
+        </p>
+
+        <div class="move-out-grid">
+          <div class="move-out-card">
+            <h3>Deposit stacking risk</h3>
+            <p>
+              Security deposits, first month's rent, pet fees, parking, utility deposits,
+              and application fees can arrive before the renter has adjusted to the new
+              monthly budget.
+            </p>
+          </div>
+
+          <div class="move-out-card">
+            <h3>Furniture and setup risk</h3>
+            <p>
+              A first apartment often needs furniture, kitchen basics, cleaning supplies,
+              tools, curtains, bedding, and small replacements that are easy to forget
+              during the rent-only estimate.
+            </p>
+          </div>
+
+          <div class="move-out-card">
+            <h3>Utility and transportation risk</h3>
+            <p>
+              Heat, electricity, water, internet, parking, laundry, gas, insurance, and
+              commuting changes can turn a reasonable rent number into a tight monthly
+              budget.
+            </p>
+          </div>
+
+          <div class="move-out-card">
+            <h3>Roommate and fallback risk</h3>
+            <p>
+              If the plan depends on a roommate, shared bills, family help, or overtime
+              income, the backup plan matters as much as the normal-month estimate.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <section id="MoveOutScenarioPlanning" class="content-section">
+        <h2>Run the move-out plan through three scenarios.</h2>
+
+        <p>
+          A move-out plan is stronger when it survives more than one version of the
+          first few months. Compare a manageable scenario, a realistic scenario, and a
+          stress scenario before signing a lease or spending the move-in cash.
+        </p>
+
+        <div class="move-out-grid">
+          <div class="move-out-card">
+            <h3>Manageable scenario</h3>
+            <p>
+              Move-in costs are paid without draining the emergency fund, rent and
+              utilities fit the monthly budget, and debt repayment does not slide backward.
+            </p>
+          </div>
+
+          <div class="move-out-card">
+            <h3>Realistic scenario</h3>
+            <p>
+              One utility bill runs higher than expected, the first grocery trip costs
+              more, a setup item is missing, and the budget still avoids credit-card
+              carryover.
+            </p>
+          </div>
+
+          <div class="move-out-card">
+            <h3>Stress scenario</h3>
+            <p>
+              Income dips, a roommate is late, a car or medical bill hits, or the renter
+              needs extra cash after move-in while still keeping housing stable.
+            </p>
+          </div>
+        </div>
+      </section>
+
+
+      <section id="MoveOutMonthlyBudgetCheck" class="content-section">
+        <h2>Build the after-move monthly budget before trusting the move-in number.</h2>
+
+        <p>
+          The move-in number answers one question: can the renter get through the door?
+          The monthly budget answers the more important question: can the renter stay
+          stable after the lease begins? That monthly budget should include every
+          recurring cost that follows the move, not only the rent line.
+        </p>
+
+        <p>
+          Start with take-home income, then subtract rent, utilities, internet, renter
+          insurance, parking, laundry, groceries, transportation, phone, subscriptions,
+          required debt payments, medical costs, childcare if relevant, and a realistic
+          savings amount. The leftover cash is the flexibility number. If that number is
+          tiny before anything goes wrong, the move is probably too fragile.
+        </p>
+
+        <div class="move-out-grid">
+          <div class="move-out-card">
+            <h3>Fixed-cost pressure</h3>
+            <p>
+              Rent, insurance, loan payments, phone bills, subscriptions, minimum debt
+              payments, and required utilities are harder to cut once the lease is
+              signed. They should be counted before flexible spending.
+            </p>
+          </div>
+
+          <div class="move-out-card">
+            <h3>Variable-cost pressure</h3>
+            <p>
+              Groceries, gas, household supplies, eating out, laundry, and small
+              apartment purchases move around from month to month. A safe budget gives
+              these categories room instead of assuming every month will be perfect.
+            </p>
+          </div>
+
+          <div class="move-out-card">
+            <h3>Savings pressure</h3>
+            <p>
+              Moving out should not permanently stop emergency savings. Even a modest
+              monthly savings line helps rebuild the cushion that deposits, furniture,
+              and moving costs may have reduced.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <section id="MoveOutReadinessRules" class="content-section">
+        <h2>Use readiness rules before making the lease feel final.</h2>
+
+        <p>
+          A move-out calculator should not turn a complicated housing decision into a
+          single yes or no. It should show whether the plan is ready, close, or still
+          exposed. These readiness rules help separate a move that is merely possible
+          from one that is financially durable.
+        </p>
+
+        <ul class="move-out-check-list">
+          <li>The renter can pay move-in costs without relying on a credit card balance that will carry interest.</li>
+          <li>The emergency fund is not emptied by deposits, first month's rent, furniture, or moving costs.</li>
+          <li>The first normal month works after utilities, groceries, transportation, debt payments, and savings are included.</li>
+          <li>The lease still works if one category runs high during the first month.</li>
+          <li>The renter has a fallback plan if a roommate, overtime shift, side income, or family contribution changes.</li>
+          <li>The monthly budget leaves enough flexibility to replace small items, handle repairs, and absorb normal surprises.</li>
+        </ul>
+      </section>
+
+      <section id="MoveOutTimingTradeoffs" class="content-section">
+        <h2>Sometimes the best move-out decision is a timing decision.</h2>
+
+        <p>
+          A renter may be ready for the responsibility of moving out but not ready for
+          the cash timing. Waiting one, two, or three months can change the decision if
+          it allows the renter to save another deposit amount, pay down a credit card,
+          buy basic furniture in advance, line up a roommate, or choose a lease with
+          lower upfront costs.
+        </p>
+
+        <p>
+          Delaying the move is not automatically failure. It can be the difference
+          between starting independent housing with control and starting it already
+          behind. The strongest move-out date is usually the one that leaves the renter
+          with a paid move-in plan, a working monthly budget, and enough cash left to
+          handle the first real problem.
+        </p>
+
+        <div class="move-out-grid">
+          <div class="move-out-card">
+            <h3>Move now</h3>
+            <p>
+              Moving now is stronger when cash is available, the monthly budget works,
+              the lease terms are clear, and the emergency fund survives the upfront
+              costs.
+            </p>
+          </div>
+
+          <div class="move-out-card">
+            <h3>Wait briefly</h3>
+            <p>
+              Waiting briefly may be better when one or two paychecks would cover the
+              deposit gap, reduce credit-card use, or make the first month less fragile.
+            </p>
+          </div>
+
+          <div class="move-out-card">
+            <h3>Change the plan</h3>
+            <p>
+              Changing the plan may be safer when the rent target is too high, the
+              roommate plan is uncertain, the commute adds cost, or the move would drain
+              every available dollar.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <section id="MoveOutRedFlags" class="content-section">
+        <h2>Red flags that the move-out plan needs another pass</h2>
+
+        <p>
+          The clearest warning signs are not always dramatic. A move-out plan may need
+          another pass if the renter is counting on a future raise, ignoring utility
+          setup, assuming furniture will be free, skipping renter insurance, or treating
+          credit-card space as emergency savings. The same is true when the budget only
+          works by cutting groceries, transportation, or debt payments unrealistically.
+        </p>
+
+        <p>
+          Before signing, look for the weak link. It might be the deposit, the first
+          normal month, the roommate assumption, the commute, the debt load, or the lack
+          of fallback cash. Fixing that weak link before moving is usually cheaper than
+          trying to recover after the lease has already started.
+        </p>
+      </section>
+
+
+      <section id="MoveOutFinalCashCheck" class="content-section">
+        <h2>Do one final cash check before saying yes.</h2>
+
+        <p>
+          Before treating the move as affordable, compare the cash required before
+          move-in with the cash that will remain afterward. A renter who can pay the
+          deposit but has almost nothing left may technically qualify for the apartment
+          while still being one surprise away from financial stress.
+        </p>
+
+        <p>
+          A practical final check is to write down the exact cash needed for the deposit,
+          first month's rent, application fees, utility setup, moving day, furniture,
+          groceries, and starter household supplies. Then write down the cash remaining
+          after those payments clear. If the remaining amount cannot cover at least a
+          small emergency, the move-out plan may need a cheaper unit, a later date, a
+          roommate, or another savings period.
+        </p>
+
+        <p>
+          This is also the moment to check whether the plan depends on optimistic
+          assumptions. If the budget needs unusually low utilities, no furniture costs,
+          perfect roommate payments, no car problems, no medical bills, and no missed
+          hours at work, the lease is probably too tight. A safer move-out plan has
+          enough margin to survive an ordinary imperfect month.
+        </p>
+      </section>
+
+      <section id="MoveOutToolMap" class="content-section">
+        <h2>Recommended starting points for move-out decisions</h2>
+
+        <p>
+          These stable pages keep the move-out decision focused on reusable housing
+          pressure: rent, deposits, first apartment costs, moving expenses, emergency
+          savings, debt, and the monthly budget after the lease begins.
+        </p>
+
+        <div class="move-out-link-grid">
+          <a class="move-out-link-card" href="/rent-calculators/">
+            <strong>Rent Calculators</strong>
+            <span>Compare base rent, utilities, deposits, emergency savings, debt, and monthly housing pressure.</span>
+          </a>
+
+          <a class="move-out-link-card" href="/how-much-rent-can-i-afford/">
+            <strong>How Much Rent Can I Afford?</strong>
+            <span>Test monthly rent against income, fixed bills, debt, groceries, transportation, and savings.</span>
+          </a>
+
+          <a class="move-out-link-card" href="/first-apartment-cost-calculator/">
+            <strong>First Apartment Cost Calculator</strong>
+            <span>Estimate deposits, first-month costs, furniture, supplies, utilities, and starter household costs.</span>
+          </a>
+
+          <a class="move-out-link-card" href="/security-deposit-and-move-in-cost-calculator/">
+            <strong>Security Deposit and Move-In Cost Calculator</strong>
+            <span>Separate deposits, fees, first month, utility setup, and cash needed before the lease starts.</span>
+          </a>
+
+          <a class="move-out-link-card" href="/how-much-should-i-save-before-moving-out/">
+            <strong>How Much Should I Save Before Moving Out?</strong>
+            <span>Estimate a move-out savings target before deposits, furniture, utilities, and first-month pressure.</span>
+          </a>
+
+          <a class="move-out-link-card" href="/moving-cost-calculator/">
+            <strong>Moving Cost Calculator</strong>
+            <span>Estimate movers, truck rental, packing supplies, storage, deposits, and other moving-day costs.</span>
+          </a>
+
+          <a class="move-out-link-card" href="/budget-rule-calculators/">
+            <strong>Budget Rule Calculators</strong>
+            <span>Pressure-test move-out plans against income, debt, fixed bills, groceries, and monthly flexibility.</span>
+          </a>
+
+          <a class="move-out-link-card" href="/emergency-savings-calculators/">
+            <strong>Emergency Savings Calculators</strong>
+            <span>Check whether moving out still leaves enough cash for repairs, medical bills, or income disruption.</span>
+          </a>
+        </div>
+      </section>
+
+      <section id="MoveOutLimitations" class="content-section">
+        <h2>What this move-out calculator can and cannot answer</h2>
+
+        <p>
+          This calculator can organize rent pressure, upfront move-in cash, utilities,
+          furniture, moving costs, debt, emergency savings impact, and monthly cash
+          flow. It cannot know every lease clause, landlord rule, utility rate,
+          roommate issue, family situation, job risk, local housing shortage, or future
+          rent increase. Use the result as a financial pressure test, then confirm the
+          lease terms, deposits, utility setup, renter insurance, and realistic first
+          month costs before treating the move as safe.
+        </p>
+
+        <div class="move-out-callout">
+          <p>
+            The safest move-out plan is not the one that barely gets approved. It is the
+            plan that keeps housing stable after the keys are handed over, protects an
+            emergency cushion, and leaves enough monthly flexibility for real life.
+          </p>
+        </div>
+      </section>
+
+      <FAQSection id="FAQSection" faqs={faqs} />
   </main>
 
   <script>
