@@ -59,7 +59,7 @@ const relatedCalculators = calculators
 
 <Layout
   title="Moving Truck Rental Cost Calculator | ShouldISpend"
-  description="Estimate DIY moving truck rental costs including base rate, days, mileage, fuel, insurance, equipment, tolls, parking, and fees."
+  description="Estimate moving truck rental costs including base rate, mileage, fuel, insurance, equipment, late-return risk, supplies, and cash left after the move."
 >
 
 
@@ -317,12 +317,74 @@ const relatedCalculators = calculators
         padding: 24px;
       }
     }
+
+    .truck-rental-grid,
+    .truck-rental-link-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 22px;
+      margin-top: 28px;
+    }
+
+    .truck-rental-card,
+    .truck-rental-link-card,
+    .truck-rental-callout {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 22px;
+      padding: 24px;
+    }
+
+    .truck-rental-link-card {
+      display: block;
+      color: inherit;
+      text-decoration: none;
+      transition:
+        transform 0.15s ease,
+        border-color 0.15s ease,
+        box-shadow 0.15s ease;
+    }
+
+    .truck-rental-link-card:hover {
+      transform: translateY(-2px);
+      border-color: var(--primary);
+      box-shadow: var(--shadow-soft);
+    }
+
+    .truck-rental-card h3,
+    .truck-rental-link-card strong {
+      display: block;
+      color: var(--text);
+      font-size: 1.08rem;
+      line-height: 1.3;
+      margin: 0 0 10px;
+    }
+
+    .truck-rental-card p,
+    .truck-rental-link-card span,
+    .truck-rental-callout p {
+      color: var(--muted);
+      line-height: 1.75;
+      margin: 0;
+    }
+
+    .truck-rental-check-list {
+      color: var(--muted);
+      line-height: 1.8;
+      margin: 22px 0 0;
+      padding-left: 22px;
+    }
+
+    .truck-rental-check-list li {
+      margin-bottom: 12px;
+    }
+
   </style>
 
   <div class="container">
     <CalculatorPageShell
       eyebrow="Moving Truck Rental Cost Calculator"
-      title="Moving Truck Rental Cost Calculator"
+      title="Moving Truck Rental Cost Calculator: Mileage, Fuel, Insurance, and Return Risk"
       description="Estimate the real cost of a DIY moving truck rental, including base rate, rental days, mileage charges, fuel, insurance, equipment, tolls, parking, hotel costs, helper labor, and extra fees."
     >
       <div class="calculator">
@@ -705,7 +767,273 @@ const relatedCalculators = calculators
       </section>
 
       <div id="FAQSection" class="content-section">
-        <FAQSection
+
+      <section id="TruckRentalTrueCostPath" class="content-section">
+        <h2>Start with the true truck rental cost, not only the advertised rate.</h2>
+
+        <p>
+          The advertised truck rate is only the starting point. A realistic rental truck
+          budget may include mileage, fuel, insurance, equipment, taxes, environmental
+          fees, extra days, late-return charges, tolls, parking, loading help, unloading
+          help, supplies, and the cost of an extra trip if everything does not fit.
+        </p>
+
+        <p>
+          This calculator is most useful when the truck is treated as one part of the
+          move, not the entire moving budget. A renter can find a cheap truck rate and
+          still have an expensive move if mileage, fuel, supplies, delays, or setup costs
+          are ignored.
+        </p>
+
+        <div class="truck-rental-grid">
+          <div class="truck-rental-card">
+            <h3>Base rental cost</h3>
+            <p>
+              Count the advertised rate, reservation deposit, taxes, fees, required
+              insurance, equipment, and the length of the rental window.
+            </p>
+          </div>
+
+          <div class="truck-rental-card">
+            <h3>Mileage and fuel</h3>
+            <p>
+              Include the full driving route, extra trips, pickup and drop-off distance,
+              fuel refill rules, tolls, and parking.
+            </p>
+          </div>
+
+          <div class="truck-rental-card">
+            <h3>Time risk</h3>
+            <p>
+              Late returns, long loading time, elevator delays, weather, traffic, and
+              multiple trips can turn a cheap rental into a stressful one.
+            </p>
+          </div>
+
+          <div class="truck-rental-card">
+            <h3>Move-after cushion</h3>
+            <p>
+              The truck should not consume cash needed for groceries, utilities, rent,
+              deposits, or first-week essentials after the move.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <section id="TruckRentalMileageFuelCheck" class="content-section">
+        <h2>Estimate mileage and fuel before choosing the truck.</h2>
+
+        <p>
+          Mileage and fuel are the two easiest truck costs to underestimate. The route
+          should include pickup, loading, the drive to the new place, unloading, return,
+          detours, and possible second trips. A bigger truck may cost more upfront but
+          reduce mileage and time if it prevents an extra round trip.
+        </p>
+
+        <p>
+          Fuel matters because moving trucks are heavier and less efficient than normal
+          cars. The budget should use a conservative fuel estimate, especially for long
+          moves, hilly routes, traffic, or a fully loaded truck.
+        </p>
+
+        <ul class="truck-rental-check-list">
+          <li>Map the pickup, old address, new address, return location, and any storage stop.</li>
+          <li>Add a buffer for wrong turns, detours, traffic, parking, and an extra supply run.</li>
+          <li>Check whether mileage is included, capped, or charged per mile.</li>
+          <li>Estimate fuel using the truck size, route distance, and refill requirement.</li>
+          <li>Compare one larger truck against a smaller truck that may require multiple trips.</li>
+          <li>Keep tolls, parking, and permit costs separate from fuel so they are not forgotten.</li>
+        </ul>
+      </section>
+
+      <section id="TruckRentalTimingReturnRisk" class="content-section">
+        <h2>Plan around pickup, loading, unloading, and return timing.</h2>
+
+        <p>
+          The cheapest rental window may not be the safest one. A short rental can work
+          when packing is complete, help is reliable, parking is easy, and the new place
+          is ready. It becomes risky when the renter still has to pack, wait for an
+          elevator, coordinate helpers, drive across town, unload stairs, or return the
+          truck before closing time.
+        </p>
+
+        <div class="truck-rental-grid">
+          <div class="truck-rental-card">
+            <h3>Fast, low-risk rental</h3>
+            <p>
+              Everything is packed, helpers are confirmed, parking is reserved, the route
+              is short, and the truck can be returned with time left.
+            </p>
+          </div>
+
+          <div class="truck-rental-card">
+            <h3>Normal rental</h3>
+            <p>
+              Some items still need organizing, loading takes longer than expected, and
+              the return window needs a buffer.
+            </p>
+          </div>
+
+          <div class="truck-rental-card">
+            <h3>High-risk rental</h3>
+            <p>
+              Packing is unfinished, stairs or elevators are involved, help is uncertain,
+              or a late return would trigger another charge.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <section id="TruckRentalEquipmentSupplyCheck" class="content-section">
+        <h2>Include equipment and supplies in the truck rental plan.</h2>
+
+        <p>
+          A truck alone does not move a household safely. Dollies, straps, furniture pads,
+          mattress bags, boxes, tape, labels, gloves, basic tools, and cleaning supplies
+          can protect time, furniture, and the rental schedule. Skipping them can make a
+          cheaper truck slower and more expensive in practice.
+        </p>
+
+        <ul class="truck-rental-check-list">
+          <li>Decide whether a dolly, hand truck, furniture pads, straps, or ramp support is needed.</li>
+          <li>Buy or borrow boxes, tape, labels, mattress bags, and protective materials before pickup day.</li>
+          <li>Keep tools, cleaning supplies, trash bags, chargers, water, and snacks accessible.</li>
+          <li>Consider paid loading help for heavy items if it prevents injury, delays, or late fees.</li>
+          <li>Check whether equipment is rented by the day, included, or charged separately.</li>
+        </ul>
+      </section>
+
+      <section id="TruckRentalRedFlags" class="content-section">
+        <h2>Warning signs the truck rental estimate is too thin</h2>
+
+        <p>
+          The truck estimate is too thin when it only includes the base rate. The plan
+          should also account for mileage, fuel, insurance, equipment, supplies, taxes,
+          parking, tolls, help, food, and first-week cash after the move. A rental that
+          looks cheap but creates a late fee, extra trip, or credit-card balance is not
+          really cheap.
+        </p>
+
+        <ul class="truck-rental-check-list">
+          <li>The estimate assumes one trip but the truck size is uncertain.</li>
+          <li>Mileage, fuel, insurance, taxes, and equipment are not included.</li>
+          <li>The return time leaves no room for traffic, stairs, elevators, or unloading delays.</li>
+          <li>The renter has no backup if helpers cancel or packing takes longer than expected.</li>
+          <li>The truck cost uses money needed for rent, deposits, utilities, groceries, or emergency savings.</li>
+          <li>The plan needs credit-card carryover after the truck is returned.</li>
+        </ul>
+      </section>
+
+      <section id="TruckRentalCloseCallPlan" class="content-section">
+        <h2>What to do if the truck rental cost is close</h2>
+
+        <p>
+          A close truck estimate needs a pressure release before booking. The best fix
+          depends on the weak point. If mileage is high, compare a closer pickup or
+          one-way option. If time is tight, book a longer window or reduce the load. If
+          labor is the problem, pay for help only on the heavy items. If cash is the
+          problem, delay nonessential purchases and keep the truck plan lean.
+        </p>
+
+        <p>
+          A smaller truck is not always cheaper if it creates extra trips, extra fuel,
+          and a late return. A bigger truck is not always better if the renter cannot
+          drive it safely or park it near either building. The right rental is the one
+          that fits the move with enough margin to avoid turning logistics into debt.
+        </p>
+      </section>
+
+      <section id="TruckRentalDecisionCheck" class="content-section">
+        <h2>Do a final truck rental decision check before reserving.</h2>
+
+        <p>
+          Before booking, write down the base rate, mileage, fuel, insurance, equipment,
+          supplies, taxes, likely return time, and backup cost for one ordinary problem.
+          Then compare that total against cash left after rent, deposits, utilities, and
+          first-week essentials.
+        </p>
+
+        <p>
+          The goal is not to rent the absolute cheapest truck. The goal is to complete
+          the move without using money that should keep the new place stable afterward.
+          If the rental only works with perfect timing, choose more time, more cushion,
+          or a simpler move before reserving.
+        </p>
+      </section>
+
+      <section id="TruckRentalToolMap" class="content-section">
+        <h2>Recommended starting points for moving truck rental decisions</h2>
+
+        <p>
+          These stable pages keep the truck decision connected to the full moving budget,
+          supplies, storage, move-out savings, deposits, and first-apartment setup.
+        </p>
+
+        <div class="truck-rental-link-grid">
+          <a class="truck-rental-link-card" href="/moving-cost-calculator/">
+            <strong>Moving Cost Calculator</strong>
+            <span>Compare truck rental against movers, supplies, storage, move-day food, and first-week cash.</span>
+          </a>
+
+          <a class="truck-rental-link-card" href="/moving-calculators/">
+            <strong>Moving Calculators</strong>
+            <span>Use the moving hub to compare truck, storage, boxes, packing supplies, and move-out readiness.</span>
+          </a>
+
+          <a class="truck-rental-link-card" href="/moving-boxes-and-packing-supplies-cost-calculator/">
+            <strong>Moving Boxes and Packing Supplies Cost Calculator</strong>
+            <span>Estimate boxes, tape, padding, mattress bags, labels, and packing extras before pickup day.</span>
+          </a>
+
+          <a class="truck-rental-link-card" href="/moving-storage-cost-calculator/">
+            <strong>Moving Storage Cost Calculator</strong>
+            <span>Check whether storage, delivery timing, or apartment overlap changes the truck plan.</span>
+          </a>
+
+          <a class="truck-rental-link-card" href="/can-i-afford-to-move-out/">
+            <strong>Can I Afford to Move Out?</strong>
+            <span>Make sure the truck budget does not consume rent, deposits, utilities, or emergency savings.</span>
+          </a>
+
+          <a class="truck-rental-link-card" href="/how-much-should-i-save-before-moving-out/">
+            <strong>How Much Should I Save Before Moving Out?</strong>
+            <span>Set a savings target that includes the truck and leaves cash after move-in.</span>
+          </a>
+
+          <a class="truck-rental-link-card" href="/security-deposit-and-move-in-cost-calculator/">
+            <strong>Security Deposit and Move-In Cost Calculator</strong>
+            <span>Keep lease-start cash separate from moving truck rental costs.</span>
+          </a>
+
+          <a class="truck-rental-link-card" href="/first-apartment-cost-calculator/">
+            <strong>First Apartment Cost Calculator</strong>
+            <span>Plan first-apartment setup costs after the truck is unloaded.</span>
+          </a>
+        </div>
+      </section>
+
+      <section id="TruckRentalLimitations" class="content-section">
+        <h2>What this moving truck rental calculator can and cannot answer</h2>
+
+        <p>
+          This calculator can organize base truck rental cost, mileage, fuel, insurance,
+          equipment, supplies, timing risk, and cash left after the move. It cannot know
+          every rental-company policy, truck availability, parking rule, building access
+          requirement, weather delay, traffic problem, or actual fuel price. Use the
+          result as a planning estimate, then confirm rental rules, pickup time, return
+          deadline, mileage charges, insurance terms, and cancellation policies before
+          paying.
+        </p>
+
+        <div class="truck-rental-callout">
+          <p>
+            A good truck rental budget leaves enough time and cash to finish the move
+            without consuming the money needed after move-in.
+          </p>
+        </div>
+      </section>
+
+      <FAQSection
           title="Moving Truck Rental Cost Calculator FAQ"
           faqs={truckRentalFaqs}
         />
