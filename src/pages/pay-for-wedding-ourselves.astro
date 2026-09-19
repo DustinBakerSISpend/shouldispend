@@ -450,6 +450,8 @@ const faqSchema = {
       const remainingSavings = savings - selfFundedCost;
 
       const savingsImpact = savings > 0 ? (selfFundedCost / savings) * 100 : 999;
+      const savingsImpactText =
+        savings > 0 ? `${savingsImpact.toFixed(1)}% of savings` : "no savings entered";
       const annualIncomeImpact = (selfFundedCost / income) * 100;
       const monthlyIncomeImpact = (selfFundedCost / monthlyTakeHome) * 100;
       const debtRatio = (debt / income) * 100;
@@ -598,20 +600,20 @@ const faqSchema = {
 
       if (pressureScore === 0) {
         guidance =
-          `Self-funding appears financially tiny relative to the numbers provided. Your estimated self-funded share is ${formatMoney(selfFundedCost)}, or about ${annualIncomeImpact.toFixed(1)}% of annual income and ${savings > 0 ? savingsImpact.toFixed(1) : "0.0"}% of savings. The decision is mainly about independence, boundaries, and what kind of wedding you actually want.`;
+          `Self-funding appears financially tiny relative to the numbers provided. Your estimated self-funded share is ${formatMoney(selfFundedCost)}, or about ${annualIncomeImpact.toFixed(1)}% of annual income and ${savingsImpactText}. The decision is mainly about independence, boundaries, and what kind of wedding you actually want.`;
       } else if (pressureScore <= 30) {
         guidance =
           `Self-funding appears manageable based on the numbers provided. Your estimated self-funded share is ${formatMoney(selfFundedCost)}, or about ${annualIncomeImpact.toFixed(1)}% of annual income. Keep the budget disciplined and avoid late upgrades.`;
       } else if (pressureScore <= 60) {
         guidance =
-          `Self-funding may work, but it deserves caution. Your estimated self-funded share is ${formatMoney(selfFundedCost)}, or about ${savings > 0 ? savingsImpact.toFixed(1) : "an undefined share of"}% of savings. Consider lowering the wedding budget or accepting clean, no-strings help.`;
+          `Self-funding may work, but it deserves caution. Your estimated self-funded share is ${formatMoney(selfFundedCost)}, or about ${savingsImpactText}. Consider lowering the wedding budget or accepting clean, no-strings help.`;
       } else {
         guidance =
-          `Self-funding could create real financial strain. Your estimated self-funded share is ${formatMoney(selfFundedCost)}, or about ${savings > 0 ? savingsImpact.toFixed(1) : "an undefined share of"}% of savings, and it may weaken emergency reserves or debt flexibility.`;
+          `Self-funding could create real financial strain. Your estimated self-funded share is ${formatMoney(selfFundedCost)}, or about ${savingsImpactText}, and it may weaken emergency reserves or debt flexibility.`;
       }
 
       scoreEl.textContent = `${level.label}  -  ${pressureScore}/100`;
-      barFill.style.width = `${pressureScore}%`;
+      barFill.style.width = `${100 - pressureScore}%`;
       barFill.style.background = level.color;
 
       stressEl.innerHTML = `<strong>Pressure level:</strong> ${level.stress}`;

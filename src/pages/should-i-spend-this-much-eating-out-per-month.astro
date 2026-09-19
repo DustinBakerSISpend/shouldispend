@@ -556,7 +556,11 @@ const diningFaqs = [
       const dining = Number(document.getElementById("dining").value);
       const groceries = Number(document.getElementById("groceries").value || 0);
       const income = Number(document.getElementById("income").value);
-      const household = Number(document.getElementById("household").value || 1);
+      const householdRaw = Number(document.getElementById("household").value);
+      const household =
+        Number.isFinite(householdRaw) && householdRaw > 0
+          ? Math.max(1, Math.round(householdRaw))
+          : 1;
       const debt = Number(document.getElementById("debt").value || 0);
       const savings = Number(document.getElementById("savings").value || 0);
 

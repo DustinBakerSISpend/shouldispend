@@ -602,6 +602,8 @@ import WhenSpendingMakesSense from "../components/WhenSpendingMakesSense.astro";
       const remainingSavings = savings - cost;
 
       const savingsImpact = savings > 0 ? (cost / savings) * 100 : 999;
+      const savingsImpactText =
+        savings > 0 ? `${savingsImpact.toFixed(1)}% of savings` : "no savings entered";
       const annualIncomeImpact = (cost / income) * 100;
       const monthlyIncomeImpact = (cost / monthlyIncome) * 100;
       const debtRatio = (debt / income) * 100;
@@ -701,18 +703,18 @@ import WhenSpendingMakesSense from "../components/WhenSpendingMakesSense.astro";
 
       if (pressureScore <= 30) {
         guidance =
-          `This wedding appears financially manageable based on the numbers provided. The cost equals about ${annualIncomeImpact.toFixed(1)}% of annual income and ${savingsImpact.toFixed(1)}% of savings, so the main priority is staying disciplined and avoiding unnecessary upgrades.`;
+          `This wedding appears financially manageable based on the numbers provided. The cost equals about ${annualIncomeImpact.toFixed(1)}% of annual income and ${savingsImpactText}, so the main priority is staying disciplined and avoiding unnecessary upgrades.`;
       } else if (pressureScore <= 60) {
         guidance =
-          `This wedding may work, but it deserves caution. The cost equals about ${annualIncomeImpact.toFixed(1)}% of annual income and ${savingsImpact.toFixed(1)}% of savings, so the budget should be controlled carefully before deposits, guest-count growth, bar upgrades, and vendor add-ons raise the final total.`;
+          `This wedding may work, but it deserves caution. The cost equals about ${annualIncomeImpact.toFixed(1)}% of annual income and ${savingsImpactText}, so the budget should be controlled carefully before deposits, guest-count growth, bar upgrades, and vendor add-ons raise the final total.`;
       } else {
         guidance =
-          `This wedding could create real financial strain. The cost equals about ${annualIncomeImpact.toFixed(1)}% of annual income and ${savingsImpact.toFixed(1)}% of savings, so reducing the guest list, simplifying the venue, delaying spending, or rebuilding savings would likely be safer.`;
+          `This wedding could create real financial strain. The cost equals about ${annualIncomeImpact.toFixed(1)}% of annual income and ${savingsImpactText}, so reducing the guest list, simplifying the venue, delaying spending, or rebuilding savings would likely be safer.`;
       }
 
       scoreText.textContent = `${level.label}  -  ${pressureScore}/100`;
 
-      barFill.style.width = `${pressureScore}%`;
+      barFill.style.width = `${100 - pressureScore}%`;
       barFill.style.background = level.color;
 
       stressEl.innerHTML =
@@ -740,9 +742,11 @@ import WhenSpendingMakesSense from "../components/WhenSpendingMakesSense.astro";
       breakdown.innerHTML = `
         <strong>Financial Breakdown:</strong><br><br>
         - Wedding cost equals <strong>${annualIncomeImpact.toFixed(1)}%</strong> of annual household income.<br>
-        - Wedding cost consumes <strong>${
-          savings > 0 ? savingsImpact.toFixed(1) + "%" : "an undefined share"
-        }</strong> of total savings.<br>
+        - ${
+          savings > 0
+            ? `Wedding cost consumes <strong>${savingsImpact.toFixed(1)}%</strong> of total savings.`
+            : "No savings were entered, so a savings-share percentage is not applicable."
+        }<br>
         - Existing debt load equals <strong>${debtRatio.toFixed(1)}%</strong> of annual income.<br>
         - Estimated savings after the wedding: <strong>$${Math.max(remainingSavings, 0).toLocaleString()}</strong>.<br><br>
         This verdict weighs savings impact, income impact, debt pressure, and remaining cushion. Very high income or very high savings can appropriately lower the score when the wedding cost is financially minor.

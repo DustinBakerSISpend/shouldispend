@@ -443,6 +443,8 @@ const faqSchema = {
       const remainingSavings = savings - totalDressCost;
 
       const savingsImpact = savings > 0 ? (totalDressCost / savings) * 100 : 999;
+      const savingsImpactText =
+        savings > 0 ? `${savingsImpact.toFixed(1)}% of savings` : "no savings entered";
       const annualIncomeImpact = (totalDressCost / income) * 100;
       const monthlyIncomeImpact = (totalDressCost / monthlyTakeHome) * 100;
       const budgetShare = (totalDressCost / budgetForShare) * 100;
@@ -563,7 +565,7 @@ const faqSchema = {
 
       if (pressureScore === 0) {
         guidance =
-          `This wedding dress plan appears financially tiny relative to the numbers provided. The estimated full dress cost is ${formatMoney(totalDressCost)}, or about ${annualIncomeImpact.toFixed(1)}% of annual income and ${savings > 0 ? savingsImpact.toFixed(1) : "0.0"}% of savings. The decision is mainly about personal priority, comfort, alterations, and opportunity cost.`;
+          `This wedding dress plan appears financially tiny relative to the numbers provided. The estimated full dress cost is ${formatMoney(totalDressCost)}, or about ${annualIncomeImpact.toFixed(1)}% of annual income and ${savingsImpactText}. The decision is mainly about personal priority, comfort, alterations, and opportunity cost.`;
       } else if (pressureScore <= 30) {
         guidance =
           `This wedding dress plan appears manageable based on the numbers provided. The estimated full dress cost is ${formatMoney(totalDressCost)}, or about ${budgetShare.toFixed(1)}% of the wedding budget, so the next step is confirming alterations, accessories, taxes, cleaning, preservation, and rush fees.`;
@@ -572,11 +574,11 @@ const faqSchema = {
           `This wedding dress plan may work, but it deserves caution. The estimated full dress cost is ${formatMoney(totalDressCost)}, or about ${budgetShare.toFixed(1)}% of the wedding budget. A sample sale, simpler alterations, or accessory cuts may protect the rest of the event.`;
       } else {
         guidance =
-          `This wedding dress plan could create real financial strain. The estimated full dress cost is ${formatMoney(totalDressCost)}, or about ${savings > 0 ? savingsImpact.toFixed(1) : "an undefined share of"}% of savings and ${budgetShare.toFixed(1)}% of the wedding budget. A lower-cost dress plan would likely be safer.`;
+          `This wedding dress plan could create real financial strain. The estimated full dress cost is ${formatMoney(totalDressCost)}, or about ${savingsImpactText} and ${budgetShare.toFixed(1)}% of the wedding budget. A lower-cost dress plan would likely be safer.`;
       }
 
       scoreEl.textContent = `${level.label}  -  ${pressureScore}/100`;
-      barFill.style.width = `${pressureScore}%`;
+      barFill.style.width = `${100 - pressureScore}%`;
       barFill.style.background = level.color;
 
       stressEl.innerHTML = `<strong>Pressure level:</strong> ${level.stress}`;

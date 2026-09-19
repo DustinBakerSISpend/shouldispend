@@ -761,11 +761,11 @@ const relatedCalculators = calculators
         return principal / months;
       }
 
-      return (
-        principal *
-        (monthlyRate * Math.pow(1 + monthlyRate, months)) /
-        (Math.pow(1 + monthlyRate, months) - 1)
-      );
+      const discountFactor = Math.pow(1 + monthlyRate, -months);
+      const denominator = 1 - discountFactor;
+      const payment = (principal * monthlyRate) / denominator;
+
+      return Number.isFinite(payment) ? payment : Number.MAX_SAFE_INTEGER;
     }
 
     function calculateCarLoan() {
@@ -901,7 +901,7 @@ const relatedCalculators = calculators
       const level = getPressureLevel(pressureScore);
 
       scoreText.textContent = `${level.label}  -  ${pressureScore}/100`;
-      fillBar.style.width = `${pressureScore}%`;
+      fillBar.style.width = `${100 - pressureScore}%`;
       fillBar.className = `fill ${level.colorClass}`;
 
       let explanation = "";

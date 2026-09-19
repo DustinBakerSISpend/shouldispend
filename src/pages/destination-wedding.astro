@@ -658,6 +658,8 @@ import WhenSpendingMakesSense from "../components/WhenSpendingMakesSense.astro";
       const remainingSavings = savings - totalDirectCost;
 
       const savingsImpact = savings > 0 ? (totalDirectCost / savings) * 100 : 999;
+      const savingsImpactText =
+        savings > 0 ? `${savingsImpact.toFixed(1)}% of savings` : "no savings entered";
       const annualIncomeImpact = (totalDirectCost / income) * 100;
       const monthlyIncomeImpact = (totalDirectCost / monthlyIncome) * 100;
       const debtRatio = (debt / income) * 100;
@@ -788,18 +790,18 @@ import WhenSpendingMakesSense from "../components/WhenSpendingMakesSense.astro";
 
       if (pressureScore <= 30) {
         guidanceText =
-          `A destination wedding appears financially manageable based on the numbers provided. Your estimated direct cost is about ${annualIncomeImpact.toFixed(1)}% of annual income and ${savingsImpact.toFixed(1)}% of savings, so the key is keeping travel extras and guest expectations controlled.`;
+          `A destination wedding appears financially manageable based on the numbers provided. Your estimated direct cost is about ${annualIncomeImpact.toFixed(1)}% of annual income and ${savingsImpactText}, so the key is keeping travel extras and guest expectations controlled.`;
       } else if (pressureScore <= 60) {
         guidanceText =
-          `A destination wedding may still work, but it needs tighter boundaries. Your estimated direct cost is about ${annualIncomeImpact.toFixed(1)}% of annual income and ${savingsImpact.toFixed(1)}% of savings, before considering the emotional and practical burden on guests.`;
+          `A destination wedding may still work, but it needs tighter boundaries. Your estimated direct cost is about ${annualIncomeImpact.toFixed(1)}% of annual income and ${savingsImpactText}, before considering the emotional and practical burden on guests.`;
       } else {
         guidanceText =
-          `This destination wedding could create too much pressure. Your estimated direct cost is about ${annualIncomeImpact.toFixed(1)}% of annual income and ${savingsImpact.toFixed(1)}% of savings, and the travel complexity or guest burden may make the plan harder to justify.`;
+          `This destination wedding could create too much pressure. Your estimated direct cost is about ${annualIncomeImpact.toFixed(1)}% of annual income and ${savingsImpactText}, and the travel complexity or guest burden may make the plan harder to justify.`;
       }
 
       scoreText.textContent = `${level.label}  -  ${pressureScore}/100`;
 
-      barFill.style.width = `${pressureScore}%`;
+      barFill.style.width = `${100 - pressureScore}%`;
       barFill.style.background = level.color;
 
       stressLine.innerHTML =
@@ -834,9 +836,11 @@ import WhenSpendingMakesSense from "../components/WhenSpendingMakesSense.astro";
         <strong>Destination Wedding Breakdown:</strong><br><br>
         - Destination wedding cost plus couple travel equals <strong>$${totalDirectCost.toLocaleString()}</strong>.<br>
         - Direct cost equals <strong>${annualIncomeImpact.toFixed(1)}%</strong> of annual household income.<br>
-        - Direct cost consumes <strong>${
-          savings > 0 ? savingsImpact.toFixed(1) + "%" : "an undefined share"
-        }</strong> of total savings.<br>
+        - ${
+          savings > 0
+            ? `Direct cost consumes <strong>${savingsImpact.toFixed(1)}%</strong> of total savings.`
+            : "No savings were entered, so a savings-share percentage is not applicable."
+        }<br>
         - Existing debt load equals <strong>${debtRatio.toFixed(1)}%</strong> of annual income.<br>
         - Estimated savings after the wedding and travel: <strong>$${Math.max(remainingSavings, 0).toLocaleString()}</strong>.<br><br>
         This verdict weighs affordability pressure, travel complexity, guest burden, local alternatives, debt, and remaining cushion. Very high income or very high savings can appropriately lower the score when the destination plan is financially minor.
