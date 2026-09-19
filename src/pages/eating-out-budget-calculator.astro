@@ -44,8 +44,8 @@ const relatedCalculators = calculators
 ---
 
 <Layout
-  title="Eating Out Budget Calculator"
-  description="Use this eating out budget calculator to estimate how much you should spend on restaurants, takeout, delivery, coffee, and work lunches per month."
+  title="Eating Out Budget Calculator | How Much Should You Spend?"
+  description="Estimate how much to spend eating out each month and week based on take-home income, groceries, household size, debt, savings, and lifestyle."
 >
 
 
@@ -201,6 +201,36 @@ const relatedCalculators = calculators
       text-decoration: underline;
     }
 
+    .budget-link-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 16px;
+      margin-top: 24px;
+    }
+
+    .budget-link-card {
+      display: block;
+      border: 1px solid #dbe4ee;
+      border-radius: 18px;
+      padding: 20px;
+      background: #f8fafc;
+      color: inherit;
+      text-decoration: none;
+    }
+
+    .budget-link-card strong {
+      display: block;
+      color: #0f172a;
+      margin-bottom: 8px;
+      font-size: 1.05rem;
+    }
+
+    .budget-link-card span {
+      color: #475569;
+      line-height: 1.65;
+      font-size: 0.95rem;
+    }
+
     @media (max-width: 768px) {
       .calculator {
         padding: 24px;
@@ -225,7 +255,7 @@ const relatedCalculators = calculators
     <CalculatorPageShell
       eyebrow="Eating Out Budget Calculator"
       title="Eating Out Budget Calculator"
-      description="Estimate a wise monthly eating-out budget based on income, groceries, household size, debt, savings, and lifestyle."
+      description="Estimate a practical monthly and weekly eating-out budget based on take-home income, groceries, household size, debt, savings, housing, and lifestyle."
     >
       <div class="calculator">
         <h2>How Much Should You Spend Eating Out?</h2>
@@ -240,32 +270,32 @@ const relatedCalculators = calculators
         <div class="grid">
           <div class="field">
             <label for="income">Monthly Take-Home Income</label>
-            <input id="income" type="number" placeholder="Example: 6500" />
+            <input id="income" type="number" min="0" placeholder="Example: 6500" />
           </div>
 
           <div class="field">
             <label for="household">Household Size</label>
-            <input id="household" type="number" placeholder="Example: 2" />
+            <input id="household" type="number" min="1" step="1" placeholder="Example: 2" />
           </div>
 
           <div class="field">
             <label for="groceries">Monthly Grocery Spending</label>
-            <input id="groceries" type="number" placeholder="Example: 700" />
+            <input id="groceries" type="number" min="0" placeholder="Example: 700" />
           </div>
 
           <div class="field">
             <label for="debt">Monthly Debt Payments</label>
-            <input id="debt" type="number" placeholder="Example: 600" />
+            <input id="debt" type="number" min="0" placeholder="Example: 600" />
           </div>
 
           <div class="field">
             <label for="savings">Emergency Savings</label>
-            <input id="savings" type="number" placeholder="Example: 10000" />
+            <input id="savings" type="number" min="0" placeholder="Example: 10000" />
           </div>
 
           <div class="field">
             <label for="housing">Monthly Rent or Mortgage</label>
-            <input id="housing" type="number" placeholder="Example: 1800" />
+            <input id="housing" type="number" min="0" placeholder="Example: 1800" />
           </div>
 
           <div class="field">
@@ -310,7 +340,7 @@ const relatedCalculators = calculators
 <OmniStyleReviewBlock
       pageName="the eating-out budget calculator"
       pageType="calculator"
-      reviewLabel="Last reviewed: July 2026"
+      reviewLabel="Last reviewed: September 2026"
       methodologyHref="/methodology/"
       editorialHref="/editorial-policy/"
       disclaimerHref="/disclaimer/"
@@ -354,27 +384,30 @@ const relatedCalculators = calculators
         <h2>How This Eating Out Budget Calculator Works</h2>
 
         <p>
-          This calculator estimates a monthly eating-out budget by looking at
-          take-home income, household size, grocery spending, debt, savings,
-          housing, and lifestyle. It is designed to give a dollar range, not a
-          pressure verdict.
+          The calculator combines income and flexible cash flow with household size,
+          grocery spending, debt, housing, savings, and your selected lifestyle goal.
+          It returns a monthly range, a weekly range, and the estimated share of
+          take-home income used for eating out.
         </p>
 
         <p>
-          A lower-income household may need a smaller restaurant budget even if
-          eating out is enjoyable. A higher-income household may reasonably
-          spend more on restaurants, delivery, coffee, or convenience without
-          damaging the budget.
+          The result is intentionally a range rather than a universal spending rule.
+          The same restaurant budget can create very different pressure depending on
+          the rest of the household budget.
         </p>
 
         <p>
           For related food decisions, compare this result with the
           <a class="content-link" href="/should-i-meal-prep-or-eat-out/">
             meal prep vs eating out calculator
-          </a>
-          or the
+          </a>,
+          the
           <a class="content-link" href="/ideal-grocery-budget-calculator/">
             ideal grocery budget calculator
+          </a>,
+          or the
+          <a class="content-link" href="/cost-per-meal-calculator/">
+            cost per meal calculator
           </a>.
         </p>
       </section>
@@ -467,11 +500,67 @@ const relatedCalculators = calculators
         <h2>How to Use Your Monthly Number</h2>
 
         <p>
-          Once you have a monthly range, divide it by four to create a weekly
-          cap. A $400 monthly restaurant budget is easier to manage as about
-          $100 per week. That makes it easier to decide whether a delivery order,
-          coffee run, or dinner out fits before the month gets away from you.
+          The calculator already converts the monthly range into a weekly target.
+          Use the weekly number as a pacing tool rather than treating the full
+          monthly amount as available on day one. That makes it easier to decide
+          whether a delivery order, coffee run, work lunch, or dinner out fits
+          before the month gets away from you.
         </p>
+
+        <p>
+          If one week runs high, adjust the next week instead of abandoning the
+          budget. The goal is repeatable spending over the month, not hitting the
+          exact same restaurant total every seven days.
+        </p>
+      </section>
+
+
+      <section class="content-section">
+        <h2>Eating Out Budget vs. Total Food Budget</h2>
+
+        <p>
+          Restaurant spending and grocery spending should be evaluated together.
+          A household that spends more on takeout because it buys fewer groceries
+          has a different food budget from a household that spends heavily in both
+          categories and throws food away at home.
+        </p>
+
+        <p>
+          Use the calculator's total-food-share result to check the combined picture.
+          If eating out rises without groceries falling, the issue may be total food
+          spending rather than restaurants alone. The
+          <a class="content-link" href="/ideal-grocery-budget-calculator/">
+            grocery budget calculator
+          </a>
+          can help pressure-test the other side of the food budget.
+        </p>
+      </section>
+
+      <section class="content-section">
+        <h2>Compare Common Monthly Eating-Out Budgets</h2>
+
+        <p>
+          The calculator gives a personalized range. If you are deciding whether a
+          specific monthly amount fits, these amount-based pages let you pressure-test
+          the same question at common spending levels.
+        </p>
+
+        <div class="budget-link-grid">
+          <a class="budget-link-card" href="/should-i-spend-300-eating-out-per-month/">
+            <strong>$300 per month eating out</strong>
+            <span>Check whether a $300 restaurant, takeout, coffee, and delivery budget fits.</span>
+          </a>
+
+          <a class="budget-link-card" href="/should-i-spend-500-eating-out-per-month/">
+            <strong>$500 per month eating out</strong>
+            <span>Pressure-test a larger monthly restaurant and convenience-food budget.</span>
+          </a>
+
+          <a class="budget-link-card" href="/should-i-spend-1000-eating-out-per-month/">
+            <strong>$1,000 per month eating out</strong>
+            <span>See when a four-figure monthly eating-out budget becomes financially heavy.</span>
+          </a>
+        </div>
       </section>
 
       <div class="content-section">
@@ -501,7 +590,9 @@ const relatedCalculators = calculators
       </ul>
     </section>
 
-    <MethodologySection category="eating out budget estimates" updated="July 2026" />
+    <!-- Journey Wave 3A eating-out traffic expansion -->
+    <!-- Calculator integrity hardening: extreme-input guardrails -->
+    <MethodologySection category="eating out budget estimates" updated="September 2026" />
   </div>
 
   <script is:inline>
@@ -526,50 +617,65 @@ const relatedCalculators = calculators
       return Math.min(Math.max(value, min), max);
     }
 
-    function calculateEatingOutBudget() {
-      const income = getNumber("income");
-      const household = Math.max(getNumber("household"), 1);
-      const groceries = getNumber("groceries");
-      const debt = getNumber("debt");
-      const savings = getNumber("savings");
-      const housing = getNumber("housing");
-      const lifestyle = getValue("lifestyle");
-      const goal = getValue("goal");
+    function calculateEatingOutRecommendation({
+      income,
+      household,
+      groceries,
+      debt,
+      savings,
+      housing,
+      lifestyle,
+      goal,
+    }) {
+      const safeIncome = Number.isFinite(income) && income > 0 ? income : 0;
+      const safeHousehold =
+        Number.isFinite(household) && household > 0
+          ? Math.max(Math.round(household), 1)
+          : 1;
+      const safeGroceries =
+        Number.isFinite(groceries) && groceries > 0 ? groceries : 0;
+      const safeDebtInput =
+        Number.isFinite(debt) && debt > 0 ? debt : 0;
+      const safeSavings =
+        Number.isFinite(savings) && savings > 0 ? savings : 0;
+      const safeHousing =
+        Number.isFinite(housing) && housing > 0 ? housing : 0;
 
-      const results = document.getElementById("results");
-      const budgetRange = document.getElementById("budgetRange");
-      const resultDetails = document.getElementById("resultDetails");
-      const summary = document.getElementById("summary");
-
-      results.classList.add("visible");
-
-      if (income <= 0) {
-        budgetRange.textContent = "$0";
-        resultDetails.innerHTML =
-          "<p>Enter monthly take-home income to estimate a monthly eating-out budget.</p>";
-        summary.textContent = "";
-        return;
+      if (safeIncome <= 0) {
+        return {
+          recommendedMidpoint: 0,
+          lowRange: 0,
+          highRange: 0,
+          weeklyLow: 0,
+          weeklyHigh: 0,
+          finalShare: 0,
+          totalFoodShare: 0,
+          savingsMonths: 0,
+          flexibleCash: 0,
+          guidance: "no discretionary room",
+          household: safeHousehold,
+        };
       }
 
-      const safeDebt = Math.min(debt, income);
-      const requiredOutflow = housing + safeDebt + groceries;
-      const flexibleCash = Math.max(income - requiredOutflow, 0);
+      const safeDebt = Math.min(safeDebtInput, safeIncome);
+      const requiredOutflow = safeHousing + safeDebt + safeGroceries;
+      const flexibleCash = Math.max(safeIncome - requiredOutflow, 0);
 
       let incomePercent = 0.045;
 
-      if (income >= 4000) {
+      if (safeIncome >= 4000) {
         incomePercent = 0.055;
       }
 
-      if (income >= 8000) {
+      if (safeIncome >= 8000) {
         incomePercent = 0.07;
       }
 
-      if (income >= 15000) {
+      if (safeIncome >= 15000) {
         incomePercent = 0.085;
       }
 
-      if (income >= 30000) {
+      if (safeIncome >= 30000) {
         incomePercent = 0.1;
       }
 
@@ -579,8 +685,8 @@ const relatedCalculators = calculators
       const goalMultiplier =
         goal === "save" ? 0.7 : goal === "flexible" ? 1.2 : 1;
 
-      const householdFloor = household * 45;
-      const incomeBasedBudget = income * incomePercent;
+      const householdFloor = safeHousehold * 45;
+      const incomeBasedBudget = safeIncome * incomePercent;
       const flexibleCashBudget = flexibleCash * 0.18;
 
       let recommendedMidpoint =
@@ -588,8 +694,11 @@ const relatedCalculators = calculators
 
       recommendedMidpoint *= lifestyleMultiplier * goalMultiplier;
 
-      const savingsNeed = Math.max(income * 0.65, requiredOutflow + household * 300);
-      const savingsMonths = savingsNeed > 0 ? savings / savingsNeed : 0;
+      const savingsNeed = Math.max(
+        safeIncome * 0.65,
+        requiredOutflow + safeHousehold * 300
+      );
+      const savingsMonths = savingsNeed > 0 ? safeSavings / savingsNeed : 0;
 
       if (savingsMonths < 1) {
         recommendedMidpoint *= 0.78;
@@ -599,9 +708,9 @@ const relatedCalculators = calculators
         recommendedMidpoint *= 1.08;
       }
 
-      const debtShare = safeDebt / income;
-      const housingShare = housing / income;
-      const groceryShare = groceries / income;
+      const debtShare = safeDebt / safeIncome;
+      const housingShare = safeHousing / safeIncome;
+      const groceryShare = safeGroceries / safeIncome;
 
       if (debtShare > 0.35) {
         recommendedMidpoint *= 0.65;
@@ -624,26 +733,112 @@ const relatedCalculators = calculators
       }
 
       const practicalMinimum =
-        income < 2500 ? 40 : income < 4500 ? 75 : householdFloor;
+        safeIncome < 2500 ? 40 : safeIncome < 4500 ? 75 : householdFloor;
 
-      recommendedMidpoint = Math.max(recommendedMidpoint, practicalMinimum);
+      // Integrity guardrails:
+      // 1) Never recommend discretionary restaurant spending when entered
+      //    housing + debt + groceries already consume all take-home income.
+      // 2) Never let a household-size floor overpower actual cash flow.
+      // 3) Cap the midpoint at 10% of take-home income and 40% of remaining
+      //    flexible cash so extreme income/household inputs stay bounded.
+      const discretionaryCap = Math.max(
+        Math.min(safeIncome * 0.1, flexibleCash * 0.4),
+        0
+      );
+
+      if (discretionaryCap <= 0) {
+        recommendedMidpoint = 0;
+      } else {
+        const affordableFloor = Math.min(practicalMinimum, discretionaryCap);
+        recommendedMidpoint = Math.max(recommendedMidpoint, affordableFloor);
+        recommendedMidpoint = Math.min(recommendedMidpoint, discretionaryCap);
+      }
 
       const lowRange = recommendedMidpoint * 0.82;
       const highRange = recommendedMidpoint * 1.18;
       const weeklyLow = lowRange / 4.33;
       const weeklyHigh = highRange / 4.33;
-      const finalShare = recommendedMidpoint / income;
-      const totalFoodShare = (groceries + recommendedMidpoint) / income;
+      const finalShare = recommendedMidpoint / safeIncome;
+      const totalFoodShare =
+        (safeGroceries + recommendedMidpoint) / safeIncome;
 
       let guidance = "balanced";
 
-      if (finalShare <= 0.035) {
+      if (recommendedMidpoint <= 0) {
+        guidance = "no discretionary room";
+      } else if (finalShare <= 0.035) {
         guidance = "conservative";
       } else if (finalShare >= 0.09) {
         guidance = "flexible";
       }
 
-      budgetRange.textContent = `${formatMoney(lowRange)} - ${formatMoney(highRange)}`;
+      return {
+        recommendedMidpoint,
+        lowRange,
+        highRange,
+        weeklyLow,
+        weeklyHigh,
+        finalShare,
+        totalFoodShare,
+        savingsMonths,
+        flexibleCash,
+        guidance,
+        household: safeHousehold,
+      };
+    }
+
+    function calculateEatingOutBudget() {
+      const income = getNumber("income");
+      const household = getNumber("household");
+      const groceries = getNumber("groceries");
+      const debt = getNumber("debt");
+      const savings = getNumber("savings");
+      const housing = getNumber("housing");
+      const lifestyle = getValue("lifestyle");
+      const goal = getValue("goal");
+
+      const results = document.getElementById("results");
+      const budgetRange = document.getElementById("budgetRange");
+      const resultDetails = document.getElementById("resultDetails");
+      const summary = document.getElementById("summary");
+
+      results.classList.add("visible");
+
+      const recommendation = calculateEatingOutRecommendation({
+        income,
+        household,
+        groceries,
+        debt,
+        savings,
+        housing,
+        lifestyle,
+        goal,
+      });
+
+      if (income <= 0) {
+        budgetRange.textContent = "$0";
+        resultDetails.innerHTML =
+          "<p>Enter monthly take-home income to estimate a monthly eating-out budget.</p>";
+        summary.textContent = "";
+        return;
+      }
+
+      const {
+        recommendedMidpoint,
+        lowRange,
+        highRange,
+        weeklyLow,
+        weeklyHigh,
+        finalShare,
+        totalFoodShare,
+        savingsMonths,
+        guidance,
+      } = recommendation;
+
+      budgetRange.textContent =
+        recommendedMidpoint > 0
+          ? `${formatMoney(lowRange)} - ${formatMoney(highRange)}`
+          : "$0";
 
       resultDetails.innerHTML = `
         <p><strong>Estimated midpoint:</strong> ${formatMoney(recommendedMidpoint)} per month.</p>
@@ -657,13 +852,22 @@ const relatedCalculators = calculators
         <p><strong>Emergency savings estimate:</strong> about ${savingsMonths.toFixed(1)} months of baseline expenses.</p>
       `;
 
-      summary.innerHTML = `
-        Based on <strong>${formatMoney(income)}</strong> in monthly take-home income,
-        <strong>${formatMoney(groceries)}</strong> in groceries, household size,
-        debt, housing, savings, and lifestyle, a wise eating-out budget is about
-        <strong>${formatMoney(lowRange)} to ${formatMoney(highRange)}</strong> per month.
-        This is a <strong>${guidance}</strong> restaurant budget, not a hard limit.
-      `;
+      if (recommendedMidpoint <= 0) {
+        summary.innerHTML = `
+          Based on the income, housing, debt, and grocery costs entered, there is
+          <strong>no current discretionary room</strong> for a separate eating-out
+          budget. Reduce another entered cost or increase available income before
+          assigning restaurant spending.
+        `;
+      } else {
+        summary.innerHTML = `
+          Based on <strong>${formatMoney(income)}</strong> in monthly take-home income,
+          <strong>${formatMoney(groceries)}</strong> in groceries, household size,
+          debt, housing, savings, and lifestyle, a practical eating-out budget is about
+          <strong>${formatMoney(lowRange)} to ${formatMoney(highRange)}</strong> per month.
+          This is a <strong>${guidance}</strong> restaurant budget, not a hard limit.
+        `;
+      }
     }
 
     document
