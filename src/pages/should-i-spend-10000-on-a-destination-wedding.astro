@@ -525,7 +525,6 @@ const breadcrumbSchema = {
       const debtRatio = (debt / income) * 100;
       const guestSupportShare = totalTravelWeddingCost > 0 ? (guestSupport / totalTravelWeddingCost) * 100 : 0;
       const remainingSavings = savings - totalTravelWeddingCost;
-      const remainingSavingsMonths = remainingSavings / monthlyIncome;
 
       let pressureScore = 0;
 
@@ -535,13 +534,6 @@ const breadcrumbSchema = {
 
       if (totalTravelWeddingCost > savings) pressureScore += 28;
 
-      if (remainingSavingsMonths < 1 && income < 100000) {
-        pressureScore += 18;
-      } else if (remainingSavingsMonths < 3 && income < 160000) {
-        pressureScore += 10;
-      } else if (remainingSavingsMonths >= 6) {
-        pressureScore -= 8;
-      }
 
       if (debtRatio >= 75) pressureScore += 12;
       else if (debtRatio >= 40) pressureScore += 8;
@@ -552,25 +544,15 @@ const breadcrumbSchema = {
         else if (guestSupportShare >= 15) pressureScore += 3;
       }
 
-      if (
-        annualIncomeImpact < 2 &&
-        savingsImpact < 10 &&
-        remainingSavingsMonths >= 6 &&
-        debtRatio < 15
-      ) {
-        pressureScore -= 12;
-      }
 
       if (
         savingsImpact < 1 &&
-        debtRatio < 10 &&
-        remainingSavingsMonths >= 24
+        debtRatio < 10
       ) {
         pressureScore = 0;
       } else if (
         savingsImpact < 3 &&
-        debtRatio < 15 &&
-        remainingSavingsMonths >= 12
+        debtRatio < 15
       ) {
         pressureScore = Math.min(pressureScore, 5);
       } else if (
@@ -612,7 +594,7 @@ const breadcrumbSchema = {
       monthlyImpactEl.innerHTML = `<strong>Monthly take-home impact:</strong> ${monthlyIncomeImpact.toFixed(1)}% of one month's take-home pay`;
       debtRatioEl.innerHTML = `<strong>Debt ratio:</strong> ${debtRatio.toFixed(1)}% of annual income`;
       travelStackEl.innerHTML = `<strong>Destination wedding + guest support:</strong> ${formatMoney(totalTravelWeddingCost)} total / guest support is ${guestSupportShare.toFixed(1)}%`;
-      remainingSavingsEl.innerHTML = `<strong>Estimated savings after destination wedding:</strong> ${formatMoney(remainingSavings)} / ${remainingSavingsMonths.toFixed(1)} months of take-home pay`;
+      remainingSavingsEl.innerHTML = `<strong>Estimated savings after destination wedding:</strong> ${formatMoney(remainingSavings)}`;
 
       guidanceEl.textContent = `${guidance} Recommended next step: ${level.action}`;
     }

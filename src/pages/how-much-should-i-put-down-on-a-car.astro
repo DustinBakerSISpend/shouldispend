@@ -562,15 +562,12 @@ const relatedCalculators = calculators
         return;
       }
 
-      const monthlyFlexibilityEstimate = Math.max(income * 0.7, 1);
       const savingsAfterDownPayment = Math.max(savings - downPayment, 0);
       const downPaymentPercent = (downPayment / vehiclePrice) * 100;
       const loanAmount = Math.max(vehiclePrice - downPayment, 0);
       const loanToValue = (loanAmount / vehiclePrice) * 100;
       const paymentRatio = (monthlyPayment / income) * 100;
       const totalDebtRatio = ((monthlyPayment + debt) / income) * 100;
-      const savingsMonthsAfter =
-        savingsAfterDownPayment / monthlyFlexibilityEstimate;
       const paymentsCoveredAfter =
         monthlyPayment > 0 ? savingsAfterDownPayment / monthlyPayment : 0;
       const savingsUsedPercent =
@@ -602,16 +599,6 @@ const relatedCalculators = calculators
 
       if (savingsAfterDownPayment <= 0) {
         pressureScore += 34;
-      } else if (savingsMonthsAfter < 1) {
-        pressureScore += 26;
-      } else if (savingsMonthsAfter < 3) {
-        pressureScore += 16;
-      } else if (savingsMonthsAfter >= 24) {
-        pressureScore -= 30;
-      } else if (savingsMonthsAfter >= 12) {
-        pressureScore -= 22;
-      } else if (savingsMonthsAfter >= 6) {
-        pressureScore -= 14;
       }
 
       if (savingsUsedPercent >= 80) {
@@ -620,7 +607,7 @@ const relatedCalculators = calculators
         pressureScore += 12;
       } else if (savingsUsedPercent >= 40) {
         pressureScore += 6;
-      } else if (savingsUsedPercent <= 20 && savingsMonthsAfter >= 3) {
+      } else if (savingsUsedPercent <= 20) {
         pressureScore -= 6;
       }
 
@@ -628,9 +615,9 @@ const relatedCalculators = calculators
         pressureScore += 16;
       } else if (downPaymentPercent < 10) {
         pressureScore += 9;
-      } else if (downPaymentPercent >= 20 && savingsMonthsAfter >= 3) {
+      } else if (downPaymentPercent >= 20) {
         pressureScore -= 10;
-      } else if (downPaymentPercent >= 15 && savingsMonthsAfter >= 3) {
+      } else if (downPaymentPercent >= 15) {
         pressureScore -= 6;
       }
 
@@ -661,7 +648,7 @@ const relatedCalculators = calculators
 
       if (loanToValue >= 95) {
         pressureScore += 12;
-      } else if (loanToValue <= 80 && savingsMonthsAfter >= 3) {
+      } else if (loanToValue <= 80) {
         pressureScore -= 8;
       }
 
@@ -676,7 +663,6 @@ const relatedCalculators = calculators
       }
 
       if (
-        savingsMonthsAfter >= 12 &&
         paymentRatio < 12 &&
         totalDebtRatio < 30 &&
         downPaymentPercent >= 10
@@ -685,7 +671,6 @@ const relatedCalculators = calculators
       }
 
       if (
-        savingsMonthsAfter >= 6 &&
         paymentRatio < 10 &&
         totalDebtRatio < 25 &&
         downPaymentPercent >= 15
@@ -722,11 +707,10 @@ const relatedCalculators = calculators
       ) {
         pressureScore = Math.min(pressureScore, 5);
       } else if (
-        savingsMonthsAfter >= 120 ||
         paymentsCoveredAfter >= 120
       ) {
         pressureScore = Math.min(pressureScore, 8);
-      } else if (savingsMonthsAfter >= 60 || paymentsCoveredAfter >= 60) {
+      } else if (paymentsCoveredAfter >= 60) {
         pressureScore = Math.min(pressureScore, 12);
       }
 
@@ -761,11 +745,11 @@ const relatedCalculators = calculators
           "This down payment plan appears risky. Either the down payment is too small for the vehicle and loan structure, or it uses too much savings and leaves the rest of the budget exposed.";
       }
 
-      if (downPaymentPercent < minimumTarget && savingsMonthsAfter >= 3) {
-        suggestedDownPayment = `A stronger target would be at least $${minimumDownPayment.toLocaleString()} down, if that still leaves emergency savings intact.`;
-      } else if (savingsMonthsAfter < 3) {
+      if (savingsAfterDownPayment <= 0) {
         suggestedDownPayment =
           "The bigger issue is savings left after purchase. Consider a smaller down payment, cheaper vehicle, or waiting until your cushion is stronger.";
+      } else if (downPaymentPercent < minimumTarget && savingsUsedPercent <= 20) {
+        suggestedDownPayment = `A stronger target would be at least $${minimumDownPayment.toLocaleString()} down, if that still leaves emergency savings intact.`;
       } else {
         suggestedDownPayment = `A conservative target for this vehicle type is around $${targetDownPayment.toLocaleString()} down, but only if your emergency savings remain healthy.`;
       }
@@ -785,7 +769,7 @@ const relatedCalculators = calculators
 
         <p><strong>Total debt impact:</strong> ${totalDebtRatio.toFixed(1)}% of monthly take-home income, including this car payment.</p>
 
-        <p><strong>Savings after down payment:</strong> $${savingsAfterDownPayment.toLocaleString()}, or about ${savingsMonthsAfter.toFixed(1)} months of estimated flexibility.</p>
+        <p><strong>Savings after down payment:</strong> $${savingsAfterDownPayment.toLocaleString()}, using about ${savingsUsedPercent.toFixed(1)}% of current savings.</p>
 
         <p><strong>Savings used:</strong> ${
           savings > 0 ? `${savingsUsedPercent.toFixed(1)}% of current savings` : "No savings entered"

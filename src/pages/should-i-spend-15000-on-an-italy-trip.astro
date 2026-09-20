@@ -548,7 +548,6 @@ import WhenSpendingMakesSense from "../components/WhenSpendingMakesSense.astro";
       const monthlyIncomeImpact = (vacation / monthlyIncome) * 100;
       const debtRatio = (debt / income) * 100;
       const remainingSavings = savings - vacation;
-      const remainingSavingsMonths = remainingSavings / monthlyIncome;
 
       const conservativeBudget = Math.max(0, Math.min(income * 0.045, savings * 0.18));
       const flexibleBudget = Math.max(0, Math.min(income * 0.075, savings * 0.3));
@@ -562,20 +561,10 @@ import WhenSpendingMakesSense from "../components/WhenSpendingMakesSense.astro";
 
       if (vacation > savings) pressureScore += 25;
 
-      if (remainingSavingsMonths < 1 && income < 100000) {
-        pressureScore += 18;
-      } else if (remainingSavingsMonths < 3 && income < 150000) {
-        pressureScore += 10;
-      } else if (remainingSavingsMonths >= 6) {
-        pressureScore -= 8;
-      }
 
       if (debtRatio >= 75) pressureScore += 10;
       else if (debtRatio >= 40) pressureScore += 6;
 
-      if (annualIncomeImpact < 2 && savingsImpact < 10 && remainingSavingsMonths >= 6) {
-        pressureScore -= 12;
-      }
 
       if (annualIncomeImpact < 0.75 && monthlyIncomeImpact < 8 && debtRatio < 10) {
         pressureScore = Math.min(pressureScore, 18);
@@ -589,8 +578,7 @@ import WhenSpendingMakesSense from "../components/WhenSpendingMakesSense.astro";
         annualIncomeImpact < 0.1 &&
         monthlyIncomeImpact < 1.5 &&
         savingsImpact < 1 &&
-        debtRatio < 3 &&
-        remainingSavingsMonths >= 12
+        debtRatio < 3
       ) {
         pressureScore = 0;
       }

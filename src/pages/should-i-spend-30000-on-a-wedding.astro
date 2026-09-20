@@ -626,7 +626,6 @@ const relatedCalculators = calculators
       const monthlyIncomeImpact = (cost / monthlyIncome) * 100;
       const debtRatio = (debt / income) * 100;
       const remainingSavings = savings - cost;
-      const remainingSavingsMonths = remainingSavings / monthlyIncome;
 
       let pressureScore = 0;
 
@@ -636,24 +635,10 @@ const relatedCalculators = calculators
 
       if (cost > savings) pressureScore += 28;
 
-      if (remainingSavingsMonths < 1 && income < 100000) {
-        pressureScore += 20;
-      } else if (remainingSavingsMonths < 3 && income < 150000) {
-        pressureScore += 12;
-      } else if (remainingSavingsMonths >= 6) {
-        pressureScore -= 8;
-      }
 
       if (debtRatio >= 75) pressureScore += 12;
       else if (debtRatio >= 40) pressureScore += 8;
 
-      if (
-        annualIncomeImpact < 2 &&
-        savingsImpact < 10 &&
-        remainingSavingsMonths >= 6
-      ) {
-        pressureScore -= 12;
-      }
 
       if (
         annualIncomeImpact < 0.25 &&

@@ -607,7 +607,6 @@ import WhenSpendingMakesSense from "../components/WhenSpendingMakesSense.astro";
       const annualIncomeImpact = (cost / income) * 100;
       const monthlyIncomeImpact = (cost / monthlyIncome) * 100;
       const debtRatio = (debt / income) * 100;
-      const remainingSavingsMonths = monthlyIncome > 0 ? remainingSavings / monthlyIncome : 0;
 
       let pressureScore = 0;
 
@@ -619,13 +618,6 @@ import WhenSpendingMakesSense from "../components/WhenSpendingMakesSense.astro";
       else if (cost > savings && annualIncomeImpact >= 3) pressureScore += 14;
       else if (cost > savings) pressureScore += 6;
 
-      if (remainingSavingsMonths < 1 && annualIncomeImpact >= 6) {
-        pressureScore += 18;
-      } else if (remainingSavingsMonths < 3 && annualIncomeImpact >= 4) {
-        pressureScore += 10;
-      } else if (remainingSavingsMonths >= 6) {
-        pressureScore -= 8;
-      }
 
       if (debtRatio >= 75) pressureScore += 12;
       else if (debtRatio >= 40) pressureScore += 8;
@@ -667,7 +659,7 @@ import WhenSpendingMakesSense from "../components/WhenSpendingMakesSense.astro";
 
       if (
         savings >= cost * 20 &&
-        remainingSavingsMonths >= 6 &&
+
         debtRatio <= 15
       ) {
         pressureScore = Math.min(pressureScore, 15);

@@ -449,7 +449,6 @@ const faqSchema = {
       const monthlyIncomeImpact = (totalDressCost / monthlyTakeHome) * 100;
       const budgetShare = (totalDressCost / budgetForShare) * 100;
       const debtRatio = (debt / income) * 100;
-      const remainingSavingsMonths = monthlyTakeHome > 0 ? remainingSavings / monthlyTakeHome : 0;
       const extrasShare = totalDressCost > 0 ? (extrasCost / totalDressCost) * 100 : 0;
 
       let pressureScore = 0;
@@ -463,13 +462,6 @@ const faqSchema = {
       else if (totalDressCost > savings && annualIncomeImpact >= 2) pressureScore += 10;
       else if (totalDressCost > savings) pressureScore += 5;
 
-      if (remainingSavingsMonths < 1 && annualIncomeImpact >= 3) {
-        pressureScore += 14;
-      } else if (remainingSavingsMonths < 3 && annualIncomeImpact >= 2) {
-        pressureScore += 8;
-      } else if (remainingSavingsMonths >= 6) {
-        pressureScore -= 8;
-      }
 
       if (budgetShare >= 15) pressureScore += 14;
       else if (budgetShare >= 10) pressureScore += 8;
@@ -521,7 +513,7 @@ const faqSchema = {
 
       if (
         savings >= totalDressCost * 25 &&
-        remainingSavingsMonths >= 6 &&
+
         debtRatio <= 15
       ) {
         pressureScore = Math.min(pressureScore, 12);

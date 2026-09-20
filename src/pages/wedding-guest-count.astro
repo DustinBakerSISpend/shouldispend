@@ -445,7 +445,6 @@ const faqSchema = {
       const monthlyIncomeImpact = (estimatedWeddingCost / monthlyTakeHome) * 100;
       const budgetShare = (estimatedWeddingCost / budgetForShare) * 100;
       const debtRatio = (debt / income) * 100;
-      const remainingSavingsMonths = monthlyTakeHome > 0 ? remainingSavings / monthlyTakeHome : 0;
       const capacityUse = venueCapacity > 0 ? (guestCount / venueCapacity) * 100 : 0;
       const costPer10Guests = costPerGuest * 10;
 
@@ -460,13 +459,6 @@ const faqSchema = {
       else if (estimatedWeddingCost > savings && annualIncomeImpact >= 3) pressureScore += 14;
       else if (estimatedWeddingCost > savings) pressureScore += 6;
 
-      if (remainingSavingsMonths < 1 && annualIncomeImpact >= 6) {
-        pressureScore += 18;
-      } else if (remainingSavingsMonths < 3 && annualIncomeImpact >= 4) {
-        pressureScore += 10;
-      } else if (remainingSavingsMonths >= 6) {
-        pressureScore -= 8;
-      }
 
       if (budgetShare >= 110) pressureScore += 18;
       else if (budgetShare >= 95) pressureScore += 10;
@@ -526,7 +518,7 @@ const faqSchema = {
 
       if (
         savings >= estimatedWeddingCost * 20 &&
-        remainingSavingsMonths >= 6 &&
+
         debtRatio <= 15
       ) {
         pressureScore = Math.min(pressureScore, 15);

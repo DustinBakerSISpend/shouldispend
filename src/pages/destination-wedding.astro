@@ -663,7 +663,6 @@ import WhenSpendingMakesSense from "../components/WhenSpendingMakesSense.astro";
       const annualIncomeImpact = (totalDirectCost / income) * 100;
       const monthlyIncomeImpact = (totalDirectCost / monthlyIncome) * 100;
       const debtRatio = (debt / income) * 100;
-      const remainingSavingsMonths = monthlyIncome > 0 ? remainingSavings / monthlyIncome : 0;
       const localComparison = localAlternative > 0 ? ((totalDirectCost - localAlternative) / localAlternative) * 100 : 0;
       const guestBurdenIndex = guestTravelBurden / Math.max(monthlyIncome, 1);
 
@@ -677,13 +676,6 @@ import WhenSpendingMakesSense from "../components/WhenSpendingMakesSense.astro";
       else if (totalDirectCost > savings && annualIncomeImpact >= 3) pressureScore += 14;
       else if (totalDirectCost > savings) pressureScore += 6;
 
-      if (remainingSavingsMonths < 1 && annualIncomeImpact >= 6) {
-        pressureScore += 18;
-      } else if (remainingSavingsMonths < 3 && annualIncomeImpact >= 4) {
-        pressureScore += 10;
-      } else if (remainingSavingsMonths >= 6) {
-        pressureScore -= 8;
-      }
 
       if (familyPressure >= 4) pressureScore += 14;
       else if (familyPressure >= 3) pressureScore += 9;
@@ -740,7 +732,7 @@ import WhenSpendingMakesSense from "../components/WhenSpendingMakesSense.astro";
 
       if (
         savings >= totalDirectCost * 20 &&
-        remainingSavingsMonths >= 6 &&
+
         debtRatio <= 15
       ) {
         pressureScore = Math.min(pressureScore, 15);

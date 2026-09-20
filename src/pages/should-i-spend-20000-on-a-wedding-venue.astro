@@ -536,8 +536,6 @@ const breadcrumbSchema = {
     const monthlyIncomeImpact = (venueCost / monthlyTakeHome) * 100;
     const debtRatio = (debt / income) * 100;
     const venueBudgetShare = (venueCost / budgetForShare) * 100;
-    const remainingSavingsMonths =
-      monthlyTakeHome > 0 ? remainingSavings / monthlyTakeHome : 0;
 
     let pressureScore = 0;
 
@@ -550,13 +548,6 @@ const breadcrumbSchema = {
     else if (venueCost > savings && annualIncomeImpact >= 3) pressureScore += 14;
     else if (venueCost > savings) pressureScore += 5;
 
-    if (remainingSavingsMonths < 1 && annualIncomeImpact >= 6) {
-      pressureScore += 18;
-    } else if (remainingSavingsMonths < 3 && annualIncomeImpact >= 4) {
-      pressureScore += 10;
-    } else if (remainingSavingsMonths >= 6) {
-      pressureScore -= 8;
-    }
 
     if (debtRatio >= 75) pressureScore += 12;
     else if (debtRatio >= 40) pressureScore += 8;
@@ -600,7 +591,7 @@ const breadcrumbSchema = {
 
     if (
       savings >= venueCost * 20 &&
-      remainingSavingsMonths >= 6 &&
+
       debtRatio <= 15
     ) {
       pressureScore = Math.min(pressureScore, 15);
@@ -674,7 +665,7 @@ if (
 
     budgetShareEl.innerHTML = `<strong>Venue share of wedding budget:</strong> ${venueBudgetShare.toFixed(1)}% / ${formatMoney(remainingWeddingBudget)} left for other wedding costs`;
 
-    remainingSavingsEl.innerHTML = `<strong>Estimated savings after venue:</strong> ${formatMoney(remainingSavings)} / ${remainingSavingsMonths.toFixed(1)} months of take-home pay`;
+    remainingSavingsEl.innerHTML = `<strong>Estimated savings after venue:</strong> ${formatMoney(remainingSavings)}`;
 
     guidanceEl.textContent = `${guidance} Recommended next step: ${level.action}`;
   }
