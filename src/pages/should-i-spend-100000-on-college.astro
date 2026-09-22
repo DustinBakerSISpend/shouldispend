@@ -690,7 +690,6 @@ const relatedCalculators = calculators
       const borrowingShare = borrowed / Math.max(collegeCost, 1);
       const cashUseRatio = cashUsed > 0 ? (cashUsed / Math.max(savings, 1)) * 100 : 0;
       const remainingSavings = Math.max(savings - cashUsed, 0);
-      const savingsMonthsAfter = remainingSavings / Math.max(income * 0.7, 1);
       const debtRatioAfter = ((debt + estimatedLoanPayment) / income) * 100;
       const loanPaymentRatio = estimatedLoanPayment / Math.max(income, 1);
       const incomeGainRatio = incomeGain / Math.max(income, 1);
@@ -722,15 +721,6 @@ const relatedCalculators = calculators
         pressureScore += 4;
       }
 
-      if (savingsMonthsAfter < 1) {
-        pressureScore += income >= collegeCost ? 2 : income >= collegeCost * 0.5 ? 8 : 24;
-      } else if (savingsMonthsAfter < 3) {
-        pressureScore += income >= collegeCost * 0.5 ? 4 : 14;
-      } else if (savingsMonthsAfter >= 6) {
-        pressureScore -= 8;
-      } else if (savingsMonthsAfter >= 12) {
-        pressureScore -= 12;
-      }
 
       if (estimatedLoanPayment > 0 && incomeGain <= 0) {
         pressureScore += estimatedLoanPayment <= income * 0.01 ? 5 : 22;
@@ -860,7 +850,6 @@ if (
       if (
         costToIncomeRatio < 10 &&
         debtRatioAfter < 12 &&
-        savingsMonthsAfter >= 9 &&
         payoffStrength !== "weak"
       ) {
         pressureScore = Math.min(pressureScore, 20);
@@ -869,7 +858,6 @@ if (
       if (
         costToIncomeRatio < 6 &&
         debtRatioAfter < 8 &&
-        savingsMonthsAfter >= 12 &&
         payoffStrength === "strong"
       ) {
         pressureScore = Math.min(pressureScore, 8);
@@ -908,7 +896,7 @@ if (
 
         <p><strong>Debt impact after school borrowing:</strong> ${debtRatioAfter.toFixed(1)}% of monthly take-home income, including estimated student loan payment.</p>
 
-        <p><strong>Savings after planned cash use:</strong> About ${savingsMonthsAfter.toFixed(1)} months of estimated flexibility.</p>
+        <p><strong>Savings after planned cash use:</strong> $${Math.round(remainingSavings).toLocaleString()}.</p>
 
         <p><strong>Expected payoff strength:</strong> ${payoffStrength} based on estimated loan payment versus expected monthly income gain.</p>
 

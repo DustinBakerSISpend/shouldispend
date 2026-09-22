@@ -794,8 +794,6 @@ const relatedCalculators = calculators
         travelers > 0 && tripDays > 0 ? outOfPocketCost / travelers / tripDays : 0;
       const paidDayShare = tripDays > 0 ? paidActivityDays / tripDays : 0;
       const freeDayShare = tripDays > 0 ? freeActivityDays / tripDays : 0;
-      const nonrefundableShare =
-        grossActivityCost > 0 ? Math.min(nonrefundableAmount, grossActivityCost) / grossActivityCost : 0;
       const emergencyAfterGap = Math.max(0, emergencySavings - cashGap);
 
       /*
@@ -870,9 +868,6 @@ const relatedCalculators = calculators
       if (freeDayShare >= 0.35) score -= 5;
       else if (freeDayShare <= 0.1 && paidActivityDays > 0) score += 5;
 
-      if (nonrefundableShare >= 0.6) score += 12;
-      else if (nonrefundableShare >= 0.35) score += 7;
-      else if (nonrefundableShare >= 0.15) score += 4;
 
       if (bufferPercent < 8 && outOfPocketCost > 0) score += 4;
 
@@ -896,8 +891,7 @@ const relatedCalculators = calculators
         fullyCovered &&
         noDebtPayment &&
         tinyCostForIncome &&
-        strongEmergencyCushion &&
-        nonrefundableShare < 0.5
+        strongEmergencyCushion
       ) {
         score = 0;
       } else if (

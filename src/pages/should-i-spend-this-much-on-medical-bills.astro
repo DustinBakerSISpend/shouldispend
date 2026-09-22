@@ -522,8 +522,6 @@ const medicalFaqs = [
 
       const savingsAfterBill = savingsAmount - billAmount;
 
-      const monthsOfIncomeLeftAfterBill =
-        incomeAmount > 0 ? savingsAfterBill / incomeAmount : 0;
 
       const hasHugeIncomeBuffer =
         incomeAmount > 0 && billAmount <= incomeAmount * 0.02;
@@ -555,10 +553,6 @@ const medicalFaqs = [
         else if (billToMonthlyIncomeRatio >= 0.1) pressureScore += 5;
 
         if (savingsAfterBill < 0) pressureScore += 18;
-        else if (monthsOfIncomeLeftAfterBill < 1) pressureScore += 14;
-        else if (monthsOfIncomeLeftAfterBill < 2) pressureScore += 8;
-        else if (monthsOfIncomeLeftAfterBill >= 6) pressureScore -= 12;
-        else if (monthsOfIncomeLeftAfterBill >= 3) pressureScore -= 6;
 
         if (debtPressure === "moderate") pressureScore += 10;
         if (debtPressure === "high") pressureScore += 22;

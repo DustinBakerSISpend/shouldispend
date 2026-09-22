@@ -578,7 +578,6 @@ const relatedCalculators = calculators
       return;
     }
 
-    const monthlyFlexibilityEstimate = Math.max(income * 0.7, 1);
     const equity = tradeValue - loanBalance;
     const positiveEquity = Math.max(equity, 0);
     const negativeEquity = Math.max(-equity, 0);
@@ -587,7 +586,6 @@ const relatedCalculators = calculators
     const newPaymentRatio = (newPayment / income) * 100;
     const newDebtRatio = ((newPayment + debt) / income) * 100;
     const currentDebtRatio = ((currentPayment + debt) / income) * 100;
-    const savingsMonths = savings / monthlyFlexibilityEstimate;
     const paymentsCoveredBySavings = savings / newPayment;
     const twelveMonthIncrease = paymentIncrease * 12;
     const annualRepairVsIncrease =
@@ -621,16 +619,6 @@ const relatedCalculators = calculators
 
     if (savings <= 0) {
       pressureScore += 30;
-    } else if (savingsMonths < 1) {
-      pressureScore += 24;
-    } else if (savingsMonths < 3) {
-      pressureScore += 14;
-    } else if (savingsMonths >= 24) {
-      pressureScore -= 34;
-    } else if (savingsMonths >= 12) {
-      pressureScore -= 24;
-    } else if (savingsMonths >= 6) {
-      pressureScore -= 14;
     }
 
     if (negativeEquity > 0) {
@@ -701,23 +689,7 @@ const relatedCalculators = calculators
       pressureScore = Math.max(pressureScore, 70);
     }
 
-    if (
-      savingsMonths >= 24 &&
-      equity >= 0 &&
-      newDebtRatio < 30 &&
-      newPaymentRatio < 18
-    ) {
-      pressureScore = Math.min(pressureScore, 55);
-    }
 
-    if (
-      savingsMonths >= 12 &&
-      equity >= 0 &&
-      newDebtRatio < 30 &&
-      need !== "low"
-    ) {
-      pressureScore = Math.min(pressureScore, 60);
-    }
 
     if (income >= 1000000 && newPaymentRatio <= 0.5 && newDebtRatio <= 2) {
       pressureScore = 0;
@@ -741,9 +713,9 @@ const relatedCalculators = calculators
       pressureScore = Math.min(pressureScore, 2);
     } else if (savings >= 250000 && paymentsCoveredBySavings >= 180) {
       pressureScore = Math.min(pressureScore, 5);
-    } else if (savingsMonths >= 120 || paymentsCoveredBySavings >= 120) {
+    } else if (paymentsCoveredBySavings >= 120) {
       pressureScore = Math.min(pressureScore, 8);
-    } else if (savingsMonths >= 60 || paymentsCoveredBySavings >= 60) {
+    } else if (paymentsCoveredBySavings >= 60) {
       pressureScore = Math.min(pressureScore, 12);
     }
 
@@ -799,7 +771,7 @@ const relatedCalculators = calculators
 
       <p><strong>Replacement total debt impact:</strong> ${newDebtRatio.toFixed(1)}% of monthly take-home income.</p>
 
-      <p><strong>Savings cushion:</strong> $${savings.toLocaleString()}, or about ${savingsMonths.toFixed(1)} months of estimated flexibility.</p>
+      <p><strong>Savings cushion:</strong> ${savings.toLocaleString()}.</p>
 
       <p><strong>Expected repairs:</strong> $${repairCost.toLocaleString()} over the next 12 months.</p>
 

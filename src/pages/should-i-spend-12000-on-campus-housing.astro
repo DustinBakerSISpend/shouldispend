@@ -745,10 +745,6 @@ const relatedCalculators = calculators
     const remainingSavings = Math.max(savings - cashUsed, 0);
     const estimatedLoanPayment = borrowed > 0 ? borrowed * 0.012 : 0;
 
-    const emergencyMonths = income > 0 ? emergencyFund / income : 0;
-    const savingsMonthsAfter = income > 0 ? remainingSavings / income : 0;
-    const totalLiquidMonthsAfter =
-      income > 0 ? (remainingSavings + emergencyFund) / income : 0;
 
     const debtRatioAfter =
       income > 0 ? ((monthlyDebt + estimatedLoanPayment) / income) * 100 : 0;
@@ -805,18 +801,7 @@ const relatedCalculators = calculators
         pressureScore += clamp(borrowedShare * 0.14, 0, 14);
       }
 
-      if (emergencyMonths < 1) {
-        pressureScore += savings >= housingCost * 5 ? 2 : 16;
-      } else if (emergencyMonths < 3) {
-        pressureScore += savings >= housingCost * 5 ? 1 : 7;
-      } else if (emergencyMonths >= 6) {
-        pressureScore -= 8;
-      }
 
-      if (savingsMonthsAfter >= 24) pressureScore -= 18;
-      else if (savingsMonthsAfter >= 12) pressureScore -= 12;
-      else if (savingsMonthsAfter >= 6) pressureScore -= 6;
-      else if (cashUsed > 0 && savingsMonthsAfter < 1) pressureScore += 12;
 
       if (commuteAlternative === "strong") pressureScore += 8;
       else if (commuteAlternative === "none") pressureScore -= 8;
@@ -902,11 +887,11 @@ const relatedCalculators = calculators
 
       <p><strong>Debt impact after borrowing:</strong> ${debtRatioAfter.toFixed(1)}% of monthly take-home income, including estimated housing loan payment.</p>
 
-      <p><strong>Emergency fund coverage:</strong> ${emergencyMonths.toFixed(1)} months of take-home income.</p>
+      <p><strong>Emergency fund:</strong> ${formatDollars(emergencyFund)}.</p>
 
-      <p><strong>Savings after planned cash use:</strong> About ${savingsMonthsAfter.toFixed(1)} months of take-home income.</p>
+      <p><strong>Savings after planned cash use:</strong> ${formatDollars(remainingSavings)}.</p>
 
-      <p><strong>Total liquid cushion after housing:</strong> About ${totalLiquidMonthsAfter.toFixed(1)} months of take-home income.</p>
+      <p><strong>Total liquid cushion after housing:</strong> ${formatDollars(remainingSavings + emergencyFund)}.</p>
 
       <p><strong>Pressure level:</strong> ${level.stress}.</p>
 

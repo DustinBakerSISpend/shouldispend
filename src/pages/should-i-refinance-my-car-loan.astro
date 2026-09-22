@@ -588,7 +588,6 @@ const relatedCalculators = calculators
         return;
       }
 
-      const monthlyFlexibilityEstimate = Math.max(income * 0.7, 1);
       const monthlySavings = currentPayment - newPayment;
       const positiveMonthlySavings = Math.max(monthlySavings, 0);
       const paymentIncrease = Math.max(newPayment - currentPayment, 0);
@@ -602,7 +601,6 @@ const relatedCalculators = calculators
       const newPaymentRatio = (newPayment / income) * 100;
       const newDebtRatio = ((newPayment + debt) / income) * 100;
       const currentDebtRatio = ((currentPayment + debt) / income) * 100;
-      const savingsMonths = savings / monthlyFlexibilityEstimate;
       const paymentsCoveredBySavings = savings / newPayment;
       const equity = vehicleValue > 0 ? vehicleValue - balance : 0;
       const negativeEquity = Math.max(-equity, 0);
@@ -662,15 +660,15 @@ const relatedCalculators = calculators
 
       if (savings <= 0) {
         pressureScore += 24;
-      } else if (savingsMonths < 1) {
+      } else if (paymentsCoveredBySavings < 1) {
         pressureScore += 18;
-      } else if (savingsMonths < 3) {
+      } else if (paymentsCoveredBySavings < 3) {
         pressureScore += 10;
-      } else if (savingsMonths >= 24) {
+      } else if (paymentsCoveredBySavings >= 24) {
         pressureScore -= 24;
-      } else if (savingsMonths >= 12) {
+      } else if (paymentsCoveredBySavings >= 12) {
         pressureScore -= 16;
-      } else if (savingsMonths >= 6) {
+      } else if (paymentsCoveredBySavings >= 6) {
         pressureScore -= 10;
       }
 
@@ -694,7 +692,7 @@ const relatedCalculators = calculators
         pressureScore -= 8;
       } else if (goal === "interest" && totalCostChange > 0) {
         pressureScore += 10;
-      } else if (goal === "stress" && savingsMonths < 3) {
+      } else if (goal === "stress" && paymentsCoveredBySavings < 3) {
         pressureScore += 6;
       }
 
@@ -749,9 +747,9 @@ const relatedCalculators = calculators
         pressureScore = Math.min(pressureScore, 2);
       } else if (savings >= 250000 && paymentsCoveredBySavings >= 180) {
         pressureScore = Math.min(pressureScore, 5);
-      } else if (savingsMonths >= 120 || paymentsCoveredBySavings >= 120) {
+      } else if (paymentsCoveredBySavings >= 120) {
         pressureScore = Math.min(pressureScore, 8);
-      } else if (savingsMonths >= 60 || paymentsCoveredBySavings >= 60) {
+      } else if (paymentsCoveredBySavings >= 60) {
         pressureScore = Math.min(pressureScore, 12);
       }
 
@@ -823,7 +821,7 @@ const relatedCalculators = calculators
 
         <p><strong>Refinanced total debt impact:</strong> ${newDebtRatio.toFixed(1)}% of monthly take-home income.</p>
 
-        <p><strong>Savings cushion:</strong> $${savings.toLocaleString()}, or about ${savingsMonths.toFixed(1)} months of estimated flexibility.</p>
+        <p><strong>Savings cushion:</strong> $${savings.toLocaleString()}, enough to cover about ${paymentsCoveredBySavings.toFixed(1)} refinanced payments at the entered payment.</p>
 
         <p><strong>Vehicle equity estimate:</strong> ${
           vehicleValue > 0

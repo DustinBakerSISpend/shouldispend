@@ -625,8 +625,11 @@ const relatedCalculators = calculators
       const monthlyAfterPrep =
         (remainingEatingOutMeals * eatOutCost + replaceableMeals * prepCost) * 4.33;
 
-      const savingsNeed = Math.max(income * 0.65, monthlyEatingOutCost + safeDebt + household * 300);
-      const savingsMonths = savingsNeed > 0 ? savings / savingsNeed : 0;
+      const baselineExpenseEstimate = Math.max(
+        monthlyEatingOutCost + safeDebt + household * 300,
+        1
+      );
+      const savingsMonths = savings / baselineExpenseEstimate;
 
       const eatingOutShare = monthlyEatingOutCost / income;
       const afterPrepShare = monthlyAfterPrep / income;
@@ -718,7 +721,7 @@ const relatedCalculators = calculators
 
         <p><strong>Eating-out share of take-home income:</strong> ${(eatingOutShare * 100).toFixed(1)}% now, or ${(afterPrepShare * 100).toFixed(1)}% after meal prep.</p>
 
-        <p><strong>Emergency savings estimate:</strong> about ${savingsMonths.toFixed(1)} months of baseline expenses.</p>
+        <p><strong>Emergency savings estimate:</strong> about ${savingsMonths.toFixed(1)} months against this calculator's baseline monthly expense estimate.</p>
       `;
 
       summary.innerHTML = `
