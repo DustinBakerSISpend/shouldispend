@@ -1,0 +1,7 @@
+import fs from "node:fs";import path from "node:path";import { pathToFileURL } from "node:url";
+const ROOT=process.cwd(),mod=await import(pathToFileURL(path.join(ROOT,"src","data","calculators.js")).href+"?v="+Date.now()),items=mod.calculators||[];
+const errors=[],ids=new Set(),byHref=new Map();
+for(const c of items){if(!c.title||!c.category||!c.href)errors.push("Missing required calculator field: "+JSON.stringify(c));if(c.id){if(ids.has(c.id))errors.push("Duplicate calculator id: "+c.id);ids.add(c.id)}if(!/^\/.*\/$/.test(c.href))errors.push("Non-canonical href format: "+c.href);const slug=c.href.replace(/^\//,"").replace(/\/$/,""),f=path.join(ROOT,"src","pages",slug+".astro");if(!fs.existsSync(f))errors.push("Calculator destination source missing: "+c.title+" -> "+c.href);if(/-calculators\/$/.test(c.href)&&!/calculators/i.test(c.title))errors.push("Specific calculator points to category hub: "+c.title+" -> "+c.href);if(!byHref.has(c.href))byHref.set(c.href,[]);byHref.get(c.href).push(c)}
+for(const [href,a] of byHref){const titles=[...new Set(a.map(x=>x.title))];if(titles.length>1)errors.push("Multiple different calculator titles share destination "+href+": "+titles.join(" | "))}
+if(errors.length){console.error("SIS inventory validation FAILED");for(const e of errors)console.error("- "+e);process.exit(1)}
+console.log("SIS inventory validation PASS entries="+items.length+" uniqueDestinations="+byHref.size+" ids="+ids.size);
