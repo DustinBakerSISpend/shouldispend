@@ -1,0 +1,413 @@
+---
+import Layout from "../layouts/Layout.astro";
+import CalculatorPageShell from "../components/CalculatorPageShell.astro";
+import FAQSection from "../components/FAQSection.astro";
+import RelatedCalculators from "../components/RelatedCalculators.astro";
+import MethodologySection from "../components/MethodologySection.astro";
+import { calculators } from "../data/calculators.js";
+
+const medicalOopFaqs = [
+  {
+    question: "What is an out-of-pocket medical cost?",
+    answer:
+      "For this calculator, out-of-pocket medical cost means the amount you may pay for covered care through deductible, coinsurance, and copays, plus any non-covered or out-of-network costs you enter. Insurance premiums are not included.",
+  },
+  {
+    question: "What does out-of-pocket maximum remaining mean?",
+    answer:
+      "Enter the amount still left before your plan reaches its applicable out-of-pocket maximum for covered benefits. Leave it blank if you do not know it. Enter zero only if that maximum has already been reached.",
+  },
+  {
+    question: "Does the out-of-pocket maximum cover out-of-network or non-covered care?",
+    answer:
+      "Not necessarily. Plans can exclude premiums, non-covered services, out-of-network care, and other charges from the out-of-pocket maximum. This calculator keeps those entered costs outside the covered-service cap.",
+  },
+  {
+    question: "Should I enter billed charges or allowed charges?",
+    answer:
+      "Use the insurer's allowed or negotiated amount for covered in-network care when available. Billed charges can be much higher than the amount used to calculate your cost sharing.",
+  },
+  {
+    question: "Is this an insurance quote?",
+    answer:
+      "No. It is a planning estimate. Your plan documents, insurer estimate, provider estimate, and explanation of benefits control the real cost-sharing rules.",
+  },
+];
+
+const relatedCalculators = calculators
+  .filter(
+    (calculator) =>
+      calculator.category === "Medical" &&
+      calculator.href !== "/medical-out-of-pocket-cost-calculator/"
+  )
+  .slice(0, 4);
+---
+
+<Layout
+  title="Medical Out-of-Pocket Cost Calculator | Deductible & Coinsurance"
+  description="Estimate medical out-of-pocket costs using allowed charges, deductible remaining, coinsurance, copays, out-of-pocket maximum, non-covered costs, and HSA or FSA funds."
+>
+  <style>
+    .container {
+      max-width: 960px;
+      margin: 0 auto;
+    }
+
+    .calculator {
+      background: white;
+      padding: 38px;
+      border-radius: 24px;
+      border: 1px solid var(--border);
+      box-shadow: 0 10px 25px rgba(15, 23, 42, 0.06);
+    }
+
+    .calculator h2 {
+      margin-top: 0;
+      color: #0f172a;
+      font-size: 2rem;
+    }
+
+    .calculator-intro {
+      color: #334155;
+      line-height: 1.8;
+      margin-bottom: 28px;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 22px;
+    }
+
+    .field label {
+      display: block;
+      font-weight: 800;
+      color: #0f172a;
+      margin-bottom: 8px;
+    }
+
+    .field small {
+      display: block;
+      color: #64748b;
+      line-height: 1.5;
+      margin-top: 7px;
+    }
+
+    .field input {
+      width: 100%;
+      box-sizing: border-box;
+      padding: 14px 15px;
+      border: 1px solid #cbd5e1;
+      border-radius: 12px;
+      font-size: 1rem;
+      background: white;
+    }
+
+    .calc-button {
+      margin-top: 28px;
+      border: 0;
+      border-radius: 999px;
+      padding: 16px 28px;
+      background: #0f766e;
+      color: white;
+      font-size: 1rem;
+      font-weight: 800;
+      cursor: pointer;
+    }
+
+    .results {
+      display: none;
+      margin-top: 30px;
+      padding: 28px;
+      border-radius: 20px;
+      background: #f8fafc;
+      border: 1px solid #dbe4ee;
+    }
+
+    .results.visible {
+      display: block;
+    }
+
+    .total-price {
+      font-size: clamp(2.3rem, 5vw, 3.8rem);
+      line-height: 1;
+      font-weight: 900;
+      color: #0f172a;
+      margin-bottom: 8px;
+    }
+
+    .result-label {
+      color: #0f766e;
+      font-weight: 900;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      margin-bottom: 22px;
+    }
+
+    .result-details {
+      color: #334155;
+      line-height: 1.8;
+    }
+
+    .result-details p {
+      margin: 0 0 10px;
+    }
+
+    .result-note {
+      margin-top: 20px;
+      padding: 18px;
+      border-radius: 14px;
+      background: white;
+      color: #475569;
+      line-height: 1.7;
+    }
+
+    .content-section {
+      margin-top: 54px;
+    }
+
+    .content-section h2 {
+      color: #0f172a;
+      font-size: 2rem;
+      margin-bottom: 16px;
+    }
+
+    .content-section p,
+    .content-section li {
+      color: #334155;
+      font-size: 1.06rem;
+      line-height: 1.85;
+    }
+
+    .content-section li + li {
+      margin-top: 10px;
+    }
+
+    @media (max-width: 760px) {
+      .calculator {
+        padding: 24px;
+      }
+
+      .grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+
+  <div class="container">
+    <CalculatorPageShell
+      eyebrow="Medical Cost Calculator"
+      title="Medical Out-of-Pocket Cost Calculator"
+      description="Estimate your share of covered medical costs using allowed charges, deductible remaining, coinsurance, copays, and the out-of-pocket maximum. Add non-covered costs separately, then see the cash gap after HSA, FSA, or outside help."
+    >
+      <div class="calculator">
+        <h2>Estimate Your Medical Out-of-Pocket Cost</h2>
+        <p class="calculator-intro">
+          Use covered in-network allowed charges when possible. If your insurer has already
+          given you a cost estimate, use those plan-specific numbers instead of guessing.
+        </p>
+
+        <div class="grid">
+          <div class="field">
+            <label for="allowedCoveredCharges">Covered allowed charges</label>
+            <input id="allowedCoveredCharges" type="number" min="0" step="0.01" value="5000" />
+            <small>The negotiated or allowed amount for covered care, not the sticker price.</small>
+          </div>
+
+          <div class="field">
+            <label for="deductibleRemaining">Deductible remaining</label>
+            <input id="deductibleRemaining" type="number" min="0" step="0.01" value="1000" />
+            <small>How much deductible is still left for the applicable plan year.</small>
+          </div>
+
+          <div class="field">
+            <label for="coinsurancePercent">Coinsurance after deductible (%)</label>
+            <input id="coinsurancePercent" type="number" min="0" max="100" step="0.1" value="20" />
+            <small>Your percentage share after the deductible for the covered care entered.</small>
+          </div>
+
+          <div class="field">
+            <label for="copaysAndOtherCoveredCostShare">Copays or other covered cost share</label>
+            <input id="copaysAndOtherCoveredCostShare" type="number" min="0" step="0.01" value="0" />
+            <small>Enter covered copays or similar patient cost sharing not already reflected above.</small>
+          </div>
+
+          <div class="field">
+            <label for="outOfPocketMaxRemaining">Out-of-pocket maximum remaining</label>
+            <input id="outOfPocketMaxRemaining" type="number" min="0" step="0.01" placeholder="Leave blank if unknown" />
+            <small>Blank means no cap supplied. Zero means the applicable maximum has already been reached.</small>
+          </div>
+
+          <div class="field">
+            <label for="nonCoveredOrOutOfNetworkCosts">Non-covered or out-of-network costs</label>
+            <input id="nonCoveredOrOutOfNetworkCosts" type="number" min="0" step="0.01" value="0" />
+            <small>These are added after the covered-service out-of-pocket cap in this planning model.</small>
+          </div>
+
+          <div class="field">
+            <label for="hsaFsaMedicalFunds">HSA/FSA or medical funds available</label>
+            <input id="hsaFsaMedicalFunds" type="number" min="0" step="0.01" value="0" />
+            <small>This reduces the cash gap, not the medical liability itself.</small>
+          </div>
+
+          <div class="field">
+            <label for="outsideHelp">Confirmed outside help</label>
+            <input id="outsideHelp" type="number" min="0" step="0.01" value="0" />
+            <small>Use only confirmed employer, family, charity, or other assistance.</small>
+          </div>
+        </div>
+
+        <button id="medicalOopButton" class="calc-button" type="button">
+          Calculate Medical Out-of-Pocket Cost
+        </button>
+
+        <div id="results" class="results">
+          <div id="totalPrice" class="total-price">$0.00</div>
+          <div class="result-label">Estimated Medical Out-of-Pocket Cost</div>
+          <div id="resultDetails" class="result-details"></div>
+          <div id="resultNote" class="result-note"></div>
+        </div>
+      </div>
+    </CalculatorPageShell>
+
+    <section class="content-section">
+      <h2>How This Medical Out-of-Pocket Calculator Works</h2>
+      <p>
+        The calculator applies the remaining deductible first, then coinsurance to the
+        covered allowed charges left after the deductible. Covered copays or other entered
+        cost sharing are added, but the covered patient share cannot exceed the allowed
+        covered charges.
+      </p>
+      <p>
+        If you enter an out-of-pocket maximum remaining amount, the calculator caps the
+        covered patient share at that amount. Non-covered or out-of-network costs are then
+        added separately because they may not count toward the plan maximum.
+      </p>
+    </section>
+
+    <section class="content-section">
+      <h2>What to Enter Before You Calculate</h2>
+      <ul>
+        <li>Use the insurer's allowed or negotiated amount for covered in-network care when available.</li>
+        <li>Use the deductible still remaining for the plan year, not the original annual deductible if part has already been met.</li>
+        <li>Enter coinsurance as the percentage you pay after the deductible for the covered care being modeled.</li>
+        <li>Leave out-of-pocket maximum remaining blank if you do not know it; enter zero only when it has already been reached.</li>
+        <li>Keep clearly non-covered or out-of-network costs separate so they are not incorrectly capped.</li>
+      </ul>
+    </section>
+
+    <section class="content-section">
+      <h2>Important Limits</h2>
+      <p>
+        Health plans can use separate deductibles, prescription rules, service-specific
+        copays, family versus individual limits, network tiers, exclusions, and other
+        cost-sharing rules. This calculator is a planning model, not an insurer adjudication
+        engine or a medical bill guarantee.
+      </p>
+      <p>
+        Compare the result with your plan documents, insurer estimate, provider estimate,
+        or explanation of benefits before making a payment decision.
+      </p>
+    </section>
+
+    <FAQSection title="Medical Out-of-Pocket Cost Calculator FAQ" faqs={medicalOopFaqs} />
+
+    <RelatedCalculators calculators={relatedCalculators} />
+
+    <MethodologySection category="medical out-of-pocket cost estimates" updated="September 2026" />
+  </div>
+
+  <script is:inline>
+    const getNumber = (id) => {
+      const raw = document.getElementById(id)?.value;
+      const value = Number(raw);
+      return Number.isFinite(value) && value >= 0 ? value : 0;
+    };
+
+    const getOptionalNumber = (id) => {
+      const raw = document.getElementById(id)?.value;
+      if (raw === undefined || raw === null || String(raw).trim() === "") {
+        return null;
+      }
+
+      const value = Number(raw);
+      return Number.isFinite(value) && value >= 0 ? value : null;
+    };
+
+    const formatMoney = (value) =>
+      value.toLocaleString(undefined, {
+        style: "currency",
+        currency: "USD",
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2,
+      });
+
+    function calculateMedicalOutOfPocket() {
+      const allowedCoveredCharges = getNumber("allowedCoveredCharges");
+      const deductibleRemaining = getNumber("deductibleRemaining");
+      const coinsurancePercent = Math.min(getNumber("coinsurancePercent"), 100);
+      const copaysAndOtherCoveredCostShare = getNumber("copaysAndOtherCoveredCostShare");
+      const outOfPocketMaxRemaining = getOptionalNumber("outOfPocketMaxRemaining");
+      const nonCoveredOrOutOfNetworkCosts = getNumber("nonCoveredOrOutOfNetworkCosts");
+      const hsaFsaMedicalFunds = getNumber("hsaFsaMedicalFunds");
+      const outsideHelp = getNumber("outsideHelp");
+
+      const deductibleApplied = Math.min(deductibleRemaining, allowedCoveredCharges);
+      const postDeductibleCoveredCharges = Math.max(
+        allowedCoveredCharges - deductibleApplied,
+        0
+      );
+      const coinsuranceAmount =
+        postDeductibleCoveredCharges * (coinsurancePercent / 100);
+
+      const coveredPatientShareBeforeOopCap = Math.min(
+        allowedCoveredCharges,
+        deductibleApplied + coinsuranceAmount + copaysAndOtherCoveredCostShare
+      );
+
+      const coveredPatientShare =
+        outOfPocketMaxRemaining === null
+          ? coveredPatientShareBeforeOopCap
+          : Math.min(coveredPatientShareBeforeOopCap, outOfPocketMaxRemaining);
+
+      const estimatedMedicalOutOfPocket =
+        coveredPatientShare + nonCoveredOrOutOfNetworkCosts;
+      const availableHelp = hsaFsaMedicalFunds + outsideHelp;
+      const cashGapAfterHsaFsaAndHelp = Math.max(
+        estimatedMedicalOutOfPocket - availableHelp,
+        0
+      );
+
+      const results = document.getElementById("results");
+      const totalPrice = document.getElementById("totalPrice");
+      const resultDetails = document.getElementById("resultDetails");
+      const resultNote = document.getElementById("resultNote");
+
+      results.classList.add("visible");
+      totalPrice.textContent = formatMoney(estimatedMedicalOutOfPocket);
+
+      resultDetails.innerHTML =
+        "<p><strong>Allowed covered charges:</strong> " + formatMoney(allowedCoveredCharges) + ".</p>" +
+        "<p><strong>Deductible applied:</strong> " + formatMoney(deductibleApplied) + ".</p>" +
+        "<p><strong>Coinsurance amount:</strong> " + formatMoney(coinsuranceAmount) + ".</p>" +
+        "<p><strong>Covered patient share before OOP cap:</strong> " + formatMoney(coveredPatientShareBeforeOopCap) + ".</p>" +
+        "<p><strong>Covered patient share after OOP cap:</strong> " + formatMoney(coveredPatientShare) + ".</p>" +
+        "<p><strong>Non-covered or out-of-network costs entered:</strong> " + formatMoney(nonCoveredOrOutOfNetworkCosts) + ".</p>" +
+        "<p><strong>HSA/FSA and confirmed help:</strong> " + formatMoney(availableHelp) + ".</p>" +
+        "<p><strong>Estimated cash gap after those funds:</strong> " + formatMoney(cashGapAfterHsaFsaAndHelp) + ".</p>";
+
+      resultNote.textContent =
+        outOfPocketMaxRemaining === null
+          ? "No remaining out-of-pocket maximum was supplied, so this estimate does not apply an insurance-plan cap."
+          : "The covered-service share was capped at the entered remaining out-of-pocket maximum of " +
+            formatMoney(outOfPocketMaxRemaining) +
+            " when that cap was lower.";
+    }
+
+    window.__sisMedicalOopCalculate = calculateMedicalOutOfPocket;
+
+    document
+      .getElementById("medicalOopButton")
+      .addEventListener("click", calculateMedicalOutOfPocket);
+  </script>
+</Layout>

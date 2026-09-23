@@ -1003,6 +1003,14 @@ export const calculators = [
 },
 
 {
+  id: "medical-out-of-pocket-cost",
+  category: "Medical",
+  title: "Medical Out-of-Pocket Cost Calculator",
+  description:
+    "Estimate medical out-of-pocket costs using allowed charges, deductible remaining, coinsurance, copays, the out-of-pocket maximum, and non-covered costs.",
+  href: "/medical-out-of-pocket-cost-calculator/",
+},
+{
   id: "medical-bill-payment-plan",
   category: "Medical",
   title: "Medical Bill Payment Plan Calculator",
