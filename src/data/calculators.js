@@ -741,7 +741,7 @@ export const calculators = [
 {
   id: "funeral-price",
   category: "Funeral Costs",
-  title: "Funeral Price Calculator",
+  title: "Funeral Cost Calculator",
   description:
     "Estimate a realistic funeral cost range based on burial, cremation, viewing, casket, cemetery, reception, flowers, obituary, transportation, and memorial choices.",
   href: "/funeral-price-calculator/",
