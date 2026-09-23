@@ -1,0 +1,488 @@
+---
+import Layout from "../layouts/Layout.astro";
+import CalculatorPageShell from "../components/CalculatorPageShell.astro";
+import FAQSection from "../components/FAQSection.astro";
+import RelatedCalculators from "../components/RelatedCalculators.astro";
+import MethodologySection from "../components/MethodologySection.astro";
+import { calculators } from "../data/calculators.js";
+
+const expenseFaqs = [
+  {
+    question: "What should I include in a monthly expense calculator?",
+    answer:
+      "Include recurring household costs such as housing, utilities, groceries, transportation, insurance, childcare, medical costs, debt payments, subscriptions, and discretionary spending. Add annual or irregular costs so they can be converted into a monthly equivalent.",
+  },
+  {
+    question: "Should I include debt payments as expenses?",
+    answer:
+      "Yes. Required monthly debt payments use household cash flow, so this calculator includes them in the monthly expense total.",
+  },
+  {
+    question: "How are annual expenses handled?",
+    answer:
+      "Enter the annual total for irregular costs such as registrations, memberships, annual premiums, or recurring yearly bills. The calculator divides that amount by 12 and adds the monthly equivalent.",
+  },
+  {
+    question: "Do I need to enter income?",
+    answer:
+      "No. Income is optional. If you enter monthly take-home income, the calculator also shows cash flow remaining after expenses and the percentage of take-home income used by the expense total.",
+  },
+  {
+    question: "Is this a budget recommendation?",
+    answer:
+      "No. It is an arithmetic planning tool. It totals the expenses you enter and shows their relationship to take-home income when income is supplied.",
+  },
+];
+
+const relatedCalculators = calculators
+  .filter(
+    (calculator) =>
+      calculator.category === "Budget Rules" &&
+      calculator.href !== "/monthly-expense-calculator/"
+  )
+  .slice(0, 4);
+---
+
+<Layout
+  title="Monthly Expense Calculator | Bills, Spending & Annual Costs"
+  description="Calculate monthly and annual household expenses across housing, utilities, groceries, transportation, insurance, childcare, medical costs, debt, subscriptions, and other spending."
+>
+  <style>
+    .container {
+      max-width: 980px;
+      margin: 0 auto;
+    }
+
+    .calculator {
+      background: white;
+      padding: 38px;
+      border-radius: 24px;
+      border: 1px solid var(--border);
+      box-shadow: 0 10px 25px rgba(15, 23, 42, 0.06);
+    }
+
+    .calculator h2 {
+      margin-top: 0;
+      color: #0f172a;
+      font-size: 2rem;
+    }
+
+    .calculator-intro {
+      color: #334155;
+      line-height: 1.8;
+      margin-bottom: 28px;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 22px;
+    }
+
+    .field label {
+      display: block;
+      font-weight: 800;
+      color: #0f172a;
+      margin-bottom: 8px;
+    }
+
+    .field small {
+      display: block;
+      color: #64748b;
+      line-height: 1.5;
+      margin-top: 7px;
+    }
+
+    .field input {
+      width: 100%;
+      box-sizing: border-box;
+      padding: 14px 15px;
+      border: 1px solid #cbd5e1;
+      border-radius: 12px;
+      font-size: 1rem;
+      background: white;
+    }
+
+    .calc-button {
+      margin-top: 28px;
+      border: 0;
+      border-radius: 999px;
+      padding: 16px 28px;
+      background: #0f766e;
+      color: white;
+      font-size: 1rem;
+      font-weight: 800;
+      cursor: pointer;
+    }
+
+    .results {
+      display: none;
+      margin-top: 30px;
+      padding: 28px;
+      border-radius: 20px;
+      background: #f8fafc;
+      border: 1px solid #dbe4ee;
+    }
+
+    .results.visible {
+      display: block;
+    }
+
+    .total-price {
+      font-size: clamp(2.3rem, 5vw, 3.8rem);
+      line-height: 1;
+      font-weight: 900;
+      color: #0f172a;
+      margin-bottom: 8px;
+    }
+
+    .result-label {
+      color: #0f766e;
+      font-weight: 900;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      margin-bottom: 22px;
+    }
+
+    .result-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 14px;
+    }
+
+    .result-card {
+      background: white;
+      border: 1px solid #dbe4ee;
+      border-radius: 14px;
+      padding: 16px;
+    }
+
+    .result-card strong {
+      display: block;
+      color: #0f172a;
+      margin-bottom: 5px;
+    }
+
+    .result-card span {
+      color: #334155;
+      line-height: 1.5;
+    }
+
+    .result-note {
+      margin-top: 20px;
+      padding: 18px;
+      border-radius: 14px;
+      background: white;
+      color: #475569;
+      line-height: 1.7;
+    }
+
+    .content-section {
+      margin-top: 54px;
+    }
+
+    .content-section h2 {
+      color: #0f172a;
+      font-size: 2rem;
+      margin-bottom: 16px;
+    }
+
+    .content-section p,
+    .content-section li {
+      color: #334155;
+      font-size: 1.06rem;
+      line-height: 1.85;
+    }
+
+    .content-section li + li {
+      margin-top: 10px;
+    }
+
+    @media (max-width: 760px) {
+      .calculator {
+        padding: 24px;
+      }
+
+      .grid,
+      .result-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+
+  <div class="container">
+    <CalculatorPageShell
+      eyebrow="Household Expense Calculator"
+      title="Monthly Expense Calculator"
+      description="Add your recurring bills and spending, convert annual costs into a monthly amount, and see the total monthly and annual expense load. Add take-home income if you also want a cash-flow comparison."
+    >
+      <div class="calculator">
+        <h2>Calculate Monthly Household Expenses</h2>
+        <p class="calculator-intro">
+          Enter the categories that apply to your household. Leave unused categories at zero.
+          Monthly take-home income is optional.
+        </p>
+
+        <div class="grid">
+          <div class="field">
+            <label for="monthlyTakeHomeIncome">Monthly take-home income (optional)</label>
+            <input id="monthlyTakeHomeIncome" type="number" min="0" step="0.01" placeholder="Example: 6000" />
+            <small>Used only for the remaining cash-flow and expense-percentage results.</small>
+          </div>
+
+          <div class="field">
+            <label for="housing">Housing</label>
+            <input id="housing" type="number" min="0" step="0.01" value="0" />
+            <small>Rent, mortgage, required housing fees, or similar recurring housing costs.</small>
+          </div>
+
+          <div class="field">
+            <label for="utilities">Utilities</label>
+            <input id="utilities" type="number" min="0" step="0.01" value="0" />
+            <small>Electricity, gas, water, trash, internet, phone, and similar recurring bills.</small>
+          </div>
+
+          <div class="field">
+            <label for="groceries">Groceries and household supplies</label>
+            <input id="groceries" type="number" min="0" step="0.01" value="0" />
+          </div>
+
+          <div class="field">
+            <label for="transportation">Transportation</label>
+            <input id="transportation" type="number" min="0" step="0.01" value="0" />
+            <small>Fuel, transit, parking, routine vehicle costs, and similar transportation spending.</small>
+          </div>
+
+          <div class="field">
+            <label for="insurance">Insurance</label>
+            <input id="insurance" type="number" min="0" step="0.01" value="0" />
+            <small>Recurring insurance premiums not already withheld from take-home pay.</small>
+          </div>
+
+          <div class="field">
+            <label for="childcare">Childcare or dependent care</label>
+            <input id="childcare" type="number" min="0" step="0.01" value="0" />
+          </div>
+
+          <div class="field">
+            <label for="medical">Medical and prescriptions</label>
+            <input id="medical" type="number" min="0" step="0.01" value="0" />
+          </div>
+
+          <div class="field">
+            <label for="debtPayments">Required debt payments</label>
+            <input id="debtPayments" type="number" min="0" step="0.01" value="0" />
+          </div>
+
+          <div class="field">
+            <label for="otherEssentials">Other essential monthly costs</label>
+            <input id="otherEssentials" type="number" min="0" step="0.01" value="0" />
+          </div>
+
+          <div class="field">
+            <label for="subscriptions">Optional subscriptions and memberships</label>
+            <input id="subscriptions" type="number" min="0" step="0.01" value="0" />
+          </div>
+
+          <div class="field">
+            <label for="discretionary">Other discretionary spending</label>
+            <input id="discretionary" type="number" min="0" step="0.01" value="0" />
+          </div>
+
+          <div class="field">
+            <label for="annualIrregularCosts">Annual or irregular recurring costs</label>
+            <input id="annualIrregularCosts" type="number" min="0" step="0.01" value="0" />
+            <small>Enter the yearly total. The calculator converts it to a monthly equivalent.</small>
+          </div>
+        </div>
+
+        <button id="monthlyExpenseButton" class="calc-button" type="button">
+          Calculate Monthly Expenses
+        </button>
+
+        <div id="results" class="results">
+          <div id="monthlyTotal" class="total-price">$0.00</div>
+          <div class="result-label">Total Monthly Expenses</div>
+
+          <div class="result-grid">
+            <div class="result-card">
+              <strong>Essential monthly expenses</strong>
+              <span id="essentialTotal">$0.00</span>
+            </div>
+            <div class="result-card">
+              <strong>Flexible monthly expenses</strong>
+              <span id="flexibleTotal">$0.00</span>
+            </div>
+            <div class="result-card">
+              <strong>Annual expense total</strong>
+              <span id="annualTotal">$0.00</span>
+            </div>
+            <div class="result-card">
+              <strong>Annual costs converted monthly</strong>
+              <span id="irregularMonthly">$0.00</span>
+            </div>
+            <div class="result-card">
+              <strong>Cash flow after expenses</strong>
+              <span id="cashFlow">Add income to calculate</span>
+            </div>
+            <div class="result-card">
+              <strong>Expenses as % of take-home income</strong>
+              <span id="expenseRate">Add income to calculate</span>
+            </div>
+          </div>
+
+          <div id="resultNote" class="result-note"></div>
+        </div>
+      </div>
+    </CalculatorPageShell>
+
+    <section class="content-section">
+      <h2>What Counts as a Monthly Expense?</h2>
+      <p>
+        A useful expense total includes recurring bills and spending that reliably use
+        household cash. Housing, utilities, groceries, transportation, insurance,
+        childcare, medical costs, and debt payments are common categories. Optional
+        spending belongs in the total too if it happens regularly.
+      </p>
+    </section>
+
+    <section class="content-section">
+      <h2>Turn Annual Bills Into Monthly Costs</h2>
+      <p>
+        Some costs do not arrive every month. Annual memberships, registrations,
+        recurring yearly fees, and other irregular bills can still be converted into a
+        monthly planning amount. This calculator divides the annual total by 12 before
+        adding it to the monthly expense total.
+      </p>
+    </section>
+
+    <section class="content-section">
+      <h2>How Much Am I Spending Each Month?</h2>
+      <p>
+        The monthly total is the sum of every expense entered plus one-twelfth of the
+        annual irregular costs. If take-home income is entered, the calculator also
+        subtracts expenses from income and shows the share of take-home income used by
+        the monthly total.
+      </p>
+    </section>
+
+    <section class="content-section">
+      <h2>Important Limits</h2>
+      <p>
+        This tool totals the numbers you enter. It does not decide whether a category is
+        too high or recommend a specific budget percentage. Household needs vary, and
+        irregular one-time expenses may need separate planning.
+      </p>
+    </section>
+
+    <FAQSection title="Monthly Expense Calculator FAQ" faqs={expenseFaqs} />
+
+    <RelatedCalculators calculators={relatedCalculators} />
+
+    <MethodologySection category="monthly household expense totals" updated="September 2026" />
+  </div>
+
+  <script is:inline>
+    const getNumber = (id) => {
+      const raw = document.getElementById(id)?.value;
+      const value = Number(raw);
+      return Number.isFinite(value) && value >= 0 ? value : 0;
+    };
+
+    const getOptionalNumber = (id) => {
+      const raw = document.getElementById(id)?.value;
+      if (raw === undefined || raw === null || String(raw).trim() === "") {
+        return null;
+      }
+
+      const value = Number(raw);
+      return Number.isFinite(value) && value >= 0 ? value : null;
+    };
+
+    const formatMoney = (value) =>
+      value.toLocaleString(undefined, {
+        style: "currency",
+        currency: "USD",
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2,
+      });
+
+    function calculateMonthlyExpenses() {
+      const monthlyTakeHomeIncome = getOptionalNumber("monthlyTakeHomeIncome");
+      const housing = getNumber("housing");
+      const utilities = getNumber("utilities");
+      const groceries = getNumber("groceries");
+      const transportation = getNumber("transportation");
+      const insurance = getNumber("insurance");
+      const childcare = getNumber("childcare");
+      const medical = getNumber("medical");
+      const debtPayments = getNumber("debtPayments");
+      const otherEssentials = getNumber("otherEssentials");
+      const subscriptions = getNumber("subscriptions");
+      const discretionary = getNumber("discretionary");
+      const annualIrregularCosts = getNumber("annualIrregularCosts");
+
+      const irregularMonthlyEquivalent = annualIrregularCosts / 12;
+
+      const essentialMonthlyExpenses =
+        housing +
+        utilities +
+        groceries +
+        transportation +
+        insurance +
+        childcare +
+        medical +
+        debtPayments +
+        otherEssentials +
+        irregularMonthlyEquivalent;
+
+      const flexibleMonthlyExpenses = subscriptions + discretionary;
+      const monthlyExpenses =
+        essentialMonthlyExpenses + flexibleMonthlyExpenses;
+      const annualExpenses = monthlyExpenses * 12;
+
+      const cashFlowAfterExpenses =
+        monthlyTakeHomeIncome === null
+          ? null
+          : monthlyTakeHomeIncome - monthlyExpenses;
+
+      const expenseRate =
+        monthlyTakeHomeIncome === null || monthlyTakeHomeIncome === 0
+          ? null
+          : (monthlyExpenses / monthlyTakeHomeIncome) * 100;
+
+      document.getElementById("results").classList.add("visible");
+      document.getElementById("monthlyTotal").textContent =
+        formatMoney(monthlyExpenses);
+      document.getElementById("essentialTotal").textContent =
+        formatMoney(essentialMonthlyExpenses);
+      document.getElementById("flexibleTotal").textContent =
+        formatMoney(flexibleMonthlyExpenses);
+      document.getElementById("annualTotal").textContent =
+        formatMoney(annualExpenses);
+      document.getElementById("irregularMonthly").textContent =
+        formatMoney(irregularMonthlyEquivalent);
+
+      document.getElementById("cashFlow").textContent =
+        cashFlowAfterExpenses === null
+          ? "Add income to calculate"
+          : formatMoney(cashFlowAfterExpenses);
+
+      document.getElementById("expenseRate").textContent =
+        expenseRate === null
+          ? "Add income above $0 to calculate"
+          : expenseRate.toFixed(1) + "%";
+
+      document.getElementById("resultNote").textContent =
+        monthlyTakeHomeIncome === null
+          ? "Income was left blank, so the result shows expense totals only."
+          : "Cash flow after expenses equals the take-home income entered minus the monthly expense total.";
+    }
+
+    window.__sisMonthlyExpenseCalculate = calculateMonthlyExpenses;
+
+    document
+      .getElementById("monthlyExpenseButton")
+      .addEventListener("click", calculateMonthlyExpenses);
+  </script>
+</Layout>

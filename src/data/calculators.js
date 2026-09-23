@@ -706,6 +706,14 @@ export const calculators = [
   href: "/how-much-rent-can-i-afford/",
 },
   {
+    id: "monthly-expense-calculator",
+    category: "Budget Rules",
+    title: "Monthly Expense Calculator",
+    description:
+      "Calculate monthly and annual household expenses across housing, utilities, groceries, transportation, insurance, childcare, medical costs, debt, subscriptions, and other spending.",
+    href: "/monthly-expense-calculator/",
+  },
+  {
     id: "house-affordability-guide",
     category: "Budget Rules",
     title: "How Much House Can I Afford?",
