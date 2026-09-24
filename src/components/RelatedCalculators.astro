@@ -1,12 +1,20 @@
 ---
 const { title = "Related Calculators", calculators = [] } = Astro.props;
+const currentPath = Astro.url.pathname.endsWith("/") ? Astro.url.pathname : Astro.url.pathname + "/";
+const seen = new Set();
+const visibleCalculators = calculators.filter((calculator) => {
+  const href = calculator?.href;
+  if (!href || href === currentPath || seen.has(href)) return false;
+  seen.add(href);
+  return true;
+});
 ---
 
 <section class="related-calculators">
   <h2>{title}</h2>
 
   <div class="related-grid">
-    {calculators.map((calculator) => (
+    {visibleCalculators.map((calculator) => (
       <a class="related-card" href={calculator.href}>
         <p>{calculator.category}</p>
         <h3>{calculator.title}</h3>
