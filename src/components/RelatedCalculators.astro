@@ -1,17 +1,40 @@
 ---
+import { calculators as calculatorRegistry } from "../data/calculators.js";
 const { title = "Related Calculators", calculators = [] } = Astro.props;
 const currentPath = Astro.url.pathname.endsWith("/") ? Astro.url.pathname : Astro.url.pathname + "/";
+const currentEntry = calculatorRegistry.find((item) => item.href === currentPath);
+const currentCategory = currentEntry?.category || "";
+const hubs = {
+  "Baby & Parenting": "/baby-parenting-calculators/",
+  "Budget Rules": "/budget-rule-calculators/",
+  Cars: "/car-calculators/",
+  College: "/college-calculators/",
+  "Emergency Savings": "/emergency-savings-calculators/",
+  "Funeral Costs": "/funeral-calculators/",
+  Groceries: "/grocery-calculators/",
+  "Home Improvement": "/home-improvement-calculators/",
+  Medical: "/medical-calculators/",
+  Moving: "/moving-calculators/",
+  Rent: "/rent-calculators/",
+  Travel: "/travel-calculators/",
+  Weddings: "/wedding-calculators/",
+};
+const hub = hubs[currentCategory];
 const seen = new Set();
-const visibleCalculators = calculators.filter((calculator) => {
+const uniqueCalculators = calculators.filter((calculator) => {
   const href = calculator?.href;
   if (!href || href === currentPath || seen.has(href)) return false;
   seen.add(href);
   return true;
 });
+const sameCategory = uniqueCalculators.filter((calculator) => calculator.category === currentCategory).slice(0, 3);
+const crossCategory = uniqueCalculators.filter((calculator) => calculator.category !== currentCategory).slice(0, 1);
+const visibleCalculators = currentCategory ? [...sameCategory, ...crossCategory] : uniqueCalculators.slice(0, 4);
 ---
 
 <section class="related-calculators">
   <h2>{title}</h2>
+  {hub && <p class="related-hub"><a href={hub}>Browse all {currentCategory} calculators →</a></p>}
 
   <div class="related-grid">
     {visibleCalculators.map((calculator) => (
@@ -25,56 +48,14 @@ const visibleCalculators = calculators.filter((calculator) => {
 </section>
 
 <style>
-  .related-calculators {
-    max-width: 920px;
-    margin: 72px auto 0;
-  }
-
-  .related-calculators h2 {
-    font-size: 2rem;
-    margin-bottom: 28px;
-    color: #0f172a;
-  }
-
-  .related-grid {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 18px;
-  }
-
-  .related-card {
-    display: block;
-    background: white;
-    border: 1px solid #dbe3ee;
-    border-radius: 18px;
-    padding: 26px;
-    text-decoration: none;
-    color: #0f172a;
-  }
-
-  .related-card p {
-    margin: 0 0 10px;
-    color: #0f766e;
-    font-size: 0.75rem;
-    font-weight: 800;
-    letter-spacing: 2px;
-    text-transform: uppercase;
-  }
-
-  .related-card h3 {
-    font-size: 1.25rem;
-    margin: 0 0 16px;
-    line-height: 1.3;
-  }
-
-  .related-card span {
-    font-weight: 800;
-    color: #0b132b;
-  }
-
-  @media (max-width: 700px) {
-    .related-grid {
-      grid-template-columns: 1fr;
-    }
-  }
+  .related-calculators { max-width: 920px; margin: 72px auto 0; }
+  .related-calculators h2 { font-size: 2rem; margin-bottom: 10px; color: #0f172a; }
+  .related-hub { margin: 0 0 24px; }
+  .related-hub a { color: var(--primary); font-weight: 800; }
+  .related-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 18px; }
+  .related-card { display: block; background: white; border: 1px solid #dbe3ee; border-radius: 18px; padding: 26px; text-decoration: none; color: #0f172a; }
+  .related-card p { margin: 0 0 10px; color: #0f766e; font-size: 0.75rem; font-weight: 800; letter-spacing: 2px; text-transform: uppercase; }
+  .related-card h3 { font-size: 1.25rem; margin: 0 0 16px; line-height: 1.3; }
+  .related-card span { font-weight: 800; color: #0b132b; }
+  @media (max-width: 700px) { .related-grid { grid-template-columns: 1fr; } }
 </style>
