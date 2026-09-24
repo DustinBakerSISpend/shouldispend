@@ -1,5 +1,8 @@
 ---
 import Layout from "../layouts/Layout.astro";
+import CorePageExamplesBlock from "../components/CorePageExamplesBlock.astro";
+import DecisionLimitsBlock from "../components/DecisionLimitsBlock.astro";
+import KeyCostCategories from "../components/KeyCostCategories.astro";
 import CalculatorPageShell from "../components/CalculatorPageShell.astro";
 import FAQSection from "../components/FAQSection.astro";
 import RelatedCalculators from "../components/RelatedCalculators.astro";
@@ -375,7 +378,21 @@ const relatedCalculators = calculators
       </p>
     </section>
 
-    <FAQSection title="Monthly Expense Calculator FAQ" faqs={expenseFaqs} />
+<CorePageExamplesBlock
+      title="How a monthly expense total changes the decision"
+      intro="The same expense total can be manageable or restrictive depending on income, debt, and the amount of fixed spending already committed."
+      useCases={["Translate the calculator output into actual monthly or savings pressure.","Compare the result with the obligations and risks that sit outside the headline number."]}
+      notEnough={["Important recurring costs or plan details are still missing.","The decision depends on contractual, clinical, or household facts the calculator cannot determine."]}
+      examples={[{"label":"$4,000 take-home income with $2,800 in monthly expenses","takeaway":"The household has $1,200 left before irregular spending and savings goals. A new recurring commitment has to fit inside that remaining room."},{"label":"$8,000 take-home income with $4,000 in monthly expenses","takeaway":"Half of take-home pay remains after the listed expenses, creating much more flexibility for saving, debt payoff, and unexpected costs."},{"label":"Same expense total with $1,000 of unlisted debt payments","takeaway":"If major recurring obligations are missing from the calculator, the result can overstate the room actually available."}]}
+      commonMistake="Treating the calculator result as complete when important costs, coverage details, or recurring obligations have not been included."
+      nextStep="Replace estimates with the best available real numbers, then rerun the calculator before committing."
+    />
+
+    <DecisionLimitsBlock category="Budget Rules" />
+
+    <KeyCostCategories title="Cost anatomy: what belongs in the monthly total" items={[{"title":"Fixed obligations","description":"Housing, minimum debt payments, insurance, childcare, and other bills that recur whether spending is high or low."},{"title":"Variable essentials","description":"Food, utilities, transportation, medical needs, and other necessities that can move from month to month."},{"title":"Savings and irregular costs","description":"Emergency-fund contributions, annual bills, repairs, travel, gifts, and other expenses that are easy to omit from a one-month snapshot."},{"title":"Discretionary spending","description":"Dining out, subscriptions, entertainment, shopping, and other categories that can often be adjusted when cash flow tightens."}]} />
+
+        <FAQSection title="Monthly Expense Calculator FAQ" faqs={expenseFaqs} />
 
     <RelatedCalculators calculators={relatedCalculators} />
 
