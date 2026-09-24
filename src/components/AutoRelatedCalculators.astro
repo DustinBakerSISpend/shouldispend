@@ -1,0 +1,19 @@
+---
+import { calculators } from "../data/calculators.js";
+const hubs = { "Baby & Parenting": "/baby-parenting-calculators/", "Budget Rules": "/budget-rule-calculators/", Cars: "/car-calculators/", College: "/college-calculators/", "Emergency Savings": "/emergency-savings-calculators/", "Funeral Costs": "/funeral-calculators/", Groceries: "/grocery-calculators/", "Home Improvement": "/home-improvement-calculators/", Medical: "/medical-calculators/", Moving: "/moving-calculators/", Rent: "/rent-calculators/", Travel: "/travel-calculators/", Weddings: "/wedding-calculators/" };
+const current = Astro.url.pathname.endsWith("/") ? Astro.url.pathname : Astro.url.pathname + "/";
+const entry = calculators.find((item) => item.href === current);
+const category = entry?.category || "";
+const hub = hubs[category];
+const seen = new Set();
+const siblings = calculators.filter((item) => item.category === category && item.href !== current && !seen.has(item.href) && seen.add(item.href)).slice(0, 3);
+---
+{entry && hub && (
+<section class="related-calculators">
+  <h2>Related {category} calculators</h2>
+  <p class="related-hub"><a href={hub}>Browse the full category →</a></p>
+  <div class="related-grid">{siblings.map((item) => <a class="related-card" href={item.href}><p>{item.category}</p><h3>{item.title}</h3><span>Open Calculator →</span></a>)}</div>
+</section>
+)}
+<style>.related-calculators{max-width:920px;margin:72px auto 0}.related-calculators h2{font-size:2rem;margin-bottom:10px}.related-hub{margin:0 0 24px}.related-hub a{color:var(--primary);font-weight:800}.related-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px}.related-card{display:block;background:var(--card);border:1px solid var(--border);border-radius:18px;padding:22px;text-decoration:none;color:var(--text)}.related-card p{margin:0 0 8px;color:var(--primary);font-size:.75rem;font-weight:800;letter-spacing:1.5px;text-transform:uppercase}.related-card h3{font-size:1.12rem;margin:0 0 14px;line-height:1.3}.related-card span{font-weight:800}@media(max-width:760px){.related-grid{grid-template-columns:1fr}}
+</style>
