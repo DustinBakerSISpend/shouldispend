@@ -4,6 +4,7 @@ import OmniStyleReviewBlock from "../components/OmniStyleReviewBlock.astro";
 import Layout from "../layouts/Layout.astro";
 import CalculatorPageShell from "../components/CalculatorPageShell.astro";
 import FAQSection from "../components/FAQSection.astro";
+import SourcesAssumptionsBlock from "../components/SourcesAssumptionsBlock.astro";
 import RelatedCalculators from "../components/RelatedCalculators.astro";
 import MethodologySection from "../components/MethodologySection.astro";
 import CalculatorAssumptions from "../components/CalculatorAssumptions.astro";
@@ -441,7 +442,7 @@ const relatedCalculators = calculators
 
         <button class="sis-action-button sis-calculate-button" id="cateringButton" type="button">Calculate Catering Cost</button>
 
-        <div class="results" id="results">
+        <div class="results" id="results" aria-live="polite">
           <div class="result-label">Estimated Catering Cost</div>
 
           <div class="total-price" id="totalPrice"></div>
@@ -627,6 +628,16 @@ const relatedCalculators = calculators
       </section>
 
       <div class="content-section">
+        <section class="content-section">
+          <h2>Worked Example: Estimating the Full Catering Bill</h2>
+          <p>
+            Suppose catering for 100 guests is quoted at $75 per person, or $7,500. Add a 22% service charge and 8% tax to the food-and-service subtotal, and the cost rises by roughly $2,250 before rentals or bar service.
+          </p>
+          <p>
+            Cutting the guest list to 85 people lowers the base food cost by $1,125. Even after similar percentage-based charges, that reduction can save well over $1,000 and may also reduce rentals, staffing, and bar costs. Guest count therefore affects more than the per-plate line alone.
+          </p>
+        </section>
+
         <FAQSection title="Wedding Catering Cost FAQ" faqs={cateringFaqs} />
       </div>
 
@@ -832,7 +843,7 @@ const relatedCalculators = calculators
 
         <p><strong>Cash gap after available catering funds:</strong> ${formatMoney(cashGap)}.</p>
 
-        <p><strong>Monthly savings needed until the wedding:</strong> ${formatMoney(monthlySavingsNeeded)} for ${monthsUntilWedding.toFixed(0)} ${monthsUntilWedding === 1 ? "month" : "months"}.</p>
+        <p><strong>Catering savings target:</strong> ${formatMoney(monthlySavingsNeeded)} per month across the next ${monthsUntilWedding.toFixed(0)} ${monthsUntilWedding === 1 ? "month" : "months"}.</p>
       `;
 
       guestLevers.innerHTML = `
@@ -854,6 +865,7 @@ const relatedCalculators = calculators
       .getElementById("cateringButton")
       .addEventListener("click", calculateCatering);
   </script>
+  <SourcesAssumptionsBlock category="Wedding Costs" />
 </Layout>
 
 

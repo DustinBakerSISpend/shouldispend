@@ -4,6 +4,7 @@ import CorePageExamplesBlock from "../components/CorePageExamplesBlock.astro";
 import Layout from "../layouts/Layout.astro";
 import AutoRelatedCalculators from "../components/AutoRelatedCalculators.astro";
 import FAQSection from "../components/FAQSection.astro";
+import SourcesAssumptionsBlock from "../components/SourcesAssumptionsBlock.astro";
 import { calculators } from "../data/calculators.js";
 
 const roommateFaqs = [
@@ -362,7 +363,7 @@ const relatedCalculators = calculators
 
       <button class="sis-action-button sis-calculate-button" id="calculateButton" type="button">Compare Housing Options</button>
 
-      <div class="result" id="result">
+      <div class="result" id="result" aria-live="polite">
         <div class="score" id="scoreText"></div>
         <div class="result-details" id="resultDetails"></div>
         <div class="guidance" id="guidance"></div>
@@ -613,6 +614,16 @@ const relatedCalculators = calculators
     </section>
 
     <section class="content-section" id="FAQSection">
+      <section class="content-section">
+        <h2>Worked Example: Measuring the Cost of Living Alone</h2>
+        <p>
+          Suppose a one-bedroom apartment costs $1,650 per month, while half of a two-bedroom shared with a roommate costs $1,050. If utilities are $180 alone versus $110 as a roommate share, living alone costs about $670 more each month. Over one year, that privacy premium is roughly $8,040.
+        </p>
+        <p>
+          If take-home pay is $4,500 per month, the extra $670 uses nearly 14.9% of take-home income. A renter saving $600 per month for emergencies would have to cut that goal to zero and still find another $70 if every other expense stayed the same. Comparing the annual premium with savings and debt goals makes the roommate decision more concrete than comparing rent alone.
+        </p>
+      </section>
+
       <FAQSection title="Roommate vs. Living Alone Calculator FAQ" faqs={roommateFaqs} />
     </section>
   </main>
@@ -813,5 +824,6 @@ const relatedCalculators = calculators
       guidance.textContent = guidanceText;
     });
   </script>
+  <SourcesAssumptionsBlock category="Rent" />
   <AutoRelatedCalculators />
 </Layout>

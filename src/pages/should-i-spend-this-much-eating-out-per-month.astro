@@ -313,7 +313,7 @@ const diningFaqs = [
         financial advice.
       </p>
 
-      <div class="result" id="result">
+      <div class="result" id="result" aria-live="polite">
         <div class="score" id="scoreText"></div>
 
         <div class="bar">
@@ -544,6 +544,16 @@ const diningFaqs = [
       </div>
     </section>
 
+    <section class="content-section">
+      <h2>Worked Example: Measuring a Monthly Eating-Out Budget</h2>
+      <p>
+        Suppose a household spends $850 per month at restaurants and on takeout. On $6,000 of monthly take-home pay, that is about 14.2% of income. Reducing the dining budget to $500 would free $350 per month, or $4,200 over a year.
+      </p>
+      <p>
+        If the household is currently saving $600 per month, redirecting that $350 would raise monthly savings to $950. Keeping one or two higher-value meals out each week while cutting convenience purchases may preserve most of the enjoyment without giving up the full $4,200 annual difference.
+      </p>
+    </section>
+
     <FAQSection title="Eating Out Budget FAQ" faqs={diningFaqs} />
   </main>
 
@@ -555,16 +565,26 @@ const diningFaqs = [
     const resultDetails = document.getElementById("resultDetails");
 
     button?.addEventListener("click", () => {
-      const dining = Number(document.getElementById("dining").value);
-      const groceries = Number(document.getElementById("groceries").value || 0);
-      const income = Number(document.getElementById("income").value);
+      const diningRaw = Number(document.getElementById("dining").value);
+      const groceriesRaw = Number(document.getElementById("groceries").value || 0);
+      const incomeRaw = Number(document.getElementById("income").value);
+      const dining =
+        Number.isFinite(diningRaw) && diningRaw >= 0 ? diningRaw : 0;
+      const groceries =
+        Number.isFinite(groceriesRaw) && groceriesRaw >= 0 ? groceriesRaw : 0;
+      const income =
+        Number.isFinite(incomeRaw) && incomeRaw > 0 ? incomeRaw : 0;
       const householdRaw = Number(document.getElementById("household").value);
       const household =
         Number.isFinite(householdRaw) && householdRaw > 0
           ? Math.max(1, Math.round(householdRaw))
           : 1;
-      const debt = Number(document.getElementById("debt").value || 0);
-      const savings = Number(document.getElementById("savings").value || 0);
+      const debtRaw = Number(document.getElementById("debt").value || 0);
+      const savingsRaw = Number(document.getElementById("savings").value || 0);
+      const debt =
+        Number.isFinite(debtRaw) && debtRaw >= 0 ? debtRaw : 0;
+      const savings =
+        Number.isFinite(savingsRaw) && savingsRaw >= 0 ? savingsRaw : 0;
 
       result?.classList.add("visible");
 

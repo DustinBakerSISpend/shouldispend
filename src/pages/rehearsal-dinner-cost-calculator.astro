@@ -4,6 +4,7 @@ import OmniStyleReviewBlock from "../components/OmniStyleReviewBlock.astro";
 import Layout from "../layouts/Layout.astro";
 import CalculatorPageShell from "../components/CalculatorPageShell.astro";
 import FAQSection from "../components/FAQSection.astro";
+import SourcesAssumptionsBlock from "../components/SourcesAssumptionsBlock.astro";
 import RelatedCalculators from "../components/RelatedCalculators.astro";
 import MethodologySection from "../components/MethodologySection.astro";
 import CalculatorAssumptions from "../components/CalculatorAssumptions.astro";
@@ -479,7 +480,7 @@ const relatedCalculators = calculators
 
         <button class="sis-action-button sis-calculate-button" id="rehearsalButton" type="button">Calculate Rehearsal Dinner Cost</button>
 
-        <div class="results" id="results">
+        <div class="results" id="results" aria-live="polite">
           <div class="result-label">Estimated Rehearsal Dinner Cost</div>
 
           <div class="total-price" id="totalPrice"></div>
@@ -668,6 +669,16 @@ const relatedCalculators = calculators
       </section>
 
       <div class="content-section">
+        <section class="content-section">
+          <h2>Worked Example: Estimating a Rehearsal Dinner</h2>
+          <p>
+            Suppose 40 guests attend a dinner priced at $65 per person. Food and nonalcoholic drinks total $2,600. Add a $350 room fee, $500 for hosted drinks, and 28% for tax, gratuity, and service charges on the $3,100 food-and-drink subtotal. Those add-ons are about $868, bringing the full event estimate to roughly $3,818.
+          </p>
+          <p>
+            Cutting the guest list to 30 people would reduce the food portion by $650. If the hosted-drink budget also falls to $375, the revised subtotal before fees is $2,675. Applying the same 28% charges to the food-and-drink portion produces a total near $3,259, or about $559 less. Guest count and service charges often move the total more than small menu changes.
+          </p>
+        </section>
+
         <FAQSection title="Rehearsal Dinner Cost FAQ" faqs={rehearsalDinnerFaqs} />
       </div>
 
@@ -906,7 +917,7 @@ const relatedCalculators = calculators
 
         <p><strong>Cash gap after available rehearsal dinner funds:</strong> ${formatMoney(cashGap)}.</p>
 
-        <p><strong>Monthly savings needed until the wedding:</strong> ${formatMoney(monthlySavingsNeeded)} for ${monthsUntilWedding.toFixed(0)} ${monthsUntilWedding === 1 ? "month" : "months"}.</p>
+        <p><strong>Rehearsal-dinner savings target:</strong> ${formatMoney(monthlySavingsNeeded)} per month for ${monthsUntilWedding.toFixed(0)} ${monthsUntilWedding === 1 ? "month" : "months"}.</p>
       `;
 
       scopeCheck.innerHTML = `
@@ -929,6 +940,7 @@ const relatedCalculators = calculators
       .getElementById("rehearsalButton")
       .addEventListener("click", calculateRehearsalDinner);
   </script>
+  <SourcesAssumptionsBlock category="Rehearsal Dinner" />
 </Layout>
 
 

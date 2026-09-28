@@ -329,13 +329,13 @@ const relatedCalculators = calculators
 
           <div class="field">
             <label for="monthsToEstimate">Months to Estimate</label>
-            <input id="monthsToEstimate" type="number" placeholder="Example: 12" />
+            <input id="monthsToEstimate" type="number" min="1" step="1" placeholder="Example: 12" />
           </div>
         </div>
 
         <button class="sis-action-button sis-calculate-button" id="formulaButton" type="button">Calculate Formula Cost</button>
 
-        <div class="results" id="results">
+        <div class="results" id="results" aria-live="polite">
           <div class="result-label">Estimated Monthly Out-of-Pocket Cost</div>
 
           <div class="total-price" id="totalPrice"></div>
@@ -595,7 +595,8 @@ const relatedCalculators = calculators
       const monthlyExtras = getNumber("monthlyExtras");
       const monthlyHelp = getNumber("monthlyHelp");
       const wasteBuffer = getNumber("wasteBuffer") / 100;
-      const monthsToEstimate = Math.max(getNumber("monthsToEstimate"), 12);
+      const rawMonthsToEstimate = getNumber("monthsToEstimate");
+      const monthsToEstimate = rawMonthsToEstimate > 0 ? rawMonthsToEstimate : 12;
 
       const results = document.getElementById("results");
       const totalPrice = document.getElementById("totalPrice");

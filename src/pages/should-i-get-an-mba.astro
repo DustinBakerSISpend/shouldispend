@@ -289,22 +289,22 @@ const relatedCalculators = calculators
         <div class="grid">
           <div class="field">
             <label for="monthlyIncome">Current Monthly Take-Home Income</label>
-            <input id="monthlyIncome" type="number" placeholder="Example: 7500" />
+            <input id="monthlyIncome" type="number" min="1" max="10000000" step="0.01" placeholder="Example: 7500" />
           </div>
 
           <div class="field">
             <label for="savings">Current Savings</label>
-            <input id="savings" type="number" placeholder="Example: 35000" />
+            <input id="savings" type="number" min="0" max="100000000" step="0.01" placeholder="Example: 35000" />
           </div>
 
           <div class="field">
             <label for="mbaCost">Total MBA Program Cost</label>
-            <input id="mbaCost" type="number" placeholder="Example: 85000" />
+            <input id="mbaCost" type="number" min="1" max="10000000" step="0.01" placeholder="Example: 85000" />
           </div>
 
           <div class="field">
             <label for="borrowedAmount">Amount You Expect to Borrow</label>
-            <input id="borrowedAmount" type="number" placeholder="Example: 50000" />
+            <input id="borrowedAmount" type="number" min="0" max="10000000" step="0.01" placeholder="Example: 50000" />
 
             <div class="helper-link">
               Testing the loan side?
@@ -314,12 +314,12 @@ const relatedCalculators = calculators
 
           <div class="field">
             <label for="employerHelp">Employer Reimbursement or Scholarships</label>
-            <input id="employerHelp" type="number" placeholder="Example: 15000" />
+            <input id="employerHelp" type="number" min="0" max="10000000" step="0.01" placeholder="Example: 15000" />
           </div>
 
           <div class="field">
             <label for="monthlyDebt">Current Monthly Debt Payments</label>
-            <input id="monthlyDebt" type="number" placeholder="Example: 900" />
+            <input id="monthlyDebt" type="number" min="0" max="10000000" step="0.01" placeholder="Example: 900" />
 
             <div class="helper-link">
               Not sure what counts as debt?
@@ -329,17 +329,17 @@ const relatedCalculators = calculators
 
           <div class="field">
             <label for="lostIncome">Monthly Income You May Lose During the MBA</label>
-            <input id="lostIncome" type="number" placeholder="Example: 1200" />
+            <input id="lostIncome" type="number" min="0" max="10000000" step="0.01" placeholder="Example: 1200" />
           </div>
 
           <div class="field">
             <label for="incomeGain">Expected Monthly Income Gain After the MBA</label>
-            <input id="incomeGain" type="number" placeholder="Example: 2500" />
+            <input id="incomeGain" type="number" min="0" max="10000000" step="0.01" placeholder="Example: 2500" />
           </div>
 
           <div class="field">
             <label for="years">Years Until Finished</label>
-            <input id="years" type="number" placeholder="Example: 2" />
+            <input id="years" type="number" min="0.25" max="20" step="0.25" placeholder="Example: 2" />
           </div>
 
           <div class="field">
@@ -372,13 +372,13 @@ const relatedCalculators = calculators
 
           <div class="field">
             <label for="cashUsed">Savings You Plan to Use</label>
-            <input id="cashUsed" type="number" placeholder="Example: 20000" />
+            <input id="cashUsed" type="number" min="0" max="10000000" step="0.01" placeholder="Example: 20000" />
           </div>
         </div>
 
         <button class="sis-action-button sis-calculate-button" id="mbaButton" type="button">Get MBA Verdict</button>
 
-        <div class="results" id="results">
+        <div class="results" id="results" aria-live="polite">
           <div class="score" id="scoreText"></div>
 
           <div class="bar">
@@ -637,6 +637,16 @@ const relatedCalculators = calculators
 
 
       <div class="content-section">
+        <section class="content-section">
+          <h2>Worked Example: Testing an MBA Payback Period</h2>
+          <p>
+            Suppose an MBA costs $72,000 after scholarships and employer help, with $42,000 financed and $30,000 paid from savings. If the degree raises annual take-home income by about $12,000, the gross payback period on the $72,000 cost is about six years before loan interest and lost work income are considered.
+          </p>
+          <p>
+            If attending also reduces income by $25,000 over two years and the loan ultimately costs $49,000 to repay, the effective financial cost rises near $104,000. At the same $12,000 annual take-home gain, recovery stretches toward nine years. The program may still be worthwhile for career reasons, but the longer payback makes employer funding, borrowing needs, and job-placement confidence much more important.
+          </p>
+        </section>
+
         <FAQSection faqs={mbaFaqs} />
       </div>
 
@@ -712,6 +722,19 @@ const relatedCalculators = calculators
       const guidance = document.getElementById("guidance");
 
       results.classList.add("visible");
+
+      const invalidFields = [...document.querySelectorAll('input[type="number"]')]
+        .filter((input) => !input.checkValidity());
+
+      if (invalidFields.length > 0) {
+        scoreText.textContent = "Check your numbers";
+        fillBar.style.width = "0%";
+        fillBar.className = "fill safe";
+        resultDetails.innerHTML =
+          "<p>One or more school-planning values are outside the supported range. Correct those entries before relying on the estimate.</p>";
+        guidance.textContent = "";
+        return;
+      }
 
       if (monthlyIncome <= 0 || mbaCost <= 0) {
         scoreText.textContent = "Add your numbers first";
@@ -966,6 +989,18 @@ const relatedCalculators = calculators
         pressureScore = Math.min(pressureScore, 8);
       }
 
+      // Extreme lost-income or cash-flow scenarios must not be neutralized by
+      // high-income recovery overrides. These floors preserve the calculator's
+      // core pressure meaning when opportunity cost or enrolled cash flow is
+      // many times the household's income.
+      if (monthlyPressureRatio >= 100 || opportunityCostRatio >= 500) {
+        pressureScore = Math.max(pressureScore, 85);
+      } else if (monthlyPressureRatio >= 75 || opportunityCostRatio >= 250) {
+        pressureScore = Math.max(pressureScore, 75);
+      } else if (monthlyPressureRatio >= 50 || opportunityCostRatio >= 150) {
+        pressureScore = Math.max(pressureScore, 65);
+      }
+
       pressureScore = clamp(Math.round(pressureScore), 0, 100);
 
       const level = getPressureLevel(pressureScore);
@@ -1007,7 +1042,7 @@ const relatedCalculators = calculators
 
         <p><strong>Emergency savings after planned cash use:</strong> About ${savingsMonthsAfter.toFixed(1)} months of estimated flexibility.</p>
 
-        <p><strong>Expected payoff strength:</strong> ${payoffStrength} based on estimated loan payment versus expected monthly income gain.</p>
+        <p><strong>MBA payoff outlook:</strong> ${payoffStrength}, comparing the estimated loan payment with the expected monthly income gain.</p>
 
         <p><strong>Pressure level:</strong> ${level.stress}.</p>
 

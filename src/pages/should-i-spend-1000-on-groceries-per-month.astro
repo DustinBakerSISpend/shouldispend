@@ -202,7 +202,7 @@ import WhenSpendingMakesSense from "../components/WhenSpendingMakesSense.astro";
           Calculate Financial Pressure
         </button>
 
-        <div class="result" id="result">
+        <div class="result" id="result" aria-live="polite">
           <div class="score" id="score"></div>
 
           <div class="bar">
@@ -392,6 +392,13 @@ import WhenSpendingMakesSense from "../components/WhenSpendingMakesSense.astro";
   </div>
 
   <script is:inline>
+  const formatSignedCurrency = (value) => {
+    const rounded = Math.round(value);
+    if (rounded === 0 || Object.is(rounded, -0)) return "$0";
+    const amount = Math.abs(rounded).toLocaleString();
+    return rounded < 0 ? `-$${amount}` : `$${amount}`;
+  };
+
   const clamp = (value, min, max) => Math.min(Math.max(value, min), max);
 
   const getNumber = (id) => {
@@ -589,7 +596,7 @@ import WhenSpendingMakesSense from "../components/WhenSpendingMakesSense.astro";
 
     foodShareEl.innerHTML = `<strong>Total food spending share:</strong> ${totalFoodShare.toFixed(1)}% of take-home income`;
     groceryPerPersonEl.innerHTML = `<strong>Groceries per person:</strong> $${Math.round(groceryPerPerson).toLocaleString()} per month`;
-    cashFlowEl.innerHTML = `<strong>Monthly cash flow after housing, debt, and food:</strong> $${Math.round(monthlyRemaining).toLocaleString()}`;
+    cashFlowEl.innerHTML = `<strong>Monthly cash flow after housing, debt, and food:</strong> ${formatSignedCurrency(monthlyRemaining)}`;
     savingsCushionEl.innerHTML = `<strong>Estimated emergency cushion:</strong> ${Math.max(emergencyMonths, 0).toFixed(1)} months`;
     guidanceEl.textContent = `${guidance} Recommended next step: ${level.action}`;
   }

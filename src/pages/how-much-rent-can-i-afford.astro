@@ -314,27 +314,27 @@ const breadcrumbSchema = {
         <div class="grid">
           <div>
             <label for="grossIncome">Annual Household Income (Gross)</label>
-            <input id="grossIncome" type="number" placeholder="85000" />
+            <input id="grossIncome" type="number" min="1" max="100000000" step="1" placeholder="85000" />
           </div>
 
           <div>
             <label for="takeHomePay">Monthly Take-Home Pay</label>
-            <input id="takeHomePay" type="number" placeholder="5600" />
+            <input id="takeHomePay" type="number" min="1" max="10000000" step="0.01" placeholder="5600" />
           </div>
 
           <div>
             <label for="rent">Monthly Rent</label>
-            <input id="rent" type="number" placeholder="2000" />
+            <input id="rent" type="number" min="1" max="1000000" step="0.01" placeholder="2000" />
           </div>
 
           <div>
             <label for="utilities">Utilities, Internet, Parking, Fees</label>
-            <input id="utilities" type="number" placeholder="350" />
+            <input id="utilities" type="number" min="0" max="100000" step="0.01" placeholder="350" />
           </div>
 
           <div>
             <label for="monthlyDebt">Monthly Debt Payments</label>
-            <input id="monthlyDebt" type="number" placeholder="650" />
+            <input id="monthlyDebt" type="number" min="0" max="1000000" step="0.01" placeholder="650" />
 
             <div class="helper-link">
               <a href="/what-counts-as-debt/">
@@ -345,17 +345,17 @@ const breadcrumbSchema = {
 
           <div>
             <label for="otherBills">Other Monthly Bills</label>
-            <input id="otherBills" type="number" placeholder="1600" />
+            <input id="otherBills" type="number" min="0" max="1000000" step="0.01" placeholder="1600" />
           </div>
 
           <div>
             <label for="savings">Total Emergency Savings</label>
-            <input id="savings" type="number" placeholder="15000" />
+            <input id="savings" type="number" min="0" max="1000000000" step="0.01" placeholder="15000" />
           </div>
 
           <div>
             <label for="movingCost">Estimated Move-In Cost</label>
-            <input id="movingCost" type="number" placeholder="4500" />
+            <input id="movingCost" type="number" min="0" max="10000000" step="0.01" placeholder="4500" />
           </div>
         </div>
 
@@ -363,7 +363,7 @@ const breadcrumbSchema = {
           Get Rent Affordability Verdict
         </button>
 
-        <div class="result" id="result">
+        <div class="result" id="result" aria-live="polite">
           <div class="score" id="score"></div>
 
           <div class="bar">
@@ -1068,6 +1068,25 @@ const breadcrumbSchema = {
 
       result.style.display = "block";
 
+      const invalidFields = [...document.querySelectorAll('.card input[type="number"]')]
+        .filter((input) => !input.checkValidity());
+
+      if (invalidFields.length > 0) {
+        scoreEl.textContent = "Check your numbers";
+        barFill.style.width = "0%";
+        barFill.style.background = "#16a34a";
+        housingRatioEl.innerHTML = "";
+        takeHomeRatioEl.innerHTML = "";
+        leftoverCashEl.innerHTML = "";
+        recommendedRentEl.innerHTML = "";
+        savingsCushionEl.innerHTML = "";
+        moveInImpactEl.innerHTML = "";
+        debtPressureEl.innerHTML = "";
+        guidanceEl.textContent =
+          "One or more values are outside the supported range. Correct those entries before relying on the rent estimate.";
+        return;
+      }
+
       if (grossIncome <= 0 || takeHomePay <= 0 || rent <= 0) {
         scoreEl.textContent = "Add your numbers first";
         barFill.style.width = "0%";
@@ -1094,7 +1113,7 @@ const breadcrumbSchema = {
       const leftoverRatio = (leftoverAfterBills / takeHomePay) * 100;
       const postMoveSavings = savings - movingCost;
       const postMoveSavingsMonths =
-        totalCommittedMonthly > 0 ? postMoveSavings / totalCommittedMonthly : 0;
+        totalCommittedMonthly > 0 ? Math.max(0, postMoveSavings / totalCommittedMonthly) : 0;
       const emergencyMonths =
         totalCommittedMonthly > 0 ? savings / totalCommittedMonthly : 0;
       const moveInSavingsImpact =

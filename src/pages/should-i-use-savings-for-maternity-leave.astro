@@ -4,6 +4,7 @@ import OmniStyleReviewBlock from "../components/OmniStyleReviewBlock.astro";
 import Layout from "../layouts/Layout.astro";
 import CalculatorPageShell from "../components/CalculatorPageShell.astro";
 import FAQSection from "../components/FAQSection.astro";
+import SourcesAssumptionsBlock from "../components/SourcesAssumptionsBlock.astro";
 import RelatedCalculators from "../components/RelatedCalculators.astro";
 import RelatedGuides from "../components/RelatedGuides.astro";
 import MethodologySection from "../components/MethodologySection.astro";
@@ -130,7 +131,7 @@ import WhenSpendingMakesSense from "../components/WhenSpendingMakesSense.astro";
 
         <button class="sis-action-button sis-calculate-button" id="leaveButton" type="button">Calculate Financial Pressure</button>
 
-        <div class="result" id="result">
+        <div class="result" id="result" aria-live="polite">
           <div class="score" id="score"></div>
           <div class="bar"><div class="fill" id="barFill"></div></div>
           <div class="metric" id="stress"></div>
@@ -285,6 +286,16 @@ import WhenSpendingMakesSense from "../components/WhenSpendingMakesSense.astro";
         ]}
       />
 
+      <section class="content-section">
+        <h2>Worked Example: Funding a Maternity-Leave Income Gap</h2>
+        <p>
+          Suppose a 12-week leave creates an estimated $7,200 take-home income gap after paid leave and benefits are included. If the household has $16,000 in savings and wants to preserve a $9,000 emergency reserve, the maximum planned savings draw is $7,000.
+        </p>
+        <p>
+          Cutting the leave-period budget by $400 per month for three months saves $1,200 and reduces the gap to $6,000. That would leave $10,000 in savings after leave, preserving a $1,000 margin above the reserve target before regular income resumes.
+        </p>
+      </section>
+
       <FAQSection
         title="Maternity Leave Savings FAQ"
         faqs={[
@@ -365,6 +376,13 @@ import WhenSpendingMakesSense from "../components/WhenSpendingMakesSense.astro";
   </div>
 
   <script is:inline>
+  const formatSignedCurrency = (value) => {
+    const rounded = Math.round(value);
+    if (rounded === 0 || Object.is(rounded, -0)) return "$0";
+    const amount = Math.abs(rounded).toLocaleString();
+    return rounded < 0 ? `-$${amount}` : `$${amount}`;
+  };
+
   const clamp = (value, min, max) => Math.min(Math.max(value, min), max);
 
   const getNumber = (id) => {
@@ -619,7 +637,7 @@ import WhenSpendingMakesSense from "../components/WhenSpendingMakesSense.astro";
 
     stressEl.innerHTML = `<strong>Pressure level:</strong> ${level.stress}`;
     gapEl.innerHTML = `<strong>Estimated amount needed from savings:</strong> $${amountNeededFromSavings.toLocaleString()}`;
-    savingsAfterEl.innerHTML = `<strong>Estimated savings after leave:</strong> $${remainingSavings.toLocaleString()}`;
+    savingsAfterEl.innerHTML = `<strong>Estimated savings after leave:</strong> ${formatSignedCurrency(remainingSavings)}`;
     cushionEl.innerHTML = `<strong>Estimated emergency cushion after leave:</strong> ${Math.max(emergencyMonthsAfter, 0).toFixed(1)} months`;
     guidanceEl.textContent = `${guidance} Recommended next step: ${level.action}`;
   }
@@ -628,4 +646,5 @@ import WhenSpendingMakesSense from "../components/WhenSpendingMakesSense.astro";
     .getElementById("leaveButton")
     .addEventListener("click", calculateLeaveSavings);
 </script>
+  <SourcesAssumptionsBlock category="Parental Leave" />
 </Layout>

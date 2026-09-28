@@ -4,6 +4,7 @@ import OmniStyleReviewBlock from "../components/OmniStyleReviewBlock.astro";
 import Layout from "../layouts/Layout.astro";
 import CalculatorPageShell from "../components/CalculatorPageShell.astro";
 import FAQSection from "../components/FAQSection.astro";
+import SourcesAssumptionsBlock from "../components/SourcesAssumptionsBlock.astro";
 import RelatedCalculators from "../components/RelatedCalculators.astro";
 import RelatedGuides from "../components/RelatedGuides.astro";
 import MethodologySection from "../components/MethodologySection.astro";
@@ -207,7 +208,7 @@ import WhenSpendingMakesSense from "../components/WhenSpendingMakesSense.astro";
 
         <button class="sis-action-button sis-calculate-button" id="secondChildButton" type="button">Calculate Financial Pressure</button>
 
-        <div class="result" id="result">
+        <div class="result" id="result" aria-live="polite">
           <div class="score" id="score"></div>
           <div class="bar"><div class="fill" id="barFill"></div></div>
           <div class="metric" id="stress"></div>
@@ -617,6 +618,8 @@ import WhenSpendingMakesSense from "../components/WhenSpendingMakesSense.astro";
         ]}
       />
 
+      <SourcesAssumptionsBlock category="Baby & Parenting" />
+
       <MethodologySection category="baby and parenting spending" updated="July 2026" />
 
       <RelatedGuides
@@ -670,6 +673,13 @@ import WhenSpendingMakesSense from "../components/WhenSpendingMakesSense.astro";
   </div>
 
   <script is:inline>
+  const formatSignedCurrency = (value) => {
+    const rounded = Math.round(value);
+    if (rounded === 0 || Object.is(rounded, -0)) return "$0";
+    const amount = Math.abs(rounded).toLocaleString();
+    return rounded < 0 ? `-$${amount}` : `$${amount}`;
+  };
+
     const clamp = (value, min, max) => Math.min(Math.max(value, min), max);
 
     const getNumber = (id) => {
@@ -913,7 +923,7 @@ import WhenSpendingMakesSense from "../components/WhenSpendingMakesSense.astro";
           `Based on the numbers provided, a second child appears to create essentially no financial pressure. The added monthly cost and near-term costs are very small relative to household resources, and the remaining emergency runway is strong.`;
       } else if (pressureScore <= 30) {
         guidance =
-          `A second child appears financially manageable based on the numbers provided. Estimated monthly cash flow after second-child costs is about $${Math.round(monthlyRemainingAfterSecondChild).toLocaleString()}, with roughly ${Math.max(emergencyMonthsAfter, 0).toFixed(1)} months of emergency runway.`;
+          `A second child appears financially manageable based on the numbers provided. Estimated monthly cash flow after second-child costs is about ${formatSignedCurrency(monthlyRemainingAfterSecondChild)}, with roughly ${Math.max(emergencyMonthsAfter, 0).toFixed(1)} months of emergency runway.`;
       } else if (pressureScore <= 60) {
         guidance =
           `A second child may be workable, but the added monthly cost creates noticeable pressure. The estimated recurring increase is about $${Math.round(addedMonthlyCost).toLocaleString()} per month, so childcare, medical bills, leave, and housing plans should be confirmed carefully.`;
@@ -929,8 +939,8 @@ import WhenSpendingMakesSense from "../components/WhenSpendingMakesSense.astro";
 
       stressEl.innerHTML = `<strong>Pressure level:</strong> ${level.stress}`;
       monthlyPressureEl.innerHTML = `<strong>Added monthly second-child cost:</strong> $${Math.round(addedMonthlyCost).toLocaleString()}`;
-      cashFlowEl.innerHTML = `<strong>Estimated monthly cash flow after second-child costs:</strong> $${Math.round(monthlyRemainingAfterSecondChild).toLocaleString()}`;
-      savingsImpactEl.innerHTML = `<strong>Estimated savings after near-term second-child costs:</strong> $${Math.round(remainingSavings).toLocaleString()}`;
+      cashFlowEl.innerHTML = `<strong>Estimated monthly cash flow after second-child costs:</strong> ${formatSignedCurrency(monthlyRemainingAfterSecondChild)}`;
+      savingsImpactEl.innerHTML = `<strong>Estimated savings after near-term second-child costs:</strong> ${formatSignedCurrency(remainingSavings)}`;
       guidanceEl.textContent = `${guidance} Recommended next step: ${level.action}`;
     }
 

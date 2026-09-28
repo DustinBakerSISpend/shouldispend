@@ -2,6 +2,7 @@
 import Layout from "../layouts/Layout.astro";
 import CalculatorPageShell from "../components/CalculatorPageShell.astro";
 import FAQSection from "../components/FAQSection.astro";
+import SourcesAssumptionsBlock from "../components/SourcesAssumptionsBlock.astro";
 import RelatedCalculators from "../components/RelatedCalculators.astro";
 import RelatedGuides from "../components/RelatedGuides.astro";
 import MethodologySection from "../components/MethodologySection.astro";
@@ -203,7 +204,7 @@ import DecisionLimitsBlock from "../components/DecisionLimitsBlock.astro";
           Calculate Financial Pressure
         </button>
 
-        <div class="result" id="result">
+        <div class="result" id="result" aria-live="polite">
           <div class="score" id="score"></div>
 
           <div class="bar">
@@ -326,6 +327,16 @@ import DecisionLimitsBlock from "../components/DecisionLimitsBlock.astro";
         ]}
       />
 
+      <section class="content-section">
+        <h2>Worked Example: Planning an $8,000 HVAC Replacement</h2>
+        <p>
+          Suppose the system quote is $8,000 and permits, electrical work, and thermostat upgrades add $900. A $700 utility rebate would bring the net project cost to about $8,200. If the household has $12,500 in repair savings, paying cash would leave roughly $4,300.
+        </p>
+        <p>
+          If the minimum emergency reserve is $7,000, the replacement creates a $2,700 gap. Saving $900 per month for three months would rebuild that cushion. If the system has failed completely, the timing may be less flexible, but the same numbers show how much post-repair cash needs to be restored.
+        </p>
+      </section>
+
       <FAQSection
         title="HVAC Replacement Spending FAQ"
         faqs={[
@@ -404,6 +415,13 @@ import DecisionLimitsBlock from "../components/DecisionLimitsBlock.astro";
   </div>
 
   <script is:inline>
+  const formatSignedCurrency = (value) => {
+    const rounded = Math.round(value);
+    if (rounded === 0 || Object.is(rounded, -0)) return "$0";
+    const amount = Math.abs(rounded).toLocaleString();
+    return rounded < 0 ? `-$${amount}` : `$${amount}`;
+  };
+
     const clamp = (value, min, max) => Math.min(Math.max(value, min), max);
 
     const getNumber = (id) => {
@@ -553,8 +571,8 @@ import DecisionLimitsBlock from "../components/DecisionLimitsBlock.astro";
       barFill.style.background = level.color;
 
       stressEl.innerHTML = `<strong>Pressure level:</strong> ${level.stress}`;
-      cashFlowEl.innerHTML = `<strong>Monthly cash flow after bills and debt:</strong> $${monthlyRemaining.toLocaleString()}`;
-      savingsImpactEl.innerHTML = `<strong>Savings after out-of-pocket HVAC cost:</strong> $${remainingSavings.toLocaleString()}`;
+      cashFlowEl.innerHTML = `<strong>Monthly cash flow after bills and debt:</strong> ${formatSignedCurrency(monthlyRemaining)}`;
+      savingsImpactEl.innerHTML = `<strong>Savings after out-of-pocket HVAC cost:</strong> ${formatSignedCurrency(remainingSavings)}`;
       financingImpactEl.innerHTML = `<strong>Financed portion of net cost:</strong> ${financedShare.toFixed(1)}%`;
       guidanceEl.textContent = `${guidance} Recommended next step: ${level.action}`;
     }
@@ -563,4 +581,5 @@ import DecisionLimitsBlock from "../components/DecisionLimitsBlock.astro";
       .getElementById("hvacButton")
       .addEventListener("click", calculateHVAC);
   </script>
+  <SourcesAssumptionsBlock category="Home Maintenance" />
 </Layout>

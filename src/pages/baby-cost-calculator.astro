@@ -884,6 +884,24 @@ const redFlags = [
       const leaveIncomeLoss = getNumber("leaveIncomeLoss");
       const insuranceIncrease = getNumber("insuranceIncrease");
 
+      if (monthlyIncome <= 0) {
+        result.classList.add("show");
+        verdict.className = "verdict medium";
+        verdict.textContent = "Add the missing details";
+        scoreEl.textContent = "Need details";
+        barFill.className = "bar-fill medium";
+        barFill.style.width = "0%";
+        resultCopy.textContent =
+          "Enter a positive monthly take-home income before calculating baby cost pressure. Savings, debt payments, childcare, and individual baby-cost estimates can be zero when that reflects your situation.";
+        firstYearCostEl.textContent = "Need details";
+        monthlyPressureEl.textContent = "Need details";
+        monthlyCushionEl.textContent = "Need details";
+        remainingSavingsEl.textContent = "Need details";
+        incomeShareEl.textContent = "Need details";
+        savingsRunwayEl.textContent = "Need details";
+        return;
+      }
+
       const recurringBabyCosts = childcare + monthlyBabyCosts + insuranceIncrease;
       const oneTimeCosts = medicalCosts + gearCosts + leaveIncomeLoss;
       const firstYearCost = oneTimeCosts + recurringBabyCosts * 12;
@@ -893,7 +911,11 @@ const redFlags = [
       const totalMonthlyObligations = monthlyExpenses + recurringBabyCosts;
       const incomeShare = monthlyIncome > 0 ? (recurringBabyCosts / monthlyIncome) * 100 : 100;
       const savingsRunway =
-        totalMonthlyObligations > 0 ? Math.max(0, savings / totalMonthlyObligations) : 99;
+        totalMonthlyObligations > 0
+          ? Math.max(0, savings / totalMonthlyObligations)
+          : savings > 0
+            ? 99
+            : 0;
 
       let score = 0;
 

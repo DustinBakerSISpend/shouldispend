@@ -4,6 +4,7 @@ import OmniStyleReviewBlock from "../components/OmniStyleReviewBlock.astro";
 import Layout from "../layouts/Layout.astro";
 import CalculatorPageShell from "../components/CalculatorPageShell.astro";
 import FAQSection from "../components/FAQSection.astro";
+import SourcesAssumptionsBlock from "../components/SourcesAssumptionsBlock.astro";
 import RelatedCalculators from "../components/RelatedCalculators.astro";
 import RelatedGuides from "../components/RelatedGuides.astro";
 import MethodologySection from "../components/MethodologySection.astro";
@@ -141,7 +142,7 @@ import WhenSpendingMakesSense from "../components/WhenSpendingMakesSense.astro";
 
         <button class="sis-action-button sis-calculate-button" id="campButton" type="button">Calculate Summer Camp Pressure</button>
 
-        <div class="result" id="result">
+        <div class="result" id="result" aria-live="polite">
           <div class="score" id="score"></div>
           <div class="bar"><div class="fill" id="barFill"></div></div>
           <div class="metric" id="stress"></div>
@@ -297,6 +298,16 @@ import WhenSpendingMakesSense from "../components/WhenSpendingMakesSense.astro";
         ]}
       />
 
+      <section class="content-section">
+        <h2>Worked Example: Testing a Summer Camp Budget</h2>
+        <p>
+          Suppose eight weeks of camp costs $3,200 and extended care adds another $800, bringing the summer total to $4,000. Spread across four months of advance saving, that requires $1,000 per month.
+        </p>
+        <p>
+          If camp replaces $450 per week of other childcare for six of those weeks, it offsets about $2,700 of care the household would have paid anyway. The net incremental cost is then about $1,300, which is very different from treating the full $4,000 as purely discretionary spending.
+        </p>
+      </section>
+
       <FAQSection
         title="Summer Camp Affordability FAQ"
         faqs={[
@@ -381,6 +392,13 @@ import WhenSpendingMakesSense from "../components/WhenSpendingMakesSense.astro";
   </div>
 
   <script is:inline>
+  const formatSignedCurrency = (value) => {
+    const rounded = Math.round(value);
+    if (rounded === 0 || Object.is(rounded, -0)) return "$0";
+    const amount = Math.abs(rounded).toLocaleString();
+    return rounded < 0 ? `-$${amount}` : `$${amount}`;
+  };
+
   const clamp = (value, min, max) => Math.min(Math.max(value, min), max);
 
   const getNumber = (id) => {
@@ -672,7 +690,7 @@ import WhenSpendingMakesSense from "../components/WhenSpendingMakesSense.astro";
     stressEl.innerHTML = `<strong>Pressure level:</strong> ${level.stress}`;
     netCostEl.innerHTML = `<strong>Estimated net camp cost after support and childcare value:</strong> $${Math.round(netCampCost).toLocaleString()}`;
     monthlyImpactEl.innerHTML = `<strong>Estimated monthly camp impact:</strong> $${Math.round(monthlyCampImpact).toLocaleString()}`;
-    cashFlowEl.innerHTML = `<strong>Monthly cash flow while paying for camp:</strong> $${Math.round(monthlyRemaining).toLocaleString()}`;
+    cashFlowEl.innerHTML = `<strong>Monthly cash flow while paying for camp:</strong> ${formatSignedCurrency(monthlyRemaining)}`;
     savingsCushionEl.innerHTML = `<strong>Estimated emergency cushion after camp:</strong> ${Math.max(emergencyMonths, 0).toFixed(1)} months`;
 
     guidanceEl.textContent = `${guidance} Recommended next step: ${level.action}`;
@@ -682,4 +700,5 @@ import WhenSpendingMakesSense from "../components/WhenSpendingMakesSense.astro";
     .getElementById("campButton")
     .addEventListener("click", calculateCampPressure);
 </script>
+  <SourcesAssumptionsBlock category="Summer Camp" />
 </Layout>

@@ -4,6 +4,7 @@ import OmniStyleReviewBlock from "../components/OmniStyleReviewBlock.astro";
 import Layout from "../layouts/Layout.astro";
 import CalculatorPageShell from "../components/CalculatorPageShell.astro";
 import FAQSection from "../components/FAQSection.astro";
+import SourcesAssumptionsBlock from "../components/SourcesAssumptionsBlock.astro";
 import RelatedCalculators from "../components/RelatedCalculators.astro";
 import MethodologySection from "../components/MethodologySection.astro";
 import CalculatorAssumptions from "../components/CalculatorAssumptions.astro";
@@ -317,76 +318,76 @@ const relatedCalculators = calculators
 
             <div class="field">
               <label for="nights">Number of Nights</label>
-              <input id="nights" type="number" placeholder="Example: 5" />
+              <input id="nights" type="number" min="1" max="90" step="1" placeholder="Example: 5" />
             </div>
 
             <div class="field">
               <label for="rooms">Rooms or Units</label>
-              <input id="rooms" type="number" placeholder="Example: 1" />
+              <input id="rooms" type="number" min="1" max="20" step="1" placeholder="Example: 1" />
               <span class="field-note">Use 2 if your family needs two hotel rooms.</span>
             </div>
 
             <div class="field">
               <label for="nightlyRate">Average Nightly Rate</label>
-              <input id="nightlyRate" type="number" step="0.01" placeholder="Example: 225" />
+              <input id="nightlyRate" type="number" min="1" max="10000" step="0.01" placeholder="Example: 225" />
             </div>
 
             <div class="field">
               <label for="travelers">Travelers Sharing the Stay</label>
-              <input id="travelers" type="number" placeholder="Example: 4" />
+              <input id="travelers" type="number" min="1" max="200" step="1" placeholder="Example: 4" />
             </div>
 
             <div class="field">
               <label for="taxRate">Hotel Tax Percent</label>
-              <input id="taxRate" type="number" step="0.01" placeholder="Example: 14" />
+              <input id="taxRate" type="number" min="0" max="100" step="0.01" placeholder="Example: 14" />
               <span class="field-note">Use the lodging tax shown at checkout if you know it.</span>
             </div>
 
             <div class="field">
               <label for="resortFeeNight">Resort or Amenity Fee per Night</label>
-              <input id="resortFeeNight" type="number" step="0.01" placeholder="Example: 45" />
+              <input id="resortFeeNight" type="number" min="0" max="1000" step="0.01" placeholder="Example: 45" />
             </div>
 
             <div class="field">
               <label for="cleaningFee">Cleaning or Service Fees</label>
-              <input id="cleaningFee" type="number" step="0.01" placeholder="Example: 180" />
+              <input id="cleaningFee" type="number" min="0" max="100000" step="0.01" placeholder="Example: 180" />
             </div>
 
             <div class="field">
               <label for="parkingNight">Parking Cost per Night</label>
-              <input id="parkingNight" type="number" step="0.01" placeholder="Example: 35" />
+              <input id="parkingNight" type="number" min="0" max="1000" step="0.01" placeholder="Example: 35" />
               <span class="field-note">Use the total nightly parking cost for your group.</span>
             </div>
 
             <div class="field">
               <label for="otherFees">Other Required Lodging Fees</label>
-              <input id="otherFees" type="number" step="0.01" placeholder="Example: 120" />
+              <input id="otherFees" type="number" min="0" max="100000" step="0.01" placeholder="Example: 120" />
             </div>
 
             <div class="field">
               <label for="refundableDeposit">Refundable Deposit or Hold</label>
-              <input id="refundableDeposit" type="number" step="0.01" placeholder="Example: 300" />
+              <input id="refundableDeposit" type="number" min="0" max="100000" step="0.01" placeholder="Example: 300" />
               <span class="field-note">This is separated from final cost, but it affects upfront cash.</span>
             </div>
 
             <div class="field">
               <label for="rewardsCredit">Rewards, Gift Cards, or Travel Credits</label>
-              <input id="rewardsCredit" type="number" step="0.01" placeholder="Example: 500" />
+              <input id="rewardsCredit" type="number" min="0" max="1000000" step="0.01" placeholder="Example: 500" />
             </div>
 
             <div class="field">
               <label for="cashSetAside">Cash Already Set Aside for Lodging</label>
-              <input id="cashSetAside" type="number" step="0.01" placeholder="Example: 1200" />
+              <input id="cashSetAside" type="number" min="0" max="1000000" step="0.01" placeholder="Example: 1200" />
             </div>
 
             <div class="field">
               <label for="monthlyTakeHome">Monthly Take-Home Income</label>
-              <input id="monthlyTakeHome" type="number" step="0.01" placeholder="Example: 6500" />
+              <input id="monthlyTakeHome" type="number" min="0" max="10000000" step="0.01" placeholder="Example: 6500" />
             </div>
 
             <div class="field">
               <label for="emergencySavings">Emergency Savings</label>
-              <input id="emergencySavings" type="number" step="0.01" placeholder="Example: 15000" />
+              <input id="emergencySavings" type="number" min="0" max="100000000" step="0.01" placeholder="Example: 15000" />
             </div>
 
             <div class="field">
@@ -417,7 +418,7 @@ const relatedCalculators = calculators
           </div>
         </form>
 
-        <div class="results" id="results">
+        <div class="results" id="results" aria-live="polite">
           <div class="result-label">Estimated Out-of-Pocket Lodging Cost</div>
 
           <div class="total-price" id="totalPrice"></div>
@@ -720,6 +721,22 @@ const relatedCalculators = calculators
 
       results.classList.add("visible");
 
+      const invalidFields = [...document.querySelectorAll('input[type="number"]')]
+        .filter((input) => !input.checkValidity());
+
+      if (invalidFields.length > 0) {
+        totalPrice.textContent = "$0";
+        pressureScore.textContent = "0/100";
+        pressureFill.style.width = "0%";
+        pressureFill.style.background = "#16a34a";
+        pressureLabel.textContent = "Check lodging inputs";
+        pressureDetails.innerHTML =
+          "<p>One or more values are outside the supported range. Correct those entries before relying on the lodging estimate.</p>";
+        resultDetails.innerHTML = "";
+        lodgingSummary.textContent = "";
+        return;
+      }
+
       if (nights <= 0 || rooms <= 0 || nightlyRate <= 0) {
         totalPrice.textContent = "$0";
         pressureScore.textContent = "0/100";
@@ -897,5 +914,6 @@ const relatedCalculators = calculators
       }, 0);
     });
   </script>
+  <SourcesAssumptionsBlock category="Travel Benchmarks" />
 </Layout>
 

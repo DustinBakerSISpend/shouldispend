@@ -339,72 +339,72 @@ const relatedCalculators = calculators
         <div class="grid">
           <div class="field">
             <label for="guests">Expected Guests</label>
-            <input id="guests" type="number" placeholder="Example: 75" />
+            <input id="guests" type="number" min="0" max="2000" step="1" placeholder="Example: 75" />
           </div>
 
           <div class="field">
             <label for="foodPerGuest">Food Cost per Guest</label>
-            <input id="foodPerGuest" type="number" placeholder="Example: 18" />
+            <input id="foodPerGuest" type="number" min="0" max="1000" step="0.01" placeholder="Example: 18" />
           </div>
 
           <div class="field">
             <label for="serviceBudget">Funeral Service Budget or Quote</label>
-            <input id="serviceBudget" type="number" placeholder="Example: 6500" />
+            <input id="serviceBudget" type="number" min="0" max="5000000" step="0.01" placeholder="Example: 6500" />
           </div>
 
           <div class="field">
             <label for="venueCost">Venue or Room Cost</label>
-            <input id="venueCost" type="number" placeholder="Example: 500" />
+            <input id="venueCost" type="number" min="0" max="1000000" step="0.01" placeholder="Example: 500" />
           </div>
 
           <div class="field">
             <label for="drinkCost">Drinks / Coffee / Beverages</label>
-            <input id="drinkCost" type="number" placeholder="Example: 300" />
+            <input id="drinkCost" type="number" min="0" max="1000000" step="0.01" placeholder="Example: 300" />
           </div>
 
           <div class="field">
             <label for="serviceFees">Service Fees</label>
-            <input id="serviceFees" type="number" placeholder="Example: 250" />
+            <input id="serviceFees" type="number" min="0" max="1000000" step="0.01" placeholder="Example: 250" />
           </div>
 
           <div class="field">
             <label for="tips">Tips or Gratuity</label>
-            <input id="tips" type="number" placeholder="Example: 200" />
+            <input id="tips" type="number" min="0" max="1000000" step="0.01" placeholder="Example: 200" />
           </div>
 
           <div class="field">
             <label for="rentals">Tables, Chairs, Linens, or Equipment</label>
-            <input id="rentals" type="number" placeholder="Example: 300" />
+            <input id="rentals" type="number" min="0" max="1000000" step="0.01" placeholder="Example: 300" />
           </div>
 
           <div class="field">
             <label for="printedMaterials">Programs, Signs, or Printed Materials</label>
-            <input id="printedMaterials" type="number" placeholder="Example: 150" />
+            <input id="printedMaterials" type="number" min="0" max="1000000" step="0.01" placeholder="Example: 150" />
           </div>
 
           <div class="field">
             <label for="decorCost">Flowers or Simple Decor</label>
-            <input id="decorCost" type="number" placeholder="Example: 250" />
+            <input id="decorCost" type="number" min="0" max="1000000" step="0.01" placeholder="Example: 250" />
           </div>
 
           <div class="field">
             <label for="cleanupCost">Cleanup or Setup Help</label>
-            <input id="cleanupCost" type="number" placeholder="Example: 200" />
+            <input id="cleanupCost" type="number" min="0" max="1000000" step="0.01" placeholder="Example: 200" />
           </div>
 
           <div class="field">
             <label for="transportationCost">Transportation Between Service and Reception</label>
-            <input id="transportationCost" type="number" placeholder="Example: 150" />
+            <input id="transportationCost" type="number" min="0" max="1000000" step="0.01" placeholder="Example: 150" />
           </div>
 
           <div class="field">
             <label for="confirmedHelp">Confirmed Family Help or Credits</label>
-            <input id="confirmedHelp" type="number" placeholder="Example: 500" />
+            <input id="confirmedHelp" type="number" min="0" max="5000000" step="0.01" placeholder="Example: 500" />
           </div>
 
           <div class="field">
             <label for="extraGuests">Possible Extra Guests</label>
-            <input id="extraGuests" type="number" placeholder="Example: 15" />
+            <input id="extraGuests" type="number" min="0" max="2000" step="1" placeholder="Example: 15" />
           </div>
         </div>
 
@@ -412,7 +412,7 @@ const relatedCalculators = calculators
           Calculate Funeral Reception Cost
         </button>
 
-        <div class="results" id="results">
+        <div class="results" id="results" aria-live="polite">
           <div class="result-label">Estimated Reception / Gathering Cost</div>
 
           <div class="total-price" id="totalPrice"></div>
@@ -729,6 +729,25 @@ const relatedCalculators = calculators
       results.classList.add("visible");
       breakdownGrid.innerHTML = "";
       warningList.innerHTML = "";
+
+      const invalidFields = [...document.querySelectorAll('.calculator input[type="number"]')]
+        .filter((input) => !input.checkValidity());
+
+      if (invalidFields.length > 0) {
+        totalPrice.textContent = "$0";
+        rangeLine.textContent =
+          "Check the highlighted values and keep each amount or guest count within the calculator's supported range.";
+        outOfPocketEl.textContent = "$0";
+        perGuestCostEl.textContent = "N/A";
+        guestCreepCostEl.textContent = "$0";
+        resultNote.textContent =
+          "One or more entries are outside the supported range. Correct those inputs before relying on the estimate.";
+        addWarning(
+          warningList,
+          "Guest counts and dollar amounts outside the supported range are not calculated because they can produce misleading reception estimates."
+        );
+        return;
+      }
 
       if (total <= 0) {
         totalPrice.textContent = "$0";

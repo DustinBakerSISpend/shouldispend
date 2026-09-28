@@ -105,7 +105,7 @@ import CorePageExamplesBlock from "../components/CorePageExamplesBlock.astro";
 
         <button class="sis-action-button sis-calculate-button" id="dentalWorkButton" type="button">Calculate Financial Pressure</button>
 
-        <div class="result" id="result">
+        <div class="result" id="result" aria-live="polite">
           <div class="score" id="score"></div>
           <div class="bar"><div class="fill" id="barFill"></div></div>
           <div class="metric" id="stress"></div>
@@ -223,6 +223,16 @@ import CorePageExamplesBlock from "../components/CorePageExamplesBlock.astro";
         ]}
       />
 
+      <section class="content-section">
+        <h2>Worked Example: Planning for $5,000 of Dental Work</h2>
+        <p>
+          Suppose a treatment plan totals $5,000 and insurance is expected to cover $1,200. If the patient can use $1,500 from medical savings without touching the emergency fund, the remaining balance is $2,300.
+        </p>
+        <p>
+          A 12-month interest-free plan on $2,300 would be about $192 per month. If the household has $450 of monthly budget room, that payment uses roughly 43% of the available cushion and leaves about $258 for other variable costs. Separating urgent procedures from work that can safely wait may reduce the balance further without postponing necessary care.
+        </p>
+      </section>
+
       <FAQSection
         title="$5,000 Dental Work FAQ"
         faqs={[
@@ -301,6 +311,13 @@ import CorePageExamplesBlock from "../components/CorePageExamplesBlock.astro";
   </div>
 
   <script is:inline>
+  const formatSignedCurrency = (value) => {
+    const rounded = Math.round(value);
+    if (rounded === 0 || Object.is(rounded, -0)) return "$0";
+    const amount = Math.abs(rounded).toLocaleString();
+    return rounded < 0 ? `-$${amount}` : `$${amount}`;
+  };
+
     const clamp = (value, min, max) => Math.min(Math.max(value, min), max);
 
     const getNumber = (id) => {
@@ -485,8 +502,8 @@ import CorePageExamplesBlock from "../components/CorePageExamplesBlock.astro";
       barFill.style.background = level.color;
 
       stressEl.innerHTML = `<strong>Pressure level:</strong> ${level.stress}`;
-      cashFlowEl.innerHTML = `<strong>Monthly cash flow after bills and debt:</strong> $${monthlyRemaining.toLocaleString()}`;
-      savingsImpactEl.innerHTML = `<strong>Savings after out-of-pocket dental cost:</strong> $${remainingSavings.toLocaleString()}`;
+      cashFlowEl.innerHTML = `<strong>Monthly cash flow after bills and debt:</strong> ${formatSignedCurrency(monthlyRemaining)}`;
+      savingsImpactEl.innerHTML = `<strong>Savings after out-of-pocket dental cost:</strong> ${formatSignedCurrency(remainingSavings)}`;
       financingImpactEl.innerHTML = `<strong>Financed portion:</strong> ${financedShare.toFixed(1)}% of treatment cost`;
       guidanceEl.textContent = `${guidance} Recommended next step: ${level.action}`;
     }

@@ -4,6 +4,7 @@ import OmniStyleReviewBlock from "../components/OmniStyleReviewBlock.astro";
 import Layout from "../layouts/Layout.astro";
 import CalculatorPageShell from "../components/CalculatorPageShell.astro";
 import FAQSection from "../components/FAQSection.astro";
+import SourcesAssumptionsBlock from "../components/SourcesAssumptionsBlock.astro";
 import RelatedCalculators from "../components/RelatedCalculators.astro";
 import MethodologySection from "../components/MethodologySection.astro";
 import CalculatorAssumptions from "../components/CalculatorAssumptions.astro";
@@ -263,37 +264,37 @@ const relatedCalculators = calculators
         <div class="grid">
           <div class="field">
             <label for="normalWeeklyTakeHome">Normal Weekly Take-Home Pay</label>
-            <input id="normalWeeklyTakeHome" type="number" step="0.01" placeholder="Example: 950" />
+            <input id="normalWeeklyTakeHome" type="number" min="0" step="0.01" placeholder="Example: 950" />
           </div>
 
           <div class="field">
             <label for="leaveWeeks">Total Leave Weeks</label>
-            <input id="leaveWeeks" type="number" placeholder="Example: 12" />
+            <input id="leaveWeeks" type="number" min="1" max="104" step="0.1" placeholder="Example: 12" />
           </div>
 
           <div class="field">
             <label for="paidLeaveWeeks">Employer Paid Leave Weeks</label>
-            <input id="paidLeaveWeeks" type="number" placeholder="Example: 4" />
+            <input id="paidLeaveWeeks" type="number" min="0" max="104" step="0.1" placeholder="Example: 4" />
           </div>
 
           <div class="field">
             <label for="paidLeavePercent">Employer Paid Leave Percent</label>
-            <input id="paidLeavePercent" type="number" placeholder="Example: 100" />
+            <input id="paidLeavePercent" type="number" min="0" max="100" step="0.1" placeholder="Example: 100" />
           </div>
 
           <div class="field">
             <label for="ptoWeeks">PTO or Vacation Weeks Used</label>
-            <input id="ptoWeeks" type="number" placeholder="Example: 2" />
+            <input id="ptoWeeks" type="number" min="0" max="104" step="0.1" placeholder="Example: 2" />
           </div>
 
           <div class="field">
             <label for="disabilityWeeks">Short-Term Disability Weeks</label>
-            <input id="disabilityWeeks" type="number" placeholder="Example: 6" />
+            <input id="disabilityWeeks" type="number" min="0" max="104" step="0.1" placeholder="Example: 6" />
           </div>
 
           <div class="field">
             <label for="disabilityPercent">Short-Term Disability Pay Percent</label>
-            <input id="disabilityPercent" type="number" placeholder="Example: 60" />
+            <input id="disabilityPercent" type="number" min="0" max="100" step="0.1" placeholder="Example: 60" />
           </div>
 
           <div class="field">
@@ -348,13 +349,13 @@ const relatedCalculators = calculators
 
           <div class="field">
             <label for="bufferPercent">Leave Cost Buffer (%)</label>
-            <input id="bufferPercent" type="number" placeholder="Example: 10" />
+            <input id="bufferPercent" type="number" min="0" max="100" step="0.1" placeholder="Example: 10" />
           </div>
         </div>
 
         <button class="sis-action-button sis-calculate-button" id="parentalLeaveButton" type="button">Calculate Leave Paycheck Gap</button>
 
-        <div class="results" id="results">
+        <div class="results" id="results" aria-live="polite">
           <div class="result-label">Estimated Savings Needed</div>
 
           <div class="total-price" id="totalPrice"></div>
@@ -524,6 +525,16 @@ const relatedCalculators = calculators
       </section>
 
       <div class="content-section">
+        <section class="content-section">
+          <h2>Worked Example: Turning Leave Weeks Into a Cash Gap</h2>
+          <p>
+            Suppose a parent normally brings home $4,800 per month and plans 12 weeks away from work. Four weeks are fully paid, four weeks are paid at 60%, and four weeks are unpaid. Across the roughly three-month leave, expected take-home pay would be about $9,216 instead of the usual $14,400, creating a $5,184 income gap before any partner income or benefits are added.
+          </p>
+          <p>
+            If household expenses during leave are $4,200 per month, the three-month spending need is about $12,600. Add $1,200 of one-time baby and medical costs and the total cash need becomes $13,800. With $9,216 of leave income and $2,500 of partner-income surplus available during that period, the remaining gap is about $2,084. That number is more useful for planning than simply saying the leave lasts 12 weeks.
+          </p>
+        </section>
+
         <FAQSection title="Parental Leave Paycheck Calculator FAQ" faqs={parentalLeavePaycheckFaqs} />
       </div>
 
@@ -574,10 +585,10 @@ const relatedCalculators = calculators
       const normalWeeklyTakeHome = getNumber("normalWeeklyTakeHome");
       const leaveWeeks = getNumber("leaveWeeks");
       const paidLeaveWeeks = getNumber("paidLeaveWeeks");
-      const paidLeavePercent = getNumber("paidLeavePercent");
+      const paidLeavePercentRaw = getNumber("paidLeavePercent");
       const ptoWeeks = getNumber("ptoWeeks");
       const disabilityWeeks = getNumber("disabilityWeeks");
-      const disabilityPercent = getNumber("disabilityPercent");
+      const disabilityPercentRaw = getNumber("disabilityPercent");
       const statePaidLeaveMonthly = getNumber("statePaidLeaveMonthly");
       const partnerMonthlyTakeHome = getNumber("partnerMonthlyTakeHome");
       const monthlyBills = getNumber("monthlyBills");
@@ -588,7 +599,7 @@ const relatedCalculators = calculators
       const familyHelp = getNumber("familyHelp");
       const targetCushion = getNumber("targetCushion");
       const currentEmergencySavings = getNumber("currentEmergencySavings");
-      const bufferPercent = getNumber("bufferPercent") / 100;
+      const bufferPercentRaw = getNumber("bufferPercent");
 
       const results = document.getElementById("results");
       const totalPrice = document.getElementById("totalPrice");
@@ -604,6 +615,34 @@ const relatedCalculators = calculators
         leaveSummary.textContent = "";
         return;
       }
+
+      if (leaveWeeks > 104) {
+        totalPrice.textContent = "$0.00";
+        resultDetails.innerHTML =
+          "<p>Enter a leave period of 104 weeks or less. For a longer career break, use a broader household cash-flow plan instead of a parental-leave estimate.</p>";
+        leaveSummary.textContent = "";
+        return;
+      }
+
+      if (paidLeaveWeeks + ptoWeeks + disabilityWeeks > leaveWeeks) {
+        totalPrice.textContent = "$0.00";
+        resultDetails.innerHTML =
+          "<p>Paid leave, PTO, and disability weeks cannot add up to more than the total leave period. Enter only non-overlapping weeks so income is not counted twice.</p>";
+        leaveSummary.textContent = "";
+        return;
+      }
+
+      if (paidLeavePercentRaw > 100 || disabilityPercentRaw > 100 || bufferPercentRaw > 100) {
+        totalPrice.textContent = "$0.00";
+        resultDetails.innerHTML =
+          "<p>Paid-leave replacement, disability replacement, and the leave-cost buffer must each be between 0% and 100%.</p>";
+        leaveSummary.textContent = "";
+        return;
+      }
+
+      const paidLeavePercent = paidLeavePercentRaw;
+      const disabilityPercent = disabilityPercentRaw;
+      const bufferPercent = bufferPercentRaw / 100;
 
       const weeksPerMonth = 4.345;
       const leaveMonths = leaveWeeks / weeksPerMonth;
@@ -723,4 +762,5 @@ const relatedCalculators = calculators
       .getElementById("parentalLeaveButton")
       .addEventListener("click", calculateParentalLeaveGap);
   </script>
+  <SourcesAssumptionsBlock category="Parental Leave" />
 </Layout>

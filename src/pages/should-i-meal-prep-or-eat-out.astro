@@ -263,42 +263,42 @@ const relatedCalculators = calculators
         <div class="grid">
           <div class="field">
             <label for="income">Monthly Take-Home Income</label>
-            <input id="income" type="number" placeholder="Example: 6500" />
+            <input id="income" type="number" min="1" max="10000000" step="0.01" placeholder="Example: 6500" />
           </div>
 
           <div class="field">
             <label for="household">Household Size</label>
-            <input id="household" type="number" placeholder="Example: 2" />
+            <input id="household" type="number" min="1" max="50" step="1" placeholder="Example: 2" />
           </div>
 
           <div class="field">
             <label for="eatOutMeals">Eating-Out Meals per Week</label>
-            <input id="eatOutMeals" type="number" placeholder="Example: 8" />
+            <input id="eatOutMeals" type="number" min="0" max="500" step="1" placeholder="Example: 8" />
           </div>
 
           <div class="field">
             <label for="eatOutCost">Average Eating-Out Cost per Meal</label>
-            <input id="eatOutCost" type="number" placeholder="Example: 17" />
+            <input id="eatOutCost" type="number" min="0" max="1000" step="0.01" placeholder="Example: 17" />
           </div>
 
           <div class="field">
             <label for="prepMeals">Meals You Would Prep per Week</label>
-            <input id="prepMeals" type="number" placeholder="Example: 5" />
+            <input id="prepMeals" type="number" min="0" max="500" step="1" placeholder="Example: 5" />
           </div>
 
           <div class="field">
             <label for="prepCost">Average Meal Prep Cost per Meal</label>
-            <input id="prepCost" type="number" placeholder="Example: 5" />
+            <input id="prepCost" type="number" min="0" max="1000" step="0.01" placeholder="Example: 5" />
           </div>
 
           <div class="field">
             <label for="debt">Monthly Debt Payments</label>
-            <input id="debt" type="number" placeholder="Example: 700" />
+            <input id="debt" type="number" min="0" max="10000000" step="0.01" placeholder="Example: 700" />
           </div>
 
           <div class="field">
             <label for="savings">Emergency Savings</label>
-            <input id="savings" type="number" placeholder="Example: 6000" />
+            <input id="savings" type="number" min="0" max="100000000" step="0.01" placeholder="Example: 6000" />
           </div>
 
           <div class="field">
@@ -322,7 +322,7 @@ const relatedCalculators = calculators
 
         <button class="sis-action-button sis-calculate-button" id="mealPrepButton" type="button">Compare Meal Prep and Eating Out</button>
 
-        <div class="results" id="results">
+        <div class="results" id="results" aria-live="polite">
           <div class="result-label">Recommendation</div>
 
           <div class="verdict" id="verdict"></div>
@@ -520,6 +520,16 @@ const relatedCalculators = calculators
       </section>
 
       <div class="content-section">
+        <section class="content-section">
+          <h2>Worked Example: Measuring the Weekly Food Gap</h2>
+          <p>
+            Suppose two adults buy lunch out five times each week at an average of $14 per meal. That is about $140 per week, or roughly $607 per month. If meal-prepped lunches cost $5 each, the same 10 lunches cost about $50 per week, or $217 per month.
+          </p>
+          <p>
+            The difference is about $390 per month, or $4,680 per year. Keeping two restaurant lunches each week and prepping the other eight could still save roughly $312 per month compared with eating out every weekday. A mixed plan can capture most of the financial benefit without requiring every meal to be cooked at home.
+          </p>
+        </section>
+
         <FAQSection title="Meal Prep vs Eating Out FAQ" faqs={mealPrepFaqs} />
       </div>
 
@@ -592,6 +602,19 @@ const relatedCalculators = calculators
       const summary = document.getElementById("summary");
 
       results.classList.add("visible");
+
+      const invalidFields = [...document.querySelectorAll('.calculator input[type="number"]')]
+        .filter((input) => !input.checkValidity());
+
+      if (invalidFields.length > 0) {
+        verdict.textContent = "Check Your Meal Inputs";
+        pressureScore.textContent = "0 / 100";
+        pressureLabel.textContent = "Outside supported range";
+        barFill.style.width = "0%";
+        resultDetails.innerHTML = "<p>One or more meal-prep values are outside the supported range. Correct those entries before relying on the comparison.</p>";
+        summary.textContent = "";
+        return;
+      }
 
       if (income <= 0 || eatOutMeals <= 0 || eatOutCost <= 0 || prepMeals <= 0 || prepCost <= 0) {
         verdict.textContent = "Add Your Meal Costs";

@@ -4,6 +4,7 @@ import OmniStyleReviewBlock from "../components/OmniStyleReviewBlock.astro";
 import Layout from "../layouts/Layout.astro";
 import AutoRelatedCalculators from "../components/AutoRelatedCalculators.astro";
 import FAQSection from "../components/FAQSection.astro";
+import SourcesAssumptionsBlock from "../components/SourcesAssumptionsBlock.astro";
 
 const homeRepairFaqs = [
   {
@@ -251,22 +252,22 @@ const homeRepairFaqs = [
     <section class="calculator">
       <div class="calc-grid">
         <div class="calc-field">
-          <label>Home Repair Cost ($)</label>
+          <label for="repairCost">Home Repair Cost ($)</label>
           <input type="number" id="repairCost" placeholder="7500" />
         </div>
 
         <div class="calc-field">
-          <label>Current Emergency Savings ($)</label>
+          <label for="savingsAmount">Current Emergency Savings ($)</label>
           <input type="number" id="savingsAmount" placeholder="15000" />
         </div>
 
         <div class="calc-field">
-          <label>Monthly Take-Home Income ($)</label>
+          <label for="incomeAmount">Monthly Take-Home Income ($)</label>
           <input type="number" id="incomeAmount" placeholder="6500" />
         </div>
 
         <div class="calc-field">
-          <label>Repair Urgency</label>
+          <label for="repairUrgency">Repair Urgency</label>
           <select id="repairUrgency">
             <option value="cosmetic">Cosmetic / Optional</option>
             <option value="important">Important but Can Wait Briefly</option>
@@ -276,7 +277,7 @@ const homeRepairFaqs = [
         </div>
 
         <div class="calc-field">
-          <label>Debt Pressure</label>
+          <label for="debtPressure">Debt Pressure</label>
           <select id="debtPressure">
             <option value="low">Low</option>
             <option value="moderate">Moderate</option>
@@ -285,7 +286,7 @@ const homeRepairFaqs = [
         </div>
 
         <div class="calc-field">
-          <label>Income Stability</label>
+          <label for="incomeStability">Income Stability</label>
           <select id="incomeStability">
             <option value="stable">Stable</option>
             <option value="average">Average</option>
@@ -294,7 +295,7 @@ const homeRepairFaqs = [
         </div>
 
         <div class="calc-field">
-          <label>Financing Available?</label>
+          <label for="financingAvailable">Financing Available?</label>
           <select id="financingAvailable">
             <option value="yes">Yes</option>
             <option value="no">No</option>
@@ -302,7 +303,7 @@ const homeRepairFaqs = [
         </div>
 
         <div class="calc-field">
-          <label>Home Age / Condition</label>
+          <label for="homeCondition">Home Age / Condition</label>
           <select id="homeCondition">
             <option value="newer">Newer / Generally Stable</option>
             <option value="average">Average Condition</option>
@@ -495,6 +496,16 @@ const homeRepairFaqs = [
       </div>
     </section>
 
+    <section class="content-section">
+      <h2>Worked Example: Building a Home Repair Budget</h2>
+      <p>
+        Suppose a household expects $6,000 of repairs over the next year and wants to save monthly instead of using credit. Setting aside $500 per month reaches the $6,000 target in 12 months. On $6,800 of take-home pay, that reserve contribution uses about 7.4% of monthly income.
+      </p>
+      <p>
+        If an urgent $2,400 repair arrives after only four months, the reserve would contain $2,000 and leave a $400 gap. Increasing the contribution to $650 per month would build $2,600 in the same four months. Testing likely repair costs against the pace of savings helps show whether the home-maintenance budget is keeping up with the property's risk.
+      </p>
+    </section>
+
     <FAQSection title="Home Repair FAQ" faqs={homeRepairFaqs} />
   </main>
 
@@ -505,14 +516,27 @@ const homeRepairFaqs = [
       if (!button) return;
 
       button.addEventListener("click", function () {
+        const repairCostRaw =
+          Number(document.getElementById("repairCost").value);
+        const savingsAmountRaw =
+          Number(document.getElementById("savingsAmount").value);
+        const incomeAmountRaw =
+          Number(document.getElementById("incomeAmount").value);
+
         const repairCost =
-          Number(document.getElementById("repairCost").value) || 0;
+          Number.isFinite(repairCostRaw) && repairCostRaw >= 0
+            ? repairCostRaw
+            : 0;
 
         const savingsAmount =
-          Number(document.getElementById("savingsAmount").value) || 0;
+          Number.isFinite(savingsAmountRaw) && savingsAmountRaw >= 0
+            ? savingsAmountRaw
+            : 0;
 
         const incomeAmount =
-          Number(document.getElementById("incomeAmount").value) || 0;
+          Number.isFinite(incomeAmountRaw) && incomeAmountRaw >= 0
+            ? incomeAmountRaw
+            : 0;
 
         const repairUrgency =
           document.getElementById("repairUrgency").value;
@@ -529,7 +553,7 @@ const homeRepairFaqs = [
         const homeCondition =
           document.getElementById("homeCondition").value;
 
-        const savingsLeft = savingsAmount - repairCost;
+        const savingsLeft = Math.max(0, savingsAmount - repairCost);
 
         let riskScore = 0;
 
@@ -604,4 +628,5 @@ const homeRepairFaqs = [
     });
   </script>
   <AutoRelatedCalculators />
+  <SourcesAssumptionsBlock category="Home Maintenance" />
 </Layout>

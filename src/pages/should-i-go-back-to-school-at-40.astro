@@ -289,22 +289,22 @@ const relatedCalculators = calculators
         <div class="grid">
           <div class="field">
             <label for="monthlyIncome">Current Monthly Take-Home Income</label>
-            <input id="monthlyIncome" type="number" placeholder="Example: 6500" />
+            <input id="monthlyIncome" type="number" min="1" max="10000000" step="0.01" placeholder="Example: 6500" />
           </div>
 
           <div class="field">
             <label for="savings">Current Savings</label>
-            <input id="savings" type="number" placeholder="Example: 30000" />
+            <input id="savings" type="number" min="0" max="100000000" step="0.01" placeholder="Example: 30000" />
           </div>
 
           <div class="field">
             <label for="schoolCost">Total Cost to Finish School</label>
-            <input id="schoolCost" type="number" placeholder="Example: 45000" />
+            <input id="schoolCost" type="number" min="1" max="10000000" step="0.01" placeholder="Example: 45000" />
           </div>
 
           <div class="field">
             <label for="borrowedAmount">Amount You Expect to Borrow</label>
-            <input id="borrowedAmount" type="number" placeholder="Example: 25000" />
+            <input id="borrowedAmount" type="number" min="0" max="10000000" step="0.01" placeholder="Example: 25000" />
 
             <div class="helper-link">
               Testing the loan side?
@@ -314,7 +314,7 @@ const relatedCalculators = calculators
 
           <div class="field">
             <label for="monthlyDebt">Current Monthly Debt Payments</label>
-            <input id="monthlyDebt" type="number" placeholder="Example: 850" />
+            <input id="monthlyDebt" type="number" min="0" max="10000000" step="0.01" placeholder="Example: 850" />
 
             <div class="helper-link">
               Not sure what counts as debt?
@@ -324,27 +324,27 @@ const relatedCalculators = calculators
 
           <div class="field">
             <label for="familyObligations">Monthly Family or Household Obligations</label>
-            <input id="familyObligations" type="number" placeholder="Example: 1200" />
+            <input id="familyObligations" type="number" min="0" max="10000000" step="0.01" placeholder="Example: 1200" />
           </div>
 
           <div class="field">
             <label for="lostIncome">Monthly Income You May Lose While Enrolled</label>
-            <input id="lostIncome" type="number" placeholder="Example: 1000" />
+            <input id="lostIncome" type="number" min="0" max="10000000" step="0.01" placeholder="Example: 1000" />
           </div>
 
           <div class="field">
             <label for="incomeGain">Expected Monthly Income Gain After School</label>
-            <input id="incomeGain" type="number" placeholder="Example: 1600" />
+            <input id="incomeGain" type="number" min="0" max="10000000" step="0.01" placeholder="Example: 1600" />
           </div>
 
           <div class="field">
             <label for="years">Years Until Finished</label>
-            <input id="years" type="number" placeholder="Example: 2" />
+            <input id="years" type="number" min="0.25" max="20" step="0.25" placeholder="Example: 2" />
           </div>
 
           <div class="field">
             <label for="retirementAge">Expected Retirement Age</label>
-            <input id="retirementAge" type="number" placeholder="Example: 67" />
+            <input id="retirementAge" type="number" min="40" max="100" step="1" placeholder="Example: 67" />
           </div>
 
           <div class="field">
@@ -368,7 +368,7 @@ const relatedCalculators = calculators
 
           <div class="field">
             <label for="cashUsed">Savings You Plan to Use</label>
-            <input id="cashUsed" type="number" placeholder="Example: 15000" />
+            <input id="cashUsed" type="number" min="0" max="10000000" step="0.01" placeholder="Example: 15000" />
           </div>
 
           <div class="field">
@@ -383,7 +383,7 @@ const relatedCalculators = calculators
 
         <button class="sis-action-button sis-calculate-button" id="schoolAt40Button" type="button">Get School at 40 Verdict</button>
 
-        <div class="results" id="results">
+        <div class="results" id="results" aria-live="polite">
           <div class="score" id="scoreText"></div>
 
           <div class="bar">
@@ -643,6 +643,16 @@ const relatedCalculators = calculators
 
 
       <div class="content-section">
+        <section class="content-section">
+          <h2>Worked Example: Going Back to School at 40</h2>
+          <p>
+            Imagine a 40-year-old considering a two-year program that costs $36,000 and reduces take-home income by $8,000 per year while enrolled. The combined tuition and lost-income cost is about $52,000. If the new credential raises take-home pay by $9,000 per year, the simple recovery period is a little under six years after graduation.
+          </p>
+          <p>
+            If $24,000 of the program must be borrowed and repayment adds about $5,000 of interest, the total economic cost rises near $57,000. With 20 or more working years still available, that may leave plenty of time for the higher income to compound. If the expected pay increase is only $3,000 per year, however, recovery stretches close to 19 years and the retirement tradeoff becomes much harder to ignore.
+          </p>
+        </section>
+
         <FAQSection faqs={schoolAt40Faqs} />
       </div>
 
@@ -719,6 +729,19 @@ const relatedCalculators = calculators
       const guidance = document.getElementById("guidance");
 
       results.classList.add("visible");
+
+      const invalidFields = [...document.querySelectorAll('input[type="number"]')]
+        .filter((input) => !input.checkValidity());
+
+      if (invalidFields.length > 0) {
+        scoreText.textContent = "Check your numbers";
+        fillBar.style.width = "0%";
+        fillBar.className = "fill safe";
+        resultDetails.innerHTML =
+          "<p>One or more school-planning values are outside the supported range. Correct those entries before relying on the estimate.</p>";
+        guidance.textContent = "";
+        return;
+      }
 
       if (monthlyIncome <= 0 || schoolCost <= 0) {
         scoreText.textContent = "Add your numbers first";
@@ -965,6 +988,18 @@ const relatedCalculators = calculators
         pressureScore = Math.min(pressureScore, 18);
       }
 
+      // Extreme lost-income or cash-flow scenarios must not be neutralized by
+      // high-income recovery overrides. These floors preserve the calculator's
+      // core pressure meaning when opportunity cost or enrolled cash flow is
+      // many times the household's income.
+      if (monthlyPressureRatio >= 100 || opportunityCostRatio >= 500) {
+        pressureScore = Math.max(pressureScore, 85);
+      } else if (monthlyPressureRatio >= 75 || opportunityCostRatio >= 250) {
+        pressureScore = Math.max(pressureScore, 75);
+      } else if (monthlyPressureRatio >= 50 || opportunityCostRatio >= 150) {
+        pressureScore = Math.max(pressureScore, 65);
+      }
+
       pressureScore = clamp(Math.round(pressureScore), 0, 100);
 
       const level = getPressureLevel(pressureScore);
@@ -1006,7 +1041,7 @@ const relatedCalculators = calculators
 
         <p><strong>Estimated working years after finishing:</strong> About ${workingYearsAfterFinish.toFixed(1)} years before the retirement age entered.</p>
 
-        <p><strong>Expected payoff strength:</strong> ${payoffStrength} based on estimated loan payment versus expected monthly income gain.</p>
+        <p><strong>Mid-career payoff outlook:</strong> ${payoffStrength}, based on the estimated loan payment relative to the expected monthly income gain.</p>
 
         <p><strong>Pressure level:</strong> ${level.stress}.</p>
 

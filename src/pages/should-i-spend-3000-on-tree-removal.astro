@@ -203,7 +203,7 @@ import DecisionLimitsBlock from "../components/DecisionLimitsBlock.astro";
           Calculate Financial Pressure
         </button>
 
-        <div class="result" id="result">
+        <div class="result" id="result" aria-live="polite">
           <div class="score" id="score"></div>
 
           <div class="bar">
@@ -326,6 +326,16 @@ import DecisionLimitsBlock from "../components/DecisionLimitsBlock.astro";
         ]}
       />
 
+      <section class="content-section">
+        <h2>Worked Example: Funding a $3,000 Tree Removal</h2>
+        <p>
+          Suppose the removal quote is $3,000 and includes hauling but not stump grinding. Adding $450 for stump work and a $300 contingency creates a $3,750 planning total. If insurance is expected to reimburse $1,000, the household's net cost would be about $2,750.
+        </p>
+        <p>
+          A family with $6,000 of emergency savings would be left with $3,250 after paying that net amount. If its minimum reserve target is $5,000, the project creates a $1,750 gap. If the tree is not immediately hazardous, saving $600 per month for three months would nearly close that gap before scheduling the work.
+        </p>
+      </section>
+
       <FAQSection
         title="Tree Removal Spending FAQ"
         faqs={[
@@ -404,6 +414,13 @@ import DecisionLimitsBlock from "../components/DecisionLimitsBlock.astro";
   </div>
 
   <script is:inline>
+  const formatSignedCurrency = (value) => {
+    const rounded = Math.round(value);
+    if (rounded === 0 || Object.is(rounded, -0)) return "$0";
+    const amount = Math.abs(rounded).toLocaleString();
+    return rounded < 0 ? `-$${amount}` : `$${amount}`;
+  };
+
     const clamp = (value, min, max) => Math.min(Math.max(value, min), max);
 
     const getNumber = (id) => {
@@ -553,8 +570,8 @@ import DecisionLimitsBlock from "../components/DecisionLimitsBlock.astro";
       barFill.style.background = level.color;
 
       stressEl.innerHTML = `<strong>Pressure level:</strong> ${level.stress}`;
-      cashFlowEl.innerHTML = `<strong>Monthly cash flow after bills and debt:</strong> $${monthlyRemaining.toLocaleString()}`;
-      savingsImpactEl.innerHTML = `<strong>Savings after out-of-pocket tree removal cost:</strong> $${remainingSavings.toLocaleString()}`;
+      cashFlowEl.innerHTML = `<strong>Monthly cash flow after bills and debt:</strong> ${formatSignedCurrency(monthlyRemaining)}`;
+      savingsImpactEl.innerHTML = `<strong>Savings after out-of-pocket tree removal cost:</strong> ${formatSignedCurrency(remainingSavings)}`;
       financingImpactEl.innerHTML = `<strong>Financed portion of net cost:</strong> ${financedShare.toFixed(1)}%`;
       guidanceEl.textContent = `${guidance} Recommended next step: ${level.action}`;
     }

@@ -93,7 +93,7 @@ const pageDescription =
 
         <button class="sis-action-button sis-calculate-button" id="therapyButton" type="button">Calculate Financial Pressure</button>
 
-        <div class="result" id="result">
+        <div class="result" id="result" aria-live="polite">
           <div class="score" id="score"></div>
           <div class="bar"><div class="fill" id="barFill"></div></div>
           <div class="metric" id="stress"></div>
@@ -284,6 +284,13 @@ const pageDescription =
   </div>
 
   <script is:inline>
+  const formatSignedCurrency = (value) => {
+    const rounded = Math.round(value);
+    if (rounded === 0 || Object.is(rounded, -0)) return "$0";
+    const amount = Math.abs(rounded).toLocaleString();
+    return rounded < 0 ? `-$${amount}` : `$${amount}`;
+  };
+
     const clamp = (value, min, max) => Math.min(Math.max(value, min), max);
 
     const getNumber = (id) => {
@@ -467,8 +474,8 @@ const pageDescription =
 
       stressEl.innerHTML = `<strong>Pressure level:</strong> ${level.stress}`;
       netCostEl.innerHTML = `<strong>Estimated net therapy cost after insurance/benefits:</strong> $${Math.round(netTreatmentCost).toLocaleString()}`;
-      cashFlowEl.innerHTML = `<strong>Monthly cash flow after bills and debt:</strong> $${Math.round(monthlyRemaining).toLocaleString()}`;
-      savingsImpactEl.innerHTML = `<strong>Savings after upfront out-of-pocket cost:</strong> $${Math.round(remainingSavings).toLocaleString()}`;
+      cashFlowEl.innerHTML = `<strong>Monthly cash flow after bills and debt:</strong> ${formatSignedCurrency(monthlyRemaining)}`;
+      savingsImpactEl.innerHTML = `<strong>Savings after upfront out-of-pocket cost:</strong> ${formatSignedCurrency(remainingSavings)}`;
       financingImpactEl.innerHTML = `<strong>Financed or credit-backed portion of net cost:</strong> ${financedShare.toFixed(1)}%`;
 
       guidanceEl.textContent = `${guidance} Recommended next step: ${level.action}`;

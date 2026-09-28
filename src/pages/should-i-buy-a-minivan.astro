@@ -4,6 +4,7 @@ import OmniStyleReviewBlock from "../components/OmniStyleReviewBlock.astro";
 import Layout from "../layouts/Layout.astro";
 import CalculatorPageShell from "../components/CalculatorPageShell.astro";
 import FAQSection from "../components/FAQSection.astro";
+import SourcesAssumptionsBlock from "../components/SourcesAssumptionsBlock.astro";
 import RelatedCalculators from "../components/RelatedCalculators.astro";
 import RelatedGuides from "../components/RelatedGuides.astro";
 import MethodologySection from "../components/MethodologySection.astro";
@@ -130,7 +131,7 @@ import WhenSpendingMakesSense from "../components/WhenSpendingMakesSense.astro";
 
         <button class="sis-action-button sis-calculate-button" id="minivanButton" type="button">Calculate Minivan Affordability</button>
 
-        <div class="result" id="result">
+        <div class="result" id="result" aria-live="polite">
           <div class="score" id="score"></div>
           <div class="bar"><div class="fill" id="barFill"></div></div>
           <div class="metric" id="paymentShare"></div>
@@ -285,6 +286,16 @@ import WhenSpendingMakesSense from "../components/WhenSpendingMakesSense.astro";
         ]}
       />
 
+      <section class="content-section">
+        <h2>Worked Example: Testing a Minivan Upgrade</h2>
+        <p>
+          Suppose a family is considering a minivan with a $620 monthly payment, $165 for insurance, $220 for fuel, and a $90 maintenance reserve. The total vehicle cost is about $1,095 per month. On $6,800 of monthly take-home pay, that uses roughly 16.1% of income before childcare, housing, groceries, and other debt.
+        </p>
+        <p>
+          If the current vehicle costs $540 per month all-in, the minivan adds about $555 to the budget. A household currently saving $900 per month would see that savings margin fall to about $345 unless another expense drops. Comparing the full monthly increase with the family value of extra seats, cargo room, or reliability makes the upgrade easier to judge than comparing sticker prices alone.
+        </p>
+      </section>
+
       <FAQSection
         title="Minivan Affordability FAQ"
         faqs={[
@@ -369,6 +380,13 @@ import WhenSpendingMakesSense from "../components/WhenSpendingMakesSense.astro";
   </div>
 
   <script is:inline>
+  const formatSignedCurrency = (value) => {
+    const rounded = Math.round(value);
+    if (rounded === 0 || Object.is(rounded, -0)) return "$0";
+    const amount = Math.abs(rounded).toLocaleString();
+    return rounded < 0 ? `-$${amount}` : `$${amount}`;
+  };
+
     const clamp = (value, min, max) => Math.min(Math.max(value, min), max);
 
     const getNumber = (id) => {
@@ -633,7 +651,7 @@ import WhenSpendingMakesSense from "../components/WhenSpendingMakesSense.astro";
 
       paymentShareEl.innerHTML = `<strong>Minivan payment share:</strong> ${paymentIncomeShare.toFixed(1)}% of take-home income`;
       vanCostShareEl.innerHTML = `<strong>Total minivan cost share:</strong> ${vanCostShare.toFixed(1)}% of take-home income`;
-      cashFlowEl.innerHTML = `<strong>Monthly cash flow after housing, debt, childcare, and minivan costs:</strong> $${Math.round(monthlyRemaining).toLocaleString()}`;
+      cashFlowEl.innerHTML = `<strong>Monthly cash flow after housing, debt, childcare, and minivan costs:</strong> ${formatSignedCurrency(monthlyRemaining)}`;
       savingsCushionEl.innerHTML = `<strong>Estimated emergency cushion:</strong> ${Math.max(emergencyMonths, 0).toFixed(1)} months`;
 
       guidanceEl.textContent = `${guidance} Recommended next step: ${level.action}`;
@@ -643,4 +661,5 @@ import WhenSpendingMakesSense from "../components/WhenSpendingMakesSense.astro";
       .getElementById("minivanButton")
       .addEventListener("click", calculateMinivan);
   </script>
+  <SourcesAssumptionsBlock category="Cars" />
 </Layout>

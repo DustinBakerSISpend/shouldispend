@@ -2,6 +2,7 @@
 import Layout from "../layouts/Layout.astro";
 import CalculatorPageShell from "../components/CalculatorPageShell.astro";
 import FAQSection from "../components/FAQSection.astro";
+import SourcesAssumptionsBlock from "../components/SourcesAssumptionsBlock.astro";
 import RelatedCalculators from "../components/RelatedCalculators.astro";
 import RelatedGuides from "../components/RelatedGuides.astro";
 import MethodologySection from "../components/MethodologySection.astro";
@@ -87,42 +88,42 @@ const faqSchema = {
         <div class="grid">
           <div>
             <label for="income">Combined Annual Income</label>
-            <input id="income" type="number" placeholder="150000" />
+            <input id="income" type="number" min="1" max="100000000" step="1" placeholder="150000" />
           </div>
 
           <div>
             <label for="savings">Total Savings</label>
-            <input id="savings" type="number" placeholder="50000" />
+            <input id="savings" type="number" min="0" max="1000000000" step="1" placeholder="50000" />
           </div>
 
           <div>
             <label for="guestCount">Guest Count</label>
-            <input id="guestCount" type="number" placeholder="125" />
+            <input id="guestCount" type="number" min="1" max="2000" step="1" placeholder="125" />
           </div>
 
           <div>
             <label for="barCostPerGuest">Open Bar Cost Per Guest</label>
-            <input id="barCostPerGuest" type="number" placeholder="65" />
+            <input id="barCostPerGuest" type="number" min="1" max="2000" step="0.01" placeholder="65" />
           </div>
 
           <div>
             <label for="barHours">Open Bar Hours</label>
-            <input id="barHours" type="number" placeholder="4" />
+            <input id="barHours" type="number" min="1" max="24" step="0.5" placeholder="4" />
           </div>
 
           <div>
             <label for="totalWeddingBudget">Total Wedding Budget</label>
-            <input id="totalWeddingBudget" type="number" placeholder="35000" />
+            <input id="totalWeddingBudget" type="number" min="0" max="100000000" step="0.01" placeholder="35000" />
           </div>
 
           <div>
             <label for="monthlyTakeHome">Monthly Take-Home Pay</label>
-            <input id="monthlyTakeHome" type="number" placeholder="9500" />
+            <input id="monthlyTakeHome" type="number" min="0" max="10000000" step="0.01" placeholder="9500" />
           </div>
 
           <div>
             <label for="debt">Current Debt</label>
-            <input id="debt" type="number" placeholder="12000" />
+            <input id="debt" type="number" min="0" max="1000000000" step="0.01" placeholder="12000" />
             <div class="helper-link">
               <a href="/what-counts-as-debt/">Not sure what counts as debt? Read the debt guide</a>
             </div>
@@ -151,7 +152,7 @@ const faqSchema = {
 
         <button class="sis-action-button sis-calculate-button" id="barButton" type="button">Get Open Bar Verdict</button>
 
-        <div class="result" id="result">
+        <div class="result" id="result" aria-live="polite">
           <div class="score" id="score"></div>
           <div class="bar"><div class="fill" id="barFill"></div></div>
 
@@ -275,6 +276,16 @@ const faqSchema = {
           The best answer is not always full open bar or no bar. Many couples get the strongest value from a limited hosted bar: beer, wine, a signature cocktail, and a clear time window. That keeps the reception welcoming without turning the alcohol package into a runaway expense.
         </p>
       </div>
+
+      <section class="content-section">
+        <h2>Worked Example: Comparing Full and Limited Open Bar Costs</h2>
+        <p>
+          Suppose a wedding has 120 guests. A full open-bar package at $38 per guest would cost $4,560 before tax, gratuity, or service fees. If those added charges total 24%, the bar reaches about $5,654. On a $30,000 wedding budget, that is nearly 18.8% of the entire event budget.
+        </p>
+        <p>
+          A limited beer-and-wine package at $24 per guest would start at $2,880 and rise to about $3,571 with the same 24% add-ons. That is roughly $2,083 less than the full package. If the couple values an open bar but does not want it consuming nearly one-fifth of the wedding budget, the lower package creates a concrete middle-ground option instead of an all-or-nothing decision.
+        </p>
+      </section>
 
       <FAQSection
         title="Open Bar FAQ"
@@ -426,6 +437,26 @@ const faqSchema = {
       const guidanceEl = document.getElementById("guidance");
 
       result.style.display = "block";
+
+      const invalidFields = [...document.querySelectorAll('.card input[type="number"]')]
+        .filter((input) => !input.checkValidity());
+
+      if (invalidFields.length > 0) {
+        scoreEl.textContent = "Check your numbers";
+        barFill.style.width = "0%";
+        barFill.style.background = "#16a34a";
+        stressEl.innerHTML = "";
+        totalBarCostEl.innerHTML = "";
+        costPerHourEl.innerHTML = "";
+        savingsImpactEl.innerHTML = "";
+        incomeImpactEl.innerHTML = "";
+        monthlyImpactEl.innerHTML = "";
+        budgetShareEl.innerHTML = "";
+        debtRatioEl.innerHTML = "";
+        guidanceEl.textContent =
+          "One or more values are outside the supported range. Correct those entries before relying on the open-bar estimate.";
+        return;
+      }
 
       if (income <= 0 || guestCount <= 0 || barCostPerGuest <= 0) {
         scoreEl.textContent = "Add your numbers first";
@@ -580,7 +611,7 @@ const faqSchema = {
           `This open bar may work, but it deserves caution. The estimated bar cost is ${formatMoney(totalBarCost)}, or about ${budgetShare.toFixed(1)}% of the wedding budget. A limited bar, shorter window, or hosted cap may protect the rest of the event.`;
       } else {
         guidance =
-          `This open bar could create real financial strain. The estimated bar cost is ${formatMoney(totalBarCost)}, or about ${savings > 0 ? savingsImpact.toFixed(1) : "an undefined share of"}% of savings and ${budgetShare.toFixed(1)}% of the wedding budget. A simpler bar plan would likely be safer.`;
+          `This open bar could create real financial strain. The estimated bar cost is ${formatMoney(totalBarCost)}. ${savings > 0 ? `That equals about ${savingsImpact.toFixed(1)}% of savings` : "No savings amount was entered"} and the bar uses about ${budgetShare.toFixed(1)}% of the wedding budget. A simpler bar plan would likely be safer.`;
       }
 
       scoreEl.textContent = `${level.label}  -  ${pressureScore}/100`;
@@ -605,4 +636,5 @@ const faqSchema = {
       .getElementById("barButton")
       .addEventListener("click", calculateOpenBar);
   </script>
+  <SourcesAssumptionsBlock category="Wedding Bar" />
 </Layout>

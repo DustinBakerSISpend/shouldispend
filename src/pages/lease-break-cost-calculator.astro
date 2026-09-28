@@ -4,6 +4,7 @@ import OmniStyleReviewBlock from "../components/OmniStyleReviewBlock.astro";
 import Layout from "../layouts/Layout.astro";
 import CalculatorPageShell from "../components/CalculatorPageShell.astro";
 import FAQSection from "../components/FAQSection.astro";
+import SourcesAssumptionsBlock from "../components/SourcesAssumptionsBlock.astro";
 import RelatedCalculators from "../components/RelatedCalculators.astro";
 import MethodologySection from "../components/MethodologySection.astro";
 import CalculatorAssumptions from "../components/CalculatorAssumptions.astro";
@@ -339,13 +340,13 @@ const relatedCalculators = calculators
         <div class="grid">
           <div class="field">
             <label for="monthlyRent">Current Monthly Rent</label>
-            <input id="monthlyRent" type="number" min="0" step="25" placeholder="1800" />
+            <input id="monthlyRent" type="number" min="0" max="100000" step="25" placeholder="1800" />
             <small>Your current rent before utilities, unless your lease charges utilities as rent.</small>
           </div>
 
           <div class="field">
             <label for="monthsRemaining">Months Remaining on Lease</label>
-            <input id="monthsRemaining" type="number" min="0" step="0.5" placeholder="7" />
+            <input id="monthsRemaining" type="number" min="0" max="120" step="0.5" placeholder="7" />
             <small>Use the number of months left after your planned move-out date.</small>
           </div>
 
@@ -353,37 +354,37 @@ const relatedCalculators = calculators
 
           <div class="field">
             <label for="leaseBreakFee">Lease Break Fee</label>
-            <input id="leaseBreakFee" type="number" min="0" step="50" placeholder="3600" />
+            <input id="leaseBreakFee" type="number" min="0" max="10000000" step="50" placeholder="3600" />
             <small>Flat fee or months-of-rent penalty required to terminate early.</small>
           </div>
 
           <div class="field">
             <label for="noticeDays">Required Notice Days</label>
-            <input id="noticeDays" type="number" min="0" step="1" placeholder="60" />
+            <input id="noticeDays" type="number" min="0" max="365" step="1" placeholder="60" />
             <small>Notice period that must be paid even if you leave earlier.</small>
           </div>
 
           <div class="field">
             <label for="noticeAlreadyPaid">Notice Rent Already Covered</label>
-            <input id="noticeAlreadyPaid" type="number" min="0" step="50" placeholder="0" />
+            <input id="noticeAlreadyPaid" type="number" min="0" max="10000000" step="50" placeholder="0" />
             <small>Rent already paid that applies to the required notice period.</small>
           </div>
 
           <div class="field">
             <label for="relettingFee">Reletting or Admin Fee</label>
-            <input id="relettingFee" type="number" min="0" step="25" placeholder="500" />
+            <input id="relettingFee" type="number" min="0" max="10000000" step="25" placeholder="500" />
             <small>Reletting fee, advertising fee, admin fee, turnover fee, or paperwork fee.</small>
           </div>
 
           <div class="field">
             <label for="securityDepositRisk">Security Deposit at Risk</label>
-            <input id="securityDepositRisk" type="number" min="0" step="50" placeholder="1200" />
+            <input id="securityDepositRisk" type="number" min="0" max="10000000" step="50" placeholder="1200" />
             <small>Amount of deposit you realistically may lose because of lease break, damages, cleaning, or unpaid charges.</small>
           </div>
 
           <div class="field">
             <label for="unpaidCharges">Unpaid Fees or Final Charges</label>
-            <input id="unpaidCharges" type="number" min="0" step="25" placeholder="150" />
+            <input id="unpaidCharges" type="number" min="0" max="10000000" step="25" placeholder="150" />
             <small>Utilities, pet fees, cleaning, repair, key fees, trash, parking, or final account balance.</small>
           </div>
 
@@ -391,7 +392,7 @@ const relatedCalculators = calculators
 
           <div class="field">
             <label for="replacementMonths">Expected Months Until Replaced</label>
-            <input id="replacementMonths" type="number" min="0" step="0.5" placeholder="2" />
+            <input id="replacementMonths" type="number" min="0" max="120" step="0.5" placeholder="2" />
             <small>How long you expect to owe rent before a replacement tenant starts.</small>
           </div>
 
@@ -408,13 +409,13 @@ const relatedCalculators = calculators
 
           <div class="field">
             <label for="overlapMonths">New Place Overlap Months</label>
-            <input id="overlapMonths" type="number" min="0" step="0.5" placeholder="1" />
+            <input id="overlapMonths" type="number" min="0" max="120" step="0.5" placeholder="1" />
             <small>Months when you may owe old rent and new rent at the same time.</small>
           </div>
 
           <div class="field">
             <label for="newMonthlyRent">New Monthly Rent</label>
-            <input id="newMonthlyRent" type="number" min="0" step="25" placeholder="1600" />
+            <input id="newMonthlyRent" type="number" min="0" max="100000" step="25" placeholder="1600" />
             <small>Use this to calculate monthly rent savings or increase after the move.</small>
           </div>
 
@@ -422,13 +423,13 @@ const relatedCalculators = calculators
 
           <div class="field">
             <label for="monthsToCompare">Months to Compare New Rent Savings</label>
-            <input id="monthsToCompare" type="number" min="0" step="1" placeholder="12" />
+            <input id="monthsToCompare" type="number" min="0" max="120" step="1" placeholder="12" />
             <small>Use 12 months for a normal first-pass break-even check.</small>
           </div>
 
           <div class="field">
             <label for="confirmedCredit">Confirmed Credit or Help</label>
-            <input id="confirmedCredit" type="number" min="0" step="50" placeholder="500" />
+            <input id="confirmedCredit" type="number" min="0" max="10000000" step="50" placeholder="500" />
             <small>Employer relocation money, landlord concession, roommate reimbursement, or confirmed family help.</small>
           </div>
 
@@ -445,7 +446,7 @@ const relatedCalculators = calculators
 
           <div class="field">
             <label for="otherCosts">Other Lease-Break Costs</label>
-            <input id="otherCosts" type="number" min="0" step="25" placeholder="250" />
+            <input id="otherCosts" type="number" min="0" max="10000000" step="25" placeholder="250" />
             <small>Attorney review, certified mail, application overlap, storage caused by timing, or another known cost.</small>
           </div>
         </div>
@@ -658,6 +659,16 @@ const relatedCalculators = calculators
         </p>
       </section>
 
+      <section class="content-section">
+        <h2>Worked Example: Estimating Lease-Break Cash Exposure</h2>
+        <p>
+          Suppose rent is $1,800 per month, the lease requires a $1,800 termination fee, and 30 days of notice creates another $1,800 of rent. Add a $400 reletting fee and assume $600 of the security deposit may be withheld. Before any overlap with the next home, the household could face about $4,600 of cash exposure.
+        </p>
+        <p>
+          If the new place costs $1,500 per month, the move saves $300 each month after the transition. At that rate, recovering a $4,600 lease-break cost takes a little over 15 months. If the household also has one month of rent overlap, the upfront exposure rises to $6,100 and the break-even period stretches past 20 months. That comparison helps separate long-term monthly savings from the short-term cash required to leave the current lease.
+        </p>
+      </section>
+
       <div id="FAQSection" class="content-section">
         <FAQSection
           title="Lease Break Cost Calculator FAQ"
@@ -760,6 +771,22 @@ const relatedCalculators = calculators
       const warningList = document.getElementById("warningList");
 
       results.classList.add("visible");
+
+      const invalidFields = [...document.querySelectorAll('input[type="number"]')]
+        .filter((input) => !input.checkValidity());
+
+      if (invalidFields.length > 0) {
+        totalCost.textContent = "$0";
+        likelyCashDueEl.textContent = "$0";
+        maximumExposureEl.textContent = "$0";
+        rentSavingsEl.textContent = "$0";
+        netCostAfterSavingsEl.textContent = "$0";
+        resultDetails.innerHTML = "<p>One or more lease-break values are outside the supported range. Correct those entries before relying on the estimate.</p>";
+        breakdownTable.innerHTML = "";
+        leaseNote.textContent = "";
+        warningList.innerHTML = "";
+        return;
+      }
 
       totalCost.textContent = formatMoney(likelyCashDue);
       likelyCashDueEl.textContent = formatMoney(likelyCashDue);
@@ -871,4 +898,5 @@ const relatedCalculators = calculators
       .getElementById("leaseBreakButton")
       .addEventListener("click", calculateLeaseBreakCost);
   </script>
+  <SourcesAssumptionsBlock category="Rent" />
 </Layout>

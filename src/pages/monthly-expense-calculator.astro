@@ -5,6 +5,7 @@ import DecisionLimitsBlock from "../components/DecisionLimitsBlock.astro";
 import KeyCostCategories from "../components/KeyCostCategories.astro";
 import CalculatorPageShell from "../components/CalculatorPageShell.astro";
 import FAQSection from "../components/FAQSection.astro";
+import SourcesAssumptionsBlock from "../components/SourcesAssumptionsBlock.astro";
 import RelatedCalculators from "../components/RelatedCalculators.astro";
 import MethodologySection from "../components/MethodologySection.astro";
 import { calculators } from "../data/calculators.js";
@@ -303,7 +304,7 @@ const relatedCalculators = calculators
           Calculate Monthly Expenses
         </button>
 
-        <div id="results" class="results">
+        <div id="results" class="results" aria-live="polite">
           <div id="monthlyTotal" class="total-price">$0.00</div>
           <div class="result-label">Total Monthly Expenses</div>
 
@@ -391,6 +392,16 @@ const relatedCalculators = calculators
     <DecisionLimitsBlock category="Budget Rules" />
 
     <KeyCostCategories title="Cost anatomy: what belongs in the monthly total" items={[{"title":"Fixed obligations","description":"Housing, minimum debt payments, insurance, childcare, and other bills that recur whether spending is high or low."},{"title":"Variable essentials","description":"Food, utilities, transportation, medical needs, and other necessities that can move from month to month."},{"title":"Savings and irregular costs","description":"Emergency-fund contributions, annual bills, repairs, travel, gifts, and other expenses that are easy to omit from a one-month snapshot."},{"title":"Discretionary spending","description":"Dining out, subscriptions, entertainment, shopping, and other categories that can often be adjusted when cash flow tightens."}]} />
+
+    <section class="content-section">
+      <h2>Worked Example: Turning Monthly Expenses Into Remaining Cash Flow</h2>
+      <p>
+        A household with $6,500 of monthly take-home pay might list $2,100 for housing, $700 for transportation, $900 for food and utilities, $550 for debt payments, $450 for insurance and medical costs, and $500 for childcare. Those categories total $5,200 per month and leave $1,300 before savings, irregular bills, entertainment, and other spending.
+      </p>
+      <p>
+        If the same household also needs to set aside $400 per month for annual bills and $500 for savings goals, only $400 remains as flexible cash flow. Adding a new $350 recurring payment would leave just $50. The headline expense total is useful, but the second calculation shows why annual costs and planned savings should be included before deciding how much room the budget really has.
+      </p>
+    </section>
 
         <FAQSection title="Monthly Expense Calculator FAQ" faqs={expenseFaqs} />
 
@@ -502,4 +513,5 @@ const relatedCalculators = calculators
       .getElementById("monthlyExpenseButton")
       .addEventListener("click", calculateMonthlyExpenses);
   </script>
+  <SourcesAssumptionsBlock category="Budget Rules" />
 </Layout>

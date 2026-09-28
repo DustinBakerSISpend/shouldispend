@@ -211,7 +211,7 @@ import WhenSpendingMakesSense from "../components/WhenSpendingMakesSense.astro";
           Calculate Truck Affordability
         </button>
 
-        <div class="result" id="result">
+        <div class="result" id="result" aria-live="polite">
           <div class="score" id="score"></div>
 
           <div class="bar">
@@ -367,6 +367,18 @@ import WhenSpendingMakesSense from "../components/WhenSpendingMakesSense.astro";
         ]}
       />
 
+      <div class="content-section">
+        <h2>Worked Example: The Truck Payment Is Only Part of the Cost</h2>
+
+        <p>
+          Imagine $6,000 in monthly take-home pay and a truck with a $650 payment. Add $210 for insurance, $300 for fuel, and a $150 monthly maintenance and repair reserve, and the truck consumes about $1,310 per month before registration or unexpected repairs. That is roughly 21.8% of the household's take-home pay, even though the payment by itself is only about 10.8%.
+        </p>
+
+        <p>
+          If housing and other required debt payments already total $2,300 per month, the truck example brings those fixed or vehicle-related costs to $3,610 and leaves $2,390 for food, utilities, savings, healthcare, and everything else. A $900 truck payment with the same operating costs would raise the truck total to $1,560 per month, or 26% of take-home pay. Comparing those full monthly totals gives a more realistic affordability check than comparing sticker price or payment alone.
+        </p>
+      </div>
+
       <FAQSection
         title="Truck Affordability FAQ"
         faqs={[
@@ -445,6 +457,13 @@ import WhenSpendingMakesSense from "../components/WhenSpendingMakesSense.astro";
   </div>
 
   <script is:inline>
+  const formatSignedCurrency = (value) => {
+    const rounded = Math.round(value);
+    if (rounded === 0 || Object.is(rounded, -0)) return "$0";
+    const amount = Math.abs(rounded).toLocaleString();
+    return rounded < 0 ? `-$${amount}` : `$${amount}`;
+  };
+
   const clamp = (value, min, max) => Math.min(Math.max(value, min), max);
 
   const getNumber = (id) => {
@@ -688,7 +707,7 @@ import WhenSpendingMakesSense from "../components/WhenSpendingMakesSense.astro";
 
     paymentShareEl.innerHTML = `<strong>Truck payment share:</strong> ${paymentIncomeShare.toFixed(1)}% of take-home income`;
     truckCostShareEl.innerHTML = `<strong>Total truck cost share:</strong> ${truckCostShare.toFixed(1)}% of take-home income`;
-    cashFlowEl.innerHTML = `<strong>Monthly cash flow after housing, debt, and truck costs:</strong> $${Math.round(monthlyRemaining).toLocaleString()}`;
+    cashFlowEl.innerHTML = `<strong>Monthly cash flow after housing, debt, and truck costs:</strong> ${formatSignedCurrency(monthlyRemaining)}`;
     savingsCushionEl.innerHTML = `<strong>Estimated emergency cushion:</strong> ${Math.max(emergencyMonths, 0).toFixed(1)} months`;
 
     guidanceEl.textContent = `${guidance} Recommended next step: ${level.action}`;

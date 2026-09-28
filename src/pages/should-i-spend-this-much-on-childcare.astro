@@ -132,7 +132,7 @@ import WhenSpendingMakesSense from "../components/WhenSpendingMakesSense.astro";
 
         <button class="sis-action-button sis-calculate-button" id="childcareButton" type="button">Calculate Financial Pressure</button>
 
-        <div class="result" id="result">
+        <div class="result" id="result" aria-live="polite">
           <div class="score" id="score"></div>
           <div class="bar"><div class="fill" id="barFill"></div></div>
           <div class="metric" id="stress"></div>
@@ -287,6 +287,16 @@ import WhenSpendingMakesSense from "../components/WhenSpendingMakesSense.astro";
         ]}
       />
 
+      <section class="content-section">
+        <h2>Worked Example: Measuring Childcare Against Take-Home Pay</h2>
+        <p>
+          Suppose childcare costs $1,650 per month and household take-home pay is $6,200. Childcare uses about 26.6% of take-home income before housing, food, transportation, insurance, and debt payments are counted.
+        </p>
+        <p>
+          If an employer benefit and dependent-care tax savings reduce the effective monthly cost by $250, the net childcare burden falls to $1,400, or about 22.6% of take-home pay. Comparing the net cost with the income that childcare helps preserve can show whether the arrangement supports work stability or creates too much monthly pressure.
+        </p>
+      </section>
+
       <FAQSection
         title="Childcare Cost FAQ"
         faqs={[
@@ -367,6 +377,13 @@ import WhenSpendingMakesSense from "../components/WhenSpendingMakesSense.astro";
   </div>
 
   <script is:inline>
+  const formatSignedCurrency = (value) => {
+    const rounded = Math.round(value);
+    if (rounded === 0 || Object.is(rounded, -0)) return "$0";
+    const amount = Math.abs(rounded).toLocaleString();
+    return rounded < 0 ? `-$${amount}` : `$${amount}`;
+  };
+
   const clamp = (value, min, max) => Math.min(Math.max(value, min), max);
 
   const getNumber = (id) => {
@@ -600,9 +617,9 @@ import WhenSpendingMakesSense from "../components/WhenSpendingMakesSense.astro";
     barFill.style.background = level.color;
 
     stressEl.innerHTML = `<strong>Pressure level:</strong> ${level.stress}`;
-    cashFlowEl.innerHTML = `<strong>Monthly cash flow after childcare:</strong> $${monthlyRemainingAfterCare.toLocaleString()}`;
+    cashFlowEl.innerHTML = `<strong>Monthly cash flow after childcare:</strong> ${formatSignedCurrency(monthlyRemainingAfterCare)}`;
     childcareShareEl.innerHTML = `<strong>Net childcare share of take-home income:</strong> ${childcareRatio.toFixed(1)}%`;
-    savingsImpactEl.innerHTML = `<strong>Estimated savings after deposits or start-up fees:</strong> $${remainingSavings.toLocaleString()}`;
+    savingsImpactEl.innerHTML = `<strong>Estimated savings after deposits or start-up fees:</strong> ${formatSignedCurrency(remainingSavings)}`;
     guidanceEl.textContent = `${guidance} Recommended next step: ${level.action}`;
   }
 

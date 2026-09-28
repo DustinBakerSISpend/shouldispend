@@ -246,27 +246,27 @@ const relatedCalculators = calculators
         <div class="grid">
           <div class="field">
             <label for="funeralCost">Total Funeral Cost</label>
-            <input id="funeralCost" type="number" placeholder="Example: 12000" />
+            <input id="funeralCost" type="number" min="1" max="5000000" step="0.01" placeholder="Example: 12000" />
           </div>
 
           <div class="field">
             <label for="help">Insurance / Family Help</label>
-            <input id="help" type="number" placeholder="Example: 3000" />
+            <input id="help" type="number" min="0" max="5000000" step="0.01" placeholder="Example: 3000" />
           </div>
 
           <div class="field">
             <label for="downPayment">Down Payment from Savings</label>
-            <input id="downPayment" type="number" placeholder="Example: 1000" />
+            <input id="downPayment" type="number" min="0" max="5000000" step="0.01" placeholder="Example: 1000" />
           </div>
 
           <div class="field">
             <label for="fees">Financing Fees</label>
-            <input id="fees" type="number" placeholder="Example: 250" />
+            <input id="fees" type="number" min="0" max="1000000" step="0.01" placeholder="Example: 250" />
           </div>
 
           <div class="field">
             <label for="interestRate">Estimated Interest Rate</label>
-            <input id="interestRate" type="number" step="0.1" placeholder="Example: 12.9" />
+            <input id="interestRate" type="number" min="0" max="100" step="0.1" placeholder="Example: 12.9" />
           </div>
 
           <div class="field">
@@ -284,27 +284,27 @@ const relatedCalculators = calculators
 
           <div class="field">
             <label for="monthlyIncome">Monthly Take-Home Income</label>
-            <input id="monthlyIncome" type="number" placeholder="Example: 7000" />
+            <input id="monthlyIncome" type="number" min="1" max="10000000" step="0.01" placeholder="Example: 7000" />
           </div>
 
           <div class="field">
             <label for="essentialBills">Monthly Essential Bills</label>
-            <input id="essentialBills" type="number" placeholder="Example: 3600" />
+            <input id="essentialBills" type="number" min="0" max="10000000" step="0.01" placeholder="Example: 3600" />
           </div>
 
           <div class="field">
             <label for="debtPayments">Current Monthly Debt Payments</label>
-            <input id="debtPayments" type="number" placeholder="Example: 900" />
+            <input id="debtPayments" type="number" min="0" max="10000000" step="0.01" placeholder="Example: 900" />
           </div>
 
           <div class="field">
             <label for="emergencySavings">Emergency Savings Available</label>
-            <input id="emergencySavings" type="number" placeholder="Example: 12000" />
+            <input id="emergencySavings" type="number" min="0" max="100000000" step="0.01" placeholder="Example: 12000" />
           </div>
 
           <div class="field">
             <label for="emergencyTarget">Savings Cushion Wanted</label>
-            <input id="emergencyTarget" type="number" placeholder="Example: 10000" />
+            <input id="emergencyTarget" type="number" min="0" max="100000000" step="0.01" placeholder="Example: 10000" />
           </div>
 
           <div class="field">
@@ -320,7 +320,7 @@ const relatedCalculators = calculators
 
         <button class="sis-action-button sis-calculate-button" id="paymentPlanButton" type="button">Calculate Funeral Payment Plan</button>
 
-        <div class="results" id="results">
+        <div class="results" id="results" aria-live="polite">
           <div class="result-label">Estimated Monthly Payment Range</div>
 
           <div class="total-price" id="totalPrice"></div>
@@ -604,6 +604,16 @@ const relatedCalculators = calculators
       const priceSummary = document.getElementById("priceSummary");
 
       results.classList.add("visible");
+
+      const invalidFields = [...document.querySelectorAll('.calculator input[type="number"]')]
+        .filter((input) => !input.checkValidity());
+
+      if (invalidFields.length > 0) {
+        totalPrice.textContent = "$0 - $0";
+        resultDetails.innerHTML = "<p>One or more funeral-payment values are outside the supported range. Correct those entries before relying on the estimate.</p>";
+        priceSummary.textContent = "";
+        return;
+      }
 
       if (funeralCost <= 0 || monthlyIncome <= 0) {
         totalPrice.textContent = "$0 - $0";

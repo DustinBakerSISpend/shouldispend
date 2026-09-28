@@ -298,7 +298,7 @@ const breadcrumbSchema = {
           Get 40% Rent Verdict
         </button>
 
-        <div class="result" id="result">
+        <div class="result" id="result" aria-live="polite">
           <div class="score" id="score"></div>
 
           <div class="bar">
@@ -685,7 +685,7 @@ const breadcrumbSchema = {
       const leftoverRatio = (leftoverAfterBills / takeHomePay) * 100;
       const postMoveSavings = savings - movingCost;
       const postMoveSavingsMonths =
-        totalCommittedMonthly > 0 ? postMoveSavings / totalCommittedMonthly : 0;
+        totalCommittedMonthly > 0 ? Math.max(0, postMoveSavings / totalCommittedMonthly) : 0;
       const emergencyMonths =
         totalCommittedMonthly > 0 ? savings / totalCommittedMonthly : 0;
       const moveInSavingsImpact =

@@ -344,7 +344,7 @@ const relatedCalculators = calculators
 
           <div class="field">
             <label for="years">Years Until Finished</label>
-            <input id="years" type="number" placeholder="Example: 3" />
+            <input id="years" type="number" min="0" max="15" step="0.1" placeholder="Example: 3" />
           </div>
 
           <div class="field">
@@ -369,7 +369,7 @@ const relatedCalculators = calculators
 
         <button class="sis-action-button sis-calculate-button" id="degreeRoiButton" type="button">Calculate Degree ROI</button>
 
-        <div class="results" id="results">
+        <div class="results" id="results" aria-live="polite">
           <div class="score" id="scoreText"></div>
 
           <div class="bar">
@@ -644,6 +644,13 @@ const relatedCalculators = calculators
   </div>
 
   <script is:inline>
+  const formatSignedCurrency = (value) => {
+    const rounded = Math.round(value);
+    if (rounded === 0 || Object.is(rounded, -0)) return "$0";
+    const amount = Math.abs(rounded).toLocaleString();
+    return rounded < 0 ? `-$${amount}` : `$${amount}`;
+  };
+
     const clamp = (value, min, max) => Math.min(Math.max(value, min), max);
 
     const getNumber = (id) => {
@@ -711,6 +718,18 @@ const relatedCalculators = calculators
 
         resultDetails.innerHTML =
           "<p>Enter monthly take-home income, degree cost, aid, savings, expected borrowing, lost income, and expected salary gain so the calculator can estimate degree ROI.</p>";
+
+        guidance.textContent = "";
+        return;
+      }
+
+      if (years > 15) {
+        scoreText.textContent = "Check the program timeline";
+        fillBar.style.width = "0%";
+        fillBar.className = "fill safe";
+
+        resultDetails.innerHTML =
+          "<p>Enter 15 years or less for the degree timeline. A longer horizon is better modeled as a broader career and household cash-flow plan than as a single degree ROI estimate.</p>";
 
         guidance.textContent = "";
         return;
@@ -856,13 +875,15 @@ const relatedCalculators = calculators
         from showing pressure that is not financially meaningful.
       */
 
-      const netCostRecoveryMonths = netDegreeCost / Math.max(monthlyIncome, 1);
-      const annualNetCostRatio = netDegreeCost / Math.max(annualIncome, 1);
+      const opportunityRecoveryMonths =
+        opportunityCost / Math.max(monthlyIncome, 1);
+      const annualOpportunityCostRatio =
+        opportunityCost / Math.max(annualIncome, 1);
       const cashRecoveryMonths = cashUsed / Math.max(monthlyIncome, 1);
 
       if (
         monthlyIncome >= 30000 &&
-        annualNetCostRatio <= 0.18 &&
+        annualOpportunityCostRatio <= 0.25 &&
         debtOnlyRatio <= 8 &&
         loanPaymentRatio <= 0.02
       ) {
@@ -871,7 +892,7 @@ const relatedCalculators = calculators
 
       if (
         monthlyIncome >= 50000 &&
-        annualNetCostRatio <= 0.12 &&
+        annualOpportunityCostRatio <= 0.15 &&
         debtOnlyRatio <= 6 &&
         loanPaymentRatio <= 0.012
       ) {
@@ -879,8 +900,8 @@ const relatedCalculators = calculators
       }
 
       if (
-        monthlyIncome >= netDegreeCost &&
-        netCostRecoveryMonths <= 1 &&
+        monthlyIncome >= opportunityCost &&
+        opportunityRecoveryMonths <= 1 &&
         debtOnlyRatio <= 5 &&
         loanPaymentRatio <= 0.01
       ) {
@@ -888,7 +909,7 @@ const relatedCalculators = calculators
       }
 
       if (
-        monthlyIncome >= netDegreeCost * 1.25 &&
+        monthlyIncome >= opportunityCost * 1.25 &&
         debtOnlyRatio <= 5 &&
         loanPaymentRatio <= 0.008 &&
         cashRecoveryMonths <= 1
@@ -897,7 +918,7 @@ const relatedCalculators = calculators
       }
 
       if (
-        monthlyIncome >= netDegreeCost * 2 &&
+        monthlyIncome >= opportunityCost * 2 &&
         debtOnlyRatio <= 8 &&
         loanPaymentRatio <= 0.015
       ) {
@@ -905,29 +926,33 @@ const relatedCalculators = calculators
       }
 
       if (
-        savings >= netDegreeCost * 4 &&
-        remainingSavings >= netDegreeCost * 3
+        opportunityCost > 0 &&
+        savings >= opportunityCost * 4 &&
+        remainingSavings >= opportunityCost * 3
       ) {
         pressureScore = Math.min(pressureScore, 20);
       }
 
       if (
-        savings >= netDegreeCost * 7 &&
-        remainingSavings >= netDegreeCost * 5
+        opportunityCost > 0 &&
+        savings >= opportunityCost * 7 &&
+        remainingSavings >= opportunityCost * 5
       ) {
         pressureScore = Math.min(pressureScore, 8);
       }
 
       if (
-        savings >= netDegreeCost * 12 &&
-        remainingSavings >= netDegreeCost * 8
+        opportunityCost > 0 &&
+        savings >= opportunityCost * 12 &&
+        remainingSavings >= opportunityCost * 8
       ) {
         pressureScore = Math.min(pressureScore, 3);
       }
 
       if (
-        savings >= netDegreeCost * 20 &&
-        remainingSavings >= netDegreeCost * 12
+        opportunityCost > 0 &&
+        savings >= opportunityCost * 20 &&
+        remainingSavings >= opportunityCost * 12
       ) {
         pressureScore = 0;
       }
@@ -935,6 +960,7 @@ const relatedCalculators = calculators
       if (
         cashUsed > 0 &&
         cashRecoveryMonths <= 0.25 &&
+        annualOpportunityCostRatio <= 0.5 &&
         debtOnlyRatio <= 8 &&
         loanPaymentRatio <= 0.02
       ) {
@@ -944,6 +970,7 @@ const relatedCalculators = calculators
       if (
         aidCoverageRatio >= 90 &&
         borrowedAmount <= 0 &&
+        annualOpportunityCostRatio <= 0.5 &&
         savingsMonthsAfter >= 6
       ) {
         pressureScore = Math.min(pressureScore, 8);
@@ -952,6 +979,7 @@ const relatedCalculators = calculators
       if (
         aidCoverageRatio >= 100 &&
         borrowedAmount <= 0 &&
+        annualOpportunityCostRatio <= 0.25 &&
         savingsMonthsAfter >= 12 &&
         lostIncome <= monthlyIncome * 0.05
       ) {
@@ -1012,9 +1040,9 @@ const relatedCalculators = calculators
 
         <p><strong>Estimated payback period:</strong> ${paybackDisplay} based on expected monthly income gain.</p>
 
-        <p><strong>Estimated 5-year net gain:</strong> About $${fiveYearNet.toFixed(0)} after estimated opportunity cost.</p>
+        <p><strong>Estimated 5-year net gain:</strong> About ${formatSignedCurrency(fiveYearNet)} after estimated opportunity cost.</p>
 
-        <p><strong>Estimated 10-year net gain:</strong> About $${tenYearNet.toFixed(0)} after estimated opportunity cost.</p>
+        <p><strong>Estimated 10-year net gain:</strong> About ${formatSignedCurrency(tenYearNet)} after estimated opportunity cost.</p>
 
         <p><strong>Estimated 5-year ROI:</strong> ${roiFiveYear.toFixed(1)}%.</p>
 

@@ -207,7 +207,7 @@ import WhenSpendingMakesSense from "../components/WhenSpendingMakesSense.astro";
           Calculate Financial Pressure
         </button>
 
-        <div class="result" id="result">
+        <div class="result" id="result" aria-live="polite">
           <div class="score" id="score"></div>
 
           <div class="bar">
@@ -398,6 +398,13 @@ import WhenSpendingMakesSense from "../components/WhenSpendingMakesSense.astro";
   </div>
 
   <script is:inline>
+  const formatSignedCurrency = (value) => {
+    const rounded = Math.round(value);
+    if (rounded === 0 || Object.is(rounded, -0)) return "$0";
+    const amount = Math.abs(rounded).toLocaleString();
+    return rounded < 0 ? `-$${amount}` : `$${amount}`;
+  };
+
   const clamp = (value, min, max) => Math.min(Math.max(value, min), max);
 
   const getNumber = (id) => {
@@ -596,8 +603,8 @@ import WhenSpendingMakesSense from "../components/WhenSpendingMakesSense.astro";
     barFill.style.background = level.color;
 
     stressEl.innerHTML = `<strong>Pressure level:</strong> ${level.stress}`;
-    cashFlowEl.innerHTML = `<strong>Monthly cash flow after bills and debt:</strong> $${monthlyRemaining.toLocaleString()}`;
-    savingsImpactEl.innerHTML = `<strong>Savings after out-of-pocket window cost:</strong> $${remainingSavings.toLocaleString()}`;
+    cashFlowEl.innerHTML = `<strong>Monthly cash flow after bills and debt:</strong> ${formatSignedCurrency(monthlyRemaining)}`;
+    savingsImpactEl.innerHTML = `<strong>Savings after out-of-pocket window cost:</strong> ${formatSignedCurrency(remainingSavings)}`;
     paybackImpactEl.innerHTML = `<strong>Estimated energy-savings payback:</strong> ${paybackText}`;
     homeValueImpactEl.innerHTML = `<strong>Project cost as share of home value:</strong> ${homeValueRatio.toFixed(1)}%`;
     guidanceEl.textContent = `${guidance} Recommended next step: ${level.action}`;

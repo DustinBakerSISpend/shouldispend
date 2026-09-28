@@ -221,7 +221,7 @@ import WhenSpendingMakesSense from "../components/WhenSpendingMakesSense.astro";
           Compare Lease vs Buy
         </button>
 
-        <div class="result" id="result">
+        <div class="result" id="result" aria-live="polite">
           <div class="score" id="score"></div>
 
           <div class="bar">
@@ -377,6 +377,16 @@ import WhenSpendingMakesSense from "../components/WhenSpendingMakesSense.astro";
         ]}
       />
 
+      <section class="content-section">
+        <h2>Worked Example: Comparing a Lease With Buying</h2>
+        <p>
+          Suppose leasing requires $3,000 due at signing plus $425 per month for 36 months. That is about $18,300 before insurance, mileage charges, or end-of-lease fees. Buying the same vehicle with $3,000 down and a $590 payment for 60 months costs much more over three years, but the buyer still owns an asset after the loan is eventually paid.
+        </p>
+        <p>
+          If the buyer expects the vehicle to be worth $22,000 after five years, the ownership path can recover part of its higher payments through resale value. A driver who exceeds a 12,000-mile lease allowance by 5,000 miles per year at $0.25 per mile could add $3,750 of mileage charges over three years. The better option depends on total cash outflow, mileage, and how long the vehicle will be kept.
+        </p>
+      </section>
+
       <FAQSection
         title="Lease vs Buy FAQ"
         faqs={[
@@ -455,6 +465,13 @@ import WhenSpendingMakesSense from "../components/WhenSpendingMakesSense.astro";
   </div>
 
   <script is:inline>
+  const formatSignedCurrency = (value) => {
+    const rounded = Math.round(value);
+    if (rounded === 0 || Object.is(rounded, -0)) return "$0";
+    const amount = Math.abs(rounded).toLocaleString();
+    return rounded < 0 ? `-$${amount}` : `$${amount}`;
+  };
+
     const clamp = (value, min, max) => Math.min(Math.max(value, min), max);
 
     const getNumber = (id) => {
@@ -660,7 +677,7 @@ import WhenSpendingMakesSense from "../components/WhenSpendingMakesSense.astro";
       recommendationEl.innerHTML = `<strong>Recommendation:</strong> ${recommendation}`;
       leaseShareEl.innerHTML = `<strong>Lease total cost share:</strong> ${leaseShare.toFixed(1)}% of take-home income`;
       buyShareEl.innerHTML = `<strong>Buy total cost share:</strong> ${buyShare.toFixed(1)}% of take-home income`;
-      cashFlowEl.innerHTML = `<strong>Estimated monthly cash flow after better option:</strong> $${Math.round(selectedRemaining).toLocaleString()}`;
+      cashFlowEl.innerHTML = `<strong>Estimated monthly cash flow after better option:</strong> ${formatSignedCurrency(selectedRemaining)}`;
       guidanceEl.textContent = guidance;
     }
 

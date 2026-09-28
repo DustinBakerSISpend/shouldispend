@@ -4,6 +4,7 @@ import OmniStyleReviewBlock from "../components/OmniStyleReviewBlock.astro";
 import Layout from "../layouts/Layout.astro";
 import AutoRelatedCalculators from "../components/AutoRelatedCalculators.astro";
 import FAQSection from "../components/FAQSection.astro";
+import SourcesAssumptionsBlock from "../components/SourcesAssumptionsBlock.astro";
 
 const emergencySavingsFaqs = [
   {
@@ -306,17 +307,17 @@ const emergencySavingsFaqs = [
     <div class="calculator">
   <div class="calc-grid">
     <div class="calc-field">
-      <label>Monthly Essential Expenses ($)</label>
+      <label for="expenses">Monthly Essential Expenses ($)</label>
       <input type="number" id="expenses" placeholder="4500" />
     </div>
 
     <div class="calc-field">
-      <label>Current Emergency Savings ($)</label>
+      <label for="savings">Current Emergency Savings ($)</label>
       <input type="number" id="savings" placeholder="10000" />
     </div>
 
     <div class="calc-field">
-      <label>Debt Level</label>
+      <label for="debt">Debt Level</label>
 
       <select id="debt">
         <option value="low">Low</option>
@@ -326,7 +327,7 @@ const emergencySavingsFaqs = [
     </div>
 
     <div class="calc-field">
-      <label>Job Stability</label>
+      <label for="stability">Job Stability</label>
 
       <select id="stability">
         <option value="stable">Stable</option>
@@ -336,7 +337,7 @@ const emergencySavingsFaqs = [
     </div>
 
     <div class="calc-field">
-      <label>Dependents</label>
+      <label for="dependents">Dependents</label>
 
       <select id="dependents">
         <option value="0">0</option>
@@ -346,7 +347,7 @@ const emergencySavingsFaqs = [
     </div>
 
     <div class="calc-field">
-      <label>Housing Situation</label>
+      <label for="housing">Housing Situation</label>
 
       <select id="housing">
         <option value="rent">Renter</option>
@@ -956,15 +957,32 @@ const emergencySavingsFaqs = [
 
     button.addEventListener("click", function () {
       const expensesInput = document.getElementById("expenses");
-const expenses = Number(expensesInput.value);
+      const expensesRaw = Number(expensesInput.value);
+      const expenses =
+        Number.isFinite(expensesRaw) && expensesRaw > 0 ? expensesRaw : 0;
 
       const savingsInput = document.getElementById("savings");
-const savings = Number(savingsInput.value);
+      const savingsRaw = Number(savingsInput.value);
+      const savings =
+        Number.isFinite(savingsRaw) && savingsRaw >= 0 ? savingsRaw : 0;
 
       const debt = document.getElementById("debt").value;
       const stability = document.getElementById("stability").value;
       const dependents = document.getElementById("dependents").value;
       const housing = document.getElementById("housing").value;
+
+      if (expenses <= 0) {
+        document.getElementById("calcResults").classList.add("active");
+        document.getElementById("calcVerdict").innerText =
+          "Add Monthly Expenses";
+        document.getElementById("calcTarget").innerText =
+          "Recommended Emergency Fund: —";
+        document.getElementById("calcMonths").innerText =
+          "Suggested Cushion: —";
+        document.getElementById("calcAnalysis").innerText =
+          "Enter monthly essential expenses greater than $0 to calculate an emergency-fund target.";
+        return;
+      }
 
       let monthsTarget = 3;
 
@@ -1012,4 +1030,5 @@ const savings = Number(savingsInput.value);
   });
 </script>
   <AutoRelatedCalculators />
+  <SourcesAssumptionsBlock category="Emergency Savings" />
 </Layout>

@@ -4,6 +4,7 @@ import OmniStyleReviewBlock from "../components/OmniStyleReviewBlock.astro";
 import Layout from "../layouts/Layout.astro";
 import CalculatorPageShell from "../components/CalculatorPageShell.astro";
 import FAQSection from "../components/FAQSection.astro";
+import SourcesAssumptionsBlock from "../components/SourcesAssumptionsBlock.astro";
 import RelatedCalculators from "../components/RelatedCalculators.astro";
 import MethodologySection from "../components/MethodologySection.astro";
 import CalculatorAssumptions from "../components/CalculatorAssumptions.astro";
@@ -478,7 +479,7 @@ const relatedCalculators = calculators
 
         <button class="sis-action-button sis-calculate-button" id="stationeryButton" type="button">Calculate Stationery Cost</button>
 
-        <div class="results" id="results">
+        <div class="results" id="results" aria-live="polite">
           <div class="result-label">Estimated Stationery Cost</div>
 
           <div class="total-price" id="totalPrice"></div>
@@ -663,6 +664,16 @@ const relatedCalculators = calculators
       </section>
 
       <div class="content-section">
+        <section class="content-section">
+          <h2>Worked Example: Estimating Invitation and Stationery Costs</h2>
+          <p>
+            Suppose 90 mailed invitation suites cost $6 each, for $540, and postage averages $1.20 per household, adding $108. Day-of programs, place cards, and signs add another $350, bringing the stationery estimate to about $998.
+          </p>
+          <p>
+            Choosing a $4 invitation suite lowers printing by $180 and reduces the total to about $818. If digital RSVPs also eliminate $90 of return-card printing and postage, the budget falls to roughly $728 without changing the guest list.
+          </p>
+        </section>
+
         <FAQSection title="Wedding Invitations and Stationery Cost FAQ" faqs={stationeryFaqs} />
       </div>
 
@@ -904,7 +915,7 @@ const relatedCalculators = calculators
 
         <p><strong>Cash gap after available stationery funds:</strong> ${formatMoney(cashGap)}.</p>
 
-        <p><strong>Monthly savings needed until the wedding:</strong> ${formatMoney(monthlySavingsNeeded)} for ${monthsUntilWedding.toFixed(0)} ${monthsUntilWedding === 1 ? "month" : "months"}.</p>
+        <p><strong>Stationery savings target:</strong> ${formatMoney(monthlySavingsNeeded)} per month over ${monthsUntilWedding.toFixed(0)} ${monthsUntilWedding === 1 ? "month" : "months"}.</p>
       `;
 
       mailingCheck.innerHTML = `
@@ -925,6 +936,7 @@ const relatedCalculators = calculators
       .getElementById("stationeryButton")
       .addEventListener("click", calculateStationery);
   </script>
+  <SourcesAssumptionsBlock category="Wedding Costs" />
 </Layout>
 
 

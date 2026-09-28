@@ -205,7 +205,7 @@ import DecisionLimitsBlock from "../components/DecisionLimitsBlock.astro";
           Calculate Financial Pressure
         </button>
 
-        <div class="result" id="result">
+        <div class="result" id="result" aria-live="polite">
           <div class="score" id="score"></div>
 
           <div class="bar">
@@ -330,6 +330,16 @@ import DecisionLimitsBlock from "../components/DecisionLimitsBlock.astro";
         ]}
       />
 
+      <section class="content-section">
+        <h2>Worked Example: Testing a $1,500 Car Payment</h2>
+        <p>
+          Suppose take-home pay is $9,000 per month and the vehicle payment alone is $1,500. Add $220 for insurance, $250 for fuel, and a $120 maintenance reserve, and the vehicle consumes about $2,090 per month, or 23.2% of take-home income.
+        </p>
+        <p>
+          If housing, debt, and required bills already total $4,800 per month, the car leaves about $2,110 before groceries, savings, and discretionary spending. Reducing the payment to $950 would free $550 each month, or $6,600 per year, which can materially change whether the vehicle fits without crowding out other goals.
+        </p>
+      </section>
+
       <FAQSection
         title="$1,500 Car Payment FAQ"
         faqs={[
@@ -403,6 +413,13 @@ import DecisionLimitsBlock from "../components/DecisionLimitsBlock.astro";
   </div>
 
   <script is:inline>
+  const formatSignedCurrency = (value) => {
+    const rounded = Math.round(value);
+    if (rounded === 0 || Object.is(rounded, -0)) return "$0";
+    const amount = Math.abs(rounded).toLocaleString();
+    return rounded < 0 ? `-$${amount}` : `$${amount}`;
+  };
+
     const clamp = (value, min, max) => Math.min(Math.max(value, min), max);
 
     const getNumber = (id) => {
@@ -571,7 +588,7 @@ if (savings >= 10000000 && monthlyRemaining > 0) {
 
       transportationShareEl.innerHTML = `<strong>Total vehicle cost share:</strong> ${transportationIncomeShare.toFixed(1)}% of take-home income`;
 
-      cashFlowEl.innerHTML = `<strong>Monthly cash flow after housing, debt, and vehicle costs:</strong> $${Math.round(monthlyRemaining).toLocaleString()}`;
+      cashFlowEl.innerHTML = `<strong>Monthly cash flow after housing, debt, and vehicle costs:</strong> ${formatSignedCurrency(monthlyRemaining)}`;
 
       savingsCushionEl.innerHTML = `<strong>Estimated emergency cushion:</strong> ${Math.max(emergencyMonths, 0).toFixed(1)} months`;
 

@@ -4,6 +4,7 @@ import OmniStyleReviewBlock from "../components/OmniStyleReviewBlock.astro";
 import Layout from "../layouts/Layout.astro";
 import CalculatorPageShell from "../components/CalculatorPageShell.astro";
 import FAQSection from "../components/FAQSection.astro";
+import SourcesAssumptionsBlock from "../components/SourcesAssumptionsBlock.astro";
 import RelatedCalculators from "../components/RelatedCalculators.astro";
 import MethodologySection from "../components/MethodologySection.astro";
 import CalculatorAssumptions from "../components/CalculatorAssumptions.astro";
@@ -326,81 +327,81 @@ const relatedCalculators = calculators
 
             <div class="field">
               <label for="travelers">Ticketed Travelers</label>
-              <input id="travelers" type="number" placeholder="Example: 4" />
+              <input id="travelers" type="number" min="1" max="200" step="1" placeholder="Example: 4" />
             </div>
 
             <div class="field">
               <label for="ticketPrice">Average Ticket Price per Traveler</label>
-              <input id="ticketPrice" type="number" step="0.01" placeholder="Example: 425" />
+              <input id="ticketPrice" type="number" min="1" max="100000" step="0.01" placeholder="Example: 425" />
               <span class="field-note">Use the fare shown by the airline or flight search site.</span>
             </div>
 
             <div class="field">
               <label for="checkedBags">Checked Bags</label>
-              <input id="checkedBags" type="number" placeholder="Example: 2" />
+              <input id="checkedBags" type="number" min="0" max="200" step="1" placeholder="Example: 2" />
             </div>
 
             <div class="field">
               <label for="checkedBagFee">Checked Bag Fee per Bag Each Way</label>
-              <input id="checkedBagFee" type="number" step="0.01" placeholder="Example: 35" />
+              <input id="checkedBagFee" type="number" min="0" max="1000" step="0.01" placeholder="Example: 35" />
             </div>
 
             <div class="field">
               <label for="paidCarryOns">Paid Carry-Ons</label>
-              <input id="paidCarryOns" type="number" placeholder="Example: 2" />
+              <input id="paidCarryOns" type="number" min="0" max="200" step="1" placeholder="Example: 2" />
               <span class="field-note">Useful for basic economy or low-cost carriers.</span>
             </div>
 
             <div class="field">
               <label for="carryOnFee">Carry-On Fee per Bag Each Way</label>
-              <input id="carryOnFee" type="number" step="0.01" placeholder="Example: 45" />
+              <input id="carryOnFee" type="number" min="0" max="1000" step="0.01" placeholder="Example: 45" />
             </div>
 
             <div class="field">
               <label for="seatFee">Seat Selection Cost per Traveler Each Way</label>
-              <input id="seatFee" type="number" step="0.01" placeholder="Example: 25" />
+              <input id="seatFee" type="number" min="0" max="5000" step="0.01" placeholder="Example: 25" />
             </div>
 
             <div class="field">
               <label for="upgradeFee">Flexibility, Priority, or Upgrade Cost per Traveler</label>
-              <input id="upgradeFee" type="number" step="0.01" placeholder="Example: 80" />
+              <input id="upgradeFee" type="number" min="0" max="100000" step="0.01" placeholder="Example: 80" />
               <span class="field-note">Use this for refundable fare upgrades, priority boarding, or bundled add-ons.</span>
             </div>
 
             <div class="field">
               <label for="airportParking">Airport Parking Total</label>
-              <input id="airportParking" type="number" step="0.01" placeholder="Example: 120" />
+              <input id="airportParking" type="number" min="0" max="1000000" step="0.01" placeholder="Example: 120" />
             </div>
 
             <div class="field">
               <label for="airportTransfers">Airport Transfers Total</label>
-              <input id="airportTransfers" type="number" step="0.01" placeholder="Example: 160" />
+              <input id="airportTransfers" type="number" min="0" max="1000000" step="0.01" placeholder="Example: 160" />
               <span class="field-note">Use this for rideshare, shuttle, train, taxi, or drop-off costs tied to flying.</span>
             </div>
 
             <div class="field">
               <label for="otherFlightFees">Other Flight-Related Fees</label>
-              <input id="otherFlightFees" type="number" step="0.01" placeholder="Example: 90" />
+              <input id="otherFlightFees" type="number" min="0" max="1000000" step="0.01" placeholder="Example: 90" />
             </div>
 
             <div class="field">
               <label for="rewardsCredit">Points Value, Vouchers, or Travel Credits</label>
-              <input id="rewardsCredit" type="number" step="0.01" placeholder="Example: 600" />
+              <input id="rewardsCredit" type="number" min="0" max="10000000" step="0.01" placeholder="Example: 600" />
             </div>
 
             <div class="field">
               <label for="cashSetAside">Cash Already Set Aside for Flights</label>
-              <input id="cashSetAside" type="number" step="0.01" placeholder="Example: 1800" />
+              <input id="cashSetAside" type="number" min="0" max="10000000" step="0.01" placeholder="Example: 1800" />
             </div>
 
             <div class="field">
               <label for="monthlyTakeHome">Monthly Take-Home Income</label>
-              <input id="monthlyTakeHome" type="number" step="0.01" placeholder="Example: 6500" />
+              <input id="monthlyTakeHome" type="number" min="0" max="10000000" step="0.01" placeholder="Example: 6500" />
             </div>
 
             <div class="field">
               <label for="emergencySavings">Emergency Savings</label>
-              <input id="emergencySavings" type="number" step="0.01" placeholder="Example: 15000" />
+              <input id="emergencySavings" type="number" min="0" max="100000000" step="0.01" placeholder="Example: 15000" />
             </div>
 
             <div class="field">
@@ -432,7 +433,7 @@ const relatedCalculators = calculators
           </div>
         </form>
 
-        <div class="results" id="results">
+        <div class="results" id="results" aria-live="polite">
           <div class="result-label">Estimated Out-of-Pocket Flight Cost</div>
 
           <div class="total-price" id="totalPrice"></div>
@@ -740,6 +741,22 @@ const relatedCalculators = calculators
 
       results.classList.add("visible");
 
+      const invalidFields = [...document.querySelectorAll('input[type="number"]')]
+        .filter((input) => !input.checkValidity());
+
+      if (invalidFields.length > 0) {
+        totalPrice.textContent = "$0";
+        pressureScore.textContent = "0/100";
+        pressureFill.style.width = "0%";
+        pressureFill.style.background = "#16a34a";
+        pressureLabel.textContent = "Check flight inputs";
+        pressureDetails.innerHTML =
+          "<p>One or more flight values are outside the supported range. Correct those entries before relying on the estimate.</p>";
+        resultDetails.innerHTML = "";
+        flightSummary.textContent = "";
+        return;
+      }
+
       if (travelers <= 0 || ticketPrice <= 0) {
         totalPrice.textContent = "$0";
         pressureScore.textContent = "0/100";
@@ -952,5 +969,6 @@ const relatedCalculators = calculators
       }, 0);
     });
   </script>
+  <SourcesAssumptionsBlock category="Flights" />
 </Layout>
 

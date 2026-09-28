@@ -4,6 +4,7 @@ import OmniStyleReviewBlock from "../components/OmniStyleReviewBlock.astro";
 import Layout from "../layouts/Layout.astro";
 import CalculatorPageShell from "../components/CalculatorPageShell.astro";
 import FAQSection from "../components/FAQSection.astro";
+import SourcesAssumptionsBlock from "../components/SourcesAssumptionsBlock.astro";
 import RelatedCalculators from "../components/RelatedCalculators.astro";
 import MethodologySection from "../components/MethodologySection.astro";
 import CalculatorAssumptions from "../components/CalculatorAssumptions.astro";
@@ -478,7 +479,7 @@ const relatedCalculators = calculators
 
         <button class="sis-action-button sis-calculate-button" id="decorButton" type="button">Calculate Flowers and Decor Cost</button>
 
-        <div class="results" id="results">
+        <div class="results" id="results" aria-live="polite">
           <div class="result-label">Estimated Flowers and Decor Cost</div>
 
           <div class="total-price" id="totalPrice"></div>
@@ -665,6 +666,16 @@ const relatedCalculators = calculators
       </section>
 
       <div class="content-section">
+        <section class="content-section">
+          <h2>Worked Example: Building a Flowers and Decor Budget</h2>
+          <p>
+            Suppose ceremony flowers, bouquets, centerpieces, and rentals total $4,200. Delivery, setup, room-flip labor, and strike add another $700, bringing the working total to $4,900.
+          </p>
+          <p>
+            Reusing $900 of ceremony arrangements at the reception and trimming $600 of premium floral upgrades could lower the net cost to about $3,400. On a $35,000 wedding, that reduces flowers and decor from 14% of the budget to about 9.7%.
+          </p>
+        </section>
+
         <FAQSection title="Wedding Flowers and Decor Cost FAQ" faqs={flowersDecorFaqs} />
       </div>
 
@@ -884,7 +895,7 @@ const relatedCalculators = calculators
 
         <p><strong>Cash gap after available decor funds:</strong> ${formatMoney(cashGap)}.</p>
 
-        <p><strong>Monthly savings needed until the wedding:</strong> ${formatMoney(monthlySavingsNeeded)} for ${monthsUntilWedding.toFixed(0)} ${monthsUntilWedding === 1 ? "month" : "months"}.</p>
+        <p><strong>Flowers-and-decor savings target:</strong> ${formatMoney(monthlySavingsNeeded)} per month for the remaining ${monthsUntilWedding.toFixed(0)} ${monthsUntilWedding === 1 ? "month" : "months"}.</p>
       `;
 
       designLevers.innerHTML = `
@@ -906,6 +917,7 @@ const relatedCalculators = calculators
       .getElementById("decorButton")
       .addEventListener("click", calculateDecor);
   </script>
+  <SourcesAssumptionsBlock category="Wedding Costs" />
 </Layout>
 
 

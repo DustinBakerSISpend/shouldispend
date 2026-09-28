@@ -4,6 +4,7 @@ import OmniStyleReviewBlock from "../components/OmniStyleReviewBlock.astro";
 import Layout from "../layouts/Layout.astro";
 import CalculatorPageShell from "../components/CalculatorPageShell.astro";
 import FAQSection from "../components/FAQSection.astro";
+import SourcesAssumptionsBlock from "../components/SourcesAssumptionsBlock.astro";
 import RelatedCalculators from "../components/RelatedCalculators.astro";
 import MethodologySection from "../components/MethodologySection.astro";
 import CalculatorAssumptions from "../components/CalculatorAssumptions.astro";
@@ -273,7 +274,7 @@ const relatedCalculators = calculators
 
         <button class="sis-action-button sis-calculate-button" id="roadTripButton" type="button">Calculate Road Trip Cost</button>
 
-        <div class="results" id="results">
+        <div class="results" id="results" aria-live="polite">
           <div class="result-label">Estimated Fuel Cost</div>
 
           <div class="total-price" id="totalPrice"></div>
@@ -421,6 +422,16 @@ const relatedCalculators = calculators
       </section>
 
       <div class="content-section">
+        <section class="content-section">
+          <h2>Worked Example: Estimating Road Trip Fuel Cost</h2>
+          <p>
+            A 1,200-mile round trip in a vehicle that averages 28 MPG requires about 42.9 gallons of fuel. At $3.45 per gallon, the basic fuel estimate is about $148. Adding a 10% buffer for detours, traffic, idling, or lower real-world MPG raises the fuel budget to roughly $163.
+          </p>
+          <p>
+            If actual mileage drops to 23 MPG because of speed, cargo, hills, or weather, the same trip needs about 52.2 gallons. At the same gas price, fuel rises to about $180 before the buffer. That $32 difference is small compared with the whole vacation but large enough to show why using optimistic highway MPG can understate the travel budget.
+          </p>
+        </section>
+
         <FAQSection title="Road Trip Calculator FAQ" faqs={roadTripFaqs} />
       </div>
 
@@ -523,4 +534,5 @@ const relatedCalculators = calculators
       .getElementById("roadTripButton")
       .addEventListener("click", calculateRoadTrip);
   </script>
+  <SourcesAssumptionsBlock category="Road Trips" />
 </Layout>
